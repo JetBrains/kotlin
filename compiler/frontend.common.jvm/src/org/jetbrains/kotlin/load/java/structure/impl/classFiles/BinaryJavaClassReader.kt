@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.openapi.vfs.VirtualFile
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
-import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
-import org.jetbrains.kotlin.jvm.environment.isUnder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 
@@ -81,8 +79,6 @@ private class VirtualFileBinaryClassFileHandle(val virtualFile: VirtualFile) : B
 
     override val nameWithoutExtension: String
         get() = virtualFile.nameWithoutExtension
-
-    override fun isUnder(classpathRoot: JvmClasspathRootId): Boolean = virtualFile.isUnder(classpathRoot)
 
     override fun readBytes(): ByteArray = virtualFile.contentsToByteArray()
 

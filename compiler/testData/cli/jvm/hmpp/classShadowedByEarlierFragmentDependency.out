@@ -1,7 +1,2 @@
-compiler/testData/cli/jvm/hmpp/src/classShadowedByEarlierFragmentDependency_common.kt:1:12: error: unresolved reference 'Dup'.
-import lib.Dup
-           ^^^
-compiler/testData/cli/jvm/hmpp/src/classShadowedByEarlierFragmentDependency_common.kt:3:16: error: unresolved reference 'Dup'.
-fun common() = Dup().ok()
-               ^^^
-COMPILATION_ERROR
+info: KLIB loader: Not a Kotlin library, or a library with invalid format: $TMP_DIR$/libB/
+OK

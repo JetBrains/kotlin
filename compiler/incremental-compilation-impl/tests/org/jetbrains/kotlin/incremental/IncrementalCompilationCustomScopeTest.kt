@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.create
+import org.jetbrains.kotlin.cli.jvm.compiler.CliBinaryClassFileIndex
 import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.cli.jvm.index.containsRoot
 import org.jetbrains.kotlin.cli.jvm.config.VirtualJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -48,7 +51,7 @@ import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
-import org.jetbrains.kotlin.jvm.environment.containsFile
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -59,6 +62,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -125,11 +129,22 @@ class IncrementalCompilationCustomScopeTest {
         )
         assertFalse(scope.contains(localOutputClass), "a file on disk is not under that root either")
 
-        val otherFileSystemClass = InMemoryOutputFileSystem().addFile("p/Ref.class")
-        assertTrue(classpath.containsFile(otherFileSystemClass), "root-ID matching intentionally ignores VirtualFile system identity")
+        val localOutputRoot = checkNotNull(localOutputClass.parent?.parent)
+        val otherFileSystem = InMemoryOutputFileSystem()
+        assertTrue(
+            classpath.containsRoot(otherFileSystem.root),
+            "root-ID matching intentionally ignores VirtualFile system identity",
+        )
+        assertFalse(classpath.containsRoot(localOutputRoot), "a local root is not the in-memory output root")
 
         val finder = CliVirtualFileFinder(
-            FixedJvmDependenciesIndex(listOf(previousOutputClass, localOutputClass)),
+            FixedJvmDependenciesIndex(
+                listOf(previousOutputClass, localOutputClass),
+                sequenceOf(
+                    JavaRoot(outputFileSystem.root, JavaRoot.RootType.BINARY),
+                    JavaRoot(localOutputRoot, JavaRoot.RootType.BINARY),
+                ),
+            ),
             classpath,
             enableSearchInCtSym = false,
             perfManager = null,
@@ -145,6 +160,49 @@ class IncrementalCompilationCustomScopeTest {
         val finder = projectEnvironment.getKotlinClassFinder(context!!.precompiledBinaries!!) as VirtualFileFinder
 
         assertEquals(localOutputClass.path, finder.findVirtualFileWithHeader(ClassId.fromString("p/Local"))?.path)
+    }
+
+    @Test
+    fun testFinderContinuesAfterAClassInAnExcludedRoot(@TempDir tempDir: File) {
+        prepareClasspaths(tempDir, PlainComponents())
+
+        val firstRoot = File(tempDir, "first").apply { mkdirs() }
+        val secondRoot = File(tempDir, "second").apply { mkdirs() }
+        val firstClass = File(firstRoot, "p/Shared.class").apply {
+            parentFile.mkdirs()
+            writeBytes(byteArrayOf(1))
+        }
+        val secondClass = File(secondRoot, "p/Shared.class").apply {
+            parentFile.mkdirs()
+            writeBytes(byteArrayOf(2))
+        }
+        val index = JvmDependenciesIndexImpl(
+            listOf(
+                JavaRoot(localVirtualFile(firstRoot), JavaRoot.RootType.BINARY),
+                JavaRoot(localVirtualFile(secondRoot), JavaRoot.RootType.BINARY),
+            )
+        )
+        val classpath = JvmClasspath.Roots(listOf(JvmClasspathRootId.of(secondRoot.toPath())))
+        val finder = CliVirtualFileFinder(index, classpath, enableSearchInCtSym = false, perfManager = null)
+
+        assertEquals(localVirtualFile(secondClass).path, finder.findVirtualFileWithHeader(ClassId.fromString("p/Shared"))?.path)
+
+        val acceptedFile = localVirtualFile(secondClass)
+        val scopeFinder = CliVirtualFileFinder(
+            index,
+            { it == acceptedFile },
+            enableSearchInCtSym = false,
+            perfManager = null,
+        )
+        assertEquals(acceptedFile.path, scopeFinder.findVirtualFileWithHeader(ClassId.fromString("p/Shared"))?.path)
+
+        val binaryIndex = CliBinaryClassFileIndex(index, enableSearchInCtSym = false)
+        val classFiles = binaryIndex.findTopLevelClassFiles(ClassId.fromString("p/Shared"), classpath)
+        assertEquals(listOf(2.toByte()), classFiles.single().readBytes().toList())
+
+        val binaryCache = BinaryJavaClassCache(binaryIndex)
+        val cachedClassFiles = binaryCache.findTopLevelClassFiles(FqName("p"), Name.identifier("Shared"), classpath)
+        assertEquals(listOf(2.toByte()), cachedClassFiles.single().readBytes().toList())
     }
 
     /**
@@ -177,7 +235,7 @@ class IncrementalCompilationCustomScopeTest {
         )
 
         assertNull(commonKotlinFinder.findVirtualFileWithHeader(classId))
-        assertTrue(JvmClasspath.ProjectLibraries().containsFile(javaClassFile))
+        assertTrue(JvmClasspath.ProjectLibraries().containsRoot(localVirtualFile(platformLibraryRoot)))
     }
 
     @Test

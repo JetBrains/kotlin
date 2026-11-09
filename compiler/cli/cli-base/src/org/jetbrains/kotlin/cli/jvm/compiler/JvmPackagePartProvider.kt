@@ -10,12 +10,12 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.CliDiagnostics.JAVA_MODULE_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathRootMatcher
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
-import org.jetbrains.kotlin.jvm.environment.containsRoot
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -36,7 +36,7 @@ class JvmPackagePartProvider(
     private val acceptsRoot: (VirtualFile) -> Boolean,
 ) : JvmPackagePartProviderBase<VirtualFile>() {
     constructor(languageVersionSettings: LanguageVersionSettings, classpath: JvmClasspath) :
-            this(languageVersionSettings, classpath::containsRoot)
+            this(languageVersionSettings, JvmClasspathRootMatcher(classpath)::accepts)
 
     override val deserializationConfiguration = CommonCompilerDeserializationConfiguration(languageVersionSettings)
 
