@@ -49,7 +49,11 @@ interface KlibFactsGenerator {
                 KlibFactsGeneratorImpl(config.threadsCount, config.bridgesPolicy)
     }
 
-    fun generateFactsFrom(kotlinLibrary: KotlinLibrary): FactsTracker
+    /**
+     * The facts defined by the files of [kotlinLibrary], or only by [files] (paths as in the klib) if given:
+     * the facts of a file depend only on its own IR, so the ones of the other files don't need to be generated again.
+     */
+    fun generateFactsFrom(kotlinLibrary: KotlinLibrary, files: Set<String>? = null): FactsTracker
 }
 
 sealed interface FactVerificationResult {
@@ -68,11 +72,15 @@ class KlibFactsGeneratorImpl internal constructor(
         private val threadsCount: Int,
         private val bridgesPolicy: BridgesPolicy
 ) : KlibFactsGenerator {
-    override fun generateFactsFrom(kotlinLibrary: KotlinLibrary): FactsTracker {
+    override fun generateFactsFrom(kotlinLibrary: KotlinLibrary, files: Set<String>?): FactsTracker {
         val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
         val linker = FactsIrLinker(symbolTable)
+        // The other files are only deserialized as far as the given ones reference them, and are not in the module fragment.
+        val strategyResolver = if (files == null) DeserializationStrategy.ALL else DeserializationStrategyResolver { filePath ->
+            if (filePath in files) DeserializationStrategy.ALL else DeserializationStrategy.ON_DEMAND
+        }
         val irModule = linker.createAndRegisterModuleDeserializer(
-                createFakeModuleDescriptor(kotlinLibrary), kotlinLibrary, DeserializationStrategy.ALL
+                createFakeModuleDescriptor(kotlinLibrary), kotlinLibrary, strategyResolver
         ).moduleFragment
         linker.deserializeAllReachableTopLevels()
 
@@ -162,11 +170,12 @@ internal fun checkKlibFacts(
         bridgesPolicy: BridgesPolicy,
 ): FactVerificationResult {
     val libraryFiles = kotlinLibrary.getFilesWithFqNames().map { it.filePath }.toSet()
-    val files = (filesToCheck?.let(libraryFiles::intersect) ?: libraryFiles).sorted()
+    val filesOfInterest = filesToCheck?.let(libraryFiles::intersect)
+    val files = (filesOfInterest ?: libraryFiles).sorted()
     if (files.isEmpty()) return FactVerificationResult.Success
 
     val klibFacts = KlibFactsGeneratorImpl(threadsCount, bridgesPolicy)
-            .generateFactsFrom(kotlinLibrary)
+            .generateFactsFrom(kotlinLibrary, filesOfInterest)
             .definedFacts
     val mismatches = mutableListOf<String>()
     var mismatchCount = 0

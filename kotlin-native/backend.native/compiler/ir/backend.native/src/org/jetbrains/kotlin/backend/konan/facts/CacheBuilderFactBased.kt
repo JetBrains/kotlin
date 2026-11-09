@@ -208,16 +208,16 @@ class CacheBuilderFactBased(
         val removedFiles = (previousManifest.defs.keys + previousManifest.uses.keys) - actualFiles.map { it.filePath }.toSet()
         reportTiming("fingerprint-check", library, fingerprintCheckStart)
 
-        // The facts defined by a library depend only on its own IR (and on the bridges policy, fixed for a cache):
-        // if no file has been added, changed or removed, none of them has changed and there's no need to generate them.
-        // TODO: do the same per file, generating the facts only of the added / changed files.
+        // The facts defined by a file depend only on its own IR (and on the bridges policy, fixed for a cache):
+        // only the ones of the added and changed files are generated, the other files' ones are those of the previous manifest.
         val isLibraryModified = modificationReasons.any { it != null } || removedFileIds.isNotEmpty() || removedFiles.isNotEmpty()
         if (isLibraryModified) {
+            val modifiedFiles = actualFiles.filterIndexed { index, _ -> modificationReasons[index] != null }.map { it.filePath }.toSet()
             val currentHashes = timed("facts-generation", library) {
-                val threadsCount = config.threadsCount
-                KlibFactsGeneratorImpl(threadsCount, config.bridgesPolicy).generateFactsFrom(library).definedFacts.values
-                        .flatMap { it.entries }
-                        .associate { it.key to it.value }
+                val generatedDefs = KlibFactsGeneratorImpl(config.threadsCount, config.bridgesPolicy)
+                        .generateFactsFrom(library, modifiedFiles).definedFacts
+                val unchangedDefs = previousManifest.defs.filterKeys { it !in modifiedFiles && it !in removedFiles }
+                (unchangedDefs.values + generatedDefs.values).flatMap { it.entries }.associate { it.key to it.value }
             }
             previousManifest.defs.values.forEach { defs ->
                 defs.forEach { [factKey, hash] -> if (currentHashes[factKey] != hash) changedFacts += factKey }
