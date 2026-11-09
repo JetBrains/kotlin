@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.defaultFilteredDiagnostics
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class SourceSetsAccessInAndroidExtensionTest {
     @Test
@@ -114,6 +115,37 @@ class SourceSetsAccessInAndroidExtensionTest {
             }
         }
         project.evaluate()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SourceSetsAccessInAndroidExtension)
+    }
+
+    @Test
+    fun `diagnostic is reported and closure delegates to source set when sourceSets block is used from Groovy script`() {
+        val project = buildProject {
+            applyKotlinAndroidPlugin()
+            androidLibrary {}
+
+            val script = file("sourceSets.gradle")
+            script.writeText(
+                """
+                kotlin {
+                    sourceSets {
+                        main {
+                            languageSettings { optIn('groovy.dsl.Marker') }
+                        }
+                    }
+                }
+                """.trimIndent()
+            )
+            apply(mapOf("from" to script))
+        }
+        project.evaluate()
+
+        @Suppress("DEPRECATION_ERROR")
+        val main = project.kotlinAndroidExtension.sourceSets.getByName("main")
+        assertTrue(
+            "groovy.dsl.Marker" in main.languageSettings.optInAnnotationsInUse,
+            "Groovy closure did not configure the 'main' source set"
+        )
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.SourceSetsAccessInAndroidExtension)
     }
 }
