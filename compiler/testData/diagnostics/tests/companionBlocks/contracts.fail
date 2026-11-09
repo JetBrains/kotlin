@@ -1,3 +1,0 @@
-Caused by: java.util.NoSuchElementException: ArrayDeque is empty.
-	at kotlin.collections.ArrayDeque.last(ArrayDeque.kt:112)
-	at org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirAbstractContractResolveTransformerDispatcher$FirDeclarationsContractResolveTransformer.transformNamedFunction(FirAbstractContractResolveTransformerDispatcher.kt:414)

@@ -33,7 +33,7 @@ interface I {
 class Outer<T> {
     companion {
         fun isInner(x: Any?): Boolean {
-            contract { returns(true) implies (x is Inner) }
+            contract { returns(true) implies (x is <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>) }
             return x is Outer<*>.Inner
         }
     }
