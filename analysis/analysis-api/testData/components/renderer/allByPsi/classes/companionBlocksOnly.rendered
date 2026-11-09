@@ -1,13 +1,17 @@
 class OnlyCompanionBlocks {
-  fun foo()
+  companion {
+    fun foo()
 
-  val bar: Int
+    val bar: Int
+  }
 }
 
 class Outer {
   class Nested {
     fun regular()
 
-    fun static()
+    companion {
+      fun static()
+    }
   }
 }
