@@ -1,0 +1,18 @@
+KdBundle
+├── fragments
+│   └── KdFragment main
+│       └── elements
+│           ├── KdModule javaKotlinInterop [////PointingToDeclaration/]
+│           │   └── packages: pkg////PointingToDeclaration/
+│           ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│           │   └── declarations: pkg/JPoint///PointingToDeclaration/, pkg/KUser///PointingToDeclaration/
+│           ├── KdClass JPoint (CLASS) [pkg/JPoint///PointingToDeclaration/]
+│           │   └── declarations: pkg/JPoint/JPoint/#/PointingToDeclaration/, pkg/JPoint/getX/#/PointingToDeclaration/, pkg/JPoint/x/#/PointingToDeclaration/
+│           ├── KdConstructor() [pkg/JPoint/JPoint/#/PointingToDeclaration/]
+│           ├── KdFunction getX(): int [pkg/JPoint/getX/#/PointingToDeclaration/]
+│           ├── KdProperty x: int [pkg/JPoint/x/#/PointingToDeclaration/]
+│           ├── KdClass KUser (CLASS) [pkg/KUser///PointingToDeclaration/]
+│           │   └── declarations: pkg/KUser/KUser/#/PointingToDeclaration/, pkg/KUser/describe/#pkg.JPoint/PointingToDeclaration/
+│           ├── KdConstructor() [pkg/KUser/KUser/#/PointingToDeclaration/]
+│           └── KdFunction describe(point: JPoint): Int [pkg/KUser/describe/#pkg.JPoint/PointingToDeclaration/]
+└── expectActualMappings
