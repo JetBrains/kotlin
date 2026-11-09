@@ -106,6 +106,9 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirExpectActualMappingStorage::class, FirExpectActualMappingStorage(this))
     register(FirSealedSiblingsCalculator::class, FirSealedSiblingsCalculator(this))
     register(FirInlineConstTrackerComponent::class, FirInlineConstTrackerComponent.Default)
+
+    @OptIn(FirExtensionApiInternals::class)
+    register(TypeResolveServiceProvider::class, FirTypeResolveServiceProvider(this))
 }
 
 @OptIn(SessionConfiguration::class)

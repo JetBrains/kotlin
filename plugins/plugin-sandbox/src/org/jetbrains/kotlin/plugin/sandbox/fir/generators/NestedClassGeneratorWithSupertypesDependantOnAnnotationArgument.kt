@@ -90,6 +90,7 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
         typeResolver: TypeResolveService,
     ): List<ConeKotlinType> = emptyList()
 
+    @Suppress("OVERRIDE_DEPRECATION")
     @ExperimentalSupertypesGenerationApi
     override fun computeAdditionalSupertypesForGeneratedNestedClass(
         klass: FirRegularClass,

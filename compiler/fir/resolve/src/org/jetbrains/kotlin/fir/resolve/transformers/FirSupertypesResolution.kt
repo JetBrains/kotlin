@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtension
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterSupertype
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnionTypeInSupertype
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -167,11 +169,11 @@ private fun FirClassLikeDeclaration.typeParametersScope(): FirScope? {
     return FirMemberTypeParameterScope(this)
 }
 
-private fun createOtherScopesForNestedClassesOrCompanion(
+fun createOtherScopesForNestedClassesOrCompanion(
     klass: FirClass,
     session: FirSession,
     scopeSession: ScopeSession,
-    supertypeComputationSession: SupertypeComputationSession,
+    supertypeSupplier: SupertypeSupplier,
     withCompanionScopes: Boolean,
 ): Collection<FirScope> =
     mutableListOf<FirScope>().apply {
@@ -187,7 +189,7 @@ private fun createOtherScopesForNestedClassesOrCompanion(
         lookupSuperTypes(
             klass,
             lookupInterfaces = false, deep = true, substituteTypes = true, useSiteSession = session,
-            supertypeSupplier = supertypeComputationSession.supertypesSupplier
+            supertypeSupplier = supertypeSupplier
         ).mapNotNullTo(this) {
             it.lookupTag.getNestedClassifierScope(session, scopeSession)
                 ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(it, session)
@@ -286,7 +288,7 @@ open class FirSupertypeResolverVisitor(
                 klass = outerClass,
                 session = session,
                 scopeSession = scopeSession,
-                supertypeComputationSession = supertypeComputationSession,
+                supertypeSupplier = supertypeComputationSession.supertypesSupplier,
                 withCompanionScopes = withCompanionScopes,
             )
         )
@@ -532,6 +534,7 @@ open class FirSupertypeResolverVisitor(
             for (extension in supertypeGenerationExtensions) {
                 if (extension.needTransformSupertypes(nestedClass)) {
                     @OptIn(ExperimentalSupertypesGenerationApi::class)
+                    @Suppress("DEPRECATION")
                     val newSupertypes = extension.computeAdditionalSupertypesForGeneratedNestedClass(
                         nestedClass, typeResolveService
                     )
@@ -918,7 +921,7 @@ sealed class SupertypeComputationStatus {
 
 private typealias ScopePersistentList = PersistentList<FirScope>
 
-private fun <E> PersistentList<E>.pushing(element: E): PersistentList<E> = addingAt(0, element)
-private fun <E> PersistentList<E>.pushingAll(collection: Collection<E>): PersistentList<E> = addingAllAt(0, collection)
+fun <E> PersistentList<E>.pushing(element: E): PersistentList<E> = addingAt(0, element)
+fun <E> PersistentList<E>.pushingAll(collection: Collection<E>): PersistentList<E> = addingAllAt(0, collection)
 
 private fun ScopePersistentList.pushingIfNotNull(scope: FirScope?): ScopePersistentList = if (scope == null) this else pushing(scope)

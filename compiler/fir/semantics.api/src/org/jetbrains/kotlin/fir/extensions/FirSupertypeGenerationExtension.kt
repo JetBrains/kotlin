@@ -47,6 +47,11 @@ abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtensi
      * IMPORTANT: this method works only on one level, which means that it won't be called for the nested class of the generated class.
      *   It also doesn't work for top-level classes
      */
+    @Deprecated(
+        message = "Support for adding supertypes to generated classes will soon be removed. " +
+                "Use 'NestedClassGenerationContext.typeResolver' to resolve types when the class is generated.",
+        replaceWith = ReplaceWith(""),
+    )
     @ExperimentalSupertypesGenerationApi
     open fun computeAdditionalSupertypesForGeneratedNestedClass(
         klass: FirRegularClass,
@@ -55,9 +60,7 @@ abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtensi
 
     fun interface Factory : FirExtension.Factory<FirSupertypeGenerationExtension>
 
-    abstract class TypeResolveService {
-        abstract fun resolveUserType(type: FirUserTypeRef): FirResolvedTypeRef
-    }
+    abstract class TypeResolveService : org.jetbrains.kotlin.fir.extensions.TypeResolveService()
 }
 
 val FirExtensionService.supertypeGenerators: List<FirSupertypeGenerationExtension> by FirExtensionService.registeredExtensions()
