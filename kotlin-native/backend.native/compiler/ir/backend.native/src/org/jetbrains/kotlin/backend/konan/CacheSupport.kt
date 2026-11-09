@@ -23,45 +23,86 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.irOrFail
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.library.components.KlibIrComponent
+import org.jetbrains.kotlin.protobuf.CodedInputStream
+import org.jetbrains.kotlin.protobuf.WireFormat
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 data class FileWithFqName(val filePath: String, val fqName: String)
 
+/**
+ * The paths and package names of the files of this library.
+ * This runs for each library with a per-file cache on every compilation, so only the few needed fields of each file are read:
+ * a full parse would also read e.g. the line offsets of each file entry.
+ */
 fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
     val ir = irOrFail
-    val fileProtos = Array<ProtoFile>(ir.irFileCount) {
-        ProtoFile.parseFrom(ir.irFile(it).codedInputStream, ExtensionRegistryLite.getEmptyRegistry())
-    }
-    return fileProtos.mapIndexed { index, proto ->
-        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, index))
-        val fileEntry = fileReader.fileEntry(proto)
-        FileWithFqName(
-                fileReader.deserializeFileEntryName(fileEntry),
-                fileReader.deserializeFqName(proto.fqNameList),
-        )
-    }
+    return List(ir.irFileCount) { ir.readFileWithFqName(it) }
 }
 
 fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
-    val ir = irOrFail
-    val fileProtos = Array<ProtoFile>(ir.irFileCount) {
-        ProtoFile.parseFrom(ir.irFile(it).codedInputStream, ExtensionRegistryLite.getEmptyRegistry())
+    val fqNames = getFilesWithFqNames().associate { (filePath, fqName) -> filePath to fqName }
+    return filePaths.map { fqNames[it] ?: error("No file with path $it is found in klib $path") }
+}
+
+/** Reads the [ProtoFile] fields `file_entry`, `file_entry_id` and `fq_name`, skipping the other ones. */
+private fun KlibIrComponent.readFileWithFqName(fileIndex: Int): FileWithFqName {
+    val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, fileIndex))
+    val input = irFile(fileIndex).codedInputStream
+    var inlineFileEntryName: String? = null
+    var fileEntryId: Int? = null
+    val fqName = mutableListOf<Int>()
+    while (true) {
+        val tag = input.readTag()
+        if (tag == 0) break
+        when (WireFormat.getTagFieldNumber(tag)) {
+            ProtoFile.FILE_ENTRY_FIELD_NUMBER -> input.readMessage { inlineFileEntryName = input.readFileEntryName(fileReader) }
+            ProtoFile.FILE_ENTRY_ID_FIELD_NUMBER -> fileEntryId = input.readInt32()
+            // Packed (as written), or one element per tag (as a parser must also accept).
+            ProtoFile.FQ_NAME_FIELD_NUMBER -> when (tag and WIRE_TYPE_MASK) {
+                WireFormat.WIRETYPE_LENGTH_DELIMITED -> input.readMessage { while (!input.isAtEnd) fqName += input.readInt32() }
+                else -> fqName += input.readInt32()
+            }
+            else -> input.skipField(tag)
+        }
     }
-    val filePathToIndexAndReader = fileProtos.withIndex().associate {
-        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, it.index))
-        val fileEntry = ir.fileEntry(it.value, it.index)
-        fileReader.deserializeFileEntryName(fileEntry) to (it.index to fileReader)
+    // Like [fileEntry]: the file entry is in the file entries table if its index is given.
+    val filePath = fileEntryId?.let { id ->
+        val fileEntry = irFileEntry(id, fileIndex) ?: error("Invalid KLib: cannot read file entry by its index")
+        fileEntry.codedInputStream.readFileEntryName(fileReader)
+    } ?: inlineFileEntryName ?: error("Invalid KLib: either fileEntry or fileEntryId must be present")
+    return FileWithFqName(filePath, fileReader.deserializeFqName(fqName))
+}
+
+/** Like [deserializeFileEntryName], without parsing the line offsets of the [ProtoFileEntry]. */
+private fun CodedInputStream.readFileEntryName(fileReader: IrLibraryFile): String {
+    var nameIndex: Int? = null
+    var nameOld: String? = null
+    while (true) {
+        val tag = readTag()
+        if (tag == 0) break
+        when (WireFormat.getTagFieldNumber(tag)) {
+            ProtoFileEntry.NAME_FIELD_NUMBER -> nameIndex = readInt32()
+            ProtoFileEntry.NAME_OLD_FIELD_NUMBER -> nameOld = readString()
+            else -> skipField(tag)
+        }
     }
-    return filePaths.map { filePath ->
-        val [index, fileReader] = filePathToIndexAndReader[filePath] ?: error("No file with path $filePath is found in klib $path")
-        fileReader.deserializeFqName(fileProtos[index].fqNameList)
-    }
+    return nameIndex?.let(fileReader::string) ?: nameOld ?: error("Malformed KLIB: File entry has no name")
+}
+
+// The low bits of a tag, see `WireFormat.getTagWireType` (not public).
+private const val WIRE_TYPE_MASK = 7
+
+private inline fun CodedInputStream.readMessage(readContents: () -> Unit) {
+    val oldLimit = pushLimit(readRawVarint32())
+    readContents()
+    popLimit(oldLimit)
 }
 
 class CacheSupport(
