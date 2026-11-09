@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.documentation.analyzer
 
-import java.io.File
+import java.nio.file.Path
 
 /** The target platform of a [KdAnalyzerSourceSet], mirroring Kotlin Multiplatform's supported platforms. */
 public enum class KdAnalyzerPlatform {
@@ -21,8 +21,8 @@ public enum class KdAnalyzerPlatform {
 public class KdAnalyzerSourceSet(
     public val name: String,
     public val platform: KdAnalyzerPlatform,
-    public val sourceRoots: Set<File>,
-    public val classpath: List<File> = emptyList(),
+    public val sourceRoots: Set<Path>,
+    public val classpath: List<Path> = emptyList(),
     /** The names of the other [KdAnalyzerSourceSet]s (from the same call) that this source set depends on. */
     public val dependsOn: Set<String> = emptySet(),
 )

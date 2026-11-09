@@ -31,8 +31,8 @@ internal fun buildDokkaConfiguration(moduleName: String, sourceSets: List<KdAnal
 private fun KdAnalyzerSourceSet.toDokkaSourceSet(scopeId: String): DokkaSourceSetImpl = DokkaSourceSetImpl(
     displayName = name,
     sourceSetID = DokkaSourceSetID(scopeId, name),
-    classpath = classpath,
-    sourceRoots = sourceRoots,
+    classpath = classpath.map { it.toFile() },
+    sourceRoots = sourceRoots.mapTo(linkedSetOf()) { it.toFile() },
     dependentSourceSets = dependsOn.map { DokkaSourceSetID(scopeId, it) }.toSet(),
     analysisPlatform = platform.toDokkaPlatform(),
     documentedVisibilities = DokkaConfiguration.Visibility.entries.toSet(), // TODO KT-90416
