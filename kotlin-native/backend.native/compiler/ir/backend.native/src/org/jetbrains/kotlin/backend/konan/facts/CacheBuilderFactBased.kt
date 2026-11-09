@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.konan.config.*
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys.DEBUG_PREFIX_MAP
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -84,10 +85,12 @@ internal class LibraryCacheLayout(val root: Path) {
  *
  * A file is rebuilt when it is new, when its IR has changed, or when it used a fact whose hash has changed
  * (or which is not defined anymore) in one of the libraries handled here.
+ * A whole library is rebuilt when its cache is stale for a reason the facts don't capture, see [CacheBuilder.staleCacheReason].
  */
 class CacheBuilderFactBased(
         val config: NativeSecondStageCompilationConfig,
-        val compilationSpawner: CompilationSpawner
+        val compilationSpawner: CompilationSpawner,
+        private val cacheBuilder: CacheBuilder,
 ) {
 
     private val KotlinLibrary.isExternal: Boolean
@@ -155,8 +158,11 @@ class CacheBuilderFactBased(
                 timed("manifest-read", library) { LibraryCacheLayout(Path(it.rootDirectory)).readManifest() }
             }
             val dependencyRebuiltWithoutFacts = config.klibDag.getAllDependencies(library).any { it in librariesRebuiltWithoutFacts }
+            // E.g. a different compiler, changed external dependencies or companion initialization order: the facts don't tell.
+            val staleCacheReason = cache?.let { cacheBuilder.staleCacheReason(library, it) }
+            staleCacheReason?.let { configuration.reportLog("Incremental cache for ${library.path} $it; rebuilding it") }
 
-            if (cache is CachedLibraries.Cache.PerFile && previousManifest != null && !dependencyRebuiltWithoutFacts) {
+            if (cache is CachedLibraries.Cache.PerFile && previousManifest != null && !dependencyRebuiltWithoutFacts && staleCacheReason == null) {
                 previousManifests[library] = previousManifest
                 updateLibraryCache(library, cache, previousManifest)
             } else {
@@ -308,6 +314,9 @@ class CacheBuilderFactBased(
                 serializedKlibDag = config.klibDag.serialize()
                 val libraryPath = library.canonicalPath.pathString
                 konanLibraryToAddToCache = libraryPath
+                // Same as [CacheBuilder]: the fingerprints checked by [CacheBuilder.staleCacheReason] on the next compilation.
+                cachedLibraryDependenciesFingerprint = cacheBuilder.computeDependenciesFingerprint(library).toString()
+                putIfNotNull(DEBUG_PREFIX_MAP, config.configuration[DEBUG_PREFIX_MAP])
                 // Same as [CacheBuilder]: the test runner of an included library is generated when building its cache.
                 val generateTestRunner = this@CacheBuilderFactBased.generateTestRunner
                 if (generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries) {

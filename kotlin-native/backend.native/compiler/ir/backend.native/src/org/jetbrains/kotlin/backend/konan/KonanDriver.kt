@@ -144,7 +144,7 @@ class KonanDriver(
         }
 
         // The caches of the user libraries depend on the ones built by [cacheBuilder] above.
-        val factsCacheBuilder = CacheBuilderFactBased(config, compilationSpawner)
+        val factsCacheBuilder = CacheBuilderFactBased(config, compilationSpawner, cacheBuilder)
         if (factsCacheBuilder.needToBuild) {
             factsCacheBuilder.build()
             config.reloadCacheSupport()

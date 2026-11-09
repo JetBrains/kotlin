@@ -39,6 +39,7 @@ import kotlin.io.path.absolute
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.pathString
@@ -143,7 +144,7 @@ class CacheBuilder(
     // Only monolithically cached non-distribution dependencies (auto-cached external libraries and IC'ed cinterop libraries)
     // contribute to the fingerprint: changes in the per-file cached dependencies are tracked by the dirty-file analysis,
     // and the distribution libraries only change together with the compiler fingerprint (they live in compiler's dist directory).
-    private fun computeDependenciesFingerprint(library: KotlinLibrary): FingerprintHash {
+    internal fun computeDependenciesFingerprint(library: KotlinLibrary): FingerprintHash {
         val monolithicallyCachedDependencies = config.klibDag.getAllDependencies(library).filter {
             !it.isCachedPerFile && !it.isImplicitlyLoadedFromKotlinNativeDistribution && !it.isNativeStdlib
         }
@@ -153,13 +154,14 @@ class CacheBuilder(
     private val currentCompilerFingerprint by lazy { config.distribution.compilerFingerprint }
 
     // Returns a human-readable reason if the cache of an IC'ed library cannot be reused, or null if it is up to date.
-    private fun staleCacheReason(library: KotlinLibrary, cache: CachedLibraries.Cache): String? {
+    internal fun staleCacheReason(library: KotlinLibrary, cache: CachedLibraries.Cache): String? {
         val metadata = when (cache) {
             is CachedLibraries.Cache.Monolithic -> cache.getMetadataOrNull() // A cinterop library.
             is CachedLibraries.Cache.PerFile -> {
                 // All files of a per-file cache are produced against the same compiler and dependencies,
                 // so any file's metadata identifies the fingerprints of the whole cache.
-                val anyCachedFile = Path(cache.path).listDirectoryEntries().firstOrNull()?.name ?: return null
+                // The cache folder may contain other files next to the ones of the source files (see `CacheBuilderFactBased`).
+                val anyCachedFile = Path(cache.path).listDirectoryEntries().firstOrNull { it.isDirectory() }?.name ?: return null
                 cache.getMetadataOrNull(anyCachedFile)
             }
         }
