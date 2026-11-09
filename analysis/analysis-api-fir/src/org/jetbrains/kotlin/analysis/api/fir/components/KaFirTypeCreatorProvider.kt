@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreatorProvide
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
@@ -55,7 +56,7 @@ internal class KaFirTypeCreatorProvider(
     }
 
     @KaExperimentalApi
-    override fun copy(type: KaFunctionType, init: KaFunctionTypeBuilder.() -> Unit): KaFunctionType = withValidityAssertion {
+    override fun copy(type: KaFunctionType, init: KaFunctionTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         with(analysisSession) {
             val sourceIsMarkedNullable = type.isMarkedNullable
             val sourceIsSuspend = type.isSuspend

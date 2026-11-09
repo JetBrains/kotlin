@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
@@ -31,7 +32,7 @@ internal class KaTypeCreatorProviderBridge(
     override fun KaUsualClassType.copy(init: KaClassTypeBuilder.() -> Unit): KaUsualClassType =
         context(analysisSession) { copyEndpoint(init) }
 
-    override fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaFunctionType =
+    override fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaType =
         context(analysisSession) { copyEndpoint(init) }
 
     override fun KaTypeParameterType.copy(init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType =

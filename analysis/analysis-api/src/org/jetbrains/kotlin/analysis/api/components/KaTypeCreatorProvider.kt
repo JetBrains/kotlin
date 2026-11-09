@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
@@ -80,10 +81,14 @@ public interface KaTypeCreatorProvider : KaSessionComponent {
      * }
      * ```
      *
+     * Returns a [KaErrorType][org.jetbrains.kotlin.analysis.api.types.KaErrorType] if the arity of the function type, i.e., the
+     * total number of its context parameters, receiver, and value parameters, exceeds the maximum arity of its function type
+     * kind (see [KaFunctionTypeFamily.maxArity][org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily.maxArity]).
+     *
      * @see KaTypeCreator.functionType
      */
     @KaExperimentalApi
-    public fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaFunctionType
+    public fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaType
 
     /**
      * Creates a copy of this [KaTypeParameterType] with modifications applied via the [init] block.

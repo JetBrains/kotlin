@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 
@@ -85,11 +86,15 @@ public fun KaUsualClassType.copy(init: KaClassTypeBuilder.() -> Unit): KaUsualCl
  * }
  * ```
  *
+ * Returns a [KaErrorType][org.jetbrains.kotlin.analysis.api.types.KaErrorType] if the arity of the function type, i.e., the
+ * total number of its context parameters, receiver, and value parameters, exceeds the maximum arity of its function type
+ * kind (see [KaFunctionTypeFamily.maxArity][org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily.maxArity]).
+ *
  * @see KaTypeCreator.functionType
  */
 @KaExperimentalApi
 context(session: KaSession)
-public fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaFunctionType {
+public fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaType {
     @OptIn(KaImplementationDetail::class)
     return internals.typeCreatorProvider.copy(this, init)
 }
