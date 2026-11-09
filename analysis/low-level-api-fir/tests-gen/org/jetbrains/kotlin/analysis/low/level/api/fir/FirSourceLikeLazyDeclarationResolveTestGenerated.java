@@ -2434,6 +2434,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("staticFunctionWithContract.kt")
+    public void testStaticFunctionWithContract() {
+      run("staticFunctionWithContract.kt");
+    }
+
+    @Test
     @TestMetadata("staticProperty.kt")
     public void testStaticProperty() {
       run("staticProperty.kt");

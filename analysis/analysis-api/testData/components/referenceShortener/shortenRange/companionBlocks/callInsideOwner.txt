@@ -1,0 +1,14 @@
+Before shortening: test.Owner.foo() + test.Owner.prop
+with default settings:
+[qualifier] test.Owner.foo()
+[qualifier] test.Owner.prop
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] test.Owner.foo()
+[qualifier] test.Owner.prop
+with SHORTEN_AND_IMPORT:
+[qualifier] test.Owner.foo()
+[qualifier] test.Owner.prop
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] test.Owner.foo()
+[qualifier] test.Owner.prop

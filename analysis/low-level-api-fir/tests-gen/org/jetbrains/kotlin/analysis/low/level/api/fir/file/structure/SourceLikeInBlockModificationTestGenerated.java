@@ -34,6 +34,30 @@ public class SourceLikeInBlockModificationTestGenerated extends AbstractSourceLi
   }
 
   @Test
+  @TestMetadata("companionBlockFunctionBody.kt")
+  public void testCompanionBlockFunctionBody() {
+    run("companionBlockFunctionBody.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockGetterBody.kt")
+  public void testCompanionBlockGetterBody() {
+    run("companionBlockGetterBody.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockPropertyInitializer.kt")
+  public void testCompanionBlockPropertyInitializer() {
+    run("companionBlockPropertyInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensionFunctionBody.kt")
+  public void testCompanionExtensionFunctionBody() {
+    run("companionExtensionFunctionBody.kt");
+  }
+
+  @Test
   @TestMetadata("contract.kt")
   public void testContract() {
     run("contract.kt");

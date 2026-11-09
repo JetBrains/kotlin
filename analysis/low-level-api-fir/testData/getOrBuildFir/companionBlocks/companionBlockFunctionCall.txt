@@ -1,0 +1,21 @@
+KT element: KtCallExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Q|Owner|.R|/Owner.foo|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] companionBlockFunctionCall.kt
+    public final [ResolvedTo(STATUS)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class Owner : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Owner] constructor(): R|Owner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=Owner] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Int| {
+            ^bar Q|Owner|.R|/Owner.foo|()
+        }
+
+    }

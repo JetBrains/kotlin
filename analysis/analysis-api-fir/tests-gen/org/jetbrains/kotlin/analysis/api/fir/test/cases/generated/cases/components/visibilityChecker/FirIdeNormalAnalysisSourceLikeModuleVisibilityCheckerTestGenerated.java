@@ -56,6 +56,42 @@ public class FirIdeNormalAnalysisSourceLikeModuleVisibilityCheckerTestGenerated 
   }
 
   @Test
+  @TestMetadata("companionBlockPrivateFromCompanionObject.kt")
+  public void testCompanionBlockPrivateFromCompanionObject() {
+    run("companionBlockPrivateFromCompanionObject.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockPrivateFromMember.kt")
+  public void testCompanionBlockPrivateFromMember() {
+    run("companionBlockPrivateFromMember.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockPrivateFromOutside.kt")
+  public void testCompanionBlockPrivateFromOutside() {
+    run("companionBlockPrivateFromOutside.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockProtectedFromSubclass.kt")
+  public void testCompanionBlockProtectedFromSubclass() {
+    run("companionBlockProtectedFromSubclass.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockProtectedFromSubclassCompanionBlock.kt")
+  public void testCompanionBlockProtectedFromSubclassCompanionBlock() {
+    run("companionBlockProtectedFromSubclassCompanionBlock.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockProtectedFromUnrelatedClass.kt")
+  public void testCompanionBlockProtectedFromUnrelatedClass() {
+    run("companionBlockProtectedFromUnrelatedClass.kt");
+  }
+
+  @Test
   @TestMetadata("implicitReceiverSuperClass.kt")
   public void testImplicitReceiverSuperClass() {
     run("implicitReceiverSuperClass.kt");
