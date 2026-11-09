@@ -6,15 +6,20 @@
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
+import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder.InterfaceTablePlace
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.classHierarchyIdsSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmCallable
 import org.jetbrains.kotlin.backend.konan.llvm.RTTIGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.Struct
 import org.jetbrains.kotlin.backend.konan.llvm.constPointer
+import org.jetbrains.kotlin.backend.konan.llvm.crossModuleName
+import org.jetbrains.kotlin.backend.konan.llvm.hierarchyWillBeLaidOutByFinalLink
+import org.jetbrains.kotlin.backend.konan.llvm.importGlobal
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 
 internal class ObjCToKotlinMethodAdapter private constructor(type: LLVMTypeRef, vararg elements: ConstValue?) : Struct(type, *elements) {
     companion object {
@@ -31,22 +36,51 @@ internal class ObjCToKotlinMethodAdapter private constructor(type: LLVMTypeRef, 
     }
 }
 
+internal fun InterfaceTablePlace.toAdapterItablePlace() = KotlinToObjCMethodAdapter.ItablePlace(
+        interfaceName = irInterface.crossModuleName(),
+        isObjCProtocol = irInterface.isExternalObjCClass(),
+        interfaceId = interfaceId,
+        itableSize = itableSize,
+        methodIndex = methodIndex,
+)
+
 internal class KotlinToObjCMethodAdapter private constructor(type: LLVMTypeRef, vararg elements: ConstValue?) : Struct(type, *elements) {
+    data class ItablePlace(
+            val interfaceName: String,
+            val isObjCProtocol: Boolean,
+            val interfaceId: Int,
+            val itableSize: Int,
+            val methodIndex: Int,
+    )
+
     companion object {
         fun CodeGenerator.KotlinToObjCMethodAdapter(
                 selector: String,
-                itablePlace: ClassLayoutBuilder.InterfaceTablePlace,
+                itablePlace: ItablePlace?,
                 vtableIndex: Int,
                 kotlinImpl: ConstPointer,
-        ) = KotlinToObjCMethodAdapter(
-                type = llvm.runtime.kotlinToObjCMethodAdapter,
-                staticData.cStringLiteral(selector),
-                llvm.constInt32(itablePlace.interfaceId),
-                llvm.constInt32(itablePlace.itableSize),
-                llvm.constInt32(itablePlace.methodIndex),
-                llvm.constInt32(vtableIndex),
-                kotlinImpl,
-        )
+        ): KotlinToObjCMethodAdapter {
+            val interfaceIdPtr = when {
+                itablePlace == null -> llvm.nullPointer
+                // objc protocols always use pre-computed hash-based ids
+                context.hierarchyWillBeLaidOutByFinalLink && !itablePlace.isObjCProtocol ->
+                    constPointer(importGlobal(classHierarchyIdsSymbolName(itablePlace.interfaceName), runtime.classHierarchyIdsType))
+                else -> {
+                    val id = llvm.constInt32(itablePlace.interfaceId)
+                    staticData.placeGlobal("", Struct(runtime.classHierarchyIdsType, id, id))
+                            .also { it.setConstant(true) }.pointer
+                }
+            }
+            return KotlinToObjCMethodAdapter(
+                    type = llvm.runtime.kotlinToObjCMethodAdapter,
+                    staticData.cStringLiteral(selector),
+                    interfaceIdPtr,
+                    llvm.constInt32(itablePlace?.itableSize ?: 0),
+                    llvm.constInt32(itablePlace?.methodIndex ?: -1),
+                    llvm.constInt32(vtableIndex),
+                    kotlinImpl,
+            )
+        }
     }
 }
 

@@ -123,6 +123,9 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
         return Global.get(this, name)
     }
 
+    fun getOrCreateGlobal(type: LLVMTypeRef, name: String, isExported: Boolean = false): Global =
+            getGlobal(name) ?: createGlobal(type, name, isExported)
+
     /**
      * Creates array-typed global with given name and value.
      */

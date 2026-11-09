@@ -490,8 +490,18 @@ class SerializedEagerInitializedFile(val file: SerializedFileReference)
 class SerializedObjCReverseBridge(
         val selector: String,
         val impl: String,
+        /** Null when the method is dispatched through the vtable alone. */
+        val interfaceName: String?,
+        /** Whether [interfaceName] is an ObjC protocol; meaningful only when [interfaceName] is not null. */
+        val isObjCProtocol: Boolean,
+        /**
+         * The id [interfaceName] had in the compilation that wrote this; meaningless where the final link numbers
+         * the interfaces, and when [interfaceName] is null.
+         */
         val interfaceId: Int,
+        /** Meaningless when [interfaceName] is null. */
         val itableSize: Int,
+        /** Meaningless when [interfaceName] is null. */
         val itableIndex: Int,
         val vtableIndex: Int,
 )
@@ -514,7 +524,7 @@ internal object ObjCAdapterSerializer {
     private const val FLAG_IS_INTERFACE = 1
 
     private val SerializedObjCAdapter.payloadSize: Int
-        get() = Int.SIZE_BYTES * (8 + 6 * reverseBridges.size)
+        get() = Int.SIZE_BYTES * (8 + 8 * reverseBridges.size)
 
     fun serialize(adapters: List<SerializedObjCAdapter>): ByteArray {
         val stringTable = buildStringTable {
@@ -526,6 +536,7 @@ internal object ObjCAdapterSerializer {
                 it.reverseBridges.forEach { bridge ->
                     +bridge.selector
                     +bridge.impl
+                    bridge.interfaceName?.let { +it }
                 }
             }
         }
@@ -544,6 +555,8 @@ internal object ObjCAdapterSerializer {
                 adapter.reverseBridges.forEach { bridge ->
                     writeInt(stringTable.indices[bridge.selector]!!)
                     writeInt(stringTable.indices[bridge.impl]!!)
+                    writeInt(bridge.interfaceName?.let { stringTable.indices[it]!! } ?: INVALID_INDEX)
+                    writeInt(if (bridge.isObjCProtocol) 1 else 0)
                     writeInt(bridge.interfaceId)
                     writeInt(bridge.itableSize)
                     writeInt(bridge.itableIndex)
@@ -570,6 +583,8 @@ internal object ObjCAdapterSerializer {
                             SerializedObjCReverseBridge(
                                     selector = stringTable[readInt()],
                                     impl = stringTable[readInt()],
+                                    interfaceName = readInt().takeIf { it != INVALID_INDEX }?.let { stringTable[it] },
+                                    isObjCProtocol = readInt() != 0,
                                     interfaceId = readInt(),
                                     itableSize = readInt(),
                                     itableIndex = readInt(),

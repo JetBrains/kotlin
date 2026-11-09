@@ -485,6 +485,13 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testSwiftConformanceToInterface() {
+        val testName = "swiftConformanceToInterface"
+        val testCase = generateObjCFramework(testName)
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
     fun testFullValueClasses() {
         val testName = "fullValueClasses"
         val testCase = generateObjCFramework(testName, listOf("-XXLanguage:+FullValueClasses"))

@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.backend.konan.ir.annotations.allBindReverseBridgeToM
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmCallable
-import org.jetbrains.kotlin.backend.konan.serialization.SerializedObjCReverseBridge
-import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdapter
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdapter.Companion.KotlinToObjCMethodAdapter
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.toAdapterItablePlace
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -32,14 +31,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
  */
 internal class ReverseBridgeAdapter(
         val selector: String,
-        val itablePlace: ClassLayoutBuilder.InterfaceTablePlace,
+        val itablePlace: ClassLayoutBuilder.InterfaceTablePlace?,
         val vtableIndex: Int,
         val kotlinImpl: LlvmCallable,
 )
 
 internal fun CodeGenerator.KotlinToObjCMethodAdapter(adapter: ReverseBridgeAdapter) = KotlinToObjCMethodAdapter(
         selector = adapter.selector,
-        itablePlace = adapter.itablePlace,
+        itablePlace = adapter.itablePlace?.toAdapterItablePlace(),
         vtableIndex = adapter.vtableIndex,
         kotlinImpl = adapter.kotlinImpl.toConstPointer(),
 )
@@ -90,7 +89,7 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
     val itablePlace = if (isInterfaceMethod && targetFunction.findOverriddenMethodOfAny() == null) {
         layoutBuilder.itablePlace(targetFunction)
     } else {
-        ClassLayoutBuilder.InterfaceTablePlace.INVALID
+        null
     }
 
     return ReverseBridgeAdapter(

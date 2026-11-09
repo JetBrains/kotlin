@@ -1327,10 +1327,12 @@ private fun ObjCExportCodeGenerator.createReverseAdapter(
             baseMethod
     )
 
-    return codegen.KotlinToObjCMethodAdapter(selector,
-            itablePlace ?: ClassLayoutBuilder.InterfaceTablePlace.INVALID,
+    return codegen.KotlinToObjCMethodAdapter(
+            selector,
+            itablePlace?.toAdapterItablePlace(),
             vtableIndex ?: -1,
-            kotlinToObjC)
+            kotlinToObjC,
+    )
 }
 
 /**
@@ -1545,7 +1547,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 
     val [itable, itableSize] = when {
         irClass.isInterface -> Pair(emptyList(), context.getLayoutBuilder(irClass).interfaceVTableEntries.size)
-        irClass.isAbstract() -> rttiGenerator.interfaceTableRecords(irClass)
+        irClass.isAbstract() -> rttiGenerator.interfaceTableRecordsForObjCTypeAdapter(irClass)
         else -> Pair(emptyList(), -1)
     }
 
@@ -1668,9 +1670,9 @@ private fun ObjCExportCodeGenerator.nonOverridableAdapter(
         hasSelectorAmbiguity: Boolean
 ): KotlinToObjCMethodAdapter = codegen.KotlinToObjCMethodAdapter(
         selector,
+        itablePlace = null,
         vtableIndex = if (hasSelectorAmbiguity) -2 else -1, // Describes the reason.
         kotlinImpl = llvm.nullPointer,
-        itablePlace = ClassLayoutBuilder.InterfaceTablePlace.INVALID
 )
 
 private val ObjCTypeForKotlinType.kotlinMethods: List<ObjCMethodForKotlinMethod>

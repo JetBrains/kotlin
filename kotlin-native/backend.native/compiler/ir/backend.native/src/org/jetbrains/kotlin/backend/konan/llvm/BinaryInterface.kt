@@ -48,6 +48,11 @@ object KonanBinaryInterface {
     internal const val MANGLE_CLASS_PREFIX = "kclass"
     internal const val MANGLE_FIELD_PREFIX = "kfield"
 
+    internal const val MANGLE_CLASS_IDS_PREFIX = "kclassids"
+    internal const val MANGLE_ITABLE_PREFIX = "kifacetable"
+    internal const val MANGLE_ITABLE_RECORDS_PREFIX = "kifacerecords"
+    internal const val MANGLE_IFACE_VTABLE_PREFIX = "kifacevtable"
+
     private val mangler = object : AbstractKonanIrMangler(withReturnType = true, allowOutOfScopeTypeParameters = true) {}
 
     private val exportChecker = mangler.getExportChecker(compatibleMode = true)
@@ -72,6 +77,27 @@ object KonanBinaryInterface {
     fun isExported(declaration: IrDeclaration) = exportChecker.run {
         check(declaration, SpecialDeclarationType.REGULAR) || declaration.isPlatformSpecificExported()
     }
+
+    internal val IrClass.classHierarchyIdsSymbolName: String
+        get() = classHierarchyIdsSymbolName(crossModuleName())
+
+    internal val IrClass.interfaceTableSymbolName: String
+        get() = interfaceTableSymbolName(crossModuleName())
+
+    internal fun classHierarchyIdsSymbolName(name: String): String =
+            globalHierarchySymbolName(name, MANGLE_CLASS_IDS_PREFIX)
+
+    internal fun interfaceTableSymbolName(name: String): String =
+            globalHierarchySymbolName(name, MANGLE_ITABLE_PREFIX)
+
+    internal fun interfaceTableRecordsSymbolName(name: String): String =
+            globalHierarchySymbolName(name, MANGLE_ITABLE_RECORDS_PREFIX)
+
+    /** The vtable of the methods of one interface as implemented by one class. */
+    internal fun interfaceVTableSymbolName(className: String, interfaceName: String): String =
+            globalHierarchySymbolName("$className#$interfaceName", MANGLE_IFACE_VTABLE_PREFIX)
+
+    internal fun globalHierarchySymbolName(crossModuleName: String, prefix: String): String = withPrefix(prefix, crossModuleName)
 
     private fun withPrefix(prefix: String, mangle: String) = "$prefix:$mangle"
 

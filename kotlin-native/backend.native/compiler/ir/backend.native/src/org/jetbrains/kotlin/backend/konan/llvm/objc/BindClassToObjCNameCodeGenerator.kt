@@ -5,30 +5,18 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objc
 
-import llvm.LLVMAddGlobal
 import llvm.LLVMGetNamedFunction
-import llvm.LLVMGetNamedGlobal
 import llvm.LLVMLinkage
-import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
-import org.jetbrains.kotlin.backend.konan.isCache
-import org.jetbrains.kotlin.backend.konan.isFinalBinary
-import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.ir.annotations.BindClassToObjCName
 import org.jetbrains.kotlin.backend.konan.ir.annotations.allBindClassToObjCName
-import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
-import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
-import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface
-import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionSignature
-import org.jetbrains.kotlin.backend.konan.llvm.LlvmRetType
-import org.jetbrains.kotlin.backend.konan.llvm.computePrivateTypeInfoSymbolName
-import org.jetbrains.kotlin.backend.konan.llvm.computeTypeInfoSymbolName
-import org.jetbrains.kotlin.backend.konan.llvm.constPointer
-import org.jetbrains.kotlin.backend.konan.llvm.importGlobal
-import org.jetbrains.kotlin.backend.konan.llvm.toProto
+import org.jetbrains.kotlin.backend.konan.isCache
+import org.jetbrains.kotlin.backend.konan.isFinalBinary
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdapter.Companion.KotlinToObjCMethodAdapter
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdapter.ItablePlace
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCTypeAdapter.Companion.ObjCTypeAdapterForBindClassToObjCName
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoOverrideError
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.bindObjCExportTypeAdapterTo
@@ -37,6 +25,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedObjCAdapter
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedObjCReverseBridge
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.kotlinFqName
@@ -111,9 +100,11 @@ private fun buildSerializedObjCAdapter(
                         selector = bridge.selector,
                         impl = bridge.kotlinImpl.name
                                 ?: error("No symbol name for the bridge of `${bridge.selector}` of ${binding.objCName}"),
-                        interfaceId = bridge.itablePlace.interfaceId,
-                        itableSize = bridge.itablePlace.itableSize,
-                        itableIndex = bridge.itablePlace.methodIndex,
+                        interfaceName = bridge.itablePlace?.irInterface?.crossModuleName(),
+                        isObjCProtocol = bridge.itablePlace?.irInterface?.isExternalObjCClass() ?: false,
+                        interfaceId = bridge.itablePlace?.interfaceId ?: 0,
+                        itableSize = bridge.itablePlace?.itableSize ?: -1,
+                        itableIndex = bridge.itablePlace?.methodIndex ?: -1,
                         vtableIndex = bridge.vtableIndex,
                 )
             },
@@ -163,7 +154,9 @@ private fun CodeGenerator.emitObjCAdapterFromCache(
             reverseAdapters = serialized.reverseBridges.map {
                 KotlinToObjCMethodAdapter(
                         selector = it.selector,
-                        itablePlace = ClassLayoutBuilder.InterfaceTablePlace(it.interfaceId, it.itableSize, it.itableIndex),
+                        itablePlace = it.interfaceName?.let { name ->
+                            ItablePlace(name, it.isObjCProtocol, it.interfaceId, it.itableSize, it.itableIndex)
+                        },
                         vtableIndex = it.vtableIndex,
                         kotlinImpl = importCachedFunctionAddress(it.impl),
                 )
