@@ -1,0 +1,19 @@
+#import <Foundation/Foundation.h>
+
+@protocol UnmodifiedProtocol <NSObject>
+@end
+
+@interface UnmodifiedClass : NSObject
+@end
+
+/*
+@protocol RemovedProtocol
+@end
+
+@interface RemovedClass : NSObject
+@end
+*/
+
+@protocol BaseClassToProtocol <NSObject>
+- (int)method:(int)value;
+@end

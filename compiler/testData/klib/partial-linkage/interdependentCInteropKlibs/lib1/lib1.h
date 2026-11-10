@@ -1,0 +1,20 @@
+#ifndef LIBA_H
+#define LIBA_H
+
+typedef struct UnmodifiedStruct {
+    long long len;
+} UnmodifiedStruct;
+
+typedef struct RemovedStruct {
+    long long len;
+} RemovedStruct;
+
+typedef struct DuplicatedOnFirstStageStruct {
+    long long len;
+} DuplicatedOnFirstStageStruct;
+
+typedef struct DuplicatedOnSecondStageStruct {
+    long long len;
+} DuplicatedOnSecondStageStruct;
+
+#endif  // LIBA_H
