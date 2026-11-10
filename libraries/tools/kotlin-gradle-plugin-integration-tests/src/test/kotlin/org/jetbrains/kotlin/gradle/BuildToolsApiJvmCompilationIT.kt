@@ -9,6 +9,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -115,6 +116,70 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("Unsupported compiler flag with an older compiler does not trigger the daemon fallback")
+    fun compileWithUnsupportedFlagAndOlderCompilerVersionWithFallback(gradleVersion: GradleVersion) =
+        testUnsupportedFlagWithPinnedCompiler(gradleVersion, THROWING_COMPILER, KotlinCompilerExecutionStrategy.DAEMON, useFallback = true)
+
+    @GradleTest
+    @DisplayName("Unsupported compiler flag with an older compiler fails with a version hint in-process")
+    fun compileWithUnsupportedFlagAndOlderCompilerVersionInProcess(gradleVersion: GradleVersion) =
+        testUnsupportedFlagWithPinnedCompiler(gradleVersion, THROWING_COMPILER, KotlinCompilerExecutionStrategy.IN_PROCESS)
+
+    @GradleTest
+    @DisplayName("Unsupported compiler flag with a compiler that logs argument errors fails with a version hint")
+    fun compileWithUnsupportedFlagAndCompilerLoggingArgumentErrors(gradleVersion: GradleVersion) =
+        testUnsupportedFlagWithPinnedCompiler(gradleVersion, TestVersions.Kotlin.STABLE_RELEASE, KotlinCompilerExecutionStrategy.DAEMON)
+
+    @GradleTest
+    @DisplayName("Source error with a compiler that logs argument errors is not reported as rejected compiler arguments")
+    fun compileErrorWithCompilerLoggingArgumentErrors(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion, compilerVersion = TestVersions.Kotlin.STABLE_RELEASE) {
+            kotlinSourcesDir().resolve("helloWorld.kt").writeText("fun f() = fffffffffffffffff")
+            buildAndFail("compileKotlin") {
+                assertOutputContains("Unresolved reference 'fffffffffffffffff'")
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinCompilerArgumentsRejected)
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Unsupported compiler flag with the compiler matching KGP has no version hint")
+    fun compileWithUnsupportedFlagAndDefaultCompilerVersion(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildGradle.append("kotlin { compilerOptions.freeCompilerArgs.add(\"-no-such-flag\") }")
+            buildAndFail("compileKotlin") {
+                assertOutputContains("Invalid argument: -no-such-flag")
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinCompilerArgumentsRejected)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
+            }
+        }
+    }
+
+    private fun testUnsupportedFlagWithPinnedCompiler(
+        gradleVersion: GradleVersion,
+        compilerVersion: String,
+        strategy: KotlinCompilerExecutionStrategy,
+        useFallback: Boolean = false,
+    ) {
+        val buildOptions = defaultBuildOptions.copy(
+            compilerExecutionStrategy = strategy,
+            useDaemonFallbackStrategy = useFallback,
+            stacktraceMode = null,
+        )
+        project("simpleProject", gradleVersion, buildOptions = buildOptions, compilerVersion = compilerVersion) {
+            buildGradle.append("kotlin { compilerOptions.freeCompilerArgs.add(\"-no-such-flag\") }")
+            buildAndFail("compileKotlin") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilerArgumentsRejected)
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
+                assertOutputDoesNotContain("Using fallback strategy")
+                assertOutputDoesNotContain("CompilerArgumentsParseException")
+                assertOutputContains("Invalid argument: -no-such-flag")
+                assertOutputContains("This build uses Kotlin compiler $compilerVersion with Kotlin Gradle Plugin ${buildOptions.kotlinVersion}.")
+            }
+        }
+    }
+
     private fun testSimpleProject(gradleVersion: GradleVersion, buildOptions: BuildOptions, assertions: BuildResult.() -> Unit) {
         project("simpleProject", gradleVersion, buildOptions = buildOptions) {
             build("assemble", "compileDeployKotlin") {
@@ -126,5 +191,6 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             }
         }
     }
-
 }
+
+private const val THROWING_COMPILER = "2.2.21"
