@@ -326,7 +326,7 @@ class IrBasedFunctionFactory(
     private inner class FunctionTypeFakeOverrideBuilderStrategy: FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
         override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {}
 
-        override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean = false
+        override fun shouldSeeInternals(thisModule: IrModuleFragment, memberModule: IrModuleFragment): Boolean = false
 
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             val signature = signatureComputer(function)
