@@ -119,7 +119,8 @@ abstract class AbstractJsBoxWithInlineAnonymousFunctionsTest(
 abstract class AbstractJsCodegenBoxTestBase(
     pathToTestDir: String = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix: String,
-) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix) {
+    parser: FirParser = FirParser.Psi,
+) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix, parser = parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureFirHandlersStep {
@@ -141,6 +142,7 @@ abstract class AbstractJsCodegenBoxTest(
 ) : AbstractJsCodegenBoxTestBase(
     pathToTestDir = "compiler/testData/codegen/box",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix,
+    parser = FirParser.LightTree,
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
