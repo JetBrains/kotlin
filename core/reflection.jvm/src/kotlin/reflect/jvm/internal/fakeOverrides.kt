@@ -158,6 +158,7 @@ private fun ReflectKFunction.collectOverriddenDeclarations(result: MutableSet<Re
         overridden.collectOverriddenDeclarations(result, transitively)
     }
 }
+
 internal fun computeOverriddenFunctions(callable: ReflectKFunction): Collection<ReflectKFunction> {
     if (callable.overriddenStorage.isFakeOverride) {
         return callable.overriddenStorage.overridden.map { it as ReflectKFunction }
@@ -165,12 +166,13 @@ internal fun computeOverriddenFunctions(callable: ReflectKFunction): Collection<
 
     val container = callable.container as? MemberContainer<*> ?: return emptyList()
     val thisKotlinSignature = callable.toEquatableCallableSignature(EqualityMode.KotlinSignature)
-    return computeOverriddenFunctions(container, thisKotlinSignature)
+    return computeOverriddenFunctions(container, thisKotlinSignature, substituted = false)
 }
 
 internal fun computeOverriddenFunctions(
     container: MemberContainer<*>,
     signature: EquatableCallableSignature<EqualityMode.KotlinSignature>,
+    substituted: Boolean,
 ): Collection<ReflectKFunction> {
     val result = mutableListOf<ReflectKFunction>()
     for (supertype in container.supertypes) {
@@ -178,10 +180,9 @@ internal fun computeOverriddenFunctions(
         val substitutor = KTypeSubstitutor.create(supertype)
         for (supertypeMember in getSupertypeMembersByName(supertype, supertypeKClass, signature.name)) {
             if (supertypeMember !is ReflectKFunction) continue
-            val kotlinSignature =
-                supertypeMember.createFakeOverride(container, substitutor).toEquatableCallableSignature(EqualityMode.KotlinSignature)
-            if (signature == kotlinSignature) {
-                result.add(supertypeMember)
+            val fakeOverride = supertypeMember.createFakeOverride(container, substitutor) as ReflectKFunction
+            if (signature == fakeOverride.toEquatableCallableSignature(EqualityMode.KotlinSignature)) {
+                result.add(if (substituted) fakeOverride else supertypeMember)
             }
         }
     }
