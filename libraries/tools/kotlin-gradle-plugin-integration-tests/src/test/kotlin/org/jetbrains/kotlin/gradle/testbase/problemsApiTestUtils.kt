@@ -144,7 +144,8 @@ internal data class ProblemIdentifier(
 @Serializable
 internal data class ProblemsReportSummary(
     val totalProblemCount: Int,
-    val buildName: String,
+    // Missing in Gradle 8.14
+    val buildName: String? = null,
     val requestedTasks: String,
     val documentationLink: String,
     // Missing since Gradle 9.4
