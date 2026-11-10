@@ -236,11 +236,69 @@ class JsDtsGenerationTest : BaseCompilationTest() {
             this[X_SUSPEND_LAMBDA_EXPORTING] = false
             this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = false
             this[X_DTS_USE_UNKNOWN_INSTEAD_ANY] = false
+
         }
         assertEquals(false, allOff[JsDtsGenerationOperation.IMPLEMENT_INTERFACES])
         assertEquals(false, allOff[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])
         assertEquals(false, allOff[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
         assertEquals(false, allOff[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY])
+
+        val fromNeither = kotlinToolchain.dtsBuilderConfiguredFrom { }
+        assertEquals(JsModuleKind.UMD, fromNeither[JsDtsGenerationOperation.MODULE_KIND])
+    }
+
+    @DisplayName("configureFrom takes GRANULARITY from -Xir-per-file and -Xir-per-module")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTakesGranularity(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        // TODO (KT-90681): check TS_COMPILATION_STRATEGY once it is decided how it follows -Xir-per-file
+        val perFile = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_FILE] = true }
+        assertEquals(JsDtsGranularity.PER_FILE, perFile[JsDtsGenerationOperation.GRANULARITY])
+        assertEquals(JsDtsCompilationStrategy.EACH_FILE, perFile[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY])
+
+        val perModule = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_MODULE] = true }
+        assertEquals(JsDtsGranularity.WHOLE_PROGRAM, perModule[JsDtsGenerationOperation.GRANULARITY])
+        assertEquals(JsDtsCompilationStrategy.MERGED, perFile[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY])
+    }
+
+    @DisplayName("configureFrom copies declaration flags from the linking arguments")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromCopiesDeclarationFlags(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        // TODO (KT-90366): check EXPORT_UNTYPED_AS_UNKNOWN from -Xdts-use-unknown-instead-any
+        // TODO (KT-90528): check IMPLEMENT_INTERFACES once -Xenable-implementing-interfaces-from-typescript is available for linking
+        val longAsBigInt = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_ES_LONG_AS_BIGINT] = true }
+        assertEquals(true, longAsBigInt[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val suspendLambdas = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_SUSPEND_LAMBDA_EXPORTING] = true }
+        assertEquals(true, suspendLambdas[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])
+
+        val dataClassCopy = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = true }
+        assertEquals(true, dataClassCopy[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
+
+        val esGeneratorsUsage = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_ES_GENERATORS] = true }
+        assertEquals(true, esGeneratorsUsage[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+    }
+
+    @DisplayName("configureFrom derives COMPILE_LONG_AS_BIG_INT from -target unless -Xes-long-as-bigint is set")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromDerivesLongAsBigIntFromTarget(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val es2020 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2020 }
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+
+        val es2020ExplicitFalse = kotlinToolchain.dtsBuilderConfiguredFrom {
+            this[TARGET] = JsEcmaVersion.ES2020
+            this[X_ES_LONG_AS_BIGINT] = false
+        }
+        assertEquals(false, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        assertEquals(true, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
     }
 
     @DisplayName("configureFrom with command-line arguments copies boolean options from their flags")
