@@ -85,11 +85,6 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
-    public static File scriptingCommonJarForTests() {
-        return getFileFromProperty(KOTLIN_SCRIPTING_COMMON_PATH);
-    }
-
-    @NotNull
     public static File distKotlincForTests() {
         return new File(getFileFromProperty(KOTLIN_DIST_PATH), "kotlinc");
     }

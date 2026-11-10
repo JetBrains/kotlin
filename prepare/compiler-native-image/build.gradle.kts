@@ -142,7 +142,6 @@ projectTests {
             include("**/NativeImageDynamicPluginBoxTestGenerated.class")
             include("**/NativeImageDynamicLegacyPluginBoxTestGenerated.class")
             include("**/NativeImageScriptingTestGenerated.class")
-            withScriptingCommon()
         }
         useNativeImageDist()
         usePlugins()
