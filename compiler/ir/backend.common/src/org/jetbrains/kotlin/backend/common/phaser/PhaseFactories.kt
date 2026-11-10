@@ -40,13 +40,14 @@ private inline fun <ReturnType, reified FunctionType : Function<ReturnType>>
     val functionType = javaClass.genericInterfaces.singleOrNull {
         it is ParameterizedType && it.rawType == FunctionType::class.java
     } ?: error("Supertype ${FunctionType::class.java} is not found: " + javaClass.genericInterfaces.toList())
-    val returnType = (functionType as ParameterizedType).actualTypeArguments.last()
+
+    val returnType = when (val type = (functionType as ParameterizedType).actualTypeArguments.last()) {
+        is Class<*> -> type
+        is ParameterizedType -> type.rawType
+        else -> error("Unexpected return type ${type.typeName}")
+    }
     @Suppress("UNCHECKED_CAST")
-    return when (returnType) {
-        is Class<*> -> returnType
-        is ParameterizedType -> returnType.rawType
-        else -> error("Unexpected return type ${returnType.typeName}")
-    } as Class<out ReturnType>
+    return returnType as Class<out ReturnType>
 }
 
 private class FileLoweringPhase<Context : LoweringContext>(

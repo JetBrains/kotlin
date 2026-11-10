@@ -123,12 +123,12 @@ class CallCompleter(
         context: BasicCallResolutionContext,
         results: OverloadResolutionResultsImpl<D>
     ) {
-        @Suppress("UNCHECKED_CAST")
         val candidates = (if (context.collectAllCandidates) {
-            results.allCandidates!!
+            @Suppress("UNCHECKED_CAST")
+            results.allCandidates!! as Collection<MutableResolvedCall<D>>
         } else {
             results.resultingCalls
-        }) as Collection<MutableResolvedCall<D>>
+        })
 
         val temporaryBindingTrace =
             TemporaryBindingTrace.create(context.trace, "Trace to complete a candidate that is not a resulting call")

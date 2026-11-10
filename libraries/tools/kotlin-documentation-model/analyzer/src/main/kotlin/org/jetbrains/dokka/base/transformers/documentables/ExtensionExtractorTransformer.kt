@@ -54,8 +54,7 @@ internal class ExtensionExtractorTransformer : DocumentableTransformer {
             ?.map { async { it.addExtensionInformation(classGraph, extensionMap) } }
             .orEmpty()
 
-        @Suppress("UNCHECKED_CAST")
-        when (this@addExtensionInformation) {
+        val result = when (this@addExtensionInformation) {
             is DPackage -> copy(
                 classlikes = newClasslikes.awaitAll(),
                 typealiases = newTypealiases.awaitAll(),
@@ -94,7 +93,9 @@ internal class ExtensionExtractorTransformer : DocumentableTransformer {
             else -> throw IllegalStateException(
                 "${this@addExtensionInformation::class.simpleName} is not expected to have extensions"
             )
-        } as T
+        }
+        @Suppress("UNCHECKED_CAST")
+        result as T
     }
 
     private suspend fun collectExtensions(
