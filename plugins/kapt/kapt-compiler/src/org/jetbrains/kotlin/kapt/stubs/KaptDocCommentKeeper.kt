@@ -12,7 +12,7 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.kapt.util.kdocBody
 import org.jetbrains.kotlin.kapt.util.kdocText
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -24,7 +24,7 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
         val origin = kaptContext.origins[node] ?: return
         val source = kaptContext.firSourceOf(origin.declaration) ?: return
 
-        if (origin.declaration is IrConstructor && source.elementType in CLASS_LIKE_ELEMENT_TYPES) {
+        if (origin.declaration is IrConstructor && source.syntaxId in CLASS_LIKE_ELEMENT_TYPES) {
             // Do not copy class KDoc to an implicit constructor.
             return
         }
@@ -68,7 +68,7 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
 
 }
 
-internal val CLASS_LIKE_ELEMENT_TYPES = setOf(KtNodeTypes.CLASS, KtNodeTypes.OBJECT_DECLARATION)
+internal val CLASS_LIKE_ELEMENT_TYPES = setOf(KotlinSyntaxNodeTypeIds.CLASS, KotlinSyntaxNodeTypeIds.OBJECT_DECLARATION)
 
 private class KDocComment(val body: String) : Tokens.Comment {
     override fun getSourcePos(index: Int) = -1

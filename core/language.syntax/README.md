@@ -31,7 +31,8 @@ The element types of every frontend take their IDs from here:
 * PSI tokens (`org.jetbrains.kotlin.lexer.KtTokens`, `org.jetbrains.kotlin.kdoc.lexer.KDocTokens`) pass them to their
   constructors.
 * Other PSI element types (`org.jetbrains.kotlin.KtNodeTypes` and the language-independent `com.intellij.psi.TokenType`
-  ones) don't take an ID in their constructors, so they are mapped to it by `IElementType.syntaxId()` in `compiler:psi:psi-frontend-utils`.
+  ones) don't take an ID in their constructors, so they are mapped to it by `IElementType.syntaxId()` in `compiler:frontend.common`
+  (temporarily, until the PSI and LightTree source elements leave that module, KT-91461).
 * KMP element types (`org.jetbrains.kotlin.kmp.lexer.BasicElementTypes`, `org.jetbrains.kotlin.kmp.lexer.KtTokens`,
   `org.jetbrains.kotlin.kmp.parser.KtNodeTypes`, ...) are registered with them.
 

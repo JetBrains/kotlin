@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeArgumentsForOuterCla
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsExplicitReceiver
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
 object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -127,7 +128,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
         context(context: CheckerContext, reporter: DiagnosticReporter)
         private fun checkNestedPackages(source: KtSourceElement) {
             val parenthesizedOrTypeArgumentList = source.getChild(UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST) ?: return
-            if (parenthesizedOrTypeArgumentList.elementType == KtNodeTypes.TYPE_ARGUMENT_LIST) {
+            if (parenthesizedOrTypeArgumentList.syntaxId == KotlinSyntaxNodeTypeIds.TYPE_ARGUMENT_LIST) {
                 reporter.reportOn(
                     parenthesizedOrTypeArgumentList,
                     FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING

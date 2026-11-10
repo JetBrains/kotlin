@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -117,7 +118,7 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
 operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
 
 fun FirElement.getModifierList(): FirModifierList? = when {
-    source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor && source?.elementType != KtNodeTypes.PROPERTY_ACCESSOR -> null
+    source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor && source?.syntaxId != KotlinSyntaxNodeTypeIds.PROPERTY_ACCESSOR -> null
     else -> source.getModifierList()
 }
 

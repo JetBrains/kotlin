@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -24,5 +24,5 @@ object FirWhenReturnTypeChecker : FirWhenExpressionChecker(MppCheckerKind.Common
     }
 
     private val FirWhenExpression.isIfExpression: Boolean
-        get() = source?.elementType == KtNodeTypes.IF
+        get() = source?.syntaxId == KotlinSyntaxNodeTypeIds.IF
 }

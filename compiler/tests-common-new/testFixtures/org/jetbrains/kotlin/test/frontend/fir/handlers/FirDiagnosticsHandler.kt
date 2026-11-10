@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.*
@@ -440,8 +441,8 @@ private fun ConeKotlinType.isFunctionTypeWithDynamicReceiver(session: FirSession
 }
 
 private val KtSourceElement.parentAsSourceElement: KtSourceElement?
-    get() = when (elementType) {
-        KtNodeTypes.REFERENCE_EXPRESSION -> when (this) {
+    get() = when (syntaxId) {
+        KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION -> when (this) {
             is KtPsiSourceElement -> psi.parent.toKtPsiSourceElement(kind)
             is KtLightSourceElement -> treeStructure.getParent(lighterASTNode)?.toKtLightSourceElement(treeStructure, kind)
         }
@@ -449,8 +450,8 @@ private val KtSourceElement.parentAsSourceElement: KtSourceElement?
     }
 
 private val KtSourceElement.operatorSignIfBinary: KtSourceElement?
-    get() = when (elementType) {
-        KtNodeTypes.BINARY_EXPRESSION -> when (this) {
+    get() = when (syntaxId) {
+        KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION -> when (this) {
             is KtPsiSourceElement -> (psi as? KtBinaryExpression)?.operationReference?.toKtPsiSourceElement(kind)
             is KtLightSourceElement -> treeStructure.findChildByType(lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)
                 ?.toKtLightSourceElement(treeStructure, kind)
@@ -493,7 +494,7 @@ private class DebugDiagnosticConsumer(
 
         // Lambda argument is always (?) duplicated by function literal
         // Block expression is always (?) duplicated by single block expression
-        if (sourceElement.elementType == KtNodeTypes.LAMBDA_ARGUMENT || sourceElement.elementType == KtNodeTypes.BLOCK) return
+        if (sourceElement.syntaxId == KotlinSyntaxNodeTypeIds.LAMBDA_ARGUMENT || sourceElement.syntaxId == KotlinSyntaxNodeTypeIds.BLOCK) return
 
         val availableDiagnostics = diagnosedRangesToDiagnosticNames[sourceElement.startOffset..sourceElement.endOffset]
         val noDiagnosticInTestDataFile = availableDiagnostics == null || factory.name !in availableDiagnostics
@@ -517,7 +518,7 @@ private class DebugDiagnosticConsumer(
 
         // Lambda argument is always (?) duplicated by function literal
         // Block expression is always (?) duplicated by single block expression
-        if (sourceElement.elementType == KtNodeTypes.LAMBDA_ARGUMENT || sourceElement.elementType == KtNodeTypes.BLOCK) return
+        if (sourceElement.syntaxId == KotlinSyntaxNodeTypeIds.LAMBDA_ARGUMENT || sourceElement.syntaxId == KotlinSyntaxNodeTypeIds.BLOCK) return
 
         // Unfortunately I had to repeat positioning strategy logic here
         // (we need to check diagnostic range before applying it)
@@ -541,9 +542,9 @@ private class DebugDiagnosticConsumer(
     }
 
     private fun KtDiagnosticFactory1<String>.getPositionedElement(sourceElement: KtSourceElement): KtSourceElement {
-        val elementType = sourceElement.elementType
+        val elementTypeId = sourceElement.syntaxId
         return if (this === KtDebugInfoDiagnostics.CALL
-            && (elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION || elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION)
+            && (elementTypeId == KotlinSyntaxNodeTypeIds.DOT_QUALIFIED_EXPRESSION || elementTypeId == KotlinSyntaxNodeTypeIds.SAFE_ACCESS_EXPRESSION)
         ) {
             if (sourceElement is KtPsiSourceElement) {
                 val psi = (sourceElement.psi as KtQualifiedExpression).selectorExpression

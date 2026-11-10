@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -44,7 +45,7 @@ object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<F
         var hasModifiers = false
         var hasConstructorKeyword = false
         source.forEachChildOfType(importantNodeTypes, depth = 1) {
-            if (it.elementType == KtTokens.CONSTRUCTOR_KEYWORD) {
+            if (it.syntaxId == KotlinSyntaxTokenIds.CONSTRUCTOR_KEYWORD) {
                 hasConstructorKeyword = true
             } else {
                 hasModifiers = true

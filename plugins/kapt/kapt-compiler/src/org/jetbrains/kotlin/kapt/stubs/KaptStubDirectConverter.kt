@@ -101,7 +101,7 @@ class KaptStubDirectConverter(
         val origin = kaptContext.origins[node] ?: return
         val source = kaptContext.firSourceOf(origin.declaration) ?: return
 
-        if (origin.declaration is IrConstructor && source.elementType in CLASS_LIKE_ELEMENT_TYPES) {
+        if (origin.declaration is IrConstructor && source.syntaxId in CLASS_LIKE_ELEMENT_TYPES) {
             // Do not copy class KDoc to an implicit constructor.
             return
         }

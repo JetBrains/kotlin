@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -35,6 +35,6 @@ private fun checkFeatureIsEnabled(
     declaration: FirContractDescriptionOwner,
 ) {
     val source = declaration.contractDescription?.source ?: return
-    if (source.elementType != KtNodeTypes.CONTRACT_EFFECT_LIST) return
+    if (source.syntaxId != KotlinSyntaxNodeTypeIds.CONTRACT_EFFECT_LIST) return
     source.requireFeatureSupport(LanguageFeature.ContractSyntaxV2)
 }
