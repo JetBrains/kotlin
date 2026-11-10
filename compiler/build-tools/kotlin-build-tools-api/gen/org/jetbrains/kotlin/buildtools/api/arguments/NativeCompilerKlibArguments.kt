@@ -4,13 +4,13 @@
 package org.jetbrains.kotlin.buildtools.api.arguments
 
 import java.nio.`file`.Path
-import kotlin.Array
 import kotlin.Boolean
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.KonanTarget
 
 /**
  * @since 2.4.20
@@ -78,7 +78,7 @@ public interface NativeCompilerKlibArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_MANIFEST_NATIVE_TARGETS: NativeCompilerKlibArgument<Array<String>?> =
+    public val X_MANIFEST_NATIVE_TARGETS: NativeCompilerKlibArgument<List<KonanTarget>> =
         NativeCompilerKlibArgument("X_MANIFEST_NATIVE_TARGETS", KotlinReleaseVersion(2, 0, 20))
 
     /**

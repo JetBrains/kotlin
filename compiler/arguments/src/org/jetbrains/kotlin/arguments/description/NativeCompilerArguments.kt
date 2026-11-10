@@ -155,11 +155,13 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "memory-model"
         description = "Choose the memory model to be used – 'strict' and 'experimental' are currently supported.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<model>".asReleaseDependent()
+        argumentType = NativeMemoryModelType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -322,12 +324,14 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "produce"
         shortName = "p"
         description = "Specify the output file kind.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{program|static|dynamic|framework|library|bitcode}".asReleaseDependent()
+        argumentType = CompilerOutputKindType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -335,11 +339,13 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "target"
         description = "Set the hardware target.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<target>".asReleaseDependent()
+        argumentType = KonanTargetType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -520,6 +526,7 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xadd-light-debug"
         compilerName = "lightDebugString"
@@ -528,6 +535,7 @@ It's enabled by default on Darwin platforms where collected debug information is
 Currently this option is disabled by default on other platforms.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
+        argumentType = EnableDisableModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -535,12 +543,14 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xg-generate-debug-trampoline"
         compilerName = "generateDebugTrampolineString"
         description = "Generate trampolines to make debugger breakpoint resolution more accurate (inlines, 'when', etc.).".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
+        argumentType = EnableDisableModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,
@@ -850,11 +860,13 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xallocator"
         description = "Allocator used at runtime.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "std | mimalloc | custom".asReleaseDependent()
+        argumentType = NativeAllocationModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -887,11 +899,13 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xpre-link-caches"
         description = "Perform caches pre-linking.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
+        argumentType = EnableDisableModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -914,11 +928,13 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xgc"
         description = "GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<gc>".asReleaseDependent()
+        argumentType = NativeGcModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,
@@ -926,12 +942,14 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xir-property-lazy-initialization"
         compilerName = "propertyLazyInitialization"
         description = "Initialize top level properties lazily per file.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
+        argumentType = EnableDisableModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
@@ -1093,11 +1111,13 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xmanifest-native-targets"
         description =
             "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
+        argumentType = KonanTargetListType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,

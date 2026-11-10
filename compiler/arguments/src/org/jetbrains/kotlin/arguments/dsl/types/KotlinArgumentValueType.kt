@@ -455,7 +455,70 @@ class WasmTargetType : EnumType<WasmTarget>(ReleaseDependent(true)) {
 }
 
 /**
- * A value which accepts [JsEcmaVersion] type.
+ * A value which accepts [CompilerOutputKind] type.
+ */
+@ExperimentalArgumentApi
+@Serializable
+class CompilerOutputKindType : EnumType<CompilerOutputKind>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<CompilerOutputKind?> = ReleaseDependent(null)
+}
+
+/**
+ * A value which accepts [KonanTarget] type.
+ */
+@ExperimentalArgumentApi
+@Serializable
+class KonanTargetType : EnumType<KonanTarget>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<KonanTarget?> = ReleaseDependent(null)
+}
+
+/**
+ * A value which accepts a list of [KonanTarget] type.
+ */
+@ExperimentalArgumentApi
+@Serializable
+class KonanTargetListType : EnumListType<KonanTarget>() {
+    override val defaultValue: ReleaseDependent<List<KonanTarget>?> = ReleaseDependent(emptyList())
+}
+
+/**
+ * A value which accepts [NativeAllocationMode] type.
+ */
+@ExperimentalArgumentApi
+@Serializable
+class NativeAllocationModeType : EnumType<NativeAllocationMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<NativeAllocationMode?> = ReleaseDependent(null)
+}
+
+/**
+ * A value which accepts [NativeGcMode] type.
+ */
+@ExperimentalArgumentApi
+@Serializable
+class NativeGcModeType : EnumType<NativeGcMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<NativeGcMode?> = ReleaseDependent(null)
+}
+
+/**
+ * A value which accepts [NativeMemoryModel] type.
+ */
+@ExperimentalArgumentApi
+@Serializable
+class NativeMemoryModelType : EnumType<NativeMemoryModel>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<NativeMemoryModel?> = ReleaseDependent(null)
+}
+
+/**
+ * A value which accepts [EnableDisableMode] type.
+ */
+@ExperimentalArgumentApi
+@Serializable
+class EnableDisableModeType : EnumType<EnableDisableMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<EnableDisableMode?> = ReleaseDependent(null)
+}
+
+/**
+ * A value which accepts [MetadataTargetPlatform] type.
  */
 @ExperimentalArgumentApi
 @Serializable

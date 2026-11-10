@@ -2,6 +2,7 @@
 // DO NOT MODIFY IT MANUALLY.
 
 @file:OptIn(ExperimentalCompilerArgument::class)
+@file:Suppress("EnumValuesSoftDeprecate")
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
@@ -117,6 +118,13 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_WORKER_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_WRITE_DEPENDENCIES_TO
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.CompilerOutputKind
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.EnableDisableMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.KonanTarget
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.NativeAllocationMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.NativeGcMode
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.NativeMemoryModel
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -219,8 +227,8 @@ internal class NativeArgumentsImpl(
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
     if (X_ADD_CACHE in this) { arguments.libraryToAddToCache = get(X_ADD_CACHE)?.absolutePathStringOrThrow()}
-    if (X_ADD_LIGHT_DEBUG in this) { arguments.lightDebugString = get(X_ADD_LIGHT_DEBUG)}
-    if (X_ALLOCATOR in this) { arguments.allocator = get(X_ALLOCATOR)}
+    if (X_ADD_LIGHT_DEBUG in this) { arguments.lightDebugString = get(X_ADD_LIGHT_DEBUG)?.stringValue}
+    if (X_ALLOCATOR in this) { arguments.allocator = get(X_ALLOCATOR)?.stringValue}
     if (X_AUTO_CACHE_DIR in this) { arguments.autoCacheDir = get(X_AUTO_CACHE_DIR)?.absolutePathStringOrThrow()}
     if (X_AUTO_CACHE_FROM in this) { arguments.autoCacheableFrom = get(X_AUTO_CACHE_FROM).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_BACKEND_THREADS in this) { arguments.backendThreads = get(X_BACKEND_THREADS).toString()}
@@ -242,24 +250,24 @@ internal class NativeArgumentsImpl(
     if (X_EXTERNAL_DEPENDENCIES in this) { arguments.externalDependencies = get(X_EXTERNAL_DEPENDENCIES)?.absolutePathStringOrThrow()}
     if (X_FILE_TO_CACHE in this) { arguments.filesToCache = get(X_FILE_TO_CACHE).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_FRAMEWORK_IMPORT_HEADER in this) { arguments.frameworkImportHeaders = get(X_FRAMEWORK_IMPORT_HEADER) ?: emptyArray()}
-    if (X_G_GENERATE_DEBUG_TRAMPOLINE in this) { arguments.generateDebugTrampolineString = get(X_G_GENERATE_DEBUG_TRAMPOLINE)}
+    if (X_G_GENERATE_DEBUG_TRAMPOLINE in this) { arguments.generateDebugTrampolineString = get(X_G_GENERATE_DEBUG_TRAMPOLINE)?.stringValue}
     try { if (X_G0 in this) { arguments.setUsingReflection("lightDebugDeprecated", get(X_G0))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_G0. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.20""").initCause(e) }
-    if (X_GC in this) { arguments.gc = get(X_GC)}
+    if (X_GC in this) { arguments.gc = get(X_GC)?.stringValue}
     if (X_HEADER_KLIB_PATH in this) { arguments.headerKlibPath = get(X_HEADER_KLIB_PATH)?.absolutePathStringOrThrow()}
     if (X_IC_CACHE_DIR in this) { arguments.incrementalCacheDir = get(X_IC_CACHE_DIR)?.absolutePathStringOrThrow()}
     if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
-    if (X_IR_PROPERTY_LAZY_INITIALIZATION in this) { arguments.propertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION)}
+    if (X_IR_PROPERTY_LAZY_INITIALIZATION in this) { arguments.propertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION)?.stringValue}
     if (X_KONAN_DATA_DIR in this) { arguments.konanDataDir = get(X_KONAN_DATA_DIR)?.absolutePathStringOrThrow()}
     if (X_LLVM_LTO_PASSES in this) { arguments.llvmLTOPasses = get(X_LLVM_LTO_PASSES)}
     if (X_LLVM_MODULE_PASSES in this) { arguments.llvmModulePasses = get(X_LLVM_MODULE_PASSES)}
     if (X_LLVM_VARIANT in this) { arguments.llvmVariant = get(X_LLVM_VARIANT)}
     if (X_MAKE_PER_FILE_CACHE in this) { arguments.makePerFileCache = get(X_MAKE_PER_FILE_CACHE)}
-    if (X_MANIFEST_NATIVE_TARGETS in this) { arguments.manifestNativeTargets = get(X_MANIFEST_NATIVE_TARGETS) ?: emptyArray()}
+    if (X_MANIFEST_NATIVE_TARGETS in this) { arguments.manifestNativeTargets = get(X_MANIFEST_NATIVE_TARGETS).map { it.stringValue }.toTypedArray()}
     if (X_NO_OBJC_GENERICS in this) { arguments.noObjcGenerics = get(X_NO_OBJC_GENERICS)}
     if (X_OMIT_FRAMEWORK_BINARY in this) { arguments.omitFrameworkBinary = get(X_OMIT_FRAMEWORK_BINARY)}
     if (X_OVERRIDE_CLANG_OPTIONS in this) { arguments.clangOptions = get(X_OVERRIDE_CLANG_OPTIONS) ?: emptyArray()}
     if (X_OVERRIDE_KONAN_PROPERTIES in this) { arguments.overrideKonanProperties = get(X_OVERRIDE_KONAN_PROPERTIES) ?: emptyArray()}
-    if (X_PRE_LINK_CACHES in this) { arguments.preLinkCaches = get(X_PRE_LINK_CACHES)}
+    if (X_PRE_LINK_CACHES in this) { arguments.preLinkCaches = get(X_PRE_LINK_CACHES)?.stringValue}
     if (X_PRINT_BITCODE in this) { arguments.printBitCode = get(X_PRINT_BITCODE)}
     if (X_PRINT_FILES in this) { arguments.printFiles = get(X_PRINT_FILES)}
     if (X_PRINT_IR in this) { arguments.printIr = get(X_PRINT_IR)}
@@ -292,7 +300,7 @@ internal class NativeArgumentsImpl(
     if (LINKER_OPTIONS in this) { arguments.linkerArguments = get(LINKER_OPTIONS) ?: emptyArray()}
     if (LIST_TARGETS in this) { arguments.listTargets = get(LIST_TARGETS)}
     if (MANIFEST in this) { arguments.manifestFile = get(MANIFEST)?.absolutePathStringOrThrow()}
-    if (MEMORY_MODEL in this) { arguments.memoryModel = get(MEMORY_MODEL)}
+    if (MEMORY_MODEL in this) { arguments.memoryModel = get(MEMORY_MODEL)?.stringValue}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
     if (NATIVE_LIBRARY in this) { arguments.nativeLibraries = get(NATIVE_LIBRARY).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (NO_DEFAULT_LIBS in this) { arguments.nodefaultlibs = get(NO_DEFAULT_LIBS)}
@@ -302,8 +310,8 @@ internal class NativeArgumentsImpl(
     if (NOSTDLIB in this) { arguments.nostdlib = get(NOSTDLIB)}
     if (OPT in this) { arguments.optimization = get(OPT)}
     if (OUTPUT in this) { arguments.outputName = get(OUTPUT)?.absolutePathStringOrThrow()}
-    if (PRODUCE in this) { arguments.produce = get(PRODUCE)}
-    if (TARGET in this) { arguments.target = get(TARGET)}
+    if (PRODUCE in this) { arguments.produce = get(PRODUCE)?.stringValue}
+    if (TARGET in this) { arguments.target = get(TARGET)?.stringValue}
     arguments.internalArguments = parseCommandLineArguments<K2NativeCompilerArguments>(internalArguments.toList()).internalArguments
     populateExplicitArguments(arguments)
     return arguments
@@ -313,8 +321,8 @@ internal class NativeArgumentsImpl(
   protected fun applyCompilerArguments(arguments: K2NativeCompilerArguments) {
     super.applyCompilerArguments(arguments)
     try { this[X_ADD_CACHE] = arguments.libraryToAddToCache?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_ADD_LIGHT_DEBUG] = arguments.lightDebugString } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOCATOR] = arguments.allocator } catch (_: NoSuchMethodError) {  }
+    try { this[X_ADD_LIGHT_DEBUG] = arguments.lightDebugString?.let { EnableDisableMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::lightDebugString, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xadd-light-debug value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_ALLOCATOR] = arguments.allocator?.let { NativeAllocationMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::allocator, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xallocator value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_AUTO_CACHE_DIR] = arguments.autoCacheDir?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_AUTO_CACHE_FROM] = arguments.autoCacheableFrom.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_BACKEND_THREADS] = arguments.backendThreads.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
@@ -336,24 +344,24 @@ internal class NativeArgumentsImpl(
     try { this[X_EXTERNAL_DEPENDENCIES] = arguments.externalDependencies?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_FILE_TO_CACHE] = arguments.filesToCache.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAMEWORK_IMPORT_HEADER] = arguments.frameworkImportHeaders } catch (_: NoSuchMethodError) {  }
-    try { this[X_G_GENERATE_DEBUG_TRAMPOLINE] = arguments.generateDebugTrampolineString } catch (_: NoSuchMethodError) {  }
+    try { this[X_G_GENERATE_DEBUG_TRAMPOLINE] = arguments.generateDebugTrampolineString?.let { EnableDisableMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::generateDebugTrampolineString, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xg-generate-debug-trampoline value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_G0] = arguments.getUsingReflection<Boolean>("lightDebugDeprecated") } catch (_: NoSuchMethodError) {  }
-    try { this[X_GC] = arguments.gc } catch (_: NoSuchMethodError) {  }
+    try { this[X_GC] = arguments.gc?.let { NativeGcMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::gc, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xgc value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_HEADER_KLIB_PATH] = arguments.headerKlibPath?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_IC_CACHE_DIR] = arguments.incrementalCacheDir?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_INCLUDE] = arguments.includes.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PROPERTY_LAZY_INITIALIZATION] = arguments.propertyLazyInitialization } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_PROPERTY_LAZY_INITIALIZATION] = arguments.propertyLazyInitialization?.let { EnableDisableMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::propertyLazyInitialization, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-property-lazy-initialization value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_KONAN_DATA_DIR] = arguments.konanDataDir?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_LLVM_LTO_PASSES] = arguments.llvmLTOPasses } catch (_: NoSuchMethodError) {  }
     try { this[X_LLVM_MODULE_PASSES] = arguments.llvmModulePasses } catch (_: NoSuchMethodError) {  }
     try { this[X_LLVM_VARIANT] = arguments.llvmVariant } catch (_: NoSuchMethodError) {  }
     try { this[X_MAKE_PER_FILE_CACHE] = arguments.makePerFileCache } catch (_: NoSuchMethodError) {  }
-    try { this[X_MANIFEST_NATIVE_TARGETS] = arguments.manifestNativeTargets } catch (_: NoSuchMethodError) {  }
+    try { this[X_MANIFEST_NATIVE_TARGETS] = arguments.manifestNativeTargets.map { KonanTarget.values().firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xmanifest-native-targets value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_OBJC_GENERICS] = arguments.noObjcGenerics } catch (_: NoSuchMethodError) {  }
     try { this[X_OMIT_FRAMEWORK_BINARY] = arguments.omitFrameworkBinary } catch (_: NoSuchMethodError) {  }
     try { this[X_OVERRIDE_CLANG_OPTIONS] = arguments.clangOptions } catch (_: NoSuchMethodError) {  }
     try { this[X_OVERRIDE_KONAN_PROPERTIES] = arguments.overrideKonanProperties } catch (_: NoSuchMethodError) {  }
-    try { this[X_PRE_LINK_CACHES] = arguments.preLinkCaches } catch (_: NoSuchMethodError) {  }
+    try { this[X_PRE_LINK_CACHES] = arguments.preLinkCaches?.let { EnableDisableMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::preLinkCaches, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpre-link-caches value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_PRINT_BITCODE] = arguments.printBitCode } catch (_: NoSuchMethodError) {  }
     try { this[X_PRINT_FILES] = arguments.printFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_PRINT_IR] = arguments.printIr } catch (_: NoSuchMethodError) {  }
@@ -386,7 +394,7 @@ internal class NativeArgumentsImpl(
     try { this[LINKER_OPTIONS] = arguments.linkerArguments } catch (_: NoSuchMethodError) {  }
     try { this[LIST_TARGETS] = arguments.listTargets } catch (_: NoSuchMethodError) {  }
     try { this[MANIFEST] = arguments.manifestFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[MEMORY_MODEL] = arguments.memoryModel } catch (_: NoSuchMethodError) {  }
+    try { this[MEMORY_MODEL] = arguments.memoryModel?.let { NativeMemoryModel.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::memoryModel, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -memory-model value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
     try { this[NATIVE_LIBRARY] = arguments.nativeLibraries.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[NO_DEFAULT_LIBS] = arguments.nodefaultlibs } catch (_: NoSuchMethodError) {  }
@@ -396,8 +404,8 @@ internal class NativeArgumentsImpl(
     try { this[NOSTDLIB] = arguments.nostdlib } catch (_: NoSuchMethodError) {  }
     try { this[OPT] = arguments.optimization } catch (_: NoSuchMethodError) {  }
     try { this[OUTPUT] = arguments.outputName?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[PRODUCE] = arguments.produce } catch (_: NoSuchMethodError) {  }
-    try { this[TARGET] = arguments.target } catch (_: NoSuchMethodError) {  }
+    try { this[PRODUCE] = arguments.produce?.let { CompilerOutputKind.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::produce, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -produce value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[TARGET] = arguments.target?.let { KonanTarget.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
@@ -405,8 +413,8 @@ internal class NativeArgumentsImpl(
   public fun toCompilerArgumentsAffectingOutcome(arguments: K2NativeCompilerArguments = K2NativeCompilerArguments()): K2NativeCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
     if (X_ADD_CACHE in this) { arguments.libraryToAddToCache = get(X_ADD_CACHE)?.absolutePathStringOrThrow()}
-    if (X_ADD_LIGHT_DEBUG in this) { arguments.lightDebugString = get(X_ADD_LIGHT_DEBUG)}
-    if (X_ALLOCATOR in this) { arguments.allocator = get(X_ALLOCATOR)}
+    if (X_ADD_LIGHT_DEBUG in this) { arguments.lightDebugString = get(X_ADD_LIGHT_DEBUG)?.stringValue}
+    if (X_ALLOCATOR in this) { arguments.allocator = get(X_ALLOCATOR)?.stringValue}
     if (X_AUTO_CACHE_DIR in this) { arguments.autoCacheDir = get(X_AUTO_CACHE_DIR)?.absolutePathStringOrThrow()}
     if (X_AUTO_CACHE_FROM in this) { arguments.autoCacheableFrom = get(X_AUTO_CACHE_FROM).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_BINARY in this) { arguments.binaryOptions = get(X_BINARY) ?: emptyArray()}
@@ -427,24 +435,24 @@ internal class NativeArgumentsImpl(
     if (X_EXTERNAL_DEPENDENCIES in this) { arguments.externalDependencies = get(X_EXTERNAL_DEPENDENCIES)?.absolutePathStringOrThrow()}
     if (X_FILE_TO_CACHE in this) { arguments.filesToCache = get(X_FILE_TO_CACHE).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_FRAMEWORK_IMPORT_HEADER in this) { arguments.frameworkImportHeaders = get(X_FRAMEWORK_IMPORT_HEADER) ?: emptyArray()}
-    if (X_G_GENERATE_DEBUG_TRAMPOLINE in this) { arguments.generateDebugTrampolineString = get(X_G_GENERATE_DEBUG_TRAMPOLINE)}
+    if (X_G_GENERATE_DEBUG_TRAMPOLINE in this) { arguments.generateDebugTrampolineString = get(X_G_GENERATE_DEBUG_TRAMPOLINE)?.stringValue}
     try { if (X_G0 in this) { arguments.setUsingReflection("lightDebugDeprecated", get(X_G0))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_G0. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.20""").initCause(e) }
-    if (X_GC in this) { arguments.gc = get(X_GC)}
+    if (X_GC in this) { arguments.gc = get(X_GC)?.stringValue}
     if (X_HEADER_KLIB_PATH in this) { arguments.headerKlibPath = get(X_HEADER_KLIB_PATH)?.absolutePathStringOrThrow()}
     if (X_IC_CACHE_DIR in this) { arguments.incrementalCacheDir = get(X_IC_CACHE_DIR)?.absolutePathStringOrThrow()}
     if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
-    if (X_IR_PROPERTY_LAZY_INITIALIZATION in this) { arguments.propertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION)}
+    if (X_IR_PROPERTY_LAZY_INITIALIZATION in this) { arguments.propertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION)?.stringValue}
     if (X_KONAN_DATA_DIR in this) { arguments.konanDataDir = get(X_KONAN_DATA_DIR)?.absolutePathStringOrThrow()}
     if (X_LLVM_LTO_PASSES in this) { arguments.llvmLTOPasses = get(X_LLVM_LTO_PASSES)}
     if (X_LLVM_MODULE_PASSES in this) { arguments.llvmModulePasses = get(X_LLVM_MODULE_PASSES)}
     if (X_LLVM_VARIANT in this) { arguments.llvmVariant = get(X_LLVM_VARIANT)}
     if (X_MAKE_PER_FILE_CACHE in this) { arguments.makePerFileCache = get(X_MAKE_PER_FILE_CACHE)}
-    if (X_MANIFEST_NATIVE_TARGETS in this) { arguments.manifestNativeTargets = get(X_MANIFEST_NATIVE_TARGETS) ?: emptyArray()}
+    if (X_MANIFEST_NATIVE_TARGETS in this) { arguments.manifestNativeTargets = get(X_MANIFEST_NATIVE_TARGETS).map { it.stringValue }.toTypedArray()}
     if (X_NO_OBJC_GENERICS in this) { arguments.noObjcGenerics = get(X_NO_OBJC_GENERICS)}
     if (X_OMIT_FRAMEWORK_BINARY in this) { arguments.omitFrameworkBinary = get(X_OMIT_FRAMEWORK_BINARY)}
     if (X_OVERRIDE_CLANG_OPTIONS in this) { arguments.clangOptions = get(X_OVERRIDE_CLANG_OPTIONS) ?: emptyArray()}
     if (X_OVERRIDE_KONAN_PROPERTIES in this) { arguments.overrideKonanProperties = get(X_OVERRIDE_KONAN_PROPERTIES) ?: emptyArray()}
-    if (X_PRE_LINK_CACHES in this) { arguments.preLinkCaches = get(X_PRE_LINK_CACHES)}
+    if (X_PRE_LINK_CACHES in this) { arguments.preLinkCaches = get(X_PRE_LINK_CACHES)?.stringValue}
     try { if (X_PURGE_USER_LIBS in this) { arguments.setUsingReflection("purgeUserLibs", get(X_PURGE_USER_LIBS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_PURGE_USER_LIBS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_READ_DEPENDENCIES_FROM in this) { arguments.serializedDependencies = get(X_READ_DEPENDENCIES_FROM)?.absolutePathStringOrThrow()}
     if (X_REFINES_PATHS in this) { arguments.refinesPaths = get(X_REFINES_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
@@ -472,7 +480,7 @@ internal class NativeArgumentsImpl(
     if (LINKER_OPTION in this) { arguments.singleLinkerArguments = get(LINKER_OPTION) ?: emptyArray()}
     if (LINKER_OPTIONS in this) { arguments.linkerArguments = get(LINKER_OPTIONS) ?: emptyArray()}
     if (MANIFEST in this) { arguments.manifestFile = get(MANIFEST)?.absolutePathStringOrThrow()}
-    if (MEMORY_MODEL in this) { arguments.memoryModel = get(MEMORY_MODEL)}
+    if (MEMORY_MODEL in this) { arguments.memoryModel = get(MEMORY_MODEL)?.stringValue}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
     if (NATIVE_LIBRARY in this) { arguments.nativeLibraries = get(NATIVE_LIBRARY).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (NO_DEFAULT_LIBS in this) { arguments.nodefaultlibs = get(NO_DEFAULT_LIBS)}
@@ -482,8 +490,8 @@ internal class NativeArgumentsImpl(
     if (NOSTDLIB in this) { arguments.nostdlib = get(NOSTDLIB)}
     if (OPT in this) { arguments.optimization = get(OPT)}
     if (OUTPUT in this) { arguments.outputName = get(OUTPUT)?.absolutePathStringOrThrow()}
-    if (PRODUCE in this) { arguments.produce = get(PRODUCE)}
-    if (TARGET in this) { arguments.target = get(TARGET)}
+    if (PRODUCE in this) { arguments.produce = get(PRODUCE)?.stringValue}
+    if (TARGET in this) { arguments.target = get(TARGET)?.stringValue}
     return arguments
   }
 
@@ -536,9 +544,10 @@ internal class NativeArgumentsImpl(
 
     public val X_ADD_CACHE: NativeArgument<java.nio.`file`.Path?> = NativeArgument("X_ADD_CACHE")
 
-    public val X_ADD_LIGHT_DEBUG: NativeArgument<String?> = NativeArgument("X_ADD_LIGHT_DEBUG")
+    public val X_ADD_LIGHT_DEBUG: NativeArgument<EnableDisableMode?> =
+        NativeArgument("X_ADD_LIGHT_DEBUG")
 
-    public val X_ALLOCATOR: NativeArgument<String?> = NativeArgument("X_ALLOCATOR")
+    public val X_ALLOCATOR: NativeArgument<NativeAllocationMode?> = NativeArgument("X_ALLOCATOR")
 
     public val X_AUTO_CACHE_DIR: NativeArgument<java.nio.`file`.Path?> =
         NativeArgument("X_AUTO_CACHE_DIR")
@@ -597,12 +606,12 @@ internal class NativeArgumentsImpl(
     public val X_FRAMEWORK_IMPORT_HEADER: NativeArgument<Array<String>?> =
         NativeArgument("X_FRAMEWORK_IMPORT_HEADER")
 
-    public val X_G_GENERATE_DEBUG_TRAMPOLINE: NativeArgument<String?> =
+    public val X_G_GENERATE_DEBUG_TRAMPOLINE: NativeArgument<EnableDisableMode?> =
         NativeArgument("X_G_GENERATE_DEBUG_TRAMPOLINE")
 
     public val X_G0: NativeArgument<Boolean> = NativeArgument("X_G0")
 
-    public val X_GC: NativeArgument<String?> = NativeArgument("X_GC")
+    public val X_GC: NativeArgument<NativeGcMode?> = NativeArgument("X_GC")
 
     public val X_HEADER_KLIB_PATH: NativeArgument<java.nio.`file`.Path?> =
         NativeArgument("X_HEADER_KLIB_PATH")
@@ -612,7 +621,7 @@ internal class NativeArgumentsImpl(
 
     public val X_INCLUDE: NativeArgument<List<java.nio.`file`.Path>> = NativeArgument("X_INCLUDE")
 
-    public val X_IR_PROPERTY_LAZY_INITIALIZATION: NativeArgument<String?> =
+    public val X_IR_PROPERTY_LAZY_INITIALIZATION: NativeArgument<EnableDisableMode?> =
         NativeArgument("X_IR_PROPERTY_LAZY_INITIALIZATION")
 
     public val X_KONAN_DATA_DIR: NativeArgument<java.nio.`file`.Path?> =
@@ -628,7 +637,7 @@ internal class NativeArgumentsImpl(
     public val X_MAKE_PER_FILE_CACHE: NativeArgument<Boolean> =
         NativeArgument("X_MAKE_PER_FILE_CACHE")
 
-    public val X_MANIFEST_NATIVE_TARGETS: NativeArgument<Array<String>?> =
+    public val X_MANIFEST_NATIVE_TARGETS: NativeArgument<List<KonanTarget>> =
         NativeArgument("X_MANIFEST_NATIVE_TARGETS")
 
     public val X_NO_OBJC_GENERICS: NativeArgument<Boolean> = NativeArgument("X_NO_OBJC_GENERICS")
@@ -642,7 +651,8 @@ internal class NativeArgumentsImpl(
     public val X_OVERRIDE_KONAN_PROPERTIES: NativeArgument<Array<String>?> =
         NativeArgument("X_OVERRIDE_KONAN_PROPERTIES")
 
-    public val X_PRE_LINK_CACHES: NativeArgument<String?> = NativeArgument("X_PRE_LINK_CACHES")
+    public val X_PRE_LINK_CACHES: NativeArgument<EnableDisableMode?> =
+        NativeArgument("X_PRE_LINK_CACHES")
 
     public val X_PRINT_BITCODE: NativeArgument<Boolean> = NativeArgument("X_PRINT_BITCODE")
 
@@ -721,7 +731,7 @@ internal class NativeArgumentsImpl(
 
     public val MANIFEST: NativeArgument<java.nio.`file`.Path?> = NativeArgument("MANIFEST")
 
-    public val MEMORY_MODEL: NativeArgument<String?> = NativeArgument("MEMORY_MODEL")
+    public val MEMORY_MODEL: NativeArgument<NativeMemoryModel?> = NativeArgument("MEMORY_MODEL")
 
     public val MODULE_NAME: NativeArgument<String?> = NativeArgument("MODULE_NAME")
 
@@ -742,8 +752,8 @@ internal class NativeArgumentsImpl(
 
     public val OUTPUT: NativeArgument<java.nio.`file`.Path?> = NativeArgument("OUTPUT")
 
-    public val PRODUCE: NativeArgument<String?> = NativeArgument("PRODUCE")
+    public val PRODUCE: NativeArgument<CompilerOutputKind?> = NativeArgument("PRODUCE")
 
-    public val TARGET: NativeArgument<String?> = NativeArgument("TARGET")
+    public val TARGET: NativeArgument<KonanTarget?> = NativeArgument("TARGET")
   }
 }

@@ -13,6 +13,10 @@ import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.EnableDisableMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.NativeAllocationMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.NativeGcMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.NativeMemoryModel
 
 /**
  * @since 2.4.20
@@ -82,7 +86,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ADD_LIGHT_DEBUG: NativeCompilerLinkingArgument<String?> =
+    public val X_ADD_LIGHT_DEBUG: NativeCompilerLinkingArgument<EnableDisableMode?> =
         NativeCompilerLinkingArgument("X_ADD_LIGHT_DEBUG", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -92,7 +96,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ALLOCATOR: NativeCompilerLinkingArgument<String?> =
+    public val X_ALLOCATOR: NativeCompilerLinkingArgument<NativeAllocationMode?> =
         NativeCompilerLinkingArgument("X_ALLOCATOR", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -304,7 +308,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_G_GENERATE_DEBUG_TRAMPOLINE: NativeCompilerLinkingArgument<String?> =
+    public val X_G_GENERATE_DEBUG_TRAMPOLINE: NativeCompilerLinkingArgument<EnableDisableMode?> =
         NativeCompilerLinkingArgument("X_G_GENERATE_DEBUG_TRAMPOLINE", KotlinReleaseVersion(1, 5, 30))
 
     /**
@@ -329,7 +333,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_GC: NativeCompilerLinkingArgument<String?> =
+    public val X_GC: NativeCompilerLinkingArgument<NativeGcMode?> =
         NativeCompilerLinkingArgument("X_GC", KotlinReleaseVersion(1, 5, 30))
 
     /**
@@ -359,7 +363,8 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_PROPERTY_LAZY_INITIALIZATION: NativeCompilerLinkingArgument<String?> =
+    public val X_IR_PROPERTY_LAZY_INITIALIZATION: NativeCompilerLinkingArgument<EnableDisableMode?>
+        =
         NativeCompilerLinkingArgument("X_IR_PROPERTY_LAZY_INITIALIZATION", KotlinReleaseVersion(1, 6, 0))
 
     /**
@@ -449,7 +454,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PRE_LINK_CACHES: NativeCompilerLinkingArgument<String?> =
+    public val X_PRE_LINK_CACHES: NativeCompilerLinkingArgument<EnableDisableMode?> =
         NativeCompilerLinkingArgument("X_PRE_LINK_CACHES", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -653,7 +658,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      * Choose the memory model to be used – 'strict' and 'experimental' are currently supported.
      */
     @JvmField
-    public val MEMORY_MODEL: NativeCompilerLinkingArgument<String?> =
+    public val MEMORY_MODEL: NativeCompilerLinkingArgument<NativeMemoryModel?> =
         NativeCompilerLinkingArgument("MEMORY_MODEL", KotlinReleaseVersion(1, 5, 20))
 
     /**

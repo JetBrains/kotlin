@@ -44,7 +44,12 @@ class AllKotlinArgumentTypes {
     val sourceMapEmbedSources = TypeWithEntries<SourceMapEmbedSourcesType, SourceMapEmbedSources>()
     val sourceMapNamesPolicy = TypeWithEntries<SourceMapNamesPolicyType, SourceMapNamesPolicy>()
     val wasmTarget = TypeWithEntries<WasmTargetType, WasmTarget>()
-
+    val compilerOutputKind = TypeWithEntries<CompilerOutputKindType, CompilerOutputKind>()
+    val konanTarget = TypeWithEntries<KonanTargetType, KonanTarget>()
+    val nativeAllocationMode = TypeWithEntries<NativeAllocationModeType, NativeAllocationMode>()
+    val nativeGcMode = TypeWithEntries<NativeGcModeType, NativeGcMode>()
+    val nativeMemoryModel = TypeWithEntries<NativeMemoryModelType, NativeMemoryModel>()
+    val enableDisableMode = TypeWithEntries<EnableDisableModeType, EnableDisableMode>()
 }
 
 @Serializable

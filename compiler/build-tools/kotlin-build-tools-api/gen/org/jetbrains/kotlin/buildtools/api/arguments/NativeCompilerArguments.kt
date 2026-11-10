@@ -10,6 +10,8 @@ import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.CompilerOutputKind
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.KonanTarget
 
 /**
  * @since 2.4.20
@@ -182,14 +184,14 @@ public interface NativeCompilerArguments : CommonKlibBasedArguments {
      * Specify the output file kind.
      */
     @JvmField
-    public val PRODUCE: NativeCompilerArgument<String?> =
+    public val PRODUCE: NativeCompilerArgument<CompilerOutputKind?> =
         NativeCompilerArgument("PRODUCE", KotlinReleaseVersion(1, 5, 20))
 
     /**
      * Set the hardware target.
      */
     @JvmField
-    public val TARGET: NativeCompilerArgument<String?> =
+    public val TARGET: NativeCompilerArgument<KonanTarget?> =
         NativeCompilerArgument("TARGET", KotlinReleaseVersion(1, 5, 20))
   }
 }

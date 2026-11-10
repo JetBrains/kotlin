@@ -1346,6 +1346,19 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/Compatqua
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/CompilerOutputKind : java/lang/Enum {
+	public static final field BITCODE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompilerOutputKind;
+	public static final field DYNAMIC Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompilerOutputKind;
+	public static final field FRAMEWORK Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompilerOutputKind;
+	public static final field LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompilerOutputKind;
+	public static final field PROGRAM Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompilerOutputKind;
+	public static final field STATIC Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompilerOutputKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompilerOutputKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompilerOutputKind;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy : java/lang/Enum {
 	public static final field ALLOW_ALL Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
 	public static final field ALLOW_ALL_WITH_WARNING Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
@@ -1355,6 +1368,15 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/Duplicate
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/DuplicatedUniqueNameStrategy;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/EnableDisableMode : java/lang/Enum {
+	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/EnableDisableMode;
+	public static final field ENABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/EnableDisableMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/EnableDisableMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/EnableDisableMode;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode : java/lang/Enum {
@@ -1509,6 +1531,34 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/KlibIrInl
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KlibIrInlinerMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget : java/lang/Enum {
+	public static final field ANDROID_ARM32 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field ANDROID_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field ANDROID_X64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field ANDROID_X86 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field IOS_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field IOS_SIMULATOR_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field IOS_X64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field LINUX_ARM32_HFP Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field LINUX_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field LINUX_X64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field MACOS_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field MACOS_X64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field MINGW_X64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field TVOS_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field TVOS_SIMULATOR_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field TVOS_X64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field WATCHOS_ARM32 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field WATCHOS_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field WATCHOS_DEVICE_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field WATCHOS_SIMULATOR_ARM64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static final field WATCHOS_X64 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion : java/lang/Enum {
 	public static final field V1_0 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
 	public static final field V1_1 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
@@ -1563,6 +1613,35 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/NameBased
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/NativeAllocationMode : java/lang/Enum {
+	public static final field CUSTOM Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeAllocationMode;
+	public static final field MIMALLOC Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeAllocationMode;
+	public static final field STD Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeAllocationMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeAllocationMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeAllocationMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/NativeGcMode : java/lang/Enum {
+	public static final field CMS Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeGcMode;
+	public static final field NOOP Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeGcMode;
+	public static final field STMS Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeGcMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeGcMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeGcMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/NativeMemoryModel : java/lang/Enum {
+	public static final field EXPERIMENTAL Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeMemoryModel;
+	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeMemoryModel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeMemoryModel;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NativeMemoryModel;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/PartialLinkageLogLevel : java/lang/Enum {
