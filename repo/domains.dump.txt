@@ -178,6 +178,7 @@ BuildToolsApi:
  - compiler/compiler-runner-unshaded
  - compiler/daemon
  - compiler/incremental-compilation-impl
+ - compiler/incremental-compilation-klib
 
 BuildToolsLibraries:
  - build-tools/libraries
