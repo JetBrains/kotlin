@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage.DataValueClassGeneratedMembersInfo
 import org.jetbrains.kotlin.fir.backend.generators.*
-import org.jetbrains.kotlin.fir.backend.leafModule
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.moduleVisibilityProvider
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -48,6 +48,7 @@ class Fir2IrComponentsStorage(
         FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns)
     ).also {
         it.leafModule = it
+        it.moduleVisibilityProvider = Fir2IrModuleVisibilityProvider
     }
 
     private val conversionScope = Fir2IrConversionScope(configuration)
