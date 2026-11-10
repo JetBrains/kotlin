@@ -57,8 +57,7 @@ fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: KtFakeSourceElementKind): 
 fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
     if (source?.kind == newSource.kind) return this
 
-    @Suppress("UNCHECKED_CAST")
-    return when (val typeRef = this) {
+    val result = when (val typeRef = this) {
         is FirResolvedTypeRefImpl -> buildResolvedTypeRefCopy(typeRef) {
             source = newSource
         }
@@ -94,7 +93,9 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
             types += typeRef.types
         }
         else -> TODO("Not implemented for ${typeRef::class}")
-    } as R
+    }
+    @Suppress("UNCHECKED_CAST")
+    return result as R
 }
 
 val FirFile.packageFqName: FqName

@@ -369,13 +369,14 @@ abstract class CompileServiceImplBase(
         val targetPlatform = compilationOptions.targetPlatform
         log.info("Starting compilation with args: " + compilerArguments.joinToString(" "))
 
-        @Suppress("UNCHECKED_CAST")
-        val compiler = when (targetPlatform) {
+        val compilerForPlatform = when (targetPlatform) {
             CompileService.TargetPlatform.JVM -> K2JVMCompiler()
             CompileService.TargetPlatform.JS -> K2JSCompiler()
             CompileService.TargetPlatform.WASM -> KotlinWasmCompiler()
             CompileService.TargetPlatform.METADATA -> KotlinMetadataCompiler()
-        } as CLICompiler<CommonCompilerArguments>
+        }
+        @Suppress("UNCHECKED_CAST")
+        val compiler = compilerForPlatform as CLICompiler<CommonCompilerArguments>
 
         val k2PlatformArgs = compiler.createArguments()
         parseCommandLineArguments(compilerArguments.asList(), k2PlatformArgs)

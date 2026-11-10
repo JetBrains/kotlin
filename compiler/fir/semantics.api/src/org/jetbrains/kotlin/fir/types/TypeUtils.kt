@@ -173,8 +173,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         withConeTypeEntry("type", this@withArguments)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
+    val result = when (this) {
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, arguments, isMarkedNullable, attributes)
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withArguments(arguments))
         is ConeRawType -> ConeRawType.create(lowerBound.withArguments(arguments), upperBound.withArguments(arguments))
@@ -188,8 +187,10 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         is ConeIntegerLiteralType,
         is ConeCapturedType,
         is ConeTypeParameterType,
-        -> error()
-    } as T
+            -> error()
+    }
+    @Suppress("UNCHECKED_CAST")
+    return result as T
 }
 
 inline fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection) -> ConeTypeProjection): T {
@@ -204,8 +205,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         return this
     }
 
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
+    val result = when (this) {
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isMarkedNullable, attributes)
         is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, delegatedType, typeArguments, attributes, nullable, lookupTag)
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withAttributes(attributes))
@@ -222,7 +222,9 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         // Attributes for stub types are not supported, and it's not obvious if it should
         is ConeStubType -> this
         is ConeIntegerLiteralType -> this
-    } as T
+    }
+    @Suppress("UNCHECKED_CAST")
+    return result as T
 }
 
 fun <T : ConeKotlinType> T.removeAnnotations(): T {
@@ -282,8 +284,7 @@ fun <T : ConeKotlinType> T.withNullability(
         return this
     }
 
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
+    val result = when (this) {
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullable, theAttributes)
         is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, delegatedType, typeArguments, theAttributes, nullable, lookupTag)
         is ConeTypeParameterType -> ConeTypeParameterType(lookupTag, nullable, theAttributes)
@@ -332,7 +333,9 @@ fun <T : ConeKotlinType> T.withNullability(
 
         is ConeIntegerLiteralConstantType -> ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, nullable)
         is ConeIntegerConstantOperatorType -> ConeIntegerConstantOperatorTypeImpl(isUnsigned, nullable)
-    } as T
+    }
+    @Suppress("UNCHECKED_CAST")
+    return result as T
 }
 
 /**
