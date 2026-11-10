@@ -266,14 +266,14 @@ private fun KClassImpl<*>.getDeclaredNonStaticMethodsFromJavaClass(name: String?
 private fun KClassImpl<*>.getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
     supertypes.flatMap { supertype -> (supertype.classifier as? KClass<*>)?.memberProperties?.filter { it.name == name }.orEmpty() }
 
-private fun doesClassOverrideProperty(
+private fun KClassImpl<*>.doesClassOverrideProperty(
     property: KProperty1<*, *>,
     functions: (String) -> Collection<ReflectKFunction>,
 ): Boolean {
     // Java fields cannot be overridden.
     if (property is JavaFieldKProperty<*>) return false
 
-    val getter = property.findGetterOverride(functions)
+    val getter = property.findGetterOverride(this, functions)
     val setter = property.findSetterOverride(functions)
 
     if (getter == null) return false
@@ -282,8 +282,11 @@ private fun doesClassOverrideProperty(
     return setter != null && setter.modality == getter.modality
 }
 
-private fun KProperty1<*, *>.findGetterOverride(functions: (String) -> Collection<ReflectKFunction>): ReflectKFunction? =
-    findGetterByName(JvmAbi.getterName(name), functions)
+private fun KProperty1<*, *>.findGetterOverride(
+    container: KDeclarationContainerImpl,
+    functions: (String) -> Collection<ReflectKFunction>,
+): ReflectKFunction? =
+    findGetterByName(getBuiltinSpecialPropertyGetterName(name, container) ?: JvmAbi.getterName(name), functions)
 
 private fun KProperty1<*, *>.findGetterByName(
     getterName: String,
@@ -417,7 +420,7 @@ private fun KClassImpl<*>.createPropertyByMethods(
 ): ReflectKProperty<*>? {
     if (!doesClassOverrideProperty(overriddenProperty, functions)) return null
 
-    val getterMethod = overriddenProperty.findGetterOverride(functions)!!
+    val getterMethod = overriddenProperty.findGetterOverride(this, functions)!!
     overriddenProperty as ReflectKProperty<*>
     return if (overriddenProperty is KMutableProperty<*>)
         JavaForKotlinOverrideKMutableProperty1<Any, Any>(
