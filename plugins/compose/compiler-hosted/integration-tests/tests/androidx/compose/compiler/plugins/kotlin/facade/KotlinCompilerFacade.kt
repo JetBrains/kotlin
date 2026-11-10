@@ -116,6 +116,8 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 messageCollector = TestMessageCollector
                 updateConfiguration()
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
+                // `K2CompilerFacade` currently builds FIR from Kt PSI files (`buildResolveAndCheckFirFromKtFiles`), KT-91411
+                parserMode = ParserMode.Psi
             }
 
             @OptIn(CoreEnvironmentDeprecation::class)

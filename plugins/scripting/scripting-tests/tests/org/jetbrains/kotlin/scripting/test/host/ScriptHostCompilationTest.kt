@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.test.CapturedHostProperties
@@ -186,6 +188,7 @@ class ScriptHostCompilationTest {
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
             useFir = true
+            parserMode = ParserMode.Psi // `ScriptJvmCompilerFromEnvironment` builds FIR from PSI files, KT-91411
             updateWithBaseCompilerArguments()
             @OptIn(MessageCollectorAccess::class) // write access
             this.messageCollector = collector

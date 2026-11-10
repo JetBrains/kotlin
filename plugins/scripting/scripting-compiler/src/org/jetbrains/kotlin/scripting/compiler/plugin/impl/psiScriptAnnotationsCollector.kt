@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -146,6 +148,7 @@ private fun createAnnotationResolutionSession(
 ): FirSession {
     val configuration = CompilerConfiguration.create().apply {
         put(JVMConfigurationKeys.NO_JDK, true)
+        parserMode = ParserMode.Psi // The annotations are resolved from the PSI of the script (`KtFileScriptSource`), KT-91411
         scriptingHostConfiguration = hostConfiguration
     }
     val fileManager = VirtualFileManager.getInstance()
