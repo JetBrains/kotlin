@@ -14,6 +14,10 @@ Tower Data Context:
         Scope: FirPackageMemberScope
     Element 5
         Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol x: R|kotlin/Any?|
 
 FILE: [ResolvedTo(IMPORTS)] contractSyntaxV2Parameter.kt
     @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Any?|): R|kotlin/Unit|
