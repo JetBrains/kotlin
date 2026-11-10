@@ -6,11 +6,18 @@
 package org.jetbrains.kotlin.testFederation
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.mapProperty
+import java.io.File
 
 /**
  * Resolves the [TestFederationPlan] and prints it to the build log.
@@ -38,6 +45,10 @@ open class PlanTestFederationTask : DefaultTask() {
     @get:Optional
     val forcedSubsets = project.providers.gradleProperty("forcedSubsets").map { it.toTestSubsets() }
 
+    @get:InputDirectory
+    internal val sourceStaticFiles: DirectoryProperty = project.objects.directoryProperty()
+        .value(project.layout.projectDirectory.dir("repo/gradle-build-conventions/test-federation-convention/static"))
+
     @OutputFile
     val diffFile: RegularFileProperty = project.objects.fileProperty()
         .value(project.layout.projectDirectory.file(".test-federation.diff.txt"))
@@ -55,6 +66,20 @@ open class PlanTestFederationTask : DefaultTask() {
     @OutputFile
     val htmlPlanFile: RegularFileProperty = project.objects.fileProperty()
         .value(project.layout.projectDirectory.file(".test-federation.plan.html"))
+
+    @get:OutputFiles
+    val staticPlanFiles: MapProperty<String, File> = project.objects.mapProperty<String, File>()
+        .also { property ->
+            property.putAll(
+                sourceStaticFiles.map { directory ->
+                    staticFilesOf(directory).associate { staticFile ->
+                        staticPlanFileName(staticFile) to staticPlanFile(staticFile)
+                    }
+                }
+            )
+        }
+
+    private val projectDirectory: File = project.layout.projectDirectory.asFile
 
     init {
         usesService(project.featureBranchDiffService)
@@ -86,5 +111,16 @@ open class PlanTestFederationTask : DefaultTask() {
         logger.quiet(plan.renderAscii())
         propertiesPlanFile.get().asFile.writeText(plan.renderProperties())
         htmlPlanFile.get().asFile.writeText(plan.renderHtml())
+        val planFiles = staticPlanFiles.get()
+        staticFilesOf(sourceStaticFiles.get()).forEach { staticFile ->
+            staticFile.copyTo(planFiles.getValue(staticPlanFileName(staticFile)), overwrite = true)
+        }
     }
+
+    private fun staticFilesOf(directory: Directory): List<File> =
+        directory.asFile.listFiles().orEmpty().filter { it.isFile }
+
+    private fun staticPlanFileName(staticFile: File) = ".test-federation.${staticFile.name}"
+
+    private fun staticPlanFile(staticFile: File) = projectDirectory.resolve(staticPlanFileName(staticFile))
 }
