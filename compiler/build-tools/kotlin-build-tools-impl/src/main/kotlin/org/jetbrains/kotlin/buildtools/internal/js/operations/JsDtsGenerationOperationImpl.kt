@@ -86,6 +86,12 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val outputName = this[OUTPUT_NAME] ?: mainModule.config.outputName ?: mainModule.name
         val moduleName = this[MAIN_MODULE_NAME] ?: this[OUTPUT_NAME] ?: mainModule.name
 
+        val tsCompilationStrategy = this[TS_COMPILATION_STRATEGY]?.name?.let(TsCompilationStrategy::valueOf)
+            ?: when (this[GRANULARITY]) {
+                JsDtsGranularity.PER_FILE -> TsCompilationStrategy.EACH_FILE
+                JsDtsGranularity.PER_MODULE, JsDtsGranularity.WHOLE_PROGRAM -> TsCompilationStrategy.MERGED
+            }
+
         val typeScriptExportConfig = TypeScriptExportConfig(
             targetPlatform = JsPlatforms.defaultJsPlatform,
             artifactConfiguration = WebArtifactConfiguration(
@@ -94,7 +100,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
                 outputDirectory = outputDirectory.toFile(),
                 outputName = outputName,
                 granularity = JsGenerationGranularity.valueOf(this[GRANULARITY].name),
-                tsCompilationStrategy = TsCompilationStrategy.valueOf(this[TS_COMPILATION_STRATEGY].name),
+                tsCompilationStrategy = tsCompilationStrategy,
                 production = false,
                 minimizedMemberNames = false,
             ),
@@ -188,7 +194,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
 
     companion object {
         private val defaultArgsReference = K2JSCompilerArguments()
-        val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy> = Option("TS_COMPILATION_STRATEGY", JsDtsCompilationStrategy.MERGED)
+        val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy?> = Option("TS_COMPILATION_STRATEGY", null)
         val GRANULARITY: Option<JsDtsGranularity> = Option("GRANULARITY", JsDtsGranularity.WHOLE_PROGRAM)
 
         @Suppress("EnumValuesSoftDeprecate")
