@@ -62,6 +62,13 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             configuration.dumpInferenceLogs = true
         }
 
+        when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
+            FirParser.Psi -> configuration.parserMode = ParserMode.Psi
+            FirParser.LightTree -> configuration.parserMode = ParserMode.LightTree
+            FirParser.KmpTree -> configuration.parserMode = ParserMode.KmpTree
+            null -> {}
+        }
+
         setupK2CliConfiguration(module, configuration)
     }
 
@@ -70,6 +77,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         configuration: CompilerConfiguration,
     ) {
         if (!testServices.cliBasedFacadesEnabled) return
+
         if (
             module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
             module.isLeafModuleInMppGraph(testServices)
@@ -144,13 +152,6 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
 
         if (FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS in module.directives) {
             configuration.useFirExperimentalCheckers = true
-        }
-        // TODO: KT-89415
-        when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
-            FirParser.Psi -> configuration.parserMode = ParserMode.Psi
-            FirParser.LightTree -> configuration.parserMode = ParserMode.LightTree
-            FirParser.KmpTree -> configuration.parserMode = ParserMode.KmpTree
-            null -> {}
         }
         configuration.allowNoSourceFiles = true
         configuration.allowAnyScriptsInSourceRoots = true
