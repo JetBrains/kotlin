@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.allowAnyScriptsInSourceRoots
 import org.jetbrains.kotlin.config.disableStandardScriptDefinition
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
@@ -111,10 +112,40 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 }
             else null  // TODO: support non-file sources (KT-83973)
 
+        val acceptStandalone = configuration.allowAnyScriptsInSourceRoots
+
+        fun SourceCode.isAcceptedOrReport(): Boolean {
+            val scriptDefinition = definitionProvider.findBaseCompilationConfiguration(this)?.valueOr { failure ->
+                val reportsDescription = failure.reports.joinToString(postfix = "\n") { report -> report.render(withSeverity = false) }
+                if (acceptStandalone) {
+                    configuration.report(
+                        CliDiagnostics.SCRIPTING_WARNING,
+                        "Unable to find script definition for ${locationId ?: "script"}: $reportsDescription"
+                    )
+                }
+                return false
+            } ?: run {
+                if (acceptStandalone) {
+                    configuration.report(
+                        CliDiagnostics.SCRIPTING_WARNING,
+                        "Unable to find script definition for ${locationId ?: "script"}"
+                    )
+                }
+                return false
+            }
+            if (acceptStandalone) return true
+            return when (scriptDefinition[ScriptCompilationConfiguration.isStandalone]) {
+                false -> true
+                // standalone scripts are silently ignored per KT-52525
+                true -> false
+                // by default isStandalone flag is true
+                null -> false
+            }
+        }
 
         val sourcesToFiles = sources
             .associateBy(KtSourceFile::toSourceCode)
-            .filterTo(mutableMapOf()) { definitionProvider.isScript(it.key) }
+            .filterTo(mutableMapOf()) { it.key.isAcceptedOrReport() }
 
         val remainingSources = ArrayList<SourceCode>().also { it.addAll(sourcesToFiles.keys) }
         val knownSources = sourcesToFiles.keys.mapTo(mutableSetOf()) { it.locationId?.toSystemIndependentScriptPath() }
@@ -123,7 +154,9 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
         while (remainingSources.isNotEmpty()) {
             val sourceCode = remainingSources.pop()
             sourceCode.collectImports()?.let { imports ->
-                imports.filter { knownSources.add(it.locationId?.toSystemIndependentScriptPath()) }.forEach { newImport ->
+                imports.filter {
+                    knownSources.add(it.locationId?.toSystemIndependentScriptPath()) && it.isAcceptedOrReport()
+                }.forEach { newImport ->
                     remainingSources.add(newImport)
                     toSourceFile(newImport)?.let {
                         sourcesToFiles[newImport] = it
