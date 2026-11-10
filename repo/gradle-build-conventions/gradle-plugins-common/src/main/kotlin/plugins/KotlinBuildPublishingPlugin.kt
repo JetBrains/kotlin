@@ -6,6 +6,7 @@
 package plugins
 
 import capitalize
+import dev.adamko.gradle.dev_publish.DevPublishPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
@@ -187,6 +188,8 @@ fun Project.configureDefaultPublishing(
         apply<SigningPlugin>()
         configureSigning()
     }
+
+    apply<DevPublishPlugin>()
 
     tasks.register("install") {
         group = "publishing"

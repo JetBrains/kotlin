@@ -6,6 +6,7 @@ gradle-custom-user-data = "2.4.0"
 develocity = "4.3.3"
 develocity-plugin-adapter = "1.2.1"
 gradle-plugin-publish = "2.1.1"
+dev-publish = "1.2.0"
 gradle-crypto-checksum = "1.4.0"
 # The version for foojay should be synced with the version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "1.0.0"
@@ -131,6 +132,7 @@ kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-seria
 kotlinx-schema-generator-json = { module = "org.jetbrains.kotlinx:kotlinx-schema-generator-json", version.ref = "kotlinx-schema" }
 kotlinx-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinx-benchmark" }
 shadow-gradlePlugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
+dev-publish-gradlePlugin = { module = "dev.adamko.gradle:dev-publish-plugin", version.ref = "dev-publish" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
 proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
 node-gradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version.ref = "gradle-node-plugin" }

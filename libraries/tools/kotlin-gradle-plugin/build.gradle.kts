@@ -605,6 +605,7 @@ testing {
                 }
                 implementation(intellijPlatformUtil())
                 implementation(libs.junit.jupiter.engine)
+                implementation(devPublish.dependency())
 
                 compileOnly(libs.android.gradle.plugin.gradle)
                 compileOnly(libs.android.gradle.plugin.gradle.api)
@@ -641,17 +642,6 @@ testing {
                             systemProperty("kotlin.native.home", distribution.get().root)
                         }
                     }
-
-                    // Publish Kotlin build artifacts to <root>/build/repo and pass its path to the test JVM.
-                    // Content is tracked via classpath normalization (jar/metadata hashes, no absolute paths).
-                    // Both dev and CI use the same path — no maven.repo.local involved.
-                    dependsOnKotlinGradlePluginPublishToBuildRepo()
-                    val buildRepoDir = rootProject.isolated.projectDirectory.dir("build/repo")
-                    addClasspathDirectoryProperty(
-                        directory = buildRepoDir,
-                        classpath = project.fileTree(buildRepoDir) { exclude("**/*.md5", "**/*.sha1") },
-                        property = "kotlinBuildRepo",
-                    )
 
                     androidSdkProvisioner {
                         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
@@ -840,4 +830,8 @@ kotlin.sourceSets.common {
 node {
     version = nodejsVersion
     distBaseUrl.set(null as String?)
+}
+
+dependencies {
+    kotlinGradlePluginAndItsRequired.forEach { "devPublication"(project(it)) }
 }
