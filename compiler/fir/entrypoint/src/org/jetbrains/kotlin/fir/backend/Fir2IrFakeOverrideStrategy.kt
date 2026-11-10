@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.backend.common.actualizer.ClassActualizationInfo
 import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolver
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
@@ -47,7 +46,6 @@ class Fir2IrFakeOverrideStrategy(
     override val isGenericClashFromSameSupertypeAllowed: Boolean,
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
     private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
-    private val leafModule: IrModuleFragment,
 ) : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
     private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()
 
@@ -82,7 +80,7 @@ class Fir2IrFakeOverrideStrategy(
          * backend point of view all sources belong to the same module. So in this situation we also should
          * consider if the other declaration is visible from the leaf source module.
          */
-        val leafModuleDescriptor = leafModule.descriptor as FirModuleDescriptor
+        val leafModuleDescriptor = (memberModule.leafModule?.descriptor as FirModuleDescriptor?) ?: return false
         if (thisModuleDesc.session.kind == FirSession.Kind.Source && thisModuleDesc != leafModuleDescriptor) {
             return leafModuleDescriptor.shouldSeeInternalsOf(memberModuleDesc)
         }
