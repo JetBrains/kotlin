@@ -126,7 +126,7 @@ class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoad
             extensionRegistrars = emptyList(),
             isCommonSource = { false },
             fileBelongsToModule = { _, _ -> false },
-            icData = null
+            incrementalDataProvider = null
         )
     }
 }
@@ -161,7 +161,7 @@ class KlibWasmJsLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
             extensionRegistrars = emptyList(),
             isCommonSource = { false },
             fileBelongsToModule = { _, _ -> false },
-            icData = null
+            incrementalDataProvider = null
         )
     }
 }

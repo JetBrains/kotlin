@@ -18,8 +18,14 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFuncti
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.AbstractFirMetadataSessionFactory.JarMetadataProviderComponents
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.KmpIncrementalDataProvider
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.SerializedIrFile
+import org.jetbrains.kotlin.library.impl.klibIrComponentFromFiles
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -31,7 +37,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
@@ -64,11 +69,11 @@ fun <F> prepareJsSessions(
     extensionRegistrars: List<FirExtensionRegistrar>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
-    icData: KlibIcData?,
+    incrementalDataProvider: IncrementalDataProvider?,
 ): List<SessionWithSources<F>> {
     return prepareKlibSessions(
         FirJsSessionFactory, JsPlatforms.defaultJsPlatform, files, configuration, rootModuleName, resolvedLibraries,
-        libraryList, extensionRegistrars, isCommonSource, fileBelongsToModule, metadataCompilationMode = false, icData
+        libraryList, extensionRegistrars, isCommonSource, fileBelongsToModule, metadataCompilationMode = false, incrementalDataProvider
     )
 }
 
@@ -93,7 +98,7 @@ fun <F> prepareNativeSessions(
     return prepareKlibSessions(
         if (metadataCompilationMode) FirNativeSessionFactory.ForMetadata else FirNativeSessionFactory,
         NativePlatforms.unspecifiedNativePlatform, files, configuration, rootModuleName, resolvedLibraries,
-        libraryList, extensionRegistrars, isCommonSource, fileBelongsToModule, metadataCompilationMode, icData = null
+        libraryList, extensionRegistrars, isCommonSource, fileBelongsToModule, metadataCompilationMode, incrementalDataProvider = null
     )
 }
 
@@ -113,15 +118,25 @@ fun <F> prepareWasmSessions(
     extensionRegistrars: List<FirExtensionRegistrar>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
-    icData: KlibIcData?,
+    incrementalDataProvider: IncrementalDataProvider?,
 ): List<SessionWithSources<F>> {
     val platform = when (configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
         WasmTarget.JS -> WasmPlatforms.wasmJs
         WasmTarget.WASI -> WasmPlatforms.wasmWasi
     }
     return prepareKlibSessions(
-        FirWasmSessionFactory.of(configuration.wasmTarget), platform, files, configuration, rootModuleName, resolvedLibraries, libraryList, extensionRegistrars,
-        isCommonSource, fileBelongsToModule, metadataCompilationMode = false, icData,
+        FirWasmSessionFactory.of(configuration.wasmTarget),
+        platform,
+        files,
+        configuration,
+        rootModuleName,
+        resolvedLibraries,
+        libraryList,
+        extensionRegistrars,
+        isCommonSource,
+        fileBelongsToModule,
+        metadataCompilationMode = false,
+        incrementalDataProvider,
     )
 }
 
@@ -137,7 +152,7 @@ private fun <F> prepareKlibSessions(
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
     metadataCompilationMode: Boolean,
-    icData: KlibIcData?,
+    incrementalDataProvider: IncrementalDataProvider?,
 ): List<SessionWithSources<F>> {
     return SessionConstructionUtils.prepareSessions(
         files, configuration, rootModuleName, platform,
@@ -170,7 +185,7 @@ private fun <F> prepareKlibSessions(
                 extensionRegistrars,
                 configuration,
                 kmpModuleKind,
-                icData = icData,
+                icData = incrementalDataProvider?.toKlibIcData(moduleData, kmpModuleKind),
                 init = sessionConfigurator,
             )
         },
@@ -179,6 +194,42 @@ private fun <F> prepareKlibSessions(
         },
     )
 }
+
+private fun IncrementalDataProvider.toKlibIcData(moduleData: FirModuleData, kmpModuleKind: KmpModuleKind): KlibIcData =
+    when (kmpModuleKind) {
+        KmpModuleKind.SingleModule,
+        KmpModuleKind.LeafRegularModule,
+        KmpModuleKind.LeafHmppModule,
+            -> {
+            val inlineData = serializedIrInlineFiles.entries.map {
+                SerializedIrFile(
+                    it.value.fileData,
+                    FqName.ROOT.asString(), // the exact `fqName` and `path` do not matter for our use case
+                    it.key.path,
+                    it.value.types,
+                    it.value.signatures,
+                    it.value.strings,
+                    it.value.bodies,
+                    it.value.declarations,
+                    it.value.debugInfo,
+                    it.value.fileEntries
+                )
+            }
+            KlibIcData(
+                KlibIcMetadataComponent(compiledPackageParts.mapValues { [_, result] -> result.metadata }),
+                klibIrComponentFromFiles(inlineData)
+            )
+        }
+
+        KmpModuleKind.NonLeafRegularModule,
+        KmpModuleKind.NonLeafHmppModule,
+            -> {
+            val kmpProvider = this as? KmpIncrementalDataProvider
+                ?: error("Non-leaf KMP module '${moduleData.name}' requires a KmpIncrementalDataProvider, got ${this::class.simpleName}")
+
+            KlibIcData(KlibIcMetadataComponent(kmpProvider.metadata(moduleData.name.asStringStripSpecialMarkers())))
+        }
+    }
 
 /**
  * Creates library session and sources session for Common platform (for metadata compilation)
@@ -308,7 +359,10 @@ object SessionConstructionUtils {
         val extraAnalysisMode = configuration.useFirExtraCheckers
         val experimentalAnalysisMode = configuration.useFirExperimentalCheckers
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
-            registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider)
+            registerComponent(
+                FirBuiltinSyntheticFunctionInterfaceProvider::class,
+                sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider
+            )
 
             if (extraAnalysisMode) {
                 registerExtraCommonCheckers()
