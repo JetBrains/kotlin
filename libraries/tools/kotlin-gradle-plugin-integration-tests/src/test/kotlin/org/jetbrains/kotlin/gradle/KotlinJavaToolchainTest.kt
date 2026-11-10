@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
-import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
@@ -676,7 +675,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             //language=properties
             gradleProperties.append(
@@ -697,7 +695,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build(":compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
-                assertCompilerArgument(":compileKotlin", "-jvm-target 11", logLevel = LogLevel.DEBUG)
+                assertCompilerArgument(":compileKotlin", "-jvm-target 11")
             }
         }
     }
@@ -715,7 +713,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             "android".fullProjectName,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+                .copy(androidVersion = agpVersion),
             buildJdk = providedJdk.location
         ) {
             buildGradle.appendText(
@@ -737,7 +735,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build(":compileDebugKotlin") {
                 assertTasksExecuted(":compileDebugKotlin")
-                assertCompilerArgument(":compileDebugKotlin", "-jvm-target 11", logLevel = LogLevel.DEBUG)
+                assertCompilerArgument(":compileDebugKotlin", "-jvm-target 11")
             }
         }
     }
