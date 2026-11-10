@@ -9,13 +9,12 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.KtNodeTypes.ANNOTATION_ENTRY
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.util.getChildren
 
@@ -33,14 +32,7 @@ object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalType
 
     context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkValOrVarKeyword(source: KtSourceElement) {
-        val keyword = when (source) {
-            is KtPsiSourceElement ->
-                (source.psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.toKtPsiSourceElement()
-
-            is KtLightSourceElement ->
-                source.treeStructure.valOrVarKeyword(source.lighterASTNode)?.toKtLightSourceElement(source.treeStructure)
-
-        } ?: return
+        val keyword = withSyntax { source.findValOrVarKeywordSource() } ?: return
 
         reporter.reportOn(
             keyword,

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -30,12 +29,9 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
-import org.jetbrains.kotlin.util.getChildren
 
 object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -194,37 +190,15 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
         val delegatedTypeRef = (superTypeRef as? FirResolvedTypeRef)?.delegatedTypeRef ?: return
         if (delegatedTypeRef !is FirFunctionTypeRef) return
         for (parameter in delegatedTypeRef.parameters) {
-            if (parameter.name != null) {
-                val source = parameter.findSourceForParameterName() ?: continue
-                reporter.reportOn(
-                    source,
-                    FirErrors.UNSUPPORTED,
-                    "Named parameter in function type as supertype is unsupported."
-                )
-            }
-        }
-    }
-
-    private fun FirFunctionTypeParameter.findSourceForParameterName(): KtSourceElement? {
-        val name = this.name ?: return null
-        if (source is KtLightSourceElement) {
-            val treeStructure = source.treeStructure
-            val nodes = source.lighterASTNode.getChildren(treeStructure)
-            val node = nodes.find { it.tokenType == KtTokens.IDENTIFIER && treeStructure.toString(it) == name.identifier } ?: return null
-
-            return node.toKtLightSourceElement(
-                treeStructure,
-                startOffset = node.startOffset,
-                endOffset = node.endOffset
+            val name = parameter.name ?: continue
+            val source = withSyntax { parameter.source.findParameterNameSource(name) } ?: continue
+            reporter.reportOn(
+                source,
+                FirErrors.UNSUPPORTED,
+                "Named parameter in function type as supertype is unsupported."
             )
-        } else {
-            val source = source
-            require(source is KtPsiSourceElement)
-            val psi = source.psi.findDescendantOfType<KtParameter> { it.nameAsName == name } ?: return null
-            return psi.nameIdentifier?.toKtPsiSourceElement()
         }
     }
-
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDelegationWithoutPrimaryConstructor(

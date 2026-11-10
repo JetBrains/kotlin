@@ -5,62 +5,28 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extra
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.lang.PsiBuilder
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirStringConcatenationCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.kotlin.util.getChildren
 
 object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirStringConcatenationCall) {
         for (argumentExpression in expression.arguments) {
             if (argumentExpression.resolvedType.fullyExpandedType().isString &&
-                argumentExpression.stringParentChildrenCount() == 1 // there is no more children in original string template
+                withSyntax { argumentExpression.source?.getContainingStringTemplateEntriesCount() } == 1 // there is no more children in original string template
             ) {
                 reporter.reportOn(argumentExpression.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE)
             }
-        }
-    }
-
-    private fun FirStatement.stringParentChildrenCount(): Int? {
-        return when (val source = source) {
-            is KtPsiSourceElement -> source.psi.stringParentChildrenCount()
-            is KtLightSourceElement -> source.lighterASTNode.stringParentChildrenCount(source)
-            null -> null
-        }
-    }
-
-    private fun PsiElement.stringParentChildrenCount(): Int? {
-        return when (val parent = parent) {
-            is KtStringTemplateExpression -> parent.children.size
-            null -> null
-            else -> parent.stringParentChildrenCount()
-        }
-    }
-
-    private fun LighterASTNode.stringParentChildrenCount(source: KtLightSourceElement): Int? {
-        val parent = source.treeStructure.getParent(this)
-        return if (parent != null && parent.tokenType == KtNodeTypes.STRING_TEMPLATE) {
-            val childrenOfParent = parent.getChildren(source.treeStructure)
-            childrenOfParent.filter { it is PsiBuilder.Marker }.size
-        } else {
-            parent?.stringParentChildrenCount(source)
         }
     }
 }

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import com.intellij.lang.LighterASTTokenNode
-import com.intellij.psi.TokenType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -36,11 +34,11 @@ import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -48,7 +46,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
-import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -789,31 +786,10 @@ private fun inapplicableNullableReceiver(
 }
 
 private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, session: FirSession): KtDiagnostic? {
-    fun KtLightSourceElement.isTrailingLambdaOnNewLine(): Boolean {
-        var parent = treeStructure.getParent(this.lighterASTNode) ?: return false
-        if (parent.tokenType == KtNodeTypes.LABELED_EXPRESSION) {
-            parent = treeStructure.getParent(parent) ?: return false
-        }
-        if (parent.tokenType == KtNodeTypes.LAMBDA_ARGUMENT) {
-            // Only trivia separates the lambda from the rest of the call, so the walk stops at the first preceding element
-            var prevSibling = parent.getPreviousSibling(treeStructure)
-            while (prevSibling is LighterASTTokenNode) {
-                if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling.text.contains("\n")) {
-                    return true
-                }
-                prevSibling = prevSibling.getPreviousSibling(treeStructure)
-            }
-        }
-        return false
-    }
-
-    return when (val argumentSource = argument.source) {
-        is KtPsiSourceElement if argumentSource.psi.let { it is KtLambdaExpression && it.isTrailingLambdaOnNewLine }
-            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
-        is KtLightSourceElement if argumentSource.isTrailingLambdaOnNewLine()
-            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
-        else
-            -> null
+    val argumentSource = argument.source ?: return null
+    val isTrailingLambdaOnNewLine = with(session.syntaxComponent) { argumentSource.isTrailingLambdaOnNewLine() }
+    return runIf(isTrailingLambdaOnNewLine) {
+        FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
     }
 }
 
