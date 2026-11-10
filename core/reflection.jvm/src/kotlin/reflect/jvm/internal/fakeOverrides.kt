@@ -65,7 +65,7 @@ internal fun isNonTransitiveMember(kClass: MemberContainer<*>, member: ReflectKC
  * of their parent classes' maps.
  */
 internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name: String): MembersJavaSignatureMap {
-    val declaredMembers = kClass.getDeclaredMembersByName(name).filterNot { isNonTransitiveMember(kClass, it) }
+    val (nonTransitiveMembers, declaredMembers) = kClass.getDeclaredMembersByName(name).partition { isNonTransitiveMember(kClass, it) }
     val declaredKotlinSignatures =
         if (kClass.isKotlin) declaredMembers.mapTo(HashSet()) { it.toEquatableCallableSignature(EqualityMode.KotlinSignature) }
         else emptySet()
@@ -86,6 +86,12 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
             val javaSignature = kotlinSignature.withEqualityMode(javaSignatureMode)
             val existingMember = result[javaSignature]
             result[javaSignature] = if (existingMember == null) member else createIntersectionOverride(existingMember, member)
+        }
+    }
+    for (member in nonTransitiveMembers) {
+        // A private Java field is not inherited in subclasses, but it hides fields with the same name inherited from supertypes.
+        if (member.isJavaField) {
+            result.remove(member.toEquatableCallableSignature(javaSignatureMode))
         }
     }
     for (member in declaredMembers) {
