@@ -76,7 +76,7 @@ abstract class AbstractFirWasmTest(
             defaultDirectives {
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
-                FirDiagnosticsDirectives.FIR_PARSER with FirParser.Psi
+                FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
             }
 
             firHandlersStep {
