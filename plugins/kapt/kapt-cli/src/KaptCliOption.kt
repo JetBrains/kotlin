@@ -237,8 +237,8 @@ enum class KaptCliOption(
     STUB_GENERATION_SCHEME_OPTION(
         "stubGenerationScheme",
         "<direct|jtree>",
-        "Stub generation scheme: 'jtree' (default) is the historical scheme that uses javac AST; " +
-                "'direct' is a new experimental scheme that generates Java text directly.",
+        "Stub generation scheme: 'direct' (default) generates Java text directly; " +
+                "'jtree' is the historical scheme that uses javac AST.",
         cliToolOption = CliToolOption("-Kapt-stub-generation-scheme", VALUE)
     ),
 
