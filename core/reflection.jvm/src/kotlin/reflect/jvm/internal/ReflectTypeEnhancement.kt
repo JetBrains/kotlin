@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
+import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.types.*
 
 internal class ReflectSignatureParts(
@@ -149,7 +146,7 @@ private fun AbstractKType.enhanceInflexible(
 
     val typeConstructor = enhancedClassifier ?: originalClass
     var globalArgIndex = index + 1
-    val enhancedArguments = arguments.map { arg ->
+    val enhancedArguments = arguments.mapIndexed { argIndex, arg ->
         val enhanced = when {
             !shouldEnhanceArguments -> EnhancementResult(null, 0)
             arg != KTypeProjection.STAR ->
@@ -169,8 +166,8 @@ private fun AbstractKType.enhanceInflexible(
         }
         globalArgIndex += enhanced.subtreeSize
         when {
-            enhanced.type != null -> KTypeProjection(arg.variance, enhanced.type)
-            enhancedClassifier != null && arg != KTypeProjection.STAR -> KTypeProjection(arg.variance, arg.type)
+            enhanced.type != null -> createProjection(enhanced.type, arg.variance, typeConstructor, argIndex)
+            enhancedClassifier != null && arg != KTypeProjection.STAR -> createProjection(arg.type, arg.variance, typeConstructor, argIndex)
             enhancedClassifier != null -> KTypeProjection.STAR
             else -> null
         }
@@ -194,6 +191,12 @@ private fun AbstractKType.enhanceInflexible(
     )
 
     return EnhancementResult(enhancedType, subtreeSize)
+}
+
+private fun createProjection(type: KType?, variance: KVariance?, typeConstructor: KClassifier, index: Int): KTypeProjection {
+    if (variance == null || variance == KVariance.INVARIANT) return KTypeProjection(variance, type)
+    val typeParameter = (typeConstructor as? KClass<*>)?.allTypeParameters()?.getOrNull(index)
+    return KTypeProjection(if (typeParameter?.variance == variance) KVariance.INVARIANT else variance, type)
 }
 
 private fun KClassifier.enhanceMutability(
