@@ -2559,6 +2559,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
+        val UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("candidate")
+            parameter<ClassId>("actualClass")
+        }
     }
 
     val RICH_ERRORS by object : DiagnosticGroup("Rich Errors") {

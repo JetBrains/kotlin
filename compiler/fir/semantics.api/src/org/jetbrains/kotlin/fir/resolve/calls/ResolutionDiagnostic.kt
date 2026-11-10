@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.inference.isError
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
@@ -147,8 +148,7 @@ object ResolvedWithSynthetic : ResolutionDiagnostic(K2_SYNTHETIC_RESOLVED)
 class InapplicableWrongReceiver : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
 
 class InapplicableCompanionExtensionReceiver(
-    val expectedType: ConeKotlinType,
-    val actualType: ConeKotlinType,
+    val actualClassId: ClassId,
 ) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
 
 object ReceiverIsNotAClass : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)

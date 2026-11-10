@@ -919,6 +919,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_GET_CLA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_RICH_ERROR_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_JVM_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_OF_NOTHING_IN_CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS
@@ -4266,6 +4267,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COMPANION_EXTENSION_NULLABLE_RECEIVER,
             "Companion extension receiver type cannot be nullable.",
+        )
+        map.put(
+            UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER,
+            "Companion extension ''{0}'' cannot be called on receiver class ''{1}''.",
+            SYMBOL,
+            CLASS_ID,
         )
         map.put(NON_ERROR_CLASS_EXTENDS_RICH_ERROR, "Non-error class cannot extend 'RichError'.")
         map.put(ERROR_CLASS_HAS_SUPERTYPE, "Error class cannot have any explicit supertypes except 'RichError'.")

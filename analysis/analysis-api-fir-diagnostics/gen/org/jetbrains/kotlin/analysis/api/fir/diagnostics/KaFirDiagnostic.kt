@@ -8637,6 +8637,16 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface UnresolvedReferenceWrongCompanionReceiver : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<UnresolvedReferenceWrongCompanionReceiver>
+            get() = UnresolvedReferenceWrongCompanionReceiver::class
+
+        public val candidate: KaSymbol
+        public val actualClass: ClassId
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NonErrorClassExtendsRichError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<NonErrorClassExtendsRichError>
             get() = NonErrorClassExtendsRichError::class
