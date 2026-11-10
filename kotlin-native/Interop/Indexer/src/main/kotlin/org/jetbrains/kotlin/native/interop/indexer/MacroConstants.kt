@@ -201,6 +201,7 @@ private fun processCodeSnippet(
     val kindsToSkip = setOf(CXCursorKind.CXCursor_CompoundStmt)
     var state = VisitorState.EXPECT_NODES_TO_SKIP
     var evalResultOrNull: CXEvalResult? = null
+    var stringLiteralValueOrNull: String? = null
     var typeOrNull: Type? = null
 
     val visitor: CursorVisitor = { cursor, _ ->
@@ -213,7 +214,11 @@ private fun processCodeSnippet(
             }
 
             state == VisitorState.EXPECT_VARIABLE_VALUE && clang_isExpression(kind) != 0 -> {
-                typeOrNull = typeConverter(clang_getCursorType(cursor))
+                val type = typeConverter(clang_getCursorType(cursor))
+                if (evalResultOrNull == null && type.canonicalIsPointerToChar()) {
+                    stringLiteralValueOrNull = clang_Cursor_getStringLiteralValue(cursor).convertAndDispose()
+                }
+                typeOrNull = type
                 state = VisitorState.EXPECT_END
                 CXChildVisitResult.CXChildVisit_Continue
             }
@@ -243,12 +248,17 @@ private fun processCodeSnippet(
 
         val type = typeOrNull!!
         return if (evalResultOrNull == null) {
-            // The macro cannot be evaluated as a constant so we will wrap it in a bridge.
-            when(type.unwrapTypedefs()) {
-                is PrimitiveType,
-                is PointerType,
-                is ObjCPointer -> WrappedMacroDef(name, type)
-                else -> null
+            val stringLiteralValue = stringLiteralValueOrNull
+            if (stringLiteralValue != null) {
+                StringConstantDef(name, type, stringLiteralValue)
+            } else {
+                // The macro cannot be evaluated as a constant so we will wrap it in a bridge.
+                when(type.unwrapTypedefs()) {
+                    is PrimitiveType,
+                    is PointerType,
+                    is ObjCPointer -> WrappedMacroDef(name, type)
+                    else -> null
+                }
             }
         } else {
             // Otherwise we can evaluate the expression and create a Kotlin constant for it.
