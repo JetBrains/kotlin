@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import java.util.IdentityHashMap
 
 internal class ElementsToShortenCollector(
     private val shortenOptions: ShortenOptions,
@@ -953,33 +954,38 @@ internal class ElementsToShortenCollector(
         }
     }
 
-    private fun KtElement.isInsideOf(another: KtElement): Boolean = another.textRange.contains(textRange)
+    /**
+     * The text range of the qualifier of each element in [typesToShorten] and [qualifiersToShorten].
+     * The PSI does not change while the collector runs, so each range is computed once.
+     */
+    private val collectedQualifierRanges = IdentityHashMap<ElementToShorten, TextRange>()
 
     /**
      * Remove entries from [typesToShorten] and [qualifiersToShorten] if their qualifiers will be shortened
-     * when we shorten [qualifier].
+     * when we shorten the qualifier at [qualifierRange].
      */
-    private fun removeRedundantElements(qualifier: KtElement) {
-        typesToShorten.removeAll { it.element.qualifier?.isInsideOf(qualifier) == true }
-        qualifiersToShorten.removeAll { it.element.receiverExpression.isInsideOf(qualifier) }
+    private fun removeRedundantElements(qualifierRange: TextRange) {
+        typesToShorten.removeAll { qualifierRange.contains(collectedQualifierRanges.getValue(it)) }
+        qualifiersToShorten.removeAll { qualifierRange.contains(collectedQualifierRanges.getValue(it)) }
     }
 
-    private fun KtElement.isAlreadyCollected(): Boolean {
-        val thisElement = this
-        return typesToShorten.any { shortenType ->
-            shortenType.element.qualifier?.let { thisElement.isInsideOf(it) } == true
-        } || qualifiersToShorten.any { shortenQualifier ->
-            thisElement.isInsideOf(shortenQualifier.element.receiverExpression)
-        }
-    }
+    private fun isAlreadyCollected(qualifierRange: TextRange): Boolean =
+        typesToShorten.any { collectedQualifierRanges.getValue(it).contains(qualifierRange) } ||
+                qualifiersToShorten.any { collectedQualifierRanges.getValue(it).contains(qualifierRange) }
 
     private fun addElementToShorten(elementInfoToShorten: ElementToShorten) {
-        val qualifier = elementInfoToShorten.element.getQualifier() ?: return
-        if (!qualifier.isAlreadyCollected()) {
-            removeRedundantElements(qualifier)
+        val qualifierRange = elementInfoToShorten.element.getQualifier()?.textRange ?: return
+        if (!isAlreadyCollected(qualifierRange)) {
+            removeRedundantElements(qualifierRange)
             when (elementInfoToShorten) {
-                is ShortenType -> typesToShorten.add(elementInfoToShorten)
-                is ShortenQualifier -> qualifiersToShorten.add(elementInfoToShorten)
+                is ShortenType -> {
+                    typesToShorten.add(elementInfoToShorten)
+                    collectedQualifierRanges[elementInfoToShorten] = qualifierRange
+                }
+                is ShortenQualifier -> {
+                    qualifiersToShorten.add(elementInfoToShorten)
+                    collectedQualifierRanges[elementInfoToShorten] = qualifierRange
+                }
                 is ShortenThisLabel -> labelsToShorten.add(elementInfoToShorten)
             }
         }
