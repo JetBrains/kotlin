@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.cli.common.allowNoSourceFiles
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPerformanceManagerFor
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.io.ZipFileSystemCacheableAccessor
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
@@ -432,6 +434,9 @@ abstract class AbstractInvalidationTest(
 
         @OptIn(MessageCollectorAccess::class) // write access
         configuration.messageCollector = messageCollector
+        // The configuration is a shallow copy, so without this, diagnostics from previous builds are reported again,
+        // and reporting them fails if their source files have since been deleted.
+        configuration.diagnosticsCollector = DiagnosticsCollectorImpl()
         configuration.addSourcesFromDir(sourceDir)
         configuration.produceKlibFile = true
         configuration.outputDir = outputKlibFile.parentFile
