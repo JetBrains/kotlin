@@ -3,10 +3,12 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -68,7 +70,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ADD_CACHE: NativeCompilerLinkingArgument<String?> =
+    public val X_ADD_CACHE: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_ADD_CACHE", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -100,7 +102,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_AUTO_CACHE_DIR: NativeCompilerLinkingArgument<String?> =
+    public val X_AUTO_CACHE_DIR: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_AUTO_CACHE_DIR", KotlinReleaseVersion(1, 8, 20))
 
     /**
@@ -111,7 +113,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_AUTO_CACHE_FROM: NativeCompilerLinkingArgument<Array<String>?> =
+    public val X_AUTO_CACHE_FROM: NativeCompilerLinkingArgument<List<Path>> =
         NativeCompilerLinkingArgument("X_AUTO_CACHE_FROM", KotlinReleaseVersion(1, 8, 20))
 
     /**
@@ -158,7 +160,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_CACHE_DIRECTORY: NativeCompilerLinkingArgument<Array<String>?> =
+    public val X_CACHE_DIRECTORY: NativeCompilerLinkingArgument<List<Path>> =
         NativeCompilerLinkingArgument("X_CACHE_DIRECTORY", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -188,7 +190,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_COMPILE_FROM_BITCODE: NativeCompilerLinkingArgument<String?> =
+    public val X_COMPILE_FROM_BITCODE: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_COMPILE_FROM_BITCODE", KotlinReleaseVersion(1, 9, 0))
 
     /**
@@ -231,7 +233,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_DUMP_BUILT_CACHES_TO: NativeCompilerLinkingArgument<String?> =
+    public val X_DUMP_BUILT_CACHES_TO: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_DUMP_BUILT_CACHES_TO", KotlinReleaseVersion(2, 4, 20))
 
     /**
@@ -241,7 +243,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_DUMP_TESTS_TO: NativeCompilerLinkingArgument<String?> =
+    public val X_DUMP_TESTS_TO: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_DUMP_TESTS_TO", KotlinReleaseVersion(1, 7, 0))
 
     /**
@@ -251,7 +253,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_EMIT_LAZY_OBJC_HEADER: NativeCompilerLinkingArgument<String?> =
+    public val X_EMIT_LAZY_OBJC_HEADER: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_EMIT_LAZY_OBJC_HEADER", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -262,7 +264,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_EXPORT_LIBRARY: NativeCompilerLinkingArgument<Array<String>?> =
+    public val X_EXPORT_LIBRARY: NativeCompilerLinkingArgument<List<Path>> =
         NativeCompilerLinkingArgument("X_EXPORT_LIBRARY", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -272,7 +274,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_EXTERNAL_DEPENDENCIES: NativeCompilerLinkingArgument<String?> =
+    public val X_EXTERNAL_DEPENDENCIES: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_EXTERNAL_DEPENDENCIES", KotlinReleaseVersion(2, 0, 0))
 
     /**
@@ -282,7 +284,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_FILE_TO_CACHE: NativeCompilerLinkingArgument<Array<String>?> =
+    public val X_FILE_TO_CACHE: NativeCompilerLinkingArgument<List<Path>> =
         NativeCompilerLinkingArgument("X_FILE_TO_CACHE", KotlinReleaseVersion(1, 8, 0))
 
     /**
@@ -337,7 +339,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IC_CACHE_DIR: NativeCompilerLinkingArgument<String?> =
+    public val X_IC_CACHE_DIR: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_IC_CACHE_DIR", KotlinReleaseVersion(1, 9, 20))
 
     /**
@@ -347,7 +349,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_INCLUDE: NativeCompilerLinkingArgument<Array<String>?> =
+    public val X_INCLUDE: NativeCompilerLinkingArgument<List<Path>> =
         NativeCompilerLinkingArgument("X_INCLUDE", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -480,7 +482,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_READ_DEPENDENCIES_FROM: NativeCompilerLinkingArgument<String?> =
+    public val X_READ_DEPENDENCIES_FROM: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_READ_DEPENDENCIES_FROM", KotlinReleaseVersion(1, 9, 0))
 
     /**
@@ -490,7 +492,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_RUNTIME: NativeCompilerLinkingArgument<String?> =
+    public val X_RUNTIME: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_RUNTIME", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -520,7 +522,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_SAVE_LLVM_IR_DIRECTORY: NativeCompilerLinkingArgument<String?> =
+    public val X_SAVE_LLVM_IR_DIRECTORY: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_SAVE_LLVM_IR_DIRECTORY", KotlinReleaseVersion(1, 9, 0))
 
     /**
@@ -540,7 +542,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_TEMPORARY_FILES_DIR: NativeCompilerLinkingArgument<String?> =
+    public val X_TEMPORARY_FILES_DIR: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_TEMPORARY_FILES_DIR", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -585,7 +587,7 @@ public interface NativeCompilerLinkingArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_WRITE_DEPENDENCIES_TO: NativeCompilerLinkingArgument<String?> =
+    public val X_WRITE_DEPENDENCIES_TO: NativeCompilerLinkingArgument<Path?> =
         NativeCompilerLinkingArgument("X_WRITE_DEPENDENCIES_TO", KotlinReleaseVersion(1, 9, 0))
 
     /**

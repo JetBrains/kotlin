@@ -3,9 +3,11 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
@@ -66,7 +68,7 @@ public interface NativeCompilerKlibArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_HEADER_KLIB_PATH: NativeCompilerKlibArgument<String?> =
+    public val X_HEADER_KLIB_PATH: NativeCompilerKlibArgument<Path?> =
         NativeCompilerKlibArgument("X_HEADER_KLIB_PATH", KotlinReleaseVersion(1, 9, 24))
 
     /**
@@ -86,7 +88,7 @@ public interface NativeCompilerKlibArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_REFINES_PATHS: NativeCompilerKlibArgument<Array<String>?> =
+    public val X_REFINES_PATHS: NativeCompilerKlibArgument<List<Path>> =
         NativeCompilerKlibArgument("X_REFINES_PATHS", KotlinReleaseVersion(1, 8, 20))
 
     /**
@@ -106,14 +108,14 @@ public interface NativeCompilerKlibArguments : NativeCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO: NativeCompilerKlibArgument<String?> =
+    public val X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO: NativeCompilerKlibArgument<Path?> =
         NativeCompilerKlibArgument("X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO", KotlinReleaseVersion(2, 1, 20))
 
     /**
      * Pack the given external binary into the klib.
      */
     @JvmField
-    public val INCLUDE_BINARY: NativeCompilerKlibArgument<Array<String>?> =
+    public val INCLUDE_BINARY: NativeCompilerKlibArgument<List<Path>> =
         NativeCompilerKlibArgument("INCLUDE_BINARY", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -132,7 +134,7 @@ public interface NativeCompilerKlibArguments : NativeCompilerArguments,
      * Provide a manifest addend file.
      */
     @JvmField
-    public val MANIFEST: NativeCompilerKlibArgument<String?> =
+    public val MANIFEST: NativeCompilerKlibArgument<Path?> =
         NativeCompilerKlibArgument("MANIFEST", KotlinReleaseVersion(1, 5, 20))
 
     /**

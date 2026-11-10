@@ -3,9 +3,10 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
-import kotlin.Array
+import java.nio.`file`.Path
 import kotlin.Boolean
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
@@ -86,7 +87,7 @@ public interface NativeCompilerArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_KONAN_DATA_DIR: NativeCompilerArgument<String?> =
+    public val X_KONAN_DATA_DIR: NativeCompilerArgument<Path?> =
         NativeCompilerArgument("X_KONAN_DATA_DIR", KotlinReleaseVersion(1, 9, 20))
 
     /**
@@ -113,14 +114,14 @@ public interface NativeCompilerArguments : CommonKlibBasedArguments {
      * Paths to friend modules.
      */
     @JvmField
-    public val FRIEND_MODULES: NativeCompilerArgument<String?> =
+    public val FRIEND_MODULES: NativeCompilerArgument<List<Path>?> =
         NativeCompilerArgument("FRIEND_MODULES", KotlinReleaseVersion(1, 5, 20))
 
     /**
      * Link with the given library.
      */
     @JvmField
-    public val LIBRARY: NativeCompilerArgument<Array<String>?> =
+    public val LIBRARY: NativeCompilerArgument<List<Path>> =
         NativeCompilerArgument("LIBRARY", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -141,7 +142,7 @@ public interface NativeCompilerArguments : CommonKlibBasedArguments {
      * Include the given native bitcode library.
      */
     @JvmField
-    public val NATIVE_LIBRARY: NativeCompilerArgument<Array<String>?> =
+    public val NATIVE_LIBRARY: NativeCompilerArgument<List<Path>> =
         NativeCompilerArgument("NATIVE_LIBRARY", KotlinReleaseVersion(1, 5, 20))
 
     /**
@@ -174,7 +175,7 @@ public interface NativeCompilerArguments : CommonKlibBasedArguments {
      * Output name.
      */
     @JvmField
-    public val OUTPUT: NativeCompilerArgument<String?> =
+    public val OUTPUT: NativeCompilerArgument<Path?> =
         NativeCompilerArgument("OUTPUT", KotlinReleaseVersion(1, 5, 20))
 
     /**
