@@ -48,7 +48,7 @@ internal abstract class JavaForKotlinOverrideKProperty<out V>(
     }
 
     override val visibility: KVisibility? get() = getterMethod.visibility
-    override val modality: Modality get() = getterMethod.modality
+    override val modality: Modality get() = overriddenStorage.modality ?: getterMethod.modality
     override val isSuspend: Boolean get() = overriddenProperty.isSuspend
     override val isLateinit: Boolean get() = overriddenProperty.isLateinit
     override val isConst: Boolean get() = overriddenProperty.isConst

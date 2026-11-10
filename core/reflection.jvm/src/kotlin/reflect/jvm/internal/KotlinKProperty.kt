@@ -63,7 +63,7 @@ internal abstract class KotlinKProperty<out V>(
     override val typeParameters: List<KTypeParameter> get() = typeParameterTable.value.ownTypeParameters
 
     override val visibility: KVisibility? get() = kmProperty.visibility.toKVisibility()
-    override val modality: Modality get() = kmProperty.modality
+    override val modality: Modality get() = overriddenStorage.modality ?: kmProperty.modality
     override val overridden: Collection<ReflectKProperty<*>> by lazy(PUBLICATION) {
         if (isLocalDelegated) emptyList() else computeOverriddenCallables(this)
     }
@@ -160,7 +160,7 @@ internal abstract class KotlinKProperty<out V>(
 
         override val typeParameters: List<KTypeParameter> get() = property.typeParameters
 
-        override val modality: Modality get() = accessor?.modality ?: property.modality
+        override val modality: Modality get() = property.overriddenStorage.modality ?: accessor?.modality ?: property.modality
         override val overridden: Collection<ReflectKCallable<*>> get() = computeOverriddenAccessors()
         override val visibility: KVisibility? get() = accessor?.visibility?.toKVisibility() ?: property.visibility
         override val isInline: Boolean get() = accessor?.isInline == true
