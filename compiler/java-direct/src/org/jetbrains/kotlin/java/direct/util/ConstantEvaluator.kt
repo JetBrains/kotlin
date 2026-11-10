@@ -127,7 +127,7 @@ private fun resolveSingleStaticImport(name: String, resolutionContext: JavaResol
  * annotation arguments and annotation-method default values (JLS 9.6.1 / 9.7).
  *
  * @param containingClass the class the expression is written in, if any; simple names are looked up
- *   among its fields first.
+ *   in it and its enclosing classes before imports.
  */
 class ConstantEvaluator private constructor(
     private val tree: LightSyntaxTree,
@@ -293,7 +293,7 @@ class ConstantEvaluator private constructor(
         val reference = resolveQualifiedMemberReference(nameParts, resolutionContext)
 
         // Resolve the class qualifier as a type name (via the unit's imports + same-package + java.lang
-        // probes, JLS 6.5.5) before passing it to the cross-language callback. Without this,
+        // probes, JLS 6.5.5) before passing it to the cross-language resolver. Without this,
         // `SdkConstants.R_CLASS` — written under `import com.android.SdkConstants;` in a Java source —
         // could only be interpreted as either a current-package class or a `<root>.SdkConstants`
         // top-level class — neither of which exists. A qualified name like `p.X.Y` is classified left

@@ -1016,7 +1016,8 @@ class CallAndReferenceGenerator(
      * The default value of the parameter applies, if any. Error elements of array arguments are removed from the array. Nested
      * annotations are cleaned up recursively.
      *
-     * The cleanup is done only in two cases:
+     * The [isJavaOrBinaryAnnotation] flag is true when the FIR annotation is not a Kotlin-source
+     * [FirAnnotationCall]. Cleanup is done only in two cases:
      * - In Kapt stub generation mode ([Fir2IrConfiguration.skipBodies]), for all annotations: Kapt generates stubs for code that
      *   does not have to resolve, so frontend errors do not stop the compilation, and error nodes must not reach the backend.
      * - For annotations that do not come from Kotlin sources ([isJavaOrBinaryAnnotation]): Java sources and binaries are not

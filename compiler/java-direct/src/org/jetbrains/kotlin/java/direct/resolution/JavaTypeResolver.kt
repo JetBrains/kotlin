@@ -571,10 +571,7 @@ private fun resolveSupertypeNames(enclosing: JavaClass): List<ClassId>? =
 context(c: JavaResolutionContext)
 internal fun getSimpleImport(simpleName: String): FqName? = c.fileContext.imports.getSingleImport(simpleName)
 
-/**
- * Static-only single-import lookup: the FqName of an `import static a.b.C.X;` declaration, used
- * to recover the implicit `Outer.member` enum-entry binding from a bare identifier.
- */
+/** Returns the class FqName from a single-static import that imports [simpleName]. */
 context(c: JavaResolutionContext)
 internal fun getStaticImport(simpleName: String): FqName? = c.fileContext.imports.staticSingleImports[simpleName]
 
