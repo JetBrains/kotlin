@@ -423,7 +423,3 @@ fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): Li
     return storage
 }
 
-
-@JvmName("getSerializedDataByPsiFiles")
-fun IncrementalDataProvider.getSerializedData(newSources: List<KtFile>): List<KotlinFileSerializedData> =
-    getSerializedData(newSources.mapNotNullTo(mutableSetOf()) { KtPsiSourceFile(it).toIoFileOrNull() })
