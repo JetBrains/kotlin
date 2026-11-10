@@ -137,6 +137,7 @@
 /compiler/frontend.common.jvm/ "Kotlin Frontend"
 /compiler/frontend.common-psi/ "Kotlin Frontend"
 /compiler/incremental-compilation-impl/ "Build Tools API"
+/compiler/incremental-compilation-klib/ "Build Tools API"
 /compiler/ir/ReadMe.md "Kotlin Common Backend"
 /compiler/ir/code-rules.md "Kotlin Common Backend"
 /compiler/ir/backend.common/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
