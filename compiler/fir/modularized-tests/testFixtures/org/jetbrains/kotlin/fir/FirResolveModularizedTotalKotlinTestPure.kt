@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsReporterImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -65,13 +67,15 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
 
         val projectEnvironment = environment.toVfsBasedProjectEnvironment()
 
-        val sourceFiles: Collection<KtSourceFile> =
-            if (USE_LIGHT_TREE) {
-                (val platformSources, val _ = commonSources) = collectSources(environment.configuration, projectEnvironment)
-                platformSources
-            } else {
+        val sourceFiles: Collection<KtSourceFile> = when (environment.configuration.parserMode) {
+            Psi -> {
                 environment.getSourceFiles().map { KtPsiSourceFile(it) }
             }
+            LightTree -> {
+                collectSources(environment.configuration, projectEnvironment).platformSources
+            }
+            KmpTree -> TODO("KT-91322")
+        }
 
         val session =
             FirTestSessionFactoryHelper.createSessionForTests(
@@ -115,6 +119,7 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
 
         val configuration = createDefaultConfiguration(moduleData)
         configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
+        configuration.parserMode = if (USE_LIGHT_TREE) ParserMode.LightTree else ParserMode.Psi
 
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
