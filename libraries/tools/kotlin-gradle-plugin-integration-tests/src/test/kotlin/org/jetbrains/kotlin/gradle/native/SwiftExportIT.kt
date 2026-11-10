@@ -72,8 +72,7 @@ class SwiftExportIT : KGPBaseTest() {
                 )
             ) {
                 assertTasksFailed(":validateArchitecturesForEmbedSwiftExportForXcode")
-                assertHasDiagnostic(KotlinToolingDiagnostics.XcodeArchitectureNotConfiguredInGradle)
-                assertOutputContains("ios_x64")
+                assertHasDiagnostic(KotlinToolingDiagnostics.XcodeArchitectureNotConfiguredInGradle, withSubstring = "ios_x64")
             }
         }
     }
@@ -219,18 +218,12 @@ class SwiftExportIT : KGPBaseTest() {
 
             val builtProductsDir = projectPath.resolve("build/builtProductsDir")
 
-            val nmOutput = runProcess(
-                listOf("nm", "libShared.a"),
-                builtProductsDir.toFile()
+            // The bridge of the added function is linked, the bridge of the removed one is gone.
+            val bridgePrefix = "_com_github_jetbrains_swiftexport_"
+            assertEquals(
+                setOf("${bridgePrefix}barbarbar"),
+                nmSymbols("libShared.a", builtProductsDir.toFile()).filter { it.startsWith(bridgePrefix) }.toSet(),
             )
-
-            assert(nmOutput.isSuccessful) { "nm call was not successfull" }
-            assert(nmOutput.output.contains("com_github_jetbrains_swiftexport_barbarbar")) {
-                "barbarbar function is missing in libShared.a"
-            }
-            assert(nmOutput.output.contains("com_github_jetbrains_swiftexport_functionToRemove").not()) {
-                "functionToRemove function is present in libShared.a"
-            }
 
             // Verify Swift module API surface using symbolgraph-extract
             assertSwiftModuleSymbols(
@@ -344,16 +337,12 @@ class SwiftExportIT : KGPBaseTest() {
                 assertDirectoryInProjectExists("build/SwiftExport/iosArm64/output")
             }
 
-            val swiftFile = projectPath
+            val swiftFunctions = projectPath
                 .resolve("build/SwiftExport/iosArm64/output/files/Shared/Shared.swift")
-                .readText()
+                .swiftFunctionNames()
 
-            assert(swiftFile.contains("iosBar()")) { "Swift file doesn't contain iosBar() from iosMain source set" }
-            assert(swiftFile.contains("iosFoo()")) { "Swift file doesn't contain iosFoo() from iosMain source set" }
-
-            assert(swiftFile.contains("bar()")) { "Swift file doesn't contain bar() from commonMain source set" }
-            assert(swiftFile.contains("foo()")) { "Swift file doesn't contain foo() from commonMain source set" }
-            assert(swiftFile.contains("foobar(")) { "Swift file doesn't contain foobar( from commonMain source set" }
+            // bar, foo and foobar come from commonMain, iosBar and iosFoo from iosMain.
+            assertEquals(setOf("bar", "foo", "foobar", "iosBar", "iosFoo"), swiftFunctions)
         }
     }
 
@@ -407,23 +396,15 @@ class SwiftExportIT : KGPBaseTest() {
                 builtProductsDir
             )
 
-            val x64Symbols = runProcess(
-                listOf("nm", "libShared_x86.a"),
-                builtProductsDir
+            // Each slice links the bridge of its own target's function, and not the other one's.
+            assertEquals(
+                setOf("___root___iosX64Bar"),
+                nmSymbols("libShared_x86.a", builtProductsDir).filter { it.endsWith("Bar") }.toSet(),
             )
-
-            val arm64Symbols = runProcess(
-                listOf("nm", "libShared_arm.a"),
-                builtProductsDir
+            assertEquals(
+                setOf("___root___iosSimulatorArm64Bar"),
+                nmSymbols("libShared_arm.a", builtProductsDir).filter { it.endsWith("Bar") }.toSet(),
             )
-
-            assert(x64Symbols.output.contains("iosX64Bar")) {
-                "Doesn't contain iosX64Bar() from iosX64Main API surface"
-            }
-
-            assert(arm64Symbols.output.contains("iosSimulatorArm64Bar")) {
-                "Doesn't contain iosSimulatorArm64Bar() from iosSimulatorArm64Main API surface"
-            }
 
             val sdkVersion = runProcess(
                 listOf("xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"),

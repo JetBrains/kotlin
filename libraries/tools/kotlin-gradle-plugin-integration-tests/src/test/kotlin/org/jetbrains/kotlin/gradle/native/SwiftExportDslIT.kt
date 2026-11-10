@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.publishMultiplatformLibrary
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
+import org.jetbrains.kotlin.gradle.util.swiftSourceLines
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createParentDirectories
-import kotlin.io.path.readLines
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
 import kotlin.test.assertNotNull
@@ -251,7 +251,7 @@ class SwiftExportDslIT : KGPBaseTest() {
             ) {
                 val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/output/files/Shared/Shared.swift")
                 assertContains(
-                    sharedSwiftPath.readLines().map { it.trim() },
+                    sharedSwiftPath.swiftSourceLines(),
                     "public static func iosSuspendFunction() async throws -> Swift.Int32 {",
                 )
             }

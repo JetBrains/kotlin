@@ -20,13 +20,16 @@ import org.jetbrains.kotlin.gradle.util.SwiftSymbol
 import org.jetbrains.kotlin.gradle.util.assertSwiftModuleSymbols
 import org.jetbrains.kotlin.gradle.util.getNestedList
 import org.jetbrains.kotlin.gradle.util.parseJsonToMap
+import org.jetbrains.kotlin.gradle.util.swiftClassNames
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
+import org.jetbrains.kotlin.gradle.util.swiftTypealiases
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -208,7 +211,7 @@ class ExportDslIT : KGPBaseTest() {
                 assertFileExists(renamedSwift)
 
                 // Flattening the package exposes `com.example.sub.One` at the top level of the module.
-                assertContains(renamedSwift.readText(), "public typealias One = ExportedKotlinPackages.com.example.sub.One")
+                assertEquals("ExportedKotlinPackages.com.example.sub.One", renamedSwift.swiftTypealiases()["One"])
 
                 val modules = parseJsonToMap(projectPath.resolve("build/SwiftExport/iosArm64/output/modules.json"))
                     .getNestedList("modules")
@@ -543,7 +546,7 @@ class ExportDslIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
             ) {
                 assertTasksExecuted(":iosArm64SwiftExport")
-                assertFilesCombinedContains(swiftApiFiles(), "class TwoNeverReferenced")
+                assertContains(swiftApiFiles().flatMap { it.swiftClassNames() }, "TwoNeverReferenced")
             }
         }
     }

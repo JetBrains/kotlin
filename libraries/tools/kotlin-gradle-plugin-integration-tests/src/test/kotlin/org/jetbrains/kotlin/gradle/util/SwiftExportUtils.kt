@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.util
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.readLines
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -442,4 +443,36 @@ internal fun PublishedProject.assertSwiftExportMetadataKarVariantExistsInRootCom
         rootComponentVariants().find { it.name == SWIFT_EXPORT_METADATA_ELEMENTS },
         "Under the Kotlin Archive format only the -published variant must be declared"
     )
+}
+
+/**
+ * The lines of a generated Swift file without their indentation, so that a test can look for a whole
+ * declaration line.
+ */
+internal fun Path.swiftSourceLines(): List<String> = readLines().map { it.trim() }
+
+/** The typealiases a generated Swift file declares, as name to target. */
+internal fun Path.swiftTypealiases(): Map<String, String> = swiftSourceLines()
+    .mapNotNull { swiftTypealiasDeclaration.matchEntire(it) }
+    .associate { it.groupValues[1] to it.groupValues[2] }
+
+/** The names of the functions a generated Swift file declares. */
+internal fun Path.swiftFunctionNames(): Set<String> = swiftSourceLines()
+    .mapNotNull { swiftFunctionDeclaration.find(it)?.groupValues?.get(1) }
+    .toSet()
+
+/** The names of the classes a generated Swift file declares. */
+internal fun Path.swiftClassNames(): Set<String> = swiftSourceLines()
+    .mapNotNull { swiftClassDeclaration.find(it)?.groupValues?.get(1) }
+    .toSet()
+
+private val swiftTypealiasDeclaration = Regex("""public typealias (\w+) = (.+)""")
+private val swiftFunctionDeclaration = Regex("""^public (?:static )?func (\w+)\(""")
+private val swiftClassDeclaration = Regex("""^public (?:final |open )?class (\w+)""")
+
+/** The names of the symbols that `nm` lists for [library], a file in [workingDir]. */
+internal fun nmSymbols(library: String, workingDir: File): Set<String> {
+    val nm = runProcess(listOf("nm", library), workingDir)
+    assertTrue(nm.isSuccessful, "nm $library failed:\n${nm.output}")
+    return nm.output.lines().map { it.substringAfterLast(' ') }.filter { it.isNotBlank() }.toSet()
 }
