@@ -701,6 +701,7 @@ testing {
         register<JvmTestSuite>("archTest") {
             dependencies {
                 implementation(libs.archunit)
+                implementation(project(":kotlin-gradle-plugin-arch-test-utils"))
             }
 
             targets.configureEach {
