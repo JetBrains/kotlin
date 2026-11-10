@@ -68,7 +68,7 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata))
     }
 
-//    class IrFileData(fileData: ByteArray, symbols: ByteArray, types: ByteArray, strings: ByteArray, bodies: ByteArray, declarations: ByteArray)
+    //    class IrFileData(fileData: ByteArray, symbols: ByteArray, types: ByteArray, strings: ByteArray, bodies: ByteArray, declarations: ByteArray)
     val irFileData: Map<File, IrTranslationResultValue>
         field = hashMapOf<File, IrTranslationResultValue>()
 
@@ -136,5 +136,14 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
             this.fileEntries?.contentHashCode()?.toLong(),
         )
         return hashCodes.reduce { acc, hashCode -> acc * 31 + hashCode }
+    }
+}
+
+class KmpIncrementalResultsConsumer : IncrementalResultsConsumerImpl() {
+    val commonPackageParts: Map<String, Map<File, ByteArray>>
+        field = hashMapOf<String, MutableMap<File, ByteArray>>()
+
+    fun processCommonPackagePart(fragmentName: String, sourceFile: File, packagePartMetadata: ByteArray) {
+        commonPackageParts.getOrPut(fragmentName) { hashMapOf() }[sourceFile] = packagePartMetadata
     }
 }
