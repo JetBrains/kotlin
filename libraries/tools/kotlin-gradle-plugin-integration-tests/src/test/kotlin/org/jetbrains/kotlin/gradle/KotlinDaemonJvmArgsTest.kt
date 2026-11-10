@@ -220,6 +220,7 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.INFO),
             enableKotlinDaemonMemoryLimitInMb = null,
             enableGradleDaemonMemoryLimitInMb = null,
         ) {
@@ -233,7 +234,7 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
                 assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
             }
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(useDaemonFallbackStrategy = true)) {
+            build("assemble", buildOptions = buildOptions.copy(useDaemonFallbackStrategy = true)) {
                 assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
             }
         }
