@@ -22,6 +22,13 @@ import java.nio.file.Path
  *
  * Obtain an instance of this interface from [NativePlatformToolchain.nativeKlibCompilationOperationBuilder].
  *
+ * Only the [in-process][org.jetbrains.kotlin.buildtools.api.ExecutionPolicy.InProcess] execution policy is supported yet.
+ * With the [daemon][org.jetbrains.kotlin.buildtools.api.ExecutionPolicy.WithDaemon] policy, the operation reports an error
+ * and returns [CompilationResult.COMPILATION_ERROR].
+ *
+ * [CommonCompilerArguments.KOTLIN_HOME] must point to the Kotlin/Native distribution. It is currently required even when the standard
+ * library and the platform libraries are not taken from the distribution (`-nostdlib`, `-no-default-libs`).
+ *
  * @since 2.5.20
  */
 @ExperimentalBuildToolsApi

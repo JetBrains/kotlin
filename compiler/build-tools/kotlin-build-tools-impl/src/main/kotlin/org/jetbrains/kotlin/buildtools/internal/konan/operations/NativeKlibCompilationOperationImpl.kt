@@ -76,7 +76,8 @@ internal class NativeKlibCompilationOperationImpl private constructor(
         executionContext: ExecutionContext,
     ): CompilationResult {
         if (executionPolicy is DaemonExecutionPolicyImpl) {
-            throw UnsupportedOperationException(DAEMON_NOT_SUPPORTED_MESSAGE)
+            (logger ?: DefaultKotlinLogger).error(DAEMON_NOT_SUPPORTED_MESSAGE)
+            return CompilationResult.COMPILATION_ERROR
         }
         checkKotlinNativeCompilerIsAvailable()
         return super.executeCancellableImpl(projectId, executionPolicy, logger, executionContext)

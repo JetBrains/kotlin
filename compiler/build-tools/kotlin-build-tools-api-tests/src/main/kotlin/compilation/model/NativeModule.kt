@@ -60,9 +60,8 @@ class NativeModule(
                 .toList(),
             outputKlib
         ) {
-            moduleCompilationConfigAction(this) // apply module-wide configuration
-            compilationConfigAction(this) // apply any overrides for this compilation only
-            // TODO: K/N compiler requires KOTLIN_HOME to be passed even if it's actually unused. Pass some directory here yet.
+            // TODO: the K/N compiler resolves KOTLIN_HOME even with -nostdlib -no-default-libs (see loadNativeKlibs),
+            //  so some directory has to be passed although it's not used.
             compilerArguments[KOTLIN_HOME] = moduleDirectory
             compilerArguments.applyCommandLineArguments(
                 buildList {
@@ -79,6 +78,8 @@ class NativeModule(
                     }
                 }
             )
+            moduleCompilationConfigAction(this)
+            compilationConfigAction(this)
         }
 
         return compilationOperation.let {

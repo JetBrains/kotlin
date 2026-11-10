@@ -5,12 +5,19 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain.Companion.native
+import org.jetbrains.kotlin.buildtools.api.konan.nativeKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.TestKotlinLogger
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.nativeProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunAlways
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -45,5 +52,23 @@ class NativeKlibCompilationSmokeTest : BaseCompilationTest() {
                 assertOutputs("basic-multimodule-project_module-2.klib")
             }
         }
+    }
+
+    @Test
+    @DisplayName("Reports an error for the daemon execution policy")
+    fun testDaemonPolicyIsRejected() {
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        // the operation fails before connecting to the daemon or reading the sources
+        val operation = toolchain.native.nativeKlibCompilationOperation(
+            listOf(workingDirectory.resolve("main.kt")),
+            workingDirectory.resolve("out.klib"),
+        )
+        val logger = TestKotlinLogger()
+        val result = toolchain.createBuildSession().use { session ->
+            session.executeOperation(operation, toolchain.daemonExecutionPolicyBuilder().build(), logger)
+        }
+        assertEquals(CompilationResult.COMPILATION_ERROR, result)
+        val errors = logger.logMessagesByLevel.getValue(LogLevel.ERROR)
+        assertTrue(errors.any { "via the Kotlin daemon is not supported" in it }) { "Unexpected errors: $errors" }
     }
 }

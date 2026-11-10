@@ -40,7 +40,7 @@ public interface NativePlatformToolchain : KotlinToolchains.Toolchain {
         /**
          * Gets a [NativePlatformToolchain] instance from [KotlinToolchains].
          *
-         * Equivalent to `kotlinToolchains.getToolchain<KotlinNativePlatformToolchain>()`
+         * Equivalent to `kotlinToolchains.getToolchain<NativePlatformToolchain>()`
          */
         @JvmStatic
         @get:JvmName("from")
@@ -51,7 +51,7 @@ public interface NativePlatformToolchain : KotlinToolchains.Toolchain {
 /**
  * Convenience function for creating a [NativeKlibCompilationOperation] with options configured by [builderAction].
  *
- * @return an immutable `KotlinNativeKlibCompilationOperation`.
+ * @return an immutable [NativeKlibCompilationOperation].
  * @see NativePlatformToolchain.nativeKlibCompilationOperationBuilder
  * @since 2.5.20
  */
