@@ -35,6 +35,7 @@ object CompilerModules {
         ":compiler:resolution.common.js",
         ":compiler:backend.common.jvm",
         ":compiler:plugin-api",
+        ":compiler:incremental-compilation-klib:api",
         ":core:metadata",
         ":core:metadata.jvm",
         ":core:deserialization.common",

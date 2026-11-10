@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.incrementalDataProvider
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.perfManager

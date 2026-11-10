@@ -19,7 +19,8 @@ dependencies {
     compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-base"))
-    compileOnly(project(":js:js.config"))
+    compileOnly(project(":compiler:incremental-compilation-klib:api"))
+
     compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 

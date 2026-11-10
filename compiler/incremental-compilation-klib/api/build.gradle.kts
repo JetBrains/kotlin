@@ -3,3 +3,12 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
+
+dependencies {
+    api(project(":core:names"))
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}

@@ -53,12 +53,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val JS_INCREMENTAL_COMPILATION_ENABLED by key<Boolean>()
 
-    val INCREMENTAL_DATA_PROVIDER by key<IncrementalDataProvider>(throwOnNull = false)
-
-    val INCREMENTAL_RESULTS_CONSUMER by key<IncrementalResultsConsumer>(throwOnNull = false)
-
-    val INCREMENTAL_NEXT_ROUND_CHECKER by key<IncrementalNextRoundChecker>(throwOnNull = false)
-
     val FRIEND_PATHS_DISABLED by key<Boolean>()
 
     val GENERATE_POLYFILLS by key<Boolean>("Generate polyfills for newest properties, methods and classes from ES6+.")
