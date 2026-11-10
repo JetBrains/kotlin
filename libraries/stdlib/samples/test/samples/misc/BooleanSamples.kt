@@ -14,11 +14,11 @@ class BooleanSamples {
 
     @Sample
     fun and() {
-        assertTrue(true and true)
-        assertFalse(false and false)
-
         // And checks if both operands are true
+        assertFalse(false and false)
+        assertFalse(false and true)
         assertFalse(true and false)
+        assertTrue(true and true)
 
         // And always evaluates both operands unlike &&
         assertFailsWith<IllegalStateException> { false and error("Right operand evaluated") }
@@ -27,13 +27,13 @@ class BooleanSamples {
 
     @Sample
     fun or() {
-        assertTrue(true or true)
+        // Or checks if any of the operands is true
         assertFalse(false or false)
-
-        // And checks if any of the operands is true
+        assertTrue(false or true)
         assertTrue(true or false)
+        assertTrue(true or true)
 
-        // And always evaluates both operands unlike &&
+        // Or always evaluates both operands unlike ||
         assertFailsWith<IllegalStateException> { true or error("Right operand evaluated") }
         assertTrue(true || error("Right operand evaluated"))
     }
@@ -41,9 +41,10 @@ class BooleanSamples {
     @Sample
     fun xor() {
         // Xor checks if operands are different
-        assertFalse(true xor true)
         assertFalse(false xor false)
+        assertTrue(false xor true)
         assertTrue(true xor false)
+        assertFalse(true xor true)
     }
 
     @Sample
