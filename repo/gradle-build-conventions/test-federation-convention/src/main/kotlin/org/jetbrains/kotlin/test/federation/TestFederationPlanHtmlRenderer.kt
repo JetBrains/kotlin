@@ -31,6 +31,7 @@ internal class TestFederationPlanHtmlRenderer(
             body {
                 renderPlan()
                 renderSubsetsExplanation()
+                renderPrefixesExplanation()
             }
         }
 
@@ -105,6 +106,28 @@ internal class TestFederationPlanHtmlRenderer(
             p { +"You may think of it as of the 3rd level of the filtering hierarchy:" }
             img(alt = "How Test Federation filters tests", src = "$FILTERING_SVG_FILE#light", classes = "diagram-light")
             img(alt = "How Test Federation filters tests", src = "$FILTERING_SVG_FILE#dark", classes = "diagram-dark")
+        }
+    }
+
+    private fun BODY.renderPrefixesExplanation() {
+        details {
+            summary { h2 { +"What does it mean if a build name has emoji prefix?" } }
+            p { +"Each emoji represents one test subset. If the emoji is in the prefix, it means the build can run this subset." }
+            p { +"If there are no subset emojis, it means the build can run any combination of test subsets, so it's fully dynamic." }
+            p { +"If there is exactly one subset emoji, it means the build always runs the same tests." }
+            p { +"(one exception to the above rule is the ✍️ emoji which can run contracts against dynamically selected domains)" }
+            p { +"Examples:" }
+            table {
+                tr {
+                    th { +"Build name" }
+                    th { +"Meaning" }
+                }
+                tr { td { +"🛡 Some build" }; td { +"always runs all tests (static)" } }
+                tr { td { +"🔥️ Some build" }; td { +"always runs smoke tests (static)" } }
+                tr { td { +"✍️️ Some build" }; td { +"always runs contract tests (dynamic)" } }
+                tr { td { +"🔥✍️️ Some build" }; td { +"can run any combination of smokes and contracts (dynamic)" } }
+                tr { td { +"Some build" }; td { +"can run any combination of tests (dynamic)" } }
+            }
         }
     }
 }
