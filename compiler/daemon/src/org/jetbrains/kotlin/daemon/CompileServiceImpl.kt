@@ -869,11 +869,9 @@ class CompileServiceImpl(
 
     private val rwlock = ReentrantReadWriteLock()
 
-    private val kotlinToolchainsLazy = lazy {
-        KotlinToolchains.loadImplementation(CompileServiceImpl::class.java.classLoader)
+    private val kotlinToolchainsHolder = lazy {
+        KotlinToolchainsHolder(CompileServiceImpl::class.java.classLoader)
     }
-
-    val kotlinToolchains by kotlinToolchainsLazy
 
     private val serializerFormat by lazy {
         ServiceLoader.load(SerializationFormat::class.java, CompileServiceImpl::class.java.classLoader).singleOrNull()
@@ -917,7 +915,7 @@ class CompileServiceImpl(
     // TODO: consider tying a session to a client and use this info to cleanup
     override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         CompileService.CallResult.Good(
-            state.sessions.leaseSession(CompileSessionData(kotlinToolchainsLazy).let { sessionData ->
+            state.sessions.leaseSession(CompileSessionData(kotlinToolchainsHolder).let { sessionData ->
                 ClientOrSessionProxy(aliveFlagPath, sessionData, sessionData.asOneShot())
             }).apply {
                 log.info("leased a new session $this, session alive file: $aliveFlagPath")
@@ -1102,9 +1100,9 @@ class CompileServiceImpl(
             buildOperation.afterDeserialization(messageSender, servicesFacade)
 
             val result = if (sessionData != null) {
-                buildOperation.executeAndSerializeResult(sessionData.buildSession, logger)
+                buildOperation.executeAndSerializeResult(sessionData.buildSessionHolder.buildSession, logger)
             } else {
-                kotlinToolchains.createBuildSession().use { buildSession ->
+                kotlinToolchainsHolder.value.kotlinToolchains.createBuildSession().use { buildSession ->
                     buildOperation.executeAndSerializeResult(buildSession, logger)
                 }
             }
@@ -1426,19 +1424,19 @@ class MessageReportingLogger(override val isDebugEnabled: Boolean, private val m
 }
 
 @PublishedApi
-internal class CompileSessionData(private val kotlinToolchains: Lazy<KotlinToolchains>) : Disposable {
+internal class CompileSessionData(private val kotlinToolchainsHolder: Lazy<KotlinToolchainsHolder>) : Disposable {
     val runningCompilations = RunningCompilations()
 
-    private val buildSessionLazy = lazy {
-        kotlinToolchains.value.createBuildSession()
+    private val buildSessionLazy: Lazy<KotlinToolchainsHolder.BuildSessionHolder> = lazy {
+        kotlinToolchainsHolder.value.obtainBuildSessionHolder()
     }
-    val buildSession: KotlinToolchains.BuildSession by buildSessionLazy
+    val buildSessionHolder by buildSessionLazy
 
     override fun dispose() {
         try {
             runningCompilations.cancelAll()
         } finally {
-            buildSessionLazy.getValueOrNull()?.close()
+            buildSessionLazy.getValueOrNull()?.buildSession?.close()
         }
     }
 }
@@ -1508,4 +1506,20 @@ internal class RemoteLookupTracker(private val servicesFacade: CompilerServicesF
             attachment = null
         )
     }
+}
+
+/**
+ * Adds a level of indirection to any Build Tools API access, so that daemon doesn't fail on
+ * initialization of the CompilerServiceImpl class when Build Tools API is not available on the classpath.
+ *
+ * That way, BTA can remain optional and is only required when using the CompileService.execute method.
+ */
+class KotlinToolchainsHolder(classloader: ClassLoader) {
+    val kotlinToolchains: KotlinToolchains = KotlinToolchains.loadImplementation(classloader)
+
+    fun obtainBuildSessionHolder(): BuildSessionHolder {
+        return BuildSessionHolder(kotlinToolchains.createBuildSession())
+    }
+
+    class BuildSessionHolder(val buildSession: KotlinToolchains.BuildSession)
 }
