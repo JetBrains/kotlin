@@ -3428,6 +3428,9 @@ public abstract interface annotation class kotlin/experimental/ExperimentalObjCN
 public abstract interface annotation class kotlin/experimental/ExperimentalObjCRefinement : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/experimental/ExperimentalRichErrors : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/experimental/ExperimentalTypeInference : java/lang/annotation/Annotation {
 }
 
