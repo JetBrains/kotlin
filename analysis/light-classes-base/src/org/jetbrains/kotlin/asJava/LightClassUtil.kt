@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.classes.KtExtensibleLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.isGetter
 import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -60,9 +61,9 @@ object LightClassUtil {
         val wrappers = getPsiMethodWrappers(property) { wrapper ->
             val wrapperName = wrapper.name
             if (customNameAnnoProvided) {
-                // cls with loaded text doesn't preserve annotation arguments thus we can't rely on the name
-                // accept everything but the the opposite accessors
-                if (accessor.isGetter) !JvmAbi.isSetterName(wrapperName) else !JvmAbi.isGetterName(wrapperName)
+                // The custom name can have any prefix, and cls with loaded text doesn't preserve annotation arguments,
+                // so the accessor is chosen by its shape
+                if (accessor.isGetter) wrapper.isGetter else wrapper.isSetter
             } else if (accessor.isGetter) {
                 val getterName = JvmAbi.getterName(propertyName)
                 wrapperName == getterName ||

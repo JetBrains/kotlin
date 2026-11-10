@@ -30,7 +30,9 @@ fun KtLightMethod.isTraitFakeOverride(): Boolean {
 fun KtLightMethod.isAccessor(getter: Boolean): Boolean {
     val origin = kotlinOrigin as? KtCallableDeclaration ?: return false
     if (origin !is KtProperty && origin !is KtParameter) return false
-    val expectedParametersCount = (if (getter) 0 else 1) + (if (origin.receiverTypeReference != null) 1 else 0)
+    val expectedParametersCount = (if (getter) 0 else 1) +
+            (if (origin.receiverTypeReference != null) 1 else 0) +
+            origin.contextParameters.size
     return parameterList.parametersCount == expectedParametersCount
 }
 
