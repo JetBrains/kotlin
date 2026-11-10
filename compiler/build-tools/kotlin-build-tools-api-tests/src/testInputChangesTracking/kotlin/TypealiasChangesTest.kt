@@ -100,6 +100,27 @@ class TypealiasChangesTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @DisplayName("Replacing a value class with a typealias should recompile the unchanged file using it as a parameter type")
+    @TestMetadata("ic-scenarios/value-class-to-typealias")
+    fun testReplacingValueClassWithTypealias(scenario: ScenarioCreator) {
+        scenario {
+            // `@JvmInline` is required on JVM, but cannot be used in non-JVM sources
+            val mod = when (this@scenario) {
+                is JvmScenarioDsl -> module("ic-scenarios/value-class-to-typealias")
+                is JsScenarioDsl, is WasmScenarioDsl -> module("ic-scenarios/value-class-to-typealias-klib")
+                else -> error("Unsupported scenario type: ${this@scenario}")
+            }
+
+            mod.replaceFileWithVersion("Foo.kt", "change-to-typealias")
+            mod.replaceFileWithVersion("Oof.kt", "change-to-typealias")
+
+            mod.compile {
+                assertCompiledSources("Foo.kt", "Bar.kt", "Oof.kt")
+            }
+        }
+    }
+
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-28233: Changing a typealias should recompile the interface using it as a member return type")
     @TestMetadata("ic-scenarios/typealias-in-interface-member-type")
     fun testChangingTypealiasUsedAsInterfaceMemberType(scenario: ScenarioCreator) {
