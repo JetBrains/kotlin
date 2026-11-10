@@ -93,7 +93,7 @@ internal abstract class KotlinKFunction(
             if (isConstructor && !container.isInlineClass()) {
                 if (isAnnotationConstructor)
                     return@lazy AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, CALL_BY_NAME, KOTLIN)
-                val patchingResult = patchJvmDescriptorByExtraBoxing(this, jvmSignature.descriptor)
+                val patchingResult = patchJvmDescriptorByExtraBoxing(this, signature.descriptor)
                 preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
                 container.findDefaultConstructor(patchingResult.newDescriptor) as Member?
             } else run {
