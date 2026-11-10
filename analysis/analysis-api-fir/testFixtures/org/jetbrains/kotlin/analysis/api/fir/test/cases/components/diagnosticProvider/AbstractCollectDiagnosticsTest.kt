@@ -197,7 +197,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         val missing = withoutSuppression.filter { it !in withSuppression }
         assertTrue(
             missing.isEmpty(),
-            "The set of diagnostics with `ignoreSuppressed(true)` must include every diagnostic that `ignoreSuppressed(true)` returns. Missing:\n$missing",
+            "The set of diagnostics with `ignoreSuppressed(false)` must include every diagnostic that `ignoreSuppressed(true)` returns. Missing:\n$missing",
         )
     }
 
@@ -272,7 +272,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         val notMarked = additional.filterNot { it.isSuppressed }
         assertTrue(
             notMarked.isEmpty(),
-            "every diagnostic which is only yielded by includingSuppressed() must be marked as suppressed." +
+            "every diagnostic which is only yielded by ignoreSuppressed(false) must be marked as suppressed." +
                     " Not marked: ${notMarked.map { it.getDiagnosticKey() }}",
         )
     }
@@ -315,19 +315,19 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         assertEquals(
             allCheckers.ignoreSuppressed(false).diagnosticKeys(),
             allCheckers.ignoreSuppressed(false).ignoreSuppressed(false).diagnosticKeys(),
-            "'includingSuppressed' must be idempotent.",
+            "'ignoreSuppressed(false)' must be idempotent.",
         )
 
         assertEquals(
             allCheckers.diagnosticKeys(),
             allCheckers.ignoreSuppressed(false).ignoreSuppressed(true).diagnosticKeys(),
-            "'exclude' must undo 'include'.",
+            "'ignoreSuppressed(true)' must undo 'ignoreSuppressed(false)'.",
         )
 
         assertEquals(
             allCheckers.diagnosticKeys(),
             allCheckers.ignoreSuppressed(true).diagnosticKeys(),
-            "'exclude' must be the default behavior.",
+            "'ignoreSuppressed(true)' must be the default behavior.",
         )
     }
 
