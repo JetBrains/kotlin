@@ -14,6 +14,11 @@ import org.jetbrains.kotlin.psi.KtElement
 /**
  * Returns the [diagnostics][KaDiagnostics] reported on the given [KtElement].
  *
+ * By default, the query covers the element and all its descendants: it yields exactly those diagnostics of the containing file whose
+ * [psi][KaDiagnosticWithPsi.psi] is inside the element, so `file.diagnostics()` covers the whole file. [KaDiagnostics.directOnly] narrows
+ * the query to the element itself. Diagnostics reported on a containing element are never included, even if they concern the given element
+ * (e.g., a diagnostic about a member might be reported on its containing class).
+ *
  * The result is computed lazily, and only as far as it is iterated. See [KaDiagnostics] for the defaults and for the ways to adjust them.
  *
  * #### Example
