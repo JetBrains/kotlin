@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.web.npm
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
+import org.gradle.api.provider.*
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.hasSharedNpmToolingDir
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.withType
+import java.util.*
 
 /**
  * A utility class that applies the configuration for resolving NPM dependencies
@@ -188,6 +188,12 @@ internal class NpmResolverPluginApplier(
             fileBasedDependenciesFromConfigurations
         )
 
+        task.inputs.property(
+            "fileBasedNpmDependencyLocationsRerunToken",
+            task.project.providers.of(FileBasedNpmDependencyLocationsRerunTokenSource::class.java) { spec ->
+                spec.parameters.fileBasedNpmDependencyLocations.set(task.fileBasedNpmDependencyLocations)
+            })
+
         task.outputs.doNotCacheIf("there are file-based NPM dependencies") { _ ->
             val fileBasedNpmDependencyLocations = task.fileBasedNpmDependencyLocations.getOrElse(emptyList())
             val disableCache = fileBasedNpmDependencyLocations.isNotEmpty()
@@ -200,6 +206,31 @@ internal class NpmResolverPluginApplier(
             }
             disableCache
         }
+    }
+
+    /**
+     * Changes on every call if there are any [RequiresNpmDependenciesTask.fileBasedNpmDependencyLocations], so that the task always re-runs.
+     *
+     * Avoid using [org.gradle.api.tasks.TaskOutputs.upToDateWhen] because if
+     * [RequiresNpmDependenciesTask.fileBasedNpmDependencyLocations] is empty then the task will be marked as up-to-date,
+     * even if the task has no outputs and should always rerun.
+     *
+     * This is a temporary workaround that should be removed when [RequiresNpmDependenciesTask] is removed.
+     */
+    internal abstract class FileBasedNpmDependencyLocationsRerunTokenSource :
+        ValueSource<String, FileBasedNpmDependencyLocationsRerunTokenSource.Parameters> {
+
+        interface Parameters : ValueSourceParameters {
+            val fileBasedNpmDependencyLocations: ListProperty<String>
+        }
+
+        override fun obtain(): String =
+            if (parameters.fileBasedNpmDependencyLocations.getOrElse(emptyList()).isEmpty()) {
+                ""
+            } else {
+                // just return something random with high entropy, so the task is never up-to-date
+                UUID.randomUUID().toString()
+            }
     }
 
     @ObsoleteNpmDependencyModel
