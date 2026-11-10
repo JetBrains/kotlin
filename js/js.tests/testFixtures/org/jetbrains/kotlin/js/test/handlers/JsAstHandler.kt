@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.js.config.moduleKind
 import org.jetbrains.kotlin.js.config.useEs6ConstLet
 import org.jetbrains.kotlin.js.test.ast.JsAstDirectives
 import org.jetbrains.kotlin.js.test.ast.directives.JsAstDirective
+import org.jetbrains.kotlin.js.test.klib.JsGroupedBatchArtifact
 import org.jetbrains.kotlin.js.translate.utils.name
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
@@ -44,18 +45,21 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
             ?.jsProgram
             ?: return
 
-        // `testServices.moduleStructure.allDirectives` only provides global and module-level directives, but we also need file-level
-        // directives here, because an AST directive can be placed anywhere (we usually place them close to whatever they're checking).
-        val moduleStructure = testServices.moduleStructure
-        val fileDirectives = moduleStructure.modules.flatMap { it.files }.map { it.directives }
-        val moduleDirectives = moduleStructure.modules.map { it.directives }
+        // The launcher module of a grouped batch has no test file: the tests with JS AST checks are isolated.
+        if (info !is JsGroupedBatchArtifact) {
+            // `testServices.moduleStructure.allDirectives` only provides global and module-level directives, but we also need file-level
+            // directives here, because an AST directive can be placed anywhere (we usually place them close to whatever they're checking).
+            val moduleStructure = testServices.moduleStructure
+            val fileDirectives = moduleStructure.modules.flatMap { it.files }.map { it.directives }
+            val moduleDirectives = moduleStructure.modules.map { it.directives }
 
-        processDirectives(
-            jsProgram,
-            module.files.first { !it.isAdditional }.originalFile,
-            testServices.defaultsProvider.targetBackend!!,
-            ComposedRegisteredDirectives(moduleDirectives + fileDirectives),
-        )
+            processDirectives(
+                jsProgram,
+                module.files.first { !it.isAdditional }.originalFile,
+                testServices.defaultsProvider.targetBackend!!,
+                ComposedRegisteredDirectives(moduleDirectives + fileDirectives),
+            )
+        }
 
         jsProgram.verifyAst(testServices.compilerConfigurationProvider.getCompilerConfiguration(module))
     }

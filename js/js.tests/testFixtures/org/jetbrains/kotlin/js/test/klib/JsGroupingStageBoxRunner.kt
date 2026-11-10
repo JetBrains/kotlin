@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.NonGroupingTestRunner.Companion.shouldRun
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.checkTestInfrastructure
@@ -39,15 +40,16 @@ import org.jetbrains.kotlin.utils.DFS.topologicalOrder
  * The executable of an isolated test is processed by the handlers of the one-stage pipeline, exactly as it is there.
  * The executable of a grouped batch is run once per translation mode by calling its result-collecting driver; what
  * the driver prints is parsed by [GroupedTestsResultProtocol], and every failure is reported against the test it
- * belongs to, so a failed test does not fail the rest of its batch.
+ * belongs to, so a failed test does not fail the rest of its batch. A failed check of [groupedBatchHandlers] fails them all.
  *
  * @param isolatedTestHandlers The handlers of the one-stage pipeline to process the executable of an isolated test
- *   with. They are of no use for a grouped batch, which has no executable of a single test to look at, so a test
- *   that relies on one of them to check something has to be isolated.
+ *   with. They check the executable of a single test, which a grouped batch does not have, so a test that relies on
+ *   one of them for a check that none of [groupedBatchHandlers] makes has to be isolated.
  */
 open class JsGroupingStageBoxRunner(
     testServices: TestServices,
     private val isolatedTestHandlers: List<Constructor<JsBinaryArtifactHandler>>,
+    private val groupedBatchHandlers: List<Constructor<JsBinaryArtifactHandler>> = emptyList(),
     private val artifactsAreDumped: Boolean = false,
 ) : GroupingStageHandler<BinaryArtifacts.Js>(
     testServices,
@@ -75,7 +77,7 @@ open class JsGroupingStageBoxRunner(
     private fun runIsolated(artifact: BinaryArtifacts.Js, input: NonGroupingStageOutput) {
         val services = input.testServices
         val mainModule = JsEnvironmentConfigurator.getMainModule(services)
-        val handlers = isolatedTestHandlers.map { it(services) }
+        val handlers = isolatedTestHandlers.map { it.createInStageOfThisRunner(services) }
         var someAssertionWasFailed = false
         fun JsBinaryArtifactHandler.runUnlessSkipped(action: JsBinaryArtifactHandler.() -> Unit) {
             if (!shouldRun(thereWasAnException = someAssertionWasFailed)) return
@@ -95,6 +97,7 @@ open class JsGroupingStageBoxRunner(
         checkTestInfrastructure(inputsById.size == inputs.size) { "Tests of a grouped batch have clashing ids" }
 
         val launcherServices = inputs.first().testServices
+        runGroupedBatchHandlers(artifact, inputs, launcherServices)
         val executions = executeGroupedBatch(artifact, inputs)
         val vmFailures = executions.mapNotNull { execution -> execution.vmFailure?.let { VmFailure(execution.executionName, it) } }
 
@@ -158,6 +161,30 @@ open class JsGroupingStageBoxRunner(
             }
         }
     }
+
+    private fun runGroupedBatchHandlers(
+        artifact: JsGroupedBatchArtifact,
+        inputs: List<NonGroupingStageOutput>,
+        launcherServices: TestServices,
+    ) {
+        for (handler in groupedBatchHandlers.map { it.createInStageOfThisRunner(launcherServices) }) {
+            try {
+                handler.processModule(artifact.launcherModule, artifact)
+                handler.processAfterAllModules(someAssertionWasFailed = false)
+            } catch (e: Throwable) {
+                inputs.forEach { input ->
+                    input.executeWithFailureCatching {
+                        val failure = e.toString().pointedAtDumpedArtifacts(launcherServices)
+                        throw AssertionError("A check of the executable of the grouped batch has failed: $failure", e)
+                    }
+                }
+            }
+        }
+    }
+
+    @OptIn(TestInfrastructureInternals::class)
+    private fun Constructor<JsBinaryArtifactHandler>.createInStageOfThisRunner(services: TestServices): JsBinaryArtifactHandler =
+        invoke(services).also { it.setCompilationStage(compilationStage) }
 
     protected class GroupedBatchExecution(val executionName: String, val output: String, val vmFailure: ScriptExecutionException?)
 

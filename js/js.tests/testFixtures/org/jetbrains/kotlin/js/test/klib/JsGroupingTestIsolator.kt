@@ -271,8 +271,8 @@ class JsGroupingTestIsolator(
             JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY,
             JsEnvironmentConfigurationDirectives.GENERATE_DTS_FROM_IR,
             JsEnvironmentConfigurationDirectives.SKIP_IR_INCREMENTAL_CHECKS,
-            // What is expected of the executable of this very test. The grouped pipeline runs `box()` only, so the
-            // expectation is not checked, but a batch executable could not satisfy it anyway.
+            // What is expected of the executable of this very test. A grouped batch does not check the expectation,
+            // and its executable could not satisfy it anyway.
             JsEnvironmentConfigurationDirectives.CHECK_OPTIMIZED_JS,
             JsEnvironmentConfigurationDirectives.JS_DCE_EXPECTED_OUTPUT_SIZE,
         )
