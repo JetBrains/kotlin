@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 5,
+    "schemaVersion": 6,
     "releases": [
         {
             "name": "1.0.0",
@@ -1801,6 +1801,432 @@
                     "name": "wasm-wasi",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.1.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
+        },
+        "compilerOutputKind": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.CompilerOutputKindType",
+            "values": [
+                {
+                    "name": "program",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "static",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "dynamic",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "framework",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "library",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "bitcode",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.8.20",
+                        "removedVersion": null
+                    }
+                }
+            ]
+        },
+        "konanTarget": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.KonanTargetType",
+            "values": [
+                {
+                    "name": "android_x64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "android_x86",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "android_arm32",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "android_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "ios_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "ios_x64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "ios_simulator_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "watchos_arm32",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "watchos_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "watchos_x64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "2.3.20",
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "watchos_simulator_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "watchos_device_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.8.0",
+                        "stabilizedVersion": "1.8.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "tvos_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "tvos_x64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "2.3.20",
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "tvos_simulator_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "linux_x64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "mingw_x64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "macos_x64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "2.3.20",
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "macos_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "linux_arm64",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "linux_arm32_hfp",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.8.20",
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "ios_arm32",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.8.20",
+                        "removedVersion": "1.9.20"
+                    }
+                },
+                {
+                    "name": "watchos_x86",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.8.20",
+                        "removedVersion": "1.9.20"
+                    }
+                },
+                {
+                    "name": "linux_mips32",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.8.20",
+                        "removedVersion": "1.9.20"
+                    }
+                },
+                {
+                    "name": "linux_mipsel32",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.8.20",
+                        "removedVersion": "1.9.20"
+                    }
+                },
+                {
+                    "name": "mingw_x86",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.8.20",
+                        "removedVersion": "1.9.20"
+                    }
+                },
+                {
+                    "name": "wasm32",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.8.20",
+                        "removedVersion": "1.9.20"
+                    }
+                }
+            ]
+        },
+        "nativeAllocationMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.NativeAllocationModeType",
+            "values": [
+                {
+                    "name": "std",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": "2.3.0",
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "mimalloc",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": "2.1.0",
+                        "removedVersion": "2.2.0"
+                    }
+                },
+                {
+                    "name": "custom",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.8.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
+        },
+        "nativeGcMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.NativeGcModeType",
+            "values": [
+                {
+                    "name": "noop",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.30",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "stms",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.30",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "cms",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.6.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
+        },
+        "nativeMemoryModel": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.NativeMemoryModelType",
+            "values": [
+                {
+                    "name": "relaxed",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.7.20",
+                        "removedVersion": "1.9.20"
+                    }
+                },
+                {
+                    "name": "strict",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.9.0",
+                        "removedVersion": "1.9.20"
+                    }
+                },
+                {
+                    "name": "experimental",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": "1.5.20",
+                        "deprecatedVersion": "1.9.20",
+                        "removedVersion": null
+                    }
+                }
+            ]
+        },
+        "enableDisableMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.EnableDisableModeType",
+            "values": [
+                {
+                    "name": "enable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "disable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.20",
                         "stabilizedVersion": null,
                         "deprecatedVersion": null,
                         "removedVersion": null
@@ -16405,7 +16831,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.EnableDisableModeType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
@@ -16450,7 +16876,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.NativeAllocationModeType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
@@ -17373,13 +17799,13 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.PathListType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
-                                                "current": [],
+                                                "current": null,
                                                 "valueInVersions": []
                                             },
                                             "isNullable": {
-                                                "current": false,
+                                                "current": true,
                                                 "valueInVersions": []
                                             }
                                         },
@@ -17463,7 +17889,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.EnableDisableModeType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
@@ -17559,7 +17985,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.NativeGcModeType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
@@ -17694,13 +18120,13 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.PathListType",
                                             "defaultValue": {
-                                                "current": null,
+                                                "current": [],
                                                 "valueInVersions": []
                                             },
                                             "isNullable": {
-                                                "current": true,
+                                                "current": false,
                                                 "valueInVersions": []
                                             }
                                         },
@@ -17739,7 +18165,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.EnableDisableModeType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
@@ -18009,13 +18435,13 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
-                                            "defaultValue": {
-                                                "current": null,
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.KonanTargetListType",
+                                            "isNullable": {
+                                                "current": false,
                                                 "valueInVersions": []
                                             },
-                                            "isNullable": {
-                                                "current": true,
+                                            "defaultValue": {
+                                                "current": [],
                                                 "valueInVersions": []
                                             }
                                         },
@@ -18234,7 +18660,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.EnableDisableModeType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
@@ -19725,7 +20151,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.NativeMemoryModelType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
@@ -20181,7 +20607,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.CompilerOutputKindType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
@@ -20226,7 +20652,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.KonanTargetType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
