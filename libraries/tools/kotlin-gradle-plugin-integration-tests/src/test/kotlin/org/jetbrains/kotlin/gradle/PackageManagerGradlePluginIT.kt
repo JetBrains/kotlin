@@ -5,25 +5,33 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.Project
+import org.gradle.api.tasks.StopExecutionException
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
-import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import kotlin.io.path.deleteRecursively
-import kotlin.io.path.notExists
-import kotlin.io.path.readText
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 
 class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
@@ -719,4 +727,217 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("tasks that require npm dependencies must re-run and not be up-to-date after npm dependencies change")
+    @GradleTest
+    @JsGradlePluginTests
+    @OptIn(ExperimentalJsTestDsl::class)
+    fun testRequiresNpmDependenciesTasksRerunWhenNpmDependenciesChange(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            val expectedNpmTasks = trackedNpmTasks + untrackedNpmTasks
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser {
+                            test.chromium()
+                        }
+                        nodejs()
+                        binaries.executable()
+                        generateTypeScriptDefinitions()
+                    }
+                    wasmJs {
+                        browser {
+                            test.chromium()
+                        }
+                        nodejs()
+                        binaries.executable()
+                    }
+
+                    sourceSets.commonMain.dependencies {
+                        // Both npm DSLs are covered, so the test keeps working when the deprecated one is removed.
+                        @Suppress("DEPRECATION")
+                        implementation(npm("decamelize", project.providers.gradleProperty("decamelizeVersion").get()))
+                        npm("left-pad", project.providers.gradleProperty("leftPadVersion"))
+                    }
+                    sourceSets.commonTest.dependencies {
+                        implementation(kotlin("test"))
+                    }
+                }
+
+                // Lock file validation aren't relevant to this test, so just disable them to avoid unrelated failures
+                project.disableNpmLockFileValidations()
+
+                val npmTasks = project.tasks.withType(RequiresNpmDependenciesTask::class.java)
+
+                npmTasks.configureEach { task ->
+                    task.doFirst("Skip real task actions") { _ ->
+                        val lockFiles = task.npmDependenciesLockFiles.files
+                        check(lockFiles.isNotEmpty()) { "${task.path} has no npm dependencies lock files" }
+                        throw StopExecutionException(
+                            "Skipping ${task.path}. Running task actions for this test is slow and unnecessary. The test only needs to check whether tasks are up-to-date"
+                        )
+                    }
+                }
+
+                project.tasks.register("checkNpmTaskList") { task ->
+                    task.description = "Fail when a task is added or removed, so that the lists in the test are updated."
+                    val actualNpmTaskPaths = npmTasks.names.map { ":$it" }.sorted()
+                    task.doLast { _ ->
+                        check(actualNpmTaskPaths == expectedNpmTasks.sorted()) {
+                            "Unexpected npm tasks. Expected: ${expectedNpmTasks.sorted()}, actual: $actualNpmTaskPaths"
+                        }
+                    }
+                }
+            }
+
+            kotlinSourcesDir("commonMain").resolve("Main.kt").createParentDirectories().writeText(
+                """
+                |fun main() {
+                |    println("main")
+                |}
+                |""".trimMargin()
+            )
+            kotlinSourcesDir("commonTest").resolve("MainTest.kt").createParentDirectories().writeText(
+                """
+                |import kotlin.test.*
+                |class MainTest {
+                |    @Test
+                |    fun test() {}
+                |}
+                |""".trimMargin()
+            )
+
+            // Export something, so that the TypeScript validation tasks have declarations to validate.
+            listOf("jsMain", "jsTest").forEach { sourceSet ->
+                kotlinSourcesDir(sourceSet).resolve("Exported.kt").createParentDirectories().writeText(
+                    """
+                    |@OptIn(ExperimentalJsExport::class)
+                    |@JsExport
+                    |fun exportedFrom_${sourceSet}(): Int = 42
+                    |""".trimMargin()
+                )
+            }
+
+            // Keep Playwright away from the shared browsers cache in the user's home directory.
+            val playwrightBrowsers = projectPath.resolve("playwright-browsers").createDirectories()
+
+            var decamelizeVersion = "6.0.0"
+            var leftPadVersion = "1.2.0"
+
+            fun buildArguments() = arrayOf(
+                "-PdecamelizeVersion=$decamelizeVersion",
+                "-PleftPadVersion=$leftPadVersion",
+                "-Pkotlin.gradle.playwright.browsers.path=$playwrightBrowsers",
+            )
+
+            // Development and production executables are synced into the same directory,
+            // so Gradle refuses to run development and production tasks in one build.
+            val (productionNpmTasks, otherNpmTasks) = expectedNpmTasks.partition { "Production" in it }
+
+            fun buildNpmTasks(assertions: BuildResult.(tasks: List<String>) -> Unit) {
+                listOf(otherNpmTasks, productionNpmTasks).forEach { tasks ->
+                    build(*tasks.toTypedArray(), *buildArguments()) {
+                        assertions(tasks)
+                    }
+                }
+            }
+
+            // Step 1: check that the project has exactly the npm tasks listed in the test.
+            build("checkNpmTaskList", *buildArguments())
+
+            // Step 2: run every npm task for the first time, so each one gets an execution history.
+            buildNpmTasks { tasks ->
+                assertTasksExecuted(tasks)
+            }
+
+            // Step 3: run again with nothing changed.
+            // Tasks that track their state are up-to-date; the others always run.
+            buildNpmTasks { tasks ->
+                assertTasksUpToDate(tasks.filter { it in trackedNpmTasks })
+                assertTasksExecuted(tasks.filter { it in untrackedNpmTasks })
+            }
+
+            // Step 4: change the npm dependencies declared with both the old and the new DSL.
+            // Every task that was up-to-date in step 3 must run again.
+            decamelizeVersion = "6.0.1"
+            leftPadVersion = "1.3.0"
+            buildNpmTasks { tasks ->
+                assertTasksExecuted(tasks.filter { it in trackedNpmTasks })
+            }
+        }
+    }
+
+    companion object {
+        private fun Project.disableNpmLockFileValidations() {
+            plugins.withType(YarnPlugin::class.java) { _ ->
+                extensions.getByType(YarnRootExtension::class.java).apply {
+                    yarnLockMismatchReportProperty.set(YarnLockMismatchReport.NONE)
+                    yarnLockAutoReplaceProperty.set(true)
+                }
+            }
+            plugins.withType(WasmYarnPlugin::class.java) { _ ->
+                extensions.getByType(WasmYarnRootExtension::class.java).apply {
+                    yarnLockMismatchReportProperty.set(YarnLockMismatchReport.NONE)
+                    yarnLockAutoReplaceProperty.set(true)
+                }
+            }
+            plugins.withType(NodeJsRootPlugin::class.java) { _ ->
+                extensions.getByType(NpmExtension::class.java).apply {
+                    packageLockMismatchReport.set(LockFileMismatchReport.NONE)
+                    packageLockAutoReplace.set(true)
+                }
+            }
+            plugins.withType(WasmNodeJsRootPlugin::class.java) { _ ->
+                extensions.getByType(WasmNpmExtension::class.java).apply {
+                    packageLockMismatchReport.set(LockFileMismatchReport.NONE)
+                    packageLockAutoReplace.set(true)
+                }
+            }
+        }
+
+    }
 }
+
+/**
+ * [org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask]s that track their state,
+ * so they are up-to-date when nothing changed.
+ */
+private val trackedNpmTasks = listOf(
+    ":jsBrowserDevelopmentWebpack",
+    ":jsBrowserProductionWebpack",
+    ":jsBrowserTest",
+    ":jsNodeTest",
+    ":prepareWebpackBundleForKotlinJsTests",
+    ":wasmJsBrowserDevelopmentWebpack",
+    ":wasmJsBrowserProductionWebpack",
+    ":wasmJsBrowserTest",
+    ":wasmJsNodeTest",
+    ":wasmJsTestBundleAsEsm",
+)
+
+/**
+ * [org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask]s that always run.
+ */
+private val untrackedNpmTasks = listOf(
+    // webpack dev servers don't track their state
+    ":jsBrowserDevelopmentRun",
+    ":jsBrowserProductionRun",
+    ":wasmJsBrowserDevelopmentRun",
+    ":wasmJsBrowserProductionRun",
+    // NodeJsExec has no outputs
+    ":jsNodeDevelopmentRun",
+    ":jsNodeProductionRun",
+    ":wasmJsNodeDevelopmentRun",
+    ":wasmJsNodeProductionRun",
+    // TypeScriptValidationTask has no outputs
+    ":jsDevelopmentExecutableValidateGeneratedByCompilerTypeScript",
+    ":jsProductionExecutableValidateGeneratedByCompilerTypeScript",
+    ":jsTestTestDevelopmentExecutableValidateGeneratedByCompilerTypeScript",
+    ":jsTestTestProductionExecutableValidateGeneratedByCompilerTypeScript",
+    // the installed browsers are not a declared output
+    ":kotlinInstallPlaywrightChromium",
+)
