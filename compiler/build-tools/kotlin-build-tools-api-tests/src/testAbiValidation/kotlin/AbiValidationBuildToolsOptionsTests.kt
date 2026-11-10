@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.api.abi.dumpKlibAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpJvmAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.api.abi.operations.filters
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
