@@ -74,18 +74,18 @@ public interface KaDiagnosticProvider : KaSessionComponent {
      * (e.g. by `@Suppress` annotations).
      *
      * Deprecated: Use [diagnostics][org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics] with
-     * [ignoreSuppressed][org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics.ignoreSuppressed] instead. The [filter] becomes
+     * [includingSuppressed][org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics.includingSuppressed] instead. The [filter] becomes
      * a [withCheckers][org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics.withCheckers] modifier of the returned query:
      *
      * ```kotlin
-     * file.diagnostics().withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED).ignoreSuppressed(false)
+     * file.diagnostics().withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED).includingSuppressed(true)
      * ```
      *
      * @see diagnostics
      */
     @KaExperimentalApi
     @Deprecated(
-        "Use the 'org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics' endpoint with 'ignoreSuppressed(false)' instead." +
+        "Use the 'org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics' endpoint with 'includingSuppressed(true)' instead." +
                 " The 'filter' argument becomes a 'withCheckers' modifier of the returned 'KaDiagnostics'."
     )
     public fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>>
@@ -202,18 +202,18 @@ public fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDia
  * (e.g. by `@Suppress` annotations).
  *
  * Deprecated: Use [diagnostics][org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics] with
- * [ignoreSuppressed][org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics.ignoreSuppressed] instead. The [filter] becomes
+ * [includingSuppressed][org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics.includingSuppressed] instead. The [filter] becomes
  * a [withCheckers][org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics.withCheckers] modifier of the returned query:
  *
  * ```kotlin
- * file.diagnostics().withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED).ignoreSuppressed(false)
+ * file.diagnostics().withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED).includingSuppressed(true)
  * ```
  *
  * @see diagnostics
  */
 @KaExperimentalApi
 @Deprecated(
-    "Use the 'org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics' endpoint with 'ignoreSuppressed(false)' instead." +
+    "Use the 'org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics' endpoint with 'includingSuppressed(true)' instead." +
             " The 'filter' argument becomes a 'withCheckers' modifier of the returned 'KaDiagnostics'."
 )
 context(session: KaSession)
