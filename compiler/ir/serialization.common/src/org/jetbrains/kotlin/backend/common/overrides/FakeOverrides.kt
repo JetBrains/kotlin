@@ -292,10 +292,6 @@ private class IrLinkerFakeOverrideBuilderStrategy(
             getter = property.getter?.let { buildFunctionWithDisambiguatedSignature(it) }
             setter = property.setter?.let { buildFunctionWithDisambiguatedSignature(it) }
         }
-
-    override fun shouldSeeInternals(thisModule: IrModuleFragment, memberModule: IrModuleFragment): Boolean {
-        return thisModule.canSeeInternalsOf(memberModule)
-    }
 }
 
 class IrLinkerFakeOverrideProvider(

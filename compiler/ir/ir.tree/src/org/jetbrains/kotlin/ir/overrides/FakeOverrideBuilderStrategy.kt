@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
+import org.jetbrains.kotlin.ir.util.canSeeInternalsOf
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -87,8 +87,6 @@ abstract class FakeOverrideBuilderStrategy {
         }
     }
 
-    protected abstract fun shouldSeeInternals(thisModule: IrModuleFragment, memberModule: IrModuleFragment): Boolean
-
     private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
         return when {
             DescriptorVisibilities.isPrivate(original.visibility) -> false
@@ -99,7 +97,7 @@ abstract class FakeOverrideBuilderStrategy {
 
                 when {
                     thisModule == memberModule -> true
-                    shouldSeeInternals(thisModule, memberModule) -> true
+                    thisModule.canSeeInternalsOf(memberModule) -> true
                     !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
                             original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false

@@ -66,10 +66,6 @@ class Fir2IrFakeOverrideStrategy(
         }
     }
 
-    override fun shouldSeeInternals(thisModule: IrModuleFragment, memberModule: IrModuleFragment): Boolean {
-        return thisModule.canSeeInternalsOf(memberModule)
-    }
-
     fun clearFakeOverrideFields() {
         for (property in fieldOnlyProperties) {
             check(property.isFakeOverride && property.getter == null) { "Not a field-only property: " + property.render() }

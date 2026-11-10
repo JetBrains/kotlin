@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
@@ -325,8 +324,6 @@ class IrBasedFunctionFactory(
 
     private inner class FunctionTypeFakeOverrideBuilderStrategy: FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
         override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {}
-
-        override fun shouldSeeInternals(thisModule: IrModuleFragment, memberModule: IrModuleFragment): Boolean = false
 
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             val signature = signatureComputer(function)

@@ -89,7 +89,7 @@ private fun IrDeclarationWithVisibility.isVisibleAsInternal(file: IrFile): Boole
         // See MoveBodilessDeclarationsToSeparatePlaceLowering
         return module.name.asString() == "<$KOTLIN_JS_STDLIB_NAME>"
     }
-    return module.descriptor.shouldSeeInternalsOf(referencedDeclarationPackageFragment.moduleDescriptor)
+    return module.canSeeInternalsOf(referencedDeclarationPackageFragment.module)
 }
 
 private fun IrDeclarationWithVisibility.isVisibleAsPrivate(file: IrFile): Boolean {
