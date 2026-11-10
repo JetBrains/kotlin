@@ -19,8 +19,8 @@ configurations.testImplementation { extendsFrom(configurations.embedded) }
 dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
 
-    embedded(libs.protobuf.java)
-    embedded(libs.protobuf.kotlin)
+    embedded(libs.protobuf.java) { isTransitive = false }
+    embedded(libs.protobuf.kotlin) { isTransitive = false }
 
     api(kotlin("stdlib", coreDepsVersion))
 

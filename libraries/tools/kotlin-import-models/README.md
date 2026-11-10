@@ -10,8 +10,10 @@ and serialized parameters) and receives a `KotlinGradleModel` that holds a seria
 
 The public API is the `org.jetbrains.kotlin.importmodels` package and its `proto` subpackage, which holds the classes generated
 from [kotlin_import_models.proto](src/main/proto/kotlin_import_models.proto).
-The bundled Protobuf runtime is relocated to `org.jetbrains.kotlin.importmodels.internal.protobuf`.
-It is an implementation detail that can change in any release, so use it only through the generated classes.
+The bundled Protobuf runtime is relocated to `org.jetbrains.kotlin.importmodels.internal.protobuf`:
+use it only through the generated classes. The `internal` package, which holds
+`KotlinImportModelSerialization`, is not API.
+They are implementation details that can change in any release.
 
 ## Schema rules
 
@@ -21,7 +23,9 @@ Enums are open, with a zero `*_UNSPECIFIED` value and a value prefix unique to t
 Consumers decide compatibility by `BaseModel.plugin_version`.
 
 The schema has no `map<>` fields.
-The producer sorts set-like repeated fields and keeps the order of order-significant ones, such as classpath entries.
+Set-like repeated fields are semantically unordered: a consumer must not rely on their order and
+sorts them when it matters. The producer sorts them today for byte stability, which is not part
+of the contract. Order-significant fields, such as classpath entries, keep their order.
 Nothing relies on byte equality of serialized messages, because Protobuf serialization is not canonical across versions.
 
 ## Changing the schema
