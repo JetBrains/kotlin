@@ -42,12 +42,6 @@ public class ScriptingCliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("dirWithKotlinScriptPsi.args")
-    public void testDirWithKotlinScriptPsi() {
-      run("dirWithKotlinScriptPsi.args");
-    }
-
-    @Test
     @TestMetadata("nonexistentScript.args")
     public void testNonexistentScript() {
       run("nonexistentScript.args");
