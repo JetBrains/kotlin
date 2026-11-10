@@ -1,0 +1,4 @@
+package = lib1
+language = Objective-C
+headers = lib1.h
+headerFilter = lib1.h
