@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.diagnostics
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.psi.KtElement
@@ -56,7 +55,6 @@ import org.jetbrains.kotlin.psi.KtElement
  *
  * @see diagnostics
  */
-@KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaDiagnostics : KaLifetimeOwner, Sequence<KaDiagnosticWithPsi<*>> {
     /**

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import kotlin.reflect.KClass
@@ -72,7 +71,6 @@ public interface KaDiagnostic : KaLifetimeOwner {
      *
      * The `UNUSED_VARIABLE` diagnostic reported on `unused` is suppressed.
      */
-    @KaExperimentalApi
     public val isSuppressed: Boolean
 
     /**
