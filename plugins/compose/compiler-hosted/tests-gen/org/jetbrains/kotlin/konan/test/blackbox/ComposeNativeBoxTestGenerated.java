@@ -37,6 +37,12 @@ public class ComposeNativeBoxTestGenerated extends AbstractNativeCodegenBoxTest 
   }
 
   @Test
+  @TestMetadata("composableFunInterfaceSamConversionCrossModule.kt")
+  public void testComposableFunInterfaceSamConversionCrossModule() {
+    run("composableFunInterfaceSamConversionCrossModule.kt");
+  }
+
+  @Test
   @TestMetadata("composableLambda.kt")
   public void testComposableLambda() {
     run("composableLambda.kt");
