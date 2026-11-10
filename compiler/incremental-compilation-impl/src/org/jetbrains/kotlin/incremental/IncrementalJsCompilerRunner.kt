@@ -42,7 +42,6 @@ fun makeJsIncrementally(
     buildHistoryFile: File,
     messageCollector: MessageCollector = MessageCollector.NONE,
     reporter: ICReporter = DoNothingICReporter,
-    scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     modulesApiHistory: ModulesApiHistory = EmptyModulesApiHistory,
     providedChangedFiles: ChangedFiles? = null,
 ) {
@@ -55,7 +54,6 @@ fun makeJsIncrementally(
             cachesDir, buildReporter,
             buildHistoryFile = buildHistoryFile,
             modulesApiHistory = modulesApiHistory,
-            scopeExpansion = scopeExpansion,
         )
         compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles ?: ChangedFiles.DeterminableFiles.ToBeComputed)
     }
@@ -84,7 +82,6 @@ class IncrementalJsCompilerRunner(
     reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     buildHistoryFile: File?,
     override val modulesApiHistory: ModulesApiHistory,
-    private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     pluginsLoader: PluginsLoader? = null,
     override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
@@ -181,10 +178,8 @@ class IncrementalJsCompilerRunner(
             compilationCanceledStatus
         ).apply {
             if (isIncremental) {
-                if (scopeExpansion == CompileScopeExpansionMode.ALWAYS) {
-                    val nextRoundChecker = IncrementalNextRoundCheckerImpl(caches, dirtySources)
-                    register(IncrementalNextRoundChecker::class.java, nextRoundChecker)
-                }
+                val nextRoundChecker = IncrementalNextRoundCheckerImpl(caches, dirtySources)
+                register(IncrementalNextRoundChecker::class.java, nextRoundChecker)
                 register(IncrementalDataProvider::class.java, getIncrementalDataProvider(args, caches))
             }
 
@@ -250,12 +245,7 @@ class IncrementalJsCompilerRunner(
         dirtySources: Set<File>,
     ): List<File> {
         val additionalDirtyFiles: Set<File> =
-            when (scopeExpansion) {
-                CompileScopeExpansionMode.ALWAYS ->
-                    (services[IncrementalNextRoundChecker::class.java] as IncrementalNextRoundCheckerImpl).newDirtySources
-                CompileScopeExpansionMode.NEVER ->
-                    emptySet()
-            }
+            (services[IncrementalNextRoundChecker::class.java] as IncrementalNextRoundCheckerImpl).newDirtySources
 
         return additionalDirtyFiles.filter { it !in dirtySources }
     }

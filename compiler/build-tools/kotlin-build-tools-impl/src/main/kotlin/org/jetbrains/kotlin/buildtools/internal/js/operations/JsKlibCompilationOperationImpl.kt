@@ -258,7 +258,6 @@ internal class JsKlibCompilationOperationImpl : BaseCompilationOperationImpl<JsA
                     icConfiguration[ROOT_PROJECT_BUILD_DIR]
                 )
             ),
-            CompileScopeExpansionMode.ALWAYS,
             icFeatures,
             executionContext.classloadersCache?.asPluginsLoader(),
             getLookupTrackerAdapter()

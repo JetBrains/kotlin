@@ -253,7 +253,6 @@ internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<W
                     icConfiguration[ROOT_PROJECT_BUILD_DIR]
                 )
             ),
-            CompileScopeExpansionMode.ALWAYS,
             icFeatures,
             executionContext.classloadersCache?.asPluginsLoader(),
             getLookupTrackerAdapter()
