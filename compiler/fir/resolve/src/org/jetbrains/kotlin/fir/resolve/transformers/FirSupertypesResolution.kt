@@ -411,7 +411,7 @@ open class FirSupertypeResolverVisitor(
         val typeResolveService = TypeResolveServiceForPlugins(typeResolveTransformer, configuration)
         for (extension in supertypeGenerationExtensions) {
             if (extension.needTransformSupertypes(klass)) {
-                extension.computeAdditionalSupertypes(klass, supertypeRefs, typeResolveService).mapTo(supertypeRefs) {
+                extension.computeAdditionalSupertypes(klass, supertypeRefs, typeResolveService as PluginTypeResolver).mapTo(supertypeRefs) {
                     it.toFirResolvedTypeRef(klass.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default))
                 }
             }
@@ -444,6 +444,7 @@ open class FirSupertypeResolverVisitor(
             for (extension in supertypeGenerationExtensions) {
                 if (extension.needTransformSupertypes(nestedClass)) {
                     @OptIn(ExperimentalSupertypesGenerationApi::class)
+                    @Suppress("DEPRECATION")
                     val newSupertypes = extension.computeAdditionalSupertypesForGeneratedNestedClass(
                         nestedClass, typeResolveService
                     )
@@ -462,6 +463,7 @@ open class FirSupertypeResolverVisitor(
         }
     }
 
+    @Suppress("DEPRECATION")
     private class TypeResolveServiceForPlugins(
         val typeResolveTransformer: FirSpecificTypeResolverTransformer,
         val configuration: TypeResolutionConfiguration,
