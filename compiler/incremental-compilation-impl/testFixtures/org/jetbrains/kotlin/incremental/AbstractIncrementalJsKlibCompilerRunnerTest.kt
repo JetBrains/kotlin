@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.incremental.utils.TestICReporter
 import java.io.File
 
-abstract class AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalCompilerRunnerTestBase<K2JSCompilerArguments>() {
+abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncrementalCompilerRunnerTestBase<K2JSCompilerArguments>() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
         K2JSCompilerArguments().apply {
             libraries = ForTestCompileRuntime.stdlibJs().absolutePath
