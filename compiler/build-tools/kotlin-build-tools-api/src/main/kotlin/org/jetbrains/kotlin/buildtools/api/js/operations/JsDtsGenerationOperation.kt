@@ -38,7 +38,7 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
     public val klibs: List<Path>
 
     /**
-     * The directory the generated `.d.ts` files are written into.
+     * The directory the generated `.d.ts` files are written into. It is created if it does not exist.
      */
     public val outputDirectory: Path
 
@@ -60,7 +60,7 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
         public val klibs: List<Path>
 
         /**
-         * The directory the generated `.d.ts` files are written into.
+         * The directory the generated `.d.ts` files are written into. It is created if it does not exist.
          */
         public val outputDirectory: Path
 
