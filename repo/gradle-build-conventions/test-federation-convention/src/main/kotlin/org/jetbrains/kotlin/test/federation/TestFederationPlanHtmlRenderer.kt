@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.testFederation
 
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
+import org.jetbrains.kotlin.testFederation.TestSubset.AllTests
+import org.jetbrains.kotlin.testFederation.TestSubset.SmokeTests
 
 internal class TestFederationPlanHtmlRenderer(
     private val plan: TestFederationPlan
@@ -27,7 +29,6 @@ internal class TestFederationPlanHtmlRenderer(
             }
             body {
                 renderPlan()
-                renderLegend()
             }
         }
 
@@ -51,7 +52,7 @@ internal class TestFederationPlanHtmlRenderer(
     private fun TD.renderDomain(entry: TestFederationPlan.PlanEntry) {
         val domainName = entry.domain.name
         when {
-            entry.isChanged -> strong { +"$domainName*" }
+            entry.isChanged -> strong { +domainName }
             else -> +domainName
         }
     }
@@ -59,25 +60,42 @@ internal class TestFederationPlanHtmlRenderer(
     private fun TD.renderTestSubsets(entry: TestFederationPlan.PlanEntry) {
         entry.testSubsets.forEachIndexed { index, subset ->
             if (index > 0) +" + "
-            +subset.toEmoji()
+            renderTestSubset(subset)
+        }
+    }
+
+    private fun TD.renderTestSubset(subset: TestSubset) {
+        when (subset) {
+            AllTests -> {
+                span(classes = "chip chip-all-tests") {
+                    +"$ALL_TESTS_EMOJI all tests"
+                }
+            }
+            SmokeTests -> {
+                span(classes = "chip chip-smoke-tests") {
+                    dataAnnotation = "@MustRunAlways"
+                    +"$SMOKE_TESTS_EMOJI smoke tests"
+                }
+            }
+            else -> {
+                val domain = Domain.entries.first { contractTestsSubsetOf(it) == subset }
+                span(classes = "chip chip-contract-tests") {
+                    dataAnnotation = "@MustRunOnChangesIn${domain.name}"
+                    +"$CONTRACT_TESTS_EMOJI contracts for ${domain.name}"
+                }
+            }
         }
     }
 
     private fun TD.renderReason(entry: TestFederationPlan.PlanEntry) {
-        +entry.reason
-    }
-
-    private fun BODY.renderLegend() {
-        p { +"Legend:" }
-        table {
-            tr {
-                th { +"Symbol" }
-                th { +"Meaning" }
-            }
-            tr { td { strong { +"Domain*" } }; td { +"The domain is changed" } }
-            tr { td { +ALL_TESTS_EMOJI }; td { +"AllTests" } }
-            tr { td { +SMOKE_TESTS_EMOJI }; td { +"SmokeTests" } }
-            tr { td { +"$CONTRACT_TESTS_EMOJI (Domain)" }; td { +"ContractTestsForDomain" } }
+        val reason = entry.reason
+        when {
+            reason.startsWith(MUST_RUN_ALL_TESTS_REASON_PREFIX) -> code { +reason }
+            else -> +reason
         }
     }
 }
+
+private var CoreAttributeGroupFacade.dataAnnotation : String
+    get() = attributes["data-annotation"].orEmpty()
+    set(newValue) { attributes["data-annotation"] = newValue }
