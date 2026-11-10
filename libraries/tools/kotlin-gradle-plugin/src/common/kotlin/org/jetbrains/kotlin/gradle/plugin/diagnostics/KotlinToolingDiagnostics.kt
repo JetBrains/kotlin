@@ -2500,6 +2500,24 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KotlinCompilerArgumentsRejected : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Compiler.Warning) {
+        operator fun invoke(rejection: String?, compilerVersion: String, pluginVersion: String) = build {
+            title { "Kotlin compiler rejected compiler arguments" }
+                .description {
+                    val versions = "This build uses Kotlin compiler $compilerVersion with Kotlin Gradle Plugin $pluginVersion."
+                    if (rejection != null) {
+                        "$rejection\n$versions"
+                    } else {
+                        "Kotlin compiler failed without reporting a source error, so a compiler argument is likely unsupported. " +
+                                "See the errors above.\n$versions"
+                    }
+                }
+                .solution {
+                    "Remove the unsupported compiler argument, or align 'kotlin.compilerVersion' with the Kotlin Gradle Plugin version."
+                }
+        }
+    }
+
     internal object DuplicateJsBrowserTestFrameworkConfiguration : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
