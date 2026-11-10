@@ -744,7 +744,7 @@ class NativeSecondStageCompilationConfig(
      * see [CacheCompilations] and [org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver].
      */
     internal val mergesIcCacheBuild: Boolean
-        get() = configuration.get(BinaryOptions.mergedIcCacheBuild) ?: false
+        get() = configuration.get(BinaryOptions.mergedIcCacheBuild) ?: true
 
     /**
      * Whether object files are emitted in-process: everywhere with [inProcessObjEmission], and by default ([inProcessLlvmTools])

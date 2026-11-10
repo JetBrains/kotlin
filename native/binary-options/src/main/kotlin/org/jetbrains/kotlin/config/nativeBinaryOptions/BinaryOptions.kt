@@ -150,7 +150,7 @@ object BinaryOptions : BinaryOptionRegistry() {
     val inProcessLlvmTools by booleanOption()
 
     /**
-     * When `true`, the last incremental cache build of a compilation (the dirty files of one or several libraries)
+     * When `true` (the default), the last incremental cache build of a compilation (the dirty files of one or several libraries)
      * is compiled in the same IR as the final binary, instead of in a separate compilation linking the IR of all the libraries again.
      */
     val mergedIcCacheBuild by booleanOption()
