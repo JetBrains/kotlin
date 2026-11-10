@@ -8,12 +8,18 @@ package org.jetbrains.kotlin.lombok.config
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lombok.generators.hasJavaOrigin
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ACCESS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME
@@ -72,6 +78,8 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.FIELD_DEFAULTS_FINAL
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.LEVEL
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.MAKE_FINAL
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_STRING_DO_NOT_USE_GETTERS_CONFIG
+import org.jetbrains.kotlin.lombok.generators.containsExplicitConstructor
+import org.jetbrains.kotlin.lombok.generators.primaryConstructorParameters
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -248,6 +256,12 @@ object ConeLombokAnnotations {
     interface ConstructorAnnotation {
         val accessLevel: AccessLevel
         val staticName: String?
+
+        fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable>
+
+        fun generatesPlainNoArgsConstructor(classSymbol: FirClassSymbol<*>): Boolean {
+            return staticName == null && getVariablesForParameters(classSymbol).isEmpty()
+        }
     }
 
     class NoArgsConstructor(
@@ -256,6 +270,8 @@ object ConeLombokAnnotations {
         val force: Boolean,
         annotation: FirAnnotation,
     ) : ConstructorAnnotation, ConeLombokAnnotation(annotation) {
+        override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> = emptyList()
+
         companion object : ConeAnnotationCompanion<NoArgsConstructor>(LombokNames.NO_ARGS_CONSTRUCTOR_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): NoArgsConstructor {
                 return NoArgsConstructor(
@@ -273,6 +289,21 @@ object ConeLombokAnnotations {
         override val staticName: String? = null,
         annotation: FirAnnotation,
     ) : ConstructorAnnotation, ConeLombokAnnotation(annotation) {
+        @OptIn(SymbolInternals::class)
+        override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> {
+            val isAllArgsConstructor = annotation.unexpandedClassId == classId
+
+            return buildList {
+                for (declaration in classSymbol.fir.declarations) {
+                    if (declaration !is FirJavaField || declaration.isStatic) continue
+
+                    if (declaration.hasInitializer && (!isAllArgsConstructor || !declaration.isVar)) continue
+
+                    add(declaration)
+                }
+            }
+        }
+
         companion object : ConeAnnotationCompanion<AllArgsConstructor>(LombokNames.ALL_ARGS_CONSTRUCTOR_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): AllArgsConstructor {
                 return AllArgsConstructor(
@@ -289,6 +320,22 @@ object ConeLombokAnnotations {
         override val staticName: String? = null,
         annotation: FirAnnotation,
     ) : ConstructorAnnotation, ConeLombokAnnotation(annotation) {
+        @OptIn(SymbolInternals::class)
+        override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> {
+            if (!classSymbol.hasJavaOrigin) return classSymbol.primaryConstructorParameters().orEmpty()
+
+            return classSymbol.fir.declarations
+                .filterIsInstance<FirJavaField>()
+                .filter { it.isFieldRequired() }
+        }
+
+        private fun FirJavaField.isFieldRequired(): Boolean {
+            if (isStatic) return false
+            if (hasInitializer) return false
+            if (isVal) return true
+            return annotations.any { it.unexpandedClassId?.asSingleFqName() in LombokNames.NON_NULL_ANNOTATIONS }
+        }
+
         companion object : ConeAnnotationCompanion<RequiredArgsConstructor>(LombokNames.REQUIRED_ARGS_CONSTRUCTOR_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): RequiredArgsConstructor {
                 return RequiredArgsConstructor(
@@ -304,11 +351,14 @@ object ConeLombokAnnotations {
         fun asSetter(): Setter = Setter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
         fun asGetter(): Getter = Getter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
 
-        fun asRequiredArgsConstructor(): RequiredArgsConstructor = RequiredArgsConstructor(
-            accessLevel = AccessLevel.PUBLIC,
-            staticName = staticConstructor,
-            annotation = annotation,
-        )
+        fun asRequiredArgsConstructor(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? =
+            runIf(!classSymbol.hasJavaOrigin || !containsExplicitConstructor(classSymbol)) {
+                RequiredArgsConstructor(
+                    accessLevel = AccessLevel.PUBLIC,
+                    staticName = staticConstructor,
+                    annotation = annotation,
+                )
+            }
 
         fun toEqualsAndHashCode(): EqualsAndHashCode {
             return EqualsAndHashCode(null, null, annotation)
@@ -344,11 +394,10 @@ object ConeLombokAnnotations {
     class Value(val staticConstructor: String?, annotation: FirAnnotation) : ConeLombokAnnotation(annotation) {
         fun asGetter(): Getter = Getter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
 
-        fun asAllArgsConstructor(): AllArgsConstructor = AllArgsConstructor(
-            accessLevel = AccessLevel.PUBLIC,
-            staticName = staticConstructor,
-            annotation = annotation,
-        )
+        fun asAllArgsConstructor(classSymbol: FirClassSymbol<*>): AllArgsConstructor? =
+            runIf(!containsExplicitConstructor(classSymbol)) {
+                AllArgsConstructor(accessLevel = AccessLevel.PUBLIC, staticName = staticConstructor, annotation = annotation)
+            }
 
         companion object : ConeAnnotationCompanion<Value>(LombokNames.VALUE_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Value = Value(
@@ -442,6 +491,11 @@ object ConeLombokAnnotations {
         hasSpecifiedBuilderClassName,
         annotation,
     ) {
+        fun asAllArgsConstructor(classSymbol: FirClassSymbol<*>): AllArgsConstructor? =
+            runIf(!containsExplicitConstructor(classSymbol)) {
+                AllArgsConstructor(accessLevel = AccessLevel.PACKAGE, annotation = annotation)
+            }
+
         companion object : BuilderConeAnnotationCompanion<Builder>(LombokNames.BUILDER_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Builder {
                 val specifiedBuilderClassName = annotation.getStringArgument(BUILDER_CLASS_NAME)

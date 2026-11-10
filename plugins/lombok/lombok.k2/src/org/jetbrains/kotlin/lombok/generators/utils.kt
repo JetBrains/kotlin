@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -409,4 +410,15 @@ fun remapTypeParameterBounds(
         }
         typeParameter.replaceBounds(remappedBounds)
     }
+}
+
+@OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
+internal fun FirClassSymbol<*>.primaryConstructorParameters(): List<FirValueParameter>? {
+    val primaryConstructor = fir.declarations.filterIsInstance<FirConstructor>().firstOrNull { it.isPrimary } ?: return null
+    return primaryConstructor.valueParameters.takeIf { parameters -> parameters.none { it.isVararg } }
+}
+
+@OptIn(DirectDeclarationsAccess::class)
+internal fun containsExplicitConstructor(classSymbol: FirClassSymbol<*>): Boolean {
+    return classSymbol.declarationSymbols.any { it is FirConstructorSymbol && it.source?.kind is KtRealSourceElementKind }
 }
