@@ -35,11 +35,9 @@ internal open class DecomposedCharSet(
     private fun CodepointInfo(codepointValue: Int, consumedChars: Int): CodepointInfo =
         consumedChars.toLong().shl(32).or(codepointValue.toLong())
 
-    private val CodepointInfo.codepointValue: Int
-        get() = this.and(0xFFFF_FFFFL).toInt()
+    private val CodepointInfo.codepointValue: Int get() = this.toInt()
 
-    private val CodepointInfo.charsConsumed: Int
-        get() = this.shr(32).toInt()
+    private val CodepointInfo.charsConsumed: Int get() = this.shr(32).toInt()
 
     override val consumesFixedLength: Boolean
         get() = true
@@ -52,13 +50,15 @@ internal open class DecomposedCharSet(
             return -1
         }
 
-        // We read testString and decompose it gradually to compare with this decomposedChar at position strIndex
-        val (codepointValue, charsConsumed) = codePointAt(strIndex, testString, rightBound)
-        strIndex += charsConsumed
         var readCodePoints = 0
-        // All decompositions have length that is less or equal Lexer.MAX_DECOMPOSITION_LENGTH
         var decomposedCodePoint = IntArray(Lexer.MAX_DECOMPOSITION_LENGTH)
-        readCodePoints += decomposeCodePoint(codepointValue, decomposedCodePoint, readCodePoints)
+
+        // We read testString and decompose it gradually to compare with this decomposedChar at position strIndex
+        codePointAt(strIndex, testString, rightBound).also { (codepointValue, charsConsumed) ->
+            strIndex += charsConsumed
+            // All decompositions have length that is less or equal Lexer.MAX_DECOMPOSITION_LENGTH
+            readCodePoints += decomposeCodePoint(codepointValue, decomposedCodePoint, readCodePoints)
+        }
 
         if (strIndex < rightBound) {
             var (codepointValue, charsConsumed) = codePointAt(strIndex, testString, rightBound)
