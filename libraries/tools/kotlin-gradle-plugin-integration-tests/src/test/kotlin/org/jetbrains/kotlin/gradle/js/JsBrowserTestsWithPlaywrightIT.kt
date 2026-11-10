@@ -173,7 +173,7 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                 assertOutputContains("post-processed test output")
                 // since post process bundle is served via file scheme, instead http.
                 // we shouldn't expect HTTP server to be started
-                assertOutputDoesNotContain("Starting HTTP server")
+                assertOutputDoesNotContain("HTTP server for js tests started at")
             }
         }
     }
