@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
@@ -76,7 +77,7 @@ class ScriptingIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 incremental = withIC,
-                logLevel = if (withIC) LogLevel.DEBUG else defaultBuildOptions.logLevel
+                buildReport = listOf(BuildReportType.FILE),
             )
         ) {
             val appSubproject = subProject("app")
@@ -89,7 +90,10 @@ class ScriptingIT : KGPBaseTest() {
                 .resolve("GreetScriptTemplate.kt")
                 .relativeTo(projectPath)
 
-            build("assemble") {
+            build(
+                "assemble",
+                buildOptions = if (withIC) buildOptions.copy(logLevel = LogLevel.DEBUG) else buildOptions,
+            ) {
                 val classesDir = appSubproject.kotlinClassesDir()
                 assertFileExists(classesDir.resolve("World.class"))
                 assertFileExists(classesDir.resolve("Alice.class"))
@@ -107,7 +111,7 @@ class ScriptingIT : KGPBaseTest() {
             bobGreetSource.modify { it.replace("Bob", "Uncle Bob") }
             build("assemble") {
                 if (withIC) {
-                    assertCompiledKotlinSources(listOf(bobGreet), output)
+                    assertCompiledKotlinSourcesInBuildReport(listOf(bobGreet))
                 }
             }
         }

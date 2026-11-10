@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
@@ -180,23 +180,26 @@ class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("kt-29860-basic-inline-loop-kmp")
     fun testInlineCycleWithMonotonousExpansion(gradleVersion: GradleVersion) {
-        val buildOptions = defaultBuildOptions.copy(enableMonotonousIncrementalCompileSetExpansion = true)
+        val buildOptions = defaultBuildOptions.copy(
+            enableMonotonousIncrementalCompileSetExpansion = true,
+            buildReport = listOf(BuildReportType.FILE),
+        )
 
-        project("kt-29860-basic-inline-loop-kmp", gradleVersion) {
+        project("kt-29860-basic-inline-loop-kmp", gradleVersion, buildOptions = buildOptions) {
             build("compileKotlinJvm", "compileKotlinJs")
 
             val aKt = projectPath.resolve("src/commonMain/kotlin/a.kt")
             val bKt = projectPath.resolve("src/commonMain/kotlin/b.kt")
 
             projectPath.resolve("src/commonMain/kotlin/b.kt").replaceWithVersion("justChange")
-            build("compileKotlinJvm", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertKotlinCompilationSteps(
+            build("compileKotlinJvm") {
+                assertKotlinCompilationStepsInBuildReport(
                     listOf(bKt).relativizeTo(projectPath),
                     listOf(aKt, bKt).relativizeTo(projectPath)
                 )
             }
-            build("compileKotlinJs", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertKotlinCompilationSteps(
+            build("compileKotlinJs") {
+                assertKotlinCompilationStepsInBuildReport(
                     /* js(ir) instantly detects that a.kt is affected - good for it */
                     listOf(bKt, aKt).relativizeTo(projectPath)
                 )
@@ -208,23 +211,26 @@ class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("kt-29860-basic-inline-loop-kmp")
     fun testInlineCycleWithoutMonotonousExpansion(gradleVersion: GradleVersion) {
-        val buildOptions = defaultBuildOptions.copy(enableMonotonousIncrementalCompileSetExpansion = false)
+        val buildOptions = defaultBuildOptions.copy(
+            enableMonotonousIncrementalCompileSetExpansion = false,
+            buildReport = listOf(BuildReportType.FILE),
+        )
 
-        project("kt-29860-basic-inline-loop-kmp", gradleVersion) {
+        project("kt-29860-basic-inline-loop-kmp", gradleVersion, buildOptions = buildOptions) {
             build("compileKotlinJvm", "compileKotlinJs")
 
             val aKt = projectPath.resolve("src/commonMain/kotlin/a.kt")
             val bKt = projectPath.resolve("src/commonMain/kotlin/b.kt")
 
             bKt.replaceWithVersion("justChange")
-            build("compileKotlinJvm", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertKotlinCompilationSteps(
+            build("compileKotlinJvm") {
+                assertKotlinCompilationStepsInBuildReport(
                     listOf(bKt).relativizeTo(projectPath),
                     listOf(aKt).relativizeTo(projectPath)
                 )
             }
-            build("compileKotlinJs", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertKotlinCompilationSteps(
+            build("compileKotlinJs") {
+                assertKotlinCompilationStepsInBuildReport(
                     /* js(ir) instantly detects that a.kt is affected - good for it */
                     listOf(bKt, aKt).relativizeTo(projectPath)
                 )
@@ -236,9 +242,12 @@ class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("kt-29860-basic-inline-loop-kmp")
     fun testInlineCycleWithMonotonousExpansionAvoidingInfiniteLoop(gradleVersion: GradleVersion) {
-        val buildOptions = defaultBuildOptions.copy(enableMonotonousIncrementalCompileSetExpansion = true)
+        val buildOptions = defaultBuildOptions.copy(
+            enableMonotonousIncrementalCompileSetExpansion = true,
+            buildReport = listOf(BuildReportType.FILE),
+        )
 
-        project("kt-29860-basic-inline-loop-kmp", gradleVersion) {
+        project("kt-29860-basic-inline-loop-kmp", gradleVersion, buildOptions = buildOptions) {
             // js variant of this scenario is different per KT-29860 - compiler backend handles the loop detection
             build("compileKotlinJvm")
 
@@ -246,8 +255,8 @@ class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
             val bKt = projectPath.resolve("src/commonMain/kotlin/b.kt")
 
             bKt.replaceWithVersion("addCircularDependencyOnA")
-            buildAndFail("compileKotlinJvm", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertKotlinCompilationSteps(
+            buildAndFail("compileKotlinJvm") {
+                assertKotlinCompilationStepsInBuildReport(
                     listOf(bKt).relativizeTo(projectPath),
                     listOf(aKt, bKt).relativizeTo(projectPath)
                 )

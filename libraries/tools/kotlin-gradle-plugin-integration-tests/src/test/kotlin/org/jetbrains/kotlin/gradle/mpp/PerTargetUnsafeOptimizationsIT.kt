@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
@@ -32,7 +32,7 @@ class PerTargetUnsafeOptimizationsIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions
-            .copy(logLevel = LogLevel.DEBUG)
+            .copy(buildReport = listOf(BuildReportType.FILE))
             .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
@@ -53,10 +53,10 @@ class PerTargetUnsafeOptimizationsIT : KGPBaseTest() {
             changeCommonSource()
 
             build(JVM_TASK) {
-                assertIncrementalCompilation()
+                assertIncrementalCompilationInBuildReport()
             }
             build(JS_TASK) {
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilationInBuildReport(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
             }
         }
     }
@@ -79,10 +79,10 @@ class PerTargetUnsafeOptimizationsIT : KGPBaseTest() {
             changeCommonSource()
 
             build(JS_TASK) {
-                assertIncrementalCompilation()
+                assertIncrementalCompilationInBuildReport()
             }
             build(JVM_TASK) {
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilationInBuildReport(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
             }
         }
     }

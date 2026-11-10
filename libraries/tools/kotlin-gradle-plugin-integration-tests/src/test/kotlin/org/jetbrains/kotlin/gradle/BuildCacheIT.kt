@@ -191,7 +191,7 @@ class BuildCacheIT : KGPBaseTest() {
         project(
             "incrementalMultiproject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE)),
         ) {
             enableLocalBuildCache(localBuildCacheDir)
             build("assemble")
@@ -205,7 +205,7 @@ class BuildCacheIT : KGPBaseTest() {
             val affectedAppSourceFile = projectPath.resolve("app/src/main/kotlin/foo/BB.kt")
 
             build("assemble") {
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     expectedCompiledKotlinFiles = relativeToProject(listOf(bKtSourceFile, affectedAppSourceFile))
                 )
             }
@@ -219,7 +219,7 @@ class BuildCacheIT : KGPBaseTest() {
         project(
             "incrementalMultiproject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE)),
         ) {
             enableLocalBuildCache(localBuildCacheDir)
             build("assemble")
@@ -237,7 +237,7 @@ class BuildCacheIT : KGPBaseTest() {
                 val affectedFiles = setOf(
                     bKtSourceFile,
                 )
-                assertCompiledKotlinSources(affectedFiles.relativizeTo(projectPath), output)
+                assertCompiledKotlinSourcesInBuildReport(affectedFiles.relativizeTo(projectPath))
             }
 
             bKtSourceFile.modify { it.replace("fun b2) {}", "fun b2() {}") }
@@ -247,7 +247,7 @@ class BuildCacheIT : KGPBaseTest() {
                     bKtSourceFile,
                     subProject("app").kotlinSourcesDir().resolve("foo/BB.kt"),
                 )
-                assertIncrementalCompilation(expectedCompiledKotlinFiles = affectedFiles.relativizeTo(projectPath))
+                assertIncrementalCompilationInBuildReport(expectedCompiledKotlinFiles = affectedFiles.relativizeTo(projectPath))
             }
         }
     }

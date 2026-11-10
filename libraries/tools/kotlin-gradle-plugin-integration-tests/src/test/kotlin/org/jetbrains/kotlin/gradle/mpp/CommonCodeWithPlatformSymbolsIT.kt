@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
@@ -33,7 +33,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 ) : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            logLevel = LogLevel.DEBUG,
+            buildReport = listOf(BuildReportType.FILE),
             isolatedProjects = when (platformType) {
                 KotlinPlatformType.js -> BuildOptions.IsolatedProjectsMode.DISABLED
                 else -> super.defaultBuildOptions.isolatedProjects
@@ -101,7 +101,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilationInBuildReport(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
             }
         }
     }
@@ -123,7 +123,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilationInBuildReport(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
             }
         }
     }
@@ -148,7 +148,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilationInBuildReport(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
             }
         }
     }
@@ -173,7 +173,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
 
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
-                assertNonIncrementalCompilation(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                assertNonIncrementalCompilationInBuildReport(BuildAttribute.UNSAFE_INCREMENTAL_CHANGE_KT_62686)
             }
         }
     }

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.mpp.smoke
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
@@ -30,7 +30,7 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
             enableJvmIncrementalCompilationOfCommonSources = true,
             enableJsUnsafeIncrementalCompilationForMultiplatform = true,
             enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
-            logLevel = LogLevel.DEBUG,
+            buildReport = listOf(BuildReportType.FILE),
         )
 
     @DisplayName("File with actual declaration needs recompiling")
@@ -53,7 +53,7 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
 
             build("assemble") {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         kotlinSourcesDir("jvmMain").resolve("ActualFunFoo.kt"),
                         kotlinSourcesDir("jsMain").resolve("ActualFunFoo.kt"),
@@ -81,7 +81,7 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
 
             build("assemble") {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         kotlinSourcesDir("jvmMain").resolve("ActualFunFoo.kt"),
                         kotlinSourcesDir("jsMain").resolve("ActualFunFoo.kt"),
@@ -109,7 +109,7 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
 
             build("assemble") {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         kotlinSourcesDir("jvmMain").resolve("ActualClassBar.kt"),
                         kotlinSourcesDir("jsMain").resolve("ActualClassBar.kt"),
@@ -134,7 +134,7 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
             )
 
             build("compileKotlinJvm") {
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         kotlinSourcesDir("commonMain").resolve("common.kt"),
                         kotlinSourcesDir("jvmMain").resolve("jvm.kt")
@@ -149,7 +149,7 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
             )
 
             build("compileKotlinJvm") {
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         kotlinSourcesDir("jvmMain").resolve("jvm2.kt")
                     ).relativizeTo(projectPath)
@@ -185,7 +185,7 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
             )
 
             build("compileKotlinJvm") {
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         kotlinSourcesDir("commonMain").resolve("common.kt"),
                         kotlinSourcesDir("commonMain").resolve("common2.kt"),
