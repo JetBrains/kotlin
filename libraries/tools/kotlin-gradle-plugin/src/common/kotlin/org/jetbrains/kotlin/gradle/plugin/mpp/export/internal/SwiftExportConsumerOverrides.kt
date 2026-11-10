@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createH
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.defaultSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
@@ -54,7 +54,11 @@ internal fun applySwiftExportConsumerOverrides(
     val exported = modules.map { module ->
         val component = componentByArtifact[module.artifact] ?: return@map module to null
         val declaredName = sources.declaredModuleName(component)?.also {
-            validateSwiftExportModuleName(it, component.displayName, reportDiagnostic = reportDiagnostic)
+            validateSwiftExportModuleIdentifier(
+                it,
+                component.displayName,
+                reportDiagnostic = reportDiagnostic,
+            )
         }
         val visibility = sources.declaredVisibility(component)
         val mode = when (visibility) {

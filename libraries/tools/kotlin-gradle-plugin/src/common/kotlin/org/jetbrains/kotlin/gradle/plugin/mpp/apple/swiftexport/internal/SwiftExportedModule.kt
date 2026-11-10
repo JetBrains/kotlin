@@ -131,7 +131,22 @@ internal fun collectModules(
         integrationDsl = integrationDsl,
         reportDiagnostic = reportDiagnostic,
     )
-    return modules + swiftPMImportCinteropModules(exportConfiguration)
+    val allModules = modules + swiftPMImportCinteropModules(exportConfiguration)
+    validateSwiftExportModuleName(
+        moduleName = rootModuleName,
+        module = "the module being exported",
+        integrationDsl = integrationDsl,
+        reportDiagnostic = reportDiagnostic,
+    )
+    allModules.forEach { module ->
+        validateSwiftExportModuleName(
+            moduleName = module.moduleName,
+            module = module.artifact.name,
+            integrationDsl = integrationDsl,
+            reportDiagnostic = reportDiagnostic,
+        )
+    }
+    return allModules
 }
 
 private fun swiftPMImportCinteropModules(
@@ -427,5 +442,10 @@ private data class SwiftExportedModuleImp(
 
 private fun normalizedAndValidatedModuleName(module: SwiftExportedDependency, reportDiagnostic: (ToolingDiagnostic) -> Unit) =
     module.inheritedName.normalizedSwiftExportModuleName.also {
-        validateSwiftExportModuleName(it, module.name, "swiftExport { export(...) { moduleName = ... } }", reportDiagnostic)
+        validateSwiftExportModuleIdentifier(
+            it,
+            module.name,
+            "swiftExport { export(...) { moduleName = ... } }",
+            reportDiagnostic,
+        )
     }
