@@ -17,8 +17,6 @@ import org.jetbrains.dokka.model.doc.See
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
-import utils.OnlyJavaPsi
-import utils.OnlyJavaSymbols
 import utils.assertContains
 import utils.assertNotNull
 import utils.name
@@ -398,7 +396,6 @@ class JavaTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyJavaSymbols("Java symbols have `KotlinOnlyModifiers.VarArg`")
     @Test
     fun varargs() {
         testInline(
@@ -836,7 +833,6 @@ class JavaTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlyJavaSymbols("Java PSI incorrectly omits generating a synthetic property without a backing field")
     fun `synthetic properties should have a Java type`() {
         testInline(
             """
@@ -860,7 +856,6 @@ class JavaTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlyJavaPsi("Experimental Java analysis by symbols intentionally displays unmapped Java types, see #4564")
     fun `java members inherited into a kotlin class should have kotlin types`() {
         testInline(
             """
@@ -873,7 +868,7 @@ class JavaTest : BaseAbstractTest() {
             |    public Integer method() { return null; }
             |}
             |
-            |/src/test/Child.kt 
+            |/src/test/Child.kt
             |package test
             |class Child : Parent()
             """.trimIndent(), configuration
@@ -881,10 +876,11 @@ class JavaTest : BaseAbstractTest() {
             documentablesTransformationStage = { module ->
                 val child = module / "test" / "Child"
 
-                (child / "s").cast<DProperty>().type.driOrNull equals DRI("kotlin", "String")
+                // Symbols analysis intentionally displays unmapped Java types as Java types (#4564)
+                (child / "s").cast<DProperty>().type.driOrNull equals DRI("java.lang", "String")
                 (child / "i").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")
-                (child / "integer").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")
-                (child / "method").cast<DFunction>().type.driOrNull equals DRI("kotlin", "Int")
+                (child / "integer").cast<DProperty>().type.driOrNull equals DRI("java.lang", "Integer")
+                (child / "method").cast<DFunction>().type.driOrNull equals DRI("java.lang", "Integer")
             }
         }
     }

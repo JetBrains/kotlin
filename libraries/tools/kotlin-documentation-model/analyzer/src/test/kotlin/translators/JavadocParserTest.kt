@@ -12,14 +12,16 @@ import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.childrenOfType
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.DFunction
+import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.model.firstMemberOfType
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
-import utils.OnlyJavaPsi
 import utils.text
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 @MustRunOnChangesInAnalysisApi
@@ -75,8 +77,8 @@ class JavadocParserTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyJavaPsi("Symbol-based Java analysis represents the overriding getter as a synthetic property")
     @Test
+    @Ignore("https://github.com/Kotlin/dokka/issues/4572")
     fun `should resolve javadoc link to a method overriding a classpath method #4543`() {
         val configuration = dokkaConfiguration {
             sourceSets {
@@ -107,8 +109,8 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                val fn = module.dfs { it.name == "getFirst" && it is DFunction } as DFunction
-                val description = fn.documentation.values.single().children
+                val getter = assertNotNull((module.dfs { it.name == "first" && it is DProperty } as DProperty).getter)
+                val description = getter.documentation.values.single().children
                     .filterIsInstance<Description>().single()
 
                 val allLinks = mutableListOf<DocumentationLink>()
