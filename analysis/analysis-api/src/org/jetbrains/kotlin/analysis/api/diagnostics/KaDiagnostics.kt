@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * ```kotlin
  * element.diagnostics()
  *     .withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
- *     .ignoreSuppressed(false)
+ *     .includingSuppressed(true)
  *     .directOnly(true)
  *     .forEach { handle(it) }
  * ```
@@ -80,8 +80,8 @@ public interface KaDiagnostics : KaLifetimeOwner, Sequence<KaDiagnosticWithPsi<*
     public fun withCheckers(vararg kinds: KaDiagnosticCheckerKind): KaDiagnostics
 
     /**
-     * Returns a [KaDiagnostics] which skips [suppressed][KaDiagnostic.isSuppressed] diagnostics if [ignore] is `true`, or yields them as
-     * well if [ignore] is `false`.
+     * Returns a [KaDiagnostics] which yields [suppressed][KaDiagnostic.isSuppressed] diagnostics as well if [include] is `true`, or skips
+     * them if [include] is `false`.
      *
      * Suppressed diagnostics are not reported by the compiler, so they should not be presented to the user as is. They are useful for
      * tooling which analyzes suppressions themselves, such as an inspection which detects redundant `@Suppress` annotations. A client can
@@ -89,9 +89,9 @@ public interface KaDiagnostics : KaLifetimeOwner, Sequence<KaDiagnosticWithPsi<*
      *
      * Collecting suppressed diagnostics does not require additional analysis.
      *
-     * The default behavior is `true`.
+     * The default behavior is `false`.
      */
-    public fun ignoreSuppressed(ignore: Boolean): KaDiagnostics
+    public fun includingSuppressed(include: Boolean): KaDiagnostics
 
     /**
      * Returns a [KaDiagnostics] which yields only the diagnostics reported on the [KtElement] itself if [direct] is `true`, or the

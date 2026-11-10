@@ -75,13 +75,13 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                 analyzeForTest(ktFile) {
                     val diagnosticsFromFile = collectFileDiagnostics(ktFile)
                     printFileDiagnostics(preparedFile, diagnosticsFromFile, preparedFiles.size > 1)
-                    val ignoringSuppression = collectFileDiagnosticsIgnoringSuppression(ktFile)
-                    checkDiagnosticsIgnoringSuppressionSupersetOfRegular(
+                    val includingSuppressed = collectFileDiagnosticsIncludingSuppressed(ktFile)
+                    checkDiagnosticsIncludingSuppressedSupersetOfRegular(
                         withoutSuppression = diagnosticsFromFile,
-                        withSuppression = ignoringSuppression,
+                        withSuppression = includingSuppressed,
                     )
 
-                    val additionallyReported = ignoringSuppression.filter { it !in diagnosticsFromFile }
+                    val additionallyReported = includingSuppressed.filter { it !in diagnosticsFromFile }
                     if (additionallyReported.isNotEmpty()) {
                         printFileDiagnostics(preparedFile, additionallyReported, preparedFiles.size > 1, ignoringSuppression = true)
                     }
@@ -126,11 +126,11 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             .toList()
 
     context(_: KaSession)
-    private fun collectFileDiagnosticsIgnoringSuppression(ktFile: KtFile): List<DiagnosticKey> =
+    private fun collectFileDiagnosticsIncludingSuppressed(ktFile: KtFile): List<DiagnosticKey> =
         ktFile
             .diagnostics()
             .withCommonAndExtendedDiagnostics()
-            .ignoreSuppressed(false)
+            .includingSuppressed(true)
             .map { it.getDiagnosticKey() }
             .sorted()
             .toList()
@@ -190,14 +190,14 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
     }
 
     context(_: KaSession)
-    private fun checkDiagnosticsIgnoringSuppressionSupersetOfRegular(
+    private fun checkDiagnosticsIncludingSuppressedSupersetOfRegular(
         withoutSuppression: List<DiagnosticKey>,
         withSuppression: List<DiagnosticKey>,
     ) {
         val missing = withoutSuppression.filter { it !in withSuppression }
         assertTrue(
             missing.isEmpty(),
-            "The set of diagnostics with `ignoreSuppressed(false)` must include every diagnostic that `ignoreSuppressed(true)` returns. Missing:\n$missing",
+            "The set of diagnostics with `includingSuppressed(true)` must include every diagnostic that `includingSuppressed(false)` returns. Missing:\n$missing",
         )
     }
 
@@ -251,7 +251,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
     }
 
     /**
-     * Only [KaDiagnostics.ignoreSuppressed] with `false` parameter may yield suppressed diagnostics, and every additionally yielded diagnostic must be marked
+     * Only [KaDiagnostics.includingSuppressed] with `true` parameter may yield suppressed diagnostics, and every additionally yielded diagnostic must be marked
      * as suppressed.
      */
     context(_: KaSession)
@@ -265,14 +265,14 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
 
         val reportedKeys = diagnosticsFromFile.toSet()
         val additional = diagnostics.withCommonAndExtendedDiagnostics()
-            .ignoreSuppressed(false)
+            .includingSuppressed(true)
             .filter { it.getDiagnosticKey() !in reportedKeys }
             .toList()
 
         val notMarked = additional.filterNot { it.isSuppressed }
         assertTrue(
             notMarked.isEmpty(),
-            "every diagnostic which is only yielded by ignoreSuppressed(false) must be marked as suppressed." +
+            "every diagnostic which is only yielded by includingSuppressed(true) must be marked as suppressed." +
                     " Not marked: ${notMarked.map { it.getDiagnosticKey() }}",
         )
     }
@@ -313,21 +313,21 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         )
 
         assertEquals(
-            allCheckers.ignoreSuppressed(false).diagnosticKeys(),
-            allCheckers.ignoreSuppressed(false).ignoreSuppressed(false).diagnosticKeys(),
-            "'ignoreSuppressed(false)' must be idempotent.",
+            allCheckers.includingSuppressed(true).diagnosticKeys(),
+            allCheckers.includingSuppressed(true).includingSuppressed(true).diagnosticKeys(),
+            "'includingSuppressed(true)' must be idempotent.",
         )
 
         assertEquals(
             allCheckers.diagnosticKeys(),
-            allCheckers.ignoreSuppressed(false).ignoreSuppressed(true).diagnosticKeys(),
-            "'ignoreSuppressed(true)' must undo 'ignoreSuppressed(false)'.",
+            allCheckers.includingSuppressed(true).includingSuppressed(false).diagnosticKeys(),
+            "'includingSuppressed(false)' must undo 'includingSuppressed(true)'.",
         )
 
         assertEquals(
             allCheckers.diagnosticKeys(),
-            allCheckers.ignoreSuppressed(true).diagnosticKeys(),
-            "'ignoreSuppressed(true)' must be the default behavior.",
+            allCheckers.includingSuppressed(false).diagnosticKeys(),
+            "'includingSuppressed(false)' must be the default behavior.",
         )
     }
 
