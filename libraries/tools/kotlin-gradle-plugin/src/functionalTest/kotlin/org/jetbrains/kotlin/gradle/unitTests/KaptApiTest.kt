@@ -144,13 +144,13 @@ class KaptApiTest {
     fun testKaptExtension() {
         plugin.kaptExtension.useBuildCache = false
         plugin.kaptExtension.includeCompileClasspath = false
-        plugin.kaptExtension.stubGenerationScheme.set(KaptStubGenerationScheme.DIRECT)
+        plugin.kaptExtension.stubGenerationScheme.set(KaptStubGenerationScheme.JTREE)
         plugin.kaptExtension.detectMemoryLeaks = "paranoid"
 
         val task = configureKapt {}
         assertEquals(false, task.useBuildCache)
         assertEquals(false, task.includeCompileClasspath.get())
-        assertEquals(KaptStubGenerationScheme.DIRECT, task.stubGenerationScheme.get())
+        assertEquals(KaptStubGenerationScheme.JTREE, task.stubGenerationScheme.get())
         assertEquals(KaptDetectMemoryLeaksMode.PARANOID, task.detectMemoryLeaks.get())
     }
 
@@ -159,7 +159,7 @@ class KaptApiTest {
         val task = configureKapt {}
         assertEquals(true, task.useBuildCache)
         assertEquals(true, task.includeCompileClasspath.get())
-        assertEquals(KaptStubGenerationScheme.JTREE, task.stubGenerationScheme.get())
+        assertEquals(KaptStubGenerationScheme.DIRECT, task.stubGenerationScheme.get())
         assertEquals(KaptDetectMemoryLeaksMode.STANDARD, task.detectMemoryLeaks.get())
     }
 
@@ -184,7 +184,7 @@ class KaptApiTest {
     fun testGenerateStubsOptions() {
         val stubsDir = tmpDir.resolve("stubsDir").also { it.mkdirs() }
         val kaptClasspath = setOf(tmpDir.resolve("kaptClasspath2").also { it.mkdirs() })
-        plugin.kaptExtension.stubGenerationScheme.set(KaptStubGenerationScheme.DIRECT)
+        plugin.kaptExtension.stubGenerationScheme.set(KaptStubGenerationScheme.JTREE)
 
         val task = plugin.registerKaptGenerateStubsTask(
             GENERATE_STUBS,
@@ -200,7 +200,7 @@ class KaptApiTest {
         assertEquals(stubsDir, task.stubsDir.get().asFile)
         assertEquals(kaptClasspath, task.kaptClasspath.files)
         assertEquals(
-            "direct",
+            "jtree",
             task.pluginOptions.get()
                 .flatMap { it.allOptions()[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID].orEmpty() }
                 .single { it.key == "stubGenerationScheme" }
