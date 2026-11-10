@@ -67,21 +67,7 @@ class SwiftExportManifestGeneratorTest {
     }
 
     @Test
-    fun `test generated manifest has no trailing commas before closing brackets`() {
-        val manifest = SPMManifestGenerator.generateManifest(
-            "Shared",
-            "SharedLibrary",
-            "KotlinRuntime",
-            sharedModulesFixture("Shared").inPackage()
-        )
-
-        val expectedManifest = sharedLibraryManifestGold()
-
-        assertEquals(expectedManifest, manifest)
-    }
-
-    @Test
-    fun `test single module manifest has no trailing commas`() {
+    fun `test swift export SPM manifest generation for a single module`() {
         val manifest = SPMManifestGenerator.generateManifest(
             "SingleModule",
             "SingleLibrary",

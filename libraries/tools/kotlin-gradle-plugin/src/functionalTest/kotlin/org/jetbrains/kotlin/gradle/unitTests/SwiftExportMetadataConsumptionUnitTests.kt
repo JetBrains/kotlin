@@ -92,7 +92,7 @@ class SwiftExportMetadataConsumptionUnitTests {
     }
 
     @Test
-    fun `malformed metadata for a supported schema fails with a diagnostic`() {
+    fun `malformed metadata for a supported schema is ignored with a warning`() {
         val result = consumeMetadata("this is not valid json")
 
         assertTrue(result.metadata.isEmpty(), "Malformed metadata must not be parsed")
