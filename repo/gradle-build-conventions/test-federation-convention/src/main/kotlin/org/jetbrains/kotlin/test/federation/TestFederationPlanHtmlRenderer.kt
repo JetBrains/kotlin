@@ -16,6 +16,7 @@ internal class TestFederationPlanHtmlRenderer(
     companion object {
         private const val STYLE_CSS_FILE = ".test-federation.style.css"
         private const val DARK_THEME_JS_FILE = ".test-federation.dark-theme.js"
+        private const val FILTERING_SVG_FILE = ".test-federation.filtering-hierarchy.svg"
     }
 
     fun renderHtml(): String =
@@ -29,10 +30,12 @@ internal class TestFederationPlanHtmlRenderer(
             }
             body {
                 renderPlan()
+                renderSubsetsExplanation()
             }
         }
 
     private fun BODY.renderPlan() {
+        h2 { +"Execution plan" }
         table {
             tr {
                 th { +"Domain" }
@@ -92,6 +95,16 @@ internal class TestFederationPlanHtmlRenderer(
         when {
             reason.startsWith(MUST_RUN_ALL_TESTS_REASON_PREFIX) -> code { +reason }
             else -> +reason
+        }
+    }
+
+    private fun BODY.renderSubsetsExplanation() {
+        details {
+            summary { h2 { +"What are the test subsets?" } }
+            p { +"Test subset is a concept introduced by Test Federation. It's basically a subset of tests selected by a given test task." }
+            p { +"You may think of it as of the 3rd level of the filtering hierarchy:" }
+            img(alt = "How Test Federation filters tests", src = "$FILTERING_SVG_FILE#light", classes = "diagram-light")
+            img(alt = "How Test Federation filters tests", src = "$FILTERING_SVG_FILE#dark", classes = "diagram-dark")
         }
     }
 }
