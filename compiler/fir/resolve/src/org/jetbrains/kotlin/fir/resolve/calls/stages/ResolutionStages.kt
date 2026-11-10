@@ -117,8 +117,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         if (receiverClassSymbol != expectedReceiverType.toClassSymbol()) {
             sink.reportDiagnostic(
                 InapplicableCompanionExtensionReceiver(
-                    expectedReceiverType,
-                    receiverClassSymbol.defaultType()
+                    receiverClassSymbol.classId
                 )
             )
         }

@@ -1189,6 +1189,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER: KtDiagnosticFactory1<FirTypeParameterSymbol> = KtDiagnosticFactory1("COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val COMPANION_EXTENSION_RECEIVER_ANNOTATED: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_RECEIVER_ANNOTATED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val COMPANION_EXTENSION_NULLABLE_RECEIVER: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_NULLABLE_RECEIVER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER: KtDiagnosticFactory2<FirBasedSymbol<*>, ClassId> = KtDiagnosticFactory2("UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())
 
     // Rich Errors
     val NON_ERROR_CLASS_EXTENDS_RICH_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_ERROR_CLASS_EXTENDS_RICH_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

@@ -5,29 +5,29 @@
 // ISSUE: KT-91409
 
 fun test() {
-    <!CANNOT_INFER_PARAMETER_TYPE("T"), UNRESOLVED_REFERENCE_WRONG_RECEIVER("companion fun <T> Function1.invoke(): (T) -> Unit; () -> R (of interface Function0<out R>)")!>Function0<!>()
+    <!CANNOT_INFER_PARAMETER_TYPE("T"), UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun <T> Function1.invoke(): (T) -> Unit; kotlin.Function0")!>Function0<!>()
 }
 
 companion operator fun <T> Function1.invoke(): (T) -> Unit = {}
 
 companion fun Function0.a02() {}
-fun t02() { Function1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("companion fun Function0.a02(): Unit; (P1 (of interface Function1<in P1, out R>)) -> R (of interface Function1<in P1, out R>)")!>a02<!>() }
+fun t02() { Function1.<!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun Function0.a02(): Unit; kotlin.Function1")!>a02<!>() }
 
 companion fun Function22.a04() {}
-fun t04() { Function1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("companion fun Function22.a04(): Unit; (P1 (of interface Function1<in P1, out R>)) -> R (of interface Function1<in P1, out R>)")!>a04<!>() }
+fun t04() { Function1.<!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun Function22.a04(): Unit; kotlin.Function1")!>a04<!>() }
 
 companion fun kotlin.coroutines.SuspendFunction1.a06() {}
-fun t06() { Function0.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("companion fun SuspendFunction1.a06(): Unit; () -> R (of interface Function0<out R>)")!>a06<!>() }
+fun t06() { Function0.<!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun SuspendFunction1.a06(): Unit; kotlin.Function0")!>a06<!>() }
 
 companion fun <!COMPANION_EXTENSION_NULLABLE_RECEIVER!>Function1?<!>.a38() {}
-fun t38() { Function0.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("companion fun Function1?.a38(): Unit; () -> R (of interface Function0<out R>)")!>a38<!>() }
+fun t38() { Function0.<!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun Function1?.a38(): Unit; kotlin.Function0")!>a38<!>() }
 
 typealias F17<A, B> = Function1<A, B>
 companion fun F17.a17() {}
-fun t17() { Function0.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("companion fun Function1.a17(): Unit; () -> R (of interface Function0<out R>)")!>a17<!>() }
+fun t17() { Function0.<!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun Function1.a17(): Unit; kotlin.Function0")!>a17<!>() }
 
 companion val Function1.p16: Int get() = 1
-fun t16() { Function0.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("companion val Function1.p16: Int; () -> R (of interface Function0<out R>)")!>p16<!> }
+fun t16() { Function0.<!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion val Function1.p16: Int; kotlin.Function0")!>p16<!> }
 
 companion fun Function1.a11() {}
 fun t11() { Function1.a11(<!TOO_MANY_ARGUMENTS("companion fun Function1.a11(): Unit")!>1<!>) }
@@ -49,7 +49,7 @@ fun t30() { Function1.<!DEPRECATION_ERROR("companion fun Function1.a30(): Unit; 
 
 companion fun Function1.a25() {}
 companion fun Function2.a25() {}
-fun t25() { Function0.<!NONE_APPLICABLE("companion fun Function1.a25(): Unit:  Candidate 'companion fun Function1.a25(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.companion fun Function2.a25(): Unit:  Candidate 'companion fun Function2.a25(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.")!>a25<!>() }
+fun t25() { Function0.<!NONE_APPLICABLE("companion fun Function1.a25(): Unit:  Companion extension 'companion fun Function1.a25(): Unit' cannot be called on receiver class 'kotlin.Function0'.companion fun Function2.a25(): Unit:  Companion extension 'companion fun Function2.a25(): Unit' cannot be called on receiver class 'kotlin.Function0'.")!>a25<!>() }
 
 @Deprecated("x")
 companion fun Function1.a12(): String = "ok"

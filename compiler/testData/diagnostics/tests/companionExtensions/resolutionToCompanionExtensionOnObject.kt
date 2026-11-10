@@ -5,8 +5,8 @@ class C {
     companion object {
         fun test() {
             foo()
-            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
-            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>baz<!>()
+            <!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>bar<!>()
+            <!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>baz<!>()
         }
     }
 }
@@ -25,8 +25,8 @@ companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT!>O<!>.baz() {}
 
 fun test() {
     C.foo()
-    C.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
-    C.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>baz<!>()
+    C.<!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>bar<!>()
+    C.<!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>baz<!>()
 
     C.Companion.<!UNRESOLVED_REFERENCE!>foo<!>()
     C.Companion.<!UNRESOLVED_REFERENCE!>bar<!>()

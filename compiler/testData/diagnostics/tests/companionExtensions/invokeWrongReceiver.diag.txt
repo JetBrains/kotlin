@@ -1,20 +1,20 @@
-/invokeWrongReceiver.kt:8:5: error: Candidate 'companion fun <T> Function1.invoke(): (T) -> Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
-
 /invokeWrongReceiver.kt:8:5: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
 
-/invokeWrongReceiver.kt:14:23: error: Candidate 'companion fun Function0.a02(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '(P1 (of interface Function1<in P1, out R>)) -> R (of interface Function1<in P1, out R>)'.
+/invokeWrongReceiver.kt:8:5: error: Companion extension 'companion fun <T> Function1.invoke(): (T) -> Unit' cannot be called on receiver class 'kotlin.Function0'.
 
-/invokeWrongReceiver.kt:17:23: error: Candidate 'companion fun Function22.a04(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '(P1 (of interface Function1<in P1, out R>)) -> R (of interface Function1<in P1, out R>)'.
+/invokeWrongReceiver.kt:14:23: error: Companion extension 'companion fun Function0.a02(): Unit' cannot be called on receiver class 'kotlin.Function1'.
 
-/invokeWrongReceiver.kt:20:23: error: Candidate 'companion fun SuspendFunction1.a06(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+/invokeWrongReceiver.kt:17:23: error: Companion extension 'companion fun Function22.a04(): Unit' cannot be called on receiver class 'kotlin.Function1'.
+
+/invokeWrongReceiver.kt:20:23: error: Companion extension 'companion fun SuspendFunction1.a06(): Unit' cannot be called on receiver class 'kotlin.Function0'.
 
 /invokeWrongReceiver.kt:22:15: error: Companion extension receiver type cannot be nullable.
 
-/invokeWrongReceiver.kt:23:23: error: Candidate 'companion fun Function1?.a38(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+/invokeWrongReceiver.kt:23:23: error: Companion extension 'companion fun Function1?.a38(): Unit' cannot be called on receiver class 'kotlin.Function0'.
 
-/invokeWrongReceiver.kt:27:23: error: Candidate 'companion fun Function1.a17(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+/invokeWrongReceiver.kt:27:23: error: Companion extension 'companion fun Function1.a17(): Unit' cannot be called on receiver class 'kotlin.Function0'.
 
-/invokeWrongReceiver.kt:30:23: error: Candidate 'companion val Function1.p16: Int' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+/invokeWrongReceiver.kt:30:23: error: Companion extension 'companion val Function1.p16: Int' cannot be called on receiver class 'kotlin.Function0'.
 
 /invokeWrongReceiver.kt:33:27: error: Too many arguments for 'companion fun Function1.a11(): Unit'.
 
@@ -37,10 +37,10 @@ companion fun Function1.a49(vararg x: Long): Unit
 /invokeWrongReceiver.kt:52:23: error: None of the following candidates is applicable:
 
 companion fun Function1.a25(): Unit:
-  Candidate 'companion fun Function1.a25(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+  Companion extension 'companion fun Function1.a25(): Unit' cannot be called on receiver class 'kotlin.Function0'.
 
 companion fun Function2.a25(): Unit:
-  Candidate 'companion fun Function2.a25(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+  Companion extension 'companion fun Function2.a25(): Unit' cannot be called on receiver class 'kotlin.Function0'.
 
 /invokeWrongReceiver.kt:56:23: warning: 'companion fun Function1.a12(): String' is deprecated. x.
 
