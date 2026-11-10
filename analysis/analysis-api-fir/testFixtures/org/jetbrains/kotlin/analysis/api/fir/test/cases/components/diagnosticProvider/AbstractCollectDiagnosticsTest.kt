@@ -201,6 +201,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         )
     }
 
+    @Suppress("DEPRECATION")
     context(_: KaSession)
     private fun checkDiagnosticsConsistentWithObsoleteApi(
         file: KtFile,

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtFile
  * place (in the `components` package) and reach the proxy through this bridge, so the bridge must forward directly to the proxy to avoid
  * recursing back into the endpoints.
  */
-@Suppress("OVERRIDE_DEPRECATION")
+@Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
 internal class KaDiagnosticProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaDiagnosticProvider {
