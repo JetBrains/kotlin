@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSo
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.builtinTypes
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.providers.*
@@ -109,7 +111,7 @@ internal open class SirFunctionFromKtSymbol(
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         if (isUnavailable) return@lazyWithSessions null
-        val fqName = bridgeFqName ?: return@lazyWithSessions null
+        val fqName = bridgeOwnerFqName ?: return@lazyWithSessions null
         val suffix = ""
         val baseName = fqName.baseBridgeName + suffix
 
@@ -166,7 +168,7 @@ internal open class SirFunctionFromKtSymbol(
 
         val reverseBridges = if (needsReverseBridge()) {
             bridgeProxy?.createReverseSirBridges(
-                targetClassFqName = ktSymbol.reverseBridgeTargetClassFqName,
+                targetClassFqName = reverseBridgeTargetClassFqName(),
                 targetMethodName = ktSymbol.name?.asString() ?: "",
                 swiftDynamicCall = this@SirFunctionFromKtSymbol::reverseBridgeSwiftCall,
                 swiftDeprecation = effectiveReverseBridgeDeprecation(),
@@ -177,6 +179,11 @@ internal open class SirFunctionFromKtSymbol(
 
         forwardBridges + reverseBridges
     }
+
+    protected open val bridgeOwnerFqName: FqName? get() = bridgeFqName
+
+    context(_: KaSession)
+    protected open fun reverseBridgeTargetClassFqName(): String = ktSymbol.reverseBridgeTargetClassFqName
 
     private val isAbstractKotlinMethod: Boolean
         get() = ktSymbol.modality == KaSymbolModality.ABSTRACT
@@ -202,4 +209,24 @@ internal open class SirFunctionFromKtSymbol(
             body = SirFunctionBody(proxy.createSwiftInvocation(useDirectDispatch = true) { "return $it" })
         }
     }
+}
+
+/**
+ * A method a Kotlin class inherits from an interface without redeclaring it (KT-90761), declared on the class wrapper.
+ * Provides an extension point for swift inheritors.
+ */
+internal class SirInheritedFunctionFromKtSymbol(
+    private val function: KaNamedFunctionSymbol,
+    sirSession: SirSession,
+    private val inheritor: SirAbstractClassFromKtSymbol,
+) : SirFunctionFromKtSymbol(function, sirSession) {
+    override var parent: SirDeclarationParent
+        get() = inheritor
+        set(_) = Unit
+
+    override val bridgeOwnerFqName: FqName?
+        get() = inheritor.ktSymbol.classId?.asSingleFqName()?.child(function.name)
+
+    context(_: KaSession)
+    override fun reverseBridgeTargetClassFqName(): String = inheritor.ktSymbol.classId?.asSingleFqName()?.render() ?: ""
 }
