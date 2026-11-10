@@ -77,7 +77,7 @@ class KaptOptions(
         var mode: AptMode = AptMode.STUBS_AND_APT
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.STANDARD
         var usedDefaultDetectMemoryLeaks = false
-        var stubGenerationScheme: StubGenerationScheme = StubGenerationScheme.JTREE
+        var stubGenerationScheme: StubGenerationScheme = StubGenerationScheme.DIRECT
         var stubWriterThreads: Int = 1
         var processorsStatsReportFile: File? = null
         var fileReadHistoryReportFile: File? = null

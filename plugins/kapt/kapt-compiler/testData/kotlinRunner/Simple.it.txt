@@ -3,6 +3,7 @@ package error;
 public final class NonExistentClass {
 }
 
+
 ////////////////////
 
 package test;
@@ -13,19 +14,18 @@ package test;
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class Simple {
-
-    public Simple() {
-        super();
-    }
-
-    @MyAnnotation()
-    public final void myMethod() {
-    }
-
-    public final int heavyMethod() {
-        return 0;
-    }
+public Simple() {
+super();
 }
+@MyAnnotation
+public final void myMethod() {
+
+}
+public final int heavyMethod() {
+return 0;
+}
+}
+
 
 ////////////////////
 
@@ -36,23 +36,25 @@ package test;
 public abstract @interface MyAnnotation {
 }
 
+
 ////////////////////
 
 package test;
 
 @kotlin.Metadata()
 public enum EnumClass {
-    /*public static final*/ BLACK /* = new BLACK() */,
-    /*public static final*/ WHITE /* = new WHITE() */;
+BLACK,
+WHITE,
+;
+EnumClass() {
 
-    EnumClass() {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<test.EnumClass> getEntries() {
-        return null;
-    }
 }
+@org.jetbrains.annotations.NotNull
+public static kotlin.enums.EnumEntries<test.EnumClass> getEntries() {
+return null;
+}
+}
+
 
 ////////////////////
 
@@ -60,16 +62,17 @@ package test;
 
 @kotlin.Metadata()
 public enum EnumClass2 {
-    /*public static final*/ WHITE /* = new WHITE(null) */,
-    /*public static final*/ RED /* = new RED(null) */;
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String blah = null;
+WHITE(null),
+RED(null),
+;
+@org.jetbrains.annotations.NotNull
+private final java.lang.String blah = null;
 
-    EnumClass2(java.lang.String blah) {
-    }
+EnumClass2(java.lang.String blah) {
 
-    @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<test.EnumClass2> getEntries() {
-        return null;
-    }
+}
+@org.jetbrains.annotations.NotNull
+public static kotlin.enums.EnumEntries<test.EnumClass2> getEntries() {
+return null;
+}
 }

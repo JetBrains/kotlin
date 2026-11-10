@@ -73,10 +73,10 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
     /**
      * Selects how kapt generates Java stubs.
+     * {@code direct} (the default) generates Java text directly.
      * {@code jtree} is the historical scheme that uses javac AST and will be deprecated eventually.
-     * {@code direct} is a new experimental scheme that generates Java text directly.
      */
-    @Parameter(property = "kapt.stub.generation.scheme", defaultValue = "jtree")
+    @Parameter(property = "kapt.stub.generation.scheme", defaultValue = "direct")
     private StubGenerationScheme stubGenerationScheme;
 
     /**

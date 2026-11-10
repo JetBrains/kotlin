@@ -3,6 +3,7 @@ package error;
 public final class NonExistentClass {
 }
 
+
 ////////////////////
 
 package test;
@@ -12,52 +13,49 @@ package test;
 public abstract @interface MyAnnotation {
 }
 
+
 ////////////////////
 
 package test;
 
 @kotlin.Metadata()
 public final class Simple {
-    @org.jetbrains.annotations.NotNull()
-    public static final test.Simple.Companion Companion = null;
+@org.jetbrains.annotations.NotNull
+public static final test.Simple.Companion Companion = null;
 
-    public Simple() {
-        super();
-    }
+public Simple() {
+super();
+}
+@MyAnnotation
+public final void myMethod() {
 
-    @MyAnnotation()
-    public final void myMethod() {
-    }
+}
+@kotlin.Metadata()
+public static final class Companion {
+private Companion() {
+super();
+}
+}
 
-    @kotlin.Metadata()
-    public static final class Companion {
+@kotlin.Metadata()
+public final class InnerClass {
+public InnerClass() {
+super();
+}
+}
 
-        private Companion() {
-            super();
-        }
-    }
+@kotlin.Metadata()
+public static final class NestedClass {
+public NestedClass() {
+super();
+}
+@kotlin.Metadata()
+public static final class NestedNestedClass {
+public NestedNestedClass() {
+super();
+}
+}
 
-    @kotlin.Metadata()
-    public final class InnerClass {
+}
 
-        public InnerClass() {
-            super();
-        }
-    }
-
-    @kotlin.Metadata()
-    public static final class NestedClass {
-
-        public NestedClass() {
-            super();
-        }
-
-        @kotlin.Metadata()
-        public static final class NestedNestedClass {
-
-            public NestedNestedClass() {
-                super();
-            }
-        }
-    }
 }
