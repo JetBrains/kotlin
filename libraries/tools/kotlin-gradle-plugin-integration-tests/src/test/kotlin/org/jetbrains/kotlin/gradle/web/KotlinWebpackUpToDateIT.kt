@@ -5,18 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.web
 
-import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockFileMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
-import org.jetbrains.kotlin.gradle.targets.web.yarn.CommonYarnPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testing.js.disableNpmLockFileValidations
 import org.jetbrains.kotlin.gradle.util.setupCustomKgpNpmToolingDependenciesDir
 import kotlin.io.path.*
 import kotlin.test.assertEquals
@@ -210,21 +204,9 @@ private fun KGPBaseTest.createTestProject(
             )
         }
 
-        //region disable lockfile checks
-        // Lock file validation aren't relevant to this test, so just disable them to avoid UX issues KT-84782
         buildScriptInjection {
-            project.plugins.withType<CommonNodeJsRootPlugin>().configureEach { _ ->
-                project.extensions.configure<BaseNpmExtension> {
-                    packageLockMismatchReport.set(LockFileMismatchReport.NONE)
-                    packageLockAutoReplace.set(true)
-                }
-            }
-            project.plugins.withType<CommonYarnPlugin>().configureEach { _ ->
-                project.extensions.configure<BaseYarnRootExtension> {
-                    yarnLockMismatchReportProperty.set(YarnLockMismatchReport.NONE)
-                    yarnLockAutoReplaceProperty.set(true)
-                }
-            }
+            // Lock file validation aren't relevant to this test, so just disable them to avoid UX issues KT-84782
+            project.disableNpmLockFileValidations()
 
             project.tasks.register("upgradeAllLockFiles") { t ->
                 t.description = "helper task to run all lock file upgrade tasks"
@@ -235,7 +217,6 @@ private fun KGPBaseTest.createTestProject(
                 }
             }
         }
-        //endregion
         //endregion
 
         gradleProperties.appendText("\nkotlin.js.yarn=$useYarn")
