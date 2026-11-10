@@ -15,9 +15,6 @@ package org.jetbrains.kotlin.js.config
 import java.io.File
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.name.FqName
 
 object JSConfigurationKeys {
@@ -73,15 +70,6 @@ object JSConfigurationKeys {
 
     @JvmField
     val JS_INCREMENTAL_COMPILATION_ENABLED = CompilerConfigurationKey.create<Boolean>("JS_INCREMENTAL_COMPILATION_ENABLED")
-
-    @JvmField
-    val INCREMENTAL_DATA_PROVIDER = CompilerConfigurationKey.create<IncrementalDataProvider>("INCREMENTAL_DATA_PROVIDER")
-
-    @JvmField
-    val INCREMENTAL_RESULTS_CONSUMER = CompilerConfigurationKey.create<IncrementalResultsConsumer>("INCREMENTAL_RESULTS_CONSUMER")
-
-    @JvmField
-    val INCREMENTAL_NEXT_ROUND_CHECKER = CompilerConfigurationKey.create<IncrementalNextRoundChecker>("INCREMENTAL_NEXT_ROUND_CHECKER")
 
     @JvmField
     val FRIEND_PATHS_DISABLED = CompilerConfigurationKey.create<Boolean>("FRIEND_PATHS_DISABLED")
@@ -265,18 +253,6 @@ var CompilerConfiguration.moduleKind: ModuleKind?
 var CompilerConfiguration.jsIncrementalCompilationEnabled: Boolean
     get() = getBoolean(JSConfigurationKeys.JS_INCREMENTAL_COMPILATION_ENABLED)
     set(value) { put(JSConfigurationKeys.JS_INCREMENTAL_COMPILATION_ENABLED, value) }
-
-var CompilerConfiguration.incrementalDataProvider: IncrementalDataProvider?
-    get() = get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
-    set(value) { putIfNotNull(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER, value) }
-
-var CompilerConfiguration.incrementalResultsConsumer: IncrementalResultsConsumer?
-    get() = get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
-    set(value) { putIfNotNull(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, value) }
-
-var CompilerConfiguration.incrementalNextRoundChecker: IncrementalNextRoundChecker?
-    get() = get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER)
-    set(value) { putIfNotNull(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER, value) }
 
 var CompilerConfiguration.friendPathsDisabled: Boolean
     get() = getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)

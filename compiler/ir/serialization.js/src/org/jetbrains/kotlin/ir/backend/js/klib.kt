@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -264,7 +265,7 @@ fun serializeModuleIntoKlib(
     wasmTarget: WasmTarget? = null,
     performanceManager: PerformanceManager? = null
 ) {
-    val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
+    val incrementalResultsConsumer = configuration.get(KlibConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val serializerOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
         serializeModuleIntoKlib(
             moduleName = moduleFragment.name.asString(),
@@ -355,7 +356,7 @@ fun <SourceFile> shouldGoToNextIcRound(
     compilerConfiguration: CompilerConfiguration,
     createMetadataSerializer: () -> KlibSingleFileMetadataSerializer<SourceFile>,
 ): Boolean {
-    val nextRoundChecker = compilerConfiguration.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return false
+    val nextRoundChecker = compilerConfiguration.get(KlibConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return false
     createMetadataSerializer().run {
         forEachFile { _, ioFile, sourceFile, _, _ ->
             val protoBuf = serializeSingleFileMetadata(sourceFile)

@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":js:js.parser"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":core:error.handling"))
+    api(project(":compiler:incremental-compilation-klib:api"))
 
     compileOnly(intellijCore())
 
