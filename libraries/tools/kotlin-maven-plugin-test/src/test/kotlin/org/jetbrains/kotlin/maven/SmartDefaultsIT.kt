@@ -202,8 +202,7 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("KAPT applied properly for mixed Kotlin+Java project with smart defaults enabled")
     fun testSmartDefaultsInMixedProjectWithKapt(mavenVersion: TestVersions.Maven) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-smart-defaults-kapt", mavenVersion, buildOptions) {
+        testProject("test-smart-defaults-kapt", mavenVersion) {
             build("verify") {
                 assertSmartDefaultsEnabled()
 
@@ -230,8 +229,7 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("Execution-level source dirs override smart defaults")
     fun testExecutionLevelSourceDirsOverrides(mavenVersion: TestVersions.Maven) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-smart-defaults-execution-source-dirs", mavenVersion, buildOptions) {
+        testProject("test-smart-defaults-execution-source-dirs", mavenVersion) {
             build("compile", "test-compile") {
                 assertSmartDefaultsEnabled()
 
@@ -255,8 +253,7 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
     fun testEmptyExecutionLevelSourceDirsFallbacks(
         mavenVersion: TestVersions.Maven,
     ) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-smart-defaults-empty-execution-source-dirs", mavenVersion, buildOptions) {
+        testProject("test-smart-defaults-empty-execution-source-dirs", mavenVersion) {
             build("compile", "test-compile") {
                 assertSmartDefaultsEnabled()
 
@@ -272,8 +269,7 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
     fun testExecutionLevelSourceDirsWarnings(
         mavenVersion: TestVersions.Maven,
     ) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-smart-defaults-execution-source-dirs-no-duplicates", mavenVersion, buildOptions) {
+        testProject("test-smart-defaults-execution-source-dirs-no-duplicates", mavenVersion) {
             build("compile", "test-compile") {
                 assertSmartDefaultsEnabled()
                 assertBuildLogDoesNotContain("Duplicate source root")
@@ -294,8 +290,7 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
     fun testExecutionLevelSourceDirsRespectCompileSourceRoots(
         mavenVersion: TestVersions.Maven,
     ) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-smart-defaults-execution-source-dirs-compile-source-roots", mavenVersion, buildOptions) {
+        testProject("test-smart-defaults-execution-source-dirs-compile-source-roots", mavenVersion) {
             build("package") {
                 assertSmartDefaultsEnabled()
 
