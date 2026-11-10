@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.LLDB
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
@@ -84,7 +85,9 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
 
     @Test
     fun stepInFromObjCToVirtualKotlin___WithTransparentStepping___StepsThroughToKotlinCode() {
-        val clangMainSources = """
+        // KT-91198: trampolines lose their debug info under incremental compilation
+        Assumptions.assumingThat(!testRunSettings.get<CacheMode>().useIncrementalCompilation) {
+            val clangMainSources = """
             @import ${kotlinFrameworkName};
             void landing() {}
             int main() {
@@ -93,7 +96,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
                 landing();
             }
         """.trimIndent()
-        val kotlinLibrarySources = """
+            val kotlinLibrarySources = """
             interface Foo {
                 fun foo()
             }
@@ -104,8 +107,8 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
                 }
             }
         """.trimIndent()
-        testSteppingFromObjcToKotlin(
-            """
+            testSteppingFromObjcToKotlin(
+                """
             > b ${CLANG_FILE_NAME}:5
             > run
             > thread step-in
@@ -120,12 +123,13 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
                9   	}
             > c
             """.trimIndent(),
-            CLANG_FILE_NAME,
-            KOTLIN_FILE_NAME,
-            "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepInFromObjCToVirtualKotlin___WithTransparentStepping___StepsThroughToKotlinCode.name}",
-            clangMainSources = clangMainSources,
-            kotlinLibrarySources = kotlinLibrarySources,
-        )
+                CLANG_FILE_NAME,
+                KOTLIN_FILE_NAME,
+                "${ObjCToKotlinSteppingInLLDBTest::class.qualifiedName}.${::stepInFromObjCToVirtualKotlin___WithTransparentStepping___StepsThroughToKotlinCode.name}",
+                clangMainSources = clangMainSources,
+                kotlinLibrarySources = kotlinLibrarySources,
+            )
+        }
     }
 
     @Test
@@ -233,7 +237,9 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         """.trimIndent(),
     ) {
         // FIXME: With Rosetta the step-out and step-over tests stop on the line after "[KotlinLibKt bar]"
-        if (targets.testTarget != KonanTarget.MACOS_ARM64) { Assumptions.abort<Nothing>("This test is supported only on Apple targets") }
+        if (targets.testTarget != KonanTarget.MACOS_ARM64) {
+            Assumptions.abort<Nothing>("This test is supported only on Apple targets")
+        }
 
         runTestWithLLDB(
             kotlinLibrarySources = kotlinLibrarySources,

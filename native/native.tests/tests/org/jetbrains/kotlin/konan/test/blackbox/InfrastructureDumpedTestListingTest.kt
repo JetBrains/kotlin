@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Success
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ForcedNoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.testProcessExecutor
@@ -38,7 +39,10 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata(TEST_CASE_NAME)
     fun testListingCompiledFromSources() {
-        doTest(TEST_CASE_PATH, fromSources = true)
+        // KT-91210: with incremental compilation, the test binary registers tests from KLIB dependencies
+        Assumptions.assumingThat(!testRunSettings.get<CacheMode>().useIncrementalCompilation) {
+            doTest(TEST_CASE_PATH, fromSources = true)
+        }
     }
 
     @Test
@@ -93,7 +97,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
                 GTestListing.parse(listing).toSet()
             }
 
-            assertEquals(extractedTestListing, dumpedTestListing)
+            assertEquals(dumpedTestListing, extractedTestListing)
 
             runExecutableAndVerify(executableTestCase, testExecutable) // <-- run executable and verify
         }
