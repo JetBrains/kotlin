@@ -9,10 +9,8 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2PlatformAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.NativeProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectWithPolicyCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
-import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 
 class DaemonSessionsTest : BaseCompilationTest() {
@@ -23,7 +21,6 @@ class DaemonSessionsTest : BaseCompilationTest() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         runSingleShotDaemonTest(kotlinToolchains) { daemonPolicy, _ ->
             project(daemonPolicy) {
-                assumeTrue(this !is NativeProject) { DAEMON_NOT_SUPPORTED_FOR_NATIVE }
                 val module = module("basic-multimodule-project/module-1")
                 module.compile {
                     assertDaemonConnectionWasCreated(true)
@@ -46,7 +43,6 @@ class DaemonSessionsTest : BaseCompilationTest() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         runSingleShotDaemonTest(kotlinToolchains) { daemonPolicy, _ ->
             project(daemonPolicy) {
-                assumeTrue(this !is NativeProject) { DAEMON_NOT_SUPPORTED_FOR_NATIVE }
                 val module = module("basic-multimodule-project/module-1")
                 module.compile {
                     assertDaemonConnectionWasCreated(true)
@@ -62,9 +58,5 @@ class DaemonSessionsTest : BaseCompilationTest() {
 
     private fun CompilationOutcome.assertDaemonConnectionWasCreated(wasCreated: Boolean) {
         assertLogContainsSubstringExactlyTimes(DEBUG, "successfully leased a compile session", if (wasCreated) 1 else 0)
-    }
-
-    private companion object {
-        const val DAEMON_NOT_SUPPORTED_FOR_NATIVE = "Kotlin/Native compilation via the daemon is not supported yet"
     }
 }

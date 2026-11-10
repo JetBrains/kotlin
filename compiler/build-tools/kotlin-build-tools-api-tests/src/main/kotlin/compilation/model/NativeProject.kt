@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibCompilatio
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinNativeStdlibKlibLocation
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.nio.file.Path
 
 class NativeProject(
@@ -23,6 +24,13 @@ class NativeProject(
     defaultStrategyConfig,
     projectDirectory,
 ) {
+    init {
+        // Skips (rather than fails) every Native variant of a test that runs with the daemon policy
+        assumeTrue(defaultStrategyConfig !is ExecutionPolicy.WithDaemon) {
+            "Kotlin/Native compilation via the daemon is not supported yet"
+        }
+    }
+
     override fun module(
         moduleName: String,
         dependencies: List<Dependency>,

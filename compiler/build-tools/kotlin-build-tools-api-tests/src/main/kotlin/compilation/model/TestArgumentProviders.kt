@@ -288,4 +288,4 @@ fun KotlinToolchains.supportsMetadata() = KotlinToolingVersion(getCompilerVersio
  * see [isKotlinNativeCompilerAvailable].
  */
 fun KotlinToolchains.supportsNative() =
-    KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 5, 0) && isKotlinNativeCompilerAvailable
+    KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 5, 20) && isKotlinNativeCompilerAvailable

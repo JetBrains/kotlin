@@ -50,7 +50,6 @@ val unpackedResources = configurations.detachedConfiguration(
 // both the stdlib and the compiler are taken from the bootstrap K/N distribution; the compiler jar is appended after the regular
 // Build Tools API classpath so that the current compiler classes win over the (older) copies in that fat jar.
 val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled.get()
-val nativeStdlibClasspathProperty = "kotlin.build-tools-api.test.nativeStdlibClasspath"
 val (nativeStdlibKlib: FileCollection, nativeCompilerClasspath: FileCollection?) = if (isKotlinNativeEnabled) {
     configurations.detachedConfiguration(
         dependencies.project(":kotlin-native:runtime", configuration = "nativeStdlib")
@@ -170,6 +169,9 @@ class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolea
 }
 
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
+// Keep the Kotlin/Native properties in sync with the constants in src/main/kotlin/compilation/util/DependencyUtils.kt
+val NATIVE_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.nativeStdlibClasspath"
+val NATIVE_STDLIB_IS_BOOTSTRAP_PROPERTY = "kotlin.build-tools-api.test.nativeStdlibIsBootstrap"
 
 fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsVersion) {
     if (version.isCurrent) return
@@ -329,7 +331,7 @@ testing {
                     )
                     addClasspathProperty(unpackedResources, "kotlin.test.templates.classpath")
                     if (isRegular && isKotlinNativeEnabled) {
-                        addClasspathProperty(nativeStdlibKlib, nativeStdlibClasspathProperty)
+                        addClasspathProperty(nativeStdlibKlib, NATIVE_STDLIB_CLASSPATH_PROPERTY)
                     }
                 }
             }
@@ -422,7 +424,9 @@ testing {
             if (!isKotlinNativeEnabled) {
                 targets.all {
                     testTask.configure {
-                        addClasspathProperty(nativeStdlibKlib, nativeStdlibClasspathProperty)
+                        addClasspathProperty(nativeStdlibKlib, NATIVE_STDLIB_CLASSPATH_PROPERTY)
+                        // the bootstrap stdlib is older than the compiler under test, see NativeModule
+                        systemProperty(NATIVE_STDLIB_IS_BOOTSTRAP_PROPERTY, "true")
                     }
                 }
             }
