@@ -38,8 +38,8 @@ internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
 
     @TaskAction
     fun generate() {
-        val dependencies = compilation.directDependencies.get() +
-                compilation.toolDependencies.get() +
+        val dependencies = compilation.directUserDependencies.get() +
+                compilation.npmToolingDependencies.get() +
                 compilation.dependencyReports.files.flatMap { readNpmDependencyReport(it).npmDependencies() }
 
         dependencies.toNpmDependencyReport(target.get(), compilation.moduleName.get())
@@ -55,11 +55,11 @@ internal abstract class CompilationNpmDependencies {
 
     /** Declared by the user with `npm`, `npmDev`, `npmOptional` and `npmPeer`. */
     @get:Input
-    abstract val directDependencies: SetProperty<DefaultKotlinNpmDependency>
+    abstract val directUserDependencies: SetProperty<DefaultKotlinNpmDependency>
 
     /** Required by this compilation's tasks, test framework, webpack, etc. */
     @get:Input
-    abstract val toolDependencies: SetProperty<DefaultKotlinNpmDependency>
+    abstract val npmToolingDependencies: SetProperty<DefaultKotlinNpmDependency>
 
     /** Reports of runtime dependencies, built from klibs where a dependency has none. */
     @get:InputFiles

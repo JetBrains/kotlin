@@ -71,8 +71,8 @@ private fun CompilationNpmDependencies.configure(
     platform: HasPlatformDisambiguator,
 ) {
     moduleName.convention(compilation.outputModuleName)
-    directDependencies.convention(project.provider { collectDirectDeclaredNpmDependencies(compilation) })
-    toolDependencies.convention(project.provider { project.collectDevNpmDependencies(compilation) })
+    directUserDependencies.convention(project.provider { collectDirectDeclaredNpmDependencies(compilation) })
+    npmToolingDependencies.convention(project.provider { project.collectDevNpmDependencies(compilation) })
     dependencyReports.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver, platform))
 }
 

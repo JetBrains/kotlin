@@ -148,8 +148,8 @@ class SharedNpmSubprojectTest {
         val isOdd = DefaultKotlinNpmDependency("is-odd", "2.0.0", KotlinNpmDependency.Scope.DEV)
         val cowsay = DefaultKotlinNpmDependency("cowsay", "9.9.9", KotlinNpmDependency.Scope.PEER)
 
-        assertEquals(setOf(isEven, isOdd), project.npmDependencies("jsNpmDependenciesReport").directDependencies.get())
-        assertEquals(setOf(isEven, isOdd, cowsay), project.npmDependencies("jsTestNpmDependenciesReport").directDependencies.get())
+        assertEquals(setOf(isEven, isOdd), project.npmDependencies("jsNpmDependenciesReport").directUserDependencies.get())
+        assertEquals(setOf(isEven, isOdd, cowsay), project.npmDependencies("jsTestNpmDependenciesReport").directUserDependencies.get())
     }
 
     @Test
@@ -206,7 +206,7 @@ class SharedNpmSubprojectTest {
         project.evaluate()
 
         for (taskName in listOf("jsTestNpmDependenciesReport", "wasmJsTestNpmDependenciesReport")) {
-            val testTools = project.npmDependencies(taskName).toolDependencies.get()
+            val testTools = project.npmDependencies(taskName).npmToolingDependencies.get()
             assertTrue("karma" in testTools.map { it.name }, "karma expected in $taskName test tools: $testTools")
             assertTrue(testTools.all { it.scope == KotlinNpmDependency.Scope.DEV }, "tool dependencies must be devDependencies: $testTools")
         }
