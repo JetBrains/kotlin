@@ -723,7 +723,6 @@ abstract class CompileServiceImplBase(
             workingDir = workingDir,
             reporter = reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
-            scopeExpansion = CompileScopeExpansionMode.ALWAYS,
             modulesApiHistory = modulesApiHistory,
             icFeatures = incrementalCompilationOptions.icFeatures,
             lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
