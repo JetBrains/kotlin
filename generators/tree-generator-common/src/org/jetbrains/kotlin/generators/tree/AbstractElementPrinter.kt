@@ -58,6 +58,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
                         )
                     }
                     printAdditionalMethods(element)
+                    printEqualityMethods(element)
                 }
             }
             val body = printer.toString()
@@ -70,5 +71,32 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
             println()
             addAllImports(element.additionalImports)
         }
+    }
+
+    private fun ImportCollectingPrinter.printEqualityMethods(element: Element) {
+        if (element.equalityFieldNames.isEmpty()) return
+
+        val kind = element.kind ?: error("Expected non-null element kind")
+        require(!kind.isInterface) {
+            "The element `${element.typeName}` is an interface, so it cannot override `equals` and `hashCode` for its equality fields."
+        }
+
+        val fieldsByName = element.allFields.associateBy { it.name }
+        val fields = element.equalityFieldNames.map { fieldName ->
+            fieldsByName[fieldName] ?: error("The equality field `$fieldName` of the element `${element.typeName}` does not exist.")
+        }
+
+        println()
+        print("override fun equals(other: Any?): Boolean = this === other || other is ", element.withStarArgs().render())
+        fields.forEach { print(" && ", it.name, " == other.", it.name) }
+        println()
+
+        // Combines the field hash codes like `31 * (31 * a + b) + c`, which avoids the array allocation of `Objects.hash`.
+        val hashCodeExpression = fields
+            .map { if (it.nullable) "(${it.name}?.hashCode() ?: 0)" else "${it.name}.hashCode()" }
+            .reduceIndexed { index, accumulated, hashCode -> "31 * ${if (index > 1) "($accumulated)" else accumulated} + $hashCode" }
+
+        println()
+        println("override fun hashCode(): Int = ", hashCodeExpression)
     }
 }

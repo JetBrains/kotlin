@@ -30,6 +30,13 @@
         restartRequired="true"
     />
 
+    <registryKey
+        defaultValue="false"
+        description="Create source-based FIR symbol IDs in the Analysis API. Experimental: a prerequisite for evicting FIR symbols from caches (KT-87712)."
+        key="kotlin.analysis.ll.sourceBasedSymbolIds"
+        restartRequired="true"
+    />
+
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser"
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLRealFirElementByPsiElementChooser"

@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGener
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
@@ -119,6 +121,7 @@ public class PropertyBuildingContext(
                 propertyTypeRef = returnTypeRef,
                 visibility = status.visibility,
                 propertySymbol = symbol,
+                symbol = FirPropertyAccessorSymbol(),
                 modality = resolvedStatus.modality,
                 effectiveVisibility = resolvedStatus.effectiveVisibility,
                 resolvePhase = FirResolvePhase.BODY_RESOLVE,
@@ -131,6 +134,7 @@ public class PropertyBuildingContext(
                     propertyTypeRef = returnTypeRef,
                     visibility = setterVisibility ?: status.visibility,
                     propertySymbol = symbol,
+                    propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                     modality = resolvedStatus.modality,
                     effectiveVisibility = resolvedStatus.effectiveVisibility,
                     resolvePhase = FirResolvePhase.BODY_RESOLVE,
@@ -147,8 +151,9 @@ public class PropertyBuildingContext(
                     mutableListOf(),
                     returnTypeRef,
                     isVar,
-                    symbol,
-                    status,
+                    symbol = FirBackingFieldSymbol(),
+                    propertySymbol = symbol,
+                    status = status,
                     resolvePhase = FirResolvePhase.BODY_RESOLVE,
                 )
             }
