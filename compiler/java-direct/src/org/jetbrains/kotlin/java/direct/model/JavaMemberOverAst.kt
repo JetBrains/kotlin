@@ -11,18 +11,14 @@ import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
-import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
 import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
-import org.jetbrains.kotlin.java.direct.util.referenceNameParts
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -179,128 +175,33 @@ class JavaFieldOverAst(
         get() = initializerNode != null
 
     override val hasConstantNotNullInitializer: Boolean
-        get() {
-            val init = initializerNode ?: return false
-            if (!isFinal) return false
-            val fieldType = type
-            val isString = fieldType is JavaClassifierType &&
-                    (fieldType.classifierQualifiedName == "java.lang.String" ||
-                            fieldType.classifierQualifiedName == "String")
-            if (fieldType !is JavaPrimitiveType && !isString) return false
-            // Mirrors PSI's computeConstantValue() != null check: method calls, object creation,
-            // etc. can never be compile-time constants per JLS 15.29.
-            return isInitializerPotentiallyConstant(init)
-        }
+        get() = initializerValue != null
 
     /**
-     * Returns true if the initializer expression could possibly be a JLS compile-time constant
-     * expression. This is conservative: qualified references (e.g., `Foo.BAR`) are assumed
-     * potentially constant even if we cannot evaluate them locally, since they might be resolved
-     * via cross-language callback. Unresolvable simple names and method calls return false.
+     * Evaluates and caches the field's initializer using the local [ConstantEvaluator], which also
+     * resolves qualified references to Kotlin `const val`s through the session-backed resolver.
+     * Returns `null` for non-constant initializers and if evaluation re-enters this field on the
+     * current thread.
      */
-    private fun isInitializerPotentiallyConstant(n: LightNode): Boolean {
-        return when (tree.getType(n)) {
-            JavaSyntaxElementType.LITERAL_EXPRESSION -> {
-                val child = tree.getChildren(n).firstOrNull()
-                child != null && tree.getType(child) != JavaSyntaxTokenType.NULL_KEYWORD
-            }
-            JavaSyntaxElementType.BINARY_EXPRESSION -> {
-                val children = tree.getChildren(n)
-                children.size >= 3 &&
-                        isInitializerPotentiallyConstant(children[0]) &&
-                        isInitializerPotentiallyConstant(children[2])
-            }
-            JavaSyntaxElementType.POLYADIC_EXPRESSION -> {
-                val children = tree.getChildren(n)
-                var i = 0
-                var result = true
-                while (i < children.size) {
-                    if (!isInitializerPotentiallyConstant(children[i])) {
-                        result = false
-                        break
-                    }
-                    i += 2  // skip operator token
-                }
-                result
-            }
-            JavaSyntaxElementType.PREFIX_EXPRESSION -> {
-                val children = tree.getChildren(n)
-                children.size >= 2 && isInitializerPotentiallyConstant(children[1])
-            }
-            JavaSyntaxElementType.PARENTH_EXPRESSION -> {
-                val inner = tree.getChildren(n).firstOrNull {
-                    val t = tree.getType(it)
-                    t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
-                }
-                inner != null && isInitializerPotentiallyConstant(inner)
-            }
-            // `(byte) 0` and similar: a cast to a primitive (or String) type keeps the expression
-            // constant (JLS 15.29), so the operand alone decides.
-            JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> {
-                val children = tree.getChildren(n)
-                val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
-                val operand = if (rparenthIndex < 0) null else children.getOrNull(rparenthIndex + 1)
-                operand != null && isInitializerPotentiallyConstant(operand)
-            }
-            JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
-                val nameParts = tree.referenceNameParts(n) ?: return true
-                if (nameParts.size > 1) true else isSimpleNamePotentiallyConstant(nameParts.single())
-            }
-            else -> false
+    override val initializerValue: Any? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val init = initializerNode ?: return@lazy null
+        if (!isFinal) return@lazy null
+        val fieldType = type
+        val isString = fieldType is JavaClassifierType &&
+                (fieldType.classifierQualifiedName == "java.lang.String" ||
+                        fieldType.classifierQualifiedName == "String")
+        if (fieldType !is JavaPrimitiveType && !isString) return@lazy null
+
+        val activeFields = fieldsBeingEvaluated.get()
+        if (!activeFields.add(this)) return@lazy null
+        try {
+            val evaluator = ConstantEvaluator(containingClass)
+            coerceConstantToFieldType(evaluator.evaluate(init))
+        } finally {
+            activeFields.remove(this)
+            if (activeFields.isEmpty()) fieldsBeingEvaluated.remove()
         }
     }
-
-    private fun isSimpleNamePotentiallyConstant(name: String): Boolean {
-        var currentClass: JavaClass? = containingClass
-        while (currentClass != null) {
-            findFieldInHierarchy(currentClass, name, mutableSetOf())?.let { return it }
-            currentClass = currentClass.outerClass
-        }
-        return getStaticImport(name, c = containingClass.resolutionContext) != null ||
-                containingClass.resolutionContext.fileContext.imports.staticStarImports.isNotEmpty()
-    }
-
-    private fun findFieldInHierarchy(
-        javaClass: JavaClass,
-        name: String,
-        visited: MutableSet<ClassId>,
-    ): Boolean? {
-        val classId = javaClass.classId ?: return null
-        if (!visited.add(classId)) return null
-
-        if (javaClass is JavaClassOverAst) {
-            javaClass.fields.find { it.name.asString() == name }?.let { return it.isFinal }
-        } else {
-            // FIR-backed adapters expose members as symbols, not JavaField wrappers; existence is enough here.
-            val session = containingClass.resolutionContext.fileContext.session
-            if (session.getClassDeclaredPropertySymbols(classId, Name.identifier(name)).any()) return true
-        }
-        for (supertype in javaClass.supertypes) {
-            val superClass = supertype.classifier as? JavaClass ?: continue
-            findFieldInHierarchy(superClass, name, visited)?.let { return it }
-        }
-        return null
-    }
-
-    /**
-     * Evaluates the field's initializer using the local [ConstantEvaluator], which also resolves
-     * qualified references to Kotlin `const val`s through the session-backed cross-language resolver.
-     * Returns `null` if evaluation re-enters this field on the current thread.
-     */
-    override val initializerValue: Any?
-        get() {
-            if (!hasConstantNotNullInitializer) return null
-            val init = initializerNode ?: return null
-            val activeFields = fieldsBeingEvaluated.get()
-            if (!activeFields.add(this)) return null
-            return try {
-                val evaluator = ConstantEvaluator(containingClass)
-                coerceConstantToFieldType(evaluator.evaluate(init))
-            } finally {
-                activeFields.remove(this)
-                if (activeFields.isEmpty()) fieldsBeingEvaluated.remove()
-            }
-        }
 
     /**
      * Applies JLS 5.1 widening and 5.2 narrowing-of-constant-expression conversions so the
