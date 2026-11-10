@@ -25,8 +25,13 @@ fun Test.withJunit5ParallelExecution(parallelism: Int) {
  * - not very high to keep RAM consumption well under RAM limit for a test task and prevent GC thrashing,
  * - not very low to avoid CPU idling and unnecessary increase of test runners duration.
  * Pick reasonable values which deliver the quickest test task execution.
+ * With every test isolated (`-Pkotlin.test.grouping.engine.all.tests.isolated=true`), [liftLimitWhenAllIsolated] lifts the
+ * limit of [simultaneousBatches]: set it for a task whose single test takes little memory.
  */
-fun Test.groupingEngineSettings(batchSize: Int, simultaneousBatches: Int) {
+fun Test.groupingEngineSettings(batchSize: Int, simultaneousBatches: Int, liftLimitWhenAllIsolated: Boolean = false) {
     systemProperty("kotlin.test.grouping.engine.simultaneous.methods.group.size", batchSize)
     systemProperty("kotlin.test.grouping.engine.simultaneous.methods.groups", simultaneousBatches)
+    if (liftLimitWhenAllIsolated) {
+        systemProperty("kotlin.test.grouping.engine.simultaneous.methods.groups.lifted.when.all.isolated", true)
+    }
 }

@@ -11,6 +11,7 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.jetbrains.kotlin.test.DynamicWithMaxThresholdParallelExecutionConfigurationStrategy
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator.BatchToken
 import org.jetbrains.kotlin.test.pinApplicationEnvironment
@@ -68,6 +69,9 @@ class CompilerTestGroupingTestEngine : TestEngine {
         private const val SIMULTANEOUS_METHODS_GROUPS_PROP = "kotlin.test.grouping.engine.simultaneous.methods.groups"
         private const val DEFAULT_SIMULTANEOUS_METHODS_GROUPS = 2
 
+        private const val LIFT_SIMULTANEOUS_METHODS_GROUPS_PROP =
+            "kotlin.test.grouping.engine.simultaneous.methods.groups.lifted.when.all.isolated"
+
         /**
          * A hard upper bound on the number of tests which are compiled and executed together as a single batch.
          * Grouping-stage memory consumption grows with the batch size, as a batch is linked and lowered as a
@@ -107,9 +111,16 @@ class CompilerTestGroupingTestEngine : TestEngine {
             workerPool = Executors.newFixedThreadPool(parallelism)
             dispatcher = workerPool.asCoroutineDispatcher()
 
-            val numberOfActiveBatches = params.get(SIMULTANEOUS_METHODS_GROUPS_PROP).orElse(null)?.toInt()?.also {
-                require(it > 0) { "Number of simultaneous method groups must be positive, but was $it" }
-            } ?: DEFAULT_SIMULTANEOUS_METHODS_GROUPS
+            @OptIn(TestInfrastructureInternals::class)
+            val liftLimit = AllTestsIsolator.allTestsIsolated &&
+                    (params.getBoolean(LIFT_SIMULTANEOUS_METHODS_GROUPS_PROP).orElse(null) ?: false)
+            val numberOfActiveBatches = if (liftLimit) {
+                parallelism
+            } else {
+                params.get(SIMULTANEOUS_METHODS_GROUPS_PROP).orElse(null)?.toInt()?.also {
+                    require(it > 0) { "Number of simultaneous method groups must be positive, but was $it" }
+                } ?: DEFAULT_SIMULTANEOUS_METHODS_GROUPS
+            }
 
             activeBatches = Semaphore(permits = numberOfActiveBatches)
 
