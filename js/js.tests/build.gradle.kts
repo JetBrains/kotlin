@@ -150,7 +150,7 @@ fun Test.forwardProperties() {
 
 fun Test.setUpGroupedJsBoxTests() {
     setUpJsBoxTests()
-    groupingEngineSettings(batchSize = 50, simultaneousBatches = 12)
+    groupingEngineSettings(batchSize = 50, simultaneousBatches = 12, liftLimitWhenAllIsolated = true)
 }
 
 projectTests {
