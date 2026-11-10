@@ -39,8 +39,6 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
 
     override val moduleNames: Collection<String>? get() = modulesOrder
 
-    protected abstract val scopeExpansionMode: CompileScopeExpansionMode
-
     override fun resetTest(testDir: File, newOutDir: File, newCacheDir: File) {
         repository.deleteRecursively()
         repository.mkdirs()
@@ -158,7 +156,6 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
         moduleBuildHistoryFile: File,
         messageCollector: MessageCollector,
         reporter: ICReporter,
-        scopeExpansion: CompileScopeExpansionMode,
         modulesApiHistory: ApiHistory,
         providedChangedFiles: ChangedFiles?
     )
@@ -232,7 +229,6 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
                     moduleBuildHistory,
                     messageCollector,
                     reporter,
-                    scopeExpansionMode,
                     modulesApiHistory,
                     changedDepsFiles
                 )
