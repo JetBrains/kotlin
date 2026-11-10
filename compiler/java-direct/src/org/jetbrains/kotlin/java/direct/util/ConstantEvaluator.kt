@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.model.JavaPrimitiveTypeOverAst
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
+import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.resolution.hasEnumEntry
 import org.jetbrains.kotlin.java.direct.resolution.resolve
@@ -329,8 +330,17 @@ class ConstantEvaluator private constructor(
         // No class adapter. If `resolvedClassId` is null, the qualifier is not a class java-direct
         // resolves (a JVM facade, or a class FIR serves as a builtin). Otherwise the session has no
         // symbol provider, which happens only in unit tests with the custom resolver hook.
-        return resolveExternalReference(reference.qualifier, resolvedClassId, reference.memberName)
-            ?: MemberResolutionResult.Unresolved(reference)
+        resolveExternalReference(reference.qualifier, resolvedClassId, reference.memberName)?.let { return it }
+
+        // A Kotlin file facade is a JVM class, but it does not have a class symbol of its own.
+        // If a single-type import supplied the qualifier, use its fully qualified name for facade lookup.
+        if (nameParts.size == 2) {
+            val importedClassName = getSimpleImport(nameParts.first(), c = resolutionContext)
+            if (importedClassName != null) {
+                resolveExternalReference(importedClassName.asString(), null, reference.memberName)?.let { return it }
+            }
+        }
+        return MemberResolutionResult.Unresolved(reference)
     }
 
     private fun resolveExternalReference(classQualifier: String, qualifierClassId: ClassId?, fieldName: String): MemberResolutionResult? {
@@ -373,9 +383,12 @@ class ConstantEvaluator private constructor(
         }
 
         for (className in resolutionContext.fileContext.imports.staticStarImports) {
-            val classId = resolveImportedClassName(className, c = resolutionContext) ?: continue
-            val javaClass = classifierAdapterFor(classId, c = resolutionContext) ?: continue
-            findMember(javaClass, name, mutableSetOf())?.let { return it }
+            val classId = resolveImportedClassName(className, c = resolutionContext)
+            val javaClass = classId?.let { classifierAdapterFor(it, c = resolutionContext) }
+            if (javaClass != null) {
+                findMember(javaClass, name, mutableSetOf())?.let { return it }
+            }
+            resolveExternalReference(className.asString(), null, name)?.let { return it }
         }
         return MemberResolutionResult.Unresolved(unresolvedImport)
     }
