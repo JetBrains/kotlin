@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.runners
 
-import org.jetbrains.kotlin.js.test.runners.AbstractPsiJsDiagnosticWithBackendTest
+import org.jetbrains.kotlin.js.test.runners.AbstractLightTreeJsDiagnosticWithBackendTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
@@ -24,7 +24,7 @@ abstract class AbstractSerializationFirLightTreeDiagnosticTest : AbstractFirLigh
 /**
  * For diagnostics that can only be triggered on the JS platform, such as the ones about `dynamic`.
  */
-abstract class AbstractSerializationJsDiagnosticTest : AbstractPsiJsDiagnosticWithBackendTest() {
+abstract class AbstractSerializationJsDiagnosticTest : AbstractLightTreeJsDiagnosticWithBackendTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForKotlinxSerialization(target = TargetBackend.JS_IR)
