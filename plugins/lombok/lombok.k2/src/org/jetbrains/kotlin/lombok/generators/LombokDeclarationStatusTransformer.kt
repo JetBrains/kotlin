@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.generators
 
-import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -80,8 +81,13 @@ class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransfo
         if (containingClass == null) return status
 
         val isHidden = if (constructor is FirJavaConstructor) {
-            // Only hide synthetic constructors (default no-args from Java analysis), not user-declared ones.
-            constructor.source?.kind !is KtRealSourceElementKind && containingClass.hasConstructorHiddenByStaticFactory()
+            when {
+                // Only hide synthetic constructors (default no-args from Java analysis), not user-declared ones.
+                constructor.source?.kind !is KtFakeSourceElementKind.ImplicitConstructor -> false
+                containingClass.hasConstructorHiddenByStaticFactory() -> true
+                constructor.valueParameters.isEmpty() -> containingClass.hasDefaultConstructorHiddenByConstructorWithArgs()
+                else -> false
+            }
         } else {
             // The static factory of a Kotlin class delegates to its primary constructor, which it then stands in for,
             // as the constructor generated for a Java class does. Only once it is actually generated, though, or the
@@ -104,5 +110,21 @@ class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransfo
                 lombokService.getNoArgsConstructor(this)?.staticName != null ||
                 lombokService.getData(this)?.staticConstructor != null ||
                 lombokService.getValue(this)?.staticConstructor != null
+    }
+
+    private fun FirClassLikeSymbol<*>.hasDefaultConstructorHiddenByConstructorWithArgs(): Boolean {
+        val lombokService = session.lombokService
+        val classSymbol = fullyExpandedClass(session) ?: return false
+        val constructors = listOfNotNull(
+            lombokService.getNoArgsConstructor(classSymbol),
+            lombokService.getAllArgsConstructor(classSymbol),
+            lombokService.getRequiredArgsConstructor(classSymbol),
+            lombokService.getBuilder(classSymbol)?.asAllArgsConstructor(classSymbol),
+            lombokService.getValue(classSymbol)?.asAllArgsConstructor(classSymbol),
+        ).takeIf { it.isNotEmpty() }
+        // @Data is a special case, as it is generated only when we have no other constructors
+            ?: listOfNotNull(lombokService.getData(classSymbol)?.asRequiredArgsConstructor(classSymbol))
+        if (constructors.any { it.generatesPlainNoArgsConstructor(classSymbol) }) return false
+        return constructors.any { it.accessLevel.toVisibility(this) != null } || lombokService.getSuperBuilder(classSymbol) != null
     }
 }

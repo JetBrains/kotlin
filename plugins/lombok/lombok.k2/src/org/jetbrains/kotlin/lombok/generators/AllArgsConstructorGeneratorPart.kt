@@ -6,38 +6,18 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.AllArgsConstructor
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorGeneratorPart<AllArgsConstructor>(session) {
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): AllArgsConstructor? {
         return lombokService.getAllArgsConstructor(classSymbol)
-            ?: runIf(!containsExplicitConstructor(classSymbol)) {
-                lombokService.getBuilder(classSymbol)
-                    ?.let { builder -> AllArgsConstructor(AccessLevel.PACKAGE, annotation = builder.annotation) }
-                    ?: lombokService.getValue(classSymbol)?.asAllArgsConstructor()
-            }
+            ?: lombokService.getBuilder(classSymbol)?.asAllArgsConstructor(classSymbol)
+            ?: lombokService.getValue(classSymbol)?.asAllArgsConstructor(classSymbol)
     }
 
-    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> {
-        val isAllArgsConstructor = lombokService.getAllArgsConstructor(classSymbol) != null
-
-        return buildList {
-            for (declaration in classSymbol.fir.declarations) {
-                if (declaration !is FirJavaField || declaration.isStatic) continue
-
-                if (declaration.hasInitializer && (!isAllArgsConstructor || !declaration.isVar)) continue
-
-                add(declaration)
-            }
-        }
+        return getConstructorInfo(classSymbol)?.getVariablesForParameters(classSymbol).orEmpty()
     }
 }

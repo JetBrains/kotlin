@@ -6,26 +6,16 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.RequiredArgsConstructor
-import org.jetbrains.kotlin.lombok.LombokNames
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-@OptIn(DirectDeclarationsAccess::class)
 class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorGeneratorPart<RequiredArgsConstructor>(session) {
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? {
         if (!classSymbol.hasJavaOrigin) return getKotlinConstructorInfo(classSymbol)
 
         return lombokService.getRequiredArgsConstructor(classSymbol)
-            ?: runIf(!containsExplicitConstructor(classSymbol)) { getDataAsRequiredArgsConstructor(classSymbol) }
+            ?: getDataAsRequiredArgsConstructor(classSymbol)
     }
 
     /**
@@ -47,32 +37,14 @@ class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstr
         return lombokService.getData(classSymbol)?.takeIf {
             lombokService.getAllArgsConstructor(classSymbol) == null &&
                     lombokService.getNoArgsConstructor(classSymbol) == null
-        }?.asRequiredArgsConstructor()
+        }?.asRequiredArgsConstructor(classSymbol)
     }
 
     /**
      * The required fields for a Java class, and all the primary constructor parameters for a Kotlin one: these are
      * exactly what the primary constructor called by the generated factory needs, see [getKotlinConstructorInfo].
      */
-    @OptIn(SymbolInternals::class)
     override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> {
-        if (!classSymbol.hasJavaOrigin) return classSymbol.primaryConstructorParameters().orEmpty()
-
-        return classSymbol.fir.declarations
-            .filterIsInstance<FirJavaField>()
-            .filter { it.isFieldRequired() }
-    }
-
-    private fun FirJavaField.isFieldRequired(): Boolean {
-        if (isStatic) return false
-        if (hasInitializer) return false
-        if (isVal) return true
-        return annotations.any { it.unexpandedClassId?.asSingleFqName() in LombokNames.NON_NULL_ANNOTATIONS }
-    }
-
-    @OptIn(SymbolInternals::class)
-    private fun FirClassSymbol<*>.primaryConstructorParameters(): List<FirValueParameter>? {
-        val primaryConstructor = fir.declarations.filterIsInstance<FirConstructor>().firstOrNull { it.isPrimary } ?: return null
-        return primaryConstructor.valueParameters.takeIf { parameters -> parameters.none { it.isVararg } }
+        return getConstructorInfo(classSymbol)?.getVariablesForParameters(classSymbol).orEmpty()
     }
 }

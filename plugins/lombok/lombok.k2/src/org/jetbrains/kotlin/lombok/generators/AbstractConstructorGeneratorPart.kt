@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -58,9 +57,14 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
     abstract fun getConstructorInfo(classSymbol: FirClassSymbol<*>): T?
     protected abstract fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable>
 
-    @OptIn(DirectDeclarationsAccess::class)
-    protected fun containsExplicitConstructor(classSymbol: FirClassSymbol<*>): Boolean {
-        return classSymbol.declarationSymbols.any { it is FirConstructorSymbol && it.source?.kind is KtRealSourceElementKind }
+    /**
+     * Whether the constructor Lombok generates for [classSymbol] by this part is a plain one without parameters, which
+     * stands in for the default constructor `javac` would otherwise create. With a `staticName`, the constructor behind
+     * the factory is private, so it does not count.
+     */
+    fun generatesPlainNoArgsConstructor(classSymbol: FirClassSymbol<*>): Boolean {
+        val constructorInfo = getConstructorInfo(classSymbol) ?: return false
+        return constructorInfo.staticName == null && getVariablesForParameters(classSymbol).isEmpty()
     }
 
     /**
