@@ -8,18 +8,23 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.source.PsiExtensibleClass
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.exceptions.logErrorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
  * Inspired by [ClassInnerStuffCache][com.intellij.psi.impl.source.ClassInnerStuffCache].
  *
- * This class contains only caches for `find*ByName` methods.
+ * This class contains only caches for `find*ByName` and `findOwn*ByKotlinOrigin` methods.
  *
  * @see com.intellij.psi.impl.source.ClassInnerStuffCache
  */
@@ -49,23 +54,34 @@ class ClassContentFinderCache(
         cachedMap[name]
     }
 
-    private inline fun <T> cachedMap(
-        crossinline provider: (PsiExtensibleClass) -> Map<String, T>,
-    ): Map<String, T> = CachedValuesManager.getCachedValue(
-        extensibleClass,
-        CachedValueProvider {
-            CachedValueProvider.Result.create(
-                provider(extensibleClass),
-                // Theoretically, this modification tracker should be calculated based on `extensibleClass`
-                // or should be used as a key for the cache map.
-                // But practically, `modificationTrackers` are bundled into the specific `extensibleClass`,
-                // so we save the invariant here.
-                // Hense, it is impossible to access the cache with the same `extensibleClass`,
-                // but with another `modificationTrackers`.
-                modificationTrackers,
-            )
-        }
-    )
+    /**
+     * @see KtExtensibleLightClass.findOwnMethodsByKotlinOrigin
+     */
+    @KtImplementationDetail
+    fun findOwnMethodsByKotlinOrigin(kotlinOrigin: KtElement): List<PsiMethod> =
+        cachedMap(PsiExtensibleClass::methodsByKotlinOriginMap)[kotlinOrigin].orEmpty()
+
+    /**
+     * @see KtExtensibleLightClass.findOwnFieldsByKotlinOrigin
+     */
+    @KtImplementationDetail
+    fun findOwnFieldsByKotlinOrigin(kotlinOrigin: KtElement): List<PsiField> =
+        cachedMap(PsiExtensibleClass::fieldsByKotlinOriginMap)[kotlinOrigin].orEmpty()
+
+    private inline fun <K, V> cachedMap(
+        crossinline provider: (PsiExtensibleClass) -> Map<K, V>,
+    ): Map<K, V> = CachedValuesManager.getCachedValue(extensibleClass) {
+        CachedValueProvider.Result.create(
+            provider(extensibleClass),
+            // Theoretically, this modification tracker should be calculated based on `extensibleClass`
+            // or should be used as a key for the cache map.
+            // But practically, `modificationTrackers` are bundled into the specific `extensibleClass`,
+            // so we save the invariant here.
+            // Hense, it is impossible to access the cache with the same `extensibleClass`,
+            // but with another `modificationTrackers`.
+            modificationTrackers,
+        )
+    }
 }
 
 private val PsiExtensibleClass.fieldsMap: Map<String, PsiField>
@@ -78,6 +94,25 @@ private val PsiExtensibleClass.fieldsMap: Map<String, PsiField>
 
 private val PsiExtensibleClass.methodsMap: Map<String, List<PsiMethod>>
     get() = ownMethods.groupBy { it.name }.ifEmpty { emptyMap() }
+
+private val PsiExtensibleClass.methodsByKotlinOriginMap: Map<KtElement, List<PsiMethod>>
+    get() = ownMethods.groupByKotlinOrigin()
+
+private val PsiExtensibleClass.fieldsByKotlinOriginMap: Map<KtElement, List<PsiField>>
+    get() = ownFields.groupByKotlinOrigin()
+
+/**
+ * Members without a [KtLightElement.kotlinOrigin] are skipped.
+ */
+private fun <T : PsiMember> List<T>.groupByKotlinOrigin(): Map<KtElement, List<T>> {
+    val membersByOrigin = HashMap<KtElement, MutableList<T>>()
+    for (member in this) {
+        val origin = (member as? KtLightElement<*, *>)?.kotlinOrigin ?: continue
+        membersByOrigin.getOrPut(origin) { SmartList() }.add(member)
+    }
+
+    return membersByOrigin.ifEmpty { emptyMap() }
+}
 
 private val PsiExtensibleClass.innerClassesMap: Map<String, PsiClass>
     get() = buildMap {

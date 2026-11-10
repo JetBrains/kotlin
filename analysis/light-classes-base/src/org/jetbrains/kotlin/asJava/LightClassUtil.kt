@@ -15,6 +15,7 @@ import com.intellij.psi.impl.java.stubs.PsiClassStub
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.asJava.classes.KtExtensibleLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 @Suppress("DEPRECATION")
 @Deprecated("Use light-class construction utilities from Analysis API or replace with a custom implementation. See KT-85385")
-@OptIn(IntellijInternalApi::class)
+@OptIn(IntellijInternalApi::class, KtImplementationDetail::class)
 object LightClassUtil {
 
     fun findClass(stub: StubElement<*>, predicate: (PsiClassStub<*>) -> Boolean): PsiClass? {
@@ -121,10 +122,37 @@ object LightClassUtil {
             }
         }
 
-        return psiClass.fields.find { psiField: PsiField ->
+        return psiClass.fieldsWithKotlinOrigin(declaration).find { psiField: PsiField ->
             psiField is KtLightElement<*, *> && psiField.kotlinOrigin === declaration
         }
     }
+
+    /**
+     * Returns the fields of this class that can have [declaration] as their `kotlinOrigin`, in the order of [PsiClass.getFields].
+     */
+    private fun PsiClass.fieldsWithKotlinOrigin(declaration: KtDeclaration): List<PsiField> =
+        asLightClassWithKotlinOriginLookup()?.findOwnFieldsByKotlinOrigin(declaration) ?: fields.asList()
+
+    /**
+     * Returns the methods of this class that can have [declaration] as their `kotlinOrigin`, in the order of [PsiClass.getMethods].
+     */
+    private fun PsiClass.methodsWithKotlinOrigin(declaration: KtDeclaration): Sequence<PsiMethod> = when {
+        // A scan, as no-arg constructors can have the containing class as their origin.
+        // A class has at most one primary constructor, so it is one scan per class, not per member.
+        declaration is KtPrimaryConstructor -> methods.asSequence()
+        else -> asLightClassWithKotlinOriginLookup()?.findOwnMethodsByKotlinOrigin(declaration)?.asSequence() ?: methods.asSequence()
+    }
+
+    /**
+     * Returns this class if its members can be found through [KtExtensibleLightClass.findOwnMethodsByKotlinOrigin]
+     * and [KtExtensibleLightClass.findOwnFieldsByKotlinOrigin].
+     * Such a class returns its own members from [PsiClass.getMethods] and [PsiClass.getFields].
+     *
+     * Light classes of decompiled declarations are scanned: the `kotlinOrigin` of their members is a search in the compiled file,
+     * so a lookup that computes it for all members costs more than a scan that filters by name first.
+     */
+    private fun PsiClass.asLightClassWithKotlinOriginLookup(): KtExtensibleLightClass? =
+        if (this is KtExtensibleLightClass && this !is KtClsJavaBasedLightClass) this else null
 
     fun getLightClassPropertyMethods(parameter: KtParameter): PropertyAccessorsPsiMethods {
         return extractPropertyAccessors(parameter, null, null)
@@ -156,7 +184,7 @@ object LightClassUtil {
     private fun getPsiMethodWrappers(
         declaration: KtDeclaration,
         name: String? = null,
-        nameFilter: (KtLightMethod) -> Boolean = { name == null || name == it.name }
+        nameFilter: (KtLightMethod) -> Boolean = { name == null || name == it.name },
     ): Sequence<KtLightMethod> {
         // `originalElement` is called to unwrap a potential library source declaration into a decompiled one
         // since light classes directly support only them. This helps to avoid unnecessary checks for `navigationElement`
@@ -164,7 +192,7 @@ object LightClassUtil {
         // `KotlinAnalysisApiBasedDeclarationNavigationPolicyImpl` is responsible for this mapping on the IntelliJ Kotlin plugin.
         val adjustedDeclaration = declaration.originalElement as? KtDeclaration ?: return emptySequence()
         return getWrappingClasses(adjustedDeclaration)
-            .flatMap { it.methods.asSequence() }
+            .flatMap { it.methodsWithKotlinOrigin(adjustedDeclaration) }
             .filterIsInstance<KtLightMethod>()
             .filter(nameFilter)
             .filter { lightMethod ->
@@ -235,7 +263,7 @@ object LightClassUtil {
     private fun <T> extractPropertyAccessors(
         ktDeclaration: T,
         specialGetter: PsiMethod?,
-        specialSetter: PsiMethod?
+        specialSetter: PsiMethod?,
     ): PropertyAccessorsPsiMethods where T : KtValVarKeywordOwner, T : KtNamedDeclaration {
 
         val accessorWrappers = when {
@@ -294,7 +322,7 @@ object LightClassUtil {
         val getter: PsiMethod?,
         val setter: PsiMethod?,
         val backingField: PsiField?,
-        additionalAccessors: List<PsiMethod>
+        additionalAccessors: List<PsiMethod>,
     ) : Iterable<PsiMethod> {
         private val allMethods: List<PsiMethod> = SmartList<PsiMethod>().apply {
             addIfNotNull(getter)
