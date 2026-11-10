@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -50,6 +53,7 @@ internal fun FirSession.resolveExternalFieldValue(
     qualifierClassId: ClassId?,
     fieldName: String,
     currentPackage: FqName,
+    inheritingPackage: FqName? = null,
 ): MemberResolutionResult? {
     if (nullableSymbolProvider == null) return null
     val propertyName = Name.identifier(fieldName)
@@ -61,12 +65,21 @@ internal fun FirSession.resolveExternalFieldValue(
             ?.let(MemberResolutionResult::Constant)
     }
 
-    tryResolveAsClassMember(qualifierClassId, propertyName)?.let { return MemberResolutionResult.Constant(it) }
-    tryResolveAsCompanionMember(qualifierClassId, propertyName)?.let { return MemberResolutionResult.Constant(it) }
-    if (getClassDeclaredPropertySymbols(qualifierClassId, propertyName).any()) {
+    tryResolveAsClassMember(qualifierClassId, propertyName, inheritingPackage)?.let { return MemberResolutionResult.Constant(it) }
+    tryResolveAsCompanionMember(qualifierClassId, propertyName, inheritingPackage)?.let { return MemberResolutionResult.Constant(it) }
+    if (getClassDeclaredPropertySymbols(qualifierClassId, propertyName).any {
+            it.rawStatus.visibility.isInheritedTo(inheritingPackage, qualifierClassId.packageFqName)
+        }
+    ) {
         return MemberResolutionResult.NonConstantField
     }
     return null
+}
+
+internal fun Visibility.isInheritedTo(inheritingPackage: FqName?, declaringPackage: FqName): Boolean {
+    if (inheritingPackage == null) return true
+    if (this == Visibilities.Private) return false
+    return this != JavaVisibilities.PackageVisibility || inheritingPackage == declaringPackage
 }
 
 /**
@@ -96,9 +109,10 @@ private fun FirVariableSymbol<*>.jvmFacadeClassName(): String? {
 }
 
 /** Direct class member property (e.g. `object Foo { const val BAR = 1 }`, or a Java static field on a Kotlin class). */
-private fun FirSession.tryResolveAsClassMember(classId: ClassId, propertyName: Name): Any? {
+private fun FirSession.tryResolveAsClassMember(classId: ClassId, propertyName: Name, inheritingPackage: FqName?): Any? {
     if (nullableSymbolProvider == null) return null
     for (symbol in getClassDeclaredPropertySymbols(classId, propertyName)) {
+        if (!symbol.rawStatus.visibility.isInheritedTo(inheritingPackage, classId.packageFqName)) continue
         symbol.tryExtractConstantValue(this)?.let { return it }
     }
     return null
@@ -106,11 +120,12 @@ private fun FirSession.tryResolveAsClassMember(classId: ClassId, propertyName: N
 
 /** Companion-object property (e.g. `Foo.BAR` where `BAR` lives in `Foo.Companion`). */
 @OptIn(SymbolInternals::class)
-private fun FirSession.tryResolveAsCompanionMember(classId: ClassId, propertyName: Name): Any? {
+private fun FirSession.tryResolveAsCompanionMember(classId: ClassId, propertyName: Name, inheritingPackage: FqName?): Any? {
     val provider = nullableSymbolProvider ?: return null
     val classSymbol = provider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
     val companionClassId = classSymbol?.companionObjectSymbol?.classId ?: return null
     for (symbol in getClassDeclaredPropertySymbols(companionClassId, propertyName)) {
+        if (!symbol.rawStatus.visibility.isInheritedTo(inheritingPackage, companionClassId.packageFqName)) continue
         symbol.tryExtractConstantValue(this)?.let { return it }
     }
     return null
