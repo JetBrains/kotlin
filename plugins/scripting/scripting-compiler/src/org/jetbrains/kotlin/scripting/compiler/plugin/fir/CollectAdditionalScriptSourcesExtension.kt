@@ -112,12 +112,14 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 }
             else null  // TODO: support non-file sources (KT-83973)
 
-        val acceptStandalone = configuration.allowAnyScriptsInSourceRoots
+        val acceptsAnyValid = configuration.allowAnyScriptsInSourceRoots
 
         fun SourceCode.isAcceptedOrReport(): Boolean {
             val scriptDefinition = definitionProvider.findBaseCompilationConfiguration(this)?.valueOr { failure ->
-                val reportsDescription = failure.reports.joinToString(postfix = "\n") { report -> report.render(withSeverity = false) }
-                if (acceptStandalone) {
+                if (acceptsAnyValid) {
+                    val reportsDescription = failure.reports.joinToString(prefix = "\n",separator = "\n") { report ->
+                        report.render(withSeverity = false)
+                    }
                     configuration.report(
                         CliDiagnostics.SCRIPTING_WARNING,
                         "Unable to find script definition for ${locationId ?: "script"}: $reportsDescription"
@@ -125,7 +127,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 }
                 return false
             } ?: run {
-                if (acceptStandalone) {
+                if (acceptsAnyValid) {
                     configuration.report(
                         CliDiagnostics.SCRIPTING_WARNING,
                         "Unable to find script definition for ${locationId ?: "script"}"
@@ -133,14 +135,9 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 }
                 return false
             }
-            if (acceptStandalone) return true
-            return when (scriptDefinition[ScriptCompilationConfiguration.isStandalone]) {
-                false -> true
-                // standalone scripts are silently ignored per KT-52525
-                true -> false
-                // by default isStandalone flag is true
-                null -> false
-            }
+            // We ignore 'isStandalone' scripts silently (this flag is true by default)
+            // See KT-52525
+            return acceptsAnyValid || scriptDefinition[ScriptCompilationConfiguration.isStandalone] == false
         }
 
         val sourcesToFiles = sources
