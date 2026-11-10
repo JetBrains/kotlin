@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.internal.listLibraryFiles
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CInteropWorkAction
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.tasks.SharedCompilationData
@@ -467,9 +468,6 @@ internal constructor(
                 .from(kotlinNativeProvider.flatMap { it.bundleDirectory }
                           .map { KonanDistribution(it).platformLibsDir.absoluteFile.resolve(konanTarget.name).listLibraryFiles() })
         }
-
-    private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
-        .filter { it.isDirectory || it.extension == "klib" }
 
     private fun createSharedCompilationDataOrNull(): SharedCompilationData? {
         if (!isMetadataCompilation) return null

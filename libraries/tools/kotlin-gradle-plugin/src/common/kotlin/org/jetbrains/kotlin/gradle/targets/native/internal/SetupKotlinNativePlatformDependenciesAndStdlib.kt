@@ -167,5 +167,13 @@ internal fun ObjectFactory.getOriginalPlatformLibrariesForTargetWithKonanDistrib
         )
 
 
+/**
+ * Returns the libraries of this directory: packaged *.klib files and directories (normally containing an unpacked klib).
+ *
+ * The result is sorted by name to get a machine independent order: [File.listFiles] doesn't guarantee any order
+ * (on ext4, for example, it depends on a per-filesystem hash seed). The order of these libraries is part of the
+ * '@Classpath' fingerprint of Kotlin/Native compile and link tasks and therefore of their build cache keys (KT-91182)
+ */
 fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
     .filter { it.isDirectory || it.extension == "klib" }
+    .sortedBy { it.name }
