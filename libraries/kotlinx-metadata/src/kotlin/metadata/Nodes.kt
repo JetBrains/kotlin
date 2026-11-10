@@ -9,6 +9,7 @@ package kotlin.metadata
 
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import kotlin.contracts.ExperimentalContracts
+import kotlin.experimental.ExperimentalRichErrors
 import kotlin.metadata.internal.FlagImpl
 import kotlin.metadata.internal.extensions.*
 import kotlin.metadata.internal.propertyBooleanFlag
@@ -719,6 +720,14 @@ public class KmType internal constructor(
 
     internal val extensions: List<KmTypeExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createTypeExtension)
+
+    /**
+     * The list of rich error types of this type.
+     *
+     * For example, if this type is `T | E1 | E2`, then `richErrors` will contain `E1` and `E2`.
+     */
+    @ExperimentalRichErrors
+    public var richErrors: List<KmType> = emptyList()
 
     /**
      * Determines whether this KmType is equal to the given [other].
