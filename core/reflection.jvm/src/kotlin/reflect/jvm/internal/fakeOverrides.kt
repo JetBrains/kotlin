@@ -6,6 +6,8 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsRenamedInJvmBuiltin
+import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -70,6 +72,7 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
         if (kClass.isKotlin) declaredMembers.mapTo(HashSet()) { it.toEquatableCallableSignature(EqualityMode.KotlinSignature) }
         else emptySet()
     val javaSignatureMode = EqualityMode.JavaSignature(isKotlinClass = kClass.isKotlin)
+    val isSpecialBuiltinName = Name.identifier(name).sameAsRenamedInJvmBuiltin
     val result: MutableMembersJavaSignatureMap = HashMap()
     for (supertype in kClass.supertypes) {
         val supertypeKClass = supertype.memberContainer
@@ -88,7 +91,10 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
                 continue
             }
             // Inherited signatures are always compared by the Java signatures. Even for Kotlin classes.
-            val javaSignature = kotlinSignature.withEqualityMode(javaSignatureMode)
+            val javaSignature = kotlinSignature.withEqualityMode(javaSignatureMode).let {
+                if (isSpecialBuiltinName && member.isBuiltinWithDifferentJvmNameOverriddenByKotlinName(kClass)) it.withJvmName(name)
+                else it
+            }
             val existingMember = result[javaSignature]
             result[javaSignature] = if (existingMember == null) member else createIntersectionOverride(existingMember, member)
         }
@@ -110,6 +116,14 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
         result[member.toEquatableCallableSignature(javaSignatureMode)] = member
     }
     return result
+}
+
+private fun ReflectKCallable<*>.isBuiltinWithDifferentJvmNameOverriddenByKotlinName(kClass: MemberContainer<*>): Boolean {
+    if (this !is ReflectKFunction || signature.substringBefore('(') == name) return false
+    val overriddenBuiltin = getOverriddenBuiltinWithDifferentJvmName() ?: return false
+    // Builtin functions with different JVM names are overridden by Kotlin names in Kotlin mapped builtin subclasses,
+    // and by Java names in the rest of the classes.
+    return kClass.isKotlin || kClass.hasRealKotlinSuperClassWithOverrideOf(overriddenBuiltin)
 }
 
 internal fun MemberContainer<*>.getFunctionsFromSupertypes(name: String): List<ReflectKFunction> = buildList {
@@ -398,16 +412,14 @@ internal class EquatableCallableSignature<T : EqualityMode>(
 
     fun <T : EqualityMode> withEqualityMode(equalityMode: T): EquatableCallableSignature<T> =
         EquatableCallableSignature(
-            kind,
-            name,
-            jvmNameIfFunction,
-            typeParameters,
-            kotlinParameterTypes,
-            javaErasedParameterTypes,
-            computeJavaGenericParameterTypes,
-            isSuspend,
-            isStatic,
-            equalityMode
+            kind, name, jvmNameIfFunction, typeParameters, kotlinParameterTypes, javaErasedParameterTypes, computeJavaGenericParameterTypes,
+            isSuspend, isStatic, equalityMode,
+        )
+
+    fun withJvmName(jvmName: String): EquatableCallableSignature<T> =
+        EquatableCallableSignature(
+            kind, name, jvmName, typeParameters, kotlinParameterTypes, javaErasedParameterTypes, computeJavaGenericParameterTypes,
+            isSuspend, isStatic, equalityMode,
         )
 
     override fun hashCode(): Int =

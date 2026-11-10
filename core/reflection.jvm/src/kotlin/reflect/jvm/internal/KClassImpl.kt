@@ -454,8 +454,10 @@ internal class KClassImpl<T : Any>(
             Iterable::class.java.isAssignableFrom(jClass) ||
                     Iterator::class.java.isAssignableFrom(jClass) ||
                     Map::class.java.isAssignableFrom(jClass) ||
-                    CharSequence::class.java.isAssignableFrom(jClass) ||
-                    Number::class.java.isAssignableFrom(jClass)
+                    (useK1ImplementationForCollections && (
+                            CharSequence::class.java.isAssignableFrom(jClass) ||
+                                    Number::class.java.isAssignableFrom(jClass)
+                            ))
         }
 
         val declaredMemberNames: Set<String> by lazy(PUBLICATION, ::computeDeclaredMemberNames)

@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsRenamedInJvmBuiltin
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.internalName
@@ -85,6 +87,9 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
         addAll(computeDeclaredMembersFromMetadata(name))
     } else {
         searchMethodsByNameWithoutBuiltinMagic(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
+        if (Name.identifier(name).sameAsRenamedInJvmBuiltin) {
+            addOverriddenSpecialMethods(name, this)
+        }
         for (method in jClass.declaredMethods) {
             if (method.name == name && Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
                 add(JavaKNamedFunction(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
@@ -283,12 +288,67 @@ internal fun MemberContainer<*>.isVisibleAsFunctionInCurrentClass(function: Refl
             }
         }) return false
 
-    return true
+    // TODO: KT-85727 Reflection: support overrides of renamed builtins inherited from supertypes
+    if (function !is JavaKNamedFunction || function.overriddenStorage.isFakeOverride) return true
+
+    return !doesOverrideRenamedBuiltins(function)
 }
 
 private fun MemberContainer<*>.searchMethodsInSupertypesWithoutBuiltinMagic(name: String): Collection<ReflectKFunction> =
-    // TODO (KT-85727): filter out builtins with a different JVM name, and builtins with erased parameters.
-    getFunctionsFromSupertypes(name)
+    // TODO (KT-85727): filter out builtins with erased parameters.
+    getFunctionsFromSupertypes(name).filterNot {
+        it.doesOverrideBuiltinWithDifferentJvmName()
+    }
+
+// See `LazyJavaClassMemberScope.doesOverrideRenamedBuiltins`.
+private fun MemberContainer<*>.doesOverrideRenamedBuiltins(function: JavaKNamedFunction): Boolean {
+    // e.g. 'removeAt' or 'toInt'
+    val builtinName =
+        SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(Name.identifier(function.name))?.asString() ?: return false
+    val builtinSpecialFromSuperTypes =
+        getFunctionsFromSupertypes(builtinName).filter { it.doesOverrideBuiltinWithDifferentJvmName() }
+    if (builtinSpecialFromSuperTypes.isEmpty()) return false
+
+    val functionWithKotlinName = function.createRenamedCopy(builtinName)
+
+    return builtinSpecialFromSuperTypes.any { doesOverrideRenamedFunction(it, functionWithKotlinName) }
+}
+
+// See `LazyJavaClassMemberScope.doesOverrideRenamedDescriptor`.
+private fun doesOverrideRenamedFunction(superFunction: ReflectKFunction, subFunction: JavaKNamedFunction): Boolean {
+    // Compare Java signatures by JVM names and parameter types, which allows to distinguish `remove(int)` and `remove(E)` in Java.
+    val equalityMode = EqualityMode.JavaSignature(isKotlinClass = false)
+    return superFunction.toEquatableCallableSignature(equalityMode) == subFunction.toEquatableCallableSignature(equalityMode)
+}
+
+// See `LazyJavaClassMemberScope.addOverriddenSpecialMethods`.
+private fun MemberContainer<*>.addOverriddenSpecialMethods(name: String, result: MutableCollection<ReflectKCallable<*>>) {
+    val methods = hashSetOf<Method>()
+    for (function in getFunctionsFromSupertypes(name)) {
+        val override = obtainOverrideForBuiltinWithDifferentJvmName(function, name) ?: continue
+        if (methods.add(override.jMethod)) {
+            result.add(override)
+        }
+    }
+}
+
+// See `LazyJavaClassMemberScope.obtainOverrideForBuiltinWithDifferentJvmName`.
+// Note that as opposed to the compiler, we don't create a hidden copy if the builtin is already accidentally overridden by a Java method
+// with the Kotlin name (e.g. `java.nio.CharBuffer.get`), because there are no hidden declarations in reflection.
+private fun MemberContainer<*>.obtainOverrideForBuiltinWithDifferentJvmName(function: ReflectKFunction, name: String): JavaKNamedFunction? {
+    val overriddenBuiltin = function.getOverriddenBuiltinWithDifferentJvmName() ?: return null
+
+    val nameInJava = getJvmMethodNameIfSpecial(overriddenBuiltin)!!
+    for (method in searchMethodsByNameWithoutBuiltinMagic(nameInJava)) {
+        val renamedCopy = method.createRenamedCopy(name)
+
+        if (doesOverrideRenamedFunction(function, renamedCopy)) {
+            return renamedCopy
+        }
+    }
+
+    return null
+}
 
 private fun MemberContainer<*>.searchMethodsByNameWithoutBuiltinMagic(name: String? = null): List<JavaKNamedFunction> {
     require(kmClass == null) { "Should be called only for Java classes: $this" }
@@ -325,10 +385,19 @@ private fun MemberContainer<*>.doesClassOverrideProperty(
 }
 
 private fun KProperty1<*, *>.findGetterOverride(
-    container: KDeclarationContainerImpl,
+    container: MemberContainer<*>,
     functions: (String) -> Collection<ReflectKFunction>,
-): ReflectKFunction? =
-    findGetterByName(getBuiltinSpecialPropertyGetterName(name, container) ?: JvmAbi.getterName(name), functions)
+): ReflectKFunction? {
+    val overriddenBuiltinProperty = getOverriddenBuiltinPropertyWithDifferentJvmName(name, container)
+    val specialGetterName = overriddenBuiltinProperty?.second?.let { fqName ->
+        BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[fqName]?.asString()
+    }
+    if (specialGetterName != null && !container.hasRealKotlinSuperClassWithOverrideOf(overriddenBuiltinProperty.first)) {
+        return findGetterByName(specialGetterName, functions)
+    }
+
+    return findGetterByName(JvmAbi.getterName(name), functions)
+}
 
 private fun KProperty1<*, *>.findGetterByName(
     getterName: String,
@@ -398,8 +467,9 @@ internal fun MemberContainer<*>.getAdditionalFunctions(): List<ReflectKFunction>
             JdkMemberStatus.VISIBLE, JdkMemberStatus.DEPRECATED_LIST_METHODS, JdkMemberStatus.NOT_CONSIDERED -> {}
         }
 
+        // Note that it's fine to override another additional function, e.g. `java.lang.String.chars` overrides `CharSequence.chars`.
         val function = JavaKNamedFunction(this, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY)
-        if (function.overridden.isNotEmpty()) return@mapNotNull null
+        if (function.overridden.any { it !is JavaKNamedFunction }) return@mapNotNull null
 
         function
     }
