@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.npm.DevNpmDependencyExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyExtension
 import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencies
@@ -151,6 +153,29 @@ class SharedNpmSubprojectTest {
 
         assertEquals(setOf(isEven, isOdd), project.npmDependencies("jsNpmDependenciesReport").directUserDependencies.get())
         assertEquals(setOf(isEven, isOdd, cowsay), project.npmDependencies("jsTestNpmDependenciesReport").directUserDependencies.get())
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `npm dependencies declared in Gradle configurations are not collected`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                js { nodejs() }
+                sourceSets.getByName("jsMain").dependencies {
+                    npm("is-even", "1.0.0")
+                }
+            }
+        }
+        val npm = project.dependencies.extensions.getByName("npm") as NpmDependencyExtension
+        val devNpm = project.dependencies.extensions.getByName("devNpm") as DevNpmDependencyExtension
+        project.dependencies.add("jsMainImplementation", npm("left-pad", "1.3.0"))
+        project.dependencies.add("jsTestImplementation", devNpm("is-odd", "2.0.0"))
+        project.evaluate()
+
+        val isEven = DefaultKotlinNpmDependency("is-even", "1.0.0", KotlinNpmDependency.Scope.NORMAL)
+
+        assertEquals(setOf(isEven), project.npmDependencies("jsNpmDependenciesReport").directUserDependencies.get())
+        assertEquals(setOf(isEven), project.npmDependencies("jsTestNpmDependenciesReport").directUserDependencies.get())
     }
 
     @Test
