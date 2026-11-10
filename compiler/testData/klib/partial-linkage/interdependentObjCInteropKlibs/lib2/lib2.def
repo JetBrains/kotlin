@@ -1,0 +1,28 @@
+package = lib2
+language = Objective-C
+headers = lib2.h
+---
+
+int acceptUnmodifiedProtocol(UnmodifiedClass* obj, int result) {
+    return result;
+}
+
+int acceptRemovedClass(RemovedClass* obj, int result) {
+    return result;
+}
+
+int acceptClassWithUnmodifiedProtocol(ClassWithUnmodifiedProtocol* obj, int result) {
+    return result;
+}
+
+int acceptClassWithRemovedProtocol(ClassWithRemovedProtocol* obj, int result) {
+    return result;
+}
+
+int acceptClassWithRemovedBase(ClassWithRemovedBase* obj, int result) {
+    return result;
+}
+
+int acceptRemovedClassWrapper(RemovedClassWrapper* obj, int result) {
+    return result;
+}
