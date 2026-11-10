@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -24,11 +24,15 @@ open class ConeTypeRenderer(
 
     open fun renderAsPossibleFunctionType(
         type: ConeKotlinType,
-        functionClassKindExtractor: (ConeKotlinType) -> FunctionTypeKind?,
-        renderType: ConeTypeProjection.() -> Unit = { render() }
+        functionClassKindExtractor: (ConeKotlinType) -> FunctionTypeKindExtractor.KindWithArity?,
+        renderType: ConeTypeProjection.() -> Unit = { render() },
     ) {
-        val kind = functionClassKindExtractor(type)
-        if (kind?.isReflectType != false) {
+        val (kind, arity) = functionClassKindExtractor(type) ?: run {
+            type.renderType()
+            return
+        }
+
+        if (kind.isReflectType || arity != type.typeArguments.size - 1) {
             type.renderType()
             return
         }
@@ -121,7 +125,7 @@ open class ConeTypeRenderer(
             }
 
             is ConeSimpleKotlinType -> when {
-                type is ConeClassLikeType && type.classId.isFunctionType() -> {
+                type is ConeClassLikeType && type.classId.isFunctionType() && type.typeArguments.isNotEmpty() -> {
                     renderFunctionType(type, nullabilityMarker)
                     return
                 }

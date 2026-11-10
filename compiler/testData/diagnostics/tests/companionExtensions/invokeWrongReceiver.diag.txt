@@ -1,0 +1,47 @@
+/invokeWrongReceiver.kt:8:5: error: Candidate 'companion fun <T> Function1.invoke(): (T) -> Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+
+/invokeWrongReceiver.kt:8:5: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+
+/invokeWrongReceiver.kt:14:23: error: Candidate 'companion fun Function0.a02(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '(P1 (of interface Function1<in P1, out R>)) -> R (of interface Function1<in P1, out R>)'.
+
+/invokeWrongReceiver.kt:17:23: error: Candidate 'companion fun Function22.a04(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '(P1 (of interface Function1<in P1, out R>)) -> R (of interface Function1<in P1, out R>)'.
+
+/invokeWrongReceiver.kt:20:23: error: Candidate 'companion fun SuspendFunction1.a06(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+
+/invokeWrongReceiver.kt:22:15: error: Companion extension receiver type cannot be nullable.
+
+/invokeWrongReceiver.kt:23:23: error: Candidate 'companion fun Function1?.a38(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+
+/invokeWrongReceiver.kt:27:23: error: Candidate 'companion fun Function1.a17(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+
+/invokeWrongReceiver.kt:30:23: error: Candidate 'companion val Function1.p16: Int' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+
+/invokeWrongReceiver.kt:33:27: error: Too many arguments for 'companion fun Function1.a11(): Unit'.
+
+/invokeWrongReceiver.kt:37:23: error: None of the following candidates is applicable:
+
+companion fun Function1.a15(x: Int): Unit:
+  Argument type mismatch: actual type is 'Double', but 'Int' was expected.
+
+companion fun Function1.a15(x: String): Unit:
+  Argument type mismatch: actual type is 'Double', but 'String' was expected.
+
+/invokeWrongReceiver.kt:41:23: error: Overload resolution ambiguity between candidates:
+companion fun Function1.a49(vararg x: Int): Unit
+companion fun Function1.a49(vararg x: Long): Unit
+
+/invokeWrongReceiver.kt:44:23: error: Suspend function 'companion suspend fun Function1.a28(): Unit' can only be called from a coroutine or another suspend function.
+
+/invokeWrongReceiver.kt:48:23: error: 'companion fun Function1.a30(): Unit' is deprecated. x.
+
+/invokeWrongReceiver.kt:52:23: error: None of the following candidates is applicable:
+
+companion fun Function1.a25(): Unit:
+  Candidate 'companion fun Function1.a25(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+
+companion fun Function2.a25(): Unit:
+  Candidate 'companion fun Function2.a25(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is '() -> R (of interface Function0<out R>)'.
+
+/invokeWrongReceiver.kt:56:23: warning: 'companion fun Function1.a12(): String' is deprecated. x.
+
+/invokeWrongReceiver.kt:60:23: warning: 'companion val Function1.p31: Int' is deprecated. x.
