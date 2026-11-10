@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import java.io.Serializable
 
@@ -48,3 +49,15 @@ internal fun KotlinNpmDependency.Scope.toDeprecatedScope(): NpmDependencyScopeDe
         KotlinNpmDependency.Scope.OPTIONAL -> NpmDependencyScopeDeprecated.OPTIONAL
         KotlinNpmDependency.Scope.PEER -> NpmDependencyScopeDeprecated.PEER
     }
+
+internal fun NpmDependencyDeprecated.toKotlinNpmDependency(): DefaultKotlinNpmDependency =
+    DefaultKotlinNpmDependency(
+        name = name,
+        version = version,
+        scope = when (scope) {
+            NpmDependencyScopeDeprecated.NORMAL -> KotlinNpmDependency.Scope.NORMAL
+            NpmDependencyScopeDeprecated.DEV -> KotlinNpmDependency.Scope.DEV
+            NpmDependencyScopeDeprecated.OPTIONAL -> KotlinNpmDependency.Scope.OPTIONAL
+            NpmDependencyScopeDeprecated.PEER -> KotlinNpmDependency.Scope.PEER
+        },
+    )

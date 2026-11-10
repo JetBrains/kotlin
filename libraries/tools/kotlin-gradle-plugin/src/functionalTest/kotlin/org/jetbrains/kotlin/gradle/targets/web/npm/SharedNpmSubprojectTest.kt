@@ -157,7 +157,7 @@ class SharedNpmSubprojectTest {
 
     @Test
     @Suppress("DEPRECATION")
-    fun `npm dependencies declared in Gradle configurations are not collected`() {
+    fun `npm dependencies declared in Gradle configurations are collected`() {
         val project = buildProjectWithMPP {
             kotlin {
                 js { nodejs() }
@@ -173,9 +173,11 @@ class SharedNpmSubprojectTest {
         project.evaluate()
 
         val isEven = DefaultKotlinNpmDependency("is-even", "1.0.0", KotlinNpmDependency.Scope.NORMAL)
+        val leftPad = DefaultKotlinNpmDependency("left-pad", "1.3.0", KotlinNpmDependency.Scope.NORMAL)
+        val isOdd = DefaultKotlinNpmDependency("is-odd", "2.0.0", KotlinNpmDependency.Scope.DEV)
 
-        assertEquals(setOf(isEven), project.npmDependencies("jsNpmDependenciesReport").directUserDependencies.get())
-        assertEquals(setOf(isEven), project.npmDependencies("jsTestNpmDependenciesReport").directUserDependencies.get())
+        assertEquals(setOf(isEven, leftPad), project.npmDependencies("jsNpmDependenciesReport").directUserDependencies.get())
+        assertEquals(setOf(isEven, leftPad, isOdd), project.npmDependencies("jsTestNpmDependenciesReport").directUserDependencies.get())
     }
 
     @Test

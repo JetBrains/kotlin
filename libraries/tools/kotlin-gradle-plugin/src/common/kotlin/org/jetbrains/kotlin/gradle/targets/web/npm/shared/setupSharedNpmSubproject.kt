@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.Project
@@ -18,7 +20,9 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.toKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
@@ -71,17 +75,23 @@ private fun CompilationNpmDependencies.configure(
     platform: HasPlatformDisambiguator,
 ) {
     moduleName.convention(compilation.outputModuleName)
-    directUserDependencies.convention(project.provider { collectDirectDeclaredNpmDependencies(compilation) })
+    directUserDependencies.convention(project.provider { collectDirectDeclaredNpmDependencies(compilation, npmRuntimeDependenciesResolver) })
     npmToolingDependencies.convention(project.provider { project.collectDevNpmDependencies(compilation) })
     dependencyReports.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver, platform))
 }
 
-private fun collectDirectDeclaredNpmDependencies(compilation: KotlinJsIrCompilation): Set<DefaultKotlinNpmDependency> =
-    (compilation.allAssociatedCompilations + compilation)
+private fun collectDirectDeclaredNpmDependencies(
+    compilation: KotlinJsIrCompilation,
+    npmRuntimeDependenciesResolver: Configuration,
+): Set<DefaultKotlinNpmDependency> {
+    val fromCollectors = (compilation.allAssociatedCompilations + compilation)
         .flatMap { it.allKotlinSourceSets }
-        .flatMapTo(mutableSetOf()) { sourceSet ->
-            sourceSet.npmDependenciesCollector.npmDependencies.get()
-        }
+        .flatMap { sourceSet -> sourceSet.npmDependenciesCollector.npmDependencies.get() }
+    val fromConfigurations = npmRuntimeDependenciesResolver.allDependencies
+        .withType(NpmDependencyDeprecated::class.java)
+        .map { it.toKotlinNpmDependency() }
+    return (fromCollectors + fromConfigurations).toSet()
+}
 
 private fun Project.collectDevNpmDependencies(compilation: KotlinJsIrCompilation): Set<DefaultKotlinNpmDependency> =
     tasks.withType<RequiresNpmDependenciesTask>()
