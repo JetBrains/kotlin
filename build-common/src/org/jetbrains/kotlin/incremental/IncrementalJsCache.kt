@@ -172,6 +172,13 @@ open class IncrementalJsCache(
         dirtyMetadataMap.clear()
     }
 
+    fun nonDirtyMetadata(fragmentName: String): Map<File, ByteArray> {
+        val metadata = metadataMap[fragmentName] ?: return emptyMap()
+        val dirtyMetadataSources = dirtyMetadataMap.getDirtySources()
+
+        return if (dirtyMetadataSources.isEmpty()) metadata else metadata.filterKeys { it !in dirtyMetadataSources }
+    }
+
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =
         buildMap {
             for (file in translationResults.keys) {

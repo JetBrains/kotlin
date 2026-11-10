@@ -18,3 +18,12 @@ class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : 
     override val serializedIrInlineFiles: Map<File, IrTranslationResultValue>
         get() = cache.nonDirtyIrInlineParts()
 }
+
+class KmpIncrementalDataProviderFromCache(
+    private val cache: IncrementalJsCache,
+) : KmpIncrementalDataProvider, IncrementalDataProvider by IncrementalDataProviderFromCache(cache) {
+
+    override fun metadata(fragmentName: String): Map<File, ByteArray> {
+        return cache.nonDirtyMetadata(fragmentName)
+    }
+}
