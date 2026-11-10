@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -38,7 +39,7 @@ class AdditionalSuperclassGenerator(session: FirSession) : FirSupertypeGeneratio
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
-        typeResolver: TypeResolveService,
+        typeResolver: PluginTypeResolver,
     ): List<ConeKotlinType> {
         val symbol = classLikeDeclaration.symbol as? FirClassSymbol<*> ?: return emptyList()
         val def = ENTITY_TYPE_CLASS_ID.constructClassLikeType(arrayOf(symbol.defaultType()), false)
