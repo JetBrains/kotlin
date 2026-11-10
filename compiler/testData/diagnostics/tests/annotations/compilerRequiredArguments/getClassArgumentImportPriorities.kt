@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-91406
 // ALLOW_KOTLIN_PACKAGE
 // FIR_DUMP
@@ -42,7 +42,7 @@ package aliasedImportAndStarImport
 import other.*
 import kotlin.Int as MyInt
 
-@NumericClass(<!AMBIGUOUS_ANNOTATION_ARGUMENT!>MyInt<!>::class)
+@NumericClass(MyInt::class)
 class C
 
 // FILE: aliasedImportAndSamePackage.kt
@@ -52,7 +52,7 @@ import kotlin.Int as MyInt
 
 class MyInt
 
-@NumericClass(<!AMBIGUOUS_ANNOTATION_ARGUMENT!>MyInt<!>::class)
+@NumericClass(MyInt::class)
 class C
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, outProjection, primaryConstructor,

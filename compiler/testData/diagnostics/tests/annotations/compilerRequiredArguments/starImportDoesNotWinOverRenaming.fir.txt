@@ -1,0 +1,26 @@
+FILE: p1.kt
+    package p
+
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|) [evaluated = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|)]) public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(): R|p/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Simple : R|kotlin/Any| {
+        public constructor(): R|p/Simple| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|p/Anno|() public final val prop: R|kotlin/Int| = Int(42)
+            public get(): R|kotlin/Int|
+
+    }
+FILE: p2.kt
+    package p
+
+    @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = R|kotlin/DeprecationLevel.WARNING| [evaluated = R|kotlin/DeprecationLevel.WARNING|]) public final fun foo(): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|p/foo|()
+    }
