@@ -1,0 +1,7 @@
+package usage
+
+import a.Service
+
+fun useService(service: Service) {
+    service.sink.emit("test")
+}

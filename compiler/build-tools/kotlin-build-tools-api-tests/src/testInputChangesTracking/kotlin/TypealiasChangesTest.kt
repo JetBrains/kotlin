@@ -73,6 +73,33 @@ class TypealiasChangesTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @DisplayName("KT-89857: Changing a typealias should recompile the unchanged file whose inferred type carries its expansion")
+    @TestMetadata("ic-scenarios/typealias-expansion-through-inferred-type")
+    fun testChangingTypealiasBehindInferredTypeInUnchangedSignature(scenario: ScenarioCreator) {
+        scenario {
+            val mod = module("ic-scenarios/typealias-expansion-through-inferred-type")
+
+            mod.replaceFileWithVersion("alias.kt", "change-alias-type")
+            mod.replaceFileWithVersion("ServiceUsage.kt", "change-alias-type")
+
+            mod.compile {
+                expectFailWithError(
+                    ".*ServiceUsage\\.kt:\\d+:\\d+ Argument type mismatch: actual type is 'Int', but 'String' was expected.*".toRegex()
+                )
+                when (this@scenario) {
+                    // TODO(KT-91450): the error recovery round retries only the sources that look up the typealias, so it adds
+                    //  `sink.kt`, but not `Service.kt`, whose property type is inferred from `makeSink()`. Once fixed, it
+                    //  has to succeed with `assertCompiledSources("alias.kt", "sink.kt", "Service.kt", "ServiceUsage.kt")`.
+                    is JvmScenarioDsl -> assertCompiledSources("alias.kt", "sink.kt", "ServiceUsage.kt")
+                    // TODO(KT-89851): the klib IC cache does not track typealiases, so there is no error recovery round.
+                    is JsScenarioDsl, is WasmScenarioDsl -> assertCompiledSources("alias.kt", "ServiceUsage.kt")
+                    else -> error("Unsupported scenario type: ${this@scenario}")
+                }
+            }
+        }
+    }
+
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-86585: Replacing a typealias with a value class should recompile the unchanged file using it as a parameter type")
     @TestMetadata("ic-scenarios/typealias-to-value-class")
     fun testReplacingTypealiasWithValueClass(scenario: ScenarioCreator) {
