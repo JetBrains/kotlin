@@ -5,20 +5,19 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultOne
 import org.jetbrains.kotlin.arguments.dsl.previous
-import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.IntType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
 
@@ -92,6 +91,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "include-binary"
         compilerName = "includeBinaries"
@@ -100,6 +100,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Pack the given external binary into the klib.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -108,6 +109,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "library"
         compilerName = "libraries"
@@ -116,6 +118,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -137,12 +140,14 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "manifest"
         compilerName = "manifestFile"
         description = "Provide a manifest addend file.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -177,6 +182,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "native-library"
         compilerName = "nativeLibraries"
@@ -186,6 +192,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Include the given native bitcode library.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -285,6 +292,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "output"
         compilerName = "outputName"
@@ -292,6 +300,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Output name.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -342,6 +351,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
 
     // Advanced options with -X prefix
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xcache-directory"
         compilerName = "cacheDirectories"
@@ -349,6 +359,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -370,6 +381,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xauto-cache-from"
         compilerName = "autoCacheableFrom"
@@ -378,6 +390,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
@@ -385,12 +398,14 @@ By default caches will be placed into the kotlin-native system cache directory."
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xauto-cache-dir"
         description = "Path to the directory where caches for auto-cacheable dependencies should be put.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
@@ -398,6 +413,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xic-cache-dir"
         compilerName = "incrementalCacheDir"
@@ -405,6 +421,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_20,
@@ -412,6 +429,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xdump-built-caches-to"
         compilerName = "dumpBuiltCachesTo"
@@ -420,6 +438,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
+        argumentType = PathType.defaultNull
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_20
         )
@@ -438,11 +457,13 @@ By default caches will be placed into the kotlin-native system cache directory."
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xemit-lazy-objc-header"
         compilerName = "emitLazyObjCHeader"
         description = "".asReleaseDependent()
         valueType = StringType.defaultNull
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -450,6 +471,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xexport-library"
         compilerName = "exportedLibraries"
@@ -458,6 +480,7 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -465,6 +488,7 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xexternal-dependencies"
         description = ReleaseDependent(
@@ -478,6 +502,7 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
         )
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_0,
@@ -526,6 +551,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xadd-cache"
         compilerName = "libraryToAddToCache"
@@ -533,6 +559,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -642,11 +669,13 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xwrite-dependencies-of-produced-klib-to"
         description = "Write file containing the paths of dependencies used during klib compilation to the provided path".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -654,6 +683,7 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xruntime"
         compilerName = "runtimeFile"
@@ -661,6 +691,7 @@ The default value is 1.""".asReleaseDependent()
         description = "Override the standard 'runtime.bc' location.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -668,12 +699,14 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xinclude"
         compilerName = "includes"
         description = "A path to an intermediate library that should be processed in the same manner as source files.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -704,12 +737,14 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xtemporary-files-dir"
         deprecatedName = "-temporary_files_dir"
         description = "Save temporary files to the given directory.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
         affectsCompilationOutcome = false
 
         lifecycle(
@@ -753,11 +788,13 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "friend-modules"
         description = "Paths to friend modules.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = SearchPathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -765,11 +802,13 @@ The default value is 1.""".asReleaseDependent()
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xrefines-paths"
         description = "Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize).".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
@@ -825,10 +864,12 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xheader-klib-path"
         description = "Save a klib that only contains the public ABI to the given path.".asReleaseDependent()
         valueType = StringType.defaultNull
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_24
@@ -937,12 +978,14 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xdump-tests-to"
         compilerName = "testDumpOutputPath"
         description = "Path to a file for dumping the list of all available tests.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0
@@ -961,11 +1004,13 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xcompile-from-bitcode"
         description = "Continue compilation from the given bitcode file.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
@@ -973,12 +1018,14 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xread-dependencies-from"
         compilerName = "serializedDependencies"
         description = "Serialized dependencies to use for linking.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
@@ -986,11 +1033,13 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xwrite-dependencies-to"
         compilerName = "saveDependenciesPath"
         description = "Path for writing backend dependencies.".asReleaseDependent()
         valueType = StringType.defaultNull
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
@@ -998,10 +1047,12 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xsave-llvm-ir-directory"
         description = "Directory that should contain the results of '-Xsave-llvm-ir-after=<phase>'.".asReleaseDependent()
         valueType = StringType.defaultNull
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
@@ -1009,10 +1060,12 @@ The default value is 1.""".asReleaseDependent()
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xkonan-data-dir"
         description = "Custom path to the location of konan distributions.".asReleaseDependent()
         valueType = StringType.defaultNull
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_20,
