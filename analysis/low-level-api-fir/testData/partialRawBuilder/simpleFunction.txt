@@ -1,3 +1,0 @@
-public? final? fun test/foo(): Int {
-    ^foo IntegerLiteral(0)
-}

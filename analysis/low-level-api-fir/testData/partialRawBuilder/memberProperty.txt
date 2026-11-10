@@ -1,6 +1,0 @@
-public? final? val test/classes/Outer.Inner.foo: Int
-    public? get(): Int {
-        lval <local>/outer: <implicit> = Outer#()
-        lval <local>/inner: <implicit> = outer#.Inner#()
-        ^ inner#.bar#()
-    }

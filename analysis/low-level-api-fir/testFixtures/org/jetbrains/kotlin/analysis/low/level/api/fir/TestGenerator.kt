@@ -140,14 +140,6 @@ fun main(args: Array<String>) {
                 model("fileStructure", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractSourcePartialRawFirBuilderTestCase> {
-                model("partialRawBuilder")
-            }
-
-            testClass<AbstractOutOfContentRootPartialRawFirBuilderTestCase> {
-                model("partialRawBuilder")
-            }
-
             testClass<AbstractSourceLikeGetOrBuildFirTest> {
                 model("getOrBuildFir", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
