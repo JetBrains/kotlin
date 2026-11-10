@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.java.direct.resolution
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
@@ -163,14 +161,4 @@ private fun extractEvaluatedConstValue(property: FirProperty, session: FirSessio
         ?: FirExpressionEvaluator.evaluatePropertyInitializer(property, session)
 
     return ((evaluated as? FirEvaluatorResult.Evaluated)?.result as? FirLiteralExpression)?.value
-}
-
-/**
- * Whether the class [classId], known to the session as a FIR class (not a Java source class of the
- * current module), is an enum declaring the entry [entryName].
- */
-internal fun FirSession.hasEnumEntry(classId: ClassId, entryName: String): Boolean {
-    val classSymbol = cycleSafeClassLikeSymbol(classId) as? FirRegularClassSymbol ?: return false
-    if (classSymbol.classKind != ClassKind.ENUM_CLASS) return false
-    return classSymbol.collectEnumEntries(this).any { it.name.asString() == entryName }
 }

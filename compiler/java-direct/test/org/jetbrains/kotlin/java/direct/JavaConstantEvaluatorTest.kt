@@ -156,10 +156,10 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
 
         val field = parseFirstClass(source).fields.single { it.name.asString() == "VALUE" }
 
+        // A non-constant qualified field reference must not be classified as constant.
         assertFalse(field.hasConstantNotNullInitializer)
         assertEquals(null, field.initializerValue)
     }
-
 
     @Test
     fun testNestedTypeInFieldInitializerUsesCurrentClassContext() {

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
-import org.jetbrains.kotlin.java.direct.resolution.hasEnumEntry
 import org.jetbrains.kotlin.java.direct.resolution.isInheritedTo
 import org.jetbrains.kotlin.java.direct.resolution.resolve
 import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
@@ -411,13 +410,8 @@ class ConstantEvaluator private constructor(
         if (nameParts.size == 1) return resolveSimpleName(nameParts.single())
         val reference = resolveQualifiedMemberReference(nameParts, resolutionContext)
 
-        // Resolve the class qualifier as a type name (via the unit's imports + same-package + java.lang
-        // probes, JLS 6.5.5) before passing it to the cross-language callback. Without this,
-        // `SdkConstants.R_CLASS` — written under `import com.android.SdkConstants;` in a Java source —
-        // could only be interpreted as either a current-package class or a `<root>.SdkConstants`
-        // top-level class — neither of which exists. A qualified name like `p.X.Y` is classified left
-        // to right (JLS 6.5.4.2): it is the nested class `p.X.Y` if `p.X` is a class, never a class `Y`
-        // of a package `p.X`, which splitting the string at its last dot would suggest.
+        // Resolve the qualifier as a class name before invoking the cross-language resolver; its KDoc
+        // documents the qualified-name classification.
         val resolvedClassId = reference.qualifierClassId
         if (resolvedClassId != null) {
             val javaClass = classifierAdapterFor(resolvedClassId, c = resolutionContext)
@@ -489,6 +483,7 @@ class ConstantEvaluator private constructor(
             val javaClass = classId?.let { classifierAdapterFor(it, c = resolutionContext) }
             if (javaClass != null) {
                 findMember(javaClass, name, mutableSetOf())?.let { return it }
+                continue
             }
             resolveExternalReference(className.asString(), null, name)?.let { return it }
         }
@@ -517,10 +512,6 @@ class ConstantEvaluator private constructor(
                 else MemberResolutionResult.NonConstantField
             }
         } else {
-            val session = resolutionContext.fileContext.session
-            if (session.hasEnumEntry(classId, memberName)) {
-                return MemberResolutionResult.EnumEntry(classId, Name.identifier(memberName))
-            }
             resolveExternalReference(classId.asSingleFqName().asString(), classId, memberName, inheritingPackage)?.let { return it }
         }
 
