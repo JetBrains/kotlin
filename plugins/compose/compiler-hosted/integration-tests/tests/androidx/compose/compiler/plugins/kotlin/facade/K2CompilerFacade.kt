@@ -16,11 +16,9 @@
 
 package androidx.compose.compiler.plugins.kotlin.facade
 
-import androidx.compose.compiler.plugins.kotlin.TestsCompilerError
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
@@ -35,8 +33,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
@@ -45,7 +41,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.Name
@@ -53,23 +48,7 @@ import org.jetbrains.kotlin.name.Name
 class FirAnalysisResult(
     val frontendOutput: AllModulesFrontendOutput,
     val reporter: BaseDiagnosticsCollector,
-) : AnalysisResult {
-    /** Diagnostics by file name. Syntax errors are left out, as the PSI-based facade never reported them. */
-    override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
-        get() = buildMap<String, MutableList<AnalysisResult.Diagnostic>> {
-            for ([file, fileDiagnostics] in reporter.diagnosticsByFile) {
-                if (file == null) continue
-                val list = getOrPut(file.name) { mutableListOf() }
-                for (diagnostic in fileDiagnostics) {
-                    if (diagnostic !is KtDiagnosticWithSource || diagnostic.isSyntaxError) continue
-                    list += AnalysisResult.Diagnostic(diagnostic.factoryName, diagnostic.textRanges)
-                }
-            }
-        }
-}
-
-private val KtDiagnostic.isSyntaxError: Boolean
-    get() = factoryName == FirSyntaxErrors.SYNTAX.name
+)
 
 class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacade(environment) {
     private val project: Project
@@ -89,11 +68,10 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             environment::createPackagePartProvider
         )
 
-        val commonKtFiles = commonFiles.associateWith { it.toKtSourceFile() }
-        val platformKtFiles = platformFiles.associateWith { it.toKtSourceFile() }
-        val commonKtFileSet = commonKtFiles.values.toSet()
+        val commonKtFiles = commonFiles.map { it.toKtSourceFile() }
+        val commonKtFileSet = commonKtFiles.toSet()
         val sessionsWithSources = JvmFrontendPipelinePhase.prepareJvmSessions(
-            files = commonKtFiles.values + platformKtFiles.values,
+            files = commonKtFiles + platformFiles.map { it.toKtSourceFile() },
             rootModuleName = Name.special("<$moduleName>"),
             configuration = configuration,
             projectEnvironment = projectEnvironment,
@@ -109,21 +87,8 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val outputs = sessionsWithSources.map { (val session, val files) ->
             buildResolveAndCheckFirViaLightTree(session, files, reporter, countFilesAndLines = null)
         }
-        checkSyntaxErrors(commonKtFiles + platformKtFiles, reporter)
 
         return FirAnalysisResult(AllModulesFrontendOutput(outputs), reporter)
-    }
-
-    /** A syntax error fails the test unless the file is marked with [SourceFile.ignoreParseErrors]. */
-    private fun checkSyntaxErrors(files: Map<SourceFile, KtSourceFile>, reporter: BaseDiagnosticsCollector) {
-        for ([file, ktSourceFile] in files) {
-            if (file.ignoreParseErrors) continue
-            val syntaxErrors = reporter.diagnosticsByFile[ktSourceFile].orEmpty().filter { it.isSyntaxError }
-            if (syntaxErrors.isEmpty()) continue
-            throw TestsCompilerError(
-                IllegalStateException("Syntax errors in ${file.name}: " + syntaxErrors.joinToString { it.renderMessage() })
-            )
-        }
     }
 
     private fun frontend(

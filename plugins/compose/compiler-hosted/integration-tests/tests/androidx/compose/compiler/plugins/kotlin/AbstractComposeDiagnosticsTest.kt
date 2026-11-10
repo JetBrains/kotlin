@@ -16,10 +16,12 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.plugins.kotlin.facade.AnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
+import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -39,24 +41,39 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
             clearTextFromDiagnosticMarkup(commonText)
         }
 
-        val errors = analyze(
-            listOf(SourceFile("test.kt", clearText, ignoreParseErrors)),
-            listOfNotNull(clearCommonText?.let { SourceFile("common.kt", it, ignoreParseErrors) }),
+        val diagnosticsByFileName = analyze(
+            listOf(SourceFile("test.kt", clearText)),
+            listOfNotNull(clearCommonText?.let { SourceFile("common.kt", it) }),
             additionalPaths
-        ).diagnostics
+        ).reporter.diagnosticsByFile.mapKeys { it.key?.name }
 
-        checkDiagnostics(expectedText, clearText, errors["test.kt"])
+        checkDiagnostics("test.kt", expectedText, clearText, diagnosticsByFileName, ignoreParseErrors)
         if (clearCommonText != null) {
-            checkDiagnostics(commonText, clearCommonText, errors["common.kt"])
+            checkDiagnostics("common.kt", commonText, clearCommonText, diagnosticsByFileName, ignoreParseErrors)
         }
     }
 
+    /**
+     * Syntax errors fail the test unless [ignoreParseErrors] is set; either way they are not
+     * part of the annotated text.
+     */
     private fun checkDiagnostics(
+        fileName: String,
         expectedText: String,
         clearText: String,
-        allDiagnostics: List<AnalysisResult.Diagnostic>?,
+        diagnosticsByFileName: Map<String?, List<KtDiagnostic>>,
+        ignoreParseErrors: Boolean,
     ) {
-        val annotatedText = if (allDiagnostics != null) {
+        val [syntaxErrors, allDiagnostics] = diagnosticsByFileName[fileName].orEmpty()
+            .filterIsInstance<KtDiagnosticWithSource>()
+            .partition { it.factoryName == FirSyntaxErrors.SYNTAX.name }
+        if (!ignoreParseErrors && syntaxErrors.isNotEmpty()) {
+            throw TestsCompilerError(
+                IllegalStateException("Syntax errors in $fileName: " + syntaxErrors.joinToString { it.renderMessage() })
+            )
+        }
+
+        val annotatedText = if (allDiagnostics.isNotEmpty()) {
             val rangeToDiagnostics = allDiagnostics
                 .flatGroupBy { it.textRanges }
                 .mapValues { entry ->

@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.plugins.kotlin.facade.AnalysisResult
+import androidx.compose.compiler.plugins.kotlin.facade.FirAnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.KotlinCompilerFacade
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import com.intellij.openapi.project.Project
@@ -129,7 +129,7 @@ abstract class AbstractCompilerTest {
         platformSources: List<SourceFile>,
         commonSources: List<SourceFile> = listOf(),
         additionalPaths: List<File> = emptyList(),
-    ): AnalysisResult =
+    ): FirAnalysisResult =
         createCompilerFacade(additionalPaths).analyze(platformSources, commonSources)
 
     protected fun compileToIr(

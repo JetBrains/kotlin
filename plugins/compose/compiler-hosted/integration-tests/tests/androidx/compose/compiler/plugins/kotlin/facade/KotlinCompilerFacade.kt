@@ -19,7 +19,6 @@ package androidx.compose.compiler.plugins.kotlin.facade
 import androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtilRt
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 class SourceFile(
     val name: String,
     val source: String,
-    val ignoreParseErrors: Boolean = false,
     val path: String = "",
 ) {
     fun toKtSourceFile(): KtSourceFile {
@@ -55,20 +53,11 @@ class SourceFile(
     }
 }
 
-interface AnalysisResult {
-    data class Diagnostic(
-        val factoryName: String,
-        val textRanges: List<TextRange>,
-    )
-
-    val diagnostics: Map<String, List<Diagnostic>>
-}
-
 abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
     abstract fun analyze(
         platformFiles: List<SourceFile>,
         commonFiles: List<SourceFile>,
-    ): AnalysisResult
+    ): FirAnalysisResult
 
     abstract fun compileToIr(files: List<SourceFile>): IrModuleFragment
     abstract fun compile(
