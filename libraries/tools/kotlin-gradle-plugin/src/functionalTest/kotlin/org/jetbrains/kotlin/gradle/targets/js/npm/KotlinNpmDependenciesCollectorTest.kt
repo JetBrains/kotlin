@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.npm.encodedVersionSpec
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
 import kotlin.test.assertEquals
 
 /**
@@ -122,8 +124,8 @@ class KotlinNpmDependenciesCollectorTest {
     fun `npm dependency on a directory is collected with a file version`(
         @TempDir tempDir: Path,
     ) {
-        val npmPackageDir = tempDir.resolve("is-even")
-        npmPackageDir.toFile().mkdirs()
+        val npmPackageDir1 = tempDir.resolve("is-even").createDirectories()
+        val npmPackageDir2 = tempDir.resolve("is-odd").createDirectories()
 
         val project = buildProjectWithMPP {
             kotlin {
@@ -131,14 +133,18 @@ class KotlinNpmDependenciesCollectorTest {
 
                 sourceSets.commonMain {
                     dependencies {
-                        implementation(npm(npmPackageDir.toFile()))
+                        implementation(npm(npmPackageDir1.toFile()))
+                        npm(npmPackageDir2.toFile())
                     }
                 }
             }
         }.evaluate()
 
         assertEquals(
-            listOf("NORMAL is-even:file:${npmPackageDir.toAbsolutePath().normalize().absolutePathString()}"),
+            listOf(
+                "NORMAL is-even:file:${npmPackageDir1.toAbsolutePath().normalize().absolutePathString()}",
+                "NORMAL is-odd:file:${npmPackageDir2.toAbsolutePath().normalize().absolutePathString()}",
+            ),
             project.collectedNpmDependencies(),
         )
     }
@@ -154,6 +160,31 @@ class KotlinNpmDependenciesCollectorTest {
                 "PEER react:18.0.0",
                 "DEV webpack:5.0.0",
             ),
+            project.packageJsonTaskDeclaredNpmDependencies(),
+        )
+    }
+
+    @Test
+    fun `package json task inputs contain the file version of directory npm dependencies`(
+        @TempDir tempDir: Path,
+    ) {
+        val npmPackageDir = tempDir.resolve("is-even")
+        npmPackageDir.createDirectories()
+
+        val project = buildProjectWithMPP(preApplyCode = { disableDefaultDependencies() }) {
+            kotlin {
+                js { nodejs() }
+
+                sourceSets.commonMain {
+                    dependencies {
+                        npm("is-even", npmPackageDir.toFile())
+                    }
+                }
+            }
+        }.evaluate()
+
+        assertEquals(
+            listOf("NORMAL is-even:file:${npmPackageDir.toAbsolutePath().normalize().absolutePathString()}"),
             project.packageJsonTaskDeclaredNpmDependencies(),
         )
     }
@@ -203,5 +234,5 @@ class KotlinNpmDependenciesCollectorTest {
     }
 
     private fun KotlinNpmDependency.uniqueRepresentation(): String =
-        "$scope $name:$version"
+        "$dependencyType $name:${encodedVersionSpec().orNull}"
 }
