@@ -161,6 +161,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("classShadowedByEarlierFragmentDependency.args")
+    public void testClassShadowedByEarlierFragmentDependency() {
+      run("classShadowedByEarlierFragmentDependency.args");
+    }
+
+    @Test
     @TestMetadata("commaInFragmentDependency.args")
     public void testCommaInFragmentDependency() {
       run("commaInFragmentDependency.args");

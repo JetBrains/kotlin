@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/hmpp/src/classShadowedByEarlierFragmentDependency_common.kt:1:12: error: unresolved reference 'Dup'.
+import lib.Dup
+           ^^^
+compiler/testData/cli/jvm/hmpp/src/classShadowedByEarlierFragmentDependency_common.kt:3:16: error: unresolved reference 'Dup'.
+fun common() = Dup().ok()
+               ^^^
+COMPILATION_ERROR
