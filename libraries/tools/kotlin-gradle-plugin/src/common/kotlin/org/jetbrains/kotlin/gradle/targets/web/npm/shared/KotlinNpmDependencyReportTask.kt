@@ -10,16 +10,10 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
+import org.jetbrains.kotlin.gradle.npm.encodedVersionSpec
+import java.util.*
 
 /**
  * Writes the [NpmDependencyReport] of one JS or WasmJS compilation into [outputFile].
@@ -37,15 +31,44 @@ internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
     abstract val outputFile: RegularFileProperty
 
     @TaskAction
-    fun generate() {
-        val dependencies = compilation.directUserDependencies.get() +
-                compilation.npmToolingDependencies.get() +
-                compilation.dependencyReports.files.flatMap { readNpmDependencyReport(it).npmDependencies() }
+    protected fun generate() {
+        val dependencies = resolveNpmDependencyEntries()
 
-        dependencies.toNpmDependencyReport(target.get(), compilation.moduleName.get())
-            .writeTo(outputFile.get().asFile)
+        val report = createNpmDependencyReport(dependencies, target.get(), compilation.moduleName.get())
+
+        report.writeTo(outputFile.get().asFile)
+    }
+
+    private fun resolveNpmDependencyEntries(): Set<NpmDependencyEntry> {
+        fun KotlinNpmDependency.toEntry() = NpmDependencyEntry(name, dependencyType, encodedVersionSpec().get())
+        return buildSet {
+            addAll(compilation.directUserDependencies.get().map { it.toEntry() })
+            addAll(compilation.npmToolingDependencies.get().map { it.toEntry() })
+            addAll(compilation.dependencyReports.files.flatMap { readNpmDependencyReport(it).npmDependencies() })
+        }
+    }
+
+    /** `devDependencies` are not inherited. */
+    private fun NpmDependencyReport.npmDependencies(): List<NpmDependencyEntry> {
+        fun scope(dependencyType: KotlinNpmDependency.DependencyType, dependencies: Map<String, String>) =
+            dependencies.map { (name, version) ->
+                NpmDependencyEntry(name, dependencyType, version)
+            }
+
+        return buildList {
+            addAll(scope(KotlinNpmDependency.DependencyType.NORMAL, dependencies))
+            addAll(scope(KotlinNpmDependency.DependencyType.PEER, peerDependencies))
+            addAll(scope(KotlinNpmDependency.DependencyType.OPTIONAL, optionalDependencies))
+        }
     }
 }
+
+/** A [KotlinNpmDependency], with a fixed [versionSpec]. */
+internal data class NpmDependencyEntry(
+    val name: String,
+    val dependencyType: KotlinNpmDependency.DependencyType,
+    val versionSpec: String,
+)
 
 /** npm dependencies of one JS or WasmJS compilation. */
 internal abstract class CompilationNpmDependencies {
@@ -54,12 +77,12 @@ internal abstract class CompilationNpmDependencies {
     abstract val moduleName: Property<String>
 
     /** Declared by the user with `npm`, `npmDev`, `npmOptional` and `npmPeer`. */
-    @get:Input
-    abstract val directUserDependencies: SetProperty<DefaultKotlinNpmDependency>
+    @get:Nested
+    abstract val directUserDependencies: SetProperty<KotlinNpmDependency>
 
     /** Required by this compilation's tasks, test framework, webpack, etc. */
-    @get:Input
-    abstract val npmToolingDependencies: SetProperty<DefaultKotlinNpmDependency>
+    @get:Nested
+    abstract val npmToolingDependencies: SetProperty<KotlinNpmDependency>
 
     /** Reports of runtime dependencies, built from klibs where a dependency has none. */
     @get:InputFiles
@@ -67,30 +90,41 @@ internal abstract class CompilationNpmDependencies {
     abstract val dependencyReports: ConfigurableFileCollection
 }
 
-/** `devDependencies` are not inherited. */
-private fun NpmDependencyReport.npmDependencies(): List<KotlinNpmDependency> {
-    fun scope(scope: KotlinNpmDependency.Scope, dependencies: Map<String, String>) =
-        dependencies.map { (name, version) -> DefaultKotlinNpmDependency(name, version, scope) }
-
-    return scope(KotlinNpmDependency.Scope.NORMAL, dependencies) +
-            scope(KotlinNpmDependency.Scope.PEER, peerDependencies) +
-            scope(KotlinNpmDependency.Scope.OPTIONAL, optionalDependencies)
-}
-
 /** Versions of one package are joined into one npm range, so npm validates them: KT-87942. */
-private fun Collection<KotlinNpmDependency>.toNpmDependencyReport(target: String, compilation: String): NpmDependencyReport {
-    // TODO(KT-87942): improve version merging logic, eg. handle `||` and hyphen ranges, which change meaning when joined with a space.
-    fun scope(scope: KotlinNpmDependency.Scope) = filter { it.scope == scope }
-        .groupBy({ it.name }, { it.version })
-        .mapValues { (_, versions) -> versions.distinct().sorted().joinToString(" ") }
-        .toSortedMap()
+internal fun createNpmDependencyReport(
+    dependencies: Collection<NpmDependencyEntry>,
+    target: String,
+    compilation: String,
+): NpmDependencyReport {
+    val normal: SortedMap<String, SortedSet<String>> = sortedMapOf()
+    val dev: SortedMap<String, SortedSet<String>> = sortedMapOf()
+    val peer: SortedMap<String, SortedSet<String>> = sortedMapOf()
+    val optional: SortedMap<String, SortedSet<String>> = sortedMapOf()
+
+    dependencies.forEach { dependency ->
+        val section = when (dependency.dependencyType) {
+            KotlinNpmDependency.DependencyType.NORMAL -> normal
+            KotlinNpmDependency.DependencyType.DEV -> dev
+            KotlinNpmDependency.DependencyType.PEER -> peer
+            KotlinNpmDependency.DependencyType.OPTIONAL -> optional
+        }
+        section.getOrPut(dependency.name) { sortedSetOf() } += dependency.versionSpec
+    }
+
+    fun SortedMap<String, SortedSet<String>>.joinVersions(): Map<String, String> =
+        mapValues { (_, versions) -> mergeNpmVersions(versions) }
 
     return NpmDependencyReport(
         target = target,
         compilation = compilation,
-        dependencies = scope(KotlinNpmDependency.Scope.NORMAL),
-        devDependencies = scope(KotlinNpmDependency.Scope.DEV),
-        peerDependencies = scope(KotlinNpmDependency.Scope.PEER),
-        optionalDependencies = scope(KotlinNpmDependency.Scope.OPTIONAL),
+        dependencies = normal.joinVersions(),
+        devDependencies = dev.joinVersions(),
+        peerDependencies = peer.joinVersions(),
+        optionalDependencies = optional.joinVersions(),
     )
+}
+
+// TODO(KT-87942): improve version merging logic, eg. handle `||` and hyphen ranges, which change meaning when joined with a space.
+private fun mergeNpmVersions(versions: Set<String>): String {
+    return versions.joinToString(" ")
 }

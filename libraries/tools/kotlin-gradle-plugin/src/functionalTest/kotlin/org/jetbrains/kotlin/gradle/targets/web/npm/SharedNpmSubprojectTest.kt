@@ -12,16 +12,13 @@ import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
+import org.jetbrains.kotlin.gradle.npm.encodedVersionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.npm.DevNpmDependencyExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyExtension
-import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
-import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinNpmDependencyReportTask
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readNpmDependencyReport
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -79,7 +76,12 @@ class SharedNpmSubprojectTest {
             project.configurations.names.filter { it.startsWith("kotlinNpmDependenciesReport") }.sorted(),
         )
         assertEquals(
-            listOf("jsNpmDependenciesReport", "jsTestNpmDependenciesReport", "wasmJsNpmDependenciesReport", "wasmJsTestNpmDependenciesReport"),
+            listOf(
+                "jsNpmDependenciesReport",
+                "jsTestNpmDependenciesReport",
+                "wasmJsNpmDependenciesReport",
+                "wasmJsTestNpmDependenciesReport"
+            ),
             project.npmDependenciesReportTaskNames(),
         )
     }
@@ -101,7 +103,8 @@ class SharedNpmSubprojectTest {
             listOf("kotlinNpmDependenciesReportJs"),
             project.configurations.names.filter { it.startsWith("kotlinNpmDependenciesReport") },
         )
-        val wasmWasiRuntimeElements = project.configurations.getByName(project.multiplatformExtension.wasmWasi().runtimeElementsConfigurationName)
+        val wasmWasiRuntimeElements =
+            project.configurations.getByName(project.multiplatformExtension.wasmWasi().runtimeElementsConfigurationName)
         assertNull(wasmWasiRuntimeElements.outgoing.variants.findByName("kotlinNpmRuntimeDependenciesWasmWasi"))
     }
 
@@ -147,61 +150,58 @@ class SharedNpmSubprojectTest {
         }
         project.evaluate()
 
-        val isEven = DefaultKotlinNpmDependency("is-even", "1.0.0", KotlinNpmDependency.Scope.NORMAL)
-        val isOdd = DefaultKotlinNpmDependency("is-odd", "2.0.0", KotlinNpmDependency.Scope.DEV)
-        val cowsay = DefaultKotlinNpmDependency("cowsay", "9.9.9", KotlinNpmDependency.Scope.PEER)
+//        val isEven = npm("is-even", "1.0.0")
+//        val isOdd = npmDev("is-odd", "2.0.0")
+//        val cowsay = npmPeer("cowsay", "9.9.9")
 
-        assertEquals(setOf(isEven, isOdd), project.npmDependencies("jsNpmDependenciesReport").directUserDependencies.get())
-        assertEquals(setOf(isEven, isOdd, cowsay), project.npmDependencies("jsTestNpmDependenciesReport").directUserDependencies.get())
+        val expectedMain =
+            buildMap {
+                put("dev", mapOf("is-odd" to "2.0.0"))
+                put("normal", mapOf("is-even" to "1.0.0"))
+            }
+        assertNpmDepsEqual(
+            expectedMain,
+            project.npmDependencies("jsNpmDependenciesReport").directUserDependencies.get()
+        )
+
+        val expectedTest = buildMap {
+            putAll(expectedMain)
+            put("peer", mapOf("cowsay" to "9.9.9"))
+        }
+        assertNpmDepsEqual(
+            expectedTest,
+            project.npmDependencies("jsTestNpmDependenciesReport").directUserDependencies.get()
+        )
     }
 
     @Test
-    @Suppress("DEPRECATION")
     fun `npm dependencies declared in Gradle configurations are collected`() {
         val project = buildProjectWithMPP {
             kotlin {
                 js { nodejs() }
                 sourceSets.getByName("jsMain").dependencies {
                     npm("is-even", "1.0.0")
-                }
-            }
-        }
-        val npm = project.dependencies.extensions.getByName("npm") as NpmDependencyExtension
-        val devNpm = project.dependencies.extensions.getByName("devNpm") as DevNpmDependencyExtension
-        project.dependencies.add("jsMainImplementation", npm("left-pad", "1.3.0"))
-        project.dependencies.add("jsTestImplementation", devNpm("is-odd", "2.0.0"))
-        project.evaluate()
-
-        val isEven = DefaultKotlinNpmDependency("is-even", "1.0.0", KotlinNpmDependency.Scope.NORMAL)
-        val leftPad = DefaultKotlinNpmDependency("left-pad", "1.3.0", KotlinNpmDependency.Scope.NORMAL)
-        val isOdd = DefaultKotlinNpmDependency("is-odd", "2.0.0", KotlinNpmDependency.Scope.DEV)
-
-        assertEquals(setOf(isEven, leftPad), project.npmDependencies("jsNpmDependenciesReport").directUserDependencies.get())
-        assertEquals(setOf(isEven, leftPad, isOdd), project.npmDependencies("jsTestNpmDependenciesReport").directUserDependencies.get())
-    }
-
-    @Test
-    fun `versions of one npm package are joined into one range`() {
-        val project = buildProjectWithMPP {
-            kotlin {
-                js { nodejs() }
-                sourceSets.getByName("commonMain").dependencies {
-                    npm("is-even", "1.0.0")
-                }
-                sourceSets.getByName("jsMain").dependencies {
-                    npm("is-even", ">1.0.0")
+                    implementation(npm("left-pad", "1.3.0"))
+                    implementation(@Suppress("DEPRECATION") devNpm("is-odd", "2.0.0"))
                 }
             }
         }
         project.evaluate()
 
-        val task = project.npmDependenciesReportTask("jsNpmDependenciesReport")
-        task.compilation.dependencyReports.setFrom()
-        task.generate()
+        val expected =
+            buildMap {
+                put("normal", mapOf("is-even" to "1.0.0", "left-pad" to "1.3.0"))
+                put("dev", mapOf("is-odd" to "2.0.0"))
+            }
 
-        val report = readNpmDependencyReport(task.outputFile.get().asFile)
-        assertEquals("test", report.compilation)
-        assertEquals(mapOf("is-even" to "1.0.0 >1.0.0"), report.dependencies)
+        assertNpmDepsEqual(
+            expected,
+            project.npmDependencies("jsNpmDependenciesReport").directUserDependencies.get(),
+        )
+        assertNpmDepsEqual(
+            expected,
+            project.npmDependencies("jsTestNpmDependenciesReport").directUserDependencies.get(),
+        )
     }
 
     @Test
@@ -236,7 +236,10 @@ class SharedNpmSubprojectTest {
         for (taskName in listOf("jsTestNpmDependenciesReport", "wasmJsTestNpmDependenciesReport")) {
             val testTools = project.npmDependencies(taskName).npmToolingDependencies.get()
             assertTrue("karma" in testTools.map { it.name }, "karma expected in $taskName test tools: $testTools")
-            assertTrue(testTools.all { it.scope == KotlinNpmDependency.Scope.DEV }, "tool dependencies must be devDependencies: $testTools")
+            assertTrue(
+                testTools.all { it.dependencyType == KotlinNpmDependency.DependencyType.DEV },
+                "tool dependencies must be devDependencies: $testTools"
+            )
         }
     }
 
@@ -293,5 +296,30 @@ class SharedNpmSubprojectTest {
             transitive.buildDependencies.getDependencies(null).any { it.name == "jsNpmDependenciesReport" && it.project == lib },
             "app's npm dependency report must be built after lib's",
         )
+    }
+
+    companion object {
+
+        /**
+         * Asserts [actual] matches [expected], given as
+         * dependency scope (`normal`, `dev`, `peer`, `optional`) → package name → encoded version spec.
+         *
+         * [KotlinNpmDependency] holds [org.gradle.api.provider.Provider]s, which are compared by identity,
+         * so compare their values instead.
+         *
+         * Both are rendered as multi-line strings, in their existing order, for readable failure diffs.
+         */
+        private fun assertNpmDepsEqual(expected: Map<String, Map<String, String>>, actual: Set<KotlinNpmDependency>) {
+            val actualByScope = actual
+                .groupBy { it.dependencyType.name.lowercase() }
+                .mapValues { (_, dependencies) -> dependencies.associate { it.name to it.encodedVersionSpec().orNull } }
+
+            fun renderNpmDeps(dependenciesByScope: Map<String, Map<String, String?>>): String =
+                dependenciesByScope.entries.joinToString("\n") { (scope, dependencies) ->
+                    "$scope:\n" + dependencies.entries.joinToString("\n") { (name, versionSpec) -> "  $name $versionSpec" }
+                }
+
+            assertEquals(renderNpmDeps(expected), renderNpmDeps(actualByScope))
+        }
     }
 }

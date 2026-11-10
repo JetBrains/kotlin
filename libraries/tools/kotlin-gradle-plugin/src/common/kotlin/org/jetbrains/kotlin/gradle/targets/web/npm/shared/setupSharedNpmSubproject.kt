@@ -9,8 +9,9 @@ package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.jetbrains.kotlin.gradle.npm.DefaultKotlinNpmDependency
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency.DependencyType
 import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
@@ -75,7 +76,13 @@ private fun CompilationNpmDependencies.configure(
     platform: HasPlatformDisambiguator,
 ) {
     moduleName.convention(compilation.outputModuleName)
-    directUserDependencies.convention(project.provider { collectDirectDeclaredNpmDependencies(compilation, npmRuntimeDependenciesResolver) })
+    directUserDependencies.convention(project.provider {
+        collectDirectDeclaredNpmDependencies(
+            compilation,
+            npmRuntimeDependenciesResolver,
+            project.providers,
+        )
+    })
     npmToolingDependencies.convention(project.provider { project.collectDevNpmDependencies(compilation) })
     dependencyReports.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver, platform))
 }
@@ -83,17 +90,18 @@ private fun CompilationNpmDependencies.configure(
 private fun collectDirectDeclaredNpmDependencies(
     compilation: KotlinJsIrCompilation,
     npmRuntimeDependenciesResolver: Configuration,
-): Set<DefaultKotlinNpmDependency> {
+    providers: ProviderFactory,
+): Set<KotlinNpmDependency> {
     val fromCollectors = (compilation.allAssociatedCompilations + compilation)
         .flatMap { it.allKotlinSourceSets }
         .flatMap { sourceSet -> sourceSet.npmDependenciesCollector.npmDependencies.get() }
     val fromConfigurations = npmRuntimeDependenciesResolver.allDependencies
         .withType(NpmDependencyDeprecated::class.java)
-        .map { it.toKotlinNpmDependency() }
+        .map { it.toKotlinNpmDependency(providers) }
     return (fromCollectors + fromConfigurations).toSet()
 }
 
-private fun Project.collectDevNpmDependencies(compilation: KotlinJsIrCompilation): Set<DefaultKotlinNpmDependency> =
+private fun Project.collectDevNpmDependencies(compilation: KotlinJsIrCompilation): Set<KotlinNpmDependency> =
     tasks.withType<RequiresNpmDependenciesTask>()
         .filter { task ->
             task.enabled &&
@@ -102,4 +110,10 @@ private fun Project.collectDevNpmDependencies(compilation: KotlinJsIrCompilation
         }
         .flatMap { it.requiredNpmDependencies }
         .filterIsInstance<NpmPackageVersion>()
-        .mapTo(mutableSetOf()) { DefaultKotlinNpmDependency(it.name, it.version, KotlinNpmDependency.Scope.DEV) }
+        .mapTo(mutableSetOf()) {
+            KotlinNpmDependency(
+                it.name,
+                DependencyType.DEV,
+                provider { it.version },
+            )
+        }
