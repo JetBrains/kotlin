@@ -217,6 +217,7 @@ include(
     ":compiler:cli-metadata",
     ":compiler:cli:cli-native-klib",
     ":compiler:incremental-compilation-impl",
+    ":compiler:incremental-compilation-klib:api",
     ":compiler:tests-compiler-utils",
     ":compiler:tests-common",
     ":compiler:tests-integration",
