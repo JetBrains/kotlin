@@ -503,7 +503,7 @@ public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
 /**
  * Appends all characters not matching the given [predicate] to the given [destination].
  * 
- * @sample samples.collections.Collections.Filtering.filterTo
+ * @sample samples.text.Strings.filterNotTo
  */
 @IgnorableReturnValue
 public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {

@@ -763,6 +763,7 @@ object Filtering : TemplateGroupBase() {
 
         specialFor(CharSequences) {
             doc { "Appends all characters not matching the given [predicate] to the given [destination]." }
+            sample("samples.text.Strings.filterNotTo")
         }
         body(CharSequences) {
             """

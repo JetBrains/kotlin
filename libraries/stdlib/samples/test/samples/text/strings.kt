@@ -163,6 +163,16 @@ class Strings {
     }
 
     @Sample
+    fun filterNotTo() {
+        val text = "a1b2c3"
+        val destination = StringBuilder()
+
+        text.filterNotTo(destination) { it.isDigit() }
+
+        assertPrints(destination, "abc")
+    }
+
+    @Sample
     fun find() {
         val text = "a1b2c3d4e5"
 
