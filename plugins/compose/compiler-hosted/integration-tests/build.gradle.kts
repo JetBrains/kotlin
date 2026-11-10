@@ -26,8 +26,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-optInToK1Deprecation()
-
 dependencies {
     // junit
     testImplementation(platform(libs.junit.bom))

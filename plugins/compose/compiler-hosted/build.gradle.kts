@@ -115,8 +115,6 @@ sourceSets {
     }
 }
 
-optInToK1Deprecation()
-
 base {
     archivesName = "kotlin-compose-compiler-plugin"
 }
