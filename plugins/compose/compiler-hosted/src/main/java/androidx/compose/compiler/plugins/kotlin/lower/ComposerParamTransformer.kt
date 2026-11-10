@@ -167,6 +167,8 @@ class ComposerParamTransformer(
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
         if (!expression.type.isKComposableFunction() && !expression.type.isSyntheticComposableFunction()) {
+            // Composable fun interface method can be declared in another module, so it has to be transformed here.
+            expression.overriddenFunctionSymbol = expression.overriddenFunctionSymbol.owner.withComposerParamIfNeeded().symbol
             return super.visitRichFunctionReference(expression)
         }
 
