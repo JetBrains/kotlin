@@ -6,18 +6,24 @@
 package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
+import org.jetbrains.kotlin.backend.common.serialization.ProcessFun
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
+import org.jetbrains.kotlin.backend.common.serialization.getSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.incrementalDataProvider
+import org.jetbrains.kotlin.config.incrementalResultsConsumer
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
+import org.jetbrains.kotlin.library.SerializedIrFile
+import java.io.File
 
 internal fun NativeFirstStagePhaseContext.firSerializerBase(
     configuration: CompilerConfiguration,
@@ -50,18 +56,19 @@ internal fun NativeFirstStagePhaseContext.firSerializerBase(
         configuration.languageVersionSettings,
         configuration.parseTreeKind,
     )
+    val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
+        configuration,
+        firResult.outputs,
+        fir2IrOutput?.fir2irActualizedResult,
+        produceHeaderKlib = produceHeaderKlib,
+    )
     return serializeModuleIntoKlib(
         moduleName = irModuleFragment?.name?.asString() ?: firResult.outputs.last().session.moduleData.name.asString(),
         irModuleFragment = irModuleFragment,
         configuration = configuration,
         diagnosticReporter = irDiagnosticReporter,
-        metadataSerializer = Fir2KlibMetadataSerializer(
-            configuration,
-            firResult.outputs,
-            fir2IrOutput?.fir2irActualizedResult,
-            produceHeaderKlib = produceHeaderKlib,
-        ),
-        cleanFiles = emptyList(),
+        metadataSerializer = fir2KlibMetadataSerializer,
+        cleanFiles = configuration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles) ?: emptyList(),
         dependencies = usedLibraries.orEmpty(),
         createModuleSerializer = { irDiagnosticReporter ->
             KonanIrModuleSerializer(
@@ -72,6 +79,30 @@ internal fun NativeFirstStagePhaseContext.firSerializerBase(
                 diagnosticReporter = irDiagnosticReporter,
                 irBuiltIns = fir2IrOutput?.fir2irActualizedResult?.irBuiltIns!!,
             )
+        },
+        processCompiledFileData = configuration.incrementalResultsConsumer?.let { icConsumer ->
+            fun SerializedIrFile.processIrFile(ioFile: File, process: ProcessFun) {
+                process(
+                    ioFile,
+                    fileData,
+                    types,
+                    signatures,
+                    strings,
+                    declarations,
+                    bodies,
+                    fqName.toByteArray(),
+                    debugInfo,
+                    fileEntries,
+                )
+            }
+
+            { ioFile, compiledFile, inlineIds ->
+                icConsumer.processPackagePart(ioFile, compiledFile.metadata)
+                compiledFile.irData!!.processIrFile(ioFile, icConsumer::processIrFile)
+                compiledFile.irInlineData?.processIrFile(ioFile, icConsumer::processIrInlineFile)
+                icConsumer.processIrInlineIds(ioFile, inlineIds)
+                compiledFile.signatureIndex?.let { icConsumer.processSignatureIndex(ioFile, it) }
+            }
         },
     )
 }
