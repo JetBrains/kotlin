@@ -6111,6 +6111,13 @@ internal class CompanionExtensionNullableReceiverImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionNullableReceiver
 
+internal class UnresolvedReferenceWrongCompanionReceiverImpl(
+    override val candidate: KaSymbol,
+    override val actualClass: ClassId,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnresolvedReferenceWrongCompanionReceiver
+
 internal class NonErrorClassExtendsRichErrorImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

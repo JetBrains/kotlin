@@ -37,8 +37,8 @@ companion fun C.companionExtFun() {
     companionExtFun()
     companionExtProp
 
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>irrelvantCompanionExtension<!>()
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>irrelvantCompanionExtensionProp<!>
+    <!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>irrelvantCompanionExtension<!>()
+    <!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>irrelvantCompanionExtensionProp<!>
 }
 
 companion var C.companionExtProp: Int
@@ -58,8 +58,8 @@ companion var C.companionExtProp: Int
         companionExtFun()
         companionExtProp
 
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>irrelvantCompanionExtension<!>()
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>irrelvantCompanionExtensionProp<!>
+        <!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>irrelvantCompanionExtension<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>irrelvantCompanionExtensionProp<!>
 
         return 1
     }
@@ -79,8 +79,8 @@ companion var C.companionExtProp: Int
         companionExtFun()
         companionExtProp
 
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>irrelvantCompanionExtension<!>()
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>irrelvantCompanionExtensionProp<!>
+        <!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>irrelvantCompanionExtension<!>()
+        <!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>irrelvantCompanionExtensionProp<!>
     }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, getter,

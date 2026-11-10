@@ -3040,6 +3040,14 @@ private fun KaDiagnosticConverterBuilder.addConversions64() {
             token,
         )
     }
+    add(FirErrors.UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER) { firDiagnostic ->
+        UnresolvedReferenceWrongCompanionReceiverImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS) { firDiagnostic ->
         JvmRecordWithoutPrimaryConstructorParametersImpl(
             firDiagnostic as KtDiagnosticWithSource,
