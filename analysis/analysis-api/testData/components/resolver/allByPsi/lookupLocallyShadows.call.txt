@@ -412,7 +412,7 @@ KtNameReferenceExpression(318,319): 'x'
 KtReturnExpression(340,346): 'return'
   null
 
-KtNamedFunction(350,447): 'fun selfReferential(x: Int) {'
+KtNamedFunction(350,521): 'fun selfReferential(x: Int) {'
   null
 
 KtParameterList(369,377): '(x: Int)'
@@ -430,7 +430,7 @@ KtUserType(373,376): 'Int'
 KtNameReferenceExpression(373,376): 'Int'
   null
 
-KtBlockExpression(378,447): '{'
+KtBlockExpression(378,521): '{'
   null
 
 KtProperty(384,393): 'val x = x'
@@ -594,7 +594,7 @@ KtOperationReferenceExpression(413,415): 'to'
 KtConstantExpression(416,417): '1'
   null
 
-KtForExpression(422,445): 'for (x in x..y) {'
+KtForExpression(422,519): 'for (x in x..y) {'
   KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
@@ -761,8 +761,37 @@ KtNameReferenceExpression(435,436): 'y'
         callableId = null
       typeArgumentsMapping = {}
 
-KtContainerNodeForControlStructureBody(438,445): '{'
+KtContainerNodeForControlStructureBody(438,519): '{'
   null
 
-KtBlockExpression(438,445): '{'
+KtBlockExpression(438,519): '{'
+  null
+
+KtWhenExpression(448,513): 'when (val x = x) {'
+  null
+
+KtProperty(454,463): 'val x = x'
+  null
+
+KtNameReferenceExpression(462,463): 'x'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtWhenEntry(479,503): 'else -> {'
+  null
+
+KtBlockExpression(487,503): '{'
   null

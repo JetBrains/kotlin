@@ -1051,7 +1051,7 @@ KtNameReferenceExpression(318,319): 'x'
 KtReturnExpression(340,346): 'return'
   NO_CANDIDATES
 
-KtNamedFunction(350,447): 'fun selfReferential(x: Int) {'
+KtNamedFunction(350,521): 'fun selfReferential(x: Int) {'
   NO_CANDIDATES
 
 KtParameterList(369,377): '(x: Int)'
@@ -1069,7 +1069,7 @@ KtUserType(373,376): 'Int'
 KtNameReferenceExpression(373,376): 'Int'
   NO_CANDIDATES
 
-KtBlockExpression(378,447): '{'
+KtBlockExpression(378,521): '{'
   NO_CANDIDATES
 
 KtProperty(384,393): 'val x = x'
@@ -1256,7 +1256,7 @@ KtOperationReferenceExpression(413,415): 'to'
 KtConstantExpression(416,417): '1'
   NO_CANDIDATES
 
-KtForExpression(422,445): 'for (x in x..y) {'
+KtForExpression(422,519): 'for (x in x..y) {'
   KaApplicableCallCandidate:
     candidate = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
@@ -1743,8 +1743,72 @@ KtNameReferenceExpression(435,436): 'y'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtContainerNodeForControlStructureBody(438,445): '{'
+KtContainerNodeForControlStructureBody(438,519): '{'
   NO_CANDIDATES
 
-KtBlockExpression(438,445): '{'
+KtBlockExpression(438,519): '{'
+  NO_CANDIDATES
+
+KtWhenExpression(448,513): 'when (val x = x) {'
+  NO_CANDIDATES
+
+KtProperty(454,463): 'val x = x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(462,463): 'x'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtWhenEntry(479,503): 'else -> {'
+  NO_CANDIDATES
+
+KtBlockExpression(487,503): '{'
   NO_CANDIDATES

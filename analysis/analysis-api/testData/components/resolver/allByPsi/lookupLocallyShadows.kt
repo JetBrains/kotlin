@@ -23,5 +23,10 @@ fun selfReferential(x: Int) {
     val x = x
     val (x, y) = x to 1
     for (x in x..y) {
+        when (val x = x) {
+            else -> {
+
+            }
+        }
     }
 }

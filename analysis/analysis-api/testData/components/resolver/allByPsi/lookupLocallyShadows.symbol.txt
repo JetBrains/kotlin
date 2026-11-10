@@ -384,7 +384,7 @@ KtReturnExpression(340,346): 'return'
       /shadowing(x: kotlin.Int): kotlin.Unit
     ]
 
-KtNamedFunction(350,447): 'fun selfReferential(x: Int) {'
+KtNamedFunction(350,521): 'fun selfReferential(x: Int) {'
   null
 
 KtParameterList(369,377): '(x: Int)'
@@ -414,7 +414,7 @@ KtNameReferenceExpression(373,376): 'Int'
       kotlin/Int
     ]
 
-KtBlockExpression(378,447): '{'
+KtBlockExpression(378,521): '{'
   null
 
 KtProperty(384,393): 'val x = x'
@@ -470,7 +470,7 @@ KtOperationReferenceExpression(413,415): 'to'
 KtConstantExpression(416,417): '1'
   null
 
-KtForExpression(422,445): 'for (x in x..y) {'
+KtForExpression(422,519): 'for (x in x..y) {'
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/ranges/IntProgression.iterator(<dispatch receiver>: kotlin.ranges.IntProgression): kotlin.collections.IntIterator,
@@ -516,8 +516,29 @@ KtNameReferenceExpression(435,436): 'y'
       val y: kotlin.Int
     ]
 
-KtContainerNodeForControlStructureBody(438,445): '{'
+KtContainerNodeForControlStructureBody(438,519): '{'
   null
 
-KtBlockExpression(438,445): '{'
+KtBlockExpression(438,519): '{'
+  null
+
+KtWhenExpression(448,513): 'when (val x = x) {'
+  null
+
+KtProperty(454,463): 'val x = x'
+  null
+
+KtNameReferenceExpression(462,463): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.Int
+    ]
+
+KtWhenEntry(479,503): 'else -> {'
+  null
+
+KtBlockExpression(487,503): '{'
   null

@@ -191,7 +191,10 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
 
         inValueContext {
             parentOnly {
-                element.subjectVariable?.let(::visitProperty)
+                val subjectVariable = element.subjectVariable ?: return
+                if (subjectVariable != previousElement) {
+                    visitProperty(subjectVariable)
+                }
             }
         }
     }
