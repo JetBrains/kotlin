@@ -19,13 +19,17 @@ import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.daemon.ProtoBufFormat
+import org.jetbrains.kotlin.daemon.common.serialization.SerializationFormat
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.daemon.common.serialization.SupportsNewDaemonMode
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.util.concurrent.*
 
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
 private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
+private const val PROPERTY_DAEMON_LEGACY_MODE = "kotlin.buildtools.daemon.legacy.mode"
 
 internal class KotlinToolchainsImpl : KotlinToolchains {
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
@@ -33,6 +37,7 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
         System.getProperty(PROPERTY_CLASSLOADERS_CACHE_SIZE)?.toIntOrNull() ?: DEFAULT_CLASSLOADERS_CACHE_SIZE,
         this::class.java.classLoader
     )
+    private val daemonLegacyMode = System.getProperty(PROPERTY_DAEMON_LEGACY_MODE)?.toBoolean() ?: false
 
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
@@ -100,16 +105,19 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
             executionPolicy: ExecutionPolicy,
             logger: KotlinLogger?,
         ): R {
+            val logger = logger ?: DefaultKotlinLogger
             closeableGuard.requireNotClosed()
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
+            val classloadersCacheWithLogger =
+                classloadersCache.takeIf { operation.enableClassloaderCache }?.withLogger(logger)
+            val executionContext = ExecutionContext(classloadersCacheWithLogger, daemonConnectionRegistry)
+
             val operationBody: Callable<R> = {
-                val classloadersCacheWithLogger =
-                    classloadersCache.takeIf { operation.enableClassloaderCache }?.withLogger(logger)
                 operation.execute(
                     projectId,
                     executionPolicy,
                     logger,
-                    ExecutionContext(classloadersCacheWithLogger, daemonConnectionRegistry)
+                    executionContext
                 )
             }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
@@ -120,7 +128,12 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
                 }
                 unwrapExecutionException(executor.submit(operationBody))
             } else {
-                operationBody.call()
+                require(executionPolicy is DaemonExecutionPolicyImpl)
+                if (operation is SupportsNewDaemonMode<*> && !kotlinToolchains.daemonLegacyMode) {
+                    operation.executeInDaemon(projectId, executionPolicy, logger, executionContext)
+                } else {
+                    operationBody.call()
+                }
             }
         }
 
@@ -158,6 +171,8 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
         } catch (_: NoSuchMethodError) {
             BtaApiVersion.Before2_4_20
         }
+
+        val serializer: SerializationFormat = ProtoBufFormat()
     }
 }
 
@@ -168,5 +183,5 @@ internal sealed interface BtaApiVersion {
 
 internal class ExecutionContext(
     val classloadersCache: LruClassLoadersCache?,
-    val daemonConnectionRegistry: DaemonConnectionRegistry
+    val daemonConnectionRegistry: DaemonConnectionRegistry,
 )

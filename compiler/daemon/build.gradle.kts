@@ -13,6 +13,8 @@ dependencies {
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.guava)
 
+    implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
+
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     embedded(project(":daemon-common")) { isTransitive = false }
@@ -32,3 +34,8 @@ sourcesJar()
 javadocJar()
 
 optInToK1Deprecation()
+
+runtimeJarWithRelocation {
+    from(mainSourceSet.output)
+    relocate("kotlinx.serialization", "org.jetbrains.kotlin.buildtools.internal.serialization")
+}

@@ -8,13 +8,12 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import kotlinx.serialization.*
-import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.serializability.cast
-import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
+import org.jetbrains.kotlin.buildtools.internal.daemon.cast
+import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils

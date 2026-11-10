@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.daemon.CompilationResultSerializer
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmClientManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.jps.createCompilerServicesFacadeBase
 import org.jetbrains.kotlin.buildtools.internal.jps.getClientManagedIncrementalCompilationOptions
@@ -46,12 +47,12 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl.Companion.SOURCE_OUTPUT_DIR
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
-import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
-import org.jetbrains.kotlin.buildtools.internal.serializability.Message
-import org.jetbrains.kotlin.buildtools.internal.serializability.MessageVisitor
-import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.internal.serializability.cast
-import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
+import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
+import org.jetbrains.kotlin.daemon.common.serialization.Message
+import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
+import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.cast
+import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.serialization.SupportsNewDaemonMode
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
@@ -69,7 +71,8 @@ import java.nio.file.Path
 internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, @Contextual K2JVMCompilerArguments>,
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
-    DeepCopyable<JvmCompilationOperationImpl> {
+    DeepCopyable<JvmCompilationOperationImpl>,
+    SupportsNewDaemonMode<CompilationResult> {
 
     override val sources: List<Path>
     override val destinationDirectory: Path
@@ -112,15 +115,15 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
-        addAll(super.beforeSerialization(logger))
-        (incrementalCompilation as? BtaSerializable)?.let { incrementalCompilation ->
+        addAll(super<BaseCompilationOperationImpl>.beforeSerialization(logger))
+        (incrementalCompilation as? HasSerializationHooks)?.let { incrementalCompilation ->
             addAll(incrementalCompilation.beforeSerialization(logger))
         }
     }
 
     override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
-        super.afterDeserialization(messageReporter, compilerFacade)
-        (incrementalCompilation as? BtaSerializable)?.afterDeserialization(messageReporter, compilerFacade)
+        super<BaseCompilationOperationImpl>.afterDeserialization(messageReporter, compilerFacade)
+        (incrementalCompilation as? HasSerializationHooks)?.afterDeserialization(messageReporter, compilerFacade)
     }
 
     override fun deepCopy(): JvmCompilationOperationImpl {
@@ -519,6 +522,14 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
             compilerRefIndexDirectory = compilerRefIndexDirectory(workingDirectory)?.toFile(),
             lookupTrackerDelegate = getLookupTrackerAdapter(),
         )
+
+    override fun deserializeResult(serializedData: SerializedDataContainer): CompilationResult {
+        return KotlinToolchainsImpl.serializer.deserialize(CompilationResultSerializer, serializedData)
+    }
+
+    override fun serializeResult(result: CompilationResult): SerializedDataContainer {
+        return KotlinToolchainsImpl.serializer.serialize(CompilationResultSerializer, result)
+    }
 }
 
 private fun checkJvmFirRequirements(

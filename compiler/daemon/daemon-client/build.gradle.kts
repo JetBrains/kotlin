@@ -32,3 +32,8 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+runtimeJarWithRelocation {
+    from(mainSourceSet.output)
+    relocate("kotlinx.serialization", "org.jetbrains.kotlin.buildtools.internal.serialization")
+}

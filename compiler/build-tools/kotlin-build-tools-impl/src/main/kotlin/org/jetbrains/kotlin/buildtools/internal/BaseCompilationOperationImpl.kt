@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.cri.CompilerRefIndexConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
-import org.jetbrains.kotlin.buildtools.internal.serializability.CompilerMessageVisitor
-import org.jetbrains.kotlin.buildtools.internal.serializability.IcEventVisitor
-import org.jetbrains.kotlin.buildtools.internal.serializability.LookupMessageVisitor
-import org.jetbrains.kotlin.buildtools.internal.serializability.Message
-import org.jetbrains.kotlin.buildtools.internal.serializability.MessageReportingMessageCollectorWithDiagnosticId
-import org.jetbrains.kotlin.buildtools.internal.serializability.MessageVisitor
-import org.jetbrains.kotlin.buildtools.internal.serializability.cast
-import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
+import org.jetbrains.kotlin.buildtools.internal.daemon.CompilerMessageVisitor
+import org.jetbrains.kotlin.buildtools.internal.daemon.IcEventVisitor
+import org.jetbrains.kotlin.buildtools.internal.daemon.LookupMessageVisitor
+import org.jetbrains.kotlin.daemon.common.serialization.Message
+import org.jetbrains.kotlin.buildtools.internal.daemon.MessageReportingMessageCollectorWithDiagnosticId
+import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
+import org.jetbrains.kotlin.buildtools.internal.daemon.cast
+import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -58,7 +58,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         compilerArgumentsLogLevel = other.compilerArgumentsLogLevel
         compilerMessageRenderer = other.compilerMessageRenderer
         generateCompilerRefIndex = other.generateCompilerRefIndex
-        compilerRefIndexConfiguration = other.compilerRefIndexConfiguration
+        compilerRefIndexConfiguration = other.compilerRefIndexConfiguration?.deepCopy()
         icEventCollector = other.icEventCollector
     }
 
@@ -106,8 +106,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     internal var generateCompilerRefIndex: Boolean = false
 
-    @Transient
-    internal var compilerRefIndexConfiguration: CompilerRefIndexConfiguration? = null
+    internal var compilerRefIndexConfiguration: CompilerRefIndexConfigurationImpl? = null
 
     @Transient
     var icEventCollector: IcEventCollector? = null
@@ -169,6 +168,23 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         compilerRefIndexConfiguration?.outputDirectory?.toAbsolutePath()
             ?: icWorkingDirectory.resolve(CriToolchain.DATA_PATH).takeIf { generateCompilerRefIndex }
 
+
+    override fun executeInDaemon(
+        projectId: ProjectId,
+        executionPolicy: DaemonExecutionPolicyImpl,
+        logger: KotlinLogger,
+        executionContext: ExecutionContext
+    ): CompilationResult {
+        val messageCollector = createMessageCollector(logger)
+        if (reportArgumentWarningsAndErrors(logger, messageCollector)) return COMPILATION_ERROR
+        val hasArgumentParsingErrors = messageCollector.hasErrors()
+        val result = super.executeInDaemon(projectId, executionPolicy, logger, executionContext)
+        return if (hasArgumentParsingErrors && result == COMPILATION_SUCCESS) {
+            COMPILATION_ERROR
+        } else {
+            result
+        }
+    }
 
     override fun executeCancellableImpl(
         projectId: ProjectId,
