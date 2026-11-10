@@ -57,21 +57,7 @@ abstract class AbstractJsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            setUpDefaultDirectivesForJsBoxTest(parser)
-            defaultDirectives {
-                +CHECK_SAME_ABI_AFTER_INLINING
-            }
-            configureFirHandlersStep {
-                useHandlers(
-                    ::FirDumpHandler,
-                    ::FirCfgDumpHandler,
-                    ::FirCfgConsistencyHandler,
-                    ::FirResolvedTypesVerifier,
-                )
-            }
-            configureIrHandlersStep {
-                setupIrTextDumpHandlers()
-            }
+            setUpFirstStageForJsBoxTest(parser)
             configureJsArtifactsHandlersStep {
                 useHandlers(
                     ::JsIrRecompiledArtifactsIdentityHandler,
@@ -309,6 +295,24 @@ abstract class AbstractJsCodegenWasmJsInteropTest(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
+
+fun TestConfigurationBuilder.setUpFirstStageForJsBoxTest(parser: FirParser) {
+    setUpDefaultDirectivesForJsBoxTest(parser)
+    defaultDirectives {
+        +CHECK_SAME_ABI_AFTER_INLINING
+    }
+    configureFirHandlersStep {
+        useHandlers(
+            ::FirDumpHandler,
+            ::FirCfgDumpHandler,
+            ::FirCfgConsistencyHandler,
+            ::FirResolvedTypesVerifier,
+        )
+    }
+    configureIrHandlersStep {
+        setupIrTextDumpHandlers()
+    }
+}
 
 fun TestConfigurationBuilder.setUpDefaultDirectivesForJsBoxTest(parser: FirParser) {
     defaultDirectives {
