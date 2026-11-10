@@ -3,8 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package jvmplaceholder
+package platformplaceholder
 
-// Minimal jvm-fragment source: keeps a valid two-fragment (commonMain <- jvmMain) structure
+// Minimal platform-fragment source: keeps a valid two-fragment (commonMain <- platformMain) structure
 // even though these tests only exercise commonMain metadata.
-internal fun jvmPlaceholder() = Unit
+internal fun platformPlaceholder() = Unit
