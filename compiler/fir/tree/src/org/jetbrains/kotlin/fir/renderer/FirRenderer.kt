@@ -981,7 +981,7 @@ class FirRenderer(
                 l@{
                     if (it is ConeFlexibleType) return@l null
                     val classId = it.classId ?: return@l null
-                    FunctionTypeKindExtractor.Default.getFunctionalClassKind(classId.packageFqName, classId.shortClassName.asString())
+                    FunctionTypeKindExtractor.Default.getFunctionalClassKindWithArity(classId.packageFqName, classId.shortClassName.asString())
                 }
             )
         }

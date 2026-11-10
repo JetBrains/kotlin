@@ -1,6 +1,0 @@
-fromIndex(0) > toIndex(-1)
-java.lang.IllegalArgumentException: fromIndex(0) > toIndex(-1)
-	at java.base/java.util.AbstractList.subListRangeCheck(AbstractList.java:509)
-	at java.base/java.util.AbstractList.subList(AbstractList.java:497)
-	at org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer.renderAsPossibleFunctionType(ConeTypeRenderer.kt:73)
-	at org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer.renderAsPossibleFunctionType$default(ConeTypeRenderer.kt:25)
