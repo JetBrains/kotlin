@@ -16,45 +16,46 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrTh
 import org.jetbrains.kotlin.cli.bc.K2Native
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-internal class NativeKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(NativeKlibCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destination: Path,
-    compilerArguments: NativeArgumentsImpl = NativeArgumentsImpl(),
-    private val compilerVersion: String,
-) : BaseCompilationOperationImpl<NativeArgumentsImpl, K2NativeCompilerArguments>(compilerArguments),
+internal class NativeKlibCompilationOperationImpl :
+    BaseCompilationOperationImpl<NativeArgumentsImpl, K2NativeCompilerArguments>,
     NativeKlibCompilationOperation, NativeKlibCompilationOperation.Builder,
     DeepCopyable<NativeKlibCompilationOperationImpl> {
+    override val options: Options
+    override val sources: List<Path>
+    override val destination: Path
+    override val compilerArguments: NativeArgumentsImpl
+    private val compilerVersion: String
+
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: NativeArgumentsImpl = NativeArgumentsImpl(),
         compilerVersion: String,
-    ) : this(
-        options = Options(NativeKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
+    ) : super() {
+        this.options = Options(NativeKlibCompilationOperation::class)
+        this.sources = sources
+        this.destination = destination
+        this.compilerArguments = compilerArguments
+        this.compilerVersion = compilerVersion
         initializeOptions(this::class, options)
+    }
+
+    private constructor(other: NativeKlibCompilationOperationImpl) : super(other) {
+        this.options = other.options.deepCopy()
+        this.sources = other.sources.toList()
+        this.destination = other.destination
+        this.compilerArguments = other.compilerArguments.deepCopy()
+        this.compilerVersion = other.compilerVersion
     }
 
     override fun toBuilder(): NativeKlibCompilationOperation.Builder = deepCopy()
 
-    override fun deepCopy(): NativeKlibCompilationOperationImpl {
-        return NativeKlibCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
-            destination,
-            compilerArguments.deepCopy(),
-            compilerVersion
-        )
-    }
+    override fun deepCopy(): NativeKlibCompilationOperationImpl = NativeKlibCompilationOperationImpl(this)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: NativeKlibCompilationOperation.Option<V>): V = options[key]
@@ -112,7 +113,8 @@ internal class NativeKlibCompilationOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: K2NativeCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult {
         error("Kotlin/Native klib compilation doesn't support incremental compilation")
