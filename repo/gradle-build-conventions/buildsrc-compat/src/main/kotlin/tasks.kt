@@ -49,7 +49,6 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-dom-api-compat",
-    ":examples:annotation-processor-example",
     ":kotlin-assignment-compiler-plugin.embeddable",
     ":kotlin-allopen-compiler-plugin.embeddable",
     ":kotlin-noarg-compiler-plugin.embeddable",
@@ -94,8 +93,7 @@ fun Task.dependsOnKotlinGradlePluginInstall() {
  * this writes to `<rootProject>/build/repo` (via `KotlinBuildPublishingPlugin`'s `"Maven"` repository)
  * rather than `~/.m2`, so nothing touches `maven.repo.local`.
  *
- * Modules without `KotlinBuildPublishingPlugin` (e.g. `:examples:annotation-processor-example`)
- * have no `publishAllPublicationsToMavenRepository` task and are skipped silently.
+ * Modules without `KotlinBuildPublishingPlugin` have no `publishAllPublicationsToMavenRepository` task and are skipped silently.
  */
 fun Task.dependsOnKotlinGradlePluginPublishToBuildRepo() {
     val publishedMark = project.configurations.detachedConfiguration(

@@ -6,6 +6,8 @@
 package plugins
 
 import capitalize
+import dev.adamko.gradle.dev_publish.DevPublishPlugin
+import dev.adamko.gradle.dev_publish.tasks.GenerateDevPublishMetadataTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
@@ -186,6 +188,12 @@ fun Project.configureDefaultPublishing(
     if (signingRequired) {
         apply<SigningPlugin>()
         configureSigning()
+    }
+
+    apply<DevPublishPlugin>()
+    tasks.withType<GenerateDevPublishMetadataTask>().configureEach {
+        // SBOMs contain a random namespace and a creation timestamp, so tracking them would make this task never cacheable
+        excludedDevMavenRepoFilePatterns.set(excludedDevMavenRepoFilePatterns.get() + "**/*.spdx.json")
     }
 
     tasks.register("install") {
