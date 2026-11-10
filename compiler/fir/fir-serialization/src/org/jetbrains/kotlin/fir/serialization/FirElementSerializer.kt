@@ -1110,6 +1110,13 @@ class FirElementSerializer private constructor(
                 return typeProto(approximatedType)
             }
             is ConeUnionType -> {
+                // Union types share the same slot as the primary type.
+                // Rich errors are serialized in the respective repeated field.
+                // Both, union types and their primary type can be annotated and can have abbreviations.
+                // The primary type uses abbreviated_type/abbreviated_type_id and annotation while
+                // the union type uses union_abbreviated_type/union_abbreviated_type_id and union_type_annotation.
+                // Example: @A {X =} (@B {Y =} String) | E1 is serialized with
+                // union_type_annotation=A, union_abbreviated_type=X, annotation=B, abbreviated_type=Y
                 return typeProto(type.primaryType).apply {
                     val useTypeTable = useTypeTable()
                     type.richErrorTypes.forEach {
