@@ -27,6 +27,7 @@ public actual class Boolean private constructor() : Comparable<Boolean> {
     /**
      * Performs a logical `and` operation between this Boolean and the [other] one. Unlike the `&&` operator,
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
+     *
      * @sample samples.misc.BooleanSamples.and
      */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -35,6 +36,7 @@ public actual class Boolean private constructor() : Comparable<Boolean> {
     /**
      * Performs a logical `or` operation between this Boolean and the [other] one. Unlike the `||` operator,
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
+     *
      * @sample samples.misc.BooleanSamples.or
      */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -42,6 +44,7 @@ public actual class Boolean private constructor() : Comparable<Boolean> {
 
     /**
      * Performs a logical `xor` operation between this Boolean and the [other] one.
+     *
      * @sample samples.misc.BooleanSamples.xor
      */
     @kotlin.internal.IntrinsicConstEvaluation
