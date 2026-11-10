@@ -282,7 +282,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 listOf(ModuleBuilder(name = test.moduleName, outputDir = outputDir.path, type = "android-test-module"))
             )
             addKotlinSourceRoots(writePatchedSources(test).map { it.path })
-            parserMode = ParserMode.LightTree
             // Compile files in the order in which they are declared in the test data.
             dontSortSourceFiles = true
             this.messageCollector = messageCollector

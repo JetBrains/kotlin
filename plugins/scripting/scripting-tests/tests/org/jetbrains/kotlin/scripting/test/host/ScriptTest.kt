@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.script.loadScriptingPlugin
@@ -142,6 +144,7 @@ class ScriptTest {
                 configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)
             }
             configuration.useFir = true
+            configuration.parserMode = ParserMode.Psi // `ScriptJvmCompilerFromEnvironment` builds FIR from PSI files, KT-91411
 
             loadScriptingPlugin(configuration, rootDisposable)
 
