@@ -3,18 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION") // file-based npm dependencies are still modelled by the deprecated NpmDependency
-
 package org.jetbrains.kotlin.gradle.targets.web.npm
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.hasSharedNpmToolingDir
+import org.jetbrains.kotlin.gradle.targets.js.ir.npmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NPM_DEP_FILE_VERSION_PREFIX
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
@@ -149,19 +150,42 @@ internal class NpmResolverPluginApplier(
             task.compilation.npmProject.nodeJsRoot.npmInstallTaskProvider
         )
 
-        val allNpmDeps =
+        registerNpmFileDepsAsTaskInput(task)
+        disableCachingForLegacyNpmFileDeps(task, compilationResolver)
+    }
+
+    private fun registerNpmFileDepsAsTaskInput(task: RequiresNpmDependenciesTask) {
+        val npmDepsFromCollector: Provider<List<Provider<Directory>>> =
+            task.compilation.npmDependencies()
+                .map {
+                    it.filterIsInstance<KotlinNpmDependency.LocalPath>()
+                        .map(KotlinNpmDependency.LocalPath::directory)
+                }
+
+        task.fileBasedDependencyDirectories.from(npmDepsFromCollector)
+    }
+
+    private fun disableCachingForLegacyNpmFileDeps(task: RequiresNpmDependenciesTask, compilationResolver: KotlinCompilationNpmResolver) {
+        //region legacy configuration-based npm deps
+        val npmDepsFromConfigurations =
             compilationResolver
                 .aggregatedConfiguration
                 .allDependencies
-                .withType<NpmDependency>()
+                .withType<@Suppress("DEPRECATION") org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency>()
 
-        task.fileBasedNpmDependencyLocations.convention(
+        // Use `providers.provider {}`, not `npmDepsFromConfigurations.elements`:
+        // the configuration cache cannot encode the `elements` provider of a Configuration's dependencies.
+        val fileBasedDependenciesFromConfigurations: Provider<List<String>> =
             task.project.providers.provider {
-                allNpmDeps
+                npmDepsFromConfigurations
                     .map { it.version }
                     .filter { it.startsWith(NPM_DEP_FILE_VERSION_PREFIX) }
                     .map { it.removePrefix(NPM_DEP_FILE_VERSION_PREFIX) }
+                    .distinct()
             }
+
+        task.fileBasedNpmDependencyLocations.convention(
+            fileBasedDependenciesFromConfigurations
         )
 
         task.outputs.doNotCacheIf("there are file-based NPM dependencies") { _ ->
