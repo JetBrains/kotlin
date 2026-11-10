@@ -504,7 +504,8 @@ class CInteropCompilation(
     freeCompilerArgs: TestCompilerArgs,
     defFile: File,
     sources: List<File> = emptyList(),
-    dependencies: Iterable<CompiledDependency<KLIB>>,
+    dependencies: Iterable<TestCompilationDependency<KLIB>>,
+    includeDirectories: List<File> = [defFile.parentFile],
     expectedArtifact: KLIB,
     noDefaultLibs: Boolean = true,
 ) : TestCompilation<KLIB>() {
@@ -522,7 +523,7 @@ class CInteropCompilation(
                 },
                 sourceFiles = listOf(it),
                 outputFile = expectedArtifact.klibFile.resolveSibling("${it.nameWithoutExtension}.a"),
-                includeDirectories = listOf(defFile.parentFile),
+                includeDirectories = includeDirectories,
                 additionalClangFlags = listOf(
                     if (freeCompilerArgs.objcArc) {
                         "-fobjc-arc"
@@ -555,8 +556,10 @@ class CInteropCompilation(
                 add("-staticLibrary")
                 add(it.name)
             }
-            add("-compiler-option")
-            add("-I${defFile.parentFile}")
+            includeDirectories.forEach {
+                add("-compiler-option")
+                add("-I$it")
+            }
 
             // Don't reuse the system-wide module cache to make the test run more predictably.
             // See also KT-68254 and KT-85815.
