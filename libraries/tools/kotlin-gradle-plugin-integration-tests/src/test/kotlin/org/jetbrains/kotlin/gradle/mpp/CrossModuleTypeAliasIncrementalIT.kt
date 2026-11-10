@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
@@ -169,19 +169,19 @@ class CrossModuleTypeAliasIncrementalIT : KGPBaseTest() {
             if (expandTypeAliasesInFollowUpBuild != null) {
                 val followUpBuildOptions = buildOptions.copy(
                     expandTypeAliasesInClasspathSnapshots = expandTypeAliasesInFollowUpBuild,
-                    logLevel = LogLevel.DEBUG,
+                    buildReport = listOf(BuildReportType.FILE),
                 )
 
                 // The flag is an input of every KMP JVM compile task, so `lib` re-runs, but must not recompile any sources
                 build(":lib:compileKotlinJvm", buildOptions = followUpBuildOptions) {
                     assertTasksExecuted(":lib:compileKotlinJvm")
-                    assertIncrementalCompilation(expectedCompiledKotlinFiles = emptyList())
+                    assertIncrementalCompilationInBuildReport(expectedCompiledKotlinFiles = emptyList())
                 }
 
                 build(":app:jvmRun", "-DmainClass=MainKt", buildOptions = followUpBuildOptions) {
                     assertTasksUpToDate(":lib:compileKotlinJvm")
                     assertTasksExecuted(":app:compileKotlinJvm")
-                    assertIncrementalCompilation(
+                    assertIncrementalCompilationInBuildReport(
                         expectedCompiledKotlinFiles = listOf(subProject("app").kotlinSourcesDir("commonMain").resolve("bar.kt"))
                             .relativizeTo(projectPath)
                     )

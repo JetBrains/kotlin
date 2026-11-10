@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.mpp.smoke
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -18,9 +17,6 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Basic incremental scenarios with KMP - K2")
 @MppGradlePluginTests
 open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
-
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
     @DisplayName("Base test case - local change, local recompilation")
     @GradleTest
@@ -41,7 +37,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":app:compileKotlinNative"
             )
         ) {
-            assertIncrementalCompilation(listOf(sourceInAppCommon).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(sourceInAppCommon).relativizeTo(projectPath))
         }
 
         /**
@@ -52,7 +48,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
         checkIncrementalBuild(
             tasksExpectedToExecute = setOf(":app:compileKotlinJvm")
         ) {
-            assertIncrementalCompilation(listOf(sourceInAppJvm).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(sourceInAppJvm).relativizeTo(projectPath))
         }
 
         /**
@@ -63,7 +59,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
         checkIncrementalBuild(
             tasksExpectedToExecute = setOf(":app:compileKotlinJs"),
         ) {
-            assertIncrementalCompilation(listOf(sourceInAppJs).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(sourceInAppJs).relativizeTo(projectPath))
         }
 
         /**
@@ -83,7 +79,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
         checkIncrementalBuild(
             tasksExpectedToExecute = mainCompileTasks // TODO: KT-62642 - bad compile avoidance here
         ) {
-            assertIncrementalCompilation(listOf(sourceInLibCommon).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(sourceInLibCommon).relativizeTo(projectPath))
         }
 
         /**
@@ -97,7 +93,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":lib:compileKotlinJvm"
             ),
         ) {
-            assertIncrementalCompilation(listOf(sourceInLibJvm).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(sourceInLibJvm).relativizeTo(projectPath))
         }
 
         /**
@@ -111,7 +107,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":lib:compileKotlinJs"
             ),
         ) {
-            assertIncrementalCompilation(listOf(sourceInLibJs).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(sourceInLibJs).relativizeTo(projectPath))
         }
 
         /**

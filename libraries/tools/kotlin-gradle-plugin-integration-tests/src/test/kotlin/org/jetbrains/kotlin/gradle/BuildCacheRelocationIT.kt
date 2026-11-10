@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
@@ -480,7 +480,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         configureProject: (TestProject) -> Unit = {},
     ) {
         val (firstProject, secondProject) =
-            prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions, buildJdk = null) {
+            prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions.copy(buildReport = listOf(BuildReportType.FILE)), buildJdk = null) {
                 configureProject(it)
             }
 
@@ -498,8 +498,8 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         secondProject.kotlinSourcesDir().resolve("foo.kt").modify {
             it.replace("Int = 1", "String = \"abc\"")
         }
-        secondProject.build("assemble", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-            assertIncrementalCompilation(listOf("src/main/kotlin/foo.kt", "src/main/kotlin/fooUsage.kt").toPaths())
+        secondProject.build("assemble") {
+            assertIncrementalCompilationInBuildReport(listOf("src/main/kotlin/foo.kt", "src/main/kotlin/fooUsage.kt").toPaths())
         }
     }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
@@ -23,7 +24,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            logLevel = LogLevel.DEBUG,
+            buildReport = listOf(BuildReportType.FILE),
             enableJvmIncrementalCompilationOfCommonSources = true,
         )
 
@@ -35,7 +36,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
         ) {
             setupJvmClasspathMetadataProject()
 
-            build("jvmRun", "-DmainClass=MainKt") {
+            build("jvmRun", "-DmainClass=MainKt", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksExecuted(":compileKotlinJvm")
                 assertCompiledKotlinSources(
                     expectedSources = relativeToProject(
@@ -59,8 +60,8 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
              */
             build("jvmRun", "-DmainClass=MainKt") {
                 assertTasksExecuted(":compileKotlinJvm")
-                assertCompiledKotlinSources(
-                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("foo.kt"))), output = output
+                assertCompiledKotlinSourcesInBuildReport(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("foo.kt")))
                 )
                 assertOutputContains("KMP output: Int") // wrong result
             }
@@ -75,7 +76,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
         ) {
             setupJvmClasspathMetadataProject()
 
-            build("jvmRun", "-DmainClass=MainKt") {
+            build("jvmRun", "-DmainClass=MainKt", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksExecuted(":compileKotlinJvm")
                 assertCompiledKotlinSources(
                     expectedSources = relativeToProject(
@@ -95,8 +96,8 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
 
             build("jvmRun", "-DmainClass=MainKt") {
                 assertTasksExecuted(":compileKotlinJvm")
-                assertCompiledKotlinSources(
-                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("foo.kt"))), output = output
+                assertCompiledKotlinSourcesInBuildReport(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("foo.kt")))
                 )
                 assertOutputContains("KMP output: Any")
             }
@@ -143,7 +144,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
         ) {
             setupTwoCommonModulesProject()
 
-            build("jvmRun", "-DmainClass=MainKt") {
+            build("jvmRun", "-DmainClass=MainKt", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksExecuted(":compileKotlinJvm")
                 assertCompiledKotlinSources(
                     expectedSources = relativeToProject(
@@ -163,8 +164,8 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
 
             build("jvmRun", "-DmainClass=MainKt") {
                 assertTasksExecuted(":compileKotlinJvm")
-                assertCompiledKotlinSources(
-                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("intermediateMain").resolve("foo.kt"))), output = output
+                assertCompiledKotlinSourcesInBuildReport(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("intermediateMain").resolve("foo.kt")))
                 )
                 assertOutputContains("KMP output: Any")
             }
@@ -233,7 +234,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
 
             build("jvmRun", "-DmainClass=MainKt") {
                 assertTasksExecuted(":compileKotlinJvm")
-                assertCompiledKotlinSources(
+                assertCompiledKotlinSourcesInBuildReport(
                     expectedSources = relativeToProject(
                         listOf(
                             kotlinSourcesDir("commonMain").resolve("base.kt"),
@@ -241,7 +242,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
                             kotlinSourcesDir("jvmMain").resolve("actual.kt"),
                             kotlinSourcesDir("jvmMain").resolve("b1.kt"),
                         )
-                    ), output = output
+                    )
                 )
                 assertOutputContains("KMP output: Int")
             }
@@ -301,7 +302,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
         ) {
             setupMultiPackageProject()
 
-            build("compileKotlinJvm") {
+            build("compileKotlinJvm", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksExecuted(":compileKotlinJvm")
                 assertCompiledKotlinSources(
                     expectedSources = relativeToProject(
@@ -319,9 +320,8 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
 
             build("compileKotlinJvm") {
                 assertTasksExecuted(":compileKotlinJvm")
-                assertCompiledKotlinSources(
-                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt"))),
-                    output = output
+                assertCompiledKotlinSourcesInBuildReport(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt")))
                 )
             }
 
@@ -331,9 +331,8 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
 
             build("compileKotlinJvm") {
                 assertTasksExecuted(":compileKotlinJvm")
-                assertCompiledKotlinSources(
-                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt"))),
-                    output = output
+                assertCompiledKotlinSourcesInBuildReport(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt")))
                 )
             }
         }
@@ -347,7 +346,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
         ) {
             setupMultiPackageProject()
 
-            build("compileKotlinJvm") {
+            build("compileKotlinJvm", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksExecuted(":compileKotlinJvm")
                 assertCompiledKotlinSources(
                     expectedSources = relativeToProject(
@@ -363,9 +362,8 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
 
             build("compileKotlinJvm") {
                 assertTasksExecuted(":compileKotlinJvm")
-                assertCompiledKotlinSources(
-                    expectedSources = emptyList(),
-                    output = output
+                assertCompiledKotlinSourcesInBuildReport(
+                    expectedSources = emptyList()
                 )
             }
 
@@ -375,9 +373,8 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
 
             build("compileKotlinJvm") {
                 assertTasksExecuted(":compileKotlinJvm")
-                assertCompiledKotlinSources(
-                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("com/example/one/bar.kt"))),
-                    output = output
+                assertCompiledKotlinSourcesInBuildReport(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("com/example/one/bar.kt")))
                 )
             }
         }
