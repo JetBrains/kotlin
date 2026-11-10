@@ -133,9 +133,10 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
             }
         }
 
+        // Filter first: the directory holds other builds' reports, and the comparator stats both files on every call.
         internal fun File.findV2FusFilesByBuildId(buildUid: String): List<File>? = listFiles()
-            ?.sortedWith(compareBy({ it.lastModified() }, { it.name }))
             ?.filter { it.name.startsWith(buildUid) && (it.name.endsWith("plugin-profile") || it.name.endsWith("kotlin-profile")) }
+            ?.sortedWith(compareBy({ it.lastModified() }, { it.name }))
     }
 
     override fun onFinish(p0: FinishEvent?) {
