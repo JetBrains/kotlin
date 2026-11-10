@@ -243,12 +243,13 @@ class KonanInteropModuleDeserializer(
     private fun deserializeTopLevelDeclarations(id: MetadataDeclarationId) {
         val kmDeclarations = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true) ?: return
         for (kmDeclaration in kmDeclarations) {
-            when (kmDeclaration) {
+            val irDeclaration = when (kmDeclaration) {
                 is KmClass -> transformer.transformTopLevelClass(kmDeclaration)
                 is KmFunction -> transformer.transformTopLevelFunction(kmDeclaration)
                 is KmProperty -> transformer.transformTopLevelProperty(kmDeclaration)
                 else -> error(kmDeclaration.javaClass.name)
             }
+            linker.partialLinkageSupport.enqueueDeclaration(irDeclaration)
         }
     }
 
