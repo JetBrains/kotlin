@@ -12,6 +12,9 @@ package org.jetbrains.kotlin.config
  * DO NOT MODIFY IT MANUALLY
  */
 
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.io.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
@@ -42,6 +45,18 @@ object KlibConfigurationKeys {
     @JvmField
     val SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS = CompilerConfigurationKey.create<Boolean>("SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS")
 
+    // Provides the compilation results from previous iteration of IC
+    @JvmField
+    val INCREMENTAL_DATA_PROVIDER = CompilerConfigurationKey.create<IncrementalDataProvider>("INCREMENTAL_DATA_PROVIDER")
+
+    // Consumes the compilation results from current iteration of IC
+    @JvmField
+    val INCREMENTAL_RESULTS_CONSUMER = CompilerConfigurationKey.create<IncrementalResultsConsumer>("INCREMENTAL_RESULTS_CONSUMER")
+
+    // Responsible for checking if next round of IC is needed
+    @JvmField
+    val INCREMENTAL_NEXT_ROUND_CHECKER = CompilerConfigurationKey.create<IncrementalNextRoundChecker>("INCREMENTAL_NEXT_ROUND_CHECKER")
+
 }
 
 var CompilerConfiguration.klibRelativePathBases: List<String>
@@ -71,4 +86,16 @@ var CompilerConfiguration.zipFileSystemAccessor: ZipFileSystemAccessor?
 var CompilerConfiguration.skipLibrarySpecialCompatibilityChecks: Boolean
     get() = getBoolean(KlibConfigurationKeys.SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS)
     set(value) { put(KlibConfigurationKeys.SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS, value) }
+
+var CompilerConfiguration.incrementalDataProvider: IncrementalDataProvider?
+    get() = get(KlibConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
+    set(value) { putIfNotNull(KlibConfigurationKeys.INCREMENTAL_DATA_PROVIDER, value) }
+
+var CompilerConfiguration.incrementalResultsConsumer: IncrementalResultsConsumer?
+    get() = get(KlibConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
+    set(value) { putIfNotNull(KlibConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, value) }
+
+var CompilerConfiguration.incrementalNextRoundChecker: IncrementalNextRoundChecker?
+    get() = get(KlibConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER)
+    set(value) { putIfNotNull(KlibConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER, value) }
 

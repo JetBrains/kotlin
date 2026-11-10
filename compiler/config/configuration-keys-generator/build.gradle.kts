@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":wasm:wasm.config"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":native:kotlin-native-utils"))
+    implementation(project(":compiler:incremental-compilation-klib:api"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     /*

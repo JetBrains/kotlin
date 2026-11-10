@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":native:native.config"))
     implementation(project(":wasm:wasm.config"))
     implementation(project(":wasm:wasm.frontend"))
+    api(project(":compiler:incremental-compilation-klib:api"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())

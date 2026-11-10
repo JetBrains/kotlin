@@ -103,7 +103,6 @@ Js:
  - js/js.ast
  - js/js.config/build.gradle.kts
  - js/js.config/gen
- - js/js.config/src/org/jetbrains/kotlin/incremental
  - js/js.config/src/org/jetbrains/kotlin/js/artifacts
  - js/js.config/src/org/jetbrains/kotlin/platform
  - js/js.config/src/org/jetbrains/kotlin/utils
