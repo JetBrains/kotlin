@@ -15,10 +15,9 @@ import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.api.components.collectDiagnostics
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.components.resolveToSymbol
+import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
@@ -718,7 +717,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), listOf(libraryJar), withJdk = true) {
             val ktFile = modulesWithFiles.values.single().single() as KtFile
             val diagnostics = analyze(ktFile) {
-                ktFile.collectDiagnostics(KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS).map { "${it.factoryName}: ${it.defaultMessage}" }
+                ktFile.diagnostics().map { "${it.factoryName}: ${it.defaultMessage}" }.toList()
             }
             assertEquals(emptyList(), diagnostics)
         }
