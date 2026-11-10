@@ -1,4 +1,3 @@
--Xuse-fir-lt=false
 -Xallow-any-scripts-in-source-roots
 $TESTDATA_DIR$/src/a.kt
 $TESTDATA_DIR$/src/b.kt
