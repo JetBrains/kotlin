@@ -1,0 +1,14 @@
+model {
+  [type.googleapis.com/org.jetbrains.kotlin.importmodels.proto.ProjectModel] {
+    id: "projectInformation"
+    compilation_unit_ids {
+      value: ":|:|jvm|deploy"
+    }
+    compilation_unit_ids {
+      value: ":|:|jvm|main"
+    }
+    compilation_unit_ids {
+      value: ":|:|jvm|test"
+    }
+  }
+}
