@@ -105,8 +105,7 @@ abstract class AbstractJsBoxWithInlineAnonymousFunctionsTest(
 abstract class AbstractJsCodegenBoxTestBase(
     pathToTestDir: String = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix: String,
-    parser: FirParser = FirParser.Psi,
-) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix, parser = parser) {
+) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureFirHandlersStep {
@@ -119,33 +118,6 @@ abstract class AbstractJsCodegenBoxTestBase(
 
         builder.configureIrHandlersStep {
             commonIrHandlersForCodegenTest()
-        }
-    }
-}
-
-abstract class AbstractJsCodegenBoxTest(
-    testGroupOutputDirPrefix: String = "codegen/box/",
-) : AbstractJsCodegenBoxTestBase(
-    pathToTestDir = "compiler/testData/codegen/box",
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
-    parser = FirParser.LightTree,
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureLoweredIrDumpHandlers()
-    }
-}
-
-abstract class AbstractJsCodegenBoxWithInlineAnonymousFunctionsTest(
-    testGroupOutputDirPrefix: String = "codegen/boxWithInlineAnonymousFunctions/",
-) : AbstractJsCodegenBoxTest(testGroupOutputDirPrefix) {
-    override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>
-        get() = listOf(IGNORE_WITH_INLINE_ANONYMOUS_FUNCTIONS)
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.defaultDirectives {
-            +GENERATE_INLINE_ANONYMOUS_FUNCTIONS
         }
     }
 }
