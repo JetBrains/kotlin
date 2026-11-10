@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
+import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.checkTestInfrastructure
@@ -49,7 +50,10 @@ class JsInProcessSecondStageFacade {
      * all the tests of the batch, and the name of such a file is made of the names of two modules, which are long in
      * the grouping configuration, so it could exceed the limit of the file system.
      */
-    class Grouping(testServices: TestServices) : AbstractJsSecondStageGroupingFacade(testServices) {
+    class Grouping(
+        testServices: TestServices,
+        private val recompile: Boolean = false,
+    ) : AbstractJsSecondStageGroupingFacade(testServices) {
 
         override fun linkIsolated(output: NonGroupingStageOutput): BinaryArtifacts.Js? {
             val services = output.testServices
@@ -60,7 +64,10 @@ class JsInProcessSecondStageFacade {
                 // pipeline. A first stage that has recorded its incremental data into the service must keep it.
                 services.register(service(::JsIrIncrementalDataProvider), skipAlreadyRegistered = true)
             }
-            return JsUnifiedIrDeserializerAndLoweringFacade(services).transform(mainModule, klib)
+            val artifact = JsUnifiedIrDeserializerAndLoweringFacade(services).transform(mainModule, klib) ?: return null
+            if (!recompile) return artifact
+            val recompileFacade = RecompileModuleJsIrBackendFacade(services)
+            return if (recompileFacade.shouldTransform(mainModule)) recompileFacade.transform(mainModule, artifact) else artifact
         }
 
         override fun linkGroupedBatch(batch: GroupedBatch): BinaryArtifacts.Js {
