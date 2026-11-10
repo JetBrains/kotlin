@@ -7,10 +7,8 @@ package kotlin.reflect.jvm.internal.types
 
 import java.lang.reflect.Type
 import kotlin.jvm.internal.KTypeBase
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
+import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.isNullableType
 
 internal class SimpleKType(
     override val classifier: KClassifier,
@@ -37,11 +35,18 @@ internal class SimpleKType(
     }
 
     override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType =
-        if (isDefinitelyNotNull == isDefinitelyNotNullType) this
-        else SimpleKType(
-            classifier, arguments, isMarkedNullable = isMarkedNullable && !isDefinitelyNotNull, lazyAnnotations, abbreviation,
-            isDefinitelyNotNull, isNothingType, isSuspendFunctionType, mutableCollectionClass,
-        )
+        when {
+            isDefinitelyNotNull == isDefinitelyNotNullType -> this
+            isDefinitelyNotNull && !makesSenseToBeDefinitelyNotNull() -> makeNullableAsSpecified(false)
+            else -> SimpleKType(
+                classifier, arguments, isMarkedNullable = isMarkedNullable && !isDefinitelyNotNull, lazyAnnotations, abbreviation,
+                isDefinitelyNotNull, isNothingType, isSuspendFunctionType, mutableCollectionClass,
+            )
+        }
+
+    // See `DefinitelyNotNullType.makesSenseToBeDefinitelyNotNull` in the compiler.
+    private fun makesSenseToBeDefinitelyNotNull(): Boolean =
+        classifier is KTypeParameter && isNullableType()
 
     override fun lowerBoundIfFlexible(): AbstractKType? = null
     override fun upperBoundIfFlexible(): AbstractKType? = null
