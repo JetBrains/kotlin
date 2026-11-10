@@ -603,7 +603,8 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
                         """.trimIndent()
         }
 
-        build("clean")
+        // install scripts only run for packages that are not in node_modules yet
+        projectPath.resolve("build/js").deleteRecursively()
 
         build("assemble", "kotlinNpmInstall") {
             assertDirectoryExists(

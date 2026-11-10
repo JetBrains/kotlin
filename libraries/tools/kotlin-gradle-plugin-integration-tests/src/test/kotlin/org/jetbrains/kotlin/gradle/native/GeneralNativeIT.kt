@@ -429,12 +429,15 @@ class GeneralNativeIT : KGPBaseTest() {
                 }
             }
 
-            build("clean")
-
             buildGradle.appendText(
                 """kotlin.targets["host"].compilations["main"].kotlinOptions.verbose = true"""
             )
+            // verbose only affects logging, so it is not a task input
             build(":compileKotlinHost") {
+                assertTasksUpToDate(":compileKotlinHost")
+            }
+
+            build(":compileKotlinHost", "--rerun") {
                 extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinHost") {
                     assertCommandLineArgumentsContain("-verbose")
                 }

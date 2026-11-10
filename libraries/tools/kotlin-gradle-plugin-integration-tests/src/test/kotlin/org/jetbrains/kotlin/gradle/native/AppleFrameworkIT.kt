@@ -64,9 +64,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos/sdk.framework.dSYM")
             }
 
-            build("clean")
-
-            build("assembleCustomDebugAppleFrameworkForXcodeIosArm64", "symbolicLinkToAssembleCustomDebugAppleFrameworkForXcodeIosArm64",  environmentVariables = environmentVariables) {
+            build("assembleCustomDebugAppleFrameworkForXcodeIosArm64", "symbolicLinkToAssembleCustomDebugAppleFrameworkForXcodeIosArm64", environmentVariables = environmentVariables) {
                 assertTasksExecuted(":shared:assembleCustomDebugAppleFrameworkForXcodeIosArm64")
                 assertSymlinkInProjectPointsToProjectPath(
                     "shared/build/builtProductsDir/lib.framework",
