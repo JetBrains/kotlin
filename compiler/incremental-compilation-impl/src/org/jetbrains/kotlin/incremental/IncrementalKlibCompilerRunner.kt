@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -81,13 +83,55 @@ class IncrementalJsCompilerRunner(
     workingDir: File,
     reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     buildHistoryFile: File?,
-    override val modulesApiHistory: ModulesApiHistory,
+    modulesApiHistory: ModulesApiHistory,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     pluginsLoader: PluginsLoader? = null,
-    override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
-) : IncrementalCompilerRunner<CommonJsAndWasmCompilerArguments, IncrementalJsCachesManager>(
+    lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
+) : IncrementalKlibCompilerRunner<CommonJsAndWasmCompilerArguments>(
     workingDir,
     "caches-js",
+    reporter,
+    buildHistoryFile,
+    modulesApiHistory,
+    icFeatures,
+    pluginsLoader,
+    lookupTrackerDelegate,
+) {
+    override fun createCacheManager(
+        icContext: IncrementalCompilationContext, args: CommonJsAndWasmCompilerArguments
+    ): IncrementalJsCachesManager {
+        return IncrementalJsCachesManager(icContext, KlibMetadataSerializerProtocol, cacheDirectory)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun getCompiler(args: CommonJsAndWasmCompilerArguments): CLICompiler<CommonJsAndWasmCompilerArguments> {
+        return when (args) {
+            is KotlinWasmCompilerArguments -> KotlinWasmCompiler()
+            is K2JSCompilerArguments -> K2JSCompiler()
+        } as CLICompiler<CommonJsAndWasmCompilerArguments>
+    }
+
+    override fun destinationDir(args: CommonJsAndWasmCompilerArguments): File {
+        return File(args.outputDir!!)
+    }
+
+    override fun classpathForLibrarySetSnapshot(args: CommonJsAndWasmCompilerArguments): List<File> =
+        parseLibrariesArgument(args.libraries)
+
+}
+
+abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArguments>(
+    workingDir: File,
+    cachesDirName: String,
+    reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    buildHistoryFile: File?,
+    override val modulesApiHistory: ModulesApiHistory,
+    icFeatures: IncrementalCompilationFeatures,
+    pluginsLoader: PluginsLoader?,
+    override val lookupTrackerDelegate: LookupTracker,
+) : IncrementalCompilerRunner<Args, IncrementalJsCachesManager>(
+    workingDir,
+    cachesDirName,
     reporter,
     buildHistoryFile = buildHistoryFile,
     outputDirs = null,
@@ -103,21 +147,10 @@ class IncrementalJsCompilerRunner(
     override val shouldStoreFullFqNamesInLookupCache
         get() = false
 
-    override fun createCacheManager(icContext: IncrementalCompilationContext, args: CommonJsAndWasmCompilerArguments): IncrementalJsCachesManager {
-        return IncrementalJsCachesManager(icContext, KlibMetadataSerializerProtocol, cacheDirectory)
-    }
-
-    override fun destinationDir(args: CommonJsAndWasmCompilerArguments): File {
-        return File(args.outputDir!!)
-    }
-
-    override fun classpathForLibrarySetSnapshot(args: CommonJsAndWasmCompilerArguments): List<File> =
-        parseLibrariesArgument(args.libraries)
-
     override fun calculateSourcesToCompile(
         caches: IncrementalJsCachesManager,
         changedFiles: ChangedFiles.DeterminableFiles.Known,
-        args: CommonJsAndWasmCompilerArguments,
+        args: Args,
         messageCollector: MessageCollector,
     ): CompilationMode {
         if (buildHistoryFile == null) {
@@ -131,7 +164,7 @@ class IncrementalJsCompilerRunner(
 
         val dirtyFiles = dirtyFilesProvider.getInitializedDirtyFiles(caches, changedFiles)
 
-        val libs = parseLibrariesArgument(args.libraries)
+        val libs = classpathForLibrarySetSnapshot(args)
         //TODO(valtman) check for JS
         val classpathChanges = getClasspathChanges(libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
 
@@ -158,7 +191,7 @@ class IncrementalJsCompilerRunner(
     }
 
     override fun makeServices(
-        args: CommonJsAndWasmCompilerArguments,
+        args: Args,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
         fileMappingTracker: ICFileMappingTracker,
@@ -178,7 +211,7 @@ class IncrementalJsCompilerRunner(
             compilationCanceledStatus
         ).apply {
             if (isIncremental) {
-                val nextRoundChecker = IncrementalNextRoundCheckerImpl(caches, dirtySources)
+                val nextRoundChecker = IncrementalNextRoundCheckerImpl(caches, dirtySources, reporter)
                 register(IncrementalNextRoundChecker::class.java, nextRoundChecker)
                 register(IncrementalDataProvider::class.java, getIncrementalDataProvider(args, caches))
             }
@@ -189,10 +222,10 @@ class IncrementalJsCompilerRunner(
             )
         }
 
-    private fun getIncrementalResultsConsumer(args: CommonJsAndWasmCompilerArguments) =
+    private fun getIncrementalResultsConsumer(args: CommonKlibBasedCompilerArguments) =
         if (args.multiPlatform) KmpIncrementalResultsConsumer() else IncrementalResultsConsumerImpl()
 
-    private fun getIncrementalDataProvider(args: CommonJsAndWasmCompilerArguments, caches: IncrementalJsCachesManager) =
+    private fun getIncrementalDataProvider(args: CommonKlibBasedCompilerArguments, caches: IncrementalJsCachesManager) =
         if (args.multiPlatform) KmpIncrementalDataProviderFromCache(caches.platformCache) else IncrementalDataProviderFromCache(caches.platformCache)
 
     override fun updateCaches(
@@ -209,9 +242,11 @@ class IncrementalJsCompilerRunner(
         jsCache.clearCacheForRemovedClasses(changesCollector)
     }
 
+    abstract fun getCompiler(args: Args): CLICompiler<Args>
+
     override fun runCompiler(
         sourcesToCompile: List<File>,
-        args: CommonJsAndWasmCompilerArguments,
+        args: Args,
         caches: IncrementalJsCachesManager,
         services: Services,
         messageCollector: MessageCollector,
@@ -219,19 +254,11 @@ class IncrementalJsCompilerRunner(
         isIncremental: Boolean,
     ): Pair<ExitCode, Collection<File>> {
         val freeArgsBackup = args.freeArgs
-        var compiler: CLICompiler<*>? = null
+        var compiler: CLICompiler<Args>? = null
         try {
             args.freeArgs += sourcesToCompile.map { it.absolutePath }
-            return when (args) {
-                is KotlinWasmCompilerArguments -> {
-                    compiler = KotlinWasmCompiler()
-                    compiler.exec(messageCollector, services, args) to sourcesToCompile
-                }
-                is K2JSCompilerArguments -> {
-                    compiler = K2JSCompiler()
-                    compiler.exec(messageCollector, services, args) to sourcesToCompile
-                }
-            }
+            compiler = getCompiler(args)
+            return (compiler.exec(messageCollector, services, arguments = args) to sourcesToCompile)
         } finally {
             args.freeArgs = freeArgsBackup
             compiler?.let { reporter.reportPerformanceData(it.defaultPerformanceManager.unitStats) }
@@ -250,9 +277,10 @@ class IncrementalJsCompilerRunner(
         return additionalDirtyFiles.filter { it !in dirtySources }
     }
 
-    inner class IncrementalNextRoundCheckerImpl(
+    class IncrementalNextRoundCheckerImpl(
         private val caches: IncrementalJsCachesManager,
         private val sourcesToCompile: Set<File>,
+        private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     ) : IncrementalNextRoundChecker {
         val newDirtySources = HashSet<File>()
 
