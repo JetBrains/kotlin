@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.AnnotationTargetLists
  */
 internal class LLFirIdePredicateBasedProvider(
     private val session: LLFirSession,
-    private val annotationsResolver: KotlinAnnotationsResolver,
+    private val annotationsResolver: Lazy<KotlinAnnotationsResolver>,
 ) : FirPredicateBasedProvider() {
     private val projectStructureProvider by lazy { KotlinProjectStructureProvider.getInstance(session.project) }
 
@@ -57,7 +57,7 @@ internal class LLFirIdePredicateBasedProvider(
         val annotations = predicate.annotations
         val annotatedDeclarations = annotations
             .asSequence()
-            .flatMap { annotationsResolver.declarationsByAnnotation(ClassId.topLevel(it)) }
+            .flatMap { annotationsResolver.value.declarationsByAnnotation(ClassId.topLevel(it)) }
             .toSet()
 
         return annotatedDeclarations
@@ -102,7 +102,7 @@ internal class LLFirIdePredicateBasedProvider(
 
         return pluginAnnotations.any {
             val annotationId = ClassId.topLevel(it)
-            val markedDeclarations = annotationsResolver.declarationsByAnnotation(annotationId)
+            val markedDeclarations = annotationsResolver.value.declarationsByAnnotation(annotationId)
 
             targetKtFile in markedDeclarations
         }
@@ -199,7 +199,7 @@ internal class LLFirIdePredicateBasedProvider(
         if (firResolvedAnnotations.isNotEmpty()) return firResolvedAnnotations
 
         val psiDeclaration = declaration.psi as? KtAnnotated ?: return emptySet()
-        val psiAnnotations = annotationsResolver.annotationsOnDeclaration(psiDeclaration)
+        val psiAnnotations = annotationsResolver.value.annotationsOnDeclaration(psiDeclaration)
 
         return psiAnnotations.map { it.asSingleFqName() }.toSet()
     }

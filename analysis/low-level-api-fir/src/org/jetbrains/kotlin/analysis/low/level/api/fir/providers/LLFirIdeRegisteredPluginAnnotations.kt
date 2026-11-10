@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtClass
 
 internal class LLFirIdeRegisteredPluginAnnotations(
     session: FirSession,
-    private val annotationsResolver: KotlinAnnotationsResolver
+    private val annotationsResolver: Lazy<KotlinAnnotationsResolver>,
 ) : AbstractFirRegisteredPluginAnnotations(session) {
 
     private val annotationsFromPlugins: MutableSet<AnnotationFqn> = mutableSetOf()
@@ -50,7 +50,7 @@ internal class LLFirIdeRegisteredPluginAnnotations(
     }
 
     private fun collectAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Set<FqName> {
-        val annotatedDeclarations = annotationsResolver.declarationsByAnnotation(ClassId.topLevel(metaAnnotation))
+        val annotatedDeclarations = annotationsResolver.value.declarationsByAnnotation(ClassId.topLevel(metaAnnotation))
 
         return annotatedDeclarations
             .asSequence()
