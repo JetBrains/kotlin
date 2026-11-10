@@ -63,7 +63,7 @@ internal class TestFederationPlan private constructor(
                         forcedSubsets.isNotEmpty() -> "subsets were forced"
                         isDefaultBranch && changedDomains.containsAll(Domain.entries) -> "running on the default branch"
                         isChanged -> "this domain is changed"
-                        changedDependencies.isNotEmpty() -> "mustRunAllTestsOnChangesIn: ${changedDependencies.joinToString(", ")}"
+                        changedDependencies.isNotEmpty() -> "$MUST_RUN_ALL_TESTS_REASON_PREFIX: ${changedDependencies.joinToString(", ")}"
                         else -> ""
                     },
                 )
@@ -107,12 +107,4 @@ internal class TestFederationPlan private constructor(
 internal const val ALL_TESTS_EMOJI = "🛡️"
 internal const val SMOKE_TESTS_EMOJI = "🔥"
 internal const val CONTRACT_TESTS_EMOJI = "✍️"
-
-internal fun TestSubset.toEmoji(): String = when (this) {
-    AllTests -> ALL_TESTS_EMOJI
-    SmokeTests -> SMOKE_TESTS_EMOJI
-    else -> {
-        val domain = Domain.entries.first { contractTestsSubsetOf(it) == this }
-        "$CONTRACT_TESTS_EMOJI (${domain.name})"
-    }
-}
+internal const val MUST_RUN_ALL_TESTS_REASON_PREFIX = "mustRunAllTestsOnChangesIn"
