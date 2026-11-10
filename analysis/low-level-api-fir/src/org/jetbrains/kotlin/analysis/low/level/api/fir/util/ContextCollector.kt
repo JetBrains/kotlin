@@ -976,6 +976,11 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * Processes the contract description of [namedFunction] in the scope of the function body, as
+     * [FirContractResolveTransformer][org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer]
+     * does, so that the parameters are visible in a contract that is declared outside the body.
+     */
     override fun visitNamedFunction(namedFunction: FirNamedFunction) = withProcessor(namedFunction) {
         dumpContext(namedFunction, ContextKind.SELF)
 
@@ -999,10 +1004,11 @@ private class ContextCollectorVisitor(
                             processList(namedFunction.valueParameters)
                             processBody(namedFunction)
                         }
+
+                        process(namedFunction.contractDescription)
                     }
 
                     process(namedFunction.returnTypeRef)
-                    process(namedFunction.contractDescription)
                 }
             }
         }
