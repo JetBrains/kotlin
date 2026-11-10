@@ -164,7 +164,7 @@ class ComposableDeclarationCheckerTests(
                 acceptSuspend @Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>
                 acceptComposableSuspend @Composable {}
                 acceptComposableSuspend(composableLambda)
-                acceptSuspend(<!COMPOSABLE_SUSPEND_FUN!><!ARGUMENT_TYPE_MISMATCH!>@Composable <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun()<!> { }<!>)
+                acceptSuspend(<!ARGUMENT_TYPE_MISMATCH!><!COMPOSABLE_SUSPEND_FUN!>@Composable <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun()<!> { }<!>)
             }
     """
         )

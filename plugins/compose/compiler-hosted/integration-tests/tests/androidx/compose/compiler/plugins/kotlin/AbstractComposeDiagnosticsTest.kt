@@ -18,11 +18,12 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.codeMetaInfo.CodeMetaInfoRenderer
 import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
+import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
-import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import java.io.File
@@ -37,9 +38,7 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
         additionalPaths: List<File> = emptyList(),
     ) {
         val clearText = clearTextFromDiagnosticMarkup(expectedText)
-        val clearCommonText = commonText?.let {
-            clearTextFromDiagnosticMarkup(commonText)
-        }
+        val clearCommonText = commonText?.let(::clearTextFromDiagnosticMarkup)
 
         val diagnosticsByFileName = analyze(
             listOf(SourceFile("test.kt", clearText)),
@@ -73,37 +72,12 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
             )
         }
 
-        val annotatedText = if (allDiagnostics.isNotEmpty()) {
-            val rangeToDiagnostics = allDiagnostics
-                .flatGroupBy { it.textRanges }
-                .mapValues { entry ->
-                    entry.value.map { it.factoryName }.toSet()
-                }
-            val startOffsetToGroups = rangeToDiagnostics.entries.groupBy(
-                keySelector = { it.key.startOffset },
-                valueTransform = { it.value }
-            )
-            val endOffsetsToGroups = rangeToDiagnostics.entries.groupBy(
-                keySelector = { it.key.endOffset },
-                valueTransform = { it.value }
-            )
-
-            buildString {
-                for ([i, c] in clearText.withIndex()) {
-                    endOffsetsToGroups[i]?.let { groups ->
-                        repeat(groups.size) { append("<!>") }
-                    }
-                    startOffsetToGroups[i]?.let { groups ->
-                        for (diagnostics in groups) {
-                            append("<!${diagnostics.joinToString(",")}!>")
-                        }
-                    }
-                    append(c)
-                }
+        val metaInfos = allDiagnostics.flatMap { diagnostic ->
+            diagnostic.textRanges.map { range ->
+                ParsedCodeMetaInfo(range.startOffset, range.endOffset, mutableListOf(), diagnostic.factoryName, description = null)
             }
-        } else {
-            clearText
         }
+        val annotatedText = CodeMetaInfoRenderer.renderTagsToText(metaInfos, clearText).toString()
 
         assertEquals(expectedText, annotatedText)
     }
