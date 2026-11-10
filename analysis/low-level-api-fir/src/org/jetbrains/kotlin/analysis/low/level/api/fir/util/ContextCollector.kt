@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Con
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
@@ -1106,6 +1107,11 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * Processes a getter that the property type is inferred from in the scope for contracts, which doesn't contain the backing field:
+     * [FirDeclarationsResolveTransformer][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer]
+     * resolves such a getter while the property type is still implicit, so without the backing field in scope.
+     */
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = withProcessor(propertyAccessor) {
         dumpContext(propertyAccessor, ContextKind.SELF)
 
@@ -1114,12 +1120,23 @@ private class ContextCollectorVisitor(
         onActive {
             val holder = getSessionHolder(propertyAccessor)
 
-            context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder = holder) {
+            context.withPropertyAccessor(
+                propertyAccessor.propertySymbol.fir,
+                propertyAccessor,
+                forContracts = propertyAccessor.providesPropertyType,
+                holder = holder,
+            ) {
                 dumpContext(propertyAccessor, ContextKind.BODY)
                 processChildren(propertyAccessor)
             }
         }
     }
+
+    /**
+     * Whether the type of the property is inferred from this accessor.
+     */
+    private val FirPropertyAccessor.providesPropertyType: Boolean
+        get() = isGetter && propertySymbol.fir.initializer == null && !propertySymbol.hasExplicitReturnType
 
     override fun visitValueParameter(valueParameter: FirValueParameter) = withProcessor(valueParameter) {
         dumpContext(valueParameter, ContextKind.SELF)
