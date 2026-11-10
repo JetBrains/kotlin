@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -25,7 +24,6 @@ internal class KaNonBoundToPsiErrorDiagnostic(
     override val diagnosticClass: KClass<*>
         get() = KaNonBoundToPsiErrorDiagnostic::class
 
-    @KaExperimentalApi
     override val isSuppressed: Boolean
         get() = withValidityAssertion { false }
 }

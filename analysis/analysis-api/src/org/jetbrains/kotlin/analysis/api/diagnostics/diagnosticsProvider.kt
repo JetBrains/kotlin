@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.diagnostics
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtElement
  * }
  * ```
  */
-@KaExperimentalApi
 context(session: KaSession)
 public fun KtElement.diagnostics(): KaDiagnostics {
     @OptIn(KaImplementationDetail::class)

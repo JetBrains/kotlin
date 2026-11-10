@@ -567,11 +567,29 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/dataflow/KaSma
 	public abstract fun isStable ()Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/diagnostics/DiagnosticsProviderKt {
+	public static final fun diagnostics (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnostics;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnostic : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun getDefaultMessage ()Ljava/lang/String;
 	public abstract fun getDiagnosticClass ()Lkotlin/reflect/KClass;
 	public abstract fun getFactoryName ()Ljava/lang/String;
 	public abstract fun getSeverity ()Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaSeverity;
+	public abstract fun isSuppressed ()Z
+}
+
+public final class org/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnosticCheckerKind {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnosticCheckerKind$Companion;
+	public final fun getName ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnosticCheckerKind$Companion {
+	public final fun getALL ()Ljava/util/Set;
+	public final fun getCOMMON ()Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnosticCheckerKind;
+	public final fun getEXPERIMENTAL ()Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnosticCheckerKind;
+	public final fun getEXTENDED ()Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnosticCheckerKind;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnosticKt {
@@ -582,6 +600,13 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/diagnostics/Ka
 	public abstract fun getDiagnosticClass ()Lkotlin/reflect/KClass;
 	public abstract fun getPsi ()Lcom/intellij/psi/PsiElement;
 	public abstract fun getTextRanges ()Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnostics : kotlin/sequences/Sequence, org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
+	public abstract fun directOnly (Z)Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnostics;
+	public abstract fun includingSuppressed (Z)Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnostics;
+	public abstract fun withCheckers (Ljava/util/Set;)Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnostics;
+	public abstract fun withCheckers ([Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnosticCheckerKind;)Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnostics;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/diagnostics/KaSeverity : java/lang/Enum {

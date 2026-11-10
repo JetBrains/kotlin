@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.diagnostics
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-
 /**
  * A kind of compiler checkers which report [diagnostics][KaDiagnostic].
  *
@@ -15,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
  *
  * All instances are provided by the [Companion], so instances can be compared by identity.
  */
-@KaExperimentalApi
 public class KaDiagnosticCheckerKind private constructor(
     /**
      * The name of the checker kind, such as `"COMMON"`. It is intended for debugging and logging.
@@ -24,7 +21,6 @@ public class KaDiagnosticCheckerKind private constructor(
 ) {
     override fun toString(): String = name
 
-    @KaExperimentalApi
     public companion object {
         /**
          * The compiler's common checkers. Their diagnostics are exactly the ones reported during compilation.
