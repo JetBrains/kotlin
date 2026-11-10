@@ -6,16 +6,26 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.file.CopySpec
+import org.gradle.api.file.FileCopyDetails
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import java.io.File
 
-internal fun CopySpec.remapJavaScriptSourceMapSourcePaths(destinationDir: File) {
-    eachFile {
-        if (it.name.endsWith(".js.map") || it.name.endsWith(".mjs.map")) {
-            it.filter(
+/**
+ * Rewrites relative paths in copied `.js.map`/`.mjs.map` files so they still resolve from the new location.
+ *
+ * [destinationDir] must match the spec's [CopySpec.into] directory.
+ */
+internal fun CopySpec.remapJavaScriptSourceMapSourcePaths(destinationDir: Provider<File>) {
+    fun FileCopyDetails.isJavaScriptSourceMapFile() =
+        name.endsWith(".js.map") || name.endsWith(".mjs.map")
+
+    eachFile { details ->
+        if (details.isJavaScriptSourceMapFile()) {
+            details.filter(
                 mapOf(
-                    RewriteSourceMapFilterReader::srcSourceRoot.name to it.file.parentFile,
-                    RewriteSourceMapFilterReader::targetSourceRoot.name to it.relativePath.getFile(destinationDir).parentFile
+                    RewriteSourceMapFilterReader::srcSourceRoot.name to details.file.parentFile,
+                    RewriteSourceMapFilterReader::targetSourceRoot.name to details.relativePath.getFile(destinationDir.get()).parentFile
                 ),
                 RewriteSourceMapFilterReader::class.java
             )

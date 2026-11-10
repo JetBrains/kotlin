@@ -31,26 +31,23 @@ class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         binary.name,
                         DISTRIBUTION_TASK_NAME
                     )
-                ) {
+                ) { copy ->
                     val destinationDir = binary.distribution.outputDirectory
 
                     if (subTarget is KotlinJsIrNpmBasedSubTarget && target.wasmTargetType != KotlinWasmTargetType.WASI) {
                         val npmProject = compilation.npmProject
-                        it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
+                        copy.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
                     }
 
                     if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-                        it.from(binary.linkSyncTask)
+                        copy.from(binary.linkSyncTask)
                     } else {
-                        it.from(binary.linkTask)
-                        it.from(project.tasks.named(compilation.processResourcesTaskName))
+                        copy.from(binary.linkTask)
+                        copy.from(project.tasks.named(compilation.processResourcesTaskName))
                     }
 
-                    it.into(destinationDir)
-
-                    destinationDir.asFile.map { destinationDirFile ->
-                        it.remapJavaScriptSourceMapSourcePaths(destinationDirFile)
-                    }
+                    copy.into(destinationDir)
+                    copy.remapJavaScriptSourceMapSourcePaths(destinationDir.asFile)
                 }
 
                 if (mode == KotlinJsBinaryMode.PRODUCTION) {
