@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.scripting.definitions
 
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtilRt
+import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -147,21 +148,30 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     )
 
     companion object {
-        fun getDefault(hostConfiguration: ScriptingHostConfiguration) = object : FromConfigurations(
-            hostConfiguration,
-            ScriptCompilationConfiguration {
-                hostConfiguration(hostConfiguration)
-                baseClass(KotlinType(ScriptWithArgs::class))
-                KotlinJars.scriptingCommonOrNull?.let { dependencies(JvmDependency(it)) }
-                ide {
-                    acceptedLocations(ScriptAcceptedLocation.Sources, ScriptAcceptedLocation.Tests)
-                }
-            },
-            ScriptEvaluationConfigurationFromHostConfiguration(
-                hostConfiguration
-            )
-        ) {
-            override val isDefault = true
-        }
+        fun getDefault(hostConfiguration: ScriptingHostConfiguration): FromConfigurations =
+            getDefault(hostConfiguration, KotlinJars.scriptingCommonOrNull)
+
+        /**
+         * [scriptingCommon] is the `kotlin-scripting-common` jar with the [ScriptWithArgs] base class; it becomes the dependency
+         * of the definition. Hosts that know the jar location better than [KotlinJars] (e.g. the CLI compiler, which can run
+         * as a native image, where the jar cannot be located from the loaded classes) should pass it explicitly.
+         */
+        fun getDefault(hostConfiguration: ScriptingHostConfiguration, scriptingCommon: File?): FromConfigurations =
+            object : FromConfigurations(
+                hostConfiguration,
+                ScriptCompilationConfiguration {
+                    hostConfiguration(hostConfiguration)
+                    baseClass(KotlinType(ScriptWithArgs::class))
+                    scriptingCommon?.let { dependencies(JvmDependency(it)) }
+                    ide {
+                        acceptedLocations(ScriptAcceptedLocation.Sources, ScriptAcceptedLocation.Tests)
+                    }
+                },
+                ScriptEvaluationConfigurationFromHostConfiguration(
+                    hostConfiguration
+                )
+            ) {
+                override val isDefault = true
+            }
     }
 }

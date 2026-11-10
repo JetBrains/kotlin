@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import com.intellij.core.CoreFileTypeRegistry
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.kotlinPaths
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -23,10 +24,12 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.isSnippetDefinition
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.*
+import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getRefinementEnvironment
+import kotlin.script.experimental.jvm.util.KotlinJars
 
 class ScriptingCompilerConfigurationExtension(
     val baseHostConfiguration: ScriptingHostConfiguration,
@@ -145,8 +148,15 @@ private fun selectReplSnippetBaseConfiguration(
 
     return selected?.compilationConfiguration
         ?: transportedConfiguration
-        ?: ScriptDefinition.getDefault(hostConfiguration).compilationConfiguration
+        ?: ScriptDefinition.getDefault(hostConfiguration, configuration.scriptingCommonJar()).compilationConfiguration
 }
+
+/**
+ * The `kotlin-scripting-common` jar for the default script definition. Prefers the compiler distribution, since in a native image
+ * [KotlinJars] cannot locate the jar from the loaded classes.
+ */
+private fun CompilerConfiguration.scriptingCommonJar(): File? =
+    kotlinPaths?.jar(KotlinPaths.Jar.ScriptingLib)?.takeIf { it.exists() } ?: KotlinJars.scriptingCommonOrNull
 
 internal fun configureScriptDefinitions(
     configuration: CompilerConfiguration,
@@ -173,7 +183,7 @@ internal fun configureScriptDefinitions(
     ) {
         configuration.add(
             ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-            ScriptDefinition.getDefault(hostConfiguration)
+            ScriptDefinition.getDefault(hostConfiguration, configuration.scriptingCommonJar())
         )
     }
 
