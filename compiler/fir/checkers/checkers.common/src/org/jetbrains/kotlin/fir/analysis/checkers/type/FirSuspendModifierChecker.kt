@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -30,8 +31,10 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
         if (typeRef !is FirUnresolvedTypeRef) return
 
         val suspendModifierSources = mutableListOf<KtSourceElement>()
-        typeRef.source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
-            suspendModifierSources += it
+        withSyntax {
+            typeRef.source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
+                    suspendModifierSources += it
+                }
         }
         if (suspendModifierSources.isEmpty()) return
 

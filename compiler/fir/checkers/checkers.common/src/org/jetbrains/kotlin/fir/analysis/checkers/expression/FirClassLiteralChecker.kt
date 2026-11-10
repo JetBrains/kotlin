@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
@@ -67,7 +68,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         //   where TYPE_ARGUMENT_LIST may have QUEST in it
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
-        val markedNullable = source.getChild(KotlinSyntaxTokenIds.QUEST, depth = 1) != null
+        val markedNullable = withSyntax { source.getChild(KotlinSyntaxTokenIds.QUEST, depth = 1) } != null
         val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType()
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLhsForCallableReference == true ||
@@ -149,7 +150,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         getClassSource: KtSourceElement,
     ) {
         if (argument is FirResolvedReifiedParameterReference) {
-            val argumentList = getClassSource.getChild(KotlinSyntaxNodeTypeIds.TYPE_ARGUMENT_LIST) ?: return
+            val argumentList = withSyntax { getClassSource.getChild(KotlinSyntaxNodeTypeIds.TYPE_ARGUMENT_LIST) } ?: return
             val diagnostic = if (!areUselessTypeArgumentsForbidden) {
                 FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING
             } else {

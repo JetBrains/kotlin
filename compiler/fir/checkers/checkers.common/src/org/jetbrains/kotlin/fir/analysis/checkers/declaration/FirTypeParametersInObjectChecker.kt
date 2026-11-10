@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -25,7 +26,7 @@ object FirTypeParametersInObjectChecker : FirClassChecker(MppCheckerKind.Common)
 
         if (!isNamedObject && !isAnonymousObject) return
 
-        if (declaration.source?.getChild(KotlinSyntaxNodeTypeIds.TYPE_PARAMETER_LIST, depth = 1) != null) {
+        if (withSyntax { declaration.source?.getChild(KotlinSyntaxNodeTypeIds.TYPE_PARAMETER_LIST, depth = 1) } != null) {
             reporter.reportOn(declaration.source, FirErrors.TYPE_PARAMETERS_IN_OBJECT)
         }
     }

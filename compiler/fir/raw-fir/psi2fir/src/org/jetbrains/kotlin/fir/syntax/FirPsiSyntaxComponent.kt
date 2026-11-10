@@ -6,15 +6,20 @@
 package org.jetbrains.kotlin.fir.syntax
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
+import org.jetbrains.kotlin.syntax.NO_ID
+import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.toKtPsiSourceElement
 
 @NoMutableState
@@ -24,6 +29,22 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
 
     override fun KtSourceElement.unwrap(): KtPsiSourceElement {
         return this as? KtPsiSourceElement ?: unwrapError(this@unwrap)
+    }
+
+    @OptIn(KtImplementationDetail::class)
+    override fun KtSourceElement.forEachChildMatching(
+        depth: Int,
+        reverse: Boolean,
+        isTargetType: (SyntaxId) -> Boolean,
+        processChild: (KtSourceElement) -> Boolean,
+    ) {
+        forEachChildMatching(
+            unwrap().psi, depth, reverse, isTargetType,
+            getSyntaxId = { it.elementType?.syntaxId() ?: NO_ID },
+            getChildren = { it.allChildren.toList() },
+        ) {
+            processChild(it.toKtPsiSourceElement())
+        }
     }
 
     override fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement> {

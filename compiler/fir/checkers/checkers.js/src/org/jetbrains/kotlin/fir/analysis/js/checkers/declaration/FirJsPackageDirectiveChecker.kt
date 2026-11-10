@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -33,14 +34,16 @@ object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
         if (declaration.packageFqName.isRoot) return
         if (LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping.isEnabled()) return
 
-        declaration.packageDirective.source?.forEachChildOfType(REFERENCE_EXPRESSION_SET, depth = -1) {
-            val name = KtPsiUtil.unquoteIdentifier(it.text.toString())
-            if (sanitizeName(name) != name) {
-                reporter.reportOn(
-                    it,
-                    FirErrors.INVALID_CHARACTERS,
-                    "$name contains illegal characters"
-                )
+        withSyntax {
+            declaration.packageDirective.source?.forEachChildOfType(REFERENCE_EXPRESSION_SET, depth = -1) {
+                val name = KtPsiUtil.unquoteIdentifier(it.text.toString())
+                if (sanitizeName(name) != name) {
+                    reporter.reportOn(
+                        it,
+                        FirErrors.INVALID_CHARACTERS,
+                        "$name contains illegal characters"
+                    )
+                }
             }
         }
     }

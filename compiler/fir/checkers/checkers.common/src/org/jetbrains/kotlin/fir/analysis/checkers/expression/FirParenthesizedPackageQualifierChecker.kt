@@ -73,7 +73,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
          */
         context(context: CheckerContext, reporter: DiagnosticReporter)
         private fun checkNestedPackagesParenthesized(source: KtSourceElement) {
-            val sourceOfParenthesized = source.getChild(KotlinSyntaxIdSets.UNWRAPPABLE_TOKEN_TYPES)
+            val sourceOfParenthesized = withSyntax { source.getChild(KotlinSyntaxIdSets.UNWRAPPABLE_TOKEN_TYPES) }
             if (sourceOfParenthesized != null) {
                 reportParenthesizedPackageQualifier(sourceOfParenthesized)
             }
@@ -127,7 +127,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
          */
         context(context: CheckerContext, reporter: DiagnosticReporter)
         private fun checkNestedPackages(source: KtSourceElement) {
-            val parenthesizedOrTypeArgumentList = source.getChild(UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST) ?: return
+            val parenthesizedOrTypeArgumentList = withSyntax { source.getChild(UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST) } ?: return
             if (parenthesizedOrTypeArgumentList.syntaxId == KotlinSyntaxNodeTypeIds.TYPE_ARGUMENT_LIST) {
                 reporter.reportOn(
                     parenthesizedOrTypeArgumentList,

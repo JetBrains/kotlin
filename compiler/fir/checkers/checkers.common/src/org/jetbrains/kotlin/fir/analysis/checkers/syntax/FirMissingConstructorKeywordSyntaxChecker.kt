@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.syntax.syntaxIdSetOf
@@ -45,11 +46,13 @@ object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<F
         if (source.kind !is KtRealSourceElementKind) return
         var hasModifiers = false
         var hasConstructorKeyword = false
-        source.forEachChildOfType(importantNodeTypes, depth = 1) {
-            if (it.syntaxId == KotlinSyntaxTokenIds.CONSTRUCTOR_KEYWORD) {
-                hasConstructorKeyword = true
-            } else {
-                hasModifiers = true
+        withSyntax {
+            source.forEachChildOfType(importantNodeTypes, depth = 1) {
+                if (it.syntaxId == KotlinSyntaxTokenIds.CONSTRUCTOR_KEYWORD) {
+                    hasConstructorKeyword = true
+                } else {
+                    hasModifiers = true
+                }
             }
         }
         if (hasModifiers && !hasConstructorKeyword) {
