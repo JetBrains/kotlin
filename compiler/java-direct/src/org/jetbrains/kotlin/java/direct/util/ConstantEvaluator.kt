@@ -136,7 +136,7 @@ private fun resolveSingleStaticImport(name: String, resolutionContext: JavaResol
  * annotation arguments and annotation-method default values (JLS 9.6.1 / 9.7).
  *
  * @param containingClass the class the expression is written in, if any; simple names are looked up
- *   among its fields first.
+ *   in it and its enclosing classes before imports.
  */
 class ConstantEvaluator private constructor(
     private val tree: LightSyntaxTree,
