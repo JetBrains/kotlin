@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:cli"))
     implementation(project(":compiler:cli-metadata"))
+    implementation(project(":compiler:psi:parser"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":core:descriptors"))
