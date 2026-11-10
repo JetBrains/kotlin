@@ -81,7 +81,7 @@ internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, Kotl
     val frontendOutputs = setupModuleDescriptor(context)
     setupContainerAndDumpObjcHeader(context, frontendOutputs)
     val moduleDescriptor = frontendOutputs.moduleDescriptor
-    context.config.configuration.sourcesModules = moduleDescriptor.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
+    context.config.setSourcesModules(moduleDescriptor)
 
     K1FrontendPhaseOutput(moduleDescriptor) {
         val bindingContext = frontendOutputs.trace.bindingContext as CleanableBindingContext
@@ -265,4 +265,9 @@ object NativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     private object NativePlatformConfigurator : PlatformConfiguratorBase() {
         override fun configureModuleComponents(container: StorageComponentContainer) {}
     }
+}
+
+/** The modules compiled from sources, for the tests processing: [moduleDescriptor] and the included libraries. */
+internal fun NativeSecondStageCompilationConfig.setSourcesModules(moduleDescriptor: ModuleDescriptor) {
+    configuration.sourcesModules = moduleDescriptor.getIncludedLibraryDescriptors(this).toSet() + moduleDescriptor
 }

@@ -150,8 +150,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val inProcessLlvmTools by booleanOption()
 
     /**
-     * Prototype: compile the incremental rebuild of the dirty files of a library (facts-based IC) in the same IR as the
-     * final binary, instead of in a separate compilation with its own IR linking.
+     * When `true`, the last incremental cache build of a compilation (the dirty files of one or several libraries)
+     * is compiled in the same IR as the final binary, instead of in a separate compilation linking the IR of all the libraries again.
      */
     val mergedIcCacheBuild by booleanOption()
 

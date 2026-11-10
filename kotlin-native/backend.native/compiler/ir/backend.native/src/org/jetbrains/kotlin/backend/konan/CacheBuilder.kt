@@ -56,9 +56,9 @@ internal val CACHE_BATCH = CompilerConfigurationKey.create<Map<String, Fingerpri
 internal val CACHE_BATCH_FILES = CompilerConfigurationKey.create<Map<String, List<String>>>("per-file cache batch files")
 
 // TODO: deleteRecursively might throw an exception!
-class CacheBuilder(
+class CacheBuilder internal constructor(
         val config: NativeSecondStageCompilationConfig,
-        val compilationSpawner: CompilationSpawner
+        private val cacheCompilations: CacheCompilations,
 ) {
     private val configuration = config.configuration
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!.map { Path(Path(it).canonicalPathString()) }
@@ -604,7 +604,7 @@ class CacheBuilder(
             configuration.reportLog(library.canonicalPath.pathString)
             filesToCache.getValue(library).forEach { configuration.reportLog("    $it") }
         }
-        trySpawningCacheBuild(
+        buildCaches(
                 libraries = batch,
                 dependencies = dependencies,
                 dependencyCaches = dependencies.map { cacheRootDirectories.getValue(it) },
@@ -754,7 +754,7 @@ class CacheBuilder(
                         "-Xcache-directory=${libraryCacheDirectory.absolutePathString()}\n"
         )
         // TODO: Run monolithic cache builds in parallel.
-        trySpawningCacheBuild(
+        buildCaches(
                 listOf(library),
                 dependencies,
                 dependencyCaches,
@@ -785,12 +785,12 @@ class CacheBuilder(
     }
 
     /**
-     * Spawns a compilation building the caches of [libraries] (located at [outputs]) in [cacheDirectory]
-     * against the [dependencies] cached at [dependencyCaches].
+     * Runs a compilation building the caches of [libraries] (located at [outputs]) in [cacheDirectory]
+     * against the [dependencies] cached at [dependencyCaches], see [CacheCompilations].
      * [setupConfiguration] adds the options specific to the particular build.
      */
     @OptIn(ExperimentalPathApi::class)
-    private fun trySpawningCacheBuild(
+    private fun buildCaches(
             libraries: List<KotlinLibrary>,
             dependencies: List<KotlinLibrary>,
             dependencyCaches: List<String>,
@@ -799,57 +799,59 @@ class CacheBuilder(
             outputs: List<Path>,
             setupConfiguration: CompilerConfiguration.() -> Unit,
     ) {
-        try {
-            compilationSpawner.spawn(config.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
-                config.configuration.konanHome?.let { konanHome = it }
-                setupCommonOptionsForCaches(config)
-                konanProducedArtifactKind = CompilerOutputKind.STATIC_CACHE
-                // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
-                // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
-                checkDependencies = true
-                konanNoDefaultLibs = true
-                konanNoStdlib = true
-                konanLibraries = (dependencies + libraries).map { it.canonicalPath.pathString }
-                cachedLibraries = dependencies.zip(dependencyCaches).associate { [dependency, dependencyCache] ->
-                    dependency.canonicalPath.pathString to dependencyCache
-                }
-                cacheDirectories = listOf(cacheDirectory.absolutePathString())
-                this.makePerFileCache = makePerFileCache
-                serializedKlibDag = config.klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
-                setupConfiguration()
-            }
-        } catch (t: Throwable) {
-            outputs.forEach {
-                try {
-                    it.deleteRecursively()
-                } catch (_: Throwable) {
-                    // Nothing to do.
-                }
-            }
-            val message = (t as? CompilationErrorException)?.message
-                    ?: run {
-                        val workaround = when {
-                            // The stdlib per-file cache is a system cache, not part of incremental compilation.
-                            makePerFileCache && libraries.singleOrNull()?.isNativeStdlib == true ->
-                                "stdlib per-file cache (-Xbinary=perFileCacheForStdlib=false)"
-                            makePerFileCache ->
-                                "incremental compilation (kotlin.incremental.native=false)"
-                            else ->
-                                "compiler caches (https://kotl.in/disable-native-cache)"
-                        }
-                        val cacheDescription = libraries.singleOrNull()?.let { "cache for ${it.path}" }
-                                ?: "batched cache for [${libraries.joinToString { it.uniqueName }}]"
-                        @Suppress("IncorrectFormatting") val extraUserInfo =
-                                """
-                                    Failed to build $cacheDescription.
-                                    As a workaround, please try to disable $workaround
-
-                                    Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
-                                    """.trimIndent()
-                        "$extraUserInfo\n\n${t.message}\n\n${t.stackTraceToString()}"
+        val build = CacheBuild(
+                setupConfiguration = {
+                    config.configuration.konanHome?.let { konanHome = it }
+                    setupCommonOptionsForCaches(config)
+                    konanProducedArtifactKind = CompilerOutputKind.STATIC_CACHE
+                    // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
+                    // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
+                    checkDependencies = true
+                    konanNoDefaultLibs = true
+                    konanNoStdlib = true
+                    konanLibraries = (dependencies + libraries).map { it.canonicalPath.pathString }
+                    cachedLibraries = dependencies.zip(dependencyCaches).associate { [dependency, dependencyCache] ->
+                        dependency.canonicalPath.pathString to dependencyCache
                     }
-            configuration.reportCompilationErrorAndThrow(message)
-        }
+                    cacheDirectories = listOf(cacheDirectory.absolutePathString())
+                    this.makePerFileCache = makePerFileCache
+                    serializedKlibDag = config.klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
+                    setupConfiguration()
+                },
+                onFailure = { t ->
+                    outputs.forEach {
+                        try {
+                            it.deleteRecursively()
+                        } catch (_: Throwable) {
+                            // Nothing to do.
+                        }
+                    }
+                    val message = (t as? CompilationErrorException)?.message
+                            ?: run {
+                                val workaround = when {
+                                    // The stdlib per-file cache is a system cache, not part of incremental compilation.
+                                    makePerFileCache && libraries.singleOrNull()?.isNativeStdlib == true ->
+                                        "stdlib per-file cache (-Xbinary=perFileCacheForStdlib=false)"
+                                    makePerFileCache ->
+                                        "incremental compilation (kotlin.incremental.native=false)"
+                                    else ->
+                                        "compiler caches (https://kotl.in/disable-native-cache)"
+                                }
+                                val cacheDescription = libraries.singleOrNull()?.let { "cache for ${it.path}" }
+                                        ?: "batched cache for [${libraries.joinToString { it.uniqueName }}]"
+                                @Suppress("IncorrectFormatting") val extraUserInfo =
+                                        """
+                                            Failed to build $cacheDescription.
+                                            As a workaround, please try to disable $workaround
+
+                                            Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
+                                            """.trimIndent()
+                                "$extraUserInfo\n\n${t.message}\n\n${t.stackTraceToString()}"
+                            }
+                    configuration.reportCompilationErrorAndThrow(message)
+                },
+        )
+        cacheCompilations.run(build, canBeMerged = makePerFileCache && libraries.all { it.isSubjectOfIC })
     }
 
     private fun recordRebuiltCacheFiles(library: KotlinLibrary, makePerFileCache: Boolean, filesToCache: List<String>): Unit = when {

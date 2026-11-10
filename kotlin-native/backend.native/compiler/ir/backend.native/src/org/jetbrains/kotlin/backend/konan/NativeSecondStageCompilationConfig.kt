@@ -9,6 +9,7 @@ import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
 import llvm.LLVMRelocMode
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
+import org.jetbrains.kotlin.backend.common.selectLibrariesByPaths
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Path
@@ -464,7 +466,19 @@ class NativeSecondStageCompilationConfig(
 
     internal val produceStaticFramework get() = configuration.staticFramework
 
-    override val loadedKlibs: LoadedNativeKlibs = sharesIrWith?.loadedKlibs ?: loadNativeKlibs(configuration, target)
+    override val loadedKlibs: LoadedNativeKlibs = sharesIrWith?.loadedKlibs?.let(::withOwnRoles) ?: loadNativeKlibs(configuration, target)
+
+    /** The [libraries] of another compilation, with the roles (friends, exported, included...) [configuration] gives them. */
+    private fun withOwnRoles(libraries: LoadedNativeKlibs): LoadedNativeKlibs {
+        val loaded = KlibLoaderResult(libraries.all, problematicLibraries = emptyList())
+        return LoadedNativeKlibs(
+                all = libraries.all,
+                friends = loaded.selectLibrariesByPaths(configuration.konanFriendLibraries),
+                exported = loaded.selectLibrariesByPaths(configuration.exportedLibraries),
+                included = loaded.selectLibrariesByPaths(configuration.konanIncludedLibraries),
+                toAddToCache = loaded.selectLibrariesByPaths(listOfNotNull(configuration.konanLibraryToAddToCache)).firstOrNull(),
+        )
+    }
     internal val klibDag: KlibDAG = sharesIrWith?.klibDag
             ?: configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
             ?: KlibDAGBuilder(Parameters(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }).build()
@@ -726,8 +740,8 @@ class NativeSecondStageCompilationConfig(
         get() = configuration.get(BinaryOptions.inProcessLlvmTools) ?: true
 
     /**
-     * Whether the incremental rebuild of the dirty files of a library is compiled in the same IR as the final binary,
-     * instead of in a spawned compilation, see [org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver]. A prototype, off by default.
+     * Whether the last incremental cache build is compiled in the same IR as the final binary, instead of in a spawned compilation,
+     * see [CacheCompilations] and [org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver].
      */
     internal val mergesIcCacheBuild: Boolean
         get() = configuration.get(BinaryOptions.mergedIcCacheBuild) ?: false

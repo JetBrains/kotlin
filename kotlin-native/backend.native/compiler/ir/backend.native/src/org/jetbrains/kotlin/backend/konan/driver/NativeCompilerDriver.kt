@@ -33,10 +33,14 @@ import kotlin.io.path.Path
 import kotlin.io.path.readLines
 
 /**
- * A cache build compiled in the same IR as the output, before it: see [NativeCompilerDriver].
+ * The cache [build] of [config], compiled in the same IR as the output, before it: see [NativeCompilerDriver].
  * [onCachesBuilt] runs when the caches are built, before the output is compiled with them.
  */
-internal class CacheBuildInSameIr(val config: NativeSecondStageCompilationConfig, val onCachesBuilt: () -> Unit)
+internal class CacheBuildInSameIr(
+        val config: NativeSecondStageCompilationConfig,
+        val build: CacheBuild,
+        val onCachesBuilt: () -> Unit,
+)
 
 /**
  * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
@@ -203,14 +207,24 @@ internal class NativeCompilerDriver(
             produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T,
     ): Pair<LinkKlibsOutput, T> {
         val cacheBuild = cacheBuild
-        val [linkKlibsOutput, additionalOutput] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+        fun link() = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             linkKlibs(frontendOutput, cacheBuild?.config ?: context.config, produceAdditionalOutput)
         }
-        if (cacheBuild == null) return linkKlibsOutput to additionalOutput
+        if (cacheBuild == null) return link()
 
-        val cacheBackendContext = createBackendContext(cacheBuild.config, frontendOutput.moduleDescriptor, linkKlibsOutput)
-        newEngine<NativeBackendPhaseContext, _>(BasicNativeBackendPhaseContext(cacheBuild.config)) {
-            it.runBackend(cacheBackendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
+        // A failure here is one of the cache build, like in a spawned compilation; the output is compiled afterwards.
+        val [linkKlibsOutput, additionalOutput] = try {
+            // What the frontend would have set up in the cache compilation.
+            cacheBuild.config.setSourcesModules(frontendOutput.moduleDescriptor)
+            val linked = link()
+            val cacheBackendContext = createBackendContext(cacheBuild.config, frontendOutput.moduleDescriptor, linked.first)
+            newEngine<NativeBackendPhaseContext, _>(BasicNativeBackendPhaseContext(cacheBuild.config)) {
+                it.runBackend(cacheBackendContext, linked.first.irModulesToCompile, performanceManager)
+            }
+            cacheBuild.build.onBuilt()
+            linked
+        } catch (t: Throwable) {
+            cacheBuild.build.onFailure(t)
         }
         context.config.reloadCacheSupport()
         cacheBuild.onCachesBuilt()

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
@@ -54,6 +55,40 @@ interface CompilationSpawner {
     )
 }
 
+/** A per-file cache of a whole library is built file by file: lists all the files of the library as the files to cache. */
+private fun setupFilesOfPerFileCache(configuration: CompilerConfiguration) {
+    val fileNames = configuration.konanLibraryToAddToCache?.let { libPath ->
+        val filesToCache = configuration.filesToCache
+        when {
+            !filesToCache.isEmpty() -> filesToCache
+            configuration.makePerFileCache -> {
+                val result = KlibLoader {
+                    libraryPaths(libPath)
+                    minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, FIRST_SUPPORTED_COMPILER_VERSION)
+                    maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
+                    configuration.zipFileSystemAccessor?.let(::zipFileSystemAccessor)
+                }.load()
+                result.reportLoadingProblemsIfAny(configuration, allAsErrors = true)
+
+                val lib = result.librariesStdlibFirst.singleOrNull() ?: return@let null
+
+                val ir = lib.irOrFail
+                (0 until ir.irFileCount).map { fileIndex ->
+                    val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, fileIndex))
+                    val proto = IrFile.parseFrom(ir.irFile(fileIndex).codedInputStream, ExtensionRegistryLite.getEmptyRegistry())
+                    val fileEntry = fileReader.fileEntry(proto)
+                    fileReader.deserializeFileEntryName(fileEntry)
+                }
+            }
+            else -> null
+        }
+    }
+    if (fileNames != null) {
+        configuration.makePerFileCache = true
+        configuration.filesToCache = fileNames
+    }
+}
+
 class KonanDriver(
         val project: Project,
         val environment: KotlinCoreEnvironment,
@@ -72,36 +107,7 @@ class KonanDriver(
             )
         }
 
-        val fileNames = configuration.konanLibraryToAddToCache?.let { libPath ->
-            val filesToCache = configuration.filesToCache
-            when {
-                !filesToCache.isEmpty() -> filesToCache
-                configuration.makePerFileCache -> {
-                    val result = KlibLoader {
-                        libraryPaths(libPath)
-                        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, FIRST_SUPPORTED_COMPILER_VERSION)
-                        maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
-                        configuration.zipFileSystemAccessor?.let(::zipFileSystemAccessor)
-                    }.load()
-                    result.reportLoadingProblemsIfAny(configuration, allAsErrors = true)
-
-                    val lib = result.librariesStdlibFirst.singleOrNull() ?: return@let null
-
-                    val ir = lib.irOrFail
-                    (0 until ir.irFileCount).map { fileIndex ->
-                        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, fileIndex))
-                        val proto = IrFile.parseFrom(ir.irFile(fileIndex).codedInputStream, ExtensionRegistryLite.getEmptyRegistry())
-                        val fileEntry = fileReader.fileEntry(proto)
-                        fileReader.deserializeFileEntryName(fileEntry)
-                    }
-                }
-                else -> null
-            }
-        }
-        if (fileNames != null) {
-            configuration.makePerFileCache = true
-            configuration.filesToCache = fileNames
-        }
+        setupFilesOfPerFileCache(configuration)
 
         val config = NativeSecondStageCompilationConfig(project, configuration)
 
@@ -144,7 +150,8 @@ class KonanDriver(
             notifyPhaseFinished(PhaseType.Initialization)
         }
 
-        val cacheBuilder = CacheBuilder(config, compilationSpawner)
+        val cacheCompilations = CacheCompilations(config, compilationSpawner)
+        val cacheBuilder = CacheBuilder(config, cacheCompilations)
         if (cacheBuilder.needToBuild()) {
             // Build missing caches.
             cacheBuilder.build()
@@ -155,17 +162,19 @@ class KonanDriver(
         }
 
         // The caches of the user libraries depend on the ones built by [cacheBuilder] above.
-        val factsCacheBuilder = CacheBuilderFactBased(config, compilationSpawner, cacheBuilder)
+        val factsCacheBuilder = CacheBuilderFactBased(config, cacheCompilations, cacheBuilder)
         if (factsCacheBuilder.needToBuild) {
             factsCacheBuilder.build()
             config.reloadCacheSupport()
         }
-        val deferredCacheBuild = factsCacheBuilder.takeDeferredBuild()
+        val deferredCacheBuild = cacheCompilations.takeDeferredBuild()
 
         if (cacheBuilder.needToBuild() || factsCacheBuilder.needToBuild) {
             // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
-            if (!hasCompilerInput && config.librariesToCache.isEmpty())
+            if (!hasCompilerInput && config.librariesToCache.isEmpty()) {
+                deferredCacheBuild?.let(cacheCompilations::spawn)
                 return
+            }
         }
 
         // Checks the caches the output is compiled with, so after all of them are built.
@@ -188,12 +197,20 @@ class KonanDriver(
             prepareCompilationWithCaches()
             NativeCompilerDriver(performanceManager).run(config, environment)
         } else {
-            deferredCacheBuild.compile { arguments, setupConfiguration ->
-                compilationSpawner.withSpawnedConfiguration(arguments, setupConfiguration) { cacheConfiguration ->
+            configuration.reportLog("COMPILING THE LAST CACHE BUILD WITH THE OUTPUT")
+            var isConfigured = false
+            try {
+                compilationSpawner.withSpawnedConfiguration(config.additionalCacheFlags, deferredCacheBuild.setupConfiguration) { cacheConfiguration ->
+                    setupFilesOfPerFileCache(cacheConfiguration)
                     val cacheConfig = NativeSecondStageCompilationConfig(project, cacheConfiguration, sharesIrWith = config)
-                    val cacheBuild = CacheBuildInSameIr(cacheConfig, onCachesBuilt = ::prepareCompilationWithCaches)
+                    val cacheBuild = CacheBuildInSameIr(cacheConfig, deferredCacheBuild, onCachesBuilt = ::prepareCompilationWithCaches)
+                    isConfigured = true
                     NativeCompilerDriver(performanceManager, cacheBuild).run(config, environment)
                 }
+            } catch (t: Throwable) {
+                // Like in a spawned compilation, failing to configure the cache build is a failure of the cache build.
+                if (isConfigured) throw t
+                deferredCacheBuild.onFailure(t)
             }
         }
     }
