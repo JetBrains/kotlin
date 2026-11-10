@@ -28,11 +28,9 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
-import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirPsiBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase
-import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractJvmIrTextTest
 
 open class AbstractFirJvmLightTreePluginBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
@@ -46,14 +44,6 @@ open class AbstractFirJvmLightTreePluginBlackBoxCodegenTestWithoutPlugins : Abst
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.commonWithoutPluginConfiguration()
-    }
-}
-
-@FirPsiCodegenTest
-open class AbstractFirJvmPsiPluginBlackBoxCodegenTest : AbstractFirPsiBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.commonFirWithPluginFrontendConfiguration()
     }
 }
 
@@ -126,7 +116,7 @@ open class AbstractLightTreeJsPluginIrTextTestWithoutPlugins : AbstractLightTree
     }
 }
 
-abstract class AbstractFirPsiPluginDiagnosticTest : AbstractPhasedJvmDiagnosticPsiTest() {
+abstract class AbstractFirLightTreePluginDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

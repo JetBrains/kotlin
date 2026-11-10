@@ -43,6 +43,3 @@ abstract class AbstractSteppingTestBase(val parser: FirParser) : AbstractKotlinC
 }
 
 open class AbstractFirLightTreeSteppingTest : AbstractSteppingTestBase(FirParser.LightTree)
-
-@FirPsiCodegenTest
-open class AbstractFirPsiSteppingTest : AbstractSteppingTestBase(FirParser.Psi)

@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 // ------------------------ diagnostics ------------------------
 
-abstract class AbstractFirPsiAssignmentPluginDiagnosticTest : AbstractFirPsiDiagnosticTest() {
+abstract class AbstractFirPsiAssignmentPluginDiagnosticTest : AbstractFirLightTreeDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurePlugin()

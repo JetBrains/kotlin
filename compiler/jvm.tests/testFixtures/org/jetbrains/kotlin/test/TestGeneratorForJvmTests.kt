@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrSourceRangesTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrTextTest
-import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrSourceRangesTest
-import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrTextTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {
@@ -56,7 +54,7 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirPsiForeignAnnotationsSourceJavaTest>(
+            testClass<AbstractFirLightTreeForeignAnnotationsSourceJavaTest>(
                 suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated"
             ) {
                 model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
@@ -64,7 +62,7 @@ fun main(args: Array<String>) {
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractFirPsiForeignAnnotationsCompiledJavaTest>(
+            testClass<AbstractFirLightTreeForeignAnnotationsCompiledJavaTest>(
                 suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated"
             ) {
                 model(
@@ -76,7 +74,7 @@ fun main(args: Array<String>) {
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractFirPsiForeignAnnotationsCompiledJavaWithPsiClassReadingTest>(
+            testClass<AbstractFirLightTreeForeignAnnotationsCompiledJavaWithPsiClassReadingTest>(
                 suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated"
             ) {
                 model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
@@ -127,9 +125,6 @@ fun main(args: Array<String>) {
             testClass<AbstractPhasedJvmDiagnosticLightTreeTest> {
                 phasedModel(allowKts = false)
             }
-            testClass<AbstractPhasedJvmDiagnosticPsiTest> {
-                phasedModel(allowKts = true)
-            }
         }
 
         testGroup(testRoot, "compiler/testData/diagnostics") {
@@ -143,19 +138,12 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testRoot, "compiler/testData/diagnostics/tests/contextSensitiveResolutionUsingExpectedType") {
-            testClass<AbstractPhasedJvmDiagnosticPsiWithContextSensitiveEnabledTest> {
+            testClass<AbstractPhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTest> {
                 model("ideHint", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
         }
 
         testGroup(testRoot, testDataRoot = "compiler/tests-spec/testData") {
-            testClass<AbstractFirPsiDiagnosticTestSpec> {
-                model(
-                    "diagnostics",
-                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
-                )
-            }
             testClass<AbstractFirLightTreeDiagnosticTestSpec> {
                 model(
                     "diagnostics",
@@ -181,10 +169,6 @@ fun main(args: Array<String>) {
                 model("boxJvm")
             }
 
-            testClass<AbstractFirPsiBlackBoxCodegenTest> {
-                model("box")
-                model("boxJvm")
-            }
             testClass<AbstractJvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest> {
                 model("box/multiplatform/k2")
                 model("boxJvm/multiplatform/k2")
@@ -206,24 +190,12 @@ fun main(args: Array<String>) {
                 model("codegen/boxModernJdk")
             }
 
-            testClass<AbstractFirPsiBlackBoxCodegenTest>("FirPsiBlackBoxModernJdkCodegenTestGenerated") {
-                model("codegen/boxModernJdk")
-            }
-
-            testClass<AbstractFirPsiBlackBoxInlineCodegenTest> {
-                model("codegen/boxInline")
-            }
-
             testClass<AbstractFirLightTreeBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
                 model("klib/syntheticAccessors")
             }
 
             testClass<AbstractFirLightTreeSteppingTest> {
-                model("debug/stepping")
-            }
-
-            testClass<AbstractFirPsiSteppingTest> {
                 model("debug/stepping")
             }
 
@@ -235,20 +207,8 @@ fun main(args: Array<String>) {
                 model("checkLocalVariablesTable")
             }
 
-            testClass<AbstractFirPsiLocalVariableTest> {
-                model("debug/localVariables")
-            }
-
-            testClass<AbstractFirPsiBytecodeListingTest> {
-                model("codegen/bytecodeListing")
-            }
-
             testClass<AbstractFirLightTreeBytecodeListingTest> {
                 model("codegen/bytecodeListing")
-            }
-
-            testClass<AbstractFirPsiAsmLikeInstructionListingTest> {
-                model("codegen/asmLike")
             }
 
             testClass<AbstractFirLightTreeAsmLikeInstructionListingTest> {
@@ -272,26 +232,11 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirPsiJvmIrTextTest> {
-                model(
-                    "ir/irText",
-                    excludeDirs = listOf("declarations/multiplatform/k1")
-                )
-            }
-
             testClass<AbstractFirLightTreeJvmIrSourceRangesTest> {
                 model("ir/sourceRanges")
             }
 
-            testClass<AbstractFirPsiJvmIrSourceRangesTest> {
-                model("ir/sourceRanges")
-            }
-
             testClass<AbstractFirLightTreeBytecodeTextTest> {
-                model("codegen/bytecodeText")
-            }
-
-            testClass<AbstractFirPsiBytecodeTextTest> {
                 model("codegen/bytecodeText")
             }
         }

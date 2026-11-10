@@ -38,6 +38,3 @@ abstract class AbstractBytecodeTextTestBase(val parser: FirParser) : AbstractKot
 
 
 open class AbstractFirLightTreeBytecodeTextTest : AbstractBytecodeTextTestBase(FirParser.LightTree)
-
-@FirPsiCodegenTest
-open class AbstractFirPsiBytecodeTextTest : AbstractBytecodeTextTestBase(FirParser.Psi)

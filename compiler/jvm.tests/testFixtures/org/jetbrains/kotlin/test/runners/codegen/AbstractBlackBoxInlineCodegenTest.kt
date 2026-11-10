@@ -14,11 +14,3 @@ open class AbstractFirLightTreeBlackBoxInlineCodegenTest : AbstractFirLightTreeB
         builder.useInlineHandlers()
     }
 }
-
-@FirPsiCodegenTest
-open class AbstractFirPsiBlackBoxInlineCodegenTest : AbstractFirPsiBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useInlineHandlers()
-    }
-}

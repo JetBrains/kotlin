@@ -22,7 +22,6 @@ abstract class AbstractFirDiagnosticTestSpecBase(parser: FirParser) : AbstractFi
     }
 }
 
-abstract class AbstractFirPsiDiagnosticTestSpec : AbstractFirDiagnosticTestSpecBase(FirParser.Psi)
 abstract class AbstractFirLightTreeDiagnosticTestSpec : AbstractFirDiagnosticTestSpecBase(FirParser.LightTree)
 
 fun TestConfigurationBuilder.baseFirSpecDiagnosticTestConfiguration() {

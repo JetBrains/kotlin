@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/plugin-sandbox/testData") {
-            testClass<AbstractFirPsiPluginDiagnosticTest> {
+            testClass<AbstractFirLightTreePluginDiagnosticTest> {
                 model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
                 model("intentionallyEmpty")
                 model("intentionallyNonExistent")
@@ -46,10 +46,6 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTestWithoutPlugins> {
-                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractFirJvmPsiPluginBlackBoxCodegenTest> {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 

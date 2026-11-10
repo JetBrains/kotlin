@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/sam-with-receiver/testData") {
-            testClass<AbstractFirPsiSamWithReceiverDiagnosticTest> {
+            testClass<AbstractFirLightTreeSamWithReceiverDiagnosticTest> {
                 model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver> {

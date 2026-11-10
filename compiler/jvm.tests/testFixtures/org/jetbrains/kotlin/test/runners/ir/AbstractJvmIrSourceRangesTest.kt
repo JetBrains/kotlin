@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SOURCE_RANGES_IR
-import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 
 abstract class AbstractJvmIrSourceRangesTest(parser: FirParser) : AbstractJvmIrTextTest(parser) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -26,6 +25,3 @@ abstract class AbstractJvmIrSourceRangesTest(parser: FirParser) : AbstractJvmIrT
 }
 
 open class AbstractFirLightTreeJvmIrSourceRangesTest : AbstractJvmIrSourceRangesTest(FirParser.LightTree)
-
-@FirPsiCodegenTest
-open class AbstractFirPsiJvmIrSourceRangesTest : AbstractJvmIrSourceRangesTest(FirParser.Psi)

@@ -24,7 +24,6 @@ abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKo
     }
 }
 
-abstract class AbstractFirPsiDiagnosticTest : AbstractFirDiagnosticTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeDiagnosticsTest : AbstractFirDiagnosticTestBase(FirParser.LightTree)
 
 abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest : AbstractFirLightTreeDiagnosticsTest() {
