@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.resolution.getFirstStarImportCandidate
+import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
+import org.jetbrains.kotlin.java.direct.util.MemberResolutionResult
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
@@ -535,6 +537,23 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
         assertEquals("RUNTIME", arg.entryName?.asString())
         assertEquals("java.lang.annotation.RetentionPolicy", arg.enumClassId?.asSingleFqName()?.asString())
+    }
+
+    @Test
+    fun testExternalFieldResolutionClassifiesEnumEntry() {
+        val enumClassId = ClassId.topLevel(FqName("com.example.MyEnum"))
+        val session = createSessionWithSymbols(
+            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS, enumEntries = listOf("VALUE")))
+        )
+
+        val result = session.resolveExternalFieldValue(
+            classQualifier = enumClassId.asSingleFqName().asString(),
+            qualifierClassId = enumClassId,
+            fieldName = "VALUE",
+            currentPackage = FqName("com.example"),
+        )
+
+        assertEquals(MemberResolutionResult.EnumEntry(enumClassId, Name.identifier("VALUE")), result)
     }
 
     @Test
