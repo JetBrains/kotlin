@@ -270,6 +270,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             registerCliCompilerOnlyResolveComponents(
                 configuration.diagnosticFactoriesStorage ?: error("diagnosticFactoriesStorage is not registered in the configuration"),
             )
+            registerSyntaxComponent(configuration.parserMode)
 
             registerSourceSessionComponents(context)
 

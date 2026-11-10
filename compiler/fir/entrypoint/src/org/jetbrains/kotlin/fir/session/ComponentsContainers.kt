@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.toKotlinVersion
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.*
@@ -26,6 +27,9 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmAnnotationsPlatformS
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmInlineCheckerComponent
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPlatformValueClassDeterminer
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent
+import org.jetbrains.kotlin.fir.syntax.FirKmpSyntaxComponent
+import org.jetbrains.kotlin.fir.syntax.FirLightTreeSyntaxComponent
+import org.jetbrains.kotlin.fir.syntax.FirPsiSyntaxComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
@@ -61,6 +65,7 @@ import org.jetbrains.kotlin.fir.scopes.jvm.FirJvmDelegatedMembersFilter
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope.FirMappedSymbolStorage
 import org.jetbrains.kotlin.fir.serialization.FirProvidedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
@@ -253,4 +258,23 @@ fun FirSession.registerCliCompilerOnlyResolveComponents(diagnosticFactoriesStora
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerModuleData(moduleData: FirModuleData) {
     register(FirModuleData::class, moduleData)
+}
+
+/**
+ * Registers the [org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent] matching the raw FIR builder selected by [parserMode].
+ *
+ * The Analysis API doesn't use this function; it always registers [FirPsiSyntaxComponent] in `registerIdeComponents`.
+ *
+ * The set of implementations is expected to shrink:
+ * - [ParserMode.Psi] will be removed from the CLI (KT-86283); [FirPsiSyntaxComponent] stays for the Analysis API only.
+ * - [ParserMode.LightTree] and [FirLightTreeSyntaxComponent] will be dropped once [ParserMode.KmpTree] becomes the default;
+ */
+@OptIn(SessionConfiguration::class)
+fun FirSession.registerSyntaxComponent(parserMode: ParserMode) {
+    val syntaxComponent = when (parserMode) {
+        ParserMode.Psi -> FirPsiSyntaxComponent
+        ParserMode.LightTree -> FirLightTreeSyntaxComponent
+        ParserMode.KmpTree -> FirKmpSyntaxComponent
+    }
+    register(FirSyntaxComponent::class, syntaxComponent)
 }

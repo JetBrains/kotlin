@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
-import org.jetbrains.kotlin.diagnostics.isExpression
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.Plain
@@ -44,11 +42,11 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
@@ -60,7 +58,6 @@ import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.types.model.isNullableType
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.util.getChildren
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -840,33 +837,9 @@ fun FirQualifiedAccessExpression.explicitReceiverIsNotSuperReference(): Boolean 
 }
 
 
+context(context: CheckerContext)
 internal val KtSourceElement.defaultValueForParameter: KtSourceElement?
-    get() = when (this) {
-        is KtPsiSourceElement -> (psi as? KtParameter)?.defaultValue?.toKtPsiSourceElement()
-        is KtLightSourceElement -> findDefaultValue(this)
-    }
-
-private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement? {
-    var defaultValue: LighterASTNode? = null
-    var defaultValueOffset = source.startOffset
-
-    val nodes = source.lighterASTNode.getChildren(source.treeStructure)
-    for (node in nodes) {
-        if (node.isExpression()) {
-            defaultValue = node
-            break
-        } else {
-            defaultValueOffset += node.endOffset - node.startOffset
-        }
-    }
-    if (defaultValue == null) return null
-
-    return defaultValue.toKtLightSourceElement(
-        source.treeStructure,
-        startOffset = defaultValueOffset,
-        endOffset = defaultValueOffset + defaultValue.textLength,
-    )
-}
+    get() = withSyntax { findDefaultValueSource() }
 
 context(context: CheckerContext)
 @OptIn(ScopeFunctionRequiresPrewarm::class)

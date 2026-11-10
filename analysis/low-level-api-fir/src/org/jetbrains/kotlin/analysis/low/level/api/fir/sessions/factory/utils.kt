@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.syntax.FirPsiSyntaxComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirHiddenDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationS
 import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
 import org.jetbrains.kotlin.fir.scopes.SubstitutionScopeKeyFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
+import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
 
 @SessionConfiguration
 internal fun LLFirSession.registerIdeComponents(
@@ -58,6 +60,7 @@ internal fun LLFirSession.registerIdeComponents(
         createLookupDefaultStarImportsInSourcesSettingHolder(languageVersionSettings)
     )
     register(LLCheckersFactory::class, LLCheckersFactory(this))
+    register(FirSyntaxComponent::class, FirPsiSyntaxComponent) // The Analysis API must work only with PSI.
     registerResolveExtensionTool()
     register(FirHiddenDeprecationProvider::class, LLHiddenDeprecationProvider(this))
 
