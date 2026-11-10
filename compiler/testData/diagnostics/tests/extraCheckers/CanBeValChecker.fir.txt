@@ -1,6 +1,6 @@
 FILE: CanBeValChecker.kt
     public final fun testDelegator(): R|kotlin/Unit| {
-        lvar x: R|kotlin/Boolean|by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/Boolean|>(Boolean(true))
+        lvar x: R|kotlin/Boolean| by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/Boolean|>(Boolean(true))
             local get(): R|kotlin/Boolean| {
                 ^ D|<local>/x|.R|SubstitutionOverride</LocalFreezableVar.getValue: R|kotlin/Boolean|>|(Null(null), ::R|<local>/x|)
             }
@@ -8,7 +8,7 @@ FILE: CanBeValChecker.kt
                 ^ D|<local>/x|.R|SubstitutionOverride</LocalFreezableVar.setValue: R|kotlin/Unit|>|(Null(null), ::R|<local>/x|, R|<local>/<set-?>|)
             }
 
-        lvar y: R|kotlin/String|by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/String|>(String())
+        lvar y: R|kotlin/String| by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/String|>(String())
             local get(): R|kotlin/String| {
                 ^ D|<local>/y|.R|SubstitutionOverride</LocalFreezableVar.getValue: R|kotlin/String|>|(Null(null), ::R|<local>/y|)
             }
@@ -115,7 +115,7 @@ FILE: CanBeValChecker.kt
         R|kotlin/io/print|(R|<local>/v|)
     }
     public final fun withReadonlyDeligate(): R|kotlin/Unit| {
-        lval s: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        lval s: R|kotlin/String| by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String(Hello!)
         }
         )
@@ -314,7 +314,7 @@ FILE: CanBeValChecker.kt
 
     }
     public final fun withDelegate(): R|kotlin/Unit| {
-        lvar s: R|kotlin/String|by Q|kotlin/properties/Delegates|.R|kotlin/properties/Delegates.notNull|<R|kotlin/String|>()
+        lvar s: R|kotlin/String| by Q|kotlin/properties/Delegates|.R|kotlin/properties/Delegates.notNull|<R|kotlin/String|>()
             local get(): R|kotlin/String| {
                 ^ D|<local>/s|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/String|>|(Null(null), ::R|<local>/s|)
             }

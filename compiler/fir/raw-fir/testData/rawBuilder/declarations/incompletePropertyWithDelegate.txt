@@ -2,7 +2,7 @@ FILE: incompletePropertyWithDelegate.kt
     public? final? fun String.getValue(x: Any?, y: KProperty<*>): <implicit> {
         ^getValue String()
     }
-    public? final? val x: Stringby ERROR_EXPR(Should have delegate)
+    public? final? val x: String by ERROR_EXPR(Should have delegate)
         public? get(): <implicit> {
             ^ D|/x|.getValue#(Null(null), ::R|/x|)
         }

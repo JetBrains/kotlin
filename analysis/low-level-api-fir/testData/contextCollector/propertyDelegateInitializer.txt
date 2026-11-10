@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateInitializer.kt
         public final [ResolvedTo(STATUS)] val regularProperty: R|test/MyInterface|
             public [ResolvedTo(STATUS)] get(): R|test/MyInterface|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val property: R|test/MyInterface|by R|<local>/constructorParam|
+        public final [ResolvedTo(BODY_RESOLVE)] val property: R|test/MyInterface| by R|<local>/constructorParam|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|test/MyInterface| {
                 ^ this@R|test/Foo|.D|test/Foo.property|.R|test/MyInterface.getValue|(this@R|test/Foo|, ::R|test/Foo.property|)
             }

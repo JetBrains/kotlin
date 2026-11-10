@@ -16,17 +16,17 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedPropertyInCompanionBlock.kt
             super<R|kotlin/Any|>()
         }
 
-        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] val staticVal: R|kotlin/Int|by LAZY_EXPRESSION
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] val staticVal: R|kotlin/Int| by LAZY_EXPRESSION
             public static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] var staticVar: R|kotlin/Int|by LAZY_EXPRESSION
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] var staticVar: R|kotlin/Int| by LAZY_EXPRESSION
             public static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] get(): R|kotlin/Int| { LAZY_BLOCK }
             public static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val instanceVal: R|kotlin/Int|by LAZY_EXPRESSION
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val instanceVal: R|kotlin/Int| by LAZY_EXPRESSION
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var instanceVar: R|kotlin/Int|by LAZY_EXPRESSION
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var instanceVar: R|kotlin/Int| by LAZY_EXPRESSION
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] get(): R|kotlin/Int| { LAZY_BLOCK }
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 

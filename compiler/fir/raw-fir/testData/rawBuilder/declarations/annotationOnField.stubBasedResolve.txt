@@ -26,7 +26,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnField.kt
         field:@FIELD:R|Ann|[Types]() protected final [ResolvedTo(BODY_RESOLVE)] val simplePropertyWithAnnotationList: R|kotlin/String| = String(text)
             protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeClass] get(): R|kotlin/String|
 
-        field:@FIELD:R|Ann|[Types]() protected final [ResolvedTo(ANNOTATION_ARGUMENTS)] val delegatedProperty: R|kotlin/String|by LAZY_EXPRESSION
+        field:@FIELD:R|Ann|[Types]() protected final [ResolvedTo(ANNOTATION_ARGUMENTS)] val delegatedProperty: R|kotlin/String| by LAZY_EXPRESSION
             protected [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SomeClass] get(): R|kotlin/String| { LAZY_BLOCK }
 
         field:@FIELD:R|Ann|[Types]() public final [ResolvedTo(BODY_RESOLVE)] val propertyWithCustomGetter: R|kotlin/Int|

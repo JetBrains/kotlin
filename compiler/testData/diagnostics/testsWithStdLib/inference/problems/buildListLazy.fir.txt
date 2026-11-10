@@ -20,7 +20,7 @@ FILE: buildListLazy.kt
     public final fun getEnv(): R|kotlin/collections/List<NameAndSafeValue>| {
         ^getEnv R|kotlin/collections/listOf|<R|NameAndSafeValue|>()
     }
-    private final val environment: R|kotlin/collections/List<NameAndSafeValue>|by R|kotlin/lazy|<R|kotlin/collections/List<NameAndSafeValue>|>(<L> = lazy@fun <anonymous>(): R|kotlin/collections/List<NameAndSafeValue>| <inline=NoInline>  {
+    private final val environment: R|kotlin/collections/List<NameAndSafeValue>| by R|kotlin/lazy|<R|kotlin/collections/List<NameAndSafeValue>|>(<L> = lazy@fun <anonymous>(): R|kotlin/collections/List<NameAndSafeValue>| <inline=NoInline>  {
         ^ R|kotlin/collections/buildList|<R|NameAndSafeValue|>(<L> = buildList@fun R|kotlin/collections/MutableList<NameAndSafeValue>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|/getEnv|().R|kotlin/collections/forEach|<R|NameAndSafeValue|>(<L> = forEach@fun <anonymous>(<destruct>: R|NameAndSafeValue|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
                 lval name: R|kotlin/String| = R|<local>/<destruct>|.R|/NameAndSafeValue.component1|()

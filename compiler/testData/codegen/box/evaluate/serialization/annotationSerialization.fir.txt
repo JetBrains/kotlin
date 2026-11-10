@@ -71,7 +71,7 @@ FILE: lib.kt
         }
 
     }
-    field:@PROPERTY_DELEGATE_FIELD:R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final val p: R|kotlin/String|by Q|Delegate|
+    field:@PROPERTY_DELEGATE_FIELD:R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final val p: R|kotlin/String| by Q|Delegate|
         public get(): R|kotlin/String| {
             ^ D|/p|.R|/Delegate.getValue|(Null(null), ::R|/p|)
         }

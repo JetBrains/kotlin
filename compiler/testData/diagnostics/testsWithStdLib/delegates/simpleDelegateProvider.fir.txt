@@ -25,7 +25,7 @@ FILE: simpleDelegateProvider.kt
         }
 
     }
-    public final val testTopLevel: R|kotlin/String|by R|/DelegateProvider.DelegateProvider|(String(OK)).R|/DelegateProvider.provideDelegate|(Null(null), ::R|/testTopLevel|)
+    public final val testTopLevel: R|kotlin/String| by R|/DelegateProvider.DelegateProvider|(String(OK)).R|/DelegateProvider.provideDelegate|(Null(null), ::R|/testTopLevel|)
         public get(): R|kotlin/String| {
             ^ D|/testTopLevel|.R|/Delegate.getValue|(Null(null), ::R|/testTopLevel|)
         }

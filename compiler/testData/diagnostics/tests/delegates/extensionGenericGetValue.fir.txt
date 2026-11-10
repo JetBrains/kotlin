@@ -8,7 +8,7 @@ FILE: extensionGenericGetValue.kt
         }
         )
     }
-    public final val testK: R|kotlin/String|by R|/runLogged|<R|kotlin/String|>(<L> = runLogged@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
+    public final val testK: R|kotlin/String| by R|/runLogged|<R|kotlin/String|>(<L> = runLogged@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
         ^ String(K)
     }
     )

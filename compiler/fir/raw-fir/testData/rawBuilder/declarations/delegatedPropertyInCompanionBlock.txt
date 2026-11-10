@@ -17,12 +17,12 @@ FILE: delegatedPropertyInCompanionBlock.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? static [ContainingClassKey=Owner] val staticVal: Intby Delegate#()
+        public? final? static [ContainingClassKey=Owner] val staticVal: Int by Delegate#()
             public? static [ContainingClassKey=Owner] get(): <implicit> {
                 ^ D|/Owner.staticVal|.getValue#(Null(null), ::R|/Owner.staticVal|)
             }
 
-        public? final? static [ContainingClassKey=Owner] var staticVar: Intby Delegate#()
+        public? final? static [ContainingClassKey=Owner] var staticVar: Int by Delegate#()
             public? static [ContainingClassKey=Owner] get(): <implicit> {
                 ^ D|/Owner.staticVar|.getValue#(Null(null), ::R|/Owner.staticVar|)
             }
@@ -30,12 +30,12 @@ FILE: delegatedPropertyInCompanionBlock.kt
                 ^ D|/Owner.staticVar|.setValue#(Null(null), ::R|/Owner.staticVar|, R|<local>/<set-?>|)
             }
 
-        public? final? val instanceVal: Intby Delegate#()
+        public? final? val instanceVal: Int by Delegate#()
             public? [ContainingClassKey=Owner] get(): <implicit> {
                 ^ this@R|/Owner|.D|/Owner.instanceVal|.getValue#(this@R|/Owner|, ::R|/Owner.instanceVal|)
             }
 
-        public? final? var instanceVar: Intby Delegate#()
+        public? final? var instanceVar: Int by Delegate#()
             public? [ContainingClassKey=Owner] get(): <implicit> {
                 ^ this@R|/Owner|.D|/Owner.instanceVar|.getValue#(this@R|/Owner|, ::R|/Owner.instanceVar|)
             }

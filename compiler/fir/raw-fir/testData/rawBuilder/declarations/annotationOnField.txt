@@ -26,7 +26,7 @@ FILE: annotationOnField.kt
         field:@FIELD:Ann() protected final? val simplePropertyWithAnnotationList: String = String(text)
             protected [ContainingClassKey=SomeClass] get(): String
 
-        field:@FIELD:Ann() protected final? val delegatedProperty: Stringby CustomDelegate#()
+        field:@FIELD:Ann() protected final? val delegatedProperty: String by CustomDelegate#()
             protected [ContainingClassKey=SomeClass] get(): <implicit> {
                 ^ this@R|/SomeClass|.D|/SomeClass.delegatedProperty|.getValue#(this@R|/SomeClass|, ::R|/SomeClass.delegatedProperty|)
             }
