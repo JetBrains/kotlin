@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
+    implementation(project(":compiler:incremental-compilation-klib:api"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(libs.intellij.fastutil)
 
