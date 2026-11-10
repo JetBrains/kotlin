@@ -1,0 +1,45 @@
+:root {
+    --fg: #222;
+    --bg: #fff;
+    --border: #ccc;
+    --header-bg: #f0f0f0;
+    color-scheme: light;
+}
+
+:root.dark {
+    --fg: #ddd;
+    --bg: #1e1f22;
+    --border: #4a4d52;
+    --header-bg: #2b2d30;
+    color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not(.light) {
+        --fg: #ddd;
+        --bg: #1e1f22;
+        --border: #4a4d52;
+        --header-bg: #2b2d30;
+        color-scheme: dark;
+    }
+}
+
+body {
+    font-family: sans-serif;
+    margin: 16px;
+    color: var(--fg);
+    background: var(--bg);
+}
+
+table { border-collapse: collapse; }
+
+th, td {
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    text-align: left;
+}
+
+th {
+    background: var(--header-bg);
+    font-weight: normal;
+}
