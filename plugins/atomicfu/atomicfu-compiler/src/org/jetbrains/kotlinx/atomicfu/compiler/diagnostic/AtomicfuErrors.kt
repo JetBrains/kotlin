@@ -32,5 +32,6 @@ object AtomicfuErrors : KtDiagnosticsContainer() {
     val ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN by error0<KtExpression>(SourceElementPositioningStrategies.DEFAULT)
     val ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION by error0<KtExpression>(SourceElementPositioningStrategies.DEFAULT)
     val ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY by error0<KtExpression>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
+    val ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER by error1<KtProperty, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = AtomicfuErrorMessages
 }

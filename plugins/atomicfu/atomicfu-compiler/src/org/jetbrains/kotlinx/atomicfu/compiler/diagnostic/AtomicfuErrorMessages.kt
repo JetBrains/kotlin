@@ -97,6 +97,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
     private const val ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY_MESSAGE =
         "Calling equals/hashCode/toString functions on atomic properties is not supported."
 
+    private const val ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER_MESSAGE =
+        "Delegated properties must be declared {0} as the corresponding atomic properties."
+
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, TO_STRING
@@ -142,6 +145,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY, ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY_MESSAGE
+        )
+        map.put(
+            AtomicfuErrors.ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER, ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER_MESSAGE, TO_STRING
         )
     }
 

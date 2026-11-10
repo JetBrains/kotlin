@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.diagnostic
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -14,12 +15,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInstanceExtension
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
@@ -34,6 +42,8 @@ private val FirProperty.resolvedVisibility: EffectiveVisibility
 object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
+        checkDelegatedPropertyContainer(declaration)
+
         // Check extension properties with atomic receiver
         if (declaration.isInstanceExtension) {
             val receiverClassId = declaration.receiverParameter?.symbol?.resolvedType?.classId
@@ -84,5 +94,49 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         if (declaration.returnTypeRef.coneType.isMarkedNullable) {
             reporter.reportOn(declaration.source, AtomicfuErrors.NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN)
         }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkDelegatedPropertyContainer(declaration: FirProperty) {
+        if (declaration.isLocal) return
+
+        val delegate = declaration.delegate
+        val delegateExpression = if (delegate is FirWrappedDelegateExpression) delegate.expression else delegate
+        val delegatePropertyAccess = delegateExpression as? FirPropertyAccessExpression ?: return
+        val delegateProperty = delegatePropertyAccess.calleeReference.toResolvedPropertySymbol() ?: return
+        if (delegateProperty.isLocal) return
+        if (delegateProperty.resolvedReturnType.classId?.isAtomicType() != true) return
+
+        if (declaration.symbol.isInDifferentContainerThan(delegateProperty)) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER,
+                delegateProperty.declarationLocation()
+            )
+        }
+    }
+
+    context(context: CheckerContext)
+    private fun FirPropertySymbol.declarationLocation(): String {
+        if (isCompanionBlockMember) return "in the same companion block"
+
+        val containingClass = context.session.firProvider.getContainingClass(this) as? FirClassSymbol<*>
+            ?: return "at the top level of the same file"
+        if (containingClass.isCompanion && containingClass.classKind == ClassKind.OBJECT) return "in the same companion object"
+        return "in the same ${containingClass.classKind.codeRepresentation ?: "enum entry"}"
+    }
+
+    context(context: CheckerContext)
+    private fun FirPropertySymbol.isInDifferentContainerThan(other: FirPropertySymbol): Boolean {
+        val containingClassId = context.session.firProvider.getContainingClass(this)?.classId
+        val otherContainingClassId = context.session.firProvider.getContainingClass(other)?.classId
+        if (containingClassId != null || otherContainingClassId != null) {
+            return containingClassId != otherContainingClassId
+        }
+
+        val containingFileSymbol = context.containingFileSymbol ?: return false
+        val otherContainingFileSymbol = context.session.firProvider.getFirCallableContainerFile(other)?.symbol
+            ?: return false
+        return containingFileSymbol != otherContainingFileSymbol
     }
 }
