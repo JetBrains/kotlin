@@ -1,0 +1,1 @@
+no\ classes\ should\ call\ method\ File.getAbsolutePath(),\ because\ File.getAbsolutePath\ does\ not\ resolve\ symlinks,\ which\ creates\ problems\ for\ tests\ that\ often\ rely\ on\ JUnit's\ @TempDir,\ which\ on\ macOS\ refers\ to\ a\ symlinked\ directory=file-absolute-path-usages.txt

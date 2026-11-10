@@ -13,9 +13,11 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     kotlin("plugin.serialization")
+    id("kgp-build-utils")
     id("android-sdk-provisioner")
     id("kotlin-git.gradle-build-conventions.file-leak-detector-downloader")
     id("kgp-jacoco-offline")
+    `jvm-test-suite`
 }
 
 
@@ -534,7 +536,9 @@ val kgpTestingUtilities = configurations.detachedConfiguration(
     it.isTransitive = false
 }
 
-tasks.withType<Test>().configureEach {
+// The 'archTest' suite is not an integration test suite: exclude its task from the integration test machinery
+// configured below (the IT runtime classpath, dependencies on the KGP installations, and so on)
+tasks.withType<Test>().matching { it.name != "archTest" }.configureEach {
     shardTestsByMethod(kotlinBuildProperties.booleanProperty("kotlin.test.gradle.it.shardByMethod", false).get())
 
     // Disable KONAN_DATA_DIR env variable for all integration tests
@@ -725,4 +729,36 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
         execFile = layout.buildDirectory.file("jacoco/coverage.exec"),
         testTask = tasks.named("kgpAllParallelTests"),
     )
+}
+
+testing {
+    suites {
+        register<JvmTestSuite>("archTest") {
+            useJUnitJupiter()
+
+            dependencies {
+                compileOnly(project(":kotlin-gradle-plugin-annotations")) // required for the opt-in markers configured for all compilations
+                implementation(libs.archunit)
+                implementation(project(":kotlin-gradle-plugin-arch-test-utils"))
+                implementation("org.jetbrains.kotlin:kotlin-test-junit5")
+                implementation(libs.junit.jupiter.api)
+                implementation(libs.junit.jupiter.params)
+            }
+
+            targets.configureEach {
+                testTask.configure {
+                    shouldRunAfter(project.tasks.named("test"))
+                    javaLauncher.convention(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+                    configureArchUnit(
+                        task = this,
+                        sources = files(project.sourceSets.test.map { it.output.classesDirs }),
+                    )
+                }
+            }
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.named("archTest"))
 }
