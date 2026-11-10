@@ -33,6 +33,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.MemberBelonginess.INHERITED
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 import kotlin.reflect.jvm.internal.types.areEqualKTypes
 import java.lang.Deprecated as JavaLangDeprecated
 
@@ -276,7 +277,13 @@ private fun MemberContainer<*>.getDeclaredNonStaticMethodsFromJavaClass(name: St
 }
 
 private fun MemberContainer<*>.getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
-    supertypes.flatMap { supertype -> (supertype.classifier as? KClass<*>)?.memberProperties?.filter { it.name == name }.orEmpty() }
+    supertypes.flatMap { supertype ->
+        val supertypeKClass = supertype.classifier as? KClass<*> ?: return@flatMap emptyList()
+        val substitutor = KTypeSubstitutor.create(supertype)
+        supertypeKClass.memberProperties.filter { it.name == name }.map { property ->
+            (property as ReflectKCallable<*>).createFakeOverride(this, substitutor) as KProperty1<*, *>
+        }
+    }
 
 private fun MemberContainer<*>.doesClassOverrideProperty(
     property: KProperty1<*, *>,

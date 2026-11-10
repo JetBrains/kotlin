@@ -94,7 +94,7 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
     return result
 }
 
-private fun ReflectKCallable<*>.createFakeOverride(subclass: MemberContainer<*>, substitutor: KTypeSubstitutor): ReflectKCallable<*> =
+internal fun ReflectKCallable<*>.createFakeOverride(subclass: MemberContainer<*>, substitutor: KTypeSubstitutor): ReflectKCallable<*> =
     shallowCopy(
         subclass,
         overriddenStorage.withChainedClassTypeParametersSubstitutor(substitutor).copy(
