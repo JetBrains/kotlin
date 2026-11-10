@@ -22,29 +22,24 @@
 
 package kotlin.text.regex
 
-import kotlin.experimental.ExperimentalNativeApi
-
 /** Represents canonical decomposition of Unicode character. Is used when CANON_EQ flag of Pattern class is specified. */
-open internal class DecomposedCharSet(
-        /** Decomposition of the Unicode codepoint */
-        private val decomposedChar: IntArray,
-        /** Length of useful part of decomposedChar decomposedCharLength <= decomposedChar.length */
-        private val decomposedCharLength: Int
+internal open class DecomposedCharSet(
+    /** Decomposition of the Unicode codepoint */
+    private val decomposedChar: IntArray,
+    /** Length of useful part of decomposedChar decomposedCharLength <= decomposedChar.length */
+    private val decomposedCharLength: Int
 ) : SimpleSet() {
 
-    /** Contains information about number of chars that were read for a codepoint last time */
-    private var readCharsForCodePoint = 1
+    private typealias CodepointInfo = Long
 
-    /** UTF-16 encoding of decomposedChar */
-    @OptIn(ExperimentalNativeApi::class)
-    private val decomposedCharUTF16: String by lazy {
-        val strBuff = StringBuilder()
+    private fun CodepointInfo(codepointValue: Int, consumedChars: Int): CodepointInfo =
+        consumedChars.toLong().shl(32).or(codepointValue.toLong())
 
-        for (i in 0..decomposedCharLength - 1) {
-            strBuff.append(Char.toChars(decomposedChar[i]))
-        }
-        return@lazy strBuff.toString()
-    }
+    private val CodepointInfo.codepointValue: Int
+        get() = this.and(0xFFFF_FFFFL).toInt()
+
+    private val CodepointInfo.charsConsumed: Int
+        get() = this.shr(32).toInt()
 
     override val consumesFixedLength: Boolean
         get() = true
@@ -58,34 +53,35 @@ open internal class DecomposedCharSet(
         }
 
         // We read testString and decompose it gradually to compare with this decomposedChar at position strIndex
-        var curChar = codePointAt(strIndex, testString, rightBound)
-        strIndex += readCharsForCodePoint
+        val (codepointValue, charsConsumed) = codePointAt(strIndex, testString, rightBound)
+        strIndex += charsConsumed
         var readCodePoints = 0
-        var i = 0
         // All decompositions have length that is less or equal Lexer.MAX_DECOMPOSITION_LENGTH
-        var decomposedCodePoint: IntArray = IntArray(Lexer.MAX_DECOMPOSITION_LENGTH)
-        readCodePoints += decomposeCodePoint(curChar, decomposedCodePoint, readCodePoints)
+        var decomposedCodePoint = IntArray(Lexer.MAX_DECOMPOSITION_LENGTH)
+        readCodePoints += decomposeCodePoint(codepointValue, decomposedCodePoint, readCodePoints)
 
         if (strIndex < rightBound) {
-            curChar = codePointAt(strIndex, testString, rightBound)
+            var (codepointValue, charsConsumed) = codePointAt(strIndex, testString, rightBound)
 
             // Read testString until we met a decomposed char boundary and decompose obtained portion of testString.
-            while (readCodePoints < Lexer.MAX_DECOMPOSITION_LENGTH && !Lexer.isDecomposedCharBoundary(curChar)) {
-
-                if (!Lexer.hasDecompositionNonNullCanClass(curChar)) {
-                    decomposedCodePoint[readCodePoints++] = curChar
+            while (readCodePoints < Lexer.MAX_DECOMPOSITION_LENGTH && !Lexer.isDecomposedCharBoundary(codepointValue)) {
+                if (!Lexer.hasDecompositionNonNullCanClass(codepointValue)) {
+                    decomposedCodePoint[readCodePoints++] = codepointValue
                 } else {
                     /*
                      * A few codepoints have decompositions and non null canonical classes, we have to take them into
                      * consideration, but general rule is: if canonical class != 0 then no decomposition
                      */
-                    readCodePoints += decomposeCodePoint(curChar, decomposedCodePoint, readCodePoints)
+                    readCodePoints += decomposeCodePoint(codepointValue, decomposedCodePoint, readCodePoints)
                 }
 
-                strIndex += readCharsForCodePoint
+                strIndex += charsConsumed
 
                 if (strIndex < rightBound) {
-                    curChar = codePointAt(strIndex, testString, rightBound)
+                    codePointAt(strIndex, testString, rightBound).also {
+                        codepointValue = it.codepointValue
+                        charsConsumed = it.charsConsumed
+                    }
                 } else {
                     break
                 }
@@ -127,13 +123,12 @@ open internal class DecomposedCharSet(
         get() = "decomposed char: $decomposedChar"
 
     /** Reads Unicode codepoint from [testString] starting from [strIndex] until [rightBound]. */
-    @OptIn(ExperimentalNativeApi::class)
-    fun codePointAt(strIndex: Int, testString: CharSequence, rightBound: Int): Int {
+    private fun codePointAt(strIndex: Int, testString: CharSequence, rightBound: Int): CodepointInfo {
         var index = strIndex
 
         // We store information about number of codepoints we read at variable readCharsForCodePoint.
         val curChar: Int
-        readCharsForCodePoint = 1
+        var readCharsForCodePoint = 1
         if (index < rightBound - 1) {
             val high = testString[index++]
             val low = testString[index]
@@ -150,7 +145,7 @@ open internal class DecomposedCharSet(
             curChar = testString[index].toInt()
         }
 
-        return curChar
+        return CodepointInfo(curChar, readCharsForCodePoint)
     }
 
     override fun first(set: AbstractSet): Boolean {
