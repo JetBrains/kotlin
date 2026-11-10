@@ -690,8 +690,17 @@ private class ContextCollectorVisitor(
         dumpContext(propertyAccessExpression, ContextKind.SELF, hasBodyContext = false)
     }
 
+    /**
+     * Stores a local [regularClass] in the enclosing local scope before processing its annotations and header, as
+     * [runAllPhasesForLocalClassLikeDeclarations][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.runAllPhasesForLocalClassLikeDeclarations]
+     * does, so that the class is visible in its own annotations, type parameters and supertypes.
+     */
     override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor(regularClass) {
         dumpContext(regularClass, ContextKind.SELF)
+
+        if (regularClass.isLocal) {
+            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
+        }
 
         context.withClassHeader(regularClass) {
             processRawAnnotations(regularClass)
@@ -718,10 +727,6 @@ private class ContextCollectorVisitor(
                     }
                 }
             }
-        }
-
-        if (regularClass.isLocal) {
-            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
         }
     }
 

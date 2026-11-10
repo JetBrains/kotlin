@@ -18,6 +18,8 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 7
         Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
 
 FILE: [ResolvedTo(IMPORTS)] localClassAnnotationSelfReference.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
