@@ -14,13 +14,16 @@ import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
+import org.jetbrains.kotlin.gradle.util.swiftTypealiases
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export metadata consumption with the export DSL")
@@ -419,19 +422,13 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 if (rootPackageOverride != null) {
                     val subprojectSwiftPath =
                         projectPath.resolve("build/SwiftExport/iosArm64/output/files/$expectedDirectDependencyModuleName/$expectedDirectDependencyModuleName.swift")
-                    assertFileContains(
-                        subprojectSwiftPath,
-                        "public typealias LibFoo = ExportedKotlinPackages.$rootPackageOverride.LibFoo"
-                    )
+                    assertEquals("ExportedKotlinPackages.$rootPackageOverride.LibFoo", subprojectSwiftPath.swiftTypealiases()["LibFoo"])
                 }
                 // Root package overrides for transitive dependencies are ignored!
                 if (expectedTransitiveDependencyModuleName != null && transitiveRootPackageOverride != null) {
                     val subprojectSwiftPath =
                         projectPath.resolve("build/SwiftExport/iosArm64/output/files/$expectedTransitiveDependencyModuleName/$expectedTransitiveDependencyModuleName.swift")
-                    assertFileDoesNotContain(
-                        subprojectSwiftPath,
-                        "public typealias LibBar = ExportedKotlinPackages.$transitiveRootPackageOverride.LibBar",
-                    )
+                    assertNull(subprojectSwiftPath.swiftTypealiases()["LibBar"])
                 }
             }
 
