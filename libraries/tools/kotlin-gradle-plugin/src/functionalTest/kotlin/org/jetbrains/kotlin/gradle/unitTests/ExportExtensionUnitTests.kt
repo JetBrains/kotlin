@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalSwiftExportDsl::class)
-
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.InvalidUserCodeException
@@ -27,6 +25,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleIdentifier as validateSwiftExportModuleIdentifierAtTaskTime
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName as validateSwiftExportModuleNameForConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName as validateSwiftExportModuleNameAtTaskTime
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftPackagePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.swiftPackagePlatforms
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.AssembleSwiftPackageBinary
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDepende
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.SerializeSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
-import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.EMBED_SWIFT_EXPORT_TASK_NAME
@@ -70,6 +70,70 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ExportExtensionUnitTests {
+
+    @Test
+    fun `reserved swift module names are reported case-insensitively during configuration`() {
+        val project = buildProjectWithMPP()
+        val reservedModuleNames = listOf(
+            "ExportedKotlinPackages",
+            "KotlinRuntimeSupport",
+            "KotlinRuntime",
+            "KotlinCoroutineSupport",
+        )
+
+        (reservedModuleNames + reservedModuleNames.map { it.lowercase() }).forEach { moduleName ->
+            project.validateSwiftExportModuleNameForConfiguration(moduleName, project.path)
+            project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportReservedModuleName(moduleName, project.path))
+        }
+    }
+
+    @Test
+    fun `reserved swift module names are fatal during task-time validation while similar names are allowed`() {
+        val reservedModuleNames = listOf(
+            "ExportedKotlinPackages",
+            "KotlinRuntimeSupport",
+            "KotlinRuntime",
+            "KotlinCoroutineSupport",
+        )
+        val similarModuleNames = reservedModuleNames.map { "${it}Extra" } + "Shared"
+
+        (reservedModuleNames + reservedModuleNames.map { it.lowercase() }).forEach { moduleName ->
+            val diagnostics = mutableListOf<ToolingDiagnostic>()
+            validateSwiftExportModuleNameAtTaskTime(moduleName, "test module", reportDiagnostic = diagnostics::add)
+            assertEquals(
+                listOf(KotlinToolingDiagnostics.SwiftExportReservedModuleName(moduleName, "test module", severity = FATAL)),
+                diagnostics,
+            )
+        }
+
+        similarModuleNames.forEach { moduleName ->
+            val diagnostics = mutableListOf<ToolingDiagnostic>()
+            validateSwiftExportModuleNameAtTaskTime(moduleName, "test module", reportDiagnostic = diagnostics::add)
+            assertEquals(emptyList(), diagnostics)
+        }
+    }
+
+    @Test
+    fun `an invalid module identifier is fatal during task-time validation while valid identifiers are allowed`() {
+        val invalidModuleNames = listOf("1Shared", "Shared-Module", "Shared.Module")
+        // 'KotlinRuntime' is reserved but still a valid identifier: rejecting it is up to the other validation.
+        val validModuleNames = listOf("Shared", "_Private", "Shared2", "KotlinRuntime")
+
+        invalidModuleNames.forEach { moduleName ->
+            val diagnostics = mutableListOf<ToolingDiagnostic>()
+            validateSwiftExportModuleIdentifierAtTaskTime(moduleName, "test module", reportDiagnostic = diagnostics::add)
+            assertEquals(
+                listOf(KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName, "test module", severity = FATAL)),
+                diagnostics,
+            )
+        }
+
+        validModuleNames.forEach { moduleName ->
+            val diagnostics = mutableListOf<ToolingDiagnostic>()
+            validateSwiftExportModuleIdentifierAtTaskTime(moduleName, "test module", reportDiagnostic = diagnostics::add)
+            assertEquals(emptyList(), diagnostics)
+        }
+    }
 
     @Test
     fun `test export extension is registered on the multiplatform extension`() {
@@ -665,6 +729,17 @@ class LegacySwiftExportDslDiagnosticsTests {
     }
 
     @Test
+    fun `test a reserved module name is reported when configured with the legacy dsl`() {
+        val project = legacyDslProject {
+            legacySwiftExportExtension.moduleName.set("KotlinRuntime")
+        }
+
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportReservedModuleName("KotlinRuntime", project.path)
+        )
+    }
+
+    @Test
     fun `test the conflict is reported when both dsls are used`() {
         val project = legacyDslProject {
             legacySwiftExportExtension.moduleName.set("Legacy")
@@ -821,6 +896,24 @@ class ExportExtensionSwiftExportTests {
 
         project.realizeSwiftModules()
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
+    fun `a reserved default root module name fails during swift export`() {
+        val project = swiftExportProject(
+            projectBuilder = { withName("kotlin-runtime") },
+        )
+
+        project.evaluate()
+
+        project.assertRealizingSwiftModulesFailsWith(
+            KotlinToolingDiagnostics.SwiftExportReservedModuleName(
+                reservedModuleName = "KotlinRuntime",
+                module = "the module being exported",
+                integrationDsl = "xcodeIntegration",
+                severity = FATAL,
+            )
+        )
     }
 
     @Test
@@ -1521,6 +1614,66 @@ class ExportExtensionSwiftExportTests {
                 severity = FATAL,
             )
         )
+    }
+
+    @Test
+    fun `an override with a reserved module name fails`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        moduleName.set("KotlinRuntime")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.assertRealizingSwiftModulesFailsWith(
+            KotlinToolingDiagnostics.SwiftExportReservedModuleName(
+                reservedModuleName = "KotlinRuntime",
+                module = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                integrationDsl = "xcodeIntegration",
+                severity = FATAL,
+            )
+        )
+    }
+
+    @Test
+    fun `a safe override can replace a reserved derived dependency name`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() },
+        )
+        val projectDependency = project.subProject("KotlinRuntime") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api(projectDependency)
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure(projectDependency) { moduleName.set("SafeRuntime") }
+                }
+            },
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        assertEquals("SafeRuntime", project.realizeSwiftModules().single().moduleName)
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportReservedModuleName)
     }
 
     @Test
@@ -2634,6 +2787,37 @@ class ExportExtensionSwiftPackageIntegrationTests {
             KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(
                 mapOf("Shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0")),
                 "swiftPackageIntegration",
+            )
+        )
+    }
+
+    // KT-91396
+    @Test
+    fun `an override with a reserved module name of the swift package integration points at that integration`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            }
+        ) {
+            exportExtension.swift {
+                swiftPackageIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") { moduleName.set("KotlinRuntime") }
+                }
+            }
+        }
+
+        // The diagnostic is FATAL, so the collector throws right after recording it.
+        assertFails { project.swiftPackageExportRun().resolveSwiftExportedModules(project::reportDiagnostic) }
+
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportReservedModuleName(
+                reservedModuleName = "KotlinRuntime",
+                module = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                integrationDsl = "swiftPackageIntegration",
+                severity = FATAL,
             )
         )
     }

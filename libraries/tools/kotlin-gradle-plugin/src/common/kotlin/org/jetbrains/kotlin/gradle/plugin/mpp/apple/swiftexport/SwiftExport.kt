@@ -124,7 +124,8 @@ internal fun Project.registerSwiftExportRunAndBinary(
         .moduleName
         .orElse(provider {
             project.name.normalizedSwiftExportModuleName.also {
-                validateSwiftExportModuleName(it, project.path, swiftExportConfiguration.moduleNameDsl)
+                validateSwiftExportModuleIdentifier(it, project.path, swiftExportConfiguration.moduleNameDsl)
+                validateSwiftExportModuleName(it, project.path)
             }
         })
 

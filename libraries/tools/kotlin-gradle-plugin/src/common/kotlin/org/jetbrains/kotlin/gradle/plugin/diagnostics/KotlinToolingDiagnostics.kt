@@ -1888,6 +1888,30 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportReservedModuleName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param reservedModuleName the reserved Swift module name
+         * @param module the project path or coordinates of the module the name is for
+         * @param integrationDsl the DSL block of the integration that exports the module, such as `xcodeIntegration`;
+         * `null` when no single integration is in play, such as during configuration
+         * @param severity FATAL when reported while the Swift Export task runs, where an ERROR is only logged
+         */
+        operator fun invoke(
+            reservedModuleName: String,
+            module: String,
+            integrationDsl: String? = null,
+            severity: KotlinToolingDiagnosticsSeverity = ERROR,
+        ) = build(severity = severity) {
+            title("Reserved Swift Module Name")
+                .description("The Swift module name '$reservedModuleName' for module '$module' is reserved by Swift Export.")
+                .solution {
+                    "Set a different module name with 'export { swift { moduleName = \"...\" } }' for the module being exported" +
+                            if (integrationDsl == null) "."
+                            else ", or with 'export { swift { $integrationDsl { configure(dependency) { moduleName = \"...\" } } } }' for a dependency."
+                }
+        }
+    }
+
     object SwiftExportModuleResolutionError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         /**
          * @param modules the modules that were requested but not found, rendered for the user
