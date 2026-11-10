@@ -5,6 +5,7 @@ import TestCompilePaths.KOTLIN_NATIVE_IMAGE_PLUGINS_RUNTIME
 import TestCompilePaths.KOTLIN_NATIVE_IMAGE_RESOURCES_PATH
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.testFederation.testFederation
 import java.util.regex.Pattern.quote
 
 description = "Kotlin Compiler (Native Image)"
@@ -332,6 +333,9 @@ tasks.register<Sync>("kotlincNativeImageArtifacts") {
 fun ProjectTestsExtension.nativeImageTestTask(name: String, body: Test.() -> Unit): TaskProvider<out Task> =
     testTask(taskName = name, skipInLocalBuild = false) {
         javaLauncher.set(graalLauncher)
+        testFederation {
+            smokeTests { includeAll() }
+        }
         body()
     }
 
