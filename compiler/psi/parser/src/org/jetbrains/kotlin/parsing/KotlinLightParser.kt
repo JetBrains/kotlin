@@ -32,14 +32,31 @@ object KotlinLightParser {
         }
     }
 
-    fun parse(builder: PsiBuilder, isScript: Boolean): FlyweightCapableTreeStructure<LighterASTNode> {
-        val ktParsing = KotlinParsing.createForTopLevelNonLazy(SemanticWhitespaceAwarePsiBuilderImpl(builder))
+    /**
+     * Parses a whole file or script. When [isLazy] is set, code blocks and lambdas are collapsed without being parsed, so they are
+     * parsed on demand, which requires their element types to be [com.intellij.psi.tree.ILightLazyParseableElementType]s.
+     */
+    fun parse(builder: PsiBuilder, isScript: Boolean, isLazy: Boolean = false): FlyweightCapableTreeStructure<LighterASTNode> {
+        val semanticBuilder = SemanticWhitespaceAwarePsiBuilderImpl(builder)
+        val ktParsing = if (isLazy) KotlinParsing.createForTopLevel(semanticBuilder) else KotlinParsing.createForTopLevelNonLazy(semanticBuilder)
         if (isScript) {
             ktParsing.parseScript()
         } else {
             ktParsing.parseFile()
         }
 
+        return builder.lightTree
+    }
+
+    /** Parses the contents of a lazily collapsed code block, mirroring `KotlinParser.parseBlockExpression`. */
+    fun parseBlockExpression(builder: PsiBuilder): FlyweightCapableTreeStructure<LighterASTNode> {
+        KotlinParsing.createForTopLevel(SemanticWhitespaceAwarePsiBuilderImpl(builder)).parseBlockExpression()
+        return builder.lightTree
+    }
+
+    /** Parses the contents of a lazily collapsed lambda, mirroring `KotlinParser.parseLambdaExpression`. */
+    fun parseLambdaExpression(builder: PsiBuilder): FlyweightCapableTreeStructure<LighterASTNode> {
+        KotlinParsing.createForTopLevel(SemanticWhitespaceAwarePsiBuilderImpl(builder)).parseLambdaExpression()
         return builder.lightTree
     }
 

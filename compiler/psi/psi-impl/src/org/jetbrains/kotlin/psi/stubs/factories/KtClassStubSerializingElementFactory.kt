@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.StubUtils.createClassId
@@ -27,6 +31,11 @@ import org.jetbrains.kotlin.psi.stubs.elements.deserializeValueClassRepresentati
 import org.jetbrains.kotlin.psi.stubs.elements.serializeValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.Utils
+import org.jetbrains.kotlin.psi.stubs.light.declarationName
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
+import org.jetbrains.kotlin.psi.stubs.light.isTopLevelDeclaration
+import org.jetbrains.kotlin.psi.stubs.light.safeFqNameForLazyResolve
+import org.jetbrains.kotlin.psi.stubs.light.superNames
 
 internal object KtClassStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinClassStubImpl, KtClass>(
@@ -59,6 +68,28 @@ internal object KtClassStubSerializingElementFactory :
             kdocText = null,
             valueClassRepresentation = null,
             classFileMajorVersion = null,
+        )
+    }
+
+    override fun shouldCreateStub(tree: LighterAST, node: LighterASTNode, parentStub: StubElement<*>): Boolean = true
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinClassStubImpl {
+        val name = tree.declarationName(node)
+        return KotlinClassStubImpl(
+            parent = parentStub,
+            qualifiedName = StringRef.fromString(tree.safeFqNameForLazyResolve(node, parentStub)?.asString()),
+            classId = createClassId(parentStub, KtPsiUtil.safeName(name), isEnumEntry = false),
+            name = StringRef.fromString(name),
+            superNameRefs = Utils.wrapStrings(tree.superNames(node)),
+            isInterface = tree.firstChildOfType(node, KtTokens.INTERFACE_KEYWORD) != null,
+            isClsStubCompiledToJvmDefaultImplementation = false,
+            isTopLevel = tree.isTopLevelDeclaration(node),
+            kdocText = null,
+            valueClassRepresentation = null,
         )
     }
 

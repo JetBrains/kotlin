@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -14,6 +16,8 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.anyDeclarationName
+import org.jetbrains.kotlin.psi.stubs.light.containingClassOrObject
 
 internal object KtPrimaryConstructorStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinPrimaryConstructorStubImpl, KtPrimaryConstructor>(
@@ -28,6 +32,19 @@ internal object KtPrimaryConstructorStubSerializingElementFactory :
     ): KotlinPrimaryConstructorStubImpl = KotlinPrimaryConstructorStubImpl(
         parent = parentStub,
         containingClassName = StringRef.fromString(psi.name),
+        kdocText = null,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinPrimaryConstructorStubImpl = KotlinPrimaryConstructorStubImpl(
+        parent = parentStub,
+        // Mirrors `KtConstructor.getName`, which is the containing class name
+        containingClassName = StringRef.fromString(
+            tree.containingClassOrObject(node)?.let { tree.anyDeclarationName(it) },
+        ),
         kdocText = null,
     )
 

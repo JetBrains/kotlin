@@ -18,24 +18,31 @@ package org.jetbrains.kotlin;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
+import com.intellij.lang.LighterASTNode;
+import com.intellij.lang.LighterLazyParseableNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IErrorCounterReparseableElementType;
+import com.intellij.psi.tree.ILightLazyParseableElementType;
+import com.intellij.util.diff.FlyweightCapableTreeStructure;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.lexer.KotlinLexer;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.parsing.KotlinLightParser;
 import org.jetbrains.kotlin.parsing.KotlinParser;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.psi.KtParameterList;
 
-public class LambdaExpressionElementType extends IErrorCounterReparseableElementType {
+public class LambdaExpressionElementType extends IErrorCounterReparseableElementType implements ILightLazyParseableElementType {
     public LambdaExpressionElementType() {
         super("LAMBDA_EXPRESSION", KotlinLanguage.INSTANCE);
     }
@@ -46,6 +53,17 @@ public class LambdaExpressionElementType extends IErrorCounterReparseableElement
         PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(
                 project, chameleon, null, KotlinLanguage.INSTANCE, chameleon.getChars());
         return KotlinParser.parseLambdaExpression(builder).getFirstChildNode();
+    }
+
+    /**
+     * The light tree counterpart of {@link #parseContents(ASTNode)} for lambdas collapsed by the lazy light parsing of stub building.
+     */
+    @Override
+    public @NotNull FlyweightCapableTreeStructure<LighterASTNode> parseContents(@NotNull LighterLazyParseableNode chameleon) {
+        PsiFile file = chameleon.getContainingFile();
+        if (file == null) throw new IllegalStateException("A lazily parseable lambda without a containing file");
+        PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(file.getProject(), chameleon);
+        return KotlinLightParser.INSTANCE.parseLambdaExpression(builder);
     }
 
     @Override

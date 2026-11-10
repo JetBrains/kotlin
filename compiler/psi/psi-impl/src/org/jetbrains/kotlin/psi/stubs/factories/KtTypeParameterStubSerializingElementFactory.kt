@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -12,6 +14,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.declarationName
 
 internal object KtTypeParameterStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinTypeParameterStubImpl, KtTypeParameter>(
@@ -26,6 +29,15 @@ internal object KtTypeParameterStubSerializingElementFactory :
     ): KotlinTypeParameterStubImpl = KotlinTypeParameterStubImpl(
         parent = parentStub,
         name = StringRef.fromString(psi.name),
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinTypeParameterStubImpl = KotlinTypeParameterStubImpl(
+        parent = parentStub,
+        name = StringRef.fromString(tree.declarationName(node)),
     )
 
     override fun serialize(stub: KotlinTypeParameterStubImpl, dataStream: StubOutputStream) {

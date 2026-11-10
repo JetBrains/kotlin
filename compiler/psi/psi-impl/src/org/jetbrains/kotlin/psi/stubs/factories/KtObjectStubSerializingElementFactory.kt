@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
@@ -14,6 +16,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.StubUtils.createClassId
@@ -26,6 +29,10 @@ import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableNonNegativeVarInt
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.Utils
+import org.jetbrains.kotlin.psi.stubs.light.isTopLevelDeclaration
+import org.jetbrains.kotlin.psi.stubs.light.objectName
+import org.jetbrains.kotlin.psi.stubs.light.safeFqNameForLazyResolve
+import org.jetbrains.kotlin.psi.stubs.light.superNames
 
 internal object KtObjectStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinObjectStubImpl, KtObjectDeclaration>(
@@ -53,6 +60,27 @@ internal object KtObjectStubSerializingElementFactory :
         kdocText = null,
         classFileMajorVersion = null,
     )
+
+    override fun shouldCreateStub(tree: LighterAST, node: LighterASTNode, parentStub: StubElement<*>): Boolean = true
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinObjectStubImpl {
+        val isObjectLiteral = tree.getParent(node)?.tokenType == KtNodeTypes.OBJECT_LITERAL
+        val name = tree.objectName(node)
+        return KotlinObjectStubImpl(
+            parent = parentStub,
+            name = StringRef.fromString(name),
+            fqName = tree.safeFqNameForLazyResolve(node, parentStub),
+            classId = if (isObjectLiteral) null else createClassId(parentStub, KtPsiUtil.safeName(name), isEnumEntry = false),
+            superNameRefs = Utils.wrapStrings(tree.superNames(node)),
+            isTopLevel = tree.isTopLevelDeclaration(node),
+            isObjectLiteral = isObjectLiteral,
+            kdocText = null,
+        )
+    }
 
     override fun serialize(stub: KotlinObjectStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.getName())

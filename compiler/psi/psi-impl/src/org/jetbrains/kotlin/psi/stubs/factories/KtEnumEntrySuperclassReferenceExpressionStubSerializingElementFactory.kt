@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -12,6 +14,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntrySuperclassReferenceExpressionStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.enumSuperclassReferencedName
 
 internal object KtEnumEntrySuperclassReferenceExpressionStubSerializingElementFactory :
     KtStubSerializingElementFactory<
@@ -31,6 +34,15 @@ internal object KtEnumEntrySuperclassReferenceExpressionStubSerializingElementFa
     ): KotlinEnumEntrySuperclassReferenceExpressionStubImpl = KotlinEnumEntrySuperclassReferenceExpressionStubImpl(
         parent = parentStub,
         referencedNameRef = StringRef.fromString(psi.getReferencedName())!!,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinEnumEntrySuperclassReferenceExpressionStubImpl = KotlinEnumEntrySuperclassReferenceExpressionStubImpl(
+        parent = parentStub,
+        referencedNameRef = StringRef.fromString(tree.enumSuperclassReferencedName(node))!!,
     )
 
     override fun serialize(stub: KotlinEnumEntrySuperclassReferenceExpressionStubImpl, dataStream: StubOutputStream) {

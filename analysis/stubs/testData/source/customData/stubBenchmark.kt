@@ -1,0 +1,3 @@
+package benchmark
+
+fun placeholder() {}

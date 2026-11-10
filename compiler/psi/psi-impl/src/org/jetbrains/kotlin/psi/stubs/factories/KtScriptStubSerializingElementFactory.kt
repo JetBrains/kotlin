@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.scriptFqNameForStub
 
 internal object KtScriptStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinScriptStubImpl, KtScript>(
@@ -25,6 +28,15 @@ internal object KtScriptStubSerializingElementFactory :
     override fun createStub(psi: KtScript, parentStub: StubElement<*>?): KotlinScriptStubImpl = KotlinScriptStubImpl(
         parent = parentStub,
         fqNameRef = StringRef.fromString(psi.fqName.asString())!!,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinScriptStubImpl = KotlinScriptStubImpl(
+        parent = parentStub,
+        fqNameRef = StringRef.fromString(scriptFqNameForStub(parentStub).asString())!!,
     )
 
     override fun serialize(stub: KotlinScriptStubImpl, dataStream: StubOutputStream) {

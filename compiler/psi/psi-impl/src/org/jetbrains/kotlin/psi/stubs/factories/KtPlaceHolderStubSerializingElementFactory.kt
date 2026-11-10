@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -26,6 +28,12 @@ internal open class KtPlaceHolderStubSerializingElementFactory<Psi : KtElementIm
     override fun createStub(
         psi: Psi,
         parentStub: StubElement<*>?,
+    ): KotlinPlaceHolderStubImpl<Psi> = KotlinPlaceHolderStubImpl(parent = parentStub, elementType = type)
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
     ): KotlinPlaceHolderStubImpl<Psi> = KotlinPlaceHolderStubImpl(parent = parentStub, elementType = type)
 
     override fun serialize(stub: KotlinPlaceHolderStubImpl<Psi>, dataStream: StubOutputStream) {

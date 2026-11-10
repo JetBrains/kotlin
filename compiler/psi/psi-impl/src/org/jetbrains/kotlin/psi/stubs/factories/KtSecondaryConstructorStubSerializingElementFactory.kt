@@ -5,17 +5,24 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing.mayHaveLegacyContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinSecondaryConstructorStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.anyDeclarationName
+import org.jetbrains.kotlin.psi.stubs.light.containingClassOrObject
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
+import org.jetbrains.kotlin.psi.stubs.light.isLegacyContractPresent
 
 internal object KtSecondaryConstructorStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinSecondaryConstructorStubImpl, KtSecondaryConstructor>(
@@ -42,6 +49,32 @@ internal object KtSecondaryConstructorStubSerializingElementFactory :
             isDelegatedCallToThis = isDelegatedCallToThis,
             isExplicitDelegationCall = isExplicitDelegationCall,
             mayHaveContract = mayHaveContract,
+            kdocText = null,
+        )
+    }
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinSecondaryConstructorStubImpl {
+        val delegationCall = tree.firstChildOfType(node, KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL)
+        val delegationReference = delegationCall?.let { tree.firstChildOfType(it, KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE) }
+        val isDelegationReferenceEmpty = delegationReference != null && tree.getChildren(delegationReference).isEmpty()
+
+        return KotlinSecondaryConstructorStubImpl(
+            parent = parentStub,
+            containingClassName = StringRef.fromString(
+                tree.containingClassOrObject(node)?.let { tree.anyDeclarationName(it) },
+            ),
+            hasBody = tree.firstChildOfType(node, KtNodeTypes.BLOCK) != null,
+            // Mirrors `delegationCall?.isCallToThis ?: true` with `isCallToThis` requiring a callee with `this`
+            isDelegatedCallToThis = delegationCall == null ||
+                    (delegationReference != null && tree.firstChildOfType(delegationReference, KtTokens.THIS_KEYWORD) != null),
+            // Mirrors `delegationCall?.isImplicit == false`, where `isImplicit` requires a present but empty callee;
+            // a delegation call without any callee reference counts as explicit
+            isExplicitDelegationCall = delegationCall != null && (delegationReference == null || !isDelegationReferenceEmpty),
+            mayHaveContract = tree.isLegacyContractPresent(node),
             kdocText = null,
         )
     }

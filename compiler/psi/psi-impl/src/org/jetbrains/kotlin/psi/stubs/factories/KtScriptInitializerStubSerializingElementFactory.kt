@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
+import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 
@@ -16,4 +19,6 @@ internal object KtScriptInitializerStubSerializingElementFactory :
     ) {
 
     override fun shouldCreateStub(node: ASTNode): Boolean = true
+
+    override fun shouldCreateStub(tree: LighterAST, node: LighterASTNode, parentStub: StubElement<*>): Boolean = true
 }

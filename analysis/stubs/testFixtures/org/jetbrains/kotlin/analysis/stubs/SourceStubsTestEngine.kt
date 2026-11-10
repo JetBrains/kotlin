@@ -6,10 +6,13 @@
 
 package org.jetbrains.kotlin.analysis.stubs
 
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubElementRegistryService
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithInitializer
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 object SourceStubsTestEngine : StubsTestEngine() {
@@ -28,6 +32,8 @@ object SourceStubsTestEngine : StubsTestEngine() {
     override fun validate(testServices: TestServices, file: KtFile, fileStub: KotlinFileStubImpl) {
         super.validate(testServices, file, fileStub)
 
+        checkLightStubEquivalence(testServices, file, fileStub)
+
         val violations = mutableListOf<String>()
         checkPsiConsistencies(violations, fileStub)
         val violationsDump = violations.ifNotEmpty { joinToString("\n", postfix = "\n") }
@@ -35,6 +41,33 @@ object SourceStubsTestEngine : StubsTestEngine() {
             violationsDump,
             extension = ".psiConsistencyViolations.txt",
         )
+    }
+
+    /**
+     * Builds the stub tree again from an unparsed copy of [file], so that the stubs are built from the light tree
+     * produced by `parseContentsLight` — the path indexing takes — and checks that the result matches [fileStub].
+     */
+    private fun checkLightStubEquivalence(testServices: TestServices, file: KtFile, fileStub: KotlinFileStubImpl) {
+        val copy = PsiFileFactory.getInstance(file.project).createFileFromText(
+            /* name = */ file.name,
+            /* fileType = */ file.fileType,
+            /* text = */ file.text,
+            /* modificationStamp = */ 0,
+            /* eventSystemEnabled = */ false,
+            /* markAsCopy = */ false,
+        ) as KtFile
+
+        val builder = StubElementRegistryService.getInstance()
+            .getStubDescriptor(KotlinLanguage.INSTANCE)
+            ?.stubDefinition
+            ?.builder
+            ?: error("No stub descriptor for Kotlin")
+
+        val lightStub = builder.buildStubTree(copy) as KotlinFileStubImpl
+        testServices.assertions.assertEquals(
+            expected = render(fileStub),
+            actual = render(lightStub),
+        ) { "Stubs built from the light tree must match stubs built from the AST" }
     }
 
     private fun checkPsiConsistencies(violations: MutableList<String>, stubElement: StubElement<*>) {
