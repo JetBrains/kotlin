@@ -44,16 +44,18 @@ import java.io.File
  */
 class JsInProcessSecondStageFacade {
     /**
-     * Links a grouped batch in the whole-program translation modes only, out of the modes the settings of the tests
-     * ask for; an isolated test is linked in all the modes it asks for. The per-module and per-file modes produce a
-     * file per module, which `JsGroupingStageBoxRunner` would have to load in the dependency order of the modules of
-     * all the tests of the batch, and the name of such a file is made of the names of two modules, which are long in
-     * the grouping configuration, so it could exceed the limit of the file system.
+     * Links a grouped batch in the whole-program translation modes, and in the per-module ones if [linkPerModule];
+     * an isolated test is linked in all the modes it asks for.
      */
     class Grouping(
         testServices: TestServices,
         private val recompile: Boolean = false,
+        private val linkPerModule: Boolean = false,
     ) : AbstractJsSecondStageGroupingFacade(testServices) {
+        private val linkedGranularities: Set<JsGenerationGranularity> = buildSet {
+            add(JsGenerationGranularity.WHOLE_PROGRAM)
+            if (linkPerModule) add(JsGenerationGranularity.PER_MODULE)
+        }
 
         override fun linkIsolated(output: NonGroupingStageOutput): BinaryArtifacts.Js? {
             val services = output.testServices
@@ -72,7 +74,7 @@ class JsInProcessSecondStageFacade {
 
         override fun linkGroupedBatch(batch: GroupedBatch): BinaryArtifacts.Js {
             val services = batch.services
-            val launcherModule = batch.launcherModule
+            val launcherModule = if (linkPerModule) batch.launcherModule.copy(name = LAUNCHER_MODULE_NAME) else batch.launcherModule
             val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(launcherModule, services)
 
             val launcherKlibFile = batch.workingDir.resolve("launcher.klib")
@@ -81,6 +83,11 @@ class JsInProcessSecondStageFacade {
                 klibOutputFile = launcherKlibFile,
                 libraries = runtimeKlibs + batch.perTestKlibs,
             )
+            val launcherKlib = BinaryArtifacts.KLib(launcherKlibFile, DiagnosticsCollectorStub())
+            if (launcherModule.name != batch.launcherModule.name) {
+                // The configuration of the renamed launcher module is made from its KLIB.
+                services.artifactsProvider.registerArtifact(launcherModule, launcherKlib)
+            }
 
             val configuration = services.compilerConfigurationProvider.getCompilerConfiguration(launcherModule, CompilationStage.SECOND)
             configuration.includes = launcherKlibFile.canonicalPath
@@ -88,7 +95,7 @@ class JsInProcessSecondStageFacade {
             configuration.friendLibraries = emptyList()
             // The launcher exports its entry point itself, and `box()` of the test the configuration belongs to is not to be exported.
             configuration.additionalExportedDeclarationNames = emptySet()
-            configuration.artifactConfigurations = configuration.artifactConfigurations.filter { it.granularity == JsGenerationGranularity.WHOLE_PROGRAM }
+            configuration.artifactConfigurations = configuration.artifactConfigurations.filter { it.granularity in linkedGranularities }
 
             // The compiler reports the details of a failure to the message collector, which only prints them, while
             // the exception says nothing but the fact of the failure. Every test of the batch is failed with them,
@@ -96,7 +103,6 @@ class JsInProcessSecondStageFacade {
             @OptIn(MessageCollectorAccess::class)
             val errorRecorder = configuration.messageCollector as? ErrorRecordingMessageCollector
                 ?: ErrorRecordingMessageCollector(configuration.messageCollector).also { configuration.messageCollector = it }
-            val launcherKlib = BinaryArtifacts.KLib(launcherKlibFile, DiagnosticsCollectorStub())
             val artifact = try {
                 withTemporarySingleModuleStructure(services, launcherModule) {
                     JsUnifiedIrDeserializerAndLoweringFacade(services).transform(launcherModule, launcherKlib)
@@ -111,7 +117,7 @@ class JsInProcessSecondStageFacade {
             }
                 ?: testInfraError("Linking of the grouped batch has produced no executable\n${errorRecorder.describeMessages()}")
             checkTestInfrastructure(artifact is JsIrArtifact) { "Unexpected artifact of a grouped batch: ${artifact::class}" }
-            return JsGroupedBatchArtifact(artifact, launcherModule)
+            return JsGroupedBatchArtifact(artifact, launcherModule, linkPerModule)
         }
 
         /**
@@ -148,6 +154,7 @@ class JsInProcessSecondStageFacade {
 
         private companion object {
             const val MAX_COMPILER_MESSAGES_LENGTH = 16 * 1024
+            const val LAUNCHER_MODULE_NAME = "launcher"
         }
     }
 }

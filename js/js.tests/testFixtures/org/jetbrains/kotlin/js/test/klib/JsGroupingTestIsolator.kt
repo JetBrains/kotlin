@@ -36,10 +36,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 /**
  * Decides which JS box tests can share a grouped batch.
  *
- * A batch is linked into a single whole-program executable by one compiler invocation and is run through a launcher
- * that calls every `box()` by its fully qualified name. So a test is isolated whenever it needs a compiler or a runner
- * setup of its own, or declares something that is visible outside its (renamed) package. The rules are deliberately
- * conservative: a wrongly isolated test merely runs the way it always did, while a wrongly grouped one fails and can break its whole batch.
+ * A batch is linked into a single executable by one compiler invocation and is run through a launcher that calls every `box()` by its fully
+ * qualified name. So a test is isolated whenever it needs a compiler or a runner setup of its own, or declares something that is visible
+ * outside its (renamed) package. The rules are deliberately conservative: a wrongly isolated test merely runs the way it always did, while
+ * a wrongly grouped one fails and can break its whole batch.
  *
  * @param customCompilerStage the stage compiled by a custom (previously released) compiler in this test runner. Only
  *   the `IGNORE_KLIB_*_WITH_CUSTOM_<STAGE>` directives of that stage expect a failure (see `CustomKlibCompilerFirstStageTestSuppressor`

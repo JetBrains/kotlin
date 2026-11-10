@@ -25,10 +25,13 @@ import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.ParsedBatch
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.GroupingStageHandler
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.utils.DFS.topologicalOrder
 
 /**
  * Runs the executable the grouping stage has linked, on V8.
@@ -163,14 +166,23 @@ open class JsGroupingStageBoxRunner(
         inputs: List<NonGroupingStageOutput>,
     ): List<GroupedBatchExecution> {
         val launcherServices = inputs.first().testServices
+        val testModuleIdsInLoadingOrder = inputs.flatMap { input ->
+            topologicalOrder(input.testServices.moduleStructure.modules) { module ->
+                module.allDependencies.map(DependencyDescription::dependencyModule)
+            }.reversed().map { computeJsGroupedTestModuleId(input.testServices, it) }
+        }.distinct()
         return artifact.delegate.compilerResult.entries.map { [mode, outputs] ->
-            // A batch is linked in the whole-program modes only (see `JsInProcessSecondStageFacade.Grouping`): the files of
-            // a per-module mode would have to be loaded in the dependency order of the modules of all the tests of the batch.
-            checkTestInfrastructure(mode.granularity == JsGenerationGranularity.WHOLE_PROGRAM) {
-                "A grouped batch is linked in the whole-program translation modes only, but it was linked in $mode"
+            checkTestInfrastructure(
+                mode.granularity == JsGenerationGranularity.WHOLE_PROGRAM ||
+                        mode.granularity == JsGenerationGranularity.PER_MODULE && artifact.linkedPerModule
+            ) {
+                "A grouped batch is linked ${if (artifact.linkedPerModule) "per module too" else "as a whole program only"}, but got $mode"
             }
             val outputFile = getModeOutputFilePath(launcherServices, artifact.launcherModule, mode)
-            val jsFiles = outputs.dependencies.map { outputFile.augmentWithModuleName(it.artifactConfiguration.moduleName) } + outputFile
+            val dependencyIds = outputs.dependencies.map { it.artifactConfiguration.moduleName }
+            val testModuleIds = testModuleIdsInLoadingOrder.filter { it in dependencyIds }
+            val jsFiles = (dependencyIds.filter { it !in testModuleIds } + testModuleIds)
+                .map { outputFile.augmentWithModuleName(it) } + outputFile
             try {
                 val output = V8JsTestChecker.run(jsFiles) {
                     runTestFunction(

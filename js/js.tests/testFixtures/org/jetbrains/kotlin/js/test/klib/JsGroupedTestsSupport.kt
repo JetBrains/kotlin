@@ -5,12 +5,20 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
+import org.jetbrains.kotlin.js.common.safeModuleName
+import org.jetbrains.kotlin.js.config.perModuleOutputName
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
+import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.JsIrArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter.Companion.computePackage
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.KotlinTestInfo
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.testInfo
 import java.io.File
 
 /** The name of the exported top-level function, in the root package of the launcher module, that runs a grouped batch. */
@@ -33,6 +41,7 @@ internal fun jsGroupedTestsEntryPointSource(runAllFunctionName: String): String 
 class JsGroupedBatchArtifact(
     val delegate: JsIrArtifact,
     val launcherModule: TestModule,
+    val linkedPerModule: Boolean = false,
 ) : BinaryArtifacts.Js() {
     override val outputFile: File
         get() = delegate.outputFile
@@ -46,3 +55,25 @@ class JsGroupedBatchArtifact(
  * [computePackage]) and carries none of the characters the protocol lines are built of.
  */
 fun computeJsGroupedTestId(testInfo: KotlinTestInfo): String = computePackage(testInfo)
+
+internal fun computeJsGroupedTestModuleId(testServices: TestServices, module: TestModule): String =
+    if (module.name == JsTestHelpersModuleTransformer.HELPERS_MODULE_NAME) {
+        module.name.safeModuleName
+    } else {
+        val hash = Integer.toHexString(module.name.hashCode())
+        makeValidES5Identifier("${testServices.testInfo.methodName.take(MAX_TEST_NAME_LENGTH_IN_MODULE_ID)}_$hash", withHash = false)
+    }
+
+private const val MAX_TEST_NAME_LENGTH_IN_MODULE_ID = 40
+
+/**
+ * Gives the modules of a grouped test short JS module names: a per-module file is named after its module, and the module
+ * names of the grouping configuration are long enough to exceed the 255-character limit of a file name.
+ */
+class JsGroupedTestModuleOutputNameConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        if (module.name == JsTestHelpersModuleTransformer.HELPERS_MODULE_NAME) return
+        if (testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)) return
+        configuration.perModuleOutputName = computeJsGroupedTestModuleId(testServices, module)
+    }
+}
