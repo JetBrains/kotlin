@@ -547,6 +547,10 @@ internal class SymbolLightAccessorMethod private constructor(
             }
         }
 
+        /**
+         * `LightClassMemberUtils.lightMemberKotlinOrigin` relies on the [LightMemberOriginForDeclaration.originalElement] given here
+         * to accessors of [KaSymbolOrigin.SOURCE] properties, as it is the `kotlinOrigin` of the accessor.
+         */
         context(context: Context)
         private fun getLightMemberOriginForAccessor(accessor: KaPropertyAccessorSymbol): LightMemberOriginForDeclaration? {
             val originalElement = property.psiSafe<KtDeclaration>() ?: return null
