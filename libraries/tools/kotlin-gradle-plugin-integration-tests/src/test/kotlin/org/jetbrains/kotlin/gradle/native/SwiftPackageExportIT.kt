@@ -663,7 +663,7 @@ class SwiftPackageExportIT : KGPBaseTest() {
 
             // A declaration with an untranslatable type fails the export, so it only shows up when the type is reexported.
             val producerSwift = projectPath
-                .resolve("build/SwiftPackageExport/iosSimulatorArm64/files/OrgTestProducer/OrgTestProducer.swift")
+                .resolve("build/SwiftPackageExport/iosSimulatorArm64/output/files/OrgTestProducer/OrgTestProducer.swift")
             val roundTripSignature = Regex("""func roundTrip\(\s*helper: (\S+)\s*\)\s*->\s*(\S+)""")
             assertEquals(
                 listOf(listOf("LocalHelper", "LocalHelper")),
