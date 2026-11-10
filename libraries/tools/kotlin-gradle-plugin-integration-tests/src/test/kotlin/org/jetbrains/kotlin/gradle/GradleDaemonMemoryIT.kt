@@ -34,6 +34,7 @@ class GradleDaemonMemoryIT : KGPDaemonsBaseTest() {
 
             val usedMemory: List<Int> = (1..buildCount).map {
                 var reportedMemory = 0
+                // clean also checks that nothing from the previous build remains locked by the daemon, see KT-9440
                 build(userVariantArg, reportMemoryUsage, "clean", "assemble") {
                     val matches = output
                         .lineSequence()
@@ -61,9 +62,6 @@ class GradleDaemonMemoryIT : KGPDaemonsBaseTest() {
                         "(from $establishedMaximum to $totalMaximum) kb > $memoryMaxGrowthLimitKB kb\n" +
                         "Usages: $usedMemory"
             )
-
-            // testing that nothing remains locked by daemon, see KT-9440
-            build(userVariantArg, "clean")
         }
     }
 }

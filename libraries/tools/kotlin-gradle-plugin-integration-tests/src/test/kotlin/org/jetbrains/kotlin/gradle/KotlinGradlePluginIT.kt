@@ -654,9 +654,6 @@ class KotlinGradleIT : KGPBaseTest() {
 
                 assertFileExists(moduleDir.resolve("new-model-1.0-sources.jar"))
             }
-
-            // Workaround for Junit 'Failed to delete temp directory' on Windows OS
-            build("clean")
         }
     }
 
