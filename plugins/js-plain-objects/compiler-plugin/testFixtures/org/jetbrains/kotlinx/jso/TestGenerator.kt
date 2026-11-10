@@ -6,15 +6,19 @@
 package org.jetbrains.kotlinx.jspo
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlinx.jspo.runners.AbstractJsPlainObjectsBoxTest
 import org.jetbrains.kotlinx.jspo.runners.AbstractFirJsPlainObjectsPluginDiagnosticTest
+import org.jetbrains.kotlinx.jspo.runners.AbstractJsPlainObjectsBoxTest
+import org.jetbrains.kotlinx.jspo.runners.AbstractLLJsPlainObjectsDiagnosticsTest
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/js-plain-objects/compiler-plugin/testData") {
             // ------------------------------- diagnostics -------------------------------
-            testClass<AbstractFirJsPlainObjectsPluginDiagnosticTest>() {
+            testClass<AbstractFirJsPlainObjectsPluginDiagnosticTest> {
+                model("diagnostics")
+            }
+            testClass<AbstractLLJsPlainObjectsDiagnosticsTest> {
                 model("diagnostics")
             }
 
