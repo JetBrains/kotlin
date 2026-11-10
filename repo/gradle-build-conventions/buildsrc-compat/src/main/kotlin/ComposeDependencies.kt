@@ -2,7 +2,11 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.attributes.Usage
+import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.maven
+import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import java.net.URI
 
 /*
@@ -57,3 +61,25 @@ fun Project.composeRuntimeJs() = compose("runtime", "runtime-js", composeRuntime
 fun Project.composeRuntimeDesktop() = compose("runtime", "runtime-desktop", composeRuntimeVersion())
 fun Project.compose(group: String, module: String, version: String = composeStableVersion()) =
     "androidx.compose.$group:$module:$version"
+
+/**
+ * Hosts that run Compose compiler Kotlin/Native tests on CI.
+ * Compose runtime is not published for macosX64.
+ */
+private val composeNativeTestHosts = listOf("linuxx64", "macosarm64", "iossimulatorarm64", "mingwx64")
+
+/**
+ * Adds implicit dependencies on the host-specific klibs of a Kotlin Multiplatform library [notation] (`group:name:version`)
+ * for each of [composeNativeTestHosts], so that they are included in dependency verification metadata.
+ */
+fun Project.composeNativeImplicitDependency(notation: String) {
+    val (group, name, version) = notation.split(":")
+    composeNativeTestHosts.forEach { host ->
+        dependencies.add("implicitDependencies", "$group:$name-$host:$version") {
+            isTransitive = false
+            attributes {
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+            }
+        }
+    }
+}
