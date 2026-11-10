@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrder
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
-import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
+import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import java.nio.file.Path
 

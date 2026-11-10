@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.daemon.IcEventSerializer
-import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
+import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.btaSerializersModule
 import org.junit.jupiter.api.DisplayName
 import java.io.File

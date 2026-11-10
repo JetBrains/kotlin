@@ -65,7 +65,7 @@ internal class BtaImplOptionsGenerator(
         currentFileCallsApiEnumValues = false
         val mainFileBuilder = FileSpec.builder(targetPackage, implClassName).apply {
             addAnnotation(AnnotationSpec.builder(ClassName("kotlinx.serialization", "UseSerializers")).apply {
-                addMember("%T::class", ClassName("org.jetbrains.kotlin.buildtools.internal.daemon", "PathAsStringSerializer"))
+                addMember("%T::class", ClassName("org.jetbrains.kotlin.daemon.common.serialization", "PathAsStringSerializer"))
             }.build())
             // Kotlinpoet requires these aliased imports when there's a name clash in the current context or else it calls the wrong member
             addAliasedImport(MemberName("org.jetbrains.kotlin.compilerRunner", "toArgumentStrings"), "compilerToArgumentStrings")

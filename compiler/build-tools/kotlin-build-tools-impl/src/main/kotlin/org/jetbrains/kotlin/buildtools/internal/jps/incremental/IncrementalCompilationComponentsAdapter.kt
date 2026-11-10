@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.internal.jps.incremental
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCache
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCompilationComponents
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -18,4 +19,12 @@ internal class IncrementalCompilationComponentsAdapter(
 ) : IncrementalCompilationComponents {
     override fun getIncrementalCache(target: TargetId): IncrementalCache =
         IncrementalCacheAdapter(components.getIncrementalCache(CompilerTargetId(target.name, target.type)))
+}
+
+@OptIn(InternalBuildToolsApi::class)
+internal class CompilerIncrementalCompilationComponentsAdapter(
+    private val components: IncrementalCompilationComponents,
+) : CompilerIncrementalCompilationComponents {
+    override fun getIncrementalCache(target: CompilerTargetId): CompilerIncrementalCache =
+        CompilerIncrementalCacheAdapter(components.getIncrementalCache(TargetId(target.name, target.type)))
 }

@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.buildtools.api.cri.CompilerRefIndexConfiguration
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
-import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
+import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import java.nio.file.Path
 
 @Serializable

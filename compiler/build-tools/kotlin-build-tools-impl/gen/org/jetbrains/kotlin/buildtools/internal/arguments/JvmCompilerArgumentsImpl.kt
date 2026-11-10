@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.StringConcatMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WhenExpressionsMode
-import org.jetbrains.kotlin.buildtools.`internal`.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -56,6 +55,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
+import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 

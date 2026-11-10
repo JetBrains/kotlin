@@ -37,3 +37,11 @@ internal class IncrementalCacheAdapter(private val cache: CompilerIncrementalCac
     private fun unsupported(): Nothing =
         throw UnsupportedOperationException("Not provided by the JPS incremental cache through the Build Tools API")
 }
+
+
+@OptIn(InternalBuildToolsApi::class)
+internal class CompilerIncrementalCacheAdapter(private val cache: IncrementalCache) : CompilerIncrementalCache {
+    override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
+
+    override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
+}
