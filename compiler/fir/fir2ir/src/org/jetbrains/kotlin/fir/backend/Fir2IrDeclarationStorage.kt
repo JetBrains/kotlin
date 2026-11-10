@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
+import org.jetbrains.kotlin.ir.moduleVisibilityProvider
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -233,6 +234,7 @@ class Fir2IrDeclarationStorage(
             val moduleDescriptor = FirModuleDescriptor.createDependencyModuleDescriptor(moduleData, sourceModule.descriptor.builtIns)
             IrModuleFragmentImpl(moduleDescriptor).also {
                 it.leafModule = sourceModule
+                it.moduleVisibilityProvider = Fir2IrModuleVisibilityProvider
             }
         }
     }
@@ -1481,7 +1483,7 @@ internal var FirProperty.isStubPropertyForPureField: Boolean? by FirDeclarationD
 
 internal var IrClass.isNonCachedSourceFileFacade: Boolean by irFlag(copyByDefault = false)
 
-var IrModuleFragment.leafModule: IrModuleFragment? by irAttribute(copyByDefault = false)
+internal var IrModuleFragment.leafModule: IrModuleFragment? by irAttribute(copyByDefault = false)
 
 /**
  * Opt-in to this annotation indicates that some code uses annotated function but it actually shouldn't

@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.moduleVisibilityProvider
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.ModuleVisibilityProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.toIdSignature
@@ -337,6 +339,7 @@ abstract class KotlinIrLinker(
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
         moduleFragment.kotlinLibrary = kotlinLibrary
         moduleFragment.friendLibraries = friendModules[kotlinLibrary]?.toSet().orEmpty()
+        moduleFragment.moduleVisibilityProvider = IrLinkerModuleVisibilityProvider
 
         val deserializer = maybeWrapWithBuiltIn(
             createModuleDeserializer(
@@ -509,3 +512,14 @@ var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault 
  * In practice, it's present at the 2-nd stage of compilation. Friend dependencies on the 1-st stage are tracked by frontend structures.
  */
 internal var IrModuleFragment.friendLibraries: Set<KotlinLibrary>? by irAttribute(copyByDefault = true)
+
+private object IrLinkerModuleVisibilityProvider : ModuleVisibilityProvider {
+    override fun canSeeInternals(thisModule: IrModuleFragment, otherModule: IrModuleFragment): Boolean {
+        if (otherModule.moduleVisibilityProvider !is IrLinkerModuleVisibilityProvider) return false
+        if (thisModule == otherModule) return true
+
+        val fromModuleKlib = thisModule.kotlinLibrary ?: return false
+        val toModuleKlib = otherModule.kotlinLibrary ?: return false
+        return fromModuleKlib == toModuleKlib || thisModule.friendLibraries?.contains(toModuleKlib) == true
+    }
+}
