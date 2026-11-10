@@ -154,7 +154,7 @@ class ConstantEvaluator private constructor(
     constructor(
         containingClass: JavaClassOverAst,
         customExternalConstantResolver: ExternalConstantResolver? = null,
-    ) : this(containingClass.tree, containingClass.resolutionContext, containingClass, customExternalConstantResolver)
+    ) : this(containingClass.tree, containingClass.memberResolutionContext, containingClass, customExternalConstantResolver)
 
     /**
      * Evaluator for an expression written outside of any member — an annotation argument or an
