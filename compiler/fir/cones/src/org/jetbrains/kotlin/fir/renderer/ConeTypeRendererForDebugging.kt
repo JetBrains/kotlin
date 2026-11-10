@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 
@@ -19,7 +19,7 @@ class ConeTypeRendererForDebugging() : ConeTypeRenderer() {
 
     override fun renderAsPossibleFunctionType(
         type: ConeKotlinType,
-        functionClassKindExtractor: (ConeKotlinType) -> FunctionTypeKind?,
+        functionClassKindExtractor: (ConeKotlinType) -> FunctionTypeKindExtractor.KindWithArity?,
         renderType: ConeTypeProjection.() -> Unit
     ) {
         builder.append("R|")
