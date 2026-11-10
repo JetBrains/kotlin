@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Co
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.X_IR_MODULE_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlibArguments.Companion.X_IR_PER_MODULE_OUTPUT_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments.Companion.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments.Companion.X_SUSPEND_LAMBDA_EXPORTING
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.TARGET
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.X_DTS_USE_UNKNOWN_INSTEAD_ANY
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.X_ES_GENERATORS
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.X_ES_LONG_AS_BIGINT
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.X_IR_PER_FILE
@@ -35,12 +37,14 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
+import kotlin.io.path.readText
 import kotlin.io.path.walk
 
 @MustRunOnChangesInJs
@@ -189,108 +193,87 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         }
     }
 
-    @DisplayName("configureFrom takes MODULE_KIND from -module-kind and -target")
-    @BtaVersionsOnlyCompilationTest
-    fun configureFromTakesModuleKind(kotlinToolchain: KotlinToolchains) {
-        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ts-generation")
+    @DisplayName("USE_UNKNOWN_INSTEAD_ANY set on the operation exports Any and dynamic as unknown")
+    fun useUnknownInsteadAnyExportsUntypedAsUnknown(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.first.assumeJsDtsGenerationIsSupported()
 
-        val fromModuleKind = kotlinToolchain.dtsBuilderConfiguredFrom {
-            this[JsCompilerLinkingArguments.MODULE_KIND] = JsModuleKind.COMMONJS
+        jsProject(strategyConfig) {
+            val module = module("js-ts-generation")
+            module.compile()
+
+            val outputDirectory = module.buildDirectory.resolve("dts-unknown")
+            module.generateDts(
+                outputDirectory = outputDirectory,
+                compilationConfigAction = { it[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY] = true },
+            )
+
+            val dts = outputDirectory.resolve("js-ts-generation.d.ts").readText()
+            assertTrue("function takeAny(x: NonNullable<unknown>): NonNullable<unknown>" in dts, dts)
+            assertTrue("function takeDynamic(x: unknown): unknown" in dts, dts)
         }
-        assertEquals(JsModuleKind.COMMONJS, fromModuleKind[JsDtsGenerationOperation.MODULE_KIND])
+    }
 
-        val fromEs2015Target = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2015 }
-        assertEquals(JsModuleKind.ES, fromEs2015Target[JsDtsGenerationOperation.MODULE_KIND])
+    @DisplayName("configureFrom with typed arguments copies boolean options from their arguments")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsCopiesBooleanOptions(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
 
-        val fromEs2020Target = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2020 }
-        assertEquals(JsModuleKind.ES, fromEs2020Target[JsDtsGenerationOperation.MODULE_KIND])
-
-        val fromBoth = kotlinToolchain.dtsBuilderConfiguredFrom {
-            this[JsCompilerLinkingArguments.MODULE_KIND] = JsModuleKind.COMMONJS
-            this[TARGET] = JsEcmaVersion.ES2015
+        val allOn = kotlinToolchain.dtsBuilderConfiguredFrom {
+            this[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] = true
+            this[X_SUSPEND_LAMBDA_EXPORTING] = true
+            this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = true
+            this[X_DTS_USE_UNKNOWN_INSTEAD_ANY] = true
         }
-        assertEquals(JsModuleKind.COMMONJS, fromBoth[JsDtsGenerationOperation.MODULE_KIND])
+        assertEquals(true, allOn[JsDtsGenerationOperation.IMPLEMENT_INTERFACES])
+        assertEquals(true, allOn[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])
+        assertEquals(true, allOn[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
+        assertEquals(true, allOn[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY])
 
-        val fromNeither = kotlinToolchain.dtsBuilderConfiguredFrom { }
-        assertEquals(JsModuleKind.UMD, fromNeither[JsDtsGenerationOperation.MODULE_KIND])
-    }
-
-    @DisplayName("configureFrom takes GRANULARITY from -Xir-per-file and -Xir-per-module")
-    @BtaVersionsOnlyCompilationTest
-    fun configureFromTakesGranularity(kotlinToolchain: KotlinToolchains) {
-        kotlinToolchain.assumeJsDtsGenerationIsSupported()
-
-        // TODO (KT-90681): check TS_COMPILATION_STRATEGY once it is decided how it follows -Xir-per-file
-        val perFile = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_FILE] = true }
-        assertEquals(JsDtsGranularity.PER_FILE, perFile[JsDtsGenerationOperation.GRANULARITY])
-
-        val perModule = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_MODULE] = true }
-        assertEquals(JsDtsGranularity.WHOLE_PROGRAM, perModule[JsDtsGenerationOperation.GRANULARITY])
-    }
-
-    @DisplayName("configureFrom copies declaration flags from the linking arguments")
-    @BtaVersionsOnlyCompilationTest
-    fun configureFromCopiesDeclarationFlags(kotlinToolchain: KotlinToolchains) {
-        kotlinToolchain.assumeJsDtsGenerationIsSupported()
-        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
-
-        // TODO (KT-90366): check EXPORT_UNTYPED_AS_UNKNOWN from -Xdts-use-unknown-instead-any
-        // TODO (KT-90528): check IMPLEMENT_INTERFACES once -Xenable-implementing-interfaces-from-typescript is available for linking
-        val longAsBigInt = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_ES_LONG_AS_BIGINT] = true }
-        assertEquals(true, longAsBigInt[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
-
-        val suspendLambdas = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_SUSPEND_LAMBDA_EXPORTING] = true }
-        assertEquals(true, suspendLambdas[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])
-
-        val dataClassCopy = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = true }
-        assertEquals(true, dataClassCopy[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
-
-        val esGeneratorsUsage = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_ES_GENERATORS] = true }
-        assertEquals(true, esGeneratorsUsage[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
-    }
-
-    @DisplayName("configureFrom derives COMPILE_LONG_AS_BIG_INT from -target unless -Xes-long-as-bigint is set")
-    @BtaVersionsOnlyCompilationTest
-    fun configureFromDerivesLongAsBigIntFromTarget(kotlinToolchain: KotlinToolchains) {
-        kotlinToolchain.assumeJsDtsGenerationIsSupported()
-        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
-
-        val es2020 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2020 }
-        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
-        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
-
-        val es2020ExplicitFalse = kotlinToolchain.dtsBuilderConfiguredFrom {
-            this[TARGET] = JsEcmaVersion.ES2020
-            this[X_ES_LONG_AS_BIGINT] = false
+        val allOff = kotlinToolchain.dtsBuilderConfiguredFrom {
+            this[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] = false
+            this[X_SUSPEND_LAMBDA_EXPORTING] = false
+            this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = false
+            this[X_DTS_USE_UNKNOWN_INSTEAD_ANY] = false
         }
-        assertEquals(false, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
-        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
-
-        val es2015 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2015 }
-        assertEquals(false, es2015[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
-        assertEquals(true, es2015[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
-
-        val noTarget = kotlinToolchain.dtsBuilderConfiguredFrom { }
-        assertEquals(false, noTarget[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
-        assertEquals(false, noTarget[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+        assertEquals(false, allOff[JsDtsGenerationOperation.IMPLEMENT_INTERFACES])
+        assertEquals(false, allOff[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])
+        assertEquals(false, allOff[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
+        assertEquals(false, allOff[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY])
     }
 
-    @DisplayName("configureFrom takes COMPILE_LONG_AS_BIG_INT from command-line linking arguments")
+    @DisplayName("configureFrom with command-line arguments copies boolean options from their flags")
     @BtaVersionsOnlyCompilationTest
-    fun configureFromTakesLongAsBigIntFromCommandLine(kotlinToolchain: KotlinToolchains) {
+    fun configureFromCommandLineCopiesBooleanOptions(kotlinToolchain: KotlinToolchains) {
         kotlinToolchain.assumeJsDtsGenerationIsSupported()
-        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
 
-        val es2020 = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2020")
-        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        val allOn = kotlinToolchain.dtsBuilderConfiguredFromCommandLine(
+            "-Xenable-implementing-interfaces-from-typescript",
+            "-Xsuspend-lambda-exporting",
+            "-Xconsistent-data-class-copy-visibility",
+            "-Xdts-use-unknown-instead-any",
+        )
+        assertEquals(true, allOn[JsDtsGenerationOperation.IMPLEMENT_INTERFACES])
+        assertEquals(true, allOn[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])
+        assertEquals(true, allOn[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
+        assertEquals(true, allOn[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY])
 
-        val es2020ExplicitFalse = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2020", "-Xes-long-as-bigint=false")
-        assertEquals(false, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+        val allOff = kotlinToolchain.dtsBuilderConfiguredFromCommandLine(
+            "-Xenable-implementing-interfaces-from-typescript=false",
+            "-Xsuspend-lambda-exporting=false",
+            "-Xconsistent-data-class-copy-visibility=false",
+            "-Xdts-use-unknown-instead-any=false",
+        )
+        assertEquals(false, allOff[JsDtsGenerationOperation.IMPLEMENT_INTERFACES])
+        assertEquals(false, allOff[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])
+        assertEquals(false, allOff[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
+        assertEquals(false, allOff[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY])
     }
 
-    @DisplayName("configureFrom takes declaration flags from language features enabled through -XXLanguage")
+    @DisplayName("configureFrom with command-line arguments takes boolean options from -XXLanguage features")
     @BtaVersionsOnlyCompilationTest
-    fun configureFromTakesDeclarationFlagsFromLanguageFeatures(kotlinToolchain: KotlinToolchains) {
+    fun configureFromCommandLineTakesOptionsFromLanguageFeatures(kotlinToolchain: KotlinToolchains) {
         kotlinToolchain.assumeJsDtsGenerationIsSupported()
         kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
 
@@ -302,6 +285,202 @@ class JsDtsGenerationTest : BaseCompilationTest() {
 
         val dataClassCopy = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-XXLanguage:+DataClassCopyRespectsConstructorVisibility")
         assertEquals(true, dataClassCopy[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
+    }
+
+    @DisplayName("configureFrom with typed arguments: explicit MODULE_KIND takes precedence over auto-configuration from TARGET")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsTakesExplicitModuleKind(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val fromModuleKind = kotlinToolchain.dtsBuilderConfiguredFrom {
+            this[JsCompilerLinkingArguments.MODULE_KIND] = JsModuleKind.COMMONJS
+        }
+        assertEquals(JsModuleKind.COMMONJS, fromModuleKind[JsDtsGenerationOperation.MODULE_KIND])
+
+        val fromBoth = kotlinToolchain.dtsBuilderConfiguredFrom {
+            this[JsCompilerLinkingArguments.MODULE_KIND] = JsModuleKind.COMMONJS
+            this[TARGET] = JsEcmaVersion.ES2015
+        }
+        assertEquals(JsModuleKind.COMMONJS, fromBoth[JsDtsGenerationOperation.MODULE_KIND])
+    }
+
+    @DisplayName("configureFrom with typed arguments derives MODULE_KIND from TARGET")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsDerivesModuleKindFromTarget(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val fromEs2015Target = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2015 }
+        assertEquals(JsModuleKind.ES, fromEs2015Target[JsDtsGenerationOperation.MODULE_KIND])
+
+        val fromEs2020Target = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2020 }
+        assertEquals(JsModuleKind.ES, fromEs2020Target[JsDtsGenerationOperation.MODULE_KIND])
+    }
+
+    @DisplayName("configureFrom with typed arguments uses the default MODULE_KIND when neither MODULE_KIND nor TARGET is set")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsFallsBackToUmdModuleKind(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val fromNeither = kotlinToolchain.dtsBuilderConfiguredFrom { }
+        assertEquals(JsModuleKind.UMD, fromNeither[JsDtsGenerationOperation.MODULE_KIND])
+    }
+
+    @DisplayName("configureFrom with command-line arguments takes MODULE_KIND from -module-kind, otherwise derives it from -target")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromCommandLineResolvesModuleKind(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val noArguments = kotlinToolchain.dtsBuilderConfiguredFromCommandLine()
+        assertEquals(JsModuleKind.UMD, noArguments[JsDtsGenerationOperation.MODULE_KIND])
+
+        val explicitWithTarget = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-module-kind", "commonjs", "-target", "es2015")
+        assertEquals(JsModuleKind.COMMONJS, explicitWithTarget[JsDtsGenerationOperation.MODULE_KIND])
+
+        val es2015 = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2015")
+        assertEquals(JsModuleKind.ES, es2015[JsDtsGenerationOperation.MODULE_KIND])
+
+        val es2020 = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2020")
+        assertEquals(JsModuleKind.ES, es2020[JsDtsGenerationOperation.MODULE_KIND])
+    }
+
+    @DisplayName("configureFrom with typed arguments takes GRANULARITY from X_IR_PER_FILE and X_IR_PER_MODULE")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsTakesGranularity(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        // TODO (KT-90681): check TS_COMPILATION_STRATEGY once it is decided how it follows -Xir-per-file
+        val perFile = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_FILE] = true }
+        assertEquals(JsDtsGranularity.PER_FILE, perFile[JsDtsGenerationOperation.GRANULARITY])
+
+        val perModule = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_MODULE] = true }
+        assertEquals(JsDtsGranularity.WHOLE_PROGRAM, perModule[JsDtsGenerationOperation.GRANULARITY])
+    }
+
+    @DisplayName("configureFrom with command-line arguments takes GRANULARITY from -Xir-per-file and -Xir-per-module")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromCommandLineTakesGranularity(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val noArguments = kotlinToolchain.dtsBuilderConfiguredFromCommandLine()
+        assertEquals(JsDtsGranularity.WHOLE_PROGRAM, noArguments[JsDtsGenerationOperation.GRANULARITY])
+
+        val perFile = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-Xir-per-file")
+        assertEquals(JsDtsGranularity.PER_FILE, perFile[JsDtsGenerationOperation.GRANULARITY])
+
+        val perModule = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-Xir-per-module")
+        assertEquals(JsDtsGranularity.WHOLE_PROGRAM, perModule[JsDtsGenerationOperation.GRANULARITY])
+    }
+
+    @DisplayName("configureFrom with typed arguments: explicit X_ES_LONG_AS_BIGINT takes precedence over auto-configuration from TARGET")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsTakesExplicitLongAsBigInt(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val explicitTrue = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_ES_LONG_AS_BIGINT] = true }
+        assertEquals(true, explicitTrue[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val es2020ExplicitFalse = kotlinToolchain.dtsBuilderConfiguredFrom {
+            this[TARGET] = JsEcmaVersion.ES2020
+            this[X_ES_LONG_AS_BIGINT] = false
+        }
+        assertEquals(false, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+    }
+
+    @DisplayName("configureFrom with typed arguments derives COMPILE_LONG_AS_BIG_INT from TARGET")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsDerivesLongAsBigIntFromTarget(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val es2020 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2020 }
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val es2015 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2015 }
+        assertEquals(false, es2015[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+    }
+
+    @DisplayName("configureFrom with typed arguments uses the default COMPILE_LONG_AS_BIG_INT when neither X_ES_LONG_AS_BIGINT nor TARGET is set")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsLeavesLongAsBigIntOffByDefault(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val noTarget = kotlinToolchain.dtsBuilderConfiguredFrom { }
+        assertEquals(false, noTarget[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+    }
+
+    @DisplayName("configureFrom with command-line arguments takes COMPILE_LONG_AS_BIG_INT from -Xes-long-as-bigint with an explicit value")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromCommandLineTakesExplicitLongAsBigInt(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+
+        val explicitTrue = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-Xes-long-as-bigint=true")
+        assertEquals(true, explicitTrue[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val es2020ExplicitFalse = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2020", "-Xes-long-as-bigint=false")
+        assertEquals(false, es2020ExplicitFalse[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+    }
+
+    @DisplayName("configureFrom with command-line arguments derives COMPILE_LONG_AS_BIG_INT from -target")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromCommandLineDerivesLongAsBigIntFromTarget(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val es2020 = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2020")
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val es2015 = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2015")
+        assertEquals(false, es2015[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+
+        val noTarget = kotlinToolchain.dtsBuilderConfiguredFromCommandLine()
+        assertEquals(false, noTarget[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
+    }
+
+    @DisplayName("configureFrom with typed arguments takes COMPILE_SUSPEND_AS_JS_GENERATOR from X_ES_GENERATORS, otherwise derives it from TARGET")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsResolvesSuspendAsJsGenerator(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val noTarget = kotlinToolchain.dtsBuilderConfiguredFrom { }
+        assertEquals(false, noTarget[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+
+        val explicitTrue = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_ES_GENERATORS] = true }
+        assertEquals(true, explicitTrue[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+
+        val explicitFalse = kotlinToolchain.dtsBuilderConfiguredFrom {
+            this[TARGET] = JsEcmaVersion.ES2020
+            this[X_ES_GENERATORS] = false
+        }
+        assertEquals(false, explicitFalse[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+
+        val es2020 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2020 }
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+
+        val es2015 = kotlinToolchain.dtsBuilderConfiguredFrom { this[TARGET] = JsEcmaVersion.ES2015 }
+        assertEquals(true, es2015[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+    }
+
+    @DisplayName("configureFrom with command-line arguments takes COMPILE_SUSPEND_AS_JS_GENERATOR from -Xes-generators, otherwise derives it from -target")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromCommandLineResolvesSuspendAsJsGenerator(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val noTarget = kotlinToolchain.dtsBuilderConfiguredFromCommandLine()
+        assertEquals(false, noTarget[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+
+        val explicitTrue = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-Xes-generators")
+        assertEquals(true, explicitTrue[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+
+        val explicitFalse = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2015", "-Xes-generators=false")
+        assertEquals(false, explicitFalse[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+
+        val es2020 = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2020")
+        assertEquals(true, es2020[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
+
+        val es2015 = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-target", "es2015")
+        assertEquals(true, es2015[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
     }
 
     private fun KotlinToolchains.dtsBuilderConfiguredFrom(
@@ -319,7 +498,7 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         dtsBuilderConfiguredFrom { applyCommandLineArguments(linkingArguments.toList()) }
 
     private fun KotlinToolchains.assumeJsDtsConfigureFromArgumentResolutionIsSupported() {
-        assumeTrue(KotlinToolingVersion(getCompilerVersion()) > KotlinToolingVersion(2, 5, 20, "Beta1")) {
+        assumeTrue(KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 5, 20, "Beta1")) {
             "Resolving JS linking arguments in JsDtsGenerationOperation.Builder.configureFrom is not supported on Kotlin versions before 2.5.20-Beta1"
         }
     }

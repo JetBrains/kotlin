@@ -34,6 +34,6 @@ class JsDtsGenerationOperationDefaultsTest {
         assertEquals(false, operation[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])
         assertEquals(false, operation[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
         assertEquals(false, operation[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
-        // TODO (KT-90366): check EXPORT_UNTYPED_AS_UNKNOWN once reading its default value is fixed
+        assertEquals(false, operation[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY])
     }
 }
