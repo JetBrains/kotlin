@@ -18,7 +18,7 @@ FILE: callOnThisInDelegateExpression.kt
         public abstract val type: R|java/lang/Class<R>|
             public get(): R|java/lang/Class<R>|
 
-        public final var bundle: R|R?|by this@R|/SomeImpl|.R|/delegateOf|<R|SomeImpl<R>|, R|R|>(this@R|/SomeImpl|.R|/SomeImpl.type|).R|SubstitutionOverride</Delegate.resource: R|Delegate<SomeImpl<R>, R?>|>|(this@R|/SomeImpl|.R|/SomeImpl.getFactory|<R|SomeImpl<R>|, R|R|>())
+        public final var bundle: R|R?| by this@R|/SomeImpl|.R|/delegateOf|<R|SomeImpl<R>|, R|R|>(this@R|/SomeImpl|.R|/SomeImpl.type|).R|SubstitutionOverride</Delegate.resource: R|Delegate<SomeImpl<R>, R?>|>|(this@R|/SomeImpl|.R|/SomeImpl.getFactory|<R|SomeImpl<R>|, R|R|>())
             public get(): R|R?| {
                 ^ this@R|/SomeImpl|.D|/SomeImpl.bundle|.R|SubstitutionOverride</Delegate.getValue: R|R?|>|(this@R|/SomeImpl|, ::R|/SomeImpl.bundle|)
             }

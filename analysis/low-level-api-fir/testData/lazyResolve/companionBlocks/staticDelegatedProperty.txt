@@ -5,7 +5,7 @@ FILE: [ResolvedTo(RAW_FIR)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val staticDelegatedProperty: Intby LAZY_EXPRESSION
+        public? final? static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val staticDelegatedProperty: Int by LAZY_EXPRESSION
             public? static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit> { LAZY_BLOCK }
 
     }
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val staticDelegatedProperty: Intby LAZY_EXPRESSION
+        public? final? static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val staticDelegatedProperty: Int by LAZY_EXPRESSION
             public? static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): <implicit> { LAZY_BLOCK }
 
     }
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? static [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Foo] val staticDelegatedProperty: Intby LAZY_EXPRESSION
+        public? final? static [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Foo] val staticDelegatedProperty: Int by LAZY_EXPRESSION
             public? static [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Foo] get(): <implicit> { LAZY_BLOCK }
 
     }
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? static [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Foo] val staticDelegatedProperty: Intby LAZY_EXPRESSION
+        public? final? static [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Foo] val staticDelegatedProperty: Int by LAZY_EXPRESSION
             public? static [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Foo] get(): <implicit> { LAZY_BLOCK }
 
     }
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? static [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Foo] val staticDelegatedProperty: Intby LAZY_EXPRESSION
+        public? final? static [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Foo] val staticDelegatedProperty: Int by LAZY_EXPRESSION
             public? static [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Foo] get(): <implicit> { LAZY_BLOCK }
 
     }
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? static [ResolvedTo(TYPES)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int|by LAZY_EXPRESSION
+        public? final? static [ResolvedTo(TYPES)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int| by LAZY_EXPRESSION
             public? static [ResolvedTo(TYPES)] [ContainingClassKey=Foo] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int|by LAZY_EXPRESSION
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int| by LAZY_EXPRESSION
             public static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int|by LAZY_EXPRESSION
+        public final static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int| by LAZY_EXPRESSION
             public static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Foo] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int|by LAZY_EXPRESSION
+        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int| by LAZY_EXPRESSION
             public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int|by LAZY_EXPRESSION
+        public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int| by LAZY_EXPRESSION
             public static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final static [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int|by LAZY_EXPRESSION
+        public final static [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int| by LAZY_EXPRESSION
             public static [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Foo] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int|by LAZY_EXPRESSION
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int| by LAZY_EXPRESSION
             public static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
@@ -149,7 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] staticDelegatedProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int| by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(1)
         }
         )
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] staticDelegatedProperty.kt
             super<R|kotlin/Any|>()
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] val staticDelegatedProperty: R|kotlin/Int| by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(1)
         }
         )

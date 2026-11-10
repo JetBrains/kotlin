@@ -19,7 +19,7 @@ FILE: propertyDeclaration.kt
     public final val g: R|kotlin/Int|
         public get(): R|kotlin/Int| {
         }
-    public final val h: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+    public final val h: R|kotlin/String| by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
         ^ String(H)
     }
     )

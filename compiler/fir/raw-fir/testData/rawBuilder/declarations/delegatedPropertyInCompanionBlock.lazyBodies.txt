@@ -14,17 +14,17 @@ FILE: delegatedPropertyInCompanionBlock.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? static [ContainingClassKey=Owner] val staticVal: Intby LAZY_EXPRESSION
+        public? final? static [ContainingClassKey=Owner] val staticVal: Int by LAZY_EXPRESSION
             public? static [ContainingClassKey=Owner] get(): <implicit> { LAZY_BLOCK }
 
-        public? final? static [ContainingClassKey=Owner] var staticVar: Intby LAZY_EXPRESSION
+        public? final? static [ContainingClassKey=Owner] var staticVar: Int by LAZY_EXPRESSION
             public? static [ContainingClassKey=Owner] get(): <implicit> { LAZY_BLOCK }
             public? static [ContainingClassKey=Owner] set(<set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? val instanceVal: Intby LAZY_EXPRESSION
+        public? final? val instanceVal: Int by LAZY_EXPRESSION
             public? [ContainingClassKey=Owner] get(): <implicit> { LAZY_BLOCK }
 
-        public? final? var instanceVar: Intby LAZY_EXPRESSION
+        public? final? var instanceVar: Int by LAZY_EXPRESSION
             public? [ContainingClassKey=Owner] get(): <implicit> { LAZY_BLOCK }
             public? [ContainingClassKey=Owner] set(<set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 

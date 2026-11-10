@@ -36,7 +36,7 @@ FILE: inlineClassMembers.kt
         public final val x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
 
-        public final val testVal: R|kotlin/Int|by R|/Val.Val|()
+        public final val testVal: R|kotlin/Int| by R|/Val.Val|()
             public get(): R|kotlin/Int| {
                 ^ this@R|/DelegatedProp|.D|/DelegatedProp.testVal|.R|/Val.getValue|(this@R|/DelegatedProp|, ::R|/DelegatedProp.testVal|)
             }
