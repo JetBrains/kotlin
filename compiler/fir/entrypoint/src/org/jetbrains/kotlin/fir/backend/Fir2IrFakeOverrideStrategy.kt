@@ -47,7 +47,7 @@ class Fir2IrFakeOverrideStrategy(
     override val isGenericClashFromSameSupertypeAllowed: Boolean,
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
     private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
-    private val leafModuleDescriptor: ModuleDescriptor,
+    private val leafModule: IrModuleFragment,
 ) : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
     private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()
 
@@ -75,13 +75,14 @@ class Fir2IrFakeOverrideStrategy(
         val thisModuleDesc = thisModule.descriptor as FirModuleDescriptor
         val memberModuleDesc = memberModule.descriptor as FirModuleDescriptor
         if (thisModuleDesc.shouldSeeInternalsOf(memberModuleDesc)) return true
+
         /*
          * There could be a case when one declaration is located in common sources and another is located in
          * platform dependencies. For the frontend these two module data don't see each other, but from the
          * backend point of view all sources belong to the same module. So in this situation we also should
          * consider if the other declaration is visible from the leaf source module.
          */
-
+        val leafModuleDescriptor = leafModule.descriptor as FirModuleDescriptor
         if (thisModuleDesc.session.kind == FirSession.Kind.Source && thisModuleDesc != leafModuleDescriptor) {
             return leafModuleDescriptor.shouldSeeInternalsOf(memberModuleDesc)
         }
