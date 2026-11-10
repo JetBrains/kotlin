@@ -294,7 +294,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         }
 
     // TODO(KT-62534) use ModuleDescriptor.shouldSeeInternalsOf when it's fixed and get rid of friendModules
-    override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean {
+    override fun shouldSeeInternals(thisModule: IrModuleFragment, memberModule: IrModuleFragment): Boolean {
         val fromModuleName = thisModule.name.asStringStripSpecialMarkers()
         val toModuleName = memberModule.name.asStringStripSpecialMarkers()
         return fromModuleName == toModuleName || friendModules[fromModuleName]?.contains(toModuleName) == true
