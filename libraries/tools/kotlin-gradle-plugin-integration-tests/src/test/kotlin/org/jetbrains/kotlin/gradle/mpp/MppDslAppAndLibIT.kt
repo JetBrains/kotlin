@@ -185,8 +185,6 @@ class MppDslAppAndLibIT : KGPBaseTest() {
                 "project(\":${libProject.projectPath.name}\")",
             )
 
-            build("clean")
-
             build(
                 buildArguments = buildList {
                     add("assemble")

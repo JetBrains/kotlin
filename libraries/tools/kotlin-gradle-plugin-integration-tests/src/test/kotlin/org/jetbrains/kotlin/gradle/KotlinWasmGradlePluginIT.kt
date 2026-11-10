@@ -667,8 +667,6 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                     .forEach { developmentSize[it.name] = it.fileSize() }
             }
 
-            build("clean")
-
             build("wasmJsProductionExecutableCompileSync") {
                 projectPath.resolve("build/wasm/packages/redefined-wasm-module-name/kotlin").listDirectoryEntries()
                     .filter { it.extension == "wasm" }
