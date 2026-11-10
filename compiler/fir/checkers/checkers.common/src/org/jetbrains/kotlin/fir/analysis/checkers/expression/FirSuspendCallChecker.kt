@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -114,14 +115,16 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
             // No brackets should be in a selector call
             val callExpressionSource =
                 if (explicitReceiver == null) source
-                else source?.getChild(KtNodeTypes.CALL_EXPRESSION, index = 1, depth = 1)
-            if (callExpressionSource?.getChild(KtNodeTypes.VALUE_ARGUMENT_LIST, depth = 1) == null) {
+                else source?.getChild(KotlinSyntaxNodeTypeIds.CALL_EXPRESSION, index = 1, depth = 1)
+            if (callExpressionSource?.getChild(KotlinSyntaxNodeTypeIds.VALUE_ARGUMENT_LIST, depth = 1) == null) {
                 return SuspendCallArgumentKind.LAMBDA
             }
         }
         if (origin == FirFunctionCallOrigin.Infix) {
             val lastArgument = arguments.lastOrNull()
-            if (lastArgument is FirAnonymousFunctionExpression && source?.getChild(KtNodeTypes.PARENTHESIZED, depth = 1) == null) {
+            if (lastArgument is FirAnonymousFunctionExpression &&
+                source?.getChild(KotlinSyntaxNodeTypeIds.PARENTHESIZED, depth = 1) == null
+            ) {
                 return if (lastArgument.source?.lighterASTNode?.tokenType == KtNodeTypes.FUN) {
                     SuspendCallArgumentKind.FUN
                 } else {
@@ -265,7 +268,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
             ?: return false
 
         val visualValueArgumentsCount = source
-            .getChild(KtNodeTypes.VALUE_ARGUMENT_LIST, depth = 1)
+            .getChild(KotlinSyntaxNodeTypeIds.VALUE_ARGUMENT_LIST, depth = 1)
             ?.lighterASTNode?.getChildren(source.treeStructure)
             ?.filter { it.tokenType == KtNodeTypes.VALUE_ARGUMENT }
             ?.size

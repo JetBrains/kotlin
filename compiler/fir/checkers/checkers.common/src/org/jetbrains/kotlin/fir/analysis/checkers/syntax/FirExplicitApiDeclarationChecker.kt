@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
@@ -30,8 +27,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibi
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
 
 object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -80,7 +78,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         declaration: FirMemberDeclaration,
         source: KtSourceElement,
     ) {
-        val visibilityModifier = source.getChild(KtNodeTypes.MODIFIER_LIST, depth = 1)?.getChild(KtTokens.VISIBILITY_MODIFIERS)
+        val visibilityModifier = source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.getChild(KotlinSyntaxIdSets.VISIBILITY_MODIFIER)
         if (visibilityModifier != null) return
 
         if (explicitVisibilityIsNotRequired(declaration)) return

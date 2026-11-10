@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes.TYPE_ARGUMENT_LIST
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.lexer.KtTokens.QUEST
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
@@ -67,7 +67,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         //   where TYPE_ARGUMENT_LIST may have QUEST in it
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
-        val markedNullable = source.getChild(QUEST, depth = 1) != null
+        val markedNullable = source.getChild(KotlinSyntaxTokenIds.QUEST, depth = 1) != null
         val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType()
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLhsForCallableReference == true ||
@@ -149,7 +149,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         getClassSource: KtSourceElement,
     ) {
         if (argument is FirResolvedReifiedParameterReference) {
-            val argumentList = getClassSource.getChild(TYPE_ARGUMENT_LIST) ?: return
+            val argumentList = getClassSource.getChild(KotlinSyntaxNodeTypeIds.TYPE_ARGUMENT_LIST) ?: return
             val diagnostic = if (!areUselessTypeArgumentsForbidden) {
                 FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING
             } else {
