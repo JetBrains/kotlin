@@ -37,13 +37,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
@@ -227,7 +227,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
             )
 
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(
-                rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!,
+                rootCause.argument.source?.getChild(KotlinSyntaxTokenIds.MUL, depth = 1)!!,
                 session
             )
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source, session)
@@ -748,11 +748,11 @@ private fun inapplicableNullableReceiver(
         // TODO, KT-59809: No need to check for source.syntaxId == BINARY_EXPRESSION if we use operator as callee reference source
         //  (see FirExpressionsResolveTransformer.transformAssignmentOperatorStatement)
         val operationSource = if (source.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION) {
-            source.getChild(KtNodeTypes.OPERATION_REFERENCE)
+            source.getChild(KotlinSyntaxNodeTypeIds.OPERATION_REFERENCE)
         } else {
             source
         }
-        return if (operationSource?.getChild(KtTokens.IDENTIFIER) != null) {
+        return if (operationSource?.getChild(KotlinSyntaxTokenIds.IDENTIFIER) != null) {
             FirErrors.UNSAFE_INFIX_CALL.createOn(
                 source,
                 rootCause.actualType,

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -41,12 +41,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -106,7 +106,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         if (initializer !is FirComponentCall) return
 
         // We check above that initializer is a component call, therefore, we must have positional destructuring.
-        source.getChild(KtTokens.EQ, depth = 1)?.let {
+        source.getChild(KotlinSyntaxTokenIds.EQ, depth = 1)?.let {
             reporter.reportOn(
                 it,
                 FirErrors.UNSUPPORTED_FEATURE,
@@ -159,7 +159,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
 
     private fun KtSourceElement.syntaxKind(originalDestructuringDeclaration: FirVariable): DestructuringSyntax {
         val hasOpeningSquareBracket = originalDestructuringDeclaration.source?.findSquareBracket() != null
-        val hasValVar = getChild(KtTokens.VAL_VAR, depth = 1) != null
+        val hasValVar = getChild(KotlinSyntaxIdSets.VAL_VAR, depth = 1) != null
 
         return when (hasOpeningSquareBracket) {
             true -> when (hasValVar) {
@@ -177,7 +177,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     private fun checkFullFormLanguageFeature(source: KtSourceElement) {
         if (LanguageFeature.NameBasedDestructuring.isEnabled()) return
 
-        source.getChild(KtTokens.VAL_VAR, depth = 1)?.let {
+        source.getChild(KotlinSyntaxIdSets.VAL_VAR, depth = 1)?.let {
             reporter.reportOn(
                 it,
                 FirErrors.UNSUPPORTED_FEATURE,
@@ -202,8 +202,9 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
 
     private fun KtSourceElement.findSquareBracket(): KtSourceElement? {
         return when (syntaxId) {
-            KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION -> getChild(KtTokens.LBRACKET, depth = 1)
-            KotlinSyntaxNodeTypeIds.VALUE_PARAMETER -> getChild(KtNodeTypes.DESTRUCTURING_DECLARATION, depth = 1)?.findSquareBracket()
+            KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION -> getChild(KotlinSyntaxTokenIds.LBRACKET, depth = 1)
+            KotlinSyntaxNodeTypeIds.VALUE_PARAMETER ->
+                getChild(KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION, depth = 1)?.findSquareBracket()
             else -> null
         }
     }
