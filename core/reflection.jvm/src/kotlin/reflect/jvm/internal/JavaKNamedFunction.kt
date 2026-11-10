@@ -27,6 +27,7 @@ internal class JavaKNamedFunction(
     method: Method,
     rawBoundReceiver: Any?,
     overriddenStorage: KCallableOverriddenStorage,
+    private val kotlinName: String? = null,
 ) : JavaKFunction(container, method, rawBoundReceiver, overriddenStorage) {
     override val originalParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters()
@@ -64,7 +65,7 @@ internal class JavaKNamedFunction(
     val jMethod: Method get() = member as Method
 
     override val name: String
-        get() = member.name
+        get() = kotlinName ?: member.name
 
     override val signature: String
         get() = jMethod.jvmSignature
@@ -78,7 +79,7 @@ internal class JavaKNamedFunction(
     override val isVararg: Boolean
         get() = jMethod.isVarArgs
 
-    override val isOperator: Boolean by lazy(PUBLICATION, jMethod::isJavaMethodAnOperator)
+    override val isOperator: Boolean by lazy(PUBLICATION) { jMethod.isJavaMethodAnOperator(name) }
 
     override val javaTypeParameters: Array<out TypeVariable<*>> by lazy(PUBLICATION) {
         jMethod.typeParameters
@@ -109,11 +110,13 @@ internal class JavaKNamedFunction(
     override val callerWithDefaults: Caller<*>? get() = null
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
-        JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
+        JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage, kotlinName)
 
     override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<Any?> {
         require(boundContextArguments.isEmpty()) { "Java methods cannot have bound context arguments: $this" }
-        return JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage)
+        return JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage, kotlinName)
     }
 
+    fun createRenamedCopy(kotlinName: String): JavaKNamedFunction =
+        JavaKNamedFunction(container, jMethod, rawBoundReceiver, overriddenStorage, kotlinName)
 }
