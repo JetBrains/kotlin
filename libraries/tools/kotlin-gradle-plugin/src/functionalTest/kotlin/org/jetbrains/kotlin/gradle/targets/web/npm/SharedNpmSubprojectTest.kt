@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readNpmDependencyRepor
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -224,6 +225,23 @@ class SharedNpmSubprojectTest {
 
         assertEquals("js", project.npmDependenciesReportTask("jsNpmDependenciesReport").target.get())
         assertEquals("wasm", project.npmDependenciesReportTask("wasmJsNpmDependenciesReport").target.get())
+    }
+
+    @Test
+    @Disabled("will be fixed by KT-91337")
+    fun `collecting the npm dependencies of a test compilation does not compile main`() {
+        val project = buildProjectWithMPP {
+            kotlin { js { nodejs() } }
+        }
+        project.evaluate()
+
+        val mainCompileTask = project.jsTarget().compilations.getByName("main").compileKotlinTaskName
+        val reportBuildDependencies = project.npmDependencies("jsTestNpmDependenciesReport").dependencyReports
+            .buildDependencies.getDependencies(null).map { it.name }
+        assertTrue(
+            mainCompileTask !in reportBuildDependencies,
+            "jsTestNpmDependenciesReport must not depend on $mainCompileTask: $reportBuildDependencies",
+        )
     }
 
     @Test
