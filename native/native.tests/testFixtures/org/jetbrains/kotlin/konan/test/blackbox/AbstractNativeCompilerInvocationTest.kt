@@ -99,6 +99,11 @@ class NativeCompilerInvocationTestArtifactBuilder(
                         require(defFile == null) { "More than one .def file is specified" }
                         defFile = sourceFile
                     }
+                    "h" -> {
+                        // Copy header files to the output directory. Dependent modules include this directory during compilation, so they
+                        // are able to reference the headers of dependencies.
+                        sourceFile.copyTo(module.outputDir.resolve(sourceFile.relativeTo(module.sourceDir)), overwrite = true)
+                    }
                 }
             }
         }
@@ -130,12 +135,16 @@ class NativeCompilerInvocationTestArtifactBuilder(
             )
 
             val compilation = CInteropCompilation(
-                settings,
-                TestCompilerArgs(compilerArguments),
-                defFile,
+                settings = settings,
+                freeCompilerArgs = TestCompilerArgs(compilerArguments),
+                defFile = defFile,
                 sources = nativeSourceFiles,
-                dependencies = emptyList(),
-                klibArtifact,
+                dependencies = createLibraryDependencies(dependencies),
+                includeDirectories = [defFile.parentFile] +
+                        dependencies.regularDependencies
+                            .filter { it.moduleName != "stdlib" }
+                            .map { it.libraryFile.parentFile },
+                expectedArtifact = klibArtifact,
             )
 
             compilation.result.assertSuccess() // <-- trigger compilation
