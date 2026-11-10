@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -20,15 +22,10 @@ import org.junit.jupiter.api.Test
 class JavaConstantEvaluatorTest : JavaParsingTestBase() {
 
     /**
-     * Regression for the reviewer's concern on `ConstantEvaluator.evaluateReferenceExpression`:
-     * a *statically imported* field referenced by its bare name (`import static a.b.C.FIELD;`,
-     * then `int x = FIELD;`) must be routed to the cross-language resolver with the importing
-     * class qualifier and member name; a bare name alone is never resolved externally.
+     * A statically imported field referenced by its bare name is resolved using the import's
+     * qualifier and member name. Bare names without a static import remain unresolved.
      *
-     * A parsing-level [createDummyFirSessionForTests] has no `FirSymbolProvider`, so the real
-     * cross-language lookup always returns null here. Instead we capture what the evaluator
-     * passes to `resolveExternalReference` to prove the static import was resolved and split
-     * correctly.
+     * The stub FIR class exercises the same cross-language path as production.
      */
     @Test
     fun testStaticImportedBareFieldRoutedWithResolvedQualifier() {
@@ -40,7 +37,11 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
             }
         """.trimIndent()
 
-        val parsed = parseSource(source)
+        val constantsClassId = ClassId.topLevel(FqName("com.example.Constants"))
+        val session = createSessionWithSymbols(
+            mapOf(constantsClassId to libraryClassSymbol(constantsClassId, constProperties = mapOf("MAX" to 42)))
+        )
+        val parsed = parseSource(source, session)
         val tree = parsed.tree
         val classNode = tree.getChildren(parsed.root).first { tree.getType(it).toString() == "CLASS" }
         val javaClass = JavaClassOverAst(classNode, tree, parsed.context)
@@ -48,16 +49,7 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         val refNode = findReferenceExpression(tree, parsed.root, "MAX")
             ?: error("Could not find the 'MAX' reference expression in the parsed field initializer")
 
-        var captured: Pair<String, String>? = null
-        val evaluator = ConstantEvaluator(javaClass) { classQualifier, _, fieldName ->
-            captured = classQualifier to fieldName
-            if (classQualifier == "com.example.Constants" && fieldName == "MAX") 42 else null
-        }
-
-        val result = evaluator.evaluate(refNode)
-
-        assertEquals("com.example.Constants" to "MAX", captured)
-        assertEquals(42, result)
+        assertEquals(42, ConstantEvaluator(javaClass).evaluate(refNode))
     }
 
     /**
@@ -73,7 +65,11 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
             }
         """.trimIndent()
 
-        val parsed = parseSource(source)
+        val constantsClassId = ClassId.topLevel(FqName("com.example.Constants"))
+        val session = createSessionWithSymbols(
+            mapOf(constantsClassId to libraryClassSymbol(constantsClassId, constProperties = mapOf("MISSING" to 42)))
+        )
+        val parsed = parseSource(source, session)
         val tree = parsed.tree
         val classNode = tree.getChildren(parsed.root).first { tree.getType(it).toString() == "CLASS" }
         val javaClass = JavaClassOverAst(classNode, tree, parsed.context)
@@ -81,14 +77,7 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         val refNode = findReferenceExpression(tree, parsed.root, "MISSING")
             ?: error("Could not find the 'MISSING' reference expression in the parsed field initializer")
 
-        var called = false
-        val evaluator = ConstantEvaluator(javaClass) { _, _, _ ->
-            called = true
-            null
-        }
-
-        assertEquals(null, evaluator.evaluate(refNode))
-        assertFalse(called) { "A bare name must not be resolved through the external resolver" }
+        assertEquals(null, ConstantEvaluator(javaClass).evaluate(refNode))
     }
 
     /**

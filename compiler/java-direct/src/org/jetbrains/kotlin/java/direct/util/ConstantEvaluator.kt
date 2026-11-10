@@ -137,35 +137,14 @@ private fun resolveSingleStaticImport(name: String, resolutionContext: JavaResol
  *
  * @param containingClass the class the expression is written in, if any; simple names are looked up
  *   among its fields first.
- * @param customExternalConstantResolver optional override for external constant resolution,
- *   primarily used by tests.
  */
 class ConstantEvaluator private constructor(
     private val tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
     private val containingClass: JavaClassOverAst?,
-    private val customExternalConstantResolver: ExternalConstantResolver?,
 ) {
-    /**
-     * Override for external constant resolution, primarily used by tests. Calls use one of these
-     * argument shapes:
-     * - `(qualifier, classId, fieldName)` when the qualifier resolves to a class; the text is
-     *   informational and the class ID is authoritative;
-     * - `(qualifier, null, fieldName)` when the qualifier does not resolve to a class, which can
-     *   still name a JVM facade class and must be split at its last dot.
-     *
-     * Simple names are never resolved externally. Production resolution is performed directly
-     * through [resolveExternalFieldValue] when no test hook is supplied.
-     */
-    fun interface ExternalConstantResolver {
-        fun resolve(classQualifier: String, qualifierClassId: ClassId?, fieldName: String): Any?
-    }
-
     /** Evaluator for an expression written inside [containingClass], i.e. a field initializer. */
-    constructor(
-        containingClass: JavaClassOverAst,
-        customExternalConstantResolver: ExternalConstantResolver? = null,
-    ) : this(containingClass.tree, containingClass.memberResolutionContext, containingClass, customExternalConstantResolver)
+    constructor(containingClass: JavaClassOverAst) : this(containingClass.tree, containingClass.memberResolutionContext, containingClass)
 
     /**
      * Evaluator for an expression written outside of any member — an annotation argument or an
@@ -174,8 +153,7 @@ class ConstantEvaluator private constructor(
     constructor(
         tree: LightSyntaxTree,
         resolutionContext: JavaResolutionContext,
-        customExternalConstantResolver: ExternalConstantResolver? = null,
-    ) : this(tree, resolutionContext, resolutionContext.scopeContext.containingClass as? JavaClassOverAst, customExternalConstantResolver)
+    ) : this(tree, resolutionContext, resolutionContext.scopeContext.containingClass as? JavaClassOverAst)
 
     /**
      * Checks whether [node] is a constant expression without evaluating references.
@@ -439,20 +417,13 @@ class ConstantEvaluator private constructor(
         qualifierClassId: ClassId?,
         fieldName: String,
         inheritingPackage: FqName? = null,
-    ): MemberResolutionResult? {
-        val resolver = customExternalConstantResolver
-        if (resolver != null) {
-            val value = resolver.resolve(classQualifier, qualifierClassId, fieldName) ?: return null
-            return MemberResolutionResult.Constant { value }
-        }
-        return resolutionContext.fileContext.session.resolveExternalFieldValue(
-            classQualifier,
-            qualifierClassId,
-            fieldName,
-            resolutionContext.packageFqName,
-            inheritingPackage,
-        )
-    }
+    ): MemberResolutionResult? = resolutionContext.fileContext.session.resolveExternalFieldValue(
+        classQualifier,
+        qualifierClassId,
+        fieldName,
+        resolutionContext.packageFqName,
+        inheritingPackage,
+    )
 
     /**
      * Resolves a bare name through lexical scopes, single-static imports, then static star
