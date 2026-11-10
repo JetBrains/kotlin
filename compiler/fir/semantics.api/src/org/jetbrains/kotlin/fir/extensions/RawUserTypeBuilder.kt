@@ -28,9 +28,24 @@ class QualifierPartBuilder(internal val destination: MutableList<FirQualifierPar
     }
 }
 
+@Suppress("DEPRECATION")
+@Deprecated(
+    message = "TypeResolveService is being replaced with PluginTypeResolver.",
+    replaceWith = ReplaceWith("typeFromQualifierParts(isMarkedNullable, typeResolver as PluginTypeResolver, source, builder)"),
+    level = DeprecationLevel.HIDDEN,
+)
 fun typeFromQualifierParts(
     isMarkedNullable: Boolean,
     typeResolver: FirSupertypeGenerationExtension.TypeResolveService,
+    source: KtSourceElement,
+    builder: QualifierPartBuilder.() -> Unit
+): ConeKotlinType {
+    return typeFromQualifierParts(isMarkedNullable, typeResolver as PluginTypeResolver, source, builder)
+}
+
+fun typeFromQualifierParts(
+    isMarkedNullable: Boolean,
+    typeResolver: PluginTypeResolver,
     source: KtSourceElement,
     builder: QualifierPartBuilder.() -> Unit
 ): ConeKotlinType {
