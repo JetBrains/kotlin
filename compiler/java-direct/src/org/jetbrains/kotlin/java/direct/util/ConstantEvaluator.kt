@@ -167,7 +167,7 @@ class ConstantEvaluator private constructor(
         JavaLiteralParser.evaluateLiteral(node, tree)
 
     private fun evaluateBinaryExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         if (children.size < 3) return null
 
         val lhs = evaluate(children[0]) ?: return null
@@ -178,7 +178,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluatePolyadicExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         if (children.size < 3) return null
 
         var result = evaluate(children[0]) ?: return null
@@ -233,7 +233,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluatePrefixExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         if (children.size < 2) return null
 
         val operator = tree.getType(children[0])
@@ -261,7 +261,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluateParensExpression(node: LightNode): Any? {
-        val innerExpr = tree.getChildren(node).firstOrNull {
+        val innerExpr = tree.childrenWithoutCommentsAndWhitespace(node).firstOrNull {
             val t = tree.getType(it)
             t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
         } ?: return null
@@ -269,7 +269,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluateTypeCastExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         val typeNode = children.firstOrNull { tree.getType(it) == JavaSyntaxElementType.TYPE } ?: return null
         val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
         if (rparenthIndex < 0) return null
