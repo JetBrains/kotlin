@@ -76,6 +76,56 @@ code {
     font-size: 0.9em;
 }
 
+h2 {
+    font-size: 1.15em;
+    margin: 24px 0 8px;
+}
+
+h2:first-child { margin-top: 0; }
+
+details { margin: 24px 0 8px; }
+
+summary {
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+}
+
+summary::-webkit-details-marker { display: none; }
+
+summary h2 { display: inline; }
+
+summary::before {
+    content: "▸";
+    display: inline-block;
+    margin-right: 6px;
+    transition: transform 0.15s;
+}
+
+details[open] summary::before { transform: rotate(90deg); }
+
+img {
+    display: block;
+    max-width: 600px;
+    height: auto;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.diagram-dark { display: none; }
+
+:root.dark .diagram-light { display: none; }
+
+:root.dark .diagram-dark { display: block; }
+
+@media (prefers-color-scheme: dark) {
+    :root:not(.light) .diagram-light { display: none; }
+
+    :root:not(.light) .diagram-dark { display: block; }
+}
+
 .chip {
     display: inline-block;
     padding: 1px 8px;
