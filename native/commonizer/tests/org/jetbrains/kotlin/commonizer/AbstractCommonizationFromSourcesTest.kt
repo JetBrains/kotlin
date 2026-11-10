@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatformUnspecifiedTarget
 import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.lowercaseFirstLetter
 import org.jetbrains.kotlin.test.testFramework.runWithDisposable
@@ -363,7 +362,7 @@ private object TestPatchingFirVisitor : FirVisitorVoid() {
     }
 
     override fun visitNamedFunction(namedFunction: FirNamedFunction) {
-        val comment = namedFunction.source.psi?.text?.lineSequence()?.firstOrNull()?.takeIf { it.startsWith("//") }
+        val comment = namedFunction.source?.text?.lineSequence()?.firstOrNull()?.takeIf { it.startsWith("//") }
             ?: return
         val [key, value] = comment.substringAfter("//").split('=', limit = 2).takeIf { it.size == 2 }?.map { it.trim() }
             ?: return
