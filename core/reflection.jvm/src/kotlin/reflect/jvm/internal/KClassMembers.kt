@@ -276,7 +276,7 @@ private fun MemberContainer<*>.getDeclaredNonStaticMethodsFromJavaClass(name: St
     }
 }
 
-private fun MemberContainer<*>.getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
+internal fun MemberContainer<*>.getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
     supertypes.flatMap { supertype ->
         val supertypeKClass = supertype.classifier as? KClass<*> ?: return@flatMap emptyList()
         val substitutor = KTypeSubstitutor.create(supertype)
