@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.hasContextParameters
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.syntaxIdSetOf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Platform) {
@@ -40,5 +42,5 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
         source.requireFeatureSupport(LanguageFeature.ContextParameters)
     }
 
-    private val valueParameterElementSet = TokenSet.create(KtNodeTypes.VALUE_PARAMETER)
+    private val valueParameterElementSet = syntaxIdSetOf(KotlinSyntaxNodeTypeIds.VALUE_PARAMETER)
 }

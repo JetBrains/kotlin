@@ -11,4 +11,13 @@ public object KotlinSyntaxIdSets {
         KotlinSyntaxNodeTypeIds.LABELED_EXPRESSION,
         KotlinSyntaxNodeTypeIds.ANNOTATED_EXPRESSION
     )
+
+    public val VISIBILITY_MODIFIER: SyntaxIdSet = syntaxIdSetOf(
+        KotlinSyntaxTokenIds.PRIVATE_MODIFIER,
+        KotlinSyntaxTokenIds.PUBLIC_MODIFIER,
+        KotlinSyntaxTokenIds.INTERNAL_MODIFIER,
+        KotlinSyntaxTokenIds.PROTECTED_MODIFIER,
+    )
+
+    public val VAL_VAR: SyntaxIdSet = syntaxIdSetOf(KotlinSyntaxTokenIds.VAL_KEYWORD, KotlinSyntaxTokenIds.VAR_KEYWORD)
 }
