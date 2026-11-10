@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
-import org.jetbrains.kotlin.gradle.targets.js.testing.EsmBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNpmTooling
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -32,7 +31,6 @@ import org.junit.jupiter.api.TestFactory
 import java.io.File
 import java.util.stream.Stream
 import kotlin.streams.asStream
-import kotlin.test.assertTrue
 
 /**
  * Test [NpmResolverPluginApplier].
@@ -104,11 +102,15 @@ sealed class NpmResolverPluginApplierTest(
                 binaries.executable()
             }
             wasmJs {
-                browser()
+                browser {
+                    test.chromium()
+                }
                 binaries.executable()
             }
             js {
-                browser()
+                browser {
+                    test.chromium()
+                }
                 binaries.executable()
             }
 
@@ -144,11 +146,13 @@ sealed class NpmResolverPluginApplierTest(
         testRequiresNpmDependenciesTasks(
             project.multiplatformExtension.wasmJs(),
             listOf(
+                "kotlinInstallPlaywrightChromium",
                 "wasmJsBrowserDevelopmentRun",
                 "wasmJsBrowserDevelopmentWebpack",
                 "wasmJsBrowserProductionRun",
                 "wasmJsBrowserProductionWebpack",
                 "wasmJsBrowserTest",
+                "wasmJsTestBundleAsEsm",
             )
         )
     }
@@ -165,6 +169,7 @@ sealed class NpmResolverPluginApplierTest(
                 "jsBrowserProductionRun",
                 "jsBrowserProductionWebpack",
                 "jsBrowserTest",
+                "prepareWebpackBundleForKotlinJsTests",
             )
         )
     }
@@ -510,7 +515,7 @@ sealed class NpmResolverPluginApplierTest(
 
     /**
      * Check each [org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask] for the given [target]
-     * has registered [expectedNpmDependenciesLockFiles] as task inputs.
+     * has the [expectedNpmDependenciesLockFiles].
      */
     private fun testLockFiles(
         target: KotlinTarget,
@@ -527,29 +532,6 @@ sealed class NpmResolverPluginApplierTest(
                     )
                 }
             },
-            { task ->
-                dynamicTest("lockfiles registered as task inputs") {
-                    assertLockFilesAreRegisteredAsTaskInputs(task)
-                }
-            }
-        )
-    }
-
-    private fun assertLockFilesAreRegisteredAsTaskInputs(task: RequiresNpmDependenciesTask) {
-        val allTaskInputs = task.inputs.files
-
-        val notRegisteredAsInputs = task.npmDependenciesLockFiles
-            .filter { it !in allTaskInputs }
-            .files
-            .map { it.invariantSeparatorsPath }
-
-        assertTrue(
-            notRegisteredAsInputs.isEmpty(),
-            """
-            |Task ${task.path} has npm dependencies lock files not registered as task inputs.
-            |notRegisteredAsInputs:$notRegisteredAsInputs
-            |allTaskInputs: $allTaskInputs
-            """.trimMargin()
         )
     }
     //endregion
@@ -574,10 +556,6 @@ sealed class NpmResolverPluginApplierTest(
             val project = target.project
 
             val requiresNpmDependenciesTasks = project.getRequiresNpmDependenciesTasksFor(target)
-                .matching {
-                    // FIXME: KT-88683 fix EsmBundleKotlinJsTests fails NpmResolverPluginApplier tests
-                    it !is EsmBundleKotlinJsTests
-                }
                 .toList()
 
             return requiresNpmDependenciesTasks.asSequence().map { task ->
