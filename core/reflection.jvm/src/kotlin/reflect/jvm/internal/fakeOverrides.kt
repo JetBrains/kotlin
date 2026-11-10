@@ -246,7 +246,8 @@ internal fun <T : ReflectKCallable<*>> computeOverriddenCallables(
 }
 
 internal val KType.memberContainer: MemberContainer<*>?
-    get() = classifier as? MemberContainer<*>
+    get() = (this as? AbstractKType)?.mutableCollectionClass as? MemberContainer<*>
+        ?: classifier as? MemberContainer<*>
 
 private fun getSupertypeMembersByName(
     supertype: KType,

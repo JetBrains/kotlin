@@ -37,6 +37,7 @@ import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.MemberBelonginess.INHERITED
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
+import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.areEqualKTypes
 import java.lang.Deprecated as JavaLangDeprecated
 
@@ -460,6 +461,8 @@ internal fun MemberContainer<*>.getAdditionalFunctions(): List<ReflectKFunction>
         // It can't be detected via `overridden` below because the Kotlin name differs from the Java one.
         if (method.doesOverrideRenamedBuiltins(methodOwner)) return@mapNotNull null
 
+        if (isMutabilityViolation(method)) return@mapNotNull null
+
         when (method.getJdkMethodStatus(methodOwner)) {
             JdkMemberStatus.DROP -> return@mapNotNull null
             // Hidden-for-resolution members are still listed by reflection, except in final classes where the compiler drops them.
@@ -473,6 +476,26 @@ internal fun MemberContainer<*>.getAdditionalFunctions(): List<ReflectKFunction>
 
         function
     }
+}
+
+// See `JvmBuiltInsCustomizer.isMutabilityViolation`.
+private fun MemberContainer<*>.isMutabilityViolation(method: Method): Boolean {
+    val isMutable = this is MutableCollectionKClass<*>
+    val jvmDescriptor = method.jvmSignature
+    val signature = SignatureBuildingComponents.signature(methodOwner.classId.internalName, jvmDescriptor)
+    if ((signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES) xor isMutable) return true
+
+    val mutableClass = (if (isMutable) this else getMutableCollectionKClass(this)) as? MemberContainer<*> ?: return false
+    return mutableClass.hasFunctionWithSignatureInHierarchy(jvmDescriptor, hashSetOf())
+}
+
+private fun MemberContainer<*>.hasFunctionWithSignatureInHierarchy(
+    jvmDescriptor: String, visited: MutableSet<MutableCollectionKClass<*>>,
+): Boolean {
+    if (this !is MutableCollectionKClass<*> || !visited.add(this)) return false
+    val kmClass = kmClass ?: return false
+    if (kmClass.functions.any { it.mapSignature(kmClass).toString() == jvmDescriptor }) return true
+    return supertypes.any { it.memberContainer?.hasFunctionWithSignatureInHierarchy(jvmDescriptor, visited) == true }
 }
 
 private enum class JdkMemberStatus { HIDDEN, VISIBLE, DEPRECATED_LIST_METHODS, NOT_CONSIDERED, DROP }

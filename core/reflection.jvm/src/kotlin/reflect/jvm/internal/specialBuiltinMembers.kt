@@ -47,7 +47,7 @@ private fun MemberContainer<*>.findBuiltinSpecialProperty(
     val fqName = classId.asSingleFqName().child(Name.identifier(propertyName))
     if (fqName in BuiltinSpecialProperties.SPECIAL_FQ_NAMES) return this to fqName
     for (supertype in supertypes) {
-        (supertype.classifier as? MemberContainer<*>)?.findBuiltinSpecialProperty(propertyName, visited)?.let { return it }
+        supertype.memberContainer?.findBuiltinSpecialProperty(propertyName, visited)?.let { return it }
     }
     return null
 }
