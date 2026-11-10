@@ -522,19 +522,18 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.resolveSwiftExportedModules().filter { it.exportMode == SwiftExportedModuleMode.FULL }
+        val actualModules = swiftExportTask.resolveSwiftExportedModules()
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(SwiftExportModuleForAssertion("OrgJetbrainsKotlinxKotlinxDatetime", "kotlinx-datetime.klib", true))
+            // The dependency of kotlinx-datetime is there for the exported module to compile, but isn't exported itself.
+            add(SwiftExportModuleForAssertion("OrgJetbrainsKotlinxKotlinxSerializationCore", "kotlinx-serialization-core.klib", false))
         }
 
         assertEquals(
             expectedModules,
             actualModules.toModulesForAssertion(),
         )
-
-        val kotlinXCoroutines = actualModules.singleOrNull { it.moduleName == "OrgJetbrainsKotlinxKotlinxCoroutinesCore" }
-        assertNull(kotlinXCoroutines, "Transitive dependency kotlinx-coroutines-core should not be exported")
     }
 
     @Test
