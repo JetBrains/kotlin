@@ -15,9 +15,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 
+/**
+ * @property annotationsResolver The annotations resolver is lazy because it requires the session's resolution scope, which is computed
+ *  lazily. See [LLFirSessionFactory][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirSessionFactory].
+ */
 internal class LLFirIdeRegisteredPluginAnnotations(
     session: FirSession,
-    private val annotationsResolver: KotlinAnnotationsResolver
+    private val annotationsResolver: Lazy<KotlinAnnotationsResolver>,
 ) : AbstractFirRegisteredPluginAnnotations(session) {
 
     private val annotationsFromPlugins: MutableSet<AnnotationFqn> = mutableSetOf()
@@ -50,7 +54,7 @@ internal class LLFirIdeRegisteredPluginAnnotations(
     }
 
     private fun collectAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Set<FqName> {
-        val annotatedDeclarations = annotationsResolver.declarationsByAnnotation(ClassId.topLevel(metaAnnotation))
+        val annotatedDeclarations = annotationsResolver.value.declarationsByAnnotation(ClassId.topLevel(metaAnnotation))
 
         return annotatedDeclarations
             .asSequence()

@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
 internal fun LLFirSession.registerIdeComponents(
     project: Project,
     languageVersionSettings: LanguageVersionSettings,
-    annotationSearchScope: GlobalSearchScope
+    annotationSearchScope: Lazy<GlobalSearchScope>,
 ) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
@@ -118,8 +118,9 @@ private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensi
 }
 
 @SessionConfiguration
-internal fun LLFirSession.registerCompilerPluginServices(project: Project, resolutionScope: GlobalSearchScope) {
-    val annotationsResolver = project.createAnnotationResolver(resolutionScope)
+internal fun LLFirSession.registerCompilerPluginServices(project: Project, resolutionScope: Lazy<GlobalSearchScope>) {
+    // The annotations resolver is lazy because it requires the resolution scope, which is computed lazily. See `LLFirSessionFactory`.
+    val annotationsResolver = lazy(LazyThreadSafetyMode.PUBLICATION) { project.createAnnotationResolver(resolutionScope.value) }
 
     // We need FirRegisteredPluginAnnotations and FirPredicateBasedProvider during extensions' registration process
     register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
