@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-89822
 
 interface Marker
@@ -31,8 +31,8 @@ fun <T> blockedBaseResolvedDerived(t: T) where T : BlockedBase, T : ResolvedDeri
 fun <T> resolvedBaseBlockedDerived(t: T) where T : ResolvedBase, T : BlockedDerived {}
 
 fun test() {
-    blockedBaseResolvedDerived(bar)
-    resolvedBaseBlockedDerived(bar)
+    <!CANNOT_INFER_PARAMETER_TYPE!>blockedBaseResolvedDerived<!>(<!UNRESOLVED_REFERENCE!>bar<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>resolvedBaseBlockedDerived<!>(<!UNRESOLVED_REFERENCE!>bar<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, getter, interfaceDeclaration,

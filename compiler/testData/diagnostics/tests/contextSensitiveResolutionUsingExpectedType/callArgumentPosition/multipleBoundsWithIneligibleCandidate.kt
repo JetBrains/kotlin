@@ -44,18 +44,18 @@ fun <T : BlockedByContext> returnsGenericBlockedByContext(t: T): T = t
 context(s: String)
 fun test() {
     upperClean(bar)
-    upperBlockedByExtension(bar)
-    upperBlockedByContext(bar)
+    <!CANNOT_INFER_PARAMETER_TYPE!>upperBlockedByExtension<!>(<!UNRESOLVED_REFERENCE!>bar<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>upperBlockedByContext<!>(<!UNRESOLVED_REFERENCE!>bar<!>)
 
     lowerAndUpperClean(Parent.MyClass(), bar)
-    lowerAndUpperBlockedByExtension(Parent.MyClass(), bar)
-    lowerAndUpperBlockedByContext(Parent.MyClass(), bar)
+    lowerAndUpperBlockedByExtension(Parent.MyClass(), <!UNRESOLVED_REFERENCE!>bar<!>)
+    lowerAndUpperBlockedByContext(Parent.MyClass(), <!UNRESOLVED_REFERENCE!>bar<!>)
 
     <!CANNOT_INFER_PARAMETER_TYPE!>returnsGeneric<!>(<!UNRESOLVED_REFERENCE!>bar<!>)
     val a: Parent.MyClass = returnsGeneric(bar)
     val b: Parent.MyClass = returnsGenericClean(bar)
-    val c: Parent.MyClass = returnsGenericBlockedByExtension(bar)
-    val d: Parent.MyClass = returnsGenericBlockedByContext(bar)
+    val c: Parent.MyClass = returnsGenericBlockedByExtension(<!UNRESOLVED_REFERENCE!>bar<!>)
+    val d: Parent.MyClass = returnsGenericBlockedByContext(<!UNRESOLVED_REFERENCE!>bar<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, functionDeclarationWithContext, getter,
