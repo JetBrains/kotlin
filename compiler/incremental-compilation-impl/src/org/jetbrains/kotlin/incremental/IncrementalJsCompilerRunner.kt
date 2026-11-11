@@ -89,8 +89,8 @@ class IncrementalJsCompilerRunner(
 ) {
     override fun createCacheManager(
         icContext: IncrementalCompilationContext, args: CommonJsAndWasmCompilerArguments
-    ): IncrementalJsCachesManager {
-        return IncrementalJsCachesManager(icContext, cacheDirectory)
+    ): IncrementalKlibCachesManager {
+        return IncrementalKlibCachesManager(icContext, cacheDirectory, "js")
     }
 
     @Suppress("UNCHECKED_CAST")
