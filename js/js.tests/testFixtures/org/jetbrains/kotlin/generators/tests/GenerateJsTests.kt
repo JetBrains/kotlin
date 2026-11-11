@@ -68,6 +68,10 @@ fun main(args: Array<String>) {
                 model("invalidation/", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
 
+            testClass<AbstractJsES6InvalidationPerClassTest>(annotations = listOf(es6())) {
+                model("invalidation/", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
+            }
+
             testClass<AbstractJsES6InvalidationPerModuleTest>(annotations = listOf(es6())) {
                 model("invalidation/", pattern = WITHOUT_UNDERSCORE_PREFIX, recursive = false)
             }
