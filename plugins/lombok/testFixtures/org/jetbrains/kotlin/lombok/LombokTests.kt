@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.preprocessors.ConfigCommentTransformerPreprocessor
+import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 
@@ -32,6 +33,13 @@ open class AbstractFirLightTreeBlackBoxCodegenTestForLombok : AbstractFirLightTr
 // ---------------------------- diagnostics ----------------------------
 
 open class AbstractFirPsiDiagnosticTestForLombok : AbstractFirPsiDiagnosticTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableLombok()
+    }
+}
+
+open class AbstractFirLightTreeDiagnosticTestForLombok : AbstractFirLightTreeDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableLombok()
