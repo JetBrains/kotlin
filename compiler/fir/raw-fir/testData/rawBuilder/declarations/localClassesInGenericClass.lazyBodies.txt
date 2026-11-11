@@ -1,0 +1,13 @@
+FILE: localClassesInGenericClass.kt
+    public final? class Owner<T> : R|kotlin/Any| {
+        public? [ContainingClassKey=Owner] constructor<T>(x: Int): R|Owner<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? [ContainingClassKey=Owner] constructor<T>(t: T, y: Int): R|Owner<T>| { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
+        public? final? fun foo(t: T): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
