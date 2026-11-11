@@ -5776,6 +5776,10 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnRootExt
 	public final fun getYARN ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/web/WebIsolatedProjectsSupportKt {
+	public static final fun webIsolatedProjectsSupportOffRequiredMessage (Ljava/lang/String;)Ljava/lang/String;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
 	public fun <init> ()V
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;

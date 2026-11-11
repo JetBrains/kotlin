@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.internal
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
+import org.jetbrains.kotlin.gradle.targets.web.WebIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.targets.web.webIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.utils.isRootProject
 
@@ -24,6 +26,8 @@ internal fun Project.jsToolingProject(): Project {
         // The root project's tooling project is always itself, so skip reading its properties.
         // subprojects call this on the root project, and that read would violate Isolated Projects (KT-89532).
         project.isRootProject() -> this
+        // Preview Isolated Projects support does not use the root project.
+        webIsolatedProjectsSupport == WebIsolatedProjectsSupport.Preview -> this
         npmSharedProjectsPerProject && isProjectIsolationEnabled -> this
         else -> rootProject
     }

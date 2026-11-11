@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPI
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
-import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.web.WebIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.targets.web.webIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
@@ -41,8 +43,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             }
         }
 
-        if (target.platformType != KotlinPlatformType.wasm && test.enabled) {
-            nodeJsRoot.taskRequirements.addTaskRequirements(test)
+        if (project.webIsolatedProjectsSupport == WebIsolatedProjectsSupport.Off) {
+            if (target.platformType != KotlinPlatformType.wasm && test.enabled) {
+                nodeJsRoot.taskRequirements.addTaskRequirements(test)
+            }
         }
     }
 

@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.to
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.WasmToolsToolchainMode
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
+import org.jetbrains.kotlin.gradle.targets.web.WebIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -900,6 +901,16 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val npmSharedDependenciesProjectMode: Provider<String>
         get() = property(PropertyNames.NPM_SHARED_DEPENDENCIES_PROJECT_MODE)
 
+    /**
+     * Whether KGP JS and Wasm code avoids configuration that is incompatible with Isolated Projects.
+     *
+     * Internal property, intended to help test Isolated Projects support KT-80311.
+     */
+    val webIsolatedProjectsSupport: WebIsolatedProjectsSupport
+        get() = property(PropertyNames.KOTLIN_WEB_ISOLATED_PROJECTS_SUPPORT).orNull
+            ?.let { WebIsolatedProjectsSupport.valueOf(it) }
+            ?: WebIsolatedProjectsSupport.Off
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = get(deprecatedPropName)
         if (deprecatedProperty != null) {
@@ -1095,6 +1106,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
 
         val NPM_SHARED_DEPENDENCIES_PROJECT_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.npm.sharedNpmDependenciesProjectMode")
+        val KOTLIN_WEB_ISOLATED_PROJECTS_SUPPORT = property("$KOTLIN_INTERNAL_NAMESPACE.web.isolatedProjectsSupport")
     }
 
     companion object {
