@@ -100,7 +100,7 @@ projectTests {
         }
 
         useJUnitPlatform {
-            excludeTags("nightly")
+            excludeTags("codebaseNightly")
         }
     }
 
@@ -115,7 +115,7 @@ projectTests {
         forkEvery = 1
 
         useJUnitPlatform {
-            includeTags("nightly")
+            includeTags("codebaseNightly")
         }
     }
 
