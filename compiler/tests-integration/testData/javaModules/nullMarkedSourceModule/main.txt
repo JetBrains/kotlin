@@ -1,0 +1,4 @@
+compiler/tests-integration/testData/javaModules/nullMarkedSourceModule/main/usage.kt:3:26: warning: unnecessary safe call on a receiver of non-null type 'String'.
+fun usage(j: J) = j.foo()?.length
+                         ^^
+OK

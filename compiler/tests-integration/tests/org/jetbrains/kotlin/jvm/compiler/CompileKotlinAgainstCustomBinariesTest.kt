@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil
@@ -38,7 +39,9 @@ import org.junit.jupiter.api.fail
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.File
+import java.io.IOException
 import java.net.URLClassLoader
+import java.nio.file.Files
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.zip.ZipOutputStream
@@ -715,6 +718,42 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val usage = compileLibrary("usage", extraClassPath = listOf(library1))
         val library2 = compileLibrary("library-2")
         compileKotlin("source.kt", tmpdir, listOf(usage, library2))
+    }
+
+    @Test
+    fun testKotlinNestedClassThroughJava() {
+        // The K2 CLI reads Kotlin binary classes from the class file handles of the index: the classpath entry is a directory, a jar,
+        // a relative path and a symbolic link; each must lead to the same Kotlin class with its metadata.
+        val libraryDir = compileLibrary(
+            "library",
+            destination = File(tmpdir, "library"),
+            compileJava = { _, javaFiles, outputDir ->
+                compileJavaFiles(javaFiles, listOf("-d", outputDir.path, "-cp", outputDir.path))
+            },
+        )
+        val libraryJar = MockLibraryUtil.createJarFile(tmpdir, libraryDir, "library")
+        val entries = mutableListOf(libraryDir, libraryJar)
+        // No relative path exists if the working directory is on another drive than the temporary directory (Windows).
+        val relativeJar = try {
+            File(File("").absoluteFile.toPath().relativize(libraryJar.absoluteFile.toPath()).toString())
+        } catch (_: IllegalArgumentException) {
+            null
+        }
+        if (relativeJar != null) {
+            assertTrue(!relativeJar.isAbsolute && relativeJar.exists(), relativeJar.path)
+            entries += relativeJar
+        }
+        try {
+            entries += Files.createSymbolicLink(File(tmpdir, "link-to-library").toPath(), libraryDir.toPath()).toFile()
+            entries += Files.createSymbolicLink(File(tmpdir, "link-to-library.jar").toPath(), libraryJar.toPath()).toFile()
+        } catch (_: IOException) {
+            // symbolic links are not supported here
+        } catch (_: UnsupportedOperationException) {
+        }
+
+        entries.forEachIndexed { index, entry ->
+            compileKotlin("source.kt", File(tmpdir, "out$index"), listOf(entry))
+        }
     }
 
     @Test
