@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-91096
 
 // FILE: BuilderClass.java
@@ -102,7 +103,7 @@ class SubAllAndNoArgs : AllAndNoArgs()
 
 fun main() {
     // In fact, all default constructors called below do not exist
-    BuilderClass()
+    <!INVISIBLE_REFERENCE!>BuilderClass<!>()
     <!INVISIBLE_REFERENCE!>AllArgs<!>()
     <!INVISIBLE_REFERENCE!>RequiredArgs<!>()
     <!INVISIBLE_REFERENCE!>ValueClass<!>()
@@ -120,3 +121,6 @@ fun main() {
     Plain()
     val plainReference: () -> Plain = ::Plain
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, javaCallableReference, javaFunction,
+javaType, localProperty, propertyDeclaration, secondaryConstructor */
