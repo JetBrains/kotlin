@@ -10,13 +10,13 @@ I@(1,1)
   uLong@(11,5) : kotlin.ULong?
   unit@(12,5) : kotlin.Unit?
 C@(15,1)
-  int@(16,5) : kotlin.Int
-  string@(17,5) : kotlin.String
-  boolean@(18,5) : kotlin.Boolean
-  double@(19,5) : kotlin.Double
-  float@(20,5) : kotlin.Float
-  char@(21,5) : kotlin.Char
-  long@(22,5) : kotlin.Long
-  uInt@(23,5) : kotlin.UInt
-  uLong@(24,5) : kotlin.ULong
+  int@(16,5) : kotlin.Int (by PSI)
+  string@(17,5) : kotlin.String (by PSI)
+  boolean@(18,5) : kotlin.Boolean (by PSI)
+  double@(19,5) : kotlin.Double (by PSI)
+  float@(20,5) : kotlin.Float (by PSI)
+  char@(21,5) : kotlin.Char (by PSI)
+  long@(22,5) : kotlin.Long (by PSI)
+  uInt@(23,5) : kotlin.UInt (by PSI)
+  uLong@(24,5) : kotlin.ULong (by PSI)
   unit@(25,5) : kotlin.Unit (by PSI)

@@ -154,6 +154,10 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
 }
 
 internal interface KaFirBasePropertyGetterSymbol : KaFirBasePropertyAccessorSymbol {
+    // A getter has the type of its property
+    override val returnTypeImpl: KaType
+        get() = withValidityAssertion { owningKaProperty.returnTypeByPsi ?: createReturnType() }
+
     override val isOverrideImpl: Boolean
         get() = withValidityAssertion { owningKaProperty.isOverride }
 }

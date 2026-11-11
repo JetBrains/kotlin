@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -123,6 +124,11 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
     constructor(symbol: FirPropertySymbol, session: KaFirSession) : super(symbol, session) {
         assert(symbol is FirLocalPropertySymbol)
     }
+
+    override val returnType: KaType
+        get() = withValidityAssertion {
+            (backingPsi as? KtProperty)?.inferReturnTypeByPsi(analysisSession) ?: firSymbol.returnType(builder)
+        }
 
     override val name: Name
         get() = withValidityAssertion {

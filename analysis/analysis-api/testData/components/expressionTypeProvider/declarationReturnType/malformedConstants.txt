@@ -22,19 +22,19 @@ container@(24,1) : kotlin.Unit (by PSI)
   leadingZerosLocal@(25,5) : ERROR
   tooManyCharactersLocal@(26,5) : ERROR
   lowercaseLongSuffixLocal@(27,5) : ERROR
-zero@(30,1) : kotlin.Int
-hexZero@(32,1) : kotlin.Int
-binary@(33,1) : kotlin.Int
-intMaxValue@(34,1) : kotlin.Int
-intMaxValuePlusOne@(35,1) : kotlin.Long
-longMaxValue@(36,1) : kotlin.Long
-uintMaxValue@(37,1) : kotlin.UInt
-uintMaxValuePlusOne@(38,1) : kotlin.ULong
-ulongMaxValue@(39,1) : kotlin.ULong
-upperCaseFloatSuffix@(40,1) : kotlin.Float
-exponent@(41,1) : kotlin.Double
-floatExponent@(42,1) : kotlin.Float
-floatOutOfRange@(43,1) : kotlin.Float
-doubleOutOfRange@(44,1) : kotlin.Double
-escapedCharacter@(45,1) : kotlin.Char
-unicodeEscape@(46,1) : kotlin.Char
+zero@(30,1) : kotlin.Int (by PSI)
+hexZero@(32,1) : kotlin.Int (by PSI)
+binary@(33,1) : kotlin.Int (by PSI)
+intMaxValue@(34,1) : kotlin.Int (by PSI)
+intMaxValuePlusOne@(35,1) : kotlin.Long (by PSI)
+longMaxValue@(36,1) : kotlin.Long (by PSI)
+uintMaxValue@(37,1) : kotlin.UInt (by PSI)
+uintMaxValuePlusOne@(38,1) : kotlin.ULong (by PSI)
+ulongMaxValue@(39,1) : kotlin.ULong (by PSI)
+upperCaseFloatSuffix@(40,1) : kotlin.Float (by PSI)
+exponent@(41,1) : kotlin.Double (by PSI)
+floatExponent@(42,1) : kotlin.Float (by PSI)
+floatOutOfRange@(43,1) : kotlin.Float (by PSI)
+doubleOutOfRange@(44,1) : kotlin.Double (by PSI)
+escapedCharacter@(45,1) : kotlin.Char (by PSI)
+unicodeEscape@(46,1) : kotlin.Char (by PSI)

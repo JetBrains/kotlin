@@ -1,23 +1,23 @@
-int@(1,1) : kotlin.Int
-  KtPropertyAccessor@(2,9) : kotlin.Int
-string@(3,1) : kotlin.String
-  KtPropertyAccessor@(3,12) : kotlin.String
-boolean@(4,1) : kotlin.Boolean
-  KtPropertyAccessor@(4,13) : kotlin.Boolean
-double@(5,1) : kotlin.Double
-  KtPropertyAccessor@(5,12) : kotlin.Double
-float@(6,1) : kotlin.Float
-  KtPropertyAccessor@(6,11) : kotlin.Float
-char@(7,1) : kotlin.Char
-  KtPropertyAccessor@(7,10) : kotlin.Char
-long@(8,1) : kotlin.Long
-  KtPropertyAccessor@(8,10) : kotlin.Long
-uint@(9,1) : kotlin.UInt
-  KtPropertyAccessor@(9,10) : kotlin.UInt
-ulong@(10,1) : kotlin.ULong
-  KtPropertyAccessor@(10,11) : kotlin.ULong
-ulong2@(11,1) : kotlin.ULong
-  KtPropertyAccessor@(11,12) : kotlin.ULong
+int@(1,1) : kotlin.Int (by PSI)
+  KtPropertyAccessor@(2,9) : kotlin.Int (by PSI)
+string@(3,1) : kotlin.String (by PSI)
+  KtPropertyAccessor@(3,12) : kotlin.String (by PSI)
+boolean@(4,1) : kotlin.Boolean (by PSI)
+  KtPropertyAccessor@(4,13) : kotlin.Boolean (by PSI)
+double@(5,1) : kotlin.Double (by PSI)
+  KtPropertyAccessor@(5,12) : kotlin.Double (by PSI)
+float@(6,1) : kotlin.Float (by PSI)
+  KtPropertyAccessor@(6,11) : kotlin.Float (by PSI)
+char@(7,1) : kotlin.Char (by PSI)
+  KtPropertyAccessor@(7,10) : kotlin.Char (by PSI)
+long@(8,1) : kotlin.Long (by PSI)
+  KtPropertyAccessor@(8,10) : kotlin.Long (by PSI)
+uint@(9,1) : kotlin.UInt (by PSI)
+  KtPropertyAccessor@(9,10) : kotlin.UInt (by PSI)
+ulong@(10,1) : kotlin.ULong (by PSI)
+  KtPropertyAccessor@(10,11) : kotlin.ULong (by PSI)
+ulong2@(11,1) : kotlin.ULong (by PSI)
+  KtPropertyAccessor@(11,12) : kotlin.ULong (by PSI)
 intExplicit@(13,1) : kotlin.Int?
   KtPropertyAccessor@(13,23) : kotlin.Int?
 stringExplicit@(14,1) : kotlin.String?

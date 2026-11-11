@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getExpressionTypeByPsiOrNull
-import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -258,8 +257,6 @@ internal class KaFirExpressionTypeProvider(
     }
 
     override fun returnType(declaration: KtDeclarationWithReturnType): KaType = declaration.withPsiValidityAssertion {
-        declaration.inferReturnTypeByPsi(analysisSession)?.let { return it }
-
         // Function type parameters have no symbol
         if (declaration is KtParameter && declaration.isFunctionTypeParameter) {
             val firParameter = declaration.getOrBuildFirOfType<FirFunctionTypeParameter>(resolutionFacade)
