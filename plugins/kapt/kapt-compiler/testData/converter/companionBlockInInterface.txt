@@ -1,0 +1,48 @@
+/**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // signature: foo()I
+ *   public final static fun foo(): kotlin/Int
+ *
+ *   // field: prop:I
+ *   // getter: getProp()I
+ *   // setter: setProp(I)V
+ *   public final static var prop: kotlin/Int
+ *     public final get
+ *     public final set
+ *
+ *   // field: propWithAccessors:I
+ *   // getter: getPropWithAccessors()I
+ *   // setter: setPropWithAccessors(I)V
+ *   public final static var propWithAccessors: kotlin/Int
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: kotlin/Int)
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I {
+
+    public static final int getProp() {
+        return 0;
+    }
+
+    public static final void setProp(int p0) {
+    }
+
+    public static int getPropWithAccessors() {
+        return 0;
+    }
+
+    public static void setPropWithAccessors(int value) {
+    }
+
+    public static int foo() {
+        return 0;
+    }
+}
