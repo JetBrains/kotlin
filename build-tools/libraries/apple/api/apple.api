@@ -1,3 +1,29 @@
+public final class org/jetbrains/kotlin/buildtools/apple/ApplePlatform : java/lang/Enum {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform$Companion;
+	public static final field IOS Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static final field IOS_SIMULATOR Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static final field MACOS Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static final field TVOS Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static final field TVOS_SIMULATOR Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static final field VISIONOS Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static final field VISIONOS_SIMULATOR Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static final field WATCHOS Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static final field WATCHOS_SIMULATOR Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static final fun fromSdkName (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public final fun getBundlePlatformName ()Ljava/lang/String;
+	public final fun getDestinationPlatform ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getGenericDestination ()Ljava/lang/String;
+	public final fun getSdkName ()Ljava/lang/String;
+	public final fun isSimulator ()Z
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/ApplePlatform$Companion {
+	public final fun fromSdkName (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;
+}
+
 public final class org/jetbrains/kotlin/buildtools/apple/AppleToolException : java/lang/RuntimeException {
 	public fun <init> (Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;Ljava/lang/String;)V
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -39,6 +65,32 @@ public final class org/jetbrains/kotlin/buildtools/apple/AppleToolUnavailableExc
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public final class org/jetbrains/kotlin/buildtools/apple/AppleTools {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;Lorg/jetbrains/kotlin/buildtools/apple/AppleToolRunner;Ljava/lang/String;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;Lorg/jetbrains/kotlin/buildtools/apple/AppleToolRunner;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCodesign ()Lorg/jetbrains/kotlin/buildtools/apple/Codesign;
+	public final fun getInstallNameTool ()Lorg/jetbrains/kotlin/buildtools/apple/InstallNameTool;
+	public final fun getLibtool ()Lorg/jetbrains/kotlin/buildtools/apple/Libtool;
+	public final fun getLipo ()Lorg/jetbrains/kotlin/buildtools/apple/Lipo;
+	public final fun getPlistBuddy ()Lorg/jetbrains/kotlin/buildtools/apple/PlistBuddy;
+	public final fun getPlutil ()Lorg/jetbrains/kotlin/buildtools/apple/Plutil;
+	public final fun getRunner ()Lorg/jetbrains/kotlin/buildtools/apple/AppleToolRunner;
+	public final fun getSimctl ()Lorg/jetbrains/kotlin/buildtools/apple/Simctl;
+	public final fun getSwiftPackage ()Lorg/jetbrains/kotlin/buildtools/apple/SwiftPackage;
+	public final fun getToolchain ()Ljava/lang/String;
+	public final fun getXattr ()Lorg/jetbrains/kotlin/buildtools/apple/Xattr;
+	public final fun getXcode ()Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;
+	public final fun getXcodebuild ()Lorg/jetbrains/kotlin/buildtools/apple/Xcodebuild;
+	public final fun getXcrun ()Lorg/jetbrains/kotlin/buildtools/apple/Xcrun;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/Codesign {
+	public final fun sign (Ljava/nio/file/Path;Ljava/lang/String;Z)V
+	public static synthetic fun sign$default (Lorg/jetbrains/kotlin/buildtools/apple/Codesign;Ljava/nio/file/Path;Ljava/lang/String;ZILjava/lang/Object;)V
+	public final fun signInvocation (Ljava/nio/file/Path;Ljava/lang/String;Z)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun signInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/Codesign;Ljava/nio/file/Path;Ljava/lang/String;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+}
+
 public final class org/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup {
 	public static final field APP_BUILD_SETTINGS Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup$Companion;
@@ -59,6 +111,21 @@ public final class org/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup {
 }
 
 public final class org/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/InstallNameTool {
+	public final fun setId (Ljava/nio/file/Path;Ljava/lang/String;)V
+	public final fun setIdInvocation (Ljava/nio/file/Path;Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/Libtool {
+	public final fun createStatic (Ljava/util/List;Ljava/nio/file/Path;)V
+	public final fun createStaticInvocation (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/Lipo {
+	public final fun create (Ljava/util/List;Ljava/nio/file/Path;)V
+	public final fun createInvocation (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/apple/OutputMode {
@@ -85,9 +152,141 @@ public final class org/jetbrains/kotlin/buildtools/apple/OutputMode$Forward : or
 	public final fun getErrorConsumer ()Lkotlin/jvm/functions/Function1;
 }
 
+public final class org/jetbrains/kotlin/buildtools/apple/PlistBuddy {
+	public final fun invocation (Ljava/nio/file/Path;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun run (Ljava/nio/file/Path;Ljava/util/List;Z)Ljava/lang/String;
+	public static synthetic fun run$default (Lorg/jetbrains/kotlin/buildtools/apple/PlistBuddy;Ljava/nio/file/Path;Ljava/util/List;ZILjava/lang/Object;)Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/apple/PlistBuddyCommand {
+	public abstract fun render ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/PlistBuddyCommand$Add : org/jetbrains/kotlin/buildtools/apple/PlistBuddyCommand {
+	public fun <init> (Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getKeyPath ()Ljava/util/List;
+	public final fun getType ()Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public final fun getValue ()Ljava/lang/String;
+	public fun render ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/PlistBuddyCommand$Delete : org/jetbrains/kotlin/buildtools/apple/PlistBuddyCommand {
+	public fun <init> (Ljava/util/List;)V
+	public final fun getKeyPath ()Ljava/util/List;
+	public fun render ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/PlistBuddyCommand$Print : org/jetbrains/kotlin/buildtools/apple/PlistBuddyCommand {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getKeyPath ()Ljava/util/List;
+	public fun render ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/PlistBuddyCommand$Set : org/jetbrains/kotlin/buildtools/apple/PlistBuddyCommand {
+	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public final fun getKeyPath ()Ljava/util/List;
+	public final fun getValue ()Ljava/lang/String;
+	public fun render ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/PlistValueType : java/lang/Enum {
+	public static final field ARRAY Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public static final field BOOL Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public static final field DATA Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public static final field DATE Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public static final field DICT Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public static final field INTEGER Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public static final field REAL Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public static final field STRING Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getKeyword ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/apple/PlistValueType;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/Plutil {
+	public final fun convertToJson (Ljava/nio/file/Path;)Ljava/lang/String;
+	public final fun convertToJson (Ljava/nio/file/Path;Ljava/nio/file/Path;)V
+	public final fun convertToJsonInvocation (Ljava/nio/file/Path;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun convertToJsonInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/Plutil;Ljava/nio/file/Path;Ljava/nio/file/Path;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+}
+
 public final class org/jetbrains/kotlin/buildtools/apple/ProcessAppleToolRunner : org/jetbrains/kotlin/buildtools/apple/AppleToolRunner {
 	public fun <init> ()V
 	public fun run (Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/Simctl {
+	public final fun listDevices (ZZ)Ljava/lang/String;
+	public static synthetic fun listDevices$default (Lorg/jetbrains/kotlin/buildtools/apple/Simctl;ZZILjava/lang/Object;)Ljava/lang/String;
+	public final fun listDevicesInvocation (ZZ)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun listDevicesInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/Simctl;ZZILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun listRuntimes ()Ljava/lang/String;
+	public final fun listRuntimesInvocation ()Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun spawnInvocation (Ljava/lang/String;Ljava/nio/file/Path;Ljava/util/List;ZZLorg/jetbrains/kotlin/buildtools/apple/OutputMode;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun spawnInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/Simctl;Ljava/lang/String;Ljava/nio/file/Path;Ljava/util/List;ZZLorg/jetbrains/kotlin/buildtools/apple/OutputMode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/SwiftPackage {
+	public final fun build (Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
+	public static synthetic fun build$default (Lorg/jetbrains/kotlin/buildtools/apple/SwiftPackage;Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
+	public final fun buildInvocation (Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun buildInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/SwiftPackage;Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun describe (Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;)Ljava/lang/String;
+	public static synthetic fun describe$default (Lorg/jetbrains/kotlin/buildtools/apple/SwiftPackage;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;ILjava/lang/Object;)Ljava/lang/String;
+	public final fun describeInvocation (Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun describeInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/SwiftPackage;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun resolve (Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
+	public static synthetic fun resolve$default (Lorg/jetbrains/kotlin/buildtools/apple/SwiftPackage;Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
+	public final fun resolveInvocation (Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun resolveInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/SwiftPackage;Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun showBinPath (Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;)Ljava/nio/file/Path;
+	public static synthetic fun showBinPath$default (Lorg/jetbrains/kotlin/buildtools/apple/SwiftPackage;Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;ILjava/lang/Object;)Ljava/nio/file/Path;
+	public final fun showBinPathInvocation (Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun showBinPathInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/SwiftPackage;Ljava/nio/file/Path;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice {
+	public abstract fun getDebugSymbols ()Ljava/util/List;
+	public abstract fun getPath ()Ljava/nio/file/Path;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice$Framework : org/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice {
+	public fun <init> (Ljava/nio/file/Path;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/nio/file/Path;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/nio/file/Path;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/nio/file/Path;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice$Framework;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice$Framework;Ljava/nio/file/Path;Ljava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice$Framework;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDebugSymbols ()Ljava/util/List;
+	public fun getPath ()Ljava/nio/file/Path;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice$Library : org/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice {
+	public fun <init> (Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/nio/file/Path;
+	public final fun component2 ()Ljava/nio/file/Path;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice$Library;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice$Library;Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/XCFrameworkSlice$Library;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDebugSymbols ()Ljava/util/List;
+	public final fun getHeaders ()Ljava/nio/file/Path;
+	public fun getPath ()Ljava/nio/file/Path;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/Xattr {
+	public final fun markCreatedByBuildSystem (Ljava/nio/file/Path;)V
+	public final fun markCreatedByBuildSystemInvocation (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
 }
 
 public final class org/jetbrains/kotlin/buildtools/apple/XcodeInstallation {
@@ -201,5 +400,31 @@ public final class org/jetbrains/kotlin/buildtools/apple/XcodeVersionFile {
 	public static synthetic fun find$default (Ljava/nio/file/Path;Ljava/nio/file/Path;ILjava/lang/Object;)Ljava/nio/file/Path;
 	public static final fun parse (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$Version;
 	public static final fun read (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$Version;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/Xcodebuild {
+	public final fun build (Ljava/nio/file/Path;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;Ljava/util/Map;Ljava/util/List;ZLjava/util/Map;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
+	public static synthetic fun build$default (Lorg/jetbrains/kotlin/buildtools/apple/Xcodebuild;Ljava/nio/file/Path;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;Ljava/util/Map;Ljava/util/List;ZLjava/util/Map;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
+	public final fun buildInvocation (Ljava/nio/file/Path;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;Ljava/util/Map;Ljava/util/List;ZLjava/util/Map;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun buildInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/Xcodebuild;Ljava/nio/file/Path;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;Ljava/util/Map;Ljava/util/List;ZLjava/util/Map;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun createXCFramework (Ljava/util/List;Ljava/nio/file/Path;)V
+	public final fun createXCFrameworkInvocation (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun showBuildSettings (Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;)Ljava/lang/String;
+	public static synthetic fun showBuildSettings$default (Lorg/jetbrains/kotlin/buildtools/apple/Xcodebuild;Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;ILjava/lang/Object;)Ljava/lang/String;
+	public final fun showBuildSettingsInvocation (Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun showBuildSettingsInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/Xcodebuild;Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/EnvironmentCleanup;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun version ()Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;
+	public final fun versionInvocation ()Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/Xcrun {
+	public final fun find (Ljava/lang/String;)Ljava/nio/file/Path;
+	public final fun findInvocation (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun runTool (Ljava/lang/String;Ljava/util/List;Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
+	public static synthetic fun runTool$default (Lorg/jetbrains/kotlin/buildtools/apple/Xcrun;Ljava/lang/String;Ljava/util/List;Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
+	public final fun showSdkPath (Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;)Ljava/nio/file/Path;
+	public final fun showSdkPathInvocation (Lorg/jetbrains/kotlin/buildtools/apple/ApplePlatform;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public final fun toolInvocation (Ljava/lang/String;Ljava/util/List;Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
+	public static synthetic fun toolInvocation$default (Lorg/jetbrains/kotlin/buildtools/apple/Xcrun;Ljava/lang/String;Ljava/util/List;Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/apple/OutputMode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;
 }
 
