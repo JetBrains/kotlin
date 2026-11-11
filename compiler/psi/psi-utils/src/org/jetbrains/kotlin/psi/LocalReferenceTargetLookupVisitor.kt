@@ -147,6 +147,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
     val strict: Boolean,
 ) : LocalReferenceTargetLookupVisitor(element) {
     private var constructorParametersAllowed: Boolean = false
+    private var usePrimaryConstructorProperties: Boolean = false
 
     override fun isStopElement(element: KtElement, lastDirection: LastDirection): Boolean =
         lastDirection == PARENT &&
@@ -159,7 +160,10 @@ private class ValueLocalReferenceTargetLookupVisitor(
                 || element.isScriptTopLevelElement
 
     override fun visitKtElement(element: KtElement, data: VisitorContext?) {
-        if (data?.previousElement is KtClass) constructorParametersAllowed = false
+        if (data?.previousElement is KtClass) {
+            constructorParametersAllowed = false
+            usePrimaryConstructorProperties = false
+        }
     }
 
     override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry, data: VisitorContext) {
@@ -170,6 +174,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         //                     ^ we need to be able to resolve this i to the parameter
 
         constructorParametersAllowed = true
+        usePrimaryConstructorProperties = false
     }
 
     override fun visitDelegatedSuperTypeEntry(specifier: KtDelegatedSuperTypeEntry, data: VisitorContext) {
@@ -180,6 +185,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         // class B(i: I) : I by i
         //                      ^
         constructorParametersAllowed = true
+        usePrimaryConstructorProperties = true
     }
 
     override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: VisitorContext) {
@@ -192,6 +198,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         //     }
         // }
         constructorParametersAllowed = true
+        usePrimaryConstructorProperties = false
     }
 
     override fun visitForExpression(element: KtForExpression, data: VisitorContext) {
@@ -246,6 +253,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
                         //     }
                         // }
                         constructorParametersAllowed = true
+                        usePrimaryConstructorProperties = false
                     }
                 }
                 is KtPropertyAccessor -> {
@@ -258,6 +266,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
                     // }
                     allowResolveToProperty = false
                     constructorParametersAllowed = false
+                    usePrimaryConstructorProperties = false
                 }
             }
         }
@@ -290,7 +299,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         data.parentOnly {
             if (constructorParametersAllowed) {
                 klass.primaryConstructorParameters.processMany {
-                    if (it.isPropertyParameter()) {
+                    if (it.isPropertyParameter() && !usePrimaryConstructorProperties) {
                         return@processMany
                     }
 
@@ -310,6 +319,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         super.visitNamedFunction(element, data)
 
         constructorParametersAllowed = false
+        usePrimaryConstructorProperties = false
 
         data.parentOnly {
             element.valueParameters.processMany { processParameter(it, data) }
@@ -335,6 +345,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         constructor.contextParameters.processMany { processParameter(it, data) }
 
         constructorParametersAllowed = false
+        usePrimaryConstructorProperties = false
     }
 
     override fun visitLambdaExpression(element: KtLambdaExpression, data: VisitorContext) {
