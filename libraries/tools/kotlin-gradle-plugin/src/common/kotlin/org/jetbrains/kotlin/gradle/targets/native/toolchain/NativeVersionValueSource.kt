@@ -75,7 +75,7 @@ internal abstract class NativeVersionValueSource :
 
             removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
 
-            if (!provisionedMarkerFile(bundleDir).exists()) {
+            if (!isProvisioned(bundleDir)) {
                 val gradleCachesKotlinNativeDir =
                     resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
 
@@ -145,6 +145,9 @@ internal abstract class NativeVersionValueSource :
         }
 
         private fun provisionedMarkerFile(bundleDir: File): File = bundleDir.resolve(MARKER_FILE)
+
+        /** Whether [bundleDir] holds a complete distribution. The marker is the last thing an installation writes. */
+        internal fun isProvisioned(bundleDir: File): Boolean = provisionedMarkerFile(bundleDir).exists()
 
         // both provisioners have to agree on what a finished installation looks like, see KT-86251
         internal fun markAsProvisioned(bundleDir: File) {
