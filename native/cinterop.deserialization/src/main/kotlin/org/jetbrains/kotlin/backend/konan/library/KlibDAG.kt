@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import org.jetbrains.kotlin.utils.softRefCached
 import java.nio.file.Path
 import java.util.PriorityQueue
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.pathString
 
 /**
@@ -320,16 +319,17 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
     private val contributedPackageToNode: MutableMap<FqName, MutableSet<KlibDAGNodeImpl>> = hashMapOf()
 
     // Index: declared signature -> KLIB.
-    private val declaredSignatureToNode: ConcurrentHashMap<IdSignature, KlibDAGNodeImpl> = ConcurrentHashMap()
+    private val declaredSignatureToNode: MutableMap<IdSignature, KlibDAGNodeImpl> = hashMapOf()
 
     // Index: KLIB -> imported signatures.
-    private val nodeToImportedSignatures: ConcurrentHashMap<KlibDAGNodeImpl, Set<IdSignature>> = ConcurrentHashMap()
+    private val nodeToImportedSignatures: MutableMap<KlibDAGNodeImpl, Set<IdSignature>> = hashMapOf()
 
     fun build(): KlibDAG {
         // Optimization: Stdlib is a dependency for each library. We don't need to extract signatures from it.
         stampStdlibNodeAsDependencyForEveryone()
 
         // Collect all libraries that need eager signature indices population.
+        // Preserve the original order from Parameters.libraries.
         val librariesToPopulateSignatureIndices: List<KotlinLibrary> = buildList {
             addAll(rootsButStdlib)
 
@@ -342,13 +342,18 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
             }
         }
 
-        // Populate signature indices for all these libraries in parallel: signature extraction is expensive,
-        // and populateSignatureIndicesForLibrary only writes to the  ConcurrentHashMap indices for distinct nodes,
-        // so the calls are safe to run concurrently.
-        runBlocking {
+        // Extract signature indices for all these libraries in parallel as the signature extraction is an expensive operation.
+        // Preserve the original order from Parameters.libraries.
+        val librariesAndTheirExtractedSignatures: List<Pair<KotlinLibrary, ExtractedSignatures>> = runBlocking {
             librariesToPopulateSignatureIndices
-                .map { library -> async(Dispatchers.Default) { populateSignatureIndicesForLibrary(library) } }
+                .map { library -> async(Dispatchers.Default) { library to library.extractTopLevelSignatures() } }
                 .awaitAll()
+        }
+
+        // Now, merge the extraction result. Do it in a single thread.
+        // Follow the original order from Parameters.libraries.
+        for ([library, extractedSignatures] in librariesAndTheirExtractedSignatures) {
+            populateSignatureIndicesForLibrary(dagUnderConstruction.getValue(library), extractedSignatures)
         }
 
         // Maintain the set of really used DAG nodes and their statuses.
@@ -456,14 +461,6 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
         contributedPackageToNode.getOrPut(contributedPackageName) { hashSetOf() } += node
 
         return true // Populated.
-    }
-
-    /**
-     * Populates [declaredSignatureToNode] and [nodeToImportedSignatures] indices.
-     */
-    private fun populateSignatureIndicesForLibrary(library: KotlinLibrary) {
-        val node = dagUnderConstruction.getValue(library)
-        populateSignatureIndicesForLibrary(node, library.extractTopLevelSignatures())
     }
 
     /**
