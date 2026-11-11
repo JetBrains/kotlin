@@ -9,13 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -29,7 +23,7 @@ import java.io.File
  * one workspace `package.json` per compilation plus the root `package.json` listing all workspaces.
  */
 @CacheableTask
-internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKotlinToolingDiagnostics {
+abstract class KotlinSetupSharedNpmProjectTask internal constructor() : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     @get:InputFiles
     @get:NormalizeLineEndings
@@ -46,7 +40,7 @@ internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKot
     abstract val outputDirectory: DirectoryProperty
 
     @TaskAction
-    fun assemble() {
+    protected fun assemble() {
         val outputDirectory = outputDirectory.get().asFile
         val packagesDirectory = outputDirectory.resolve("packages")
         packagesDirectory.deleteRecursively()

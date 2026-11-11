@@ -5823,6 +5823,20 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/npm/KotlinSharedNp
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/targets/web/npm/shared/KotlinNpmDependencyReportTask : org/gradle/api/DefaultTask {
+	protected final fun generate ()V
+	public abstract fun getOutputFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getTarget ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/web/npm/shared/KotlinSetupSharedNpmProjectTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
+	protected final fun assemble ()V
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getReportFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getRootPackageName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getRootPackageVersion ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getIgnoreScripts ()Lorg/gradle/api/provider/Property;
