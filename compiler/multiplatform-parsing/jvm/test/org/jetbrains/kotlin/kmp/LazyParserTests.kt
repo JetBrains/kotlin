@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.kmp.infra.checkSyntaxElements
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -49,6 +50,21 @@ class LazyParserTests : AbstractRecognizerTests<
     override val ignoreFilesWithSyntaxError: Boolean = true
 
     /**
+     * Ensures that the lazy parser actually collapses blocks and lambdas.
+     * Otherwise, the comparison with the non-lazy parser would be trivial.
+     * Nested blocks and lambdas are collapsed only on expanding of their parents, so they aren't visible after the initial parsing.
+     */
+    @Test
+    fun testBlocksAndLambdasAreCollapsed() {
+        val text = """
+            fun f() { run { 1 } }
+            val x = run { 2 }
+        """.trimIndent()
+
+        assertEquals(listOf("BLOCK", "LAMBDA_EXPRESSION"), lazyParser.getCollapsedLazyParseableNodeTypes("test.kt", text))
+    }
+
+    /**
      * Lazy parsing and expanding of deeply nested lambdas and function bodies should not depend on the nesting depth (KTI-3876).
      * The non-lazy parser and the tree comparison are recursive, so they run on a thread with a large stack.
      */
@@ -56,6 +72,8 @@ class LazyParserTests : AbstractRecognizerTests<
     fun testDeeplyNestedLambdasAndFunctionBodies() {
         val depth = 2000
         val text = "fun f() {\n" + "run {\nfun g() {\n".repeat(depth) + "}\n}\n".repeat(depth) + "}\n"
+
+        assertEquals(listOf("BLOCK"), lazyParser.getCollapsedLazyParseableNodeTypes("test.kt", text))
 
         val lazyTree = lazyParser.parse("test.kt", text)
 

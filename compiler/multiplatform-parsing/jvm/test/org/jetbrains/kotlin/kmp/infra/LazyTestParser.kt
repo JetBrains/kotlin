@@ -17,7 +17,9 @@ import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import com.intellij.platform.syntax.lexer.TokenList
 import com.intellij.platform.syntax.lexer.performLexing
 import com.intellij.platform.syntax.parseLazyNode
+import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilderFactory
+import com.intellij.platform.syntax.parser.prepareProduction
 import com.intellij.platform.syntax.tree.KmpSyntaxNode
 import com.intellij.platform.syntax.tree.SyntaxNode
 import com.intellij.platform.syntax.tree.children
@@ -75,12 +77,38 @@ class LazyTestParser(disposable: Disposable) : AbstractTestParser<SyntaxNode>(Pa
     override fun parse(fileName: String, text: String): TestParseNode<out SyntaxNode> =
         parseToSyntaxNode(fileName, text).toTestParseNode()
 
-    private fun parseToSyntaxNode(fileName: String, text: CharSequence): KmpSyntaxNode {
+    /**
+     * Returns types of lazy parseable nodes that remain collapsed after the initial parsing of the [text].
+     * Nested lazy parseable nodes aren't included because they're parsed only on expanding of their collapsed parents.
+     */
+    fun getCollapsedLazyParseableNodeTypes(fileName: String, text: String): List<String> {
+        val collapsedNodeTypes = mutableListOf<String>()
+        parseToSyntaxNode(fileName, text) { builder ->
+            // `prepareProduction` caches its result, so it doesn't affect the further building of the tree
+            val productions = prepareProduction(builder).productionMarkers
+            for (productionIndex in 0 until productions.size) {
+                val production = productions.getMarker(productionIndex)
+                if (productions.isDoneMarker(productionIndex) && production.isCollapsed() && production.getNodeType().isLazyParseable()) {
+                    collapsedNodeTypes.add(production.getNodeType().toString())
+                }
+            }
+        }
+        return collapsedNodeTypes
+    }
+
+    private fun parseToSyntaxNode(
+        fileName: String,
+        text: CharSequence,
+        onParsed: (SyntaxTreeBuilder) -> Unit = {},
+    ): KmpSyntaxNode {
         val parser = KotlinParser(isScript(fileName), isLazy = true)
         return parse(
             text = text,
             lexerFactory = ::KotlinLexer,
-            parser = parser::parse,
+            parser = { builder ->
+                parser.parse(builder)
+                onParsed(builder)
+            },
             whitespaces = KtTokens.WHITESPACES,
             comments = KtTokens.COMMENTS,
             documentLanguage = kotlinLanguage,
