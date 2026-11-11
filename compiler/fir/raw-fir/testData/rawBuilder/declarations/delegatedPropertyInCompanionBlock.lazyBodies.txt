@@ -1,0 +1,31 @@
+FILE: delegatedPropertyInCompanionBlock.kt
+    public final? class Delegate : R|kotlin/Any| {
+        public? [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? operator fun getValue(thisRef: Any?, property: KProperty<*>): Int { LAZY_BLOCK }
+
+        public? final? operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [FirCompanionBlockDataKey=[valid=1 nested=0]] class Owner : R|kotlin/Any| {
+        public? [ContainingClassKey=Owner] constructor(): R|Owner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? static [ContainingClassKey=Owner] val staticVal: Intby LAZY_EXPRESSION
+            public? static [ContainingClassKey=Owner] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? static [ContainingClassKey=Owner] var staticVar: Intby LAZY_EXPRESSION
+            public? static [ContainingClassKey=Owner] get(): <implicit> { LAZY_BLOCK }
+            public? static [ContainingClassKey=Owner] set(<set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? val instanceVal: Intby LAZY_EXPRESSION
+            public? [ContainingClassKey=Owner] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? var instanceVar: Intby LAZY_EXPRESSION
+            public? [ContainingClassKey=Owner] get(): <implicit> { LAZY_BLOCK }
+            public? [ContainingClassKey=Owner] set(<set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }

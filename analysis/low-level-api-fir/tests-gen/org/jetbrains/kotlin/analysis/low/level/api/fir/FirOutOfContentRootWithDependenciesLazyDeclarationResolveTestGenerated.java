@@ -1642,6 +1642,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("staticDelegatedProperty.kt")
+    public void testStaticDelegatedProperty() {
+      run("staticDelegatedProperty.kt");
+    }
+
+    @Test
     @TestMetadata("staticFunction.kt")
     public void testStaticFunction() {
       run("staticFunction.kt");
