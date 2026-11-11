@@ -1,11 +1,7 @@
-function withAnonymousObject(producer1, producer2) {
-  producer1 = producer1 === VOID ? new withAnonymousObject$1() : producer1;
-  producer2 = producer2 === VOID ? new withAnonymousObject$2() : producer2;
+function withAnonymousObject(producer1 = new withAnonymousObject$1(), producer2 = new withAnonymousObject$2()) {
   return producer1.produce() + ' ' + producer2.produce();
 }
-function triggeringTopLevelConstInitializer(x, y, z) {
-  x = x === VOID ? theAnswer : x;
-  z = z === VOID ? theAnswer : z;
+function triggeringTopLevelConstInitializer(x = theAnswer, y, z = theAnswer) {
   return 'x=' + x + ', y=' + y + ', z=' + z;
 }
 function triggeringTopLevelPureInitializer(x, y, z) {
@@ -20,13 +16,10 @@ function triggeringTopLevelEffectfulInitializer(x, y, z) {
   z = z === VOID ? get_theAnswerWithEffect() : z;
   return 'x=' + x + ', y=' + y + ', z=' + z;
 }
-function referencingOtherParameters(x, y, z) {
-  y = y === VOID ? x + 1 | 0 : y;
-  z = z === VOID ? imul(y, 2) : z;
+function referencingOtherParameters(x, y = x + 1 | 0, z = imul(y, 2)) {
   return 'x=' + x + ', y=' + y + ', z=' + z;
 }
-function simpleConditional(condition, x) {
-  x = x === VOID ? condition ? 1 : -1 : x;
+function simpleConditional(condition, x = condition ? 1 : -1) {
   return 'x=' + x;
 }
 function complexConditional(x, y) {
@@ -47,8 +40,7 @@ function complexConditional(x, y) {
   return 'x=' + x + ', y=' + y;
 }
 class Animal {
-  say(prefix, $super) {
-    prefix = prefix === VOID ? this.defaultPrefix : prefix;
+  say(prefix = this.defaultPrefix, $super) {
     return $super === VOID ? this.n(prefix) : $super.n.call(this, prefix);
   }
   get defaultPrefix() {
