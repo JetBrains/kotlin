@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final value class /Z { // /Z|null[0]
+    final val s // /Z.s|{}s[0]
+        final fun <get-s>(): kotlin/String // /Z.s.<get-s>|<get-s>(){}[0]
+    constructor <init>(kotlin/String) // /Z.<init>|<init>(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Z.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Z.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Z.toString|toString(){}[0]
+}
+final val /equals // /equals|{}equals[0]
+    final fun <get-equals>(): kotlin.reflect/KFunction2</Z, kotlin/Any?, kotlin/Boolean> // /equals.<get-equals>|<get-equals>(){}[0]
