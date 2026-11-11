@@ -225,6 +225,7 @@ Gradle:
  - libraries/tools/kotlin-gradle-plugin
  - libraries/tools/kotlin-gradle-plugin-annotations
  - libraries/tools/kotlin-gradle-plugin-api
+ - libraries/tools/kotlin-gradle-plugin-arch-test-utils
  - libraries/tools/kotlin-gradle-plugin-dsl-codegen
  - libraries/tools/kotlin-gradle-plugin-idea
  - libraries/tools/kotlin-gradle-plugin-idea-browser-debug
