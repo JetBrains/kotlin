@@ -1,4 +1,7 @@
 IGNORE_PER_FILE: true
+// Per-class and per-file place artifacts in module subdirectories (js/lib1/...),
+// so the relative @file:JsModule("./js-module-a.mjs") path does not resolve.
+IGNORE_PER_CLASS: true
 
 MODULES: lib1, lib2, main
 
