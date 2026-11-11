@@ -438,11 +438,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
         val genericBridgeableProtocols = buildList {
             if (typeParameters.isNotEmpty()) {
                 if (!hasGenericAncestor) {
-                    if (modality == SirModality.FINAL) {
-                        add(KotlinRuntimeSupportModule.kotlinCustomPointerBridgeable)
-                    } else {
-                        add(KotlinRuntimeSupportModule.kotlinOpenGenericBridgeable)
-                    }
+                    add(KotlinRuntimeSupportModule.kotlinCustomPointerBridgeable)
                 }
                 openGenericReverseDispatchProtocol?.let(::add)
             }

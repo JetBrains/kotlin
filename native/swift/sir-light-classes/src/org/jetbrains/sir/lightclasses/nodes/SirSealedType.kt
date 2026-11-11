@@ -245,7 +245,7 @@ internal class SirSealedTypeEnum(
                     addIfNotNull(unknownCase)
                 }.joinToString(prefix = "switch self {\n", separator = "\n", postfix = "\n}") { case ->
                     val expr = if (genericWrapperName != null && case != unknownCase) {
-                        "$genericWrapperName(__externalRCRefUnsafe: KotlinRuntimeSupport._cloneBridgeableRef(type.value.__externalRCRef()), options: .asExistentialWrapper)"
+                        "$genericWrapperName.__createTypedWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(type.value.__externalRCRef()))"
                     } else {
                         "type.value"
                     }
@@ -411,7 +411,7 @@ internal class SirSealedTypeStruct(
                 val wrapperName = valueType.swiftName
                 parameters += SirParameter(null, "value", SirNominalType(KotlinRuntimeModule.kotlinBase))
                 body = SirFunctionBody(
-                    listOf("self.value = (value as? $wrapperName) ?? $wrapperName(__externalRCRefUnsafe: KotlinRuntimeSupport._cloneBridgeableRef(value.__externalRCRef()), options: .asExistentialWrapper)")
+                    listOf("self.value = (value as? $wrapperName) ?? $wrapperName.__createTypedWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(value.__externalRCRef()))")
                 )
             } else {
                 parameters += SirParameter(null, "value", valueType)
@@ -546,7 +546,7 @@ internal sealed class SirSealedTypeFunction : SirFunction(), SirFromKtSymbol<KaN
                             val anyWrapper = decl.anyWrapperDeclaration!!
                             "${SirNominalType(anyWrapper, substitutedCaseArgs).swiftName}.__fromKotlinPointer(KotlinRuntimeSupport._cloneBridgeableRef(self.__externalRCRef()))"
                         } else {
-                            "KotlinRuntimeSupport._KotlinExistential<any ${decl.existentialMarker.swiftFqName}>(__externalRCRefUnsafe: KotlinRuntimeSupport._cloneBridgeableRef(self.__externalRCRef()), options: .asExistentialWrapper)"
+                            "KotlinRuntimeSupport._KotlinExistential<any ${decl.existentialMarker.swiftFqName}>.__createTypedWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(self.__externalRCRef()))"
                         }
                         else -> "${SirNominalType(decl, substitutedCaseArgs).swiftName}.__fromKotlinPointer(KotlinRuntimeSupport._cloneBridgeableRef(self.__externalRCRef()))"
                     }

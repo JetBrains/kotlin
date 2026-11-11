@@ -334,7 +334,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         return Foo_foo(self.__externalRCRef())
     }
 }
-open class GENERIC_CLASS<T: KotlinRuntimeSupport._KotlinBridgeable>: main._GENERIC_CLASS_Base, KotlinRuntimeSupport._KotlinOpenGenericBridgeable, main._GENERIC_CLASS_ReverseDispatch {
+open class GENERIC_CLASS<T: KotlinRuntimeSupport._KotlinBridgeable>: main._GENERIC_CLASS_Base, KotlinRuntimeSupport._KotlinCustomPointerBridgeable, main._GENERIC_CLASS_ReverseDispatch {
     public init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.GENERIC_CLASS<T>.self {

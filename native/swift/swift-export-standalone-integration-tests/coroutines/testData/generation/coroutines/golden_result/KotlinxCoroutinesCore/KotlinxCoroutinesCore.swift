@@ -245,7 +245,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func flowCollector<T: KotlinRuntimeSupport._KotlinBridgeable>(
         function: @escaping (T) async throws -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector<T> {
-        return { let _ptr = kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28TU2920asyncU20throwsU202D_U20Swift_Void__(Unmanaged.passRetained(({ (_p0: Swift.Optional<Swift.UnsafeMutableRawPointer>) async throws -> Swift.Void in return try await (function)(T.__fromKotlinPointer(_p0)) } as (Swift.Optional<Swift.UnsafeMutableRawPointer>) async throws -> Swift.Void) as AnyObject).toOpaque()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector<T>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlinx.coroutines.flow.AnyFlowCollector<T>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+        return { let _ptr = kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28TU2920asyncU20throwsU202D_U20Swift_Void__(Unmanaged.passRetained(({ (_p0: Swift.Optional<Swift.UnsafeMutableRawPointer>) async throws -> Swift.Void in return try await (function)(T.__fromKotlinPointer(_p0)) } as (Swift.Optional<Swift.UnsafeMutableRawPointer>) async throws -> Swift.Void) as AnyObject).toOpaque()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector<T>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlinx.coroutines.flow.AnyFlowCollector<T>.__createTypedWrapper(externalRCRef: _ptr) }()
     }
 }
 @_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
@@ -311,7 +311,7 @@ package func kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20Expor
 }()
     let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
     withKotlinTask(__continuation, __exception, __cancellation) {
-        try await _self.collect(collector: { let _ptr = collector; if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlinx.coroutines.flow.AnyFlowCollector<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }())
+        try await _self.collect(collector: { let _ptr = collector; if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlinx.coroutines.flow.AnyFlowCollector<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>.__createTypedWrapper(externalRCRef: _ptr) }())
     }
     return true
 }
@@ -389,7 +389,7 @@ package func kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU2
 }()
     let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
     withKotlinTask(__continuation, __exception, __cancellation) {
-        try await _self.collect(collector: { let _ptr = collector; if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlinx.coroutines.flow.AnyFlowCollector<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }())
+        try await _self.collect(collector: { let _ptr = collector; if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlinx.coroutines.flow.AnyFlowCollector<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>.__createTypedWrapper(externalRCRef: _ptr) }())
     }
     return true
 }

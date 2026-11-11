@@ -67,7 +67,7 @@ public final class ConcreteSelfReferencing: f_bounded_type.SelfReferencing<Kotli
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-open class SelfReferencing<T: KotlinRuntimeSupport._KotlinBridgeable>: f_bounded_type._SelfReferencing_Base, KotlinRuntimeSupport._KotlinOpenGenericBridgeable, f_bounded_type._SelfReferencing_ReverseDispatch, f_bounded_type.MyComparable, f_bounded_type.__MyComparable {
+open class SelfReferencing<T: KotlinRuntimeSupport._KotlinBridgeable>: f_bounded_type._SelfReferencing_Base, KotlinRuntimeSupport._KotlinCustomPointerBridgeable, f_bounded_type._SelfReferencing_ReverseDispatch, f_bounded_type.MyComparable, f_bounded_type.__MyComparable {
     public init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == f_bounded_type.SelfReferencing<T>.self {

@@ -16,7 +16,7 @@ public var testSetFoo: Swift.Set<KotlinRuntimeSupport._KotlinExistential<any Set
     }
 }
 public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableSet<Swift.String> {
-    return { let _ptr = __root___foo(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.MutableSet<Swift.String>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyMutableSet<Swift.String>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+    return { let _ptr = __root___foo(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.MutableSet<Swift.String>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyMutableSet<Swift.String>.__createTypedWrapper(externalRCRef: _ptr) }()
 }
 public func testOptSetInt(
     s: Swift.Set<Swift.Int32>?

@@ -19,7 +19,7 @@
    * [4.3 The `_KotlinBridgeable` Witness Protocol & Symmetrical RC Lifecycle](#43-the-_kotlinbridgeable-witness-protocol--symmetrical-rc-lifecycle)
    * [4.4 Generic Classes, Type-Parameter Hoisting & Open Subclassing](#44-generic-classes-type-parameter-hoisting--open-subclassing)
    * [4.5 Cross-Language Generic Interfaces via Primary Associated Types (PATs)](#45-cross-language-generic-interfaces-via-primary-associated-types-pats)
-   * [4.6 Zero-Allocation Compile-Time Variance](#46-zero-allocation-compile-time-variance)
+   * [4.6 Compile-Time Variance](#46-compile-time-variance)
    * [4.7 Exhaustive Generic `sealed` Hierarchies](#47-exhaustive-generic-sealed-hierarchies)
    * [4.8 Upper Bounds, Multi-Bound `where` Clauses & Protocol F-Bounds](#48-upper-bounds-multi-bound-where-clauses--protocol-f-bounds)
 5. [Deliberate Scope Boundaries & Pragmatic Cuts](#5-deliberate-scope-boundaries--pragmatic-cuts)
@@ -40,7 +40,7 @@ Bridging these two worlds naively forces an unpleasant choice: erasing generics 
 This document specifies **Witness-Bridged Open Polymorphism** (shortened to **Witness-Bridged Generics**), the architecture for generics in Kotlin Swift Export. Witness-Bridged Open Polymorphism pairs a **monomorphic `void*` (`ExternalRCRef`) C ABI boundary** on the Kotlin/Native side with **Swift `_KotlinBridgeable` protocol witness dispatch and `@inlinable` cross-module specialization** on the Swift side:
 
 1. **Idiomatic Swift 6 Surface**: Kotlin generic classes, top-level/member/extension functions, higher-order closures, `suspend` functions, `Flow<T>` / `StateFlow<T>` / `SharedFlow<T>` streams, generic `sealed` hierarchies (`@frozen public enum <Name>_SealedType<T>`), and generic interfaces (`public protocol Repository<T>` with Primary Associated Types and nominal `AnyRepository<T>` wrappers) export with first-class Swift generic parameters—including unboxed Swift value types (`Int32`, `String`, `Bool`, `Optional<T>`, `[T]`, `[K: V]`).
-2. **Static Soundness & Zero-Cost Variance**: Constraining exported type parameters to `<T: _KotlinBridgeable>` rejects unbridgeable Swift types (including the `42 -> Swift.Int` literal inference trap) at compile time, while phantom function-type projections (`KotlinCovariant<T>` / `KotlinContravariant<T>`) bring Kotlin's `out` and `in` variance to Swift with zero heap allocation and full static checking.
+2. **Static Checks & Compile-Time Variance**: Constraining exported type parameters to `<T: _KotlinBridgeable>` rejects unbridgeable Swift types (including the `42 -> Swift.Int` literal inference trap) at compile time, while phantom function-type projections (`KotlinCovariant<T>` / `KotlinContravariant<T>`) bring Kotlin's `out` and `in` variance to Swift with full static checking of the conversion.
 3. **Symmetrical `+1` Reference-Counting Hygiene**: Every generic value crossing the C bridge obeys a strict `+1` retained `ExternalRCRef` ownership transfer (`__retainedToKotlinPointer()` paired with `dereferenceAndDisposeBridgeableRef` / `_disposeBridgeableRef`), achieving **`0` `StableRef` leaks** across millions of iterations and adversarial GC cycles.
 4. **High Throughput & Sub-Linear Build Scaling**: Marking generic Swift wrappers `@inlinable` over `@usableFromInline` C-bridge shims allows `swiftc -O` to devirtualize `_KotlinBridgeable` witness tables across `-enable-library-evolution` boundaries (`89.25 ns/op` generic function calls, `131.25 ns/op` `Box<Int32>` round-trips, `47.89 ns/op` existential `any Repository<Int32>` dispatch), while keeping `runSwiftExport`, `konanc`, and `swiftc` build times strictly sub-linear ($\alpha \le 0.65$).
 
@@ -296,7 +296,7 @@ Table 4.1 summarizes how Kotlin generic constructs translate to Swift 6.
 | Kotlin Declaration | Exported Swift 6 Surface |
 |---|---|
 | `class Box<T>(var value: T)` | `public final class Box<T: _KotlinBridgeable>: KotlinBase, _KotlinCustomPointerBridgeable` |
-| `open class OpenBox<T>(open var value: T)` | `open class OpenBox<T: _KotlinBridgeable>: _OpenBox_Base, _KotlinOpenGenericBridgeable, _OpenBox_ReverseDispatch` |
+| `open class OpenBox<T>(open var value: T)` | `open class OpenBox<T: _KotlinBridgeable>: _OpenBox_Base, _KotlinCustomPointerBridgeable, _OpenBox_ReverseDispatch` |
 | `interface Repository<T>` | `public protocol Repository<T>: KotlinBase, _Repository` + `public final class AnyRepository<T: _KotlinBridgeable>` |
 | `class OutBox<out T>` / `class InSink<in T>` | `.covariant: KotlinCovariant<T>` / `.contravariant: KotlinContravariant<T>` + `convenience init(_:)` |
 | `sealed class UiState<out T>` | `open class UiState<T: _KotlinBridgeable>` + `@frozen public enum UiState_SealedType<T: _KotlinBridgeable>` |
@@ -367,11 +367,10 @@ Element unboxing inside `_unboxFlowElement` takes a two-tier path: when `Element
 
 #### Protocol Definition & Covariant `Self` Design
 
-In `KotlinRuntimeSupport`, `_KotlinBridgeable` and its two marker sub-protocols are defined as follows:
+In `KotlinRuntimeSupport`, `_KotlinBridgeable` and the marker protocol of generic classes are defined as follows:
 
 ```swift
 public protocol _KotlinCustomPointerBridgeable: KotlinRuntime.KotlinBase {}
-public protocol _KotlinOpenGenericBridgeable: _KotlinCustomPointerBridgeable {}
 
 public protocol _KotlinBridgeable {
     init(__externalRCRefUnsafe: UnsafeMutableRawPointer, options: KotlinBaseConstructionOptions)
@@ -389,23 +388,14 @@ Notice the deliberate asymmetry between **instance** methods `__toKotlinPointer(
 * Swift prohibits `Self` in contravariant parameter positions on non-final classes (`static func toPointer(_ v: Self)` fails to compile on `extension KotlinBase: _KotlinBridgeable` because `KotlinBase` is an open Objective-C class hierarchy). Making `__retainedToKotlinPointer()` an instance method avoids `Self` in parameter position entirely, allowing `KotlinBase` to conform once for *every* exported Kotlin class!
 * Making `__fromKotlinPointer(_:) -> Self` a static method places `Self` in covariant result position, which Objective-C `+ (instancetype)__createClassWrapper(externalRCRef:)` satisfies polymorphically.
 
-When `extension KotlinBase: _KotlinBridgeable` implements `__fromKotlinPointer(_:)`, it distinguishes three cases:
+When `extension KotlinBase: _KotlinBridgeable` implements `__fromKotlinPointer(_:)`, it distinguishes two cases:
 
 ```swift
 extension KotlinBase: _KotlinBridgeable {
     @inlinable
     public static func __fromKotlinPointer(_ ptr: UnsafeMutableRawPointer?) -> Self {
-        if Self.self is any _KotlinOpenGenericBridgeable.Type {
-            if let existing = KotlinRuntime.KotlinBase.__createClassWrapper(
-                externalRCRef: _bridge_cloneRef(ptr!)
-            ) as? Self {
-                _bridge_disposeRef(ptr!)
-                return existing
-            }
-            return Self(__externalRCRefUnsafe: ptr!, options: .asExistentialWrapper)
-        }
         if Self.self is any _KotlinCustomPointerBridgeable.Type {
-            return Self(__externalRCRefUnsafe: ptr!, options: .asExistentialWrapper)
+            return Self.__createTypedWrapper(externalRCRef: ptr!)
         }
         return Self.__createClassWrapper(externalRCRef: ptr!)
     }
@@ -418,8 +408,10 @@ extension KotlinBase: _KotlinBridgeable {
 ```
 
 1. **Non-generic `KotlinBase` classes (`Animal`, `Dog`)**: Fall through to `Self.__createClassWrapper(externalRCRef: ptr!)`, inspecting the Kotlin `ObjHeader*` `TypeInfo` at runtime so that a `Box<Animal>` holding a Kotlin `Dog` returns a true Swift `Dog` instance (`animalBox.value as? Dog` succeeds!) and preserves `1:1` `===` wrapper identity.
-2. **Final generic wrappers (`Holder<T>`, `AnyRepository<T>`)**: Conform to `_KotlinCustomPointerBridgeable` and instantiate `Self(__externalRCRefUnsafe: ptr!, options: .asExistentialWrapper)` directly (Section 4.4 explains why `__createClassWrapper` must not be used unconditionally on generic classes).
-3. **Open generic classes (`Box<T>`)**: Conform to `_KotlinOpenGenericBridgeable`, first checking whether `ptr!` already carries a bound Swift subclass peer (such as `class TaggedBox<T>: Box<T>`) before falling back to `.asExistentialWrapper`.
+2. **Generic classes (`Holder<T>`, `Box<T>`, `AnyRepository<T>`)**: Conform to `_KotlinCustomPointerBridgeable` and ask the runtime for a wrapper of `Self` with `KotlinBase.__createTypedWrapper(externalRCRef:)` (Section 4.4 explains why `__createClassWrapper` must not be used on generic classes). The runtime answers, in this order:
+   * the cached wrapper of the Kotlin object, if it is of a subclass of `Self`: a bound Swift subclass peer (such as `class TaggedBox<T>: Box<T>`);
+   * the wrapper of the class that is bound to the Kotlin class, if that class is a subclass of `Self`: an exported subclass without type parameters (`class IntBox : Box<Int>`);
+   * otherwise a **secondary wrapper** of `Self` (see "Wrapper identity and lifetime" in Section 4.4).
 
 #### Symmetrical `+1` `ExternalRCRef` Ownership Contract
 
@@ -482,8 +474,21 @@ Non-generic exported Swift classes carry `@objc` runtime bindings (`@BindClassTo
 2. **The 1:1 `ObjHeader*` Cache Invariance Hazard**: In Kotlin, a single `Box` heap instance (`ObjHeader*`) has erased runtime type `Box`. Suppose Kotlin creates a `Box<Dog>`, hands it to Swift (which caches a `Box<Dog>` Swift wrapper on `ObjHeader*` via `.asBoundBridge`), and then passes the *same* `ObjHeader*` through a Kotlin star-projected or covariant path (`Box<out Animal>`) back to Swift expecting `Box<Animal>`. If `Box<Animal>` used `.asBestFittingWrapper` / `.asBoundBridge`, `KotlinBase`'s Objective-C initializer would substitute the cached `Box<Dog>` pointer—producing a Swift reference statically typed as `Box<Animal>` whose dynamic Swift type is `Box<Dog>` (an unrelated type under Swift generic invariance), corrupting Swift's type system!
 
 Swift Export resolves both invariants cleanly:
-* Generic Kotlin wrapper instances are initialized with `options: .asExistentialWrapper` (non-caching, non-substituting) and conform to `_KotlinCustomPointerBridgeable`, while non-generic classes (`Animal`, `Dog`) keep `.asBoundBridge` and 1:1 `===` wrapper identity.
+* Generic Kotlin wrapper instances conform to `_KotlinCustomPointerBridgeable` and are **secondary wrappers**: they are not the cached wrapper of the Kotlin object (`options: .asExistentialWrapper`), while non-generic classes (`Animal`, `Dog`) keep `.asBoundBridge` and 1:1 `===` wrapper identity.
 * `@BindClassToObjCName` is **never** emitted pointing at a parameterized Swift class.
+
+#### Wrapper identity and lifetime
+
+A secondary wrapper is owned by Swift, not by the Kotlin object. The Kotlin/Native runtime (`ObjCExportClasses.mm`) gives it two guarantees:
+
+* **One Swift object per Kotlin object and Swift class.** The runtime keeps a table of the secondary wrappers that are alive, by Kotlin object and wrapper class. `KotlinBase.__createTypedWrapper(externalRCRef:)` and the `.asExistentialWrapper` initializer return the wrapper from the table if there is one. So `box() === box()` holds for a Kotlin object that is returned twice as `Box<Dog>`, for a `Box<Dog>` that was made in Swift and comes back from Kotlin, and for an `AnyRepository<T>` wrapper of a hidden implementation.
+* **Freed when Swift lets it go.** A secondary wrapper is counted as a plain Objective-C object and holds one reference to the Kotlin object for as long as it lives. When its last Swift reference goes, it is deallocated and leaves the table. A later request makes a new wrapper.
+
+What is not guaranteed:
+
+* The same Kotlin object seen as two static types (`Box<Dog>` and `Box<Animal>` through `.covariant`, or `Box<*>`) is two Swift objects. They are equal (`==`, `isEqual:`), and not identical (`===`).
+* A cast from an untyped value does not find a generic class: `any as? Box<Dog>` fails for a `Box` that Kotlin made, because the Kotlin object does not know its type arguments. Kotlin has the same limit (`is Box<Dog>` is not allowed). A non-generic exported subclass (`class IntBox : Box<Int>`) and a Swift subclass are found.
+* A Kotlin `object` has no wrapper table entry: a view of it through a generic type (`Loading` as `Resource<User>`) is a new Swift object per call.
 
 #### Companion Objects & Nested Type Hoisting
 
@@ -526,7 +531,7 @@ To enable cross-language open generic inheritance without binding `Box::class` t
    ```swift
    open class Box<T: KotlinRuntimeSupport._KotlinBridgeable>:
        main._Box_Base,
-       KotlinRuntimeSupport._KotlinOpenGenericBridgeable,
+       KotlinRuntimeSupport._KotlinCustomPointerBridgeable,
        main._Box_ReverseDispatch
    {
        public init(value: T) {
@@ -554,7 +559,7 @@ To enable cross-language open generic inheritance without binding `Box::class` t
        }
    }
    ```
-   Notice the precision of the `options:` ternary: pure Kotlin `Box<T>` instances use `.asExistentialWrapper`, whereas **Swift subclasses (`Self.self != Box<T>.self`) pass `.asBoundBridge`**, binding the exact `TaggedBox<Int32>` Swift object to its Kotlin peer! When that `TaggedBox<Int32>` later round-trips through Kotlin (`idValue(x: tagged as Box<Int32>)`), `_KotlinOpenGenericBridgeable` in `KotlinBase.__fromKotlinPointer` recovers `existing as? Self`, preserving both `TaggedBox<Int32>`'s dynamic type and `===` reference identity!
+   Notice the precision of the `options:` ternary: pure Kotlin `Box<T>` instances use `.asExistentialWrapper`, whereas **Swift subclasses (`Self.self != Box<T>.self`) pass `.asBoundBridge`**, binding the exact `TaggedBox<Int32>` Swift object to its Kotlin peer! When that `TaggedBox<Int32>` later round-trips through Kotlin (`idValue(x: tagged as Box<Int32>)`), `KotlinBase.__createTypedWrapper(externalRCRef:)` finds the cached `TaggedBox<Int32>`, preserving both its dynamic type and `===` reference identity!
 3. **Existential-Opening Reverse Dispatch (`_Box_ReverseDispatch<T>`)**:
    When Kotlin calls an `open` method overridden by `TaggedBox<T>`, the `@_cdecl` reverse bridge recovers `self` as `any _Box_ReverseDispatch` and opens it via `SE-0352` (`func _open<__Self: _Box_ReverseDispatch>(_ _self: __Self)`), invoking `_self.current()` polymorphically for *any* specialization `T`.
 
@@ -622,7 +627,7 @@ public final class AnyProcessor<
          KotlinRuntimeSupport._disposeBridgeableRef(_ptr)
          return _w
      }
-     return AnyRepository<Swift.Int32>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper)
+     return AnyRepository<Swift.Int32>.__createTypedWrapper(externalRCRef: _ptr)
      ```
      When Kotlin returns a public conformer (`IntRepo`), this fast path avoids allocating a wrapper box altogether (`47.89 ns/op`) and preserves `repo as? IntRepo` downcast identity.
    * **Sibling Name-Collision Fallback**: If the Kotlin package already defines a declaration named `AnyStream` alongside `interface Stream<T>`, Swift Export automatically escalates the nominal wrapper name to `_AnyStream<T>` (`__AnyStream<T>`, etc.), preventing symbol collisions.
@@ -650,7 +655,7 @@ At runtime, `_open(_rawSelf)` extracts `__Self`'s Protocol Witness Table from th
 
 ---
 
-### 4.6 Zero-Allocation Compile-Time Variance
+### 4.6 Compile-Time Variance
 
 Swift nominal generic types and constrained PAT existentials are strictly invariant: `OutBox<Dog>` is not a subtype of `OutBox<Animal>`, and Swift rejects subtype bounds on generic type parameters (`convenience init<U: T>(_ other: OutBox<U>)` fails with `error: type 'U' constrained to non-protocol, non-class type 'T'`).
 
@@ -708,7 +713,7 @@ let animalSink = InSink<Animal>(prefix: "vet")
 let dogSink = InSink<Dog>(animalSink.contravariant)   // ✅ Compiles! (Animal) -> Void <: (Dog) -> Void
 ```
 
-Because `_absurd` and `_noop` are stateless `@inline(__always)` functions that are never called, the variance witness allocates **zero heap memory**; converting `OutBox<Dog>` to `OutBox<Animal>` performs a single `O(1)` `_cloneBridgeableRef` call.
+Because `_absurd` and `_noop` are stateless `@inline(__always)` functions that are never called, the variance witness itself allocates no heap memory. Converting `OutBox<Dog>` to `OutBox<Animal>` performs one `_cloneBridgeableRef` call and asks the runtime for the `OutBox<Animal>` wrapper of the same Kotlin object: the one that is alive if there is one, a new one otherwise (see "Wrapper identity and lifetime" in Section 4.4). The result is equal to the original (`==`) and is not the same Swift object (`===`).
 
 #### Automatic Use-Site Input Projection Lifting
 
@@ -854,7 +859,7 @@ To validate Witness-Bridged Open Polymorphism rigorously rather than relying on 
 | **Compile-Time Rejection of `42 -> Swift.Int` Trap** | N/A | **No** (silent `Swift.Int` bug) | **Yes** | N/A | **Yes** |
 | **Foreign Unbridged Swift `struct` in `<T>`** | No | **Yes** (opaque box) | No (rejected statically) | No | **No** (rejected statically; opt-in box possible) |
 | **Generic Kotlin Interfaces (`Repository<T>`)** | Erased (`any Repo`) | Erased (`any Repo`) | Erased (`any Repo`) | Closed specializations | **Full PAT (`protocol Repo<T>` + `AnyRepo<T>`)** |
-| **Declaration-Site Variance (`out` / `in`)** | Erased | Invariant | Invariant | Per-pair overloads | **Zero-alloc `.covariant` / `.contravariant`** |
+| **Declaration-Site Variance (`out` / `in`)** | Erased | Invariant | Invariant | Per-pair overloads | **Checked `.covariant` / `.contravariant` projections** |
 | **Open Generic Subclassing in Swift** | No | Partial | Kotlin-side only | No | **Full (`_<C>_Base` + `_ReverseDispatch`)** |
 | **Multi-Bounds, F-Bounds & `Hashable` Key Synthesis** | No | Relaxed | Single class bound | No | **Full `where` clauses + `Hashable` inference** |
 | **Open-World Downstream Type Instantiation** | No | Yes | Yes | **No** (closed-world only) | **Yes** |

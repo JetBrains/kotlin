@@ -271,7 +271,7 @@ public func enumId<_T0: KotlinRuntimeSupport._KotlinBridgeable>(
     return ExportedKotlinPackages.kotlin.Enum<KotlinRuntimeSupport.KotlinAny>.__fromKotlinPointer(_cbridge___root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__T0___(e.__externalRCRef()))
 }
 public func ewamEntries() -> any ExportedKotlinPackages.kotlin.enums.EnumEntries<main.EnumWithAbstractMembers> {
-    return { let _ptr = __root___ewamEntries(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.enums.EnumEntries<main.EnumWithAbstractMembers>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.enums.AnyEnumEntries<main.EnumWithAbstractMembers>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+    return { let _ptr = __root___ewamEntries(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.enums.EnumEntries<main.EnumWithAbstractMembers>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.enums.AnyEnumEntries<main.EnumWithAbstractMembers>.__createTypedWrapper(externalRCRef: _ptr) }()
 }
 public func ewamValues() -> ExportedKotlinPackages.kotlin.Array<main.EnumWithAbstractMembers> {
     return ExportedKotlinPackages.kotlin.Array<main.EnumWithAbstractMembers>.__fromKotlinPointer(__root___ewamValues())

@@ -370,8 +370,8 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         public var value: ExportedKotlinPackages.org.kotlin.foo.AnyQueryResult<T> {
             get {
                 switch self {
-                case let .asyncValue(type): ExportedKotlinPackages.org.kotlin.foo.AnyQueryResult<T>(__externalRCRefUnsafe: KotlinRuntimeSupport._cloneBridgeableRef(type.value.__externalRCRef()), options: .asExistentialWrapper)
-                case let .value(type): ExportedKotlinPackages.org.kotlin.foo.AnyQueryResult<T>(__externalRCRefUnsafe: KotlinRuntimeSupport._cloneBridgeableRef(type.value.__externalRCRef()), options: .asExistentialWrapper)
+                case let .asyncValue(type): ExportedKotlinPackages.org.kotlin.foo.AnyQueryResult<T>.__createTypedWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(type.value.__externalRCRef()))
+                case let .value(type): ExportedKotlinPackages.org.kotlin.foo.AnyQueryResult<T>.__createTypedWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(type.value.__externalRCRef()))
                 }
             }
         }

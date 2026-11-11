@@ -8,6 +8,9 @@
 
 #if KONAN_OBJC_INTEROP
 
+#include <atomic>
+#include <mutex>
+#include <unordered_map>
 #include <variant>
 
 #import <Foundation/Foundation.h>
@@ -50,6 +53,31 @@ namespace {
 using PermanentRef = KRef;
 using RegularRef = kotlin::mm::ObjCBackRef;
 
+// The reference of a secondary wrapper (Swift Export only).
+//
+// A secondary wrapper is not the cached wrapper (the associated object) of its Kotlin object: the object has another
+// one, or this wrapper was not meant to be cached. Nothing but Swift refers to it. So it is counted as a plain
+// Objective-C object, and it holds one reference to the Kotlin object for as long as it lives.
+class SecondaryRef : private kotlin::Pinned {
+public:
+    // Adopt `raw` together with the one reference that the wrapper got it with.
+    explicit SecondaryRef(kotlin::mm::ExternalRCRefImpl* raw) noexcept : raw_(raw) {}
+
+    ~SecondaryRef() {
+        // Both can be called with any thread state.
+        raw_->releaseRef();
+        raw_->dispose();
+    }
+
+    kotlin::mm::ExternalRCRefImpl* get() const noexcept { return raw_; }
+
+    // Safe to use: the wrapper holds a reference for its whole life.
+    KRef ref() const noexcept { return raw_->ref(); }
+
+private:
+    kotlin::mm::ExternalRCRefImpl* raw_;
+};
+
 struct {
     const KotlinToObjCMethodAdapter *toString;
     const KotlinToObjCMethodAdapter *hashCode;
@@ -59,6 +87,97 @@ struct {
 static void initializeAnyMemberReverseAdapters(void) noexcept;
 static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMethodAdapter *adapter) noexcept;
 
+// The cached wrapper of the Kotlin object behind `ref`, if there is one. Not retained.
+// The caller holds `ref`, so the Kotlin object is alive, and so is its cached wrapper.
+// `object` gets the Kotlin object, to be used as a key only. It stays nil for a permanent object: it has no cached wrapper.
+static id cachedWrapperOf(kotlin::mm::RawExternalRCRef* ref, KRef* object) noexcept {
+    if (kotlin::mm::externalRCRefAsPermanentObject(ref)) return nil;
+    // TODO: Make it okay to get/replace associated objects w/o runnable state.
+    kotlin::CalledFromNativeGuard guard;
+    KRef obj = kotlin::mm::dereferenceExternalRCRef(ref);
+    *object = obj;
+    return Kotlin_ObjCExport_GetAssociatedObject(obj);
+}
+
+// The secondary wrappers that are alive, by Kotlin object and wrapper class (Swift Export only).
+//
+// A Kotlin object has one cached wrapper, of the class that the runtime finds by the Kotlin class. An instantiation
+// of a generic Swift class can't be found this way: the Kotlin object doesn't know its type arguments. So Swift code
+// asks for a wrapper of a class by name, and the wrapper is a secondary one. It is found here, so that one Kotlin
+// object and one Swift class give one Swift object, and `===` holds for it.
+//
+// The table doesn't own the wrappers. A wrapper leaves the table in its `dealloc`, and holds its Kotlin object
+// until then, so a key never names a dead object.
+class SecondaryWrappers : private kotlin::Pinned {
+public:
+    // Whether there is nothing to find. A program without generic classes has few secondary wrappers, or none.
+    bool empty() const noexcept { return count_.load(std::memory_order_relaxed) == 0; }
+
+    // The wrapper of `cls` for `object` if it is alive, retained.
+    id findRetained(KRef object, Class cls) noexcept {
+        if (object == nullptr || empty()) return nil;
+        std::lock_guard guard(lock_);
+        auto it = wrappers_.find(Key{object, cls});
+        if (it == wrappers_.end()) return nil;
+        // A wrapper that is being deallocated waits for the lock in `remove`. It can't be retained.
+        return [it->second _tryRetain] ? it->second : nil;
+    }
+
+    // Adds `candidate`, unless the wrapper of `cls` for `object` is alive: then that one is returned, retained.
+    id findRetainedOrAdd(KRef object, Class cls, id candidate) noexcept {
+        std::lock_guard guard(lock_);
+        auto [it, inserted] = wrappers_.try_emplace(Key{object, cls}, candidate);
+        if (inserted) {
+            count_.fetch_add(1, std::memory_order_relaxed);
+        } else if ([it->second _tryRetain]) {
+            return it->second;
+        } else {
+            byWrapper_.erase(it->second);
+            it->second = candidate;
+        }
+        byWrapper_.insert_or_assign(candidate, Key{object, cls});
+        return nil;
+    }
+
+    void remove(id wrapper) noexcept {
+        if (empty()) return;
+        std::lock_guard guard(lock_);
+        auto key = byWrapper_.find(wrapper);
+        if (key == byWrapper_.end()) return;
+        wrappers_.erase(key->second);
+        byWrapper_.erase(key);
+        count_.fetch_sub(1, std::memory_order_relaxed);
+    }
+
+private:
+    struct Key {
+        KRef object;
+        Class cls;
+        bool operator==(const Key& other) const noexcept { return object == other.object && cls == other.cls; }
+    };
+    struct KeyHash {
+        size_t operator()(const Key& key) const noexcept {
+            return std::hash<void*>()(key.object) * 31 + std::hash<void*>()((void*)key.cls);
+        }
+    };
+
+    kotlin::SpinLock lock_;
+    std::atomic<size_t> count_ = 0;
+    std::unordered_map<Key, id, KeyHash> wrappers_;
+    std::unordered_map<id, Key> byWrapper_;
+};
+
+static SecondaryWrappers& secondaryWrappers() noexcept {
+    static auto* instance = new SecondaryWrappers();
+    return *instance;
+}
+
+// Gives back a retained reference that no wrapper took.
+static void dropExternalRCRef(kotlin::mm::RawExternalRCRef* ref) noexcept {
+    kotlin::mm::releaseExternalRCRef(ref);
+    kotlin::mm::disposeExternalRCRef(ref);
+}
+
 }
 
 // Note: `KotlinBase`'s `toKotlin` and `_tryRetain` methods will terminate if
@@ -66,7 +185,8 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
 // in these conditions if backref's refCount is zero.
 
 @implementation KotlinBase {
-  std::variant<RegularRef, PermanentRef> refHolder;
+  // `SecondaryRef` is set once in `constructWithExternalRCRefUnsafe:options:`, before the wrapper is visible to anyone.
+  std::variant<RegularRef, PermanentRef, SecondaryRef> refHolder;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
@@ -76,6 +196,8 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
             return arg;
         } else if constexpr (std::is_same_v<T, RegularRef>) {
             return *arg;
+        } else if constexpr (std::is_same_v<T, SecondaryRef>) {
+            return arg.ref();
         }
     }, refHolder);
     RETURN_OBJ(obj);
@@ -192,6 +314,14 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
     [super release];
 }
 
+-(void)dealloc {
+    // A secondary wrapper leaves the table that finds it.
+    if (std::holds_alternative<SecondaryRef>(refHolder)) {
+        secondaryWrappers().remove(self);
+    }
+    [super dealloc];
+}
+
 - (instancetype)copyWithZone:(NSZone *)zone {
   // TODO: write documentation.
   return [self retain];
@@ -210,6 +340,38 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
 
     // Call unsafe initializer with the best-fitting class.
     return [[bestFittingClass alloc] initWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsBestFittingWrapper];
+}
+
+// `self` is retained for the caller in every branch, and `ref` is consumed.
++ (id)_createTypedWrapperForExternalRCRef:(void *)ref {
+    RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
+    kotlin::AssertThreadState(kotlin::ThreadState::kNative);
+
+    auto externalRCRef = static_cast<kotlin::mm::RawExternalRCRef *>(ref);
+
+    // The cached wrapper fits when it is of a subclass of the receiver: a Swift subclass, or an exported Kotlin subclass
+    // without type parameters.
+    KRef object = nullptr;
+    id cached = cachedWrapperOf(externalRCRef, &object);
+    if (cached != nil && [cached isKindOfClass:self]) {
+        id result = [cached retain];
+        dropExternalRCRef(externalRCRef);
+        return result;
+    }
+
+    Class bestFittingClass = kotlin::swiftExportRuntime::classWrapperFor(kotlin::mm::typeOfExternalRCRef(externalRCRef));
+    if ([bestFittingClass isSubclassOfClass:self]) {
+        // The runtime knows a class for the Kotlin object, and it fits: the same as `_createClassWrapperForExternalRCRef:`.
+        return [[bestFittingClass alloc] initWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsBestFittingWrapper];
+    }
+
+    // The receiver is a class that the runtime can't find by the Kotlin class: an instantiation of a generic Swift class.
+    // The wrapper is a secondary one, and there is one per Kotlin object and class.
+    if (id existing = secondaryWrappers().findRetained(object, self)) {
+        dropExternalRCRef(externalRCRef);
+        return existing;
+    }
+    return [[self alloc] initWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsExistentialWrapper];
 }
 
 + (id)_createProtocolWrapperForExternalRCRef:(void *)ref conformsTo:(NS_NOESCAPE BOOL (^)(Class))conformsTo {
@@ -279,11 +441,14 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
 
     auto& regularRef = refHolder.emplace<RegularRef>(kotlin::mm::ExternalRCRefImpl::fromRaw(externalRCRef));
 
+    // The Kotlin object, as a key of `secondaryWrappers()` only.
+    KRef wrappedObject = nullptr;
     id newSelf = ({
         // TODO: Make it okay to get/replace associated objects w/o runnable state.
         kotlin::CalledFromNativeGuard guard;
         // `ref` holds a strong reference to obj, no need to place obj onto a stack.
         KRef obj = regularRef.ref();
+        wrappedObject = obj;
 
         shouldCache ? AtomicCompareAndSwapAssociatedObject(obj, nullptr, self) : Kotlin_ObjCExport_GetAssociatedObject(obj);
     });
@@ -316,8 +481,23 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
         }
     }
 
+    if (shouldCache && newSelf == nullptr) {
+        // No previous associated object was set: this wrapper is the cached one now.
+        return self;
+    }
+
     if (![[newSelf class] isSubclassOfClass:[self class]] || !shouldSubstitute) {
-        // No previous associated object was set or it wasn't fitting for substitution.
+        // This wrapper was not cached, and the cached one, if any, doesn't fit for substitution.
+        // It is a secondary wrapper: it keeps the reference that it was given, and Swift counts it as a plain object.
+        // Otherwise nothing would ever free it: the Kotlin object frees its cached wrapper only.
+        auto* raw = std::get<RegularRef>(refHolder).detach();
+        refHolder.emplace<SecondaryRef>(raw);
+        // One wrapper per Kotlin object and class, so that one static type gives one Swift object.
+        if (id existing = secondaryWrappers().findRetainedOrAdd(wrappedObject, [self class], self)) {
+            // A wrapper of this class is alive already. This one goes away with the reference that it keeps.
+            [self release];
+            return existing;
+        }
         return self;
     }
 
@@ -338,6 +518,8 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
         if constexpr (std::is_same_v<T, PermanentRef>) {
             return kotlin::mm::permanentObjectAsExternalRCRef(arg);
         } else if constexpr (std::is_same_v<T, RegularRef>) {
+            return arg.get()->toRaw();
+        } else if constexpr (std::is_same_v<T, SecondaryRef>) {
             return arg.get()->toRaw();
         }
     }, refHolder);

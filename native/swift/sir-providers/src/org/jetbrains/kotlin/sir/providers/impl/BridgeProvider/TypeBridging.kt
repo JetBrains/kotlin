@@ -687,7 +687,7 @@ internal sealed interface Bridge {
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val swiftFqName = typeNamer.swiftFqName(swiftType)
                 val wrapperFqName = typeNamer.swiftFqName(anyWrapperType)
-                return "{ let _ptr = $valueExpression; if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? ($swiftFqName) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return $wrapperFqName(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()"
+                return "{ let _ptr = $valueExpression; if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? ($swiftFqName) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return $wrapperFqName.__createTypedWrapper(externalRCRef: _ptr) }()"
             }
         }
     }

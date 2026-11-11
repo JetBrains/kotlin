@@ -85,7 +85,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         @inlinable
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<T> {
-            return { let _ptr = _cbridge_kotlin_Array_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<T>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<T>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+            return { let _ptr = _cbridge_kotlin_Array_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<T>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<T>.__createTypedWrapper(externalRCRef: _ptr) }()
         }
         public init(
             size: Swift.Int32,
@@ -5532,7 +5532,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         @_spi(kotlin$ExperimentalUnsignedTypes)
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt8> {
-            return { let _ptr = kotlin_UByteArray_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt8>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt8>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+            return { let _ptr = kotlin_UByteArray_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt8>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt8>.__createTypedWrapper(externalRCRef: _ptr) }()
         }
         @_spi(kotlin$ExperimentalUnsignedTypes)
         public func contains(
@@ -6102,7 +6102,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         @_spi(kotlin$ExperimentalUnsignedTypes)
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt32> {
-            return { let _ptr = kotlin_UIntArray_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt32>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt32>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+            return { let _ptr = kotlin_UIntArray_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt32>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt32>.__createTypedWrapper(externalRCRef: _ptr) }()
         }
         @_spi(kotlin$ExperimentalUnsignedTypes)
         public func contains(
@@ -6672,7 +6672,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         @_spi(kotlin$ExperimentalUnsignedTypes)
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt64> {
-            return { let _ptr = kotlin_ULongArray_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt64>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt64>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+            return { let _ptr = kotlin_ULongArray_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt64>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt64>.__createTypedWrapper(externalRCRef: _ptr) }()
         }
         @_spi(kotlin$ExperimentalUnsignedTypes)
         public func contains(
@@ -7232,7 +7232,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         @_spi(kotlin$ExperimentalUnsignedTypes)
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt16> {
-            return { let _ptr = kotlin_UShortArray_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt16>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt16>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+            return { let _ptr = kotlin_UShortArray_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt16>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt16>.__createTypedWrapper(externalRCRef: _ptr) }()
         }
         @_spi(kotlin$ExperimentalUnsignedTypes)
         public func contains(
@@ -8212,7 +8212,7 @@ extension ExportedKotlinPackages.kotlin.collections.Collection where Self : Expo
         this.contains(element: element)
     }
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<E> {
-        return { let _ptr = kotlin_collections_Collection_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<E>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<E>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+        return { let _ptr = kotlin_collections_Collection_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<E>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<E>.__createTypedWrapper(externalRCRef: _ptr) }()
     }
     public func containsAll(
         elements: any ExportedKotlinPackages.kotlin.collections.Collection<E>
@@ -8234,7 +8234,7 @@ extension ExportedKotlinPackages.kotlin.collections.Collection {
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : ExportedKotlinPackages.kotlin.collections.__Iterable {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<T> {
-        return { let _ptr = kotlin_collections_Iterable_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<T>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<T>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+        return { let _ptr = kotlin_collections_Iterable_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<T>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<T>.__createTypedWrapper(externalRCRef: _ptr) }()
     }
 }
 @_documentation(visibility: internal)
@@ -8262,7 +8262,7 @@ extension ExportedKotlinPackages.kotlin.collections.Map where Self : ExportedKot
     }
     public var values: any ExportedKotlinPackages.kotlin.collections.Collection<V> {
         get {
-            return { let _ptr = kotlin_collections_Map_values_get(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Collection<V>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyCollection<V>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+            return { let _ptr = kotlin_collections_Map_values_get(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Collection<V>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyCollection<V>.__createTypedWrapper(externalRCRef: _ptr) }()
         }
     }
     public var entries: Swift.Set<KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_AnyEntry<K,V>> {
@@ -8593,7 +8593,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
             }
         }
         public final func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt32> {
-            return { let _ptr = kotlin_ranges_UIntProgression_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt32>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt32>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+            return { let _ptr = kotlin_ranges_UIntProgression_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt32>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt32>.__createTypedWrapper(externalRCRef: _ptr) }()
         }
         open func isEmpty() -> Swift.Bool {
             if Self.self == ExportedKotlinPackages.kotlin.ranges.UIntProgression.self {
@@ -8717,7 +8717,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
             }
         }
         public final func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt64> {
-            return { let _ptr = kotlin_ranges_ULongProgression_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt64>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt64>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+            return { let _ptr = kotlin_ranges_ULongProgression_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.UInt64>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.UInt64>.__createTypedWrapper(externalRCRef: _ptr) }()
         }
         open func isEmpty() -> Swift.Bool {
             if Self.self == ExportedKotlinPackages.kotlin.ranges.ULongProgression.self {
@@ -9077,7 +9077,7 @@ package func kotlin_collections_CharIterator_nextChar__reverse_swift(_ `self`: S
 package func kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection_E_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ elements: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _rawSelf = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: `self`) as! (any ExportedKotlinPackages.kotlin.collections.Collection)
     func _open<__Self: ExportedKotlinPackages.kotlin.collections.Collection>(_ _self: __Self) -> Swift.Bool {
-        let _result: Swift.Bool = _self.containsAll(elements: { let _ptr = elements; if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Collection<__Self.E>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyCollection<__Self.E>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }())
+        let _result: Swift.Bool = _self.containsAll(elements: { let _ptr = elements; if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Collection<__Self.E>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyCollection<__Self.E>.__createTypedWrapper(externalRCRef: _ptr) }())
         return _result
     }
     return _open(_rawSelf)

@@ -4,7 +4,7 @@ import KotlinRuntimeSupport
 import KotlinStdlib
 
 public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableList<Swift.String> {
-    return { let _ptr = __root___foo(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.MutableList<Swift.String>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyMutableList<Swift.String>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+    return { let _ptr = __root___foo(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.MutableList<Swift.String>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyMutableList<Swift.String>.__createTypedWrapper(externalRCRef: _ptr) }()
 }
 public func testListAny(
     l: [any KotlinRuntimeSupport._KotlinBridgeable]

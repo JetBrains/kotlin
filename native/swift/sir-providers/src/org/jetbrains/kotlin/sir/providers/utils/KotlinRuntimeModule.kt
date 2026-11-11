@@ -71,7 +71,6 @@ public object KotlinRuntimeSupportModule : SirModule() {
             sealedType,
             kotlinBridgeable,
             kotlinCustomPointerBridgeable,
-            kotlinOpenGenericBridgeable,
             kotlinUnit,
             kotlinAny,
             kotlinCovariant,
@@ -134,12 +133,6 @@ public object KotlinRuntimeSupportModule : SirModule() {
     public val kotlinCustomPointerBridgeable: SirProtocol = buildProtocol {
         origin = KotlinRuntimeElement()
         name = "_KotlinCustomPointerBridgeable"
-        visibility = SirVisibility.PUBLIC
-    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
-
-    public val kotlinOpenGenericBridgeable: SirProtocol = buildProtocol {
-        origin = KotlinRuntimeElement()
-        name = "_KotlinOpenGenericBridgeable"
         visibility = SirVisibility.PUBLIC
     }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
 

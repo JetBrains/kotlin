@@ -571,7 +571,7 @@ extension ExportedKotlinPackages.operators {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_inc(self.__externalRCRef()))
         }
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.Int32> {
-            return { let _ptr = operators_Foo_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.Int32>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.Int32>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+            return { let _ptr = operators_Foo_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.Int32>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.Int32>.__createTypedWrapper(externalRCRef: _ptr) }()
         }
         public func rangeTo(
             other: ExportedKotlinPackages.operators.Foo

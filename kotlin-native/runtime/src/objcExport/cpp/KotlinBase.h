@@ -56,6 +56,28 @@ NS_ASSUME_NONNULL_BEGIN
                                             conformsTo:(NS_NOESCAPE BOOL (^ _Nullable)(Class candidate))conformsTo NS_RETURNS_RETAINED NS_SWIFT_NAME(__createProtocolWrapper(externalRCRef:conformsTo:));
 
 /**
+ * Creates and/or returns a wrapper for the provided external Kotlin reference (`ref`) that is an instance of the receiver class
+ * or of its subclass.
+ *
+ * Unlike `+_createClassWrapperForExternalRCRef:`, the class that is bound to the Kotlin class of `ref` doesn't have to be
+ * a subclass of the receiver. The receiver is a class that the runtime can't find by a Kotlin class: every instantiation
+ * of a generic Swift class is a class of its own, and a Kotlin object doesn't know its type arguments.
+ *
+ * - If the cached wrapper of the Kotlin object is of the receiver class or of its subclass, it is returned.
+ * - If the class that is bound to the Kotlin class is a subclass of the receiver, the result is the same as that of
+ *   `+_createClassWrapperForExternalRCRef:`.
+ * - Otherwise the result is a secondary wrapper: an instance of the receiver class that is not cached in the Kotlin object.
+ *   There is one such wrapper per Kotlin object and class while Swift holds it, so `===` holds for one static type.
+ *   Two wrappers of one Kotlin object are equal (`isEqual:`).
+ *
+ * A permanent Kotlin object has no cached wrapper, and it gets a new wrapper on every call.
+ *
+ * @param ref A pointer to an external Kotlin reference (`kotlin.native.internal.ref.ExternalRCRef`)
+ * @return A new or reused instance of the receiver class or of its subclass.
+ */
++ (instancetype)_createTypedWrapperForExternalRCRef:(void *)ref NS_RETURNS_RETAINED NS_SWIFT_NAME(__createTypedWrapper(externalRCRef:));
+
+/**
  * Designated initializer creating a fresh Kotlin.Any object.
  */
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
@@ -68,6 +90,9 @@ NS_ASSUME_NONNULL_BEGIN
  * 1. Cache the current instance as an associated wrapper object for the provided kotlin object external reference (`ref`).
  * 2. Substitute the current instance with a cached wrapper object already associated with the provided reference (`ref`),
  *    if such a wrapper exists and fits the context specified by `options`.
+ * 3. Make the current instance a secondary wrapper, if it is not cached: with `KotlinBaseConstructionOptionsAsExistentialWrapper`,
+ *    or when another wrapper is cached and doesn't fit. A secondary wrapper is freed when its last reference goes.
+ *    If a secondary wrapper of the same class is alive for the Kotlin object, it is returned instead of the current instance.
  *
  * ### Parameters:
  * @param ref A pointer representing a `kotlin.native.internal.ref.ExternalRCRef`, an external Kotlin reference.

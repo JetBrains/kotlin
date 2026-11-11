@@ -127,9 +127,10 @@ public func _cloneBridgeableRef(_ ptr: UnsafeMutableRawPointer) -> UnsafeMutable
 
 // MARK: - _KotlinBridgeable & _KotlinCustomPointerBridgeable
 
+/// A class that the runtime can't find by the Kotlin class of an object: a class with type parameters.
+/// Every instantiation of it is a class of its own, and a Kotlin object doesn't know its type arguments.
+/// A wrapper of such a class is made by `KotlinBase.__createTypedWrapper(externalRCRef:)`.
 public protocol _KotlinCustomPointerBridgeable: KotlinRuntime.KotlinBase {}
-
-public protocol _KotlinOpenGenericBridgeable: _KotlinCustomPointerBridgeable {}
 
 @usableFromInline
 internal func _boxAnyHashable(_ value: any Swift.Hashable) -> Swift.AnyHashable {
@@ -183,15 +184,10 @@ public class _KotlinExistential<Wrapped>: _KotlinExistentialPenBox, _KotlinCusto
 extension KotlinBase: _KotlinBridgeable {
     @inlinable
     public static func __fromKotlinPointer(_ ptr: UnsafeMutableRawPointer?) -> Self {
-        if Self.self is any _KotlinOpenGenericBridgeable.Type {
-            if let existing = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _bridge_cloneRef(ptr!)) as? Self {
-                _bridge_disposeRef(ptr!)
-                return existing
-            }
-            return Self(__externalRCRefUnsafe: ptr!, options: .asExistentialWrapper)
-        }
         if Self.self is any _KotlinCustomPointerBridgeable.Type {
-            return Self(__externalRCRefUnsafe: ptr!, options: .asExistentialWrapper)
+            // One Swift object per Kotlin object and class: a Swift subclass or an exported subclass if the object has
+            // one, a wrapper of `Self` otherwise. The runtime frees it when Swift lets it go.
+            return Self.__createTypedWrapper(externalRCRef: ptr!)
         }
         return Self.__createClassWrapper(externalRCRef: ptr!)
     }

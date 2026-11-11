@@ -195,7 +195,7 @@ public final class ArrayBox: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-open class Bar<A: main.Foo, B: main.Foo>: main._Bar_Base, KotlinRuntimeSupport._KotlinOpenGenericBridgeable, main._Bar_ReverseDispatch {
+open class Bar<A: main.Foo, B: main.Foo>: main._Bar_Base, KotlinRuntimeSupport._KotlinCustomPointerBridgeable, main._Bar_ReverseDispatch {
     public init() {
         precondition(Self.self != main.Bar<A,B>.self, "main.Bar is an abstract class and cannot be instantiated directly")
         let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
@@ -210,7 +210,7 @@ open class Bar<A: main.Foo, B: main.Foo>: main._Bar_Base, KotlinRuntimeSupport._
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-open class Box<T: KotlinRuntimeSupport._KotlinBridgeable>: main._Box_Base, KotlinRuntimeSupport._KotlinOpenGenericBridgeable, main._Box_ReverseDispatch {
+open class Box<T: KotlinRuntimeSupport._KotlinBridgeable>: main._Box_Base, KotlinRuntimeSupport._KotlinCustomPointerBridgeable, main._Box_ReverseDispatch {
     @inlinable
     public final var t: T {
         get {
@@ -527,7 +527,7 @@ public var baz: main.Holder<Swift.String> {
 }
 @inlinable
 public func a<T: KotlinRuntimeSupport._KotlinBridgeable>() -> any main.A<T> {
-    return { let _ptr = _cbridge___root___A(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any main.A<T>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return main.AnyA<T>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
+    return { let _ptr = _cbridge___root___A(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any main.A<T>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return main.AnyA<T>.__createTypedWrapper(externalRCRef: _ptr) }()
 }
 @inlinable
 public func bar<T: KotlinRuntimeSupport._KotlinBridgeable>(

@@ -47,6 +47,14 @@ public:
 
     mm::ExternalRCRefImpl* get() const noexcept { return static_cast<mm::ExternalRCRefImpl*>(raw_); }
 
+    // Give up the underlying `ExternalRCRefImpl*` without disposing it or changing its reference count.
+    // Only safe while no other thread can see this `ObjCBackRef`.
+    mm::ExternalRCRefImpl* detach() noexcept {
+        auto* result = get();
+        raw_ = nullptr;
+        return result;
+    }
+
     // Return the underlying object.
     // The result is only safe to use, when reference count is >0, or there is a guarantee
     // that the object is in roots in some other way (e.g. on stack)
