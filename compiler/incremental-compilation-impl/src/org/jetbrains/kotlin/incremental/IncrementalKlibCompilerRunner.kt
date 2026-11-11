@@ -35,7 +35,7 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
     icFeatures: IncrementalCompilationFeatures,
     pluginsLoader: PluginsLoader?,
     override val lookupTrackerDelegate: LookupTracker,
-) : IncrementalCompilerRunner<Args, IncrementalJsCachesManager>(
+) : IncrementalCompilerRunner<Args, IncrementalKlibCachesManager>(
     workingDir,
     cachesDirName,
     reporter,
@@ -54,7 +54,7 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
         get() = false
 
     override fun calculateSourcesToCompile(
-        caches: IncrementalJsCachesManager,
+        caches: IncrementalKlibCachesManager,
         changedFiles: ChangedFiles.DeterminableFiles.Known,
         args: Args,
         messageCollector: MessageCollector,
@@ -101,7 +101,7 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
         fileMappingTracker: ICFileMappingTracker,
-        caches: IncrementalJsCachesManager,
+        caches: IncrementalKlibCachesManager,
         dirtySources: Set<File>,
         isIncremental: Boolean,
         compilationCanceledStatus: CompilationCanceledStatus,
@@ -131,12 +131,12 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
     private fun getIncrementalResultsConsumer(args: CommonKlibBasedCompilerArguments) =
         if (args.multiPlatform) KmpIncrementalResultsConsumer() else IncrementalResultsConsumerImpl()
 
-    private fun getIncrementalDataProvider(args: CommonKlibBasedCompilerArguments, caches: IncrementalJsCachesManager) =
+    private fun getIncrementalDataProvider(args: CommonKlibBasedCompilerArguments, caches: IncrementalKlibCachesManager) =
         if (args.multiPlatform) KmpIncrementalDataProviderFromCache(caches.platformCache) else IncrementalDataProviderFromCache(caches.platformCache)
 
     override fun updateCaches(
         services: Services,
-        caches: IncrementalJsCachesManager,
+        caches: IncrementalKlibCachesManager,
         generatedFiles: List<GeneratedFile>,
         changesCollector: ChangesCollector,
     ) {
@@ -153,7 +153,7 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
     override fun runCompiler(
         sourcesToCompile: List<File>,
         args: Args,
-        caches: IncrementalJsCachesManager,
+        caches: IncrementalKlibCachesManager,
         services: Services,
         messageCollector: MessageCollector,
         allSources: List<File>,
@@ -172,7 +172,7 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
     }
 
     override fun additionalDirtyFiles(
-        caches: IncrementalJsCachesManager,
+        caches: IncrementalKlibCachesManager,
         generatedFiles: List<GeneratedFile>,
         services: Services,
         dirtySources: Set<File>,
@@ -184,7 +184,7 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
     }
 
     class IncrementalNextRoundCheckerImpl(
-        private val caches: IncrementalJsCachesManager,
+        private val caches: IncrementalKlibCachesManager,
         private val sourcesToCompile: Set<File>,
         private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     ) : IncrementalNextRoundChecker {
