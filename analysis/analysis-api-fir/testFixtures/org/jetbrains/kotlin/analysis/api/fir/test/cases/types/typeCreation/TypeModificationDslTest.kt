@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AnalysisApiTestEnvironm
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.testInfo
 import org.junit.jupiter.api.Disabled
@@ -315,6 +316,9 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
  * (modification component is separated with a plus sign), where `testDataFileName` is a base name of the test (without '.kt' or '.kts').
  */
 abstract class AbstractTypeModificationDslTestBase(testDirPathString: String) : AbstractAnalysisApiExecutionTest(testDirPathString) {
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(TypeCreatorDslTestRenderer.Directives)
+
     private companion object {
         private val TEST_NAME_REGEX = Regex("(\\w+) (\\w+) \\+(\\w+)")
     }
