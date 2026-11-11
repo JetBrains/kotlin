@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.code
 
 import org.eclipse.jgit.ignore.FastIgnoreRule
 import org.jetbrains.kotlin.repoTestFixtures.ignoreLevel
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.fail
 
+@MustRunAlways
 class SpaceCodeOwnersTest {
     private val ownersFile = File(System.getProperty("codeOwnersTest.spaceCodeOwnersFile"))
     private val owners = parseCodeOwners(ownersFile)
