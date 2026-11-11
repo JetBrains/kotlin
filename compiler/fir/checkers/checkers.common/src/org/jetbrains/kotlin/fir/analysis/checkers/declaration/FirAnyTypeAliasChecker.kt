@@ -47,11 +47,7 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
 
         declaration.checkTypeAliasExpansionCapturesOuterTypeParameters(fullyExpandedType, expandedTypeRef)
 
-        // Skip reporting if RHS is a type alias to keep the amount of error minimal
-        if (expandedTypeRef.coneType.toSymbol() !is FirTypeAliasSymbol) {
-            checkForbiddenExpansion(fullyExpandedType, expandedTypeRef.source)
-        }
-
+        checkForbiddenExpansion(fullyExpandedType, expandedTypeRef.source, expandedTypeRef.coneType.toSymbol() is FirTypeAliasSymbol)
         checkTypeRefForUnderscore(expandedTypeRef)
 
         val allowNullableNothing = LanguageFeature.NullableNothingInReifiedPosition.isEnabled()
@@ -65,11 +61,11 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun checkForbiddenExpansion(fullyExpandedType: ConeKotlinType, source: KtSourceElement?) {
+    fun checkForbiddenExpansion(fullyExpandedType: ConeKotlinType, source: KtSourceElement?, expandsToTypeAlias: Boolean) {
         if (fullyExpandedType.hasError()) return
         if (fullyExpandedType is ConeUnionType) {
-            checkForbiddenExpansion(fullyExpandedType.primaryType, source)
-            fullyExpandedType.richErrorTypes.forEach { checkForbiddenExpansion(it, source) }
+            checkForbiddenExpansion(fullyExpandedType.primaryType, source, expandsToTypeAlias)
+            fullyExpandedType.richErrorTypes.forEach { checkForbiddenExpansion(it, source, expandsToTypeAlias) }
             return
         }
 
@@ -81,7 +77,8 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
             reporter.reportOn(source, FirErrors.TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION, expandedClassSymbol)
         }
 
-        if (expandedClassSymbol == null || fullyExpandedType is ConeDynamicType) {
+        // Skip reporting if RHS is a type alias to keep the amount of error minimal
+        if (!expandsToTypeAlias && expandedClassSymbol == null || fullyExpandedType is ConeDynamicType) {
             reporter.reportOn(source, FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS, fullyExpandedType)
         }
     }
