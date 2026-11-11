@@ -10,42 +10,18 @@ import stdlib.wit.bindings.WallClock
 import kotlin.internal.InlineOnly
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
-/**
- * The clock measuring real time. Time value zero corresponds with 1970-01-01T00:00:00Z.
- */
-private const val CLOCK_ID_REALTIME = 0
-
-/**
- * The store-wide monotonic clock, which is defined as a clock measuring real time,
- * whose value cannot be adjusted and which cannot have negative clock jumps.
- * The epoch of this clock is undefined. The absolute time value of this clock therefore has no meaning.
- */
-private const val CLOCK_ID_MONOTONIC = 1
-
-
-/**
- * Returns timestamp of the given clock in nanoseconds.
- */
-private fun clockTimeGet(clockId: Int): Long {
-    when (clockId) {
-        CLOCK_ID_REALTIME -> {
-            val now = WallClock.now()
-            return (now.seconds * 1_000_000_000uL + now.nanoseconds).toLong()
-        }
-        CLOCK_ID_MONOTONIC -> {
-            val nanosecondPerTick = MonotonicClock.resolution()
-            val ticksRightNow = MonotonicClock.now()
-            return (ticksRightNow * nanosecondPerTick).toLong()
-        }
-        else -> throw IllegalArgumentException("Unknown clock id: $clockId")
-    }
+@InlineOnly
+internal inline fun realtimeClockTimeGet(): Instant {
+    val now = WallClock.now()
+    return Instant(now.seconds, now.nanoseconds)
 }
 
 @InlineOnly
-internal inline fun realtimeClockTimeGet() = clockTimeGet(CLOCK_ID_REALTIME)
-
-@InlineOnly
-private inline fun monotonicClockTimeGet() = clockTimeGet(CLOCK_ID_MONOTONIC)
+private inline fun monotonicClockTimeGet(): Long {
+    val nanosecondPerTick = MonotonicClock.resolution()
+    val ticksRightNow = MonotonicClock.now()
+    return (ticksRightNow * nanosecondPerTick).toLong()
+}
 
 @SinceKotlin("1.3")
 internal actual object MonotonicTimeSource : TimeSource.WithComparableMarks {
