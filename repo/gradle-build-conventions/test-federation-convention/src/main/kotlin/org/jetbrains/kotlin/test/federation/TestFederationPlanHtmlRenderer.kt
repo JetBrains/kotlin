@@ -62,13 +62,11 @@ internal class TestFederationPlanHtmlRenderer(
             tr {
                 th { +"Domain" }
                 th { +"Test subsets" }
-                th { +"Reason" }
             }
             plan.entries.forEach { entry ->
                 tr {
                     td { renderDomain(entry) }
                     td { renderTestSubsets(entry) }
-                    td { renderReason(entry) }
                 }
             }
         }
@@ -77,7 +75,10 @@ internal class TestFederationPlanHtmlRenderer(
     private fun TD.renderDomain(entry: TestFederationPlan.PlanEntry) {
         val domainName = entry.domain.name
         when {
-            entry.isChanged -> strong { +domainName }
+            entry.isChanged -> {
+                strong { +domainName }
+                +" (changed)"
+            }
             else -> +domainName
         }
     }
@@ -85,20 +86,22 @@ internal class TestFederationPlanHtmlRenderer(
     private fun TD.renderTestSubsets(entry: TestFederationPlan.PlanEntry) {
         entry.testSubsets.forEachIndexed { index, subset ->
             if (index > 0) +" + "
-            renderTestSubset(subset)
+            renderTestSubset(entry, subset)
         }
     }
 
-    private fun TD.renderTestSubset(subset: TestSubset) {
+    private fun TD.renderTestSubset(entry: TestFederationPlan.PlanEntry, subset: TestSubset) {
         when (subset) {
             AllTests -> {
                 span(classes = "chip chip-all-tests") {
+                    dataAnnotation = entry.reasonPerSubset.getValue(subset)
                     +ALL_TESTS_EMOJI
                     span("chip-fold") { +" all tests" }
                 }
             }
             SmokeTests -> {
                 span(classes = "chip chip-smoke-tests") {
+                    dataAnnotation = entry.reasonPerSubset.getValue(subset)
                     +SMOKE_TESTS_EMOJI
                     span("chip-fold") { +" smoke tests" }
                 }
@@ -106,19 +109,12 @@ internal class TestFederationPlanHtmlRenderer(
             else -> {
                 val domain = Domain.entries.first { contractTestsSubsetOf(it) == subset }
                 span(classes = "chip chip-contract-tests") {
+                    dataAnnotation = entry.reasonPerSubset.getValue(subset)
                     +CONTRACT_TESTS_EMOJI
                     span("chip-fold") { +" contracts for" }
                     +" ${domain.name}"
                 }
             }
-        }
-    }
-
-    private fun TD.renderReason(entry: TestFederationPlan.PlanEntry) {
-        val reason = entry.reason
-        when {
-            reason.startsWith(MUST_RUN_ALL_TESTS_REASON_PREFIX) -> code { +reason }
-            else -> +reason
         }
     }
 

@@ -165,9 +165,11 @@ img {
     background: var(--fg);
     color: var(--bg);
     border-radius: 6px;
-    font-family: monospace;
     font-size: 0.9em;
-    white-space: nowrap;
+    width: max-content;
+    white-space: normal;
+    max-width: 24em;
+    text-align: center;
     opacity: 0;
     transition: opacity 0.15s;
     pointer-events: none;
