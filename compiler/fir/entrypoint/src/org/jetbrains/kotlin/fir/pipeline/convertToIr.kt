@@ -328,6 +328,7 @@ private class Fir2IrPipeline(
             Fir2IrFakeOverrideStrategy(
                 isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
                 isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
+                checkPropertyTypeAndMutability = session.moduleData.platform.isJvm(),
                 delegatedMembersGenerationStrategy,
                 leafModuleDescriptor = componentsStorage.module.descriptor,
             ),

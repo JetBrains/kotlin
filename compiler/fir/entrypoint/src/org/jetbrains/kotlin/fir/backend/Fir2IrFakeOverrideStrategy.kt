@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 class Fir2IrFakeOverrideStrategy(
     override val isGenericClashFromSameSupertypeAllowed: Boolean,
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
+    override val checkPropertyTypeAndMutability: Boolean,
     private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
     private val leafModuleDescriptor: ModuleDescriptor,
 ) : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {

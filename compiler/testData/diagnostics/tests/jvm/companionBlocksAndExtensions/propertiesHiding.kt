@@ -14,7 +14,7 @@ open class Base {
 class HideSameTypeVal : Base() {
     companion {
         val valProp: List<Number> = emptyList()
-        val varProp: List<Number> = emptyList()
+        <!ACCIDENTAL_OVERRIDE!>val varProp: List<Number><!> = emptyList()
         val propWithPrivateSetter: List<Number> = emptyList()
     }
 }
@@ -29,24 +29,24 @@ class HideSameTypeVar : Base() {
 
 class HideSameErasureVal : Base() {
     companion {
-        val valProp: List<String> = emptyList()
-        val varProp: List<String> = emptyList()
-        val propWithPrivateSetter: List<String> = emptyList()
+        <!ACCIDENTAL_OVERRIDE!>val valProp: List<String><!> = emptyList()
+        <!ACCIDENTAL_OVERRIDE!>val varProp: List<String><!> = emptyList()
+        <!ACCIDENTAL_OVERRIDE!>val propWithPrivateSetter: List<String><!> = emptyList()
     }
 }
 
 class HideSameErasureVar : Base() {
     companion {
-        var valProp: List<String> = emptyList()
-        var varProp: List<String> = emptyList()
-        var propWithPrivateSetter: List<String> = emptyList()
+        <!ACCIDENTAL_OVERRIDE!>var valProp: List<String><!> = emptyList()
+        <!ACCIDENTAL_OVERRIDE, ACCIDENTAL_OVERRIDE!>var varProp: List<String><!> = emptyList()
+        <!ACCIDENTAL_OVERRIDE!>var propWithPrivateSetter: List<String><!> = emptyList()
     }
 }
 
 class HideSubtypeVal : Base() {
     companion {
         val valProp: List<Int> = emptyList()
-        val varProp: List<Int> = emptyList()
+        <!ACCIDENTAL_OVERRIDE!>val varProp: List<Int><!> = emptyList()
         val propWithPrivateSetter: List<Int> = emptyList()
     }
 }
@@ -54,7 +54,7 @@ class HideSubtypeVal : Base() {
 class HideSubtypeVar : Base() {
     companion {
         var valProp: List<Int> = emptyList()
-        var varProp: List<Int> = emptyList()
+        <!ACCIDENTAL_OVERRIDE, ACCIDENTAL_OVERRIDE!>var varProp: List<Int><!> = emptyList()
         var propWithPrivateSetter: List<Int> = emptyList()
     }
 }
