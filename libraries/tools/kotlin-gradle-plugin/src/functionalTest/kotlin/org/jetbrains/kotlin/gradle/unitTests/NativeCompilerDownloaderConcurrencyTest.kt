@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.junit.jupiter.api.io.TempDir
@@ -14,9 +15,11 @@ import java.io.File
 import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.util.concurrent.Callable
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.CyclicBarrier
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.concurrent.thread
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -99,6 +102,48 @@ class NativeCompilerDownloaderConcurrencyTest {
         }
 
         assertFailsWith<FileSystemException> { NativeCompilerDownloader.publishExtractedDistribution(unpacked, distribution) }
+    }
+
+    @Test
+    fun `installing over a directory that is not a distribution fails before unpacking`(@TempDir konanDir: File) {
+        // what the toolchain leaves there when it takes its lock and then doesn't finish the installation
+        val distribution = konanDir.resolve("kotlin-native-prebuilt").apply {
+            mkdirs()
+            resolve(".lock").createNewFile()
+        }
+        val unpackCount = AtomicInteger()
+
+        assertFailsWith<IllegalStateException> {
+            NativeCompilerDownloader.installDistribution(distribution, logger) { unpackCount.incrementAndGet() }
+        }
+        assertEquals(0, unpackCount.get(), "Nothing should be unpacked when it can't be installed")
+        assertEquals(listOf(".lock"), distribution.list().orEmpty().toList(), "The directory should be left as it was")
+    }
+
+    /**
+     * AndroidX case from KT-86251: the build installs through the downloader while a TestKit build it started
+     * installs the same distribution through the toolchain, which unpacks in place under its own lock.
+     */
+    @Test
+    fun `installing while the toolchain is unpacking in place waits for it`(@TempDir konanDir: File) {
+        val distribution = konanDir.resolve("kotlin-native-prebuilt")
+        val toolchainStarted = CountDownLatch(1)
+        val toolchain = thread {
+            KotlinInterprocessDirectoryLock(distribution).withLock {
+                distribution.resolve("konanc").writeText("toolchain")
+                toolchainStarted.countDown()
+                Thread.sleep(500) // give the downloader time to run into the half-unpacked distribution
+                NativeVersionValueSource.markAsProvisioned(distribution)
+            }
+        }
+        toolchainStarted.await()
+        val unpackCount = AtomicInteger()
+
+        NativeCompilerDownloader.installDistribution(distribution, logger) { unpackCount.incrementAndGet() }
+        toolchain.join()
+
+        assertEquals(0, unpackCount.get(), "The downloader should not unpack what the toolchain is installing")
+        assertEquals("toolchain", distribution.resolve("konanc").readText(), "The toolchain's installation should stay intact")
     }
 
     /** Runs [actions] in parallel, releasing all of them at the same moment. */
