@@ -240,7 +240,7 @@
 
 /compiler/tests-different-jdk/ "Kotlin JVM"
 /compiler/tests-java8/ "Kotlin JVM"
-/compiler/tests-mutes/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/compiler/tests-mutes/ "Kotlin Build Infrastructure"
 /compiler/tests-spec/ "Kotlin Frontend"
 /compiler/util/ "Kotlin Frontend"
 /compiler/util-io/ "Kotlin Common Backend"
@@ -303,7 +303,7 @@
 /generators/tree-generator-common/ "Kotlin Frontend" "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
 /generators/wasm/ "Kotlin Wasm"
 
-/gradle/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/gradle/ "Kotlin Build Infrastructure"
 
 # UNKNOWN: /idea/
 
@@ -466,7 +466,7 @@
 /plugins/kotlin-dataframe/ "Kotlin for Data Science"
 /plugins/test-plugins/ "Kotlin Frontend"
 
-/prepare/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/prepare/ "Kotlin Build Infrastructure"
 /prepare/analysis-api/ "Kotlin Analysis API"
 
 /repo/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
@@ -524,8 +524,8 @@
 /plugins/noarg/noarg.k2/src/org/jetbrains/kotlin/noarg/fir/KtErrorsNoArg.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
 
 # Build files
-**.gradle.kts "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
-**.gradle "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+**.gradle.kts "Kotlin Build Infrastructure"
+**.gradle "Kotlin Build Infrastructure"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle.kts "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle "Kotlin Build Tools"
 /kotlin-native/backend.native/tests/**.gradle "Kotlin Native"
@@ -534,11 +534,11 @@
 /kotlin-native/performance/**/*.gradle.kts "Kotlin Native"
 /native/native.tests/*.gradle.kts "Kotlin Native"
 /native/swift/**/*.gradle.kts "Kotlin Native"
-.gitignore "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
-gradlew "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
-gradlew.bat "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+.gitignore "Kotlin Build Infrastructure"
+gradlew "Kotlin Build Infrastructure"
+gradlew.bat "Kotlin Build Infrastructure"
 
-/gradle.properties "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/gradle.properties "Kotlin Build Infrastructure"
 
 /.space/CODEOWNERS "Kotlin Build Infrastructure"
 /.editorconfig "Kotlin Build Infrastructure"
