@@ -1,0 +1,31 @@
+@kotlin.Metadata
+public final class test/I$DefaultImpls {
+    // source: 'interfaceJvmDefaultEnable.kt'
+    public synthetic static method d$default(p0: test.I, p1: int, p2: int, p3: java.lang.Object): java.lang.String
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method d(@org.jetbrains.annotations.NotNull p0: test.I, p1: int): java.lang.String
+    public final inner class test/I$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface test/I {
+    // source: 'interfaceJvmDefaultEnable.kt'
+    public synthetic static method access$d$jd(p0: test.I, p1: int): java.lang.String
+    public synthetic static method d$default(p0: test.I, p1: int, p2: int, p3: java.lang.Object): java.lang.String
+    public @org.jetbrains.annotations.NotNull method d(p0: int): java.lang.String
+    public synthetic static method withDefault$default(p0: int, p1: int, p2: java.lang.Object): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method withDefault(p0: int): java.lang.String
+    public final inner class test/I$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class test/Impl {
+    // source: 'interfaceJvmDefaultEnable.kt'
+    public method <init>(): void
+    public bridge @org.jetbrains.annotations.NotNull method d(p0: int): java.lang.String
+}
+
+@kotlin.Metadata
+public final class test/InterfaceJvmDefaultEnableKt {
+    // source: 'interfaceJvmDefaultEnable.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
