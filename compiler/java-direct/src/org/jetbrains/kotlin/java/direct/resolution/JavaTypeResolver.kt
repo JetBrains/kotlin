@@ -585,10 +585,6 @@ internal fun getStaticImport(simpleName: String): FqName? = c.fileContext.import
 context(c: JavaResolutionContext)
 internal fun resolveImportedClassName(fqName: FqName): ClassId? = resolveAsClassId(fqName, fullResolution = true)
 
-/** Parsed imports of this context's file, exposed to avoid re-extracting them from the AST. */
-context(c: JavaResolutionContext)
-internal fun getImports(): JavaImports = c.fileContext.imports
-
 /**
  * Returns the first star import package that could contain a class with the given simple name.
  * Used for best-effort classId resolution when we can't call the symbol provider.
