@@ -187,6 +187,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::JsDefaultParameterPatchOverridenSymbolsLowering,
     ::JsDefaultParameterInjector,
     ::createDefaultParameterCleanerPhase,
+    ::WebLateinitIsInitializedLowering,
     ::JsPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
     ::JsPropertyAccessorInlineLowering,

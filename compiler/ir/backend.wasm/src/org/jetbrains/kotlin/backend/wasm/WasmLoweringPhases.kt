@@ -190,6 +190,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::WasmDefaultParameterInjector,
     ::createDefaultParameterCleanerPhase,
 
+    ::WebLateinitIsInitializedLowering,
     ::WasmPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
 
