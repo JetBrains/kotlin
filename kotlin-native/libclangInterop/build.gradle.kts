@@ -83,6 +83,9 @@ nativeInteropPlugin {
             // needed here.
             add("-Wl,-z,noexecstack")
             addAll(listOf("-lrt", "-ldl", "-lpthread", "-lz", "-lm"))
+        } else if (PlatformInfo.isWindows()) {
+            // LLVMSupport uses RtlGetLastNtStatus to map Windows errors.
+            add("-lntdll")
         }
     })
     additionalLinkedStaticLibraries.set(buildList {
@@ -92,6 +95,11 @@ nativeInteropPlugin {
             "lib/${System.mapLibraryName("clang")}"
         }
         add("${nativeDependencies.llvmPath}/$libclang")
+        if (HostManager.hostIsMingw) {
+            // Clang headers emit debug helpers that reference LLVM's stream support.
+            // Link it explicitly to keep assertions enabled without pulling in Clang's AST libraries.
+            add("${nativeDependencies.llvmPath}/lib/${lib("LLVMSupport")}")
+        }
         if (PlatformInfo.isMac() || PlatformInfo.isLinux()) {
             listOf(
                     "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
