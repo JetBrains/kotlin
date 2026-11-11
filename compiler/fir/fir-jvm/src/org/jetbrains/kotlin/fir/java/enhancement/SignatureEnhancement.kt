@@ -1164,10 +1164,20 @@ class FirSignatureEnhancement(
         val coneType = toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, source, mode)
         return runIf(this is FirJavaTypeRef && type is JavaClassifierTypeImpl && type.classifier == null) {
             // TODO: drop this branch together with old Java facade (KT-70023)
-            getClassLikeSymbolFromExtensionService()?.constructType(
-                typeArguments = coneType.typeArguments
-            )?.let {
-                if (mode == FirJavaTypeConversionMode.SUPERTYPE) it else it.toTrivialFlexibleType(session.typeContext)
+            val classLikeSymbol = getClassLikeSymbolFromExtensionService() ?: return@runIf null
+            val typeArguments = coneType.typeArguments.takeIf { it.size == classLikeSymbol.typeParameterSymbols.size }
+            // Note: we have to return ConeClassLikeType in SUPERTYPE mode
+            if (typeArguments != null) {
+                val classLikeType = classLikeSymbol.constructType(typeArguments)
+                if (mode == FirJavaTypeConversionMode.SUPERTYPE) classLikeType else classLikeType.toTrivialFlexibleType(session.typeContext)
+            } else {
+                val rawType = ConeRawType.create(
+                    lowerBound = classLikeSymbol.constructType(
+                        typeArguments = classLikeSymbol.typeParameterSymbols.getProjectionsForRawType(session, nullabilities = null)
+                    ),
+                    upperBound = classLikeSymbol.constructStarProjectedType()
+                )
+                if (mode == FirJavaTypeConversionMode.SUPERTYPE) rawType.lowerBound else rawType
             }
         } ?: coneType
     }

@@ -1,5 +1,4 @@
 // ISSUE: KT-91174
-// DISABLE_WITH_PARSER: Psi
 // WITH_STDLIB
 // FILE: test/Owner.kt
 package test
