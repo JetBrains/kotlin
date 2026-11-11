@@ -19,13 +19,13 @@ import java.util.*
  * Writes the [NpmDependencyReport] of one JS or WasmJS compilation into [outputFile].
  */
 @CacheableTask
-internal abstract class KotlinNpmDependencyReportTask : DefaultTask() {
+abstract class KotlinNpmDependencyReportTask internal constructor() : DefaultTask() {
 
     @get:Input
     abstract val target: Property<String>
 
     @get:Nested
-    abstract val compilation: CompilationNpmDependencies
+    internal abstract val compilation: CompilationNpmDependencies
 
     @get:OutputFile
     abstract val outputFile: RegularFileProperty
