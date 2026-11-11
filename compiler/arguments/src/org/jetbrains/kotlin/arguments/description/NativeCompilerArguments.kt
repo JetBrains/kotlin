@@ -137,6 +137,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -458,6 +459,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -1086,6 +1088,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
