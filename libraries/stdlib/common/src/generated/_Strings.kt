@@ -514,7 +514,7 @@ public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, pred
 /**
  * Appends all characters matching the given [predicate] to the given [destination].
  * 
- * @sample samples.collections.Collections.Filtering.filterTo
+ * @sample samples.text.Strings.filterTo
  */
 @IgnorableReturnValue
 public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C {

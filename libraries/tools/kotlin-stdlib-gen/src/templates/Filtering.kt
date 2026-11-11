@@ -614,6 +614,9 @@ object Filtering : TemplateGroupBase() {
 
         doc { "Appends all ${f.element.pluralize()} matching the given [predicate] to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterTo")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.filterTo")
+        }
         annotation("@IgnorableReturnValue")
         typeParam("C : TCollection")
         returns("C")
