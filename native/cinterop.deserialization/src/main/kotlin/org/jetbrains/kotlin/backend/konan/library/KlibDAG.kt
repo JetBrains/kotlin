@@ -464,17 +464,7 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
         val node = dagUnderConstruction.getValue(library)
         if (nodeToImportedSignatures.containsKey(node)) return false // The indices were populated earlier.
 
-        val extractedSignatures = library.extractTopLevelSignatures()
-
-        for (signature in extractedSignatures.declaredSignatures) {
-            // Note: It might happen that there are clashing signatures coming from different libraries.
-            // At the moment, we will just overwrite the first occurrence with the next one(s).
-            // However, this should be fixed in the appropriate way once we have a design decision for KT-82172.
-            // TODO(KT-82172): Handle clashing signatures here in the proper way.
-            declaredSignatureToNode[signature] = node
-        }
-
-        nodeToImportedSignatures[node] = extractedSignatures.importedSignatures
+        populateSignatureIndicesForLibrary(node, library.extractTopLevelSignatures())
 
         return true // The indices were populated now.
     }
@@ -495,6 +485,21 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
         }
         @OptIn(InternalKlibDAGApi::class)
         return if (parameters.useSignatureIndices) IdSignaturesExtractorFromKlibWithIndices(this, extractor) else extractor
+    }
+
+    /**
+     * Populates [declaredSignatureToNode] and [nodeToImportedSignatures] indices.
+     */
+    private fun populateSignatureIndicesForLibrary(node: KlibDAGNodeImpl, extractedSignatures: ExtractedSignatures) {
+        for (signature in extractedSignatures.declaredSignatures) {
+            // Note: It might happen that there are clashing signatures coming from different libraries.
+            // At the moment, we will just overwrite the first occurrence with the next one(s).
+            // However, this should be fixed in the appropriate way once we have a design decision for KT-82172.
+            // TODO(KT-82172): Handle clashing signatures here in the proper way.
+            declaredSignatureToNode[signature] = node
+        }
+
+        nodeToImportedSignatures[node] = extractedSignatures.importedSignatures
     }
 
     private enum class State {
