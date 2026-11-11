@@ -6,15 +6,24 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiJavaModule
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jetbrains.kotlin.cli.jvm.index.ClassFileFilter
+import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathRootFilter
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.cli.jvm.index.asBinaryClassFileHandle
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
+import org.jetbrains.kotlin.load.kotlin.ClassFileHandleKotlinClass
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -28,38 +37,68 @@ private val KOTLIN_METADATA_EXTENSIONS = JavaFileExtensions(JavaFileExtension.KO
 
 /**
  * Finds Kotlin binary classes in [index], applying [filter] during index traversal.
+ *
+ * Compiler code uses the [JvmClasspath] constructor, which reads Kotlin classes through [BinaryClassFileHandle]s
+ * ([ClassFileHandleKotlinClass]). Finders over a file filter (Analysis API or K1 adapters over `GlobalSearchScope`) keep the
+ * [VirtualFile]-based Kotlin classes of [VirtualFileFinder], which K1 and the decompiler still inspect.
+ *
+ * TODO(KT-90203): drop the file filter constructor once K1 and the Analysis API adapters are gone or read handles; the
+ *  finder then becomes handle-only and should be renamed.
  */
 class CliVirtualFileFinder private constructor(
     private val index: JvmDependenciesIndex,
     private val filter: ClassFileFilter,
     private val enableSearchInCtSym: Boolean,
-    perfManager: PerformanceManager?,
+    private val kotlinClassesFromHandles: Boolean,
+    private val perfManager: PerformanceManager?,
 ) : VirtualFileFinder(perfManager) {
     constructor(
         index: JvmDependenciesIndex,
         accepts: (VirtualFile) -> Boolean,
         enableSearchInCtSym: Boolean,
         perfManager: PerformanceManager?,
-    ) : this(index, ClassFileFilter { _, file -> accepts(file) }, enableSearchInCtSym, perfManager)
+    ) : this(index, ClassFileFilter { _, file -> accepts(file) }, enableSearchInCtSym, kotlinClassesFromHandles = false, perfManager)
 
     constructor(
         index: JvmDependenciesIndex,
         classpath: JvmClasspath,
         enableSearchInCtSym: Boolean,
         perfManager: PerformanceManager?,
-    ) : this(index, JvmClasspathRootFilter(classpath), enableSearchInCtSym, perfManager)
+    ) : this(index, JvmClasspathRootFilter(classpath), enableSearchInCtSym, kotlinClassesFromHandles = true, perfManager)
 
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
-        findBinaryOrSigClass(classId)
+        findBinaryOrSigClass(classId)?.file
 
-    override fun findSourceOrBinaryVirtualFile(classId: ClassId) =
-        findBinaryOrSigClass(classId)
-            ?: findClass(classId, JAVA_SOURCE_EXTENSIONS)
+    override fun findSourceOrBinaryVirtualFile(classId: ClassId): VirtualFile? =
+        (findBinaryOrSigClass(classId) ?: findClass(classId, JAVA_SOURCE_EXTENSIONS))?.file
+
+    /** The `.class`/`.sig` file declaring [classId], if the classpath has one. */
+    fun findBinaryClassFile(classId: ClassId): BinaryClassFileHandle? =
+        findBinaryOrSigClass(classId)?.asBinaryClassFileHandle()
+
+    override fun findKotlinClassOrContent(classId: ClassId, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
+        if (!kotlinClassesFromHandles) return super.findKotlinClassOrContent(classId, metadataVersion)
+        val classFile = findBinaryOrSigClass(classId) ?: return null
+        return readKotlinClass(classFile.asBinaryClassFileHandle(), metadataVersion)
+    }
+
+    override fun findKotlinClassOrContent(javaClass: JavaClass, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
+        if (!kotlinClassesFromHandles || javaClass !is BinaryJavaClass) return super.findKotlinClassOrContent(javaClass, metadataVersion)
+        // A nested class read from bytecode already holds its own class file (see `BinaryJavaClass.findInnerClass`).
+        return readKotlinClass(javaClass.classFile, metadataVersion)
+    }
+
+    private fun readKotlinClass(classFile: BinaryClassFileHandle, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
+        // Only a `.class` file may carry Kotlin metadata: a `.sig` file never does, and `module-info.class` is not a class.
+        if (classFile.extension != JavaFileExtension.CLASS.extension) return null
+        if (classFile.nameWithoutExtension == PsiJavaModule.MODULE_INFO_CLASS) return null
+        return ClassFileHandleKotlinClass.create(classFile, metadataVersion, perfManager)
+    }
 
     override fun findMetadata(classId: ClassId): InputStream? {
         assert(!classId.isNestedClass) { "Nested classes are not supported here: $classId" }
 
-        return findClass(classId, KOTLIN_METADATA_EXTENSIONS)?.inputStream
+        return findClass(classId, KOTLIN_METADATA_EXTENSIONS)?.file?.inputStream
     }
 
     /** Not restricted by the class-file filter: this lookup covers all indexed roots. */
@@ -100,11 +139,11 @@ class CliVirtualFileFinder private constructor(
         return result?.inputStream
     }
 
-    private fun findBinaryOrSigClass(classId: ClassId): VirtualFile? {
+    private fun findBinaryOrSigClass(classId: ClassId): IndexedClassFile? {
         val extensions = if (enableSearchInCtSym) BINARY_CLASS_AND_SIG_EXTENSIONS else BINARY_CLASS_EXTENSIONS
         return findClass(classId, extensions)
     }
 
-    private fun findClass(classId: ClassId, extensions: JavaFileExtensions) =
-        index.findClassVirtualFiles(classId, extensions, filter).firstOrNull()
+    private fun findClass(classId: ClassId, extensions: JavaFileExtensions): IndexedClassFile? =
+        index.findClassFiles(classId, extensions, filter).firstOrNull()
 }
