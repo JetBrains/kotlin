@@ -5822,8 +5822,7 @@ public class org/jetbrains/kotlin/gradle/targets/web/nodejs/NpmToolingEnv {
 public abstract interface class org/jetbrains/kotlin/gradle/targets/web/npm/CommonNpmResolverPlugin : org/gradle/api/Plugin {
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/web/npm/KotlinSharedNpmProjectPlugin : org/gradle/api/Plugin {
-	public fun <init> ()V
+public abstract class org/jetbrains/kotlin/gradle/targets/web/npm/KotlinSharedNpmProjectPlugin : org/gradle/api/Plugin {
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
