@@ -1,18 +1,6 @@
 function withAnonymousObject(producer1, producer2) {
-  var tmp;
-  if (producer1 === VOID) {
-    tmp = new withAnonymousObject$1();
-  } else {
-    tmp = producer1;
-  }
-  producer1 = tmp;
-  var tmp_0;
-  if (producer2 === VOID) {
-    tmp_0 = new withAnonymousObject$2();
-  } else {
-    tmp_0 = producer2;
-  }
-  producer2 = tmp_0;
+  producer1 = producer1 === VOID ? new withAnonymousObject$1() : producer1;
+  producer2 = producer2 === VOID ? new withAnonymousObject$2() : producer2;
   return producer1.produce() + ' ' + producer2.produce();
 }
 function triggeringTopLevelConstInitializer(x, y, z) {
