@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.artifactConfigurations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -740,8 +741,11 @@ private class BlockDecomposerTransformer(
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-
-            expression.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue)) }
+            if (expression.statements.isEmpty()) {
+                return expression.run {
+                    IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue))
+                }
+            }
 
             val newStatements = mutableListOf<IrStatement>()
 
@@ -750,6 +754,13 @@ private class BlockDecomposerTransformer(
             }
 
             newStatements += destructureComposite(expression.statements.last().transformStatement(expressionTransformer))
+
+            (newStatements.singleOrNull() as? IrExpression)?.let { expression ->
+                // Unwrapping the block may result in worse debug info, so only do it when compiling for production.
+                if (context.configuration.artifactConfigurations.all { it.production }) {
+                    return expression
+                }
+            }
 
             return JsIrBuilder.buildComposite(expression.type, newStatements)
         }
