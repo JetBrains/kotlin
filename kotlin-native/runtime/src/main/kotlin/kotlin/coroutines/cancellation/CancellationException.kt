@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,7 @@ public actual open class CancellationException : IllegalStateException {
 @Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
 @InlineOnly
 public actual inline fun CancellationException(message: String?, cause: Throwable?): CancellationException =
-    CancellationException(message, cause)
+        CancellationException(message, cause)
 
 /**
  * Creates an instance of [CancellationException] with the given [cause].
@@ -31,4 +31,4 @@ public actual inline fun CancellationException(message: String?, cause: Throwabl
 @Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
 @InlineOnly
 public actual inline fun CancellationException(cause: Throwable?): CancellationException =
-    CancellationException(cause)
+        CancellationException(cause)
