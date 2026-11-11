@@ -10,11 +10,13 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.addToAssemble
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.gradle.targets.js.typescript.KotlinJsDtsGenerationTa
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.requestDefaultWasiAdapter
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -365,7 +368,7 @@ open class ExecutableWasm(
  * In addition to [ExecutableWasm], it can be turned into a WebAssembly component with [componentTask].
  */
 @ExperimentalWasmDsl
-internal class ExecutableWasmWasi(
+class ExecutableWasmWasi(
     compilation: KotlinJsIrCompilation,
     name: String,
     mode: KotlinJsBinaryMode,
@@ -375,12 +378,25 @@ internal class ExecutableWasmWasi(
     mode
 ) {
     /**
+     * Defines the flavor of the WASI preview1 adapter module for this binary, see [WasiAdapterFlavor] for the options.
+     * Defaults to `COMMAND`.
+     */
+    val flavor: Property<WasiAdapterFlavor> = project.objects.property(WasiAdapterFlavor::class.java)
+        .convention(WasiAdapterFlavor.COMMAND)
+
+    /**
      * Produces a Wasm component out of this binary with `wasm-tools`.
      */
     val componentTask: TaskProvider<WasmComponentizeTask> =
-        WasmComponentizeTask.register(compilation, componentTaskName()) {
+        WasmComponentizeTask.register(
+            compilation,
+            componentTaskName()
+        ) {
             inputFile.set(wasmFileFromJsFileByMode())
             outputDirectory.set(outputDirBase.map { it.dir(COMPONENT_DIRECTORY_NAME) })
+            val defaultWasiAdapter = project.requestDefaultWasiAdapter()
+            defaultWasiAdapter.flavor.convention(flavor)
+            wasiAdapterRequest.convention(defaultWasiAdapter)
         }
 
     override val mainWasmFile: Provider<RegularFile> = componentTask.flatMap {
