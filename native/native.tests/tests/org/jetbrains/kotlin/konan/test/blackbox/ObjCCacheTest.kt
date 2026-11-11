@@ -738,6 +738,17 @@ class ObjCCacheTest : ObjCCacheTestBase() {
     fun testUsedWhenObjCExportOptionIsSetToItsDefault() {
         linkFramework(alphaAndBeta(listOf("-Xbinary=unitSuspendFunctionObjCExport=proper"))).assertObjCCachesLinked("libA", "libB")
     }
+
+    @Test
+    fun testCacheKeepsAdaptersWithCustomLtoPasses() {
+        val libraries = compileLibraries(
+            Library("library", testLibrary().source, objCCacheArgs = listOf("-Xllvm-lto-passes=internalize,globaldce")),
+        )
+        val archiveSymbols = definedSymbols(objCCacheArchive(libraries.cacheDir, "library"))
+        for (adapter in objCCacheMetadata(libraries.cacheDir, "library").adapterSymbols("library")) {
+            assertEquals(1, archiveSymbols.count { it.endsWith(adapter) }) { "Expected $adapter to be defined once in the archive" }
+        }
+    }
 }
 
 @Tag("caches")
