@@ -219,4 +219,3 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
         }
     }
 }
-

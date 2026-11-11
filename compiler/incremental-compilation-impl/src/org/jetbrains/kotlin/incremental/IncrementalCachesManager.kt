@@ -20,7 +20,6 @@ import com.google.common.io.Closer
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.Closeable
 import java.io.File
 
@@ -92,9 +91,8 @@ open class IncrementalJvmCachesManager(
 
 class IncrementalJsCachesManager(
     icContext: IncrementalCompilationContext,
-    serializerProtocol: SerializerExtensionProtocol,
     cachesRootDir: File,
 ) : IncrementalCachesManager<IncrementalJsCache>(icContext, cachesRootDir) {
     private val jsCacheFile = File(cachesRootDir, "js").apply { mkdirs() }
-    override val platformCache = IncrementalJsCache(jsCacheFile, icContext, serializerProtocol).apply { registerCache() }
+    override val platformCache = IncrementalJsCache(jsCacheFile, icContext).apply { registerCache() }
 }
