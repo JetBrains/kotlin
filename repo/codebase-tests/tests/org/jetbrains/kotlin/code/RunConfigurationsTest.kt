@@ -23,7 +23,7 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.streams.asStream
 
 @GradleLock
-@NightlyTest
+@CodebaseNightlyTest
 class RunConfigurationsTest {
     @TestFactory
     fun `execute Gradle --dry-run`(): Stream<DynamicTest> {

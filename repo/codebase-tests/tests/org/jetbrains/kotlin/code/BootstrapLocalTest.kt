@@ -12,7 +12,7 @@ import java.io.File
 import kotlin.test.Test
 
 @Disabled
-@NightlyTest
+@CodebaseNightlyTest
 class BootstrapLocalTest {
 
     /**
