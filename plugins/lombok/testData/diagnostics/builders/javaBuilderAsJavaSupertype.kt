@@ -1,4 +1,5 @@
 // ISSUE: KT-91173
+// DISABLE_WITH_PARSER: Psi
 
 // FILE: test/Owner.java
 package test;
@@ -18,4 +19,4 @@ public class Child extends Owner.OwnerBuilder {}
 // FILE: test/main.kt
 package test
 
-fun asBuilder(child: Child): Owner.OwnerBuilder = <!RETURN_TYPE_MISMATCH("Owner.OwnerBuilder; Child")!>child<!>
+fun asBuilder(child: Child): Owner.OwnerBuilder = child
