@@ -22,12 +22,11 @@ import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
 
-class IncrementalJsCache(
+class IncrementalKlibCache(
     cachesDir: File,
     icContext: IncrementalCompilationContext,
 ) : AbstractIncrementalCache<FqName>(cachesDir, icContext) {

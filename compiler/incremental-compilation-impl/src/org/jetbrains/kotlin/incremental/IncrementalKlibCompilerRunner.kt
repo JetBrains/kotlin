@@ -142,10 +142,10 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
     ) {
         val incrementalResults = services[IncrementalResultsConsumer::class.java] as IncrementalResultsConsumerImpl
 
-        val jsCache = caches.platformCache
+        val klibCache = caches.platformCache
 
-        jsCache.compareAndUpdate(incrementalResults, changesCollector)
-        jsCache.clearCacheForRemovedClasses(changesCollector)
+        klibCache.compareAndUpdate(incrementalResults, changesCollector)
+        klibCache.clearCacheForRemovedClasses(changesCollector)
     }
 
     protected abstract fun getCompiler(args: Args): CLICompiler<Args>
