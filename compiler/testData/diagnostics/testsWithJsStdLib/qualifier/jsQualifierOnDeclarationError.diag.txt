@@ -1,0 +1,52 @@
+/topLevelExternal.kt:19:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/topLevelExternal.kt:22:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/topLevelExternal.kt:25:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/topLevelExternal.kt:28:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/topLevelExternal.kt:29:17: error: Declaration of such kind (inner class) cannot be external.
+
+/topLevelExternal.kt:31:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/topLevelExternal.kt:34:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/topLevelExternal.kt:36:9: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/topLevelExternal.kt:43:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/topLevelExternal.kt:46:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/topLevelExternal.kt:52:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+/nonExternal.kt:59:1: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:62:1: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:65:1: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:66:9: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:67:5: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:70:5: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:73:5: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:77:1: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:80:1: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:82:5: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:87:5: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/nonExternal.kt:90:5: error: '@JsQualifier' annotation can only be applied to external declarations.
+/typealiases.kt:106:6: error: Qualifier contains illegal characters.
+
+/typealiases.kt:110:5: error: '@JsQualifier' annotation can only be applied to top-level declarations or to files.
+
+/typealiases.kt:114:1: error: '@JsQualifier' annotation can only be applied to external declarations.
+
+/typealiases.kt:117:1: error: '@JsQualifier' annotation can only be applied to external declarations.
+/typealiasOnFile.kt:126:1: error: Only external declarations are allowed in files marked with 'JsQualifier' annotation.
