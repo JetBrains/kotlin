@@ -18,9 +18,6 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLightTreeDiagnosticTestForAllOpen> {
                 model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
-            testClass<AbstractFirPsiDiagnosticTestForAllOpen> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
         }
     }
 }
