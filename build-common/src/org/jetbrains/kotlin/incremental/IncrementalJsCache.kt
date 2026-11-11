@@ -27,7 +27,7 @@ import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
 
-open class IncrementalJsCache(
+class IncrementalJsCache(
     cachesDir: File,
     icContext: IncrementalCompilationContext,
 ) : AbstractIncrementalCache<FqName>(cachesDir, icContext) {
