@@ -10,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
@@ -463,12 +464,9 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
         val node = dagUnderConstruction.getValue(library)
         if (nodeToImportedSignatures.containsKey(node)) return false // The indices were populated earlier.
 
-        // Note: We are intentionally extracting only signatures of top-level declarations. It's an optimization.
-        // We can always deduce the signature of a top-level class from a signature of any member or an inner/nested class.
-        // In case there are numerous members or inner/nested classes, this helps us to reduce the amount of the computational work.
-        val [declaredSignatures, importedSignatures] = library.getSignatureExtractor().extractOnlyTopLevelPublicSignatures()
+        val extractedSignatures = library.extractTopLevelSignatures()
 
-        for (signature in declaredSignatures) {
+        for (signature in extractedSignatures.declaredSignatures) {
             // Note: It might happen that there are clashing signatures coming from different libraries.
             // At the moment, we will just overwrite the first occurrence with the next one(s).
             // However, this should be fixed in the appropriate way once we have a design decision for KT-82172.
@@ -476,10 +474,18 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
             declaredSignatureToNode[signature] = node
         }
 
-        nodeToImportedSignatures[node] = importedSignatures
+        nodeToImportedSignatures[node] = extractedSignatures.importedSignatures
 
         return true // The indices were populated now.
     }
+
+    /**
+     * Note: We are intentionally extracting only signatures of top-level declarations. It's an optimization.
+     * We can always deduce the signature of a top-level class from a signature of any member or an inner/nested class.
+     * In case there are numerous members or inner/nested classes, this helps us to reduce the amount of the computational work.
+     */
+    private fun KotlinLibrary.extractTopLevelSignatures(): ExtractedSignatures =
+        getSignatureExtractor().extractOnlyTopLevelPublicSignatures()
 
     private fun KotlinLibrary.getSignatureExtractor(): IdSignaturesExtractor {
         val extractor = when {
