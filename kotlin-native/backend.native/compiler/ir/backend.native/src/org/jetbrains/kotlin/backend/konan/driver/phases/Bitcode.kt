@@ -187,7 +187,9 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         }
         it.runAndMeasurePhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
         it.runAndMeasurePhase(ModuleBitcodeOptimizationPhase, module)
-        it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
+        if (!context.config.produce.isObjCCache) {
+            it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
+        }
         when (context.config.sanitizer) {
             SanitizerKind.THREAD -> it.runAndMeasurePhase(ThreadSanitizerPhase, module)
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")

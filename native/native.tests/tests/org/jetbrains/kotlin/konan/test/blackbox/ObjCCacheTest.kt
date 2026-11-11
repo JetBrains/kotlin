@@ -1234,6 +1234,17 @@ class ObjCCacheTest : ObjCCacheTestBase() {
             assertFalse("have no Objective-C cache" in output) { "Expected only '$reason' to disable the caches:\n$output" }
         }
     }
+
+    @Test
+    fun testCacheKeepsAdaptersWithCustomLtoPasses() {
+        val libraries = compileLibraries(
+            Library("library", testLibrary().source, objCCacheArgs = listOf("-Xllvm-lto-passes=internalize,globaldce")),
+        )
+        val archiveSymbols = definedSymbols(objCCacheArchive(libraries.cacheDir, "library"))
+        for (adapter in objCCacheMetadata(libraries.cacheDir, "library").adapterSymbols("library")) {
+            assertEquals(1, archiveSymbols.count { it.endsWith(adapter) }) { "Expected $adapter to be defined once in the archive" }
+        }
+    }
 }
 
 @Tag("caches")
