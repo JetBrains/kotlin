@@ -7,20 +7,27 @@ package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJvmResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.services.PlatformModuleProvider
+import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
 import org.jetbrains.kotlin.test.services.fir.OnlyTestsWithTypeAliasesMetaConfigurator
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        configureDiagnosticTest(parser)
+        jvmTestConfigurationWithSingleFrontendFacade(frontendFacade = ::FirFrontendFacade)
+        enableLazyResolvePhaseChecking()
+        configureFirParser(parser)
+        useMetaTestConfigurators(::FirSpecificParserSuppressor)
     }
 }
 
@@ -61,7 +68,7 @@ open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersio
         }
 
         configureFirParser(FirParser.LightTree)
-        baseFirDiagnosticTestConfiguration()
+        jvmTestConfigurationWithSingleFrontendFacade(frontendFacade = ::FirFrontendFacade)
 
         firHandlersStep {
             commonFirHandlersForCodegenTest()
@@ -72,7 +79,11 @@ open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersio
         @OptIn(TestInfrastructureInternals::class)
         useModuleStructureTransformers(PlatformModuleProvider)
 
-        configureIrActualizerDiagnosticsTest()
+        irHandlersStep {
+            useHandlers(::IrDiagnosticsHandler)
+        }
+        @OptIn(TestInfrastructureInternals::class)
+        (useModuleStructureTransformers(DuplicateFileNameChecker))
         configurationForTestWithLatestLanguageVersion()
     }
 }
