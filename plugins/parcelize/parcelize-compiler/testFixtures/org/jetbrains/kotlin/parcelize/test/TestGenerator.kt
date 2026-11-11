@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeBoxTest
 import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeBytecodeListingTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeDiagnosticTest
 import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeIncrementalTest
 import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizePhasedDiagnosticTest
 
@@ -24,12 +23,8 @@ fun main(args: Array<String>) {
                 model("codegen")
             }
 
-            testClass<AbstractParcelizeDiagnosticTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-
             testClass<AbstractParcelizePhasedDiagnosticTest> {
-                model("phasedDiagnostics")
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
             testClass<AbstractParcelizeIncrementalTest> {
