@@ -45,6 +45,7 @@ kotlin {
                 implementation(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))
                 implementation(project(":compiler:cli"))
                 implementation(project(":compiler:psi:parser"))
+                implementation(project(":kotlin-tooling-core"))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
                 runtimeOnly(libs.junit.platform.launcher)
