@@ -266,15 +266,6 @@ fun Test.applyKotlinNativeConfiguration() {
 
 val KGP_TEST_TASKS_GROUP = "Kotlin Gradle Plugin Verification"
 
-if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
-    // Disabling test task as it does nothing
-    tasks.test {
-        enabled = false
-        group = null
-        description = "Disabled - use KGP specific tasks in the '$KGP_TEST_TASKS_GROUP' group instead."
-    }
-}
-
 val memoryPerGradleTestWorkerMb = 6000
 val maxParallelTestForks =
     (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
@@ -385,6 +376,8 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                 systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
                 systemProperty("gradle.integration.tests.gradle.versions", gradleVersions.joinToString(";"))
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+
+                applyIntegrationTestConfiguration()
             }
         }
 
@@ -415,6 +408,8 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                     includeTags(junitTag.name)
                     excludeTags(junitTag.excludedTags)
                 }
+
+                applyIntegrationTestConfiguration()
             }
         }
 
@@ -436,6 +431,8 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
         useJUnitPlatform {
             excludeTags(JunitTag.DaemonsKGP.name)
         }
+
+        applyIntegrationTestConfiguration()
     }
 }
 
@@ -520,6 +517,8 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
                 includeTags(junitTask.junitTag.name)
                 excludeTags(junitTask.junitTag.excludedTags)
             }
+
+            applyIntegrationTestConfiguration()
         }
     }
 
@@ -529,6 +528,17 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
     }
 }
 
+excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
+
+if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
+    registerKgpTestCoverageDataVariant(
+        configurationName = "integrationTestCoverageDataElements",
+        suiteName = "integrationTest",
+        execFile = layout.buildDirectory.file("jacoco/coverage.exec"),
+        testTask = tasks.named("kgpAllParallelTests"),
+    )
+}
+
 val kgpTestingUtilities = configurations.detachedConfiguration(
     dependencies.create(dependencies.testFixtures(dependencies.project(":kotlin-gradle-plugin")))
 ).also {
@@ -536,9 +546,17 @@ val kgpTestingUtilities = configurations.detachedConfiguration(
     it.isTransitive = false
 }
 
-// The 'archTest' suite is not an integration test suite: exclude its task from the integration test machinery
-// configured below (the IT runtime classpath, dependencies on the KGP installations, and so on)
-tasks.withType<Test>().matching { it.name != "archTest" }.configureEach {
+/**
+ * Configures this test task to run the KGP integration tests of the default 'test' suite: the IT runtime
+ * classpath, the dependencies on the KGP installations, the system properties expected by the tests, and
+ * so on.
+ *
+ * Used by the 'test' task of the default suite (see the `testing` block below) and by the other tasks
+ * that run the same tests: `kgpAllParallelTests`, the per-tag `kgp*Tests` tasks, and the TeamCity
+ * tasks. Test tasks of other suites, such as 'archTest', are not integration test tasks and must not
+ * be configured this way.
+ */
+fun Test.applyIntegrationTestConfiguration() {
     shardTestsByMethod(kotlinBuildProperties.booleanProperty("kotlin.test.gradle.it.shardByMethod", false).get())
 
     // Disable KONAN_DATA_DIR env variable for all integration tests
@@ -720,19 +738,23 @@ tasks.withType<Test>().matching { it.name != "archTest" }.configureEach {
     }
 }
 
-excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
-
-if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
-    registerKgpTestCoverageDataVariant(
-        configurationName = "integrationTestCoverageDataElements",
-        suiteName = "integrationTest",
-        execFile = layout.buildDirectory.file("jacoco/coverage.exec"),
-        testTask = tasks.named("kgpAllParallelTests"),
-    )
-}
-
 testing {
     suites {
+        named<JvmTestSuite>("test") {
+            targets.configureEach {
+                testTask.configure {
+                    applyIntegrationTestConfiguration()
+
+                    if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
+                        // Disabling test task as it does nothing
+                        enabled = false
+                        group = null
+                        description = "Disabled - use KGP specific tasks in the '$KGP_TEST_TASKS_GROUP' group instead."
+                    }
+                }
+            }
+        }
+
         register<JvmTestSuite>("archTest") {
             useJUnitJupiter()
 
