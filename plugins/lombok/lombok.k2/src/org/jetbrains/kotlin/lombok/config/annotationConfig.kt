@@ -291,13 +291,18 @@ object ConeLombokAnnotations {
     ) : ConstructorAnnotation, ConeLombokAnnotation(annotation) {
         @OptIn(SymbolInternals::class)
         override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> {
-            val isAllArgsConstructor = annotation.unexpandedClassId == classId
+            val actualClassId = annotation.unexpandedClassId
 
             return buildList {
                 for (declaration in classSymbol.fir.declarations) {
                     if (declaration !is FirJavaField || declaration.isStatic) continue
 
-                    if (declaration.hasInitializer && (!isAllArgsConstructor || !declaration.isVar)) continue
+                    when (actualClassId) {
+                        // @Value doesn't use only fields with initializers...
+                        Value.classId -> if (declaration.hasInitializer) continue
+                        // ... but @Builder and @AllArgsConstructor don't use only FINAL fields with initializers (KT-54054)
+                        Builder.classId, classId -> if (declaration.hasInitializer && !declaration.isVar) continue
+                    }
 
                     add(declaration)
                 }
