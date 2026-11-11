@@ -6,9 +6,7 @@
 package kotlin.random
 
 private fun wasiRandomGet(): Long {
-    // TODO(REVIEW): this is a cryptographically secure random number generator. Doens't have to be available on all platforms.
-    //               We could also instead use `Insecure.getInsecureRandomU64()`. Should we?
-    return stdlib.wit.bindings.Random.getRandomU64().toLong()
+    return stdlib.wit.bindings.Insecure.getInsecureRandomU64().toLong()
 }
 
 internal actual val defaultRandom: Random = Random(wasiRandomGet())
