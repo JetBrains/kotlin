@@ -45,7 +45,7 @@ internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File, start
     testRunnerFile.writeText(
         """
         import * as exports from './${compiledFile.relativeTo(static).invariantSeparatorsPath}';
-        exports["$startUnitTestsExport"]?.();
+        exports["startUnitTests"]?.();
         """.trimIndent()
     )
     return testRunnerFile
