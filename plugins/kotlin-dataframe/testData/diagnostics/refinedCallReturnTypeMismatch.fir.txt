@@ -239,3 +239,10 @@ FILE: org/jetbrains/kotlinx/dataframe/__GENERATED__CALLABLES__.kt
         @R|kotlin/jvm/JvmName|(name = String(Type_a)) public get(): R|kotlin/Int|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Type>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
         @R|kotlin/jvm/JvmName|(name = String(Type_a)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+FILE: org/jetbrains/kotlinx/dataframe/__GENERATED__CALLABLES__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Type>|.a: R|kotlin/Int|
+        @R|kotlin/jvm/JvmName|(name = String(Type_a)) public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Type>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(Type_a)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|

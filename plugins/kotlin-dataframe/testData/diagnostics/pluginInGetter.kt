@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package org.jetbrains.kotlinx.dataframe.annotations
 
 import org.jetbrains.kotlinx.dataframe.*
@@ -15,3 +16,9 @@ class Context {
     @DisableInterpretation
     val peopleDf1: DataFrame<Any?> get() = <!DATAFRAME_PLUGIN_IS_DISABLED!>dataFrameOf<!>("firstName" to columnOf("Alice"))
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, annotationDeclaration, classDeclaration, data, elvisExpression,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, getter, ifExpression, inProjection, inline,
+interfaceDeclaration, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+reified, samConversion, sealed, smartcast, starProjection, stringLiteral, thisExpression, typeParameter, whenExpression,
+whenWithSubject */

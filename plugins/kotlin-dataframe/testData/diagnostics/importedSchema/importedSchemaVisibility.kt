@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_SCHEMA_READER
 
 import org.jetbrains.kotlinx.dataframe.*
@@ -24,3 +25,9 @@ public interface C {
 interface D {
     val a: Int
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, annotationDeclaration, classDeclaration, data, elvisExpression,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline,
+interfaceDeclaration, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+reified, samConversion, sealed, smartcast, starProjection, stringLiteral, thisExpression, typeParameter, whenExpression,
+whenWithSubject */

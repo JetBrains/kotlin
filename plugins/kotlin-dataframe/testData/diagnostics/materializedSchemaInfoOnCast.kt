@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // DUMP_SCHEMAS
 
@@ -20,3 +21,8 @@ fun box(): String {
 
 @DataSchema
 data class Cities(val city: String)
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, elvisExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline, interfaceDeclaration, isExpression,
+lambdaLiteral, localClass, localProperty, nullableType, primaryConstructor, propertyDeclaration, reified, samConversion,
+sealed, smartcast, stringLiteral, thisExpression, typeParameter, whenExpression, whenWithSubject */
