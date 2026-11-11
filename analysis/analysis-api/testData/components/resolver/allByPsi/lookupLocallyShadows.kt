@@ -14,6 +14,9 @@ fun shadowing(x: Int) {
                 get() = x
             val v: Int = x
                 get() = x
+            fun f() {
+                val y = x
+            }
         }
     }
     return

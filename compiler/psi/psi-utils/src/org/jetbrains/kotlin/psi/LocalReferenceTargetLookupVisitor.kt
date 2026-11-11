@@ -226,11 +226,17 @@ private class ValueLocalReferenceTargetLookupVisitor(
                     // }
                     allowResolveToProperty = false
 
-                    // class A(x: Int) {
-                    //     val y: Int = x
-                    //                  ^ we should resolve x to the constructor parameter
-                    // }
-                    constructorParametersAllowed = true
+                    if (!element.isLocal) {
+                        // class A(x: Int) {
+                        //     val y: Int = x
+                        //                  ^ we should resolve x to the constructor parameter
+                        //     fun f() {
+                        //         val z = x
+                        //                 ^ but not this x
+                        //     }
+                        // }
+                        constructorParametersAllowed = true
+                    }
                 }
                 is KtPropertyAccessor -> {
                     // fun f(x: Int) {
@@ -293,6 +299,8 @@ private class ValueLocalReferenceTargetLookupVisitor(
     override fun visitNamedFunction(element: KtNamedFunction, data: VisitorContext) {
         super.visitNamedFunction(element, data)
 
+        constructorParametersAllowed = false
+
         data.parentOnly {
             element.valueParameters.processMany { processParameter(it, data) }
             element.contextParameters.processMany { processParameter(it, data) }
@@ -315,6 +323,8 @@ private class ValueLocalReferenceTargetLookupVisitor(
 
         constructor.valueParameters.processMany { processParameter(it, data) }
         constructor.contextParameters.processMany { processParameter(it, data) }
+
+        constructorParametersAllowed = false
     }
 
     override fun visitLambdaExpression(element: KtLambdaExpression, data: VisitorContext) {

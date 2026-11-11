@@ -7,7 +7,7 @@ KtPackageDirective(0,0): ''
 KtImportList(0,0): ''
   NO_CANDIDATES
 
-KtNamedFunction(16,348): 'fun shadowing(x: Int) {'
+KtNamedFunction(16,410): 'fun shadowing(x: Int) {'
   NO_CANDIDATES
 
 KtParameterList(29,37): '(x: Int)'
@@ -25,7 +25,7 @@ KtUserType(33,36): 'Int'
 KtNameReferenceExpression(33,36): 'Int'
   NO_CANDIDATES
 
-KtBlockExpression(38,348): '{'
+KtBlockExpression(38,410): '{'
   NO_CANDIDATES
 
 KtNamedFunction(44,82): 'fun g(x: Int) {'
@@ -611,7 +611,7 @@ KtOperationReferenceExpression(107,108): '+'
 KtConstantExpression(109,110): '1'
   NO_CANDIDATES
 
-KtClass(115,335): 'class A(val x: Int) {'
+KtClass(115,397): 'class A(val x: Int) {'
   NO_CANDIDATES
 
 KtPrimaryConstructor(122,134): '(val x: Int)'
@@ -632,7 +632,7 @@ KtUserType(130,133): 'Int'
 KtNameReferenceExpression(130,133): 'Int'
   NO_CANDIDATES
 
-KtClassBody(135,335): '{'
+KtClassBody(135,397): '{'
   NO_CANDIDATES
 
 KtProperty(145,181): 'val v: Int = x'
@@ -727,7 +727,7 @@ KtNameReferenceExpression(180,181): 'x'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtClass(190,329): 'inner class B(x: Int) {'
+KtClass(190,391): 'inner class B(x: Int) {'
   NO_CANDIDATES
 
 KtDeclarationModifierList(190,195): 'inner'
@@ -751,7 +751,7 @@ KtUserType(207,210): 'Int'
 KtNameReferenceExpression(207,210): 'Int'
   NO_CANDIDATES
 
-KtClassBody(212,329): '{'
+KtClassBody(212,391): '{'
   NO_CANDIDATES
 
 KtProperty(226,266): 'val x: Int = x'
@@ -1048,34 +1048,57 @@ KtNameReferenceExpression(318,319): 'x'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtReturnExpression(340,346): 'return'
+KtNamedFunction(332,381): 'fun f() {'
   NO_CANDIDATES
 
-KtNamedFunction(350,521): 'fun selfReferential(x: Int) {'
+KtParameterList(337,339): '()'
   NO_CANDIDATES
 
-KtParameterList(369,377): '(x: Int)'
+KtBlockExpression(340,381): '{'
   NO_CANDIDATES
 
-KtParameter(370,376): 'x: Int'
+KtProperty(358,367): 'val y = x'
   NO_CANDIDATES
 
-KtTypeReference(373,376): 'Int'
-  NO_CANDIDATES
+KtNameReferenceExpression(366,367): 'x'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = A
+        type = <local>.A
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
 
-KtUserType(373,376): 'Int'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = B
+        type = <local>.A.B
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
 
-KtNameReferenceExpression(373,376): 'Int'
-  NO_CANDIDATES
-
-KtBlockExpression(378,521): '{'
-  NO_CANDIDATES
-
-KtProperty(384,393): 'val x = x'
-  NO_CANDIDATES
-
-KtNameReferenceExpression(392,393): 'x'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -1093,10 +1116,55 @@ KtNameReferenceExpression(392,393): 'x'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtDestructuringDeclaration(398,417): 'val (x, y) = x to 1'
+KtReturnExpression(402,408): 'return'
   NO_CANDIDATES
 
-KtDestructuringDeclarationEntry(403,404): 'x'
+KtNamedFunction(412,583): 'fun selfReferential(x: Int) {'
+  NO_CANDIDATES
+
+KtParameterList(431,439): '(x: Int)'
+  NO_CANDIDATES
+
+KtParameter(432,438): 'x: Int'
+  NO_CANDIDATES
+
+KtTypeReference(435,438): 'Int'
+  NO_CANDIDATES
+
+KtUserType(435,438): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(435,438): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(440,583): '{'
+  NO_CANDIDATES
+
+KtProperty(446,455): 'val x = x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(454,455): 'x'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDestructuringDeclaration(460,479): 'val (x, y) = x to 1'
+  NO_CANDIDATES
+
+KtDestructuringDeclarationEntry(465,466): 'x'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -1117,7 +1185,7 @@ KtDestructuringDeclarationEntry(403,404): 'x'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtDestructuringDeclarationEntry(406,407): 'y'
+KtDestructuringDeclarationEntry(468,469): 'y'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -1138,7 +1206,7 @@ KtDestructuringDeclarationEntry(406,407): 'y'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtBinaryExpression(411,417): 'x to 1'
+KtBinaryExpression(473,479): 'x to 1'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -1178,7 +1246,7 @@ KtBinaryExpression(411,417): 'x to 1'
       }
     isInBestCandidates = true
 
-KtNameReferenceExpression(411,412): 'x'
+KtNameReferenceExpression(473,474): 'x'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -1213,7 +1281,7 @@ KtNameReferenceExpression(411,412): 'x'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-KtOperationReferenceExpression(413,415): 'to'
+KtOperationReferenceExpression(475,477): 'to'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -1253,10 +1321,10 @@ KtOperationReferenceExpression(413,415): 'to'
       }
     isInBestCandidates = true
 
-KtConstantExpression(416,417): '1'
+KtConstantExpression(478,479): '1'
   NO_CANDIDATES
 
-KtForExpression(422,519): 'for (x in x..y) {'
+KtForExpression(484,581): 'for (x in x..y) {'
   KaApplicableCallCandidate:
     candidate = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
@@ -1312,13 +1380,13 @@ KtForExpression(422,519): 'for (x in x..y) {'
         valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtParameter(427,428): 'x'
+KtParameter(489,490): 'x'
   NO_CANDIDATES
 
-KtContainerNode(432,436): 'x..y'
+KtContainerNode(494,498): 'x..y'
   NO_CANDIDATES
 
-KtBinaryExpression(432,436): 'x..y'
+KtBinaryExpression(494,498): 'x..y'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -1504,7 +1572,7 @@ KtBinaryExpression(432,436): 'x..y'
       }
     isInBestCandidates = false
 
-KtNameReferenceExpression(432,433): 'x'
+KtNameReferenceExpression(494,495): 'x'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -1539,7 +1607,7 @@ KtNameReferenceExpression(432,433): 'x'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-KtOperationReferenceExpression(433,435): '..'
+KtOperationReferenceExpression(495,497): '..'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -1725,7 +1793,7 @@ KtOperationReferenceExpression(433,435): '..'
       }
     isInBestCandidates = false
 
-KtNameReferenceExpression(435,436): 'y'
+KtNameReferenceExpression(497,498): 'y'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -1743,19 +1811,19 @@ KtNameReferenceExpression(435,436): 'y'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtContainerNodeForControlStructureBody(438,519): '{'
+KtContainerNodeForControlStructureBody(500,581): '{'
   NO_CANDIDATES
 
-KtBlockExpression(438,519): '{'
+KtBlockExpression(500,581): '{'
   NO_CANDIDATES
 
-KtWhenExpression(448,513): 'when (val x = x) {'
+KtWhenExpression(510,575): 'when (val x = x) {'
   NO_CANDIDATES
 
-KtProperty(454,463): 'val x = x'
+KtProperty(516,525): 'val x = x'
   NO_CANDIDATES
 
-KtNameReferenceExpression(462,463): 'x'
+KtNameReferenceExpression(524,525): 'x'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -1807,8 +1875,8 @@ KtNameReferenceExpression(462,463): 'x'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-KtWhenEntry(479,503): 'else -> {'
+KtWhenEntry(541,565): 'else -> {'
   NO_CANDIDATES
 
-KtBlockExpression(487,503): '{'
+KtBlockExpression(549,565): '{'
   NO_CANDIDATES
