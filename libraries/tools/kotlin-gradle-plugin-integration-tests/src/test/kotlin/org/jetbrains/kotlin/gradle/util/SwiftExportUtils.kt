@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.gradle.uklibs.Variant
 import org.jetbrains.kotlin.gradle.uklibs.VariantFile
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 
 @OptIn(EnvironmentalVariablesOverride::class)
 internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
@@ -118,8 +119,8 @@ internal fun KGPBaseTest.swiftExportKotlinArchiveProducer(
 internal fun swiftCompile(workingDir: File, libDir: File, source: File, target: String) = runProcess(
     listOf(
         "xcrun", "--sdk", "iphonesimulator", "swiftc", "${source.relativeTo(workingDir).path}",
-        "-I", libDir.absolutePath, "-target", target,
-        "-Xlinker", "-L", "-Xlinker", libDir.absolutePath, "-Xlinker", "-lShared",
+        "-I", libDir.normalizedAbsolutePath().toString(), "-target", target,
+        "-Xlinker", "-L", "-Xlinker", libDir.normalizedAbsolutePath().toString(), "-Xlinker", "-lShared",
         "-framework", "Foundation", "-framework", "UIKit"
     ),
     workingDir
@@ -174,13 +175,13 @@ private fun swiftSymbolgraphExtract(
         "xcrun", "swift", "symbolgraph-extract",
         "-module-name", moduleName,
         "-target", target,
-        "-output-dir", outputDir.absolutePath,
+        "-output-dir", outputDir.normalizedAbsolutePath().toString(),
         "-sdk", sdkPath,
         "-skip-synthesized-members"
     )
     searchPaths.forEach { path ->
         command.add("-I")
-        command.add(path.absolutePath)
+        command.add(path.normalizedAbsolutePath().toString())
     }
 
     return runProcess(command, workingDir)
@@ -354,7 +355,7 @@ internal fun assertAllSwiftModuleSymbols(
     val swiftModuleDirs = allDirEntries.filter { it.isDirectory && it.name.endsWith(".swiftmodule") }
 
     assert(swiftModuleDirs.isNotEmpty()) {
-        "No .swiftmodule directories found in: ${builtProductsDir.absolutePath}\n" +
+        "No .swiftmodule directories found in: ${builtProductsDir.normalizedAbsolutePath().toString()}\n" +
                 "Directory contents: ${allDirEntries.map { it.name }}"
     }
 

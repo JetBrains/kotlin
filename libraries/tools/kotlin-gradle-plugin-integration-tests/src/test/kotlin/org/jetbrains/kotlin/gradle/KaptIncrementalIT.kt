@@ -4,6 +4,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
@@ -330,7 +331,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
                         .toFile()
                         .walk()
                         .filter { it.extension == "java" }
-                        .map { it.absolutePath }
+                        .map { it.normalizedAbsolutePath().toString() }
                         .toList()
                 )
                 // Make sure all compiled kt files are cleaned up.

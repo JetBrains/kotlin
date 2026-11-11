@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import java.io.Closeable
 import java.io.File
 import java.nio.file.Path
@@ -1411,7 +1412,7 @@ data class XcodebuildPIFFrameworksBuildPhase(
 
 fun dumpXcodebuildPIF(appPath: Path): List<XcodebuildPIFEntry> {
     val outputFile = File.createTempFile("xcodebuild-pif", ".json")
-    return runAppleToolCommand(appPath, listOf("xcodebuild", "-dumpPIF", outputFile.absolutePath), outputFile)
+    return runAppleToolCommand(appPath, listOf("xcodebuild", "-dumpPIF", outputFile.normalizedAbsolutePath().toString()), outputFile)
 }
 
 data class ApplicationRun(

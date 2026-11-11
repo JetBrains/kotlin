@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.DisplayName
@@ -45,7 +46,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             val icCacheDir = projectPath.toRealPath().resolve("build").resolve("kotlin-native-ic-cache").resolve("debugExecutable")
             val incrementalCacheArgs = arrayOf(
                 "-Xenable-incremental-compilation",
-                "-Xic-cache-dir=${icCacheDir.toFile().absolutePath}"
+                "-Xic-cache-dir=${icCacheDir.toFile().normalizedAbsolutePath().toString()}"
             )
 
             // disabled incremental cache parameter

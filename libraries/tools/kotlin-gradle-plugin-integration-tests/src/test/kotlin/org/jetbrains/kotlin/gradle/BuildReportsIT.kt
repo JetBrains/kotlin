@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
 import org.jetbrains.kotlin.gradle.util.readJsonReport
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
@@ -485,7 +486,7 @@ class BuildReportsIT : KGPBaseTest() {
             val metricsFile = projectPath.resolve("metrics.bin").toFile()
             build(
                 "compileKotlin",
-                "-Pkotlin.build.report.single_file=${metricsFile.absolutePath}"
+                "-Pkotlin.build.report.single_file=${metricsFile.normalizedAbsolutePath().toString()}"
             )
 
             assertTrue { metricsFile.exists() }

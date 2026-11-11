@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
@@ -707,7 +708,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                                     println("ALL IMPORTED: ")
                                     it.listFiles()
                                         ?.forEach {
-                                            println(it.absolutePath)
+                                            println(it.normalizedAbsolutePath().toString())
                                         }
                                     it.resolve(".visited-gradle").let {
                                         println("visited-gradle content")
