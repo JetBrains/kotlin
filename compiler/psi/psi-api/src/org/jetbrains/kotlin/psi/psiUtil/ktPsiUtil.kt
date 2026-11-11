@@ -713,19 +713,28 @@ private val KtDeclaration.danglingStubParent: PsiElement?
     }
 
 /**
- * Whether this declaration is declared inside a companion object block.
+ * Whether this declaration is a direct member of a
+ * [companion block](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-blocks).
  *
  * ### Example:
  *
  * ```kotlin
  * class Foo {
- *   companion {
- *     fun static1() {} // true
- *   }
+ *     companion {
+ *         fun blockMember() { // true
+ *             val local = 1 // false
+ *         }
+ *     }
  *
- *   fun regular() {} // false
+ *     companion object {
+ *         fun objectMember() {} // false
+ *     }
+ *
+ *     fun instanceMember() {} // false
  * }
  * ```
+ *
+ * @see isCompanion
  */
 @KtExperimentalApi
 val KtDeclaration.isFromCompanionBlock: Boolean
