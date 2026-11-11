@@ -86,8 +86,14 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     private val nameBasedDestructuringShortFormEnabled: Boolean =
         baseSession.languageVersionSettings.supportsFeature(LanguageFeature.EnableNameBasedDestructuringShortForm)
 
+    /**
+     * Whether the builder is directly inside a companion block, i.e., a declaration converted at this point is a direct member of the
+     * block.
+     *
+     * It is `false` deeper inside the block, e.g., in the body of a member or in a class declared in the block.
+     */
     protected val isDirectlyInsideCompanionBlock: Boolean
-        get() = context.currentCompanionBlockOwnerOrNull.let { it != null && it == context.containerSymbolIfAny }
+        get() = context.companionBlockContainerSymbolCount == context.containerSymbolCount
 
     abstract fun Node.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
     abstract val Node.elementType: Type

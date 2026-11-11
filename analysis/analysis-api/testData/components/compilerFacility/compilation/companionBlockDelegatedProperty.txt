@@ -1,0 +1,24 @@
+public final class Delegate {
+    // source: 'main.kt'
+    public method <init>(): void
+    public final method getValue(p0: java.lang.Object, p1: kotlin.reflect.KProperty): int
+    public final method setValue(p0: java.lang.Object, p1: kotlin.reflect.KProperty, p2: int): void
+}
+
+public final class MainKt {
+    // source: 'main.kt'
+    public final static method use(): int
+}
+
+public final class Owner {
+    // source: 'main.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final static field delegatedProperty$delegate: Delegate
+    private final static field lazyProperty$delegate: kotlin.Lazy
+    static method <clinit>(): void
+    public method <init>(): void
+    public final static method getDelegatedProperty(): int
+    public final static method getLazyProperty(): int
+    private final static method lazyProperty_delegate$lambda$0(): int
+    public final static method setDelegatedProperty(p0: int): void
+}

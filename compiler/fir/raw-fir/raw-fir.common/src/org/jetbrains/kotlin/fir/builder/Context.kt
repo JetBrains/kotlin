@@ -68,7 +68,13 @@ open class Context<Node> {
     var containingScriptSymbol: FirScriptSymbol? = null
     var containingReplSymbol: FirReplSnippetSymbol? = null
 
-    var currentCompanionBlockOwnerOrNull: FirBasedSymbol<*>? = null
+    /**
+     * The [containerSymbolCount] directly inside the innermost companion block, or `-1` outside of companion blocks.
+     *
+     * The block is identified by this count rather than by its container symbol, since there is no container symbol when a single
+     * declaration is built without its containing class.
+     */
+    var companionBlockContainerSymbolCount: Int = -1
 
     /**
      * @param isLocal if true [symbol] will be ignored
@@ -208,13 +214,13 @@ open class Context<Node> {
         pushFirTypeParameters(status, currentFirTypeParameters)
     }
 
-    inline fun withCompanionBlock(block: () -> Unit) {
-        val oldValue = currentCompanionBlockOwnerOrNull
-        currentCompanionBlockOwnerOrNull = containerSymbolIfAny
-        try {
+    inline fun <T> withCompanionBlock(block: () -> T): T {
+        val oldValue = companionBlockContainerSymbolCount
+        companionBlockContainerSymbolCount = containerSymbolCount
+        return try {
             block()
         } finally {
-            currentCompanionBlockOwnerOrNull = oldValue
+            companionBlockContainerSymbolCount = oldValue
         }
     }
 
@@ -263,6 +269,7 @@ open class Context<Node> {
      */
     val containerSymbol: FirBasedSymbol<*> get() = _containerSymbolStack.last()
     val containerSymbolIfAny: FirBasedSymbol<*>? get() = _containerSymbolStack.lastOrNull()
+    val containerSymbolCount: Int get() = _containerSymbolStack.size
     private val _containerSymbolStack: MutableList<FirBasedSymbol<*>> = mutableListOf()
 
     /**
