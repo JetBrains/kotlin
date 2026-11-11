@@ -105,6 +105,22 @@ class NativeCompilerDownloader(
                     logger.debug("Kotlin/Native compiler is already installed in $compilerDirectory")
                     return@withLock
                 }
+                if (!compilerDirectory.list().isNullOrEmpty()) {
+                    // Something is there, but it's not a complete distribution. The toolchain unpacks in place,
+                    // so it may simply be halfway through: a build and the TestKit builds it runs can share
+                    // one konan directory (KT-86251).
+                    if (NativeVersionValueSource.isProvisionedOnceToolchainIsDone(compilerDirectory)) {
+                        logger.debug("Kotlin/Native toolchain has installed the compiler in $compilerDirectory")
+                        return@withLock
+                    }
+                    // The move below can't replace a directory that has something in it, so there is no point
+                    // in unpacking for a minute just to fail with "Directory not empty".
+                    error(
+                        "Cannot install Kotlin/Native compiler to '$compilerDirectory': the directory is not empty, " +
+                                "but it is not a complete installation. An earlier installation was probably " +
+                                "interrupted. Delete the directory and run the build again."
+                    )
+                }
 
                 val tmpDir = Files.createTempDirectory(konanDir.toPath(), "compiler-").toFile()
                 try {
