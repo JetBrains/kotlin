@@ -219,7 +219,7 @@ private fun KaSymbol.canPerformLocalLookup(
             }
         }
         is KaClassSymbol -> {
-            if (localLookupContextKind == LookupLocallyInternals.ContextKind.VALUE) {
+            if (localLookupContextKind is LookupLocallyInternals.ContextKind.VALUE) {
                 // object A
                 // fun f() {
                 //     class A

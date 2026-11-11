@@ -7,10 +7,10 @@
 
 package org.jetbrains.kotlin.psi
 
-import org.jetbrains.annotations.TestOnly
 import com.intellij.psi.util.siblings
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.LookupLocallyInternals.ContextKind
+import org.jetbrains.kotlin.psi.LookupLocallyInternals.ContextKind.*
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 
 /**
@@ -34,7 +34,10 @@ fun KtNameReferenceExpression.lookupLocally(): KtNamedDeclaration? {
 
     val contextKind = LookupLocallyInternals.getContextKind(this) ?: return null
 
-    return LocalReferenceTargetLookupVisitor(this, contextKind).lookup()
+    return when (contextKind) {
+        is VALUE -> ValueLocalReferenceTargetLookupVisitor(this, contextKind.strict).lookup().toResult()
+        TYPE -> TypeLocalReferenceTargetLookupVisitor(this).lookup().toResult()
+    }
 }
 
 private val KtElement.nonContainerParent: KtElement?
@@ -46,93 +49,114 @@ private val KtElement.nonContainerParent: KtElement?
         return e as? KtElement
     }
 
-private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpression, val contextKind: ContextKind) :
+private abstract class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpression) :
     KtVisitor<Unit, VisitorContext>() {
-    fun lookup(): KtNamedDeclaration? {
-        val availableNameElementSequence = sequence {
-            // invariant: current is always yielded
-            var current: KtElement = element
-            var lastDirection = LastDirection.INITIAL
-            yield(current to lastDirection)
 
-            while (true) {
-                if (current.isStopElement(lastDirection)) break
+    var _found: KtNamedDeclaration? = null
+    protected val name: Name = element.getReferencedNameAsName()
 
-                when (val p = current.nonContainerParent) {
-                    is KtBlockExpression -> {
-                        for (sibling in current.siblings(forward = false, withSelf = false).filterIsInstance<KtElement>()) {
-                            yield(sibling to LastDirection.BACKWARDS)
-                        }
-                        current = p
-                        lastDirection = PARENT
-                        yield(current to lastDirection)
-                    }
-
-                    null -> break
-
-                    else -> {
-                        current = p
-                        lastDirection = PARENT
-                        yield(current to lastDirection)
-                    }
-                }
-            }
-        }
-
-        var previousElement: KtElement? = null
-
-        for ([element, direction] in availableNameElementSequence) {
-            element.accept(this, VisitorContext(direction, previousElement))
-            if (_stopResolution) return null
-
-            _found?.let { return it }
-
-            previousElement = element
-        }
-
-        return null
+    protected fun found(element: KtNamedDeclaration) {
+        if (_found != null) return
+        _found = element
     }
 
-    private var _found: KtNamedDeclaration? = null
-    private val name: Name = element.getReferencedNameAsName()
+    protected fun foundIfNameMatches(element: KtNamedDeclaration) {
+        if (element.nameAsSafeName == name) {
+            found(element)
+        }
+    }
 
-    private var constructorParametersAllowed: Boolean = false
-    private var _stopResolution: Boolean = false
-    private fun stopResolution() {
+    var _stopResolution: Boolean = false
+    protected fun stopResolution() {
         _stopResolution = true
     }
 
-    private val KtElement.isScriptTopLevelElement: Boolean
-        get() = parent is KtBlockExpression && parent.parent is KtScript
+    abstract fun isStopElement(element: KtElement, lastDirection: LastDirection): Boolean
 
-    private fun KtElement.isStopElementInValueContext(lastDirection: LastDirection): Boolean =
-        lastDirection == PARENT &&
-                when (this) {
-                    is KtNamedFunction -> isTopLevel
-                    is KtProperty -> isTopLevel
-                    is KtClassOrObject -> isTopLevel() || this is KtObjectDeclaration && this.isCompanion()
-                    else -> false
-                }
-                || isScriptTopLevelElement
+    protected inline fun <T> Iterable<T>.processMany(f: (T) -> Unit) {
+        if (_found != null) return
 
-    private fun KtElement.isStopElementInTypeContext(lastDirection: LastDirection): Boolean =
-        lastDirection == PARENT &&
-                when (this) {
-                    is KtNamedFunction -> !this.isLocal
-                    is KtProperty -> !this.isLocal
-                    is KtClassOrObject,
-                    is KtAnonymousInitializer,
-                    is KtConstructor<*>,
-                        -> true
-                    else -> false
-                }
-                || isScriptTopLevelElement
-
-    private fun KtElement.isStopElement(lastDirection: LastDirection): Boolean = when (contextKind) {
-        VALUE -> isStopElementInValueContext(lastDirection)
-        TYPE -> isStopElementInTypeContext(lastDirection)
-        VALUE_OR_TYPE -> isStopElementInValueContext(lastDirection) || isStopElementInTypeContext(lastDirection)
+        for (element in this) {
+            f(element)
+            if (_found != null) return
+        }
     }
+}
+
+private fun LocalReferenceTargetLookupVisitor.availableNameElementSequence(): Sequence<Pair<KtElement, LastDirection>> = sequence {
+    // invariant: current is always yielded
+    var current: KtElement = element
+    var lastDirection = LastDirection.INITIAL
+    yield(current to lastDirection)
+
+    while (true) {
+        if (isStopElement(current, lastDirection)) break
+
+        when (val p = current.nonContainerParent) {
+            is KtBlockExpression -> {
+                for (sibling in current.siblings(forward = false, withSelf = false).filterIsInstance<KtElement>()) {
+                    yield(sibling to LastDirection.BACKWARDS)
+                }
+                current = p
+                lastDirection = PARENT
+                yield(current to lastDirection)
+            }
+
+            null -> break
+
+            else -> {
+                current = p
+                lastDirection = PARENT
+                yield(current to lastDirection)
+            }
+        }
+    }
+}
+
+private sealed interface LookupResult {
+    data class Found(val declaration: KtNamedDeclaration) : LookupResult
+    data object Stopped : LookupResult
+    data object NotFound : LookupResult
+}
+
+private fun LookupResult.toResult() = when (this) {
+    is Found -> declaration
+    is Stopped -> null
+    NotFound -> null
+}
+
+private fun LocalReferenceTargetLookupVisitor.lookup(): LookupResult {
+    val availableNameElementSequence = availableNameElementSequence()
+
+    var previousElement: KtElement? = null
+
+    for ([element, direction] in availableNameElementSequence) {
+        element.accept(this, VisitorContext(direction, previousElement))
+        if (_stopResolution) return LookupResult.Stopped
+
+        _found?.let { return LookupResult.Found(it) }
+
+        previousElement = element
+    }
+
+    return LookupResult.NotFound
+}
+
+private class ValueLocalReferenceTargetLookupVisitor(
+    element: KtNameReferenceExpression,
+    val strict: Boolean,
+) : LocalReferenceTargetLookupVisitor(element) {
+    private var constructorParametersAllowed: Boolean = false
+
+    override fun isStopElement(element: KtElement, lastDirection: LastDirection): Boolean =
+        lastDirection == PARENT &&
+                when (element) {
+                    is KtNamedFunction -> element.isTopLevel
+                    is KtProperty -> element.isTopLevel
+                    is KtClassOrObject -> element.isTopLevel() || element is KtObjectDeclaration && element.isCompanion()
+                    else -> false
+                }
+                || element.isScriptTopLevelElement
 
     override fun visitKtElement(element: KtElement, data: VisitorContext?) {
         if (data?.previousElement is KtClass) constructorParametersAllowed = false
@@ -163,17 +187,15 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     override fun visitForExpression(element: KtForExpression, data: VisitorContext) {
         super.visitForExpression(element, data)
 
-        inValueContext {
-            data.parentOnly {
-                if (data.previousElement != element.loopRange) {
-                    // fun f(x: Int) {
-                    //      for (x in 0..x) {}
-                    //                   ^ this x refers to the function parameter rather than the for loop parameter, so we need to ignore
-                    //                     the loop parameter.
-                    // }
-                    val loopParameter = element.loopParameter ?: return
-                    processParameter(loopParameter, data)
-                }
+        data.parentOnly {
+            if (data.previousElement != element.loopRange) {
+                // fun f(x: Int) {
+                //      for (x in 0..x) {}
+                //                   ^ this x refers to the function parameter rather than the for loop parameter, so we need to ignore
+                //                     the loop parameter.
+                // }
+                val loopParameter = element.loopParameter ?: return
+                processParameter(loopParameter, data)
             }
         }
     }
@@ -181,12 +203,10 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     override fun visitWhenExpression(element: KtWhenExpression, data: VisitorContext) {
         super.visitWhenExpression(element, data)
 
-        inValueContext {
-            data.parentOnly {
-                val subjectVariable = element.subjectVariable ?: return
-                if (subjectVariable != data.previousElement) {
-                    visitProperty(subjectVariable, data)
-                }
+        data.parentOnly {
+            val subjectVariable = element.subjectVariable ?: return
+            if (subjectVariable != data.previousElement) {
+                visitProperty(subjectVariable, data)
             }
         }
     }
@@ -226,26 +246,18 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
             }
         }
 
-        inValueContext {
-            if (element.isLocal && allowResolveToProperty) {
-                foundIfNameMatches(element)
-            }
-            data.parentOnly {
-                element.contextParameters.processMany { processParameter(it, data) }
-            }
+        if (element.isLocal && allowResolveToProperty) {
+            foundIfNameMatches(element)
         }
-
-        inTypeContext {
-            data.parentOnly {
-                element.typeParameters.processMany(::processTypeParameter)
-            }
+        data.parentOnly {
+            element.contextParameters.processMany { processParameter(it, data) }
         }
     }
 
     override fun visitClass(klass: KtClass, data: VisitorContext) {
         super.visitClass(klass, data)
 
-        inValueContext(strict = true) {
+        if (strict) {
             if (name == klass.nameAsSafeName) {
                 //            object A
                 //            fun f() {
@@ -254,27 +266,19 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                 //                ^ this A should resolve to the companion object
                 //            }
                 //
-                // note: only in value context, in a `::class` literal (VALUE_OR_TYPE context), we should resolve to the local `class A`
+                // note: only in value context, in a `::class` literal (!strict context), we should resolve to the local `class A`
                 klass.companionObjects.firstOrNull()?.let(::found)
             }
         }
-        inTypeContext {
-            foundIfNameMatches(klass) // visit class itself only in type context
 
-            data.parentOnly {
-                klass.typeParameters.processMany(::processTypeParameter)
-            }
-        }
-        inValueContext {
-            data.parentOnly {
-                if (constructorParametersAllowed) {
-                    klass.primaryConstructorParameters.processMany {
-                        if (it.isPropertyParameter()) {
-                            return@processMany
-                        }
-
-                        processParameter(it, data)
+        data.parentOnly {
+            if (constructorParametersAllowed) {
+                klass.primaryConstructorParameters.processMany {
+                    if (it.isPropertyParameter()) {
+                        return@processMany
                     }
+
+                    processParameter(it, data)
                 }
             }
         }
@@ -290,13 +294,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
         super.visitNamedFunction(element, data)
 
         data.parentOnly {
-            inValueContext {
-                element.valueParameters.processMany { processParameter(it, data) }
-                element.contextParameters.processMany { processParameter(it, data) }
-            }
-            inTypeContext {
-                element.typeParameters.processMany(::processTypeParameter)
-            }
+            element.valueParameters.processMany { processParameter(it, data) }
+            element.contextParameters.processMany { processParameter(it, data) }
         }
 
         // functions cannot be referenced via simple references unless
@@ -307,45 +306,29 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: VisitorContext) {
         super.visitPrimaryConstructor(constructor, data)
 
-        inValueContext {
-            constructor.valueParameters.processMany { processParameter(it, data) }
-            constructor.contextParameters.processMany { processParameter(it, data) }
-        }
-        inTypeContext {
-            constructor.typeParameters.processMany(::processTypeParameter)
-        }
+        constructor.valueParameters.processMany { processParameter(it, data) }
+        constructor.contextParameters.processMany { processParameter(it, data) }
     }
 
     override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: VisitorContext) {
         super.visitSecondaryConstructor(constructor, data)
 
-        inValueContext {
-            constructor.valueParameters.processMany { processParameter(it, data) }
-            constructor.contextParameters.processMany { processParameter(it, data) }
-        }
-        inTypeContext {
-            constructor.typeParameters.processMany(::processTypeParameter)
-        }
-    }
-
-    private fun processTypeParameter(tyParam: KtTypeParameter) {
-        foundIfNameMatches(tyParam)
+        constructor.valueParameters.processMany { processParameter(it, data) }
+        constructor.contextParameters.processMany { processParameter(it, data) }
     }
 
     override fun visitLambdaExpression(element: KtLambdaExpression, data: VisitorContext) {
         super.visitLambdaExpression(element, data)
 
-        inValueContext {
-            data.parentOnly {
-                if (
-                    !element.functionLiteral.hasParameterSpecification() &&
-                    name == IMPLICIT_LAMBDA_PARAMETER
-                ) {
-                    stopResolution()
-                }
-
-                element.valueParameters.processMany { processParameter(it, data) }
+        data.parentOnly {
+            if (
+                !element.functionLiteral.hasParameterSpecification() &&
+                name == IMPLICIT_LAMBDA_PARAMETER
+            ) {
+                stopResolution()
             }
+
+            element.valueParameters.processMany { processParameter(it, data) }
         }
     }
 
@@ -354,17 +337,6 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
             null -> foundIfNameMatches(parameter)
 
             else -> processDestructuringDeclaration(des, data)
-        }
-    }
-
-    private fun found(element: KtNamedDeclaration) {
-        if (_found != null) return
-        _found = element
-    }
-
-    private fun foundIfNameMatches(element: KtNamedDeclaration) {
-        if (element.nameAsSafeName == name) {
-            found(element)
         }
     }
 
@@ -385,62 +357,98 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
             }
         }
 
-        inValueContext {
-            decl.entries.processMany(::foundIfNameMatches)
-        }
-    }
-
-    override fun visitTypeAlias(decl: KtTypeAlias, data: VisitorContext) {
-        super.visitTypeAlias(decl, data)
-
-        inTypeContext {
-            foundIfNameMatches(decl)
-        }
+        decl.entries.processMany(::foundIfNameMatches)
     }
 
     override fun visitPropertyAccessor(accessor: KtPropertyAccessor, data: VisitorContext) {
         super.visitPropertyAccessor(accessor, data)
 
-        inValueContext {
-            data.parentOnly {
-                accessor.valueParameters.processMany { processParameter(it, data) }
-            }
+        data.parentOnly {
+            accessor.valueParameters.processMany { processParameter(it, data) }
         }
     }
 
     override fun visitCatchSection(catchClause: KtCatchClause, data: VisitorContext) {
         super.visitCatchSection(catchClause, data)
 
-        inValueContext {
-            data.parentOnly {
-                catchClause.parameterList?.parameters?.processMany { processParameter(it, data) }
-            }
+        data.parentOnly {
+            catchClause.parameterList?.parameters?.processMany { processParameter(it, data) }
+        }
+    }
+}
+
+private class TypeLocalReferenceTargetLookupVisitor(
+    element: KtNameReferenceExpression,
+) : LocalReferenceTargetLookupVisitor(element) {
+    override fun isStopElement(element: KtElement, lastDirection: LastDirection): Boolean =
+        lastDirection == PARENT &&
+                when (element) {
+                    is KtNamedFunction -> !element.isLocal
+                    is KtProperty -> !element.isLocal
+                    is KtClassOrObject,
+                    is KtAnonymousInitializer,
+                    is KtConstructor<*>,
+                        -> true
+                    else -> false
+                }
+                || element.isScriptTopLevelElement
+
+    override fun visitProperty(element: KtProperty, data: VisitorContext) {
+        super.visitProperty(element, data)
+
+        data.parentOnly {
+            element.typeParameters.processMany(::processTypeParameter)
         }
     }
 
-    private inline fun <T> Iterable<T>.processMany(f: (T) -> Unit) {
-        if (_found != null) return
+    override fun visitClass(klass: KtClass, data: VisitorContext) {
+        super.visitClass(klass, data)
 
-        for (element in this) {
-            f(element)
+        foundIfNameMatches(klass) // visit class itself only in type context
+
+        data.parentOnly {
+            klass.typeParameters.processMany(::processTypeParameter)
         }
     }
 
-    private inline fun inValueContext(strict: Boolean = false, block: () -> Unit) = when (contextKind) {
-        VALUE -> block()
-        TYPE -> {}
-        VALUE_OR_TYPE if !strict -> block()
-        else -> {}
+    override fun visitObjectDeclaration(declaration: KtObjectDeclaration, data: VisitorContext) {
+        super.visitObjectDeclaration(declaration, data)
+
+        foundIfNameMatches(declaration)
     }
 
-    private inline fun inTypeContext(block: () -> Unit) = when (contextKind) {
-        VALUE -> {}
-        TYPE -> block()
-        VALUE_OR_TYPE -> block()
+    override fun visitNamedFunction(element: KtNamedFunction, data: VisitorContext) {
+        super.visitNamedFunction(element, data)
+
+        data.parentOnly {
+            element.typeParameters.processMany(::processTypeParameter)
+        }
+
+        // functions cannot be referenced via simple references unless
+        // they are part of KtCallExpressions, and we do not do any overload
+        // resolution here
     }
 
-    private inline fun VisitorContext.parentOnly(block: () -> Unit) {
-        if (lastDirection == PARENT) block()
+    override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: VisitorContext) {
+        super.visitPrimaryConstructor(constructor, data)
+
+        constructor.typeParameters.processMany(::processTypeParameter)
+    }
+
+    override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: VisitorContext) {
+        super.visitSecondaryConstructor(constructor, data)
+
+        constructor.typeParameters.processMany(::processTypeParameter)
+    }
+
+    private fun processTypeParameter(tyParam: KtTypeParameter) {
+        foundIfNameMatches(tyParam)
+    }
+
+    override fun visitTypeAlias(decl: KtTypeAlias, data: VisitorContext) {
+        super.visitTypeAlias(decl, data)
+
+        foundIfNameMatches(decl)
     }
 }
 
@@ -449,10 +457,9 @@ private val IMPLICIT_LAMBDA_PARAMETER: Name = Name.identifier("it")
 @KtImplementationDetail
 object LookupLocallyInternals {
     @KtImplementationDetail
-    enum class ContextKind {
-        VALUE,
-        TYPE,
-        VALUE_OR_TYPE,
+    sealed interface ContextKind {
+        data class VALUE(val strict: Boolean = true) : ContextKind
+        data object TYPE : ContextKind
     }
 
     @KtImplementationDetail
@@ -468,30 +475,42 @@ object LookupLocallyInternals {
             is KtDotQualifiedExpression,
             is KtSafeQualifiedExpression,
                 -> {
-                ContextKind.VALUE.takeIf { p.receiverExpression == expression }
+                ContextKind.VALUE().takeIf { p.receiverExpression == expression }
             }
             is KtUserType -> {
                 ContextKind.TYPE
                     .takeIf { p.qualifier == null && (p.referenceExpression == expression) }
             }
-            is KtClassLiteralExpression -> VALUE_OR_TYPE
+            // We can use types in a class literal expression as well, but between a non-local variable and a local class of the same name,
+            // the compiler picks the non-local variable. I.e. in this case:
+            //
+            // val x: Int = 0
+            // fun f() {
+            //     class x
+            //     x::class
+            //     ^ resolves to `val x` rather than `class x`
+            // }
+            //
+            // So we can only resolve local variables in class literal expressions, trying to resolve types causes it to be unsound
+            // because of the above.
+            is KtClassLiteralExpression -> VALUE(false)
             is KtProperty -> {
-                ContextKind.VALUE.takeIf { p.delegateExpressionOrInitializer == expression }
+                ContextKind.VALUE().takeIf { p.delegateExpressionOrInitializer == expression }
             }
             is KtDestructuringDeclaration -> {
-                ContextKind.VALUE.takeIf { p.initializer == expression }
+                ContextKind.VALUE().takeIf { p.initializer == expression }
             }
             is KtNamedFunction -> {
-                ContextKind.VALUE.takeIf { p.bodyExpression == expression }
+                ContextKind.VALUE().takeIf { p.bodyExpression == expression }
             }
             is KtPropertyAccessor -> {
-                ContextKind.VALUE.takeIf { p.bodyExpression == expression }
+                ContextKind.VALUE().takeIf { p.bodyExpression == expression }
             }
             is KtParameter -> {
-                ContextKind.VALUE.takeIf { p.defaultValue == expression }
+                ContextKind.VALUE().takeIf { p.defaultValue == expression }
             }
             is KtDelegatedSuperTypeEntry -> {
-                if (p.delegateExpression == expression) return VALUE
+                if (p.delegateExpression == expression) return VALUE()
 
                 TYPE
             }
@@ -513,7 +532,7 @@ object LookupLocallyInternals {
             is KtSimpleNameStringTemplateEntry,
             is KtWhenConditionWithExpression,
             is KtWhenEntry,
-                -> VALUE
+                -> VALUE()
             is KtTypeConstraint -> TYPE
             else -> null
         }
@@ -534,3 +553,10 @@ private class VisitorContext(
     val lastDirection: LastDirection,
     val previousElement: KtElement?,
 )
+
+private inline fun VisitorContext.parentOnly(block: () -> Unit) {
+    if (lastDirection == PARENT) block()
+}
+
+private val KtElement.isScriptTopLevelElement: Boolean
+    get() = parent is KtBlockExpression && parent.parent is KtScript

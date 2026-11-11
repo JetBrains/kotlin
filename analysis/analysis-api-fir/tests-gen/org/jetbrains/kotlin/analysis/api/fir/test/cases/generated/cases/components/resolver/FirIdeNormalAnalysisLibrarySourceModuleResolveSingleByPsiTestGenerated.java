@@ -981,6 +981,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveSingleByPsiTestGenera
   }
 
   @Test
+  @TestMetadata("lookupLocallyClassLiterals.kt")
+  public void testLookupLocallyClassLiterals() {
+    run("lookupLocallyClassLiterals.kt");
+  }
+
+  @Test
   @TestMetadata("lookupLocallyShouldNotResolveNonLocalProperties.kt")
   public void testLookupLocallyShouldNotResolveNonLocalProperties() {
     run("lookupLocallyShouldNotResolveNonLocalProperties.kt");
