@@ -8,30 +8,32 @@ package org.jetbrains.kotlin.gradle.unitTests.compilerArguments
 import org.gradle.api.Project
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.toCompilerValue
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 abstract class ReturnValueCheckerTestBase {
     protected fun Project.assertMode(taskName: String, mode: ReturnValueCheckerMode?) {
         val args = compileArguments(taskName)
+        val matchingArgs = args.filter { it.contains("return-value-checker") }
         if (mode == null) {
             assertTrue(
-                args.none { it.contains("return-value-checker") },
+                matchingArgs.isEmpty(),
                 "Arguments for task '${taskName}' should not contain return-value-checker: $args"
             )
         } else {
-            val args = args.filter { it.contains("return-value-checker") }
-            assertEquals(
-                1,
-                args.size,
-                "A single return-value-checker argument is expected for '${taskName}': $args"
+            // Argument can come from either the task settings, or from the language settings where it is added as a free arg.
+            assertTrue(
+                matchingArgs.isNotEmpty(),
+                "Arguments for task '${taskName}' should contain return-value-checker: $args"
             )
             assertTrue(
-                args.any { it.contains("return-value-checker=${mode.toCompilerValue()}") },
-                "Arguments for task '${taskName}' should contain return-value-checker in $mode mode: $args"
+                matchingArgs.all { it.contains("return-value-checker=${mode.toCompilerValue()}") },
+                "All return-value-checker arguments for task '${taskName}' should be in $mode mode: $matchingArgs"
             )
         }
     }
