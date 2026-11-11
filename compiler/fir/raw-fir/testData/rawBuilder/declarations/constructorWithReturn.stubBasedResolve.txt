@@ -1,0 +1,13 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] constructorWithReturn.kt
+    public open [ResolvedTo(BODY_RESOLVE)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Owner : R|Base| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|kotlin/Int| = LAZY_EXPRESSION): R|Owner| { LAZY_BLOCK }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }

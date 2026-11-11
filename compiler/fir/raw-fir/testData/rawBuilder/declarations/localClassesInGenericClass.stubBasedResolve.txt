@@ -1,0 +1,13 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] localClassesInGenericClass.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Owner<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Owner] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|Owner<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Owner] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|, [ResolvedTo(ANNOTATION_ARGUMENTS)] y: R|kotlin/Int|): R|Owner<T>| { LAZY_BLOCK }
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] init { LAZY_BLOCK }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
