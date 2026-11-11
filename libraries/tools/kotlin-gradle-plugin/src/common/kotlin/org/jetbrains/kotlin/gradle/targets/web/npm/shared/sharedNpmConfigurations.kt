@@ -15,26 +15,22 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.API_SCOPE
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.IMPLEMENTATION_SCOPE
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.RUNTIME_ONLY_SCOPE
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.utils.createDependencyScope
-import org.jetbrains.kotlin.gradle.utils.createResolvable
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
-import org.jetbrains.kotlin.gradle.utils.registerArtifact
-import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
+import org.jetbrains.kotlin.gradle.utils.*
 
 internal val HasPlatformDisambiguator.platformName: String
     get() = platformDisambiguator ?: JsPlatformDisambiguator.jsPlatform
@@ -54,22 +50,33 @@ internal val KotlinJsIrTarget.npmRuntimeDependenciesVariantName: String
 internal val KotlinJsIrCompilation.npmRuntimeDependenciesResolverConfigurationName: String
     get() = disambiguateName("npmRuntimeDependenciesResolver")
 
-internal val HasPlatformDisambiguator.npmDependenciesReportUsageName: String
-    get() = npmDependenciesReportConfigurationName
+private const val NPM_DEPENDENCIES_REPORT_USAGE = "kotlinNpmDependenciesReport"
 
-internal val HasPlatformDisambiguator.npmRuntimeDependenciesUsageName: String
-    get() = lowerCamelCaseName("kotlin", "npmRuntimeDependencies", platformName)
+private const val NPM_RUNTIME_DEPENDENCIES_USAGE = "kotlinNpmRuntimeDependencies"
 
-private fun Project.npmDependenciesReportAttributes(attributes: AttributeContainer, usageName: String) {
-    attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(usageName))
+/** Sets the attributes that tell the JS and the WasmJS npm dependency reports apart. */
+private fun AttributeContainer.platformAttributes(disambiguator: HasPlatformDisambiguator) {
+    when (disambiguator) {
+        JsPlatformDisambiguator -> attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        WasmPlatformDisambiguator -> {
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
+            attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, KotlinWasmTargetAttribute.js)
+        }
+        else -> error("Unexpected platform '${disambiguator.platformName}' for the shared npm project")
+    }
+}
+
+private fun Project.npmDependenciesReportAttributes(attributes: AttributeContainer, platform: HasPlatformDisambiguator) {
+    attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(NPM_DEPENDENCIES_REPORT_USAGE))
     attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
+    attributes.platformAttributes(platform)
 }
 
 internal fun Project.maybeCreateNpmDependenciesReport(platform: HasPlatformDisambiguator): Configuration =
     configurations.maybeCreateConsumable(platform.npmDependenciesReportConfigurationName) {
         setInvisibleIfSupported()
         description = "npm dependency reports of this project for the shared-npm-project."
-        npmDependenciesReportAttributes(attributes, platform.npmDependenciesReportUsageName)
+        npmDependenciesReportAttributes(attributes, platform)
     }
 
 internal fun Project.createNpmDependenciesReportResolver(platform: HasPlatformDisambiguator): Configuration {
@@ -80,9 +87,10 @@ internal fun Project.createNpmDependenciesReportResolver(platform: HasPlatformDi
 
     return configurations.createResolvable(platform.npmDependenciesReportResolverConfigurationName) {
         setInvisibleIfSupported()
-        description = "Resolves the '${platform.npmDependenciesReportConfigurationName}' npm dependency reports of the projects in '${platform.npmSharedDependenciesConfigurationName}'."
+        description =
+            "Resolves the '${platform.npmDependenciesReportConfigurationName}' npm dependency reports of the projects in '${platform.npmSharedDependenciesConfigurationName}'."
         extendsFrom(sharedDependencies.get())
-        npmDependenciesReportAttributes(attributes, platform.npmDependenciesReportUsageName)
+        npmDependenciesReportAttributes(attributes, platform)
     }
 }
 
@@ -95,12 +103,11 @@ private const val FILE_DEPENDENCY_USAGE = "kotlinNpmFileDependency"
 /** Offers the main compilation's report to projects that depend on this one, next to its klib. */
 internal fun Project.createNpmRuntimeDependenciesVariant(
     target: KotlinJsIrTarget,
-    platform: HasPlatformDisambiguator,
     report: Provider<RegularFile>,
 ) {
     val runtimeElements = configurations.getByName(target.runtimeElementsConfigurationName)
     runtimeElements.outgoing.variants.create(target.npmRuntimeDependenciesVariantName) { variant ->
-        variant.attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(platform.npmRuntimeDependenciesUsageName))
+        variant.attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(NPM_RUNTIME_DEPENDENCIES_USAGE))
         variant.registerArtifact(report, type = NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE)
     }
 }
@@ -123,12 +130,15 @@ private fun Project.registerPackageJsonToNpmDependencyReportTransform(target: Ko
         DIRECTORY_TYPE to fileDependencyUsage,
         JSON_TYPE to fileDependencyUsage,
     )
-    for ((fromArtifactType, fromUsage) in sources) {
+    sources.forEach { (fromArtifactType, fromUsage) ->
         dependencies.registerTransform(PackageJsonToNpmDependencyReportTransform::class.java) { transform ->
             transform.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, fromArtifactType)
             transform.from.attribute(Usage.USAGE_ATTRIBUTE, fromUsage)
+            transform.from.platformAttributes(platform)
+
             transform.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE)
-            transform.to.attribute(Usage.USAGE_ATTRIBUTE, usageByName(platform.npmRuntimeDependenciesUsageName))
+            transform.to.attribute(Usage.USAGE_ATTRIBUTE, usageByName(NPM_RUNTIME_DEPENDENCIES_USAGE))
+            transform.to.platformAttributes(platform)
             transform.parameters.target.set(platform.platformName)
         }
     }
@@ -148,10 +158,10 @@ internal fun Project.createNpmRuntimeDependenciesResolver(compilation: KotlinJsI
     }
 
 /** Projects offer their report; other dependencies are turned into one by [PackageJsonToNpmDependencyReportTransform]. */
-internal fun Project.npmRuntimeDependenciesReports(resolver: Configuration, platform: HasPlatformDisambiguator): FileCollection =
+internal fun Project.npmRuntimeDependenciesReports(resolver: Configuration): FileCollection =
     resolver.incoming.artifactView { view ->
         view.attributes { attributes ->
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(platform.npmRuntimeDependenciesUsageName))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(NPM_RUNTIME_DEPENDENCIES_USAGE))
             attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE)
         }
     }.files

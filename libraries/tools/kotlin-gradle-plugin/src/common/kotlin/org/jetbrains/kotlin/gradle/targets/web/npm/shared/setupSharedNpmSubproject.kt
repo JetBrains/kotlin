@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.toKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.withType
 
@@ -50,7 +49,7 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
         val reportTask = project.registerTask<KotlinNpmDependencyReportTask>(compilation.npmDependenciesReportTaskName) { task ->
             task.description = "Collects the npm dependencies of $compilation."
             task.target.convention(platformDirectoryName)
-            task.compilation.configure(project, compilation, npmRuntimeDependenciesResolver, platform)
+            task.compilation.configure(project, compilation, npmRuntimeDependenciesResolver)
             task.outputFile.convention(
                 project.layout.buildDirectory.file(
                     compilation.outputModuleName.map { "kotlin-npm/$platformDirectoryName/npm-dep-reports/$it/$NPM_DEPENDENCY_REPORT_FILE_NAME" }
@@ -61,7 +60,7 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
         val reportFile = reportTask.flatMap { it.outputFile }
         npmDependenciesReport.outgoing.artifact(reportFile)
         if (compilation.isMain()) {
-            project.createNpmRuntimeDependenciesVariant(target, platform, reportFile)
+            project.createNpmRuntimeDependenciesVariant(target, reportFile)
         }
     }
 }
@@ -73,7 +72,6 @@ private fun CompilationNpmDependencies.configure(
     project: Project,
     compilation: KotlinJsIrCompilation,
     npmRuntimeDependenciesResolver: Configuration,
-    platform: HasPlatformDisambiguator,
 ) {
     moduleName.convention(compilation.outputModuleName)
     directUserDependencies.convention(project.provider {
@@ -84,7 +82,7 @@ private fun CompilationNpmDependencies.configure(
         )
     })
     npmToolingDependencies.convention(project.provider { project.collectDevNpmDependencies(compilation) })
-    dependencyReports.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver, platform))
+    dependencyReports.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver))
 }
 
 private fun collectDirectDeclaredNpmDependencies(
