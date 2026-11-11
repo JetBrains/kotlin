@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.test.federation
 
 import org.jetbrains.kotlin.testFederation.TestFederationPlan
+import org.jetbrains.kotlin.testFederation.TestSubset
+import org.jetbrains.kotlin.testFederation.TestSubset.AllTests
 import kotlin.collections.maxOf
 import kotlin.collections.plus
 
@@ -15,7 +17,7 @@ internal class TestFederationPlanAsciiRenderer(plan: TestFederationPlan) {
     private val rows = plan.entries.map { row ->
         val domainName = row.domain.name + if (row.isChanged) "*" else ""
         val testSubsets = row.testSubsets.joinToString(", ") { it.name }
-        val reason = row.reason
+        val reason = row.reasonPerSubset[AllTests] ?: ""
         listOf(domainName, testSubsets, reason)
     }
     private val allRows = listOf(header) + rows
