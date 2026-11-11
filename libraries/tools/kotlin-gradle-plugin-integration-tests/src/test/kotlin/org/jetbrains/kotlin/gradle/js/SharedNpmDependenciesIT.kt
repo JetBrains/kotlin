@@ -13,6 +13,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.NpmDependencyReport
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readNpmDependencyReport
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readPackageJsonDependencies
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.writeTo
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
@@ -605,6 +607,61 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     js.resolve("packages/emptyKts-lib-b-second/package.json"),
                     name = "emptyKts-lib-b-second",
                     dependencies = secondDependencies,
+                )
+            }
+        }
+    }
+
+    @DisplayName("An unparsable npm dependency report fails the shared npm project setup")
+    @GradleTest
+    fun testUnparsableNpmDependencyReportFailsSetup(gradleVersion: GradleVersion) {
+        assertInvalidNpmDependencyReportFailsSetup(gradleVersion) { report ->
+            report.parent.createDirectories()
+            report.writeText("{ not json")
+        }
+    }
+
+    @DisplayName("An npm dependency report without a compilation name fails the shared npm project setup")
+    @GradleTest
+    fun testNpmDependencyReportWithoutCompilationNameFailsSetup(gradleVersion: GradleVersion) {
+        assertInvalidNpmDependencyReportFailsSetup(gradleVersion) { report ->
+            NpmDependencyReport(target = "js", compilation = "").writeTo(report.toFile())
+        }
+    }
+
+    /**
+     * Replaces the npm dependency report of `:lib` with [writeInvalidReport],
+     * and excludes its report task so the setup task reads the invalid report.
+     */
+    private fun assertInvalidNpmDependencyReportFailsSetup(
+        gradleVersion: GradleVersion,
+        writeInvalidReport: (report: Path) -> Unit,
+    ) {
+        project("emptyKts", gradleVersion) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            buildScriptInjection {
+                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib")))
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        js { nodejs() }
+                    }
+                }
+            }
+
+            val report = projectPath.resolve("lib/build/kotlin-npm/js/npm-dep-reports/emptyKts-lib/npm-dep-report.json")
+            writeInvalidReport(report)
+
+            buildAndFail("kotlinJsSetupSharedNpmProject", "-x", ":lib:jsNpmDependenciesReport") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.SharedNpmProjectInvalidNpmDependencyReport,
+                    withSubstring = report.toString(),
                 )
             }
         }
