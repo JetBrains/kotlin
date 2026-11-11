@@ -21,14 +21,6 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
-
-private fun getLibraryJar(classToDetect: String): File? = try {
-    PathUtil.getResourcePathForClass(Class.forName(classToDetect))
-} catch (e: ClassNotFoundException) {
-    null
-}
 
 class ParcelizeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
