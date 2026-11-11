@@ -62,7 +62,7 @@ val stdlibJvmIr = configurations.create("stdlibJvmIr") {
 }
 
 dependencies {
-    stdlibJvmIr(project(":kotlin-stdlib-jklib-for-test", configuration = "distMinimalJKlib"))
+    stdlibJvmIr(project(":kotlin-stdlib-jklib-for-test", configuration = "distJKlib"))
     testRuntimeOnly(files(stdlibJvmIr))
 }
 
