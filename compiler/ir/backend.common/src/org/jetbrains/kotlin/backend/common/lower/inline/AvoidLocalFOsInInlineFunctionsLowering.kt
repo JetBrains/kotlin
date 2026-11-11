@@ -68,10 +68,10 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
 
             override fun visitCall(expression: IrCall) {
                 val callee = expression.symbol.owner
-                findOverriddenNonLocalFo(callee)?.let { newSymbol ->
-                    expression.symbol = newSymbol as IrSimpleFunctionSymbol
-                    newSymbol.owner.dispatchReceiverParameter?.let { dispatchParam ->
-                        val superClass = newSymbol.owner.parentAsClass
+                findOverriddenNonLocalFo(callee)?.let { overriddenFunction ->
+                    expression.symbol = overriddenFunction as IrSimpleFunctionSymbol
+                    overriddenFunction.owner.dispatchReceiverParameter?.let { dispatchParam ->
+                        val superClass = overriddenFunction.owner.parentAsClass
                         // The call now targets a member of `superClass`, so the dispatch receiver (currently typed as the local class)
                         // has to be cast to the corresponding supertype. The supertype is computed from the actual receiver type
                         // rather than from the local class declaration, because for a generic local class the declared supertype
