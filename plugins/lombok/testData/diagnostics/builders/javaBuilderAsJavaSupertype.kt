@@ -1,5 +1,4 @@
 // ISSUE: KT-91173
-// DISABLE_WITH_PARSER: Psi
 
 // FILE: test/Owner.java
 package test;
