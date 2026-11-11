@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/assign-plugin/testData") {
-            testClass<AbstractFirPsiAssignmentPluginDiagnosticTest> {
+            testClass<AbstractFirAssignmentPluginDiagnosticTest> {
                 model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin> {

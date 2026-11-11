@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class ValueContainer
 
 @ValueContainer
@@ -53,3 +54,7 @@ fun `should not effect error reporting for other operators`() {
     task.<!VARIABLE_EXPECTED!>get(0)<!> = StringProperty("Fail")
     nullTask?.<!VARIABLE_EXPECTED!>get(0)<!> = StringProperty("Fail")
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, comparisonExpression, data,
+funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction, localProperty, nullableType, operator,
+primaryConstructor, propertyDeclaration, safeCall, stringLiteral, thisExpression */
