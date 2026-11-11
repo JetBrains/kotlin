@@ -191,6 +191,8 @@ private fun ConeUnionType.fullyExpandedUnionType(
     if (!isAnyComponentExpanded) return this
 
     val unifiedType = ConeTypeUnifier.unify(expandedPrimary, expandedRichErrorTypes, attributes, useSiteSession.typeContext)
+    // Cast should be safe as the only way the result of `unify` is not a `ConeSimpleKotlinType`
+    // is when passing `Nothing` and a single flexible error component to `unify` which shouldn't ever happen.
     return unifiedType as ConeSimpleKotlinType
 }
 
