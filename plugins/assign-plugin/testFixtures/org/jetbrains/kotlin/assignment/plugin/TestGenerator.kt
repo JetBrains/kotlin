@@ -17,6 +17,9 @@ fun main(args: Array<String>) {
             testClass<AbstractFirAssignmentPluginDiagnosticTest> {
                 model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
+            testClass<AbstractLLAssignmentPluginDiagnosticTest> {
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin> {
                 model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }

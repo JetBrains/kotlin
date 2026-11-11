@@ -1,0 +1,19 @@
+/incorrectUsage.ll.kt:22:5: error: None of the following candidates is applicable:
+
+fun assign(v: String): Unit:
+  Argument type mismatch: actual type is 'Int', but 'String' was expected.
+
+fun assign(v: StringProperty): Unit:
+  Argument type mismatch: actual type is 'Int', but 'StringProperty' was expected.
+
+/incorrectUsage.ll.kt:22:16: error: No applicable 'assign' function found for '=' overload.
+
+/incorrectUsage.ll.kt:28:9: error: None of the following candidates is applicable:
+
+fun assign(v: String): Unit:
+  Argument type mismatch: actual type is 'Int', but 'String' was expected.
+
+fun assign(v: StringProperty): Unit:
+  Argument type mismatch: actual type is 'Int', but 'StringProperty' was expected.
+
+/incorrectUsage.ll.kt:28:15: error: No applicable 'assign' function found for '=' overload.

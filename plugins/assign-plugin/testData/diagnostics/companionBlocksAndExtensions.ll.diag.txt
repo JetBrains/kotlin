@@ -1,0 +1,7 @@
+/companionBlocksAndExtensions.ll.kt:22:5: error: Unresolved reference 'assign' on receiver of type 'StringProperty'.
+
+/companionBlocksAndExtensions.ll.kt:22:16: error: No applicable 'assign' function found for '=' overload.
+
+/companionBlocksAndExtensions.ll.kt:23:5: error: Unresolved reference 'assign' on receiver of type 'StringProperty'.
+
+/companionBlocksAndExtensions.ll.kt:23:16: error: No applicable 'assign' function found for '=' overload.
