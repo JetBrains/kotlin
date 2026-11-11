@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
@@ -64,7 +65,12 @@ internal class KotlinNativeFromToolchainProvider(
 
     private val providerFactory = project.providers
 
-    @get:Internal
+    /**
+     * The distribution type defines whether platform libraries are part of the distribution. Platform libraries are not task inputs
+     * (the compiler takes them from its distribution), so the type and [kotlinNativeBundleVersion] are what identifies them (KT-91182).
+     */
+    @get:Input
+    @get:Optional
     internal val nativeDistributionType = project.provider { PropertiesProvider(project).nativeDistributionType }
 
     @get:Internal
