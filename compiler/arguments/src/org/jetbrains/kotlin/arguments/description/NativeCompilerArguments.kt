@@ -338,6 +338,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     @OptIn(ExperimentalArgumentApi::class)

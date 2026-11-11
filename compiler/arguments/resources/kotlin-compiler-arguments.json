@@ -20510,7 +20510,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
-                                        "restrictedToCompilerPhase": null,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
