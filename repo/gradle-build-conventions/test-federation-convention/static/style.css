@@ -187,3 +187,40 @@ img {
 }
 
 .chip[data-annotation]:hover::after, .chip[data-annotation]:hover::before { opacity: 1; }
+
+.theme-switcher {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: flex;
+}
+
+.theme-option {
+    padding: 2px 10px;
+    border: 1px solid var(--border);
+    border-left: none;
+    background: var(--header-bg);
+    color: var(--fg);
+    font-family: sans-serif;
+    font-size: 0.85em;
+    cursor: pointer;
+}
+
+.theme-option:first-child {
+    border-left: 1px solid var(--border);
+    border-radius: 6px 0 0 6px;
+}
+
+.theme-option:last-child {
+    border-radius: 0 6px 6px 0;
+}
+
+.theme-option.active {
+    background: var(--fg);
+    border-color: var(--fg);
+    color: var(--bg);
+}
+
+@media print {
+    .theme-switcher { display: none; }
+}

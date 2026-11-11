@@ -15,7 +15,7 @@ internal class TestFederationPlanHtmlRenderer(
 ) {
     companion object {
         private const val STYLE_CSS_FILE = ".test-federation.style.css"
-        private const val DARK_THEME_JS_FILE = ".test-federation.dark-theme.js"
+        private const val THEME_SWITCHER_JS_FILE = ".test-federation.theme-switcher.js"
         private const val FILTERING_SVG_FILE = ".test-federation.filtering-hierarchy.svg"
     }
 
@@ -26,14 +26,32 @@ internal class TestFederationPlanHtmlRenderer(
                 meta(charset = "utf-8")
                 title("Test Federation")
                 link(rel = "stylesheet", href = STYLE_CSS_FILE)
-                script(src = DARK_THEME_JS_FILE) {}
+                script(src = THEME_SWITCHER_JS_FILE) {}
             }
             body {
+                renderThemeSwitcher()
                 renderPlan()
                 renderSubsetsExplanation()
                 renderPrefixesExplanation()
             }
         }
+
+    private fun BODY.renderThemeSwitcher() {
+        div("theme-switcher") {
+            button(classes = "theme-option") {
+                attributes["theme"] = "auto"
+                +"Sync with OS"
+            }
+            button(classes = "theme-option") {
+                attributes["theme"] = "light"
+                +"Light"
+            }
+            button(classes = "theme-option") {
+                attributes["theme"] = "dark"
+                +"Dark"
+            }
+        }
+    }
 
     private fun BODY.renderPlan() {
         h2 { +"Execution plan" }
