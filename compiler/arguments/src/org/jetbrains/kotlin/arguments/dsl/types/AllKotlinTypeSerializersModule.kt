@@ -40,6 +40,12 @@ internal val allKotlinTypeSerializersModule = SerializersModule {
     contextualSerializerWithVersions<SourceMapEmbedSources>()
     contextualSerializerWithVersions<SourceMapNamesPolicy>()
     contextualSerializerWithVersions<WasmTarget>()
+    contextualSerializerWithVersions<CompilerOutputKind>()
+    contextualSerializerWithVersions<KonanTarget>()
+    contextualSerializerWithVersions<NativeAllocationMode>()
+    contextualSerializerWithVersions<NativeGcMode>()
+    contextualSerializerWithVersions<NativeMemoryModel>()
+    contextualSerializerWithVersions<EnableDisableMode>()
 }
 
 private inline fun <reified T> SerializersModuleBuilder.contextualSerializerWithVersions() where T : WithKotlinReleaseVersionsMetadata, T : Enum<T>, T : WithStringRepresentation {
