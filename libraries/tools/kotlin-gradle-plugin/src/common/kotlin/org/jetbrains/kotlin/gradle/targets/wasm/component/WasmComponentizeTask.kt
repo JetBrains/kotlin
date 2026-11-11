@@ -13,6 +13,7 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.gradle.tasks.wasiadapter.UsesWasiAdapterToolchainSer
 import org.jetbrains.kotlin.gradle.tasks.wasmtools.UsesWasmToolsToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
-import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -60,6 +60,9 @@ internal constructor() :
     UsesWasiAdapterToolchainService {
     @get:Inject
     internal abstract val execOperations: ExecOperations
+
+    @get:Inject
+    internal abstract val providerFactory: ProviderFactory
 
     @get:Inject
     internal abstract val fs: FileSystemOperations
@@ -200,15 +203,14 @@ internal constructor() :
      * Returns whether the [module] exports _start.
      * The command flavor of the WASI preview1 adapter ([WasiAdapterFlavor.COMMAND]) requires this export.
      */
-    private fun hasStartExport(wasmTools: String, module: File): Boolean {
-        val wat = ByteArrayOutputStream()
-        execOperations.exec {
+    private fun hasStartExport(wasmTools: String, module: File): Boolean =
+        providerFactory.exec {
             it.executable = wasmTools
             it.args = listOf("print", "--skeleton", module.absolutePath)
-            it.standardOutput = wat
-        }
-        return wat.toString().lineSequence().any { it.trimStart().startsWith(START_EXPORT_PREFIX) }
-    }
+            it.isIgnoreExitValue = true // -> also returns false if the command failed, because stdout won't contain what we're looking for
+        }.standardOutput.asText.get()
+            .lineSequence()
+            .any { it.trimStart().startsWith(START_EXPORT_PREFIX) }
 
     /**
      * WIT projects of [witProjects] which can be passed to `wasm-tools component embed`,
