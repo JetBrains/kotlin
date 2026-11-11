@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.locateOrRegisterImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.web.checkWebIsolatedProjectsSupportOff
 import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -36,10 +37,13 @@ internal class NoBundleConfigurator(
 
     private val project = subTarget.project
 
-    private val nodeJsRoot = subTarget.target.webTargetVariant(
-        { project.jsToolingProject().kotlinNodeJsRootExtension },
-        { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
-    )
+    private val nodeJsRoot by lazy {
+        project.checkWebIsolatedProjectsSupportOff { "${subTarget.target.name} no-bundle distribution" }
+        subTarget.target.webTargetVariant(
+            { project.jsToolingProject().kotlinNodeJsRootExtension },
+            { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
+        )
+    }
 
     private val nodeJs = subTarget.target.webTargetVariant(
         { project.kotlinNodeJsEnvSpec },

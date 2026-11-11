@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateT
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
+import org.jetbrains.kotlin.gradle.targets.web.providerRequiringWebIsolatedProjectsSupportOff
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.Serializable
@@ -61,9 +62,11 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         )
     }
 
-    val dir: Provider<Directory> = nodeJsRoot.projectPackagesDirectory.zip(name) { directory, name ->
-        directory.dir(name)
-    }
+    val dir: Provider<Directory> = compilation.project
+        .providerRequiringWebIsolatedProjectsSupportOff("${compilation.name} npm project directory") { nodeJsRoot.projectPackagesDirectory }
+        .zip(name) { directory, name ->
+            directory.dir(name)
+        }
 
     val target: KotlinJsTargetDsl
         get() = compilation.target
@@ -71,7 +74,9 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
     val project: Project
         get() = target.project
 
-    val nodeModulesDir: Provider<Directory> = nodeJsRoot.rootPackageDirectory.map { it.dir(NODE_MODULES) }
+    val nodeModulesDir: Provider<Directory> = compilation.project
+        .providerRequiringWebIsolatedProjectsSupportOff("${compilation.name} node_modules directory") { nodeJsRoot.rootPackageDirectory }
+        .map { it.dir(NODE_MODULES) }
 
     val packageJsonFile: Provider<RegularFile>
         get() = dir.map { it.file(PACKAGE_JSON) }

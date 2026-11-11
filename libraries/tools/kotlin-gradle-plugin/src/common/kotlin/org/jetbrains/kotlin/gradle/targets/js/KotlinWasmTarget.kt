@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.targets.wasm.WasmtimeEnvironmentConfigurator
 import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmtimeDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.web.WebIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.targets.web.webIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
@@ -83,10 +85,12 @@ internal constructor(
     //region d8
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {
-        webTargetVariant(
-            { NodeJsRootPlugin.apply(project.jsToolingProject()) },
-            { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
-        )
+        if (project.webIsolatedProjectsSupport == WebIsolatedProjectsSupport.Off) {
+            webTargetVariant(
+                { NodeJsRootPlugin.apply(project.jsToolingProject()) },
+                { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
+            )
+        }
 
         addSubTarget(KotlinD8Ir::class.java) {
             configureSubTarget()

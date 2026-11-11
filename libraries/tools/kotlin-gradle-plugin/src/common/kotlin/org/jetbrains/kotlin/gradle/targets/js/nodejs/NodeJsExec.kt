@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
-import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
+import org.jetbrains.kotlin.gradle.targets.js.ir.npmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -135,7 +135,7 @@ constructor(
             val target = compilation.target
             val project = target.project
 
-            val nodeJsRoot = compilation.nodeJsRoot()
+            val npmVersions = compilation.npmVersions()
 
             @Suppress("DEPRECATION")
             val nodeJsEnvSpec = compilation.nodeJsEnvSpec
@@ -147,7 +147,7 @@ constructor(
                 name,
                 listOf(compilation)
             ) {
-                it.versions.value(nodeJsRoot.versions)
+                it.versions.value(npmVersions)
                     .disallowChanges()
                 if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
                     it.workingDir(npmProject.dir)

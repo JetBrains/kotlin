@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.checkWebIsolatedProjectsSupportOff
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
@@ -42,10 +43,13 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
     private val project = subTarget.project
 
-    private val nodeJsRoot: BaseNodeJsRootExtension = subTarget.target.webTargetVariant(
-        { project.jsToolingProject().kotlinNodeJsRootExtension },
-        { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
-    )
+    private val nodeJsRoot: BaseNodeJsRootExtension by lazy {
+        project.checkWebIsolatedProjectsSupportOff { "${subTarget.target.name} Webpack" }
+        subTarget.target.webTargetVariant(
+            { project.jsToolingProject().kotlinNodeJsRootExtension },
+            { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
+        )
+    }
 
     internal val isWasm: Boolean = subTarget.target.webTargetVariant(
         jsVariant = false,

@@ -16,10 +16,12 @@ abstract class KotlinJsIrNpmBasedSubTarget(
     target: KotlinJsIrTarget,
     disambiguationClassifier: String,
 ) : KotlinJsIrSubTarget(target, disambiguationClassifier) {
-    protected val nodeJsRoot = target.webTargetVariant(
-        { project.jsToolingProject().kotlinNodeJsRootExtension },
-        { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
-    )
+    protected val nodeJsRoot by lazy {
+        target.webTargetVariant(
+            { project.jsToolingProject().kotlinNodeJsRootExtension },
+            { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
+        )
+    }
 
     protected val nodeJsEnvSpec = target.webTargetVariant(
         { project.kotlinNodeJsEnvSpec },
