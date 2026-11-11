@@ -130,6 +130,7 @@ dependencies {
     testImplementation(project(":kotlin-gradle-plugin-idea"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
+    testImplementation(project(":kotlin-import-models"))
     // the IDE side of the Kotlin/JS browser debug session, used to drive the session in JsBrowserDebugSessionIT
     testImplementation(project(":kotlin-gradle-plugin-idea-browser-debug"))
     testImplementation(project(":gradle:kotlin-gradle-ecosystem-plugin"))
@@ -530,6 +531,11 @@ val kgpTestingUtilities = configurations.detachedConfiguration(
 
 tasks.withType<Test>().configureEach {
     shardTestsByMethod(kotlinBuildProperties.booleanProperty("kotlin.test.gradle.it.shardByMethod", false).get())
+
+    systemProperty(
+        "kotlin.test.update.test.data",
+        kotlinBuildProperties.booleanProperty("kotlin.test.update.test.data", false).get(),
+    )
 
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead

@@ -744,6 +744,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.FUNCTIONAL_TEST_MODE_PROPERTY) ?: false
 
     /**
+     * Registers the `dumpKotlinImportModels` diagnostic task, which writes every import model
+     * the project serves to the build directory as serialized `Result` bytes and a readable
+     * protobuf text form.
+     */
+    val dumpKotlinImportModels: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_INTERNAL_DUMP_KOTLIN_IMPORT_MODELS) ?: false
+
+    /**
      * Affects classpath snapshot transformation.
      *
      * If enabled, we'd additionally record the expanded types of top-level type aliases, which is required for correct
@@ -994,6 +1002,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_TASK_EXECUTION_CACHE_METRICS_FILE = property("$KOTLIN_INTERNAL_NAMESPACE.reportTaskExecutionCacheMetricsToFile")
 
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
+
+        val KOTLIN_INTERNAL_DUMP_KOTLIN_IMPORT_MODELS = property("$KOTLIN_INTERNAL_NAMESPACE.dumpKotlinImportModels")
 
         val NPM_SHARED_DEPENDENCIES_PROJECT_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.npm.sharedNpmDependenciesProjectMode")
     }
