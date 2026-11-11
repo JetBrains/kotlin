@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isCommonized
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.listLibraryFiles
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
-import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import java.io.File
 
 /**
@@ -44,8 +44,7 @@ internal abstract class IdeKonanDistributionLibsService : BuildService<IdeKonanD
         val konanTarget = commonizerTarget.konanTargetOrNull ?: return emptySet()
         return cache.getOrPut(commonizerTarget) {
             konanDistribution.platformLibsDir.resolve(konanTarget.name)
-                .listFiles().orEmpty()
-                .filter { it.isDirectory || it.extension == KLIB_FILE_EXTENSION }
+                .listLibraryFiles()
                 .mapNotNull { libraryFile ->
                     resolveNativeDistributionLibraryForIde(
                         libraryFile,

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.regressionTests
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesForTargetWithKonanDistribution
+import org.jetbrains.kotlin.gradle.targets.native.internal.listLibraryFiles
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.io.TempDir
@@ -34,5 +35,17 @@ class KT91182KotlinNativePlatformLibrariesOrderTest {
         )
 
         assertEquals(names, libraries.files.map { it.name })
+    }
+
+    // KT-91182
+    @Test
+    fun `listLibraryFiles is sorted by name and skips non-library files`() {
+        val names = listOf("a", "b.klib", "c", "d.klib")
+        names.reversed().forEach { name ->
+            if (name.endsWith(".klib")) konanHome.resolve(name).writeText("") else konanHome.resolve(name).mkdirs()
+        }
+        konanHome.resolve("readme.txt").writeText("")
+
+        assertEquals(names, konanHome.listLibraryFiles().map { it.name })
     }
 }
