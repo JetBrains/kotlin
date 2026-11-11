@@ -4,11 +4,11 @@ import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 
+@ImportedBridge("main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__")
+internal external fun main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(pointerToClosure: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Boolean
+
 @ImportedBridge("main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 internal external fun main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Boolean
-
-@ImportedBridge("main_internal_functional_type_callee_async_ctx1_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__")
-internal external fun main_internal_functional_type_callee_async_ctx1_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(pointerToClosure: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Boolean
 
 @ExportedBridge("__root___accept_suspend_fun_with_context__TypesOfArguments__U28Swift_StringU2920asyncU20throwsU202D_U20Swift_Int32__")
 public fun __root___accept_suspend_fun_with_context__TypesOfArguments__U28Swift_StringU2920asyncU20throwsU202D_U20Swift_Int32__(block: kotlin.native.internal.NativePtr): Int {
@@ -21,7 +21,7 @@ public fun __root___accept_suspend_fun_with_context__TypesOfArguments__U28Swift_
                 val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
                 val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
                 val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
-                val _result = main_internal_functional_type_callee_async_ctx1_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(closureBox.objcPtr(), _ctx0, _continuation, _exception, _cancellation)
+                val _result = main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(closureBox.objcPtr(), _ctx0, _continuation, _exception, _cancellation)
                 run<Unit> { _result }
             }
         }

@@ -17,13 +17,6 @@ public fun __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_Swift_Any
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___testMapBarKey__TypesOfArguments__Swift_Dictionary_KotlinRuntimeSupport__KotlinExistential_anyU20MapExport__Bar__Swift_Int32___")
-public fun __root___testMapBarKey__TypesOfArguments__Swift_Dictionary_KotlinRuntimeSupport__KotlinExistential_anyU20MapExport__Bar__Swift_Int32___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __m = (dereferenceAndDisposeBridgeableRef(m) as kotlin.collections.Map<Bar, Int>)
-    val _result = testMapBarKey(__m)
-    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
 @ExportedBridge("__root___testMapIntString__TypesOfArguments__Swift_Dictionary_Swift_Int32_Swift_String___")
 public fun __root___testMapIntString__TypesOfArguments__Swift_Dictionary_Swift_Int32_Swift_String___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __m = interpretObjCPointer<kotlin.collections.Map<Int, kotlin.String>>(m)

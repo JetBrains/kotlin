@@ -380,6 +380,9 @@ internal abstract class SirAbstractClassFromKtSymbol(
         for (supType in ktSymbol.superTypes.filterIsInstance<KaClassType>()) {
             val supSym = supType.expandedSymbol ?: continue
             if (supSym.classKind != KaClassKind.INTERFACE) continue
+            // Without generics support the members of a generic interface are erased, and those of the class are not:
+            // the class can't conform to the protocol.
+            if (!sirSession.enableGenericsSupport && supSym.typeParameters.isNotEmpty()) continue
             val avail = supSym.sirAvailability()
             if (avail !is SirAvailability.Available || avail.visibility <= SirVisibility.INTERNAL) continue
             val proto = supSym.toSir().primaryDeclaration as? SirProtocolFromKtSymbol ?: continue
@@ -459,6 +462,9 @@ internal abstract class SirAbstractClassFromKtSymbol(
         get() = computedProtocolConformances.effectiveBoundAssocTypes
 
     private val patTypeAliases: List<SirDeclaration> by lazyWithSessions {
+        // Only a protocol with associated types needs these. The check comes first: computing the conformances here
+        // reads the protocols of the class earlier than before, which changes the order of imports.
+        if (!sirSession.enableGenericsSupport) return@lazyWithSessions emptyList()
         val ownParamNames = typeParameters.mapTo(mutableSetOf()) { it.name }
         computedProtocolConformances.ownNewAssocTypes
             .filterKeys { it !in ownParamNames }

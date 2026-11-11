@@ -2,7 +2,6 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
-import KotlinStdlib
 
 public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case A
@@ -88,10 +87,6 @@ public enum SEALED_SealedType: KotlinRuntimeSupport.SealedType {
             }
         }
     }
-}
-@_documentation(visibility: internal)
-public protocol _GENERIC_CLASS_ReverseDispatch<T>: KotlinRuntime.KotlinBase {
-    associatedtype T: KotlinRuntimeSupport._KotlinBridgeable
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     public override init() {
@@ -334,26 +329,25 @@ public final class Foo: KotlinRuntime.KotlinBase {
         return Foo_foo(self.__externalRCRef())
     }
 }
-open class GENERIC_CLASS<T: KotlinRuntimeSupport._KotlinBridgeable>: main._GENERIC_CLASS_Base, KotlinRuntimeSupport._KotlinCustomPointerBridgeable, main._GENERIC_CLASS_ReverseDispatch {
-    public init() {
+open class GENERIC_CLASS: KotlinRuntime.KotlinBase {
+    public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
-         if Self.self == main.GENERIC_CLASS<T>.self {
+         if Self.self == main.GENERIC_CLASS.self {
              __kt = __root___GENERIC_CLASS_init_allocate()
          } else {
              __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
          }
-        super.init(__externalRCRefUnsafe: __kt, options: Self.self == main.GENERIC_CLASS<T>.self ? .asExistentialWrapper : .asBoundBridge);
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
-    @_documentation(visibility: internal)
-    public override init(
+    package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-open class INHERITANCE_GENERIC: main.GENERIC_CLASS<Swift.Int32> {
+open class INHERITANCE_GENERIC: main.GENERIC_CLASS {
     public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.INHERITANCE_GENERIC.self {
@@ -540,8 +534,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
         return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
     }
 }
-public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.ListIterator, ExportedKotlinPackages.kotlin.collections.__ListIterator {
-    public typealias T = Swift.Never
+public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
     public static var shared: main.OBJECT_WITH_GENERIC_INHERITANCE {
         get {
             return main.OBJECT_WITH_GENERIC_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_GENERIC_INHERITANCE_get())
@@ -639,16 +632,6 @@ open class SEALED: KotlinRuntime.KotlinBase {
         case let value as main.SEALED.O: .o(.init(value))
         default: fatalError("missing sealedType for \(self)")
         }
-    }
-}
-@_documentation(visibility: internal)
-open class _GENERIC_CLASS_Base: KotlinRuntime.KotlinBase {
-    @_documentation(visibility: internal)
-    public override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-        options: KotlinRuntime.KotlinBaseConstructionOptions
-    ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 @_documentation(visibility: internal)

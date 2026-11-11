@@ -252,7 +252,7 @@ internal open class SirFunctionFromKtSymbol(
     context(_: KaSession, _: SirSession)
     private fun buildForwardKotlinCall(): BridgeFunctionBuilder.() -> String = {
         val enclosingClassSymbol = ktSymbol.containingDeclaration as? KaClassSymbol
-        if (hasNonTrivialKotlinBridgeBounds(enclosingClassSymbol, ktSymbol.typeParameters)) {
+        if (hasNonTrivialKotlinBridgeBounds(sirSession, enclosingClassSymbol, ktSymbol.typeParameters)) {
             buildLocalGenericBridgeCall(enclosingClassSymbol, ktSymbol, this@SirFunctionFromKtSymbol.returnType)
         } else {
             val typeArgs = ktSymbol.typeParameters.map { it.resolveUpperBound() ?: builtinTypes.nullableAny }

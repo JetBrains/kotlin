@@ -2,7 +2,6 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
-import KotlinStdlib
 
 public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case A
@@ -97,7 +96,7 @@ public typealias dataClassWithRef = main.DATA_CLASS_WITH_REF
 public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
 public typealias deeper_closure_typealias = main.closure
 public typealias enumClass = main.ENUM
-public typealias generic = main.GENERIC_CLASS<Swift.Int32>
+public typealias generic = main.GENERIC_CLASS
 public typealias inheritanceCouple = main.INHERITANCE_COUPLE
 public typealias inheritanceSingleClass = main.INHERITANCE_SINGLE_CLASS
 public typealias inhertanceSingleProto = main.INHERITANCE_SINGLE_PROTO
@@ -216,14 +215,13 @@ public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
         return DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
     }
 }
-public final class GENERIC_CLASS<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinCustomPointerBridgeable {
+public final class GENERIC_CLASS: KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___GENERIC_CLASS_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asExistentialWrapper);
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
-    @_documentation(visibility: internal)
-    public override init(
+    package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -325,8 +323,7 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.ListIterator, ExportedKotlinPackages.kotlin.collections.__ListIterator {
-    public typealias T = Swift.Never
+public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
     public static var shared: main.OBJECT_WITH_GENERIC_INHERITANCE {
         get {
             return main.OBJECT_WITH_GENERIC_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_GENERIC_INHERITANCE_get())

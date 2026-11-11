@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirProtocol
-import org.jetbrains.kotlin.sir.SirType
-import org.jetbrains.kotlin.sir.SirTypeConstraint
-import org.jetbrains.kotlin.sir.SirTypeParameterType
+import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.optional
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.classNamed
@@ -22,7 +19,7 @@ import kotlin.test.assertEquals
 
 class GenericsErasure : SirTranslationTest() {
     @Test
-    fun `simple function generic parameters`(codeAnalysis: InlineSourceCodeAnalysis) {
+    fun `simple function generic erasure`(codeAnalysis: InlineSourceCodeAnalysis) {
         val code = codeAnalysis.createKtFile(
             """
             fun <T> foo(t: T) {}
@@ -37,24 +34,17 @@ class GenericsErasure : SirTranslationTest() {
             """.trimIndent()
         )
         translate(code) {
-            val bridgeableBound: List<SirType> = listOf(SirNominalType(KotlinRuntimeSupportModule.kotlinBridgeable))
-
             val foo = it.functionsNamed("foo").first()
-            val fooTp = foo.typeParameters.single()
-            assertEquals("T", fooTp.name)
-            assertEquals(bridgeableBound, fooTp.bounds)
-            assertEquals(SirTypeParameterType(fooTp), foo.parameters.first().type)
+            val tParam = foo.parameters.first()
+            val optionalAny = KotlinRuntimeSupportModule.kotlinBridgeableType.optional()
+            assertEquals(optionalAny, tParam.type)
 
             val id = it.functionsNamed("id").first()
-            val idTp = id.typeParameters.single()
-            assertEquals(bridgeableBound, idTp.bounds)
-            assertEquals(SirTypeParameterType(idTp), id.parameters.first().type)
-            assertEquals(SirTypeParameterType(idTp), id.returnType)
+            val aParam = id.parameters.first()
+            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, aParam.type)
 
             val myClassMethod = it.classNamed("MyClass").declarations.functionsNamed("method").first()
-            val methodTp = myClassMethod.typeParameters.single()
-            assertEquals(bridgeableBound, methodTp.bounds)
-            assertEquals(SirTypeParameterType(methodTp), myClassMethod.returnType)
+            assertEquals(optionalAny, myClassMethod.returnType)
         }
     }
 
@@ -73,40 +63,27 @@ class GenericsErasure : SirTranslationTest() {
         )
         translate(code) {
             val foo = it.functionsNamed("foo").first()
-            val fooTp = foo.typeParameters.single()
-            assertEquals(SirTypeParameterType(fooTp), foo.parameters.first().type)
+            val tParam = foo.parameters.first()
+            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, tParam.type)
 
             val bar = it.functionsNamed("bar").first()
-            val barTp = bar.typeParameters.single()
             val myClass = it.classNamed("MyClass")
-            assertEquals<List<SirType>>(listOf(SirNominalType(myClass)), barTp.bounds)
-            assertEquals(SirTypeParameterType(barTp), bar.returnType)
-            assertEquals(SirTypeParameterType(barTp).optional(), bar.parameters.first().type)
+            assertEquals(SirNominalType(myClass), bar.returnType)
+            assertEquals(SirNominalType(myClass).optional(), bar.parameters.first().type)
         }
     }
 
     @Test
-    fun `generics with multiple upper bounds and PAT constraints`(codeAnalysis: InlineSourceCodeAnalysis) {
+    fun `generics with 2 and more upper bounds are not supported`(codeAnalysis: InlineSourceCodeAnalysis) {
         val code = codeAnalysis.createKtFile(
             """
-            open class MyClass
-            interface MyComparable<T> {
-                fun compare(other: T): Int
-            }
-            fun <T> foo(t: T) where T : MyClass, T : MyComparable<T> {}
+            fun <T> foo(t: T) where T : Any, T : Comparable<T> {}
             """.trimIndent()
         )
         translate(code) {
-            val myClass = it.classNamed("MyClass")
-            val myComp = it.filterIsInstance<SirProtocol>().first { p -> p.name == "MyComparable" }
             val foo = it.functionsNamed("foo").first()
-            val fooTp = foo.typeParameters.single()
-            assertEquals<List<SirType>>(listOf(SirNominalType(myClass), SirNominalType(myComp)), fooTp.bounds)
-            assertEquals(
-                listOf(SirTypeConstraint.Equality(SirTypeParameterType(fooTp), listOf("T", "T"))),
-                foo.constraints,
-            )
-            assertEquals(SirTypeParameterType(fooTp), foo.parameters.first().type)
+            val tParam = foo.parameters.first()
+            assertEquals(SirUnsupportedType, tParam.type)
         }
     }
 }

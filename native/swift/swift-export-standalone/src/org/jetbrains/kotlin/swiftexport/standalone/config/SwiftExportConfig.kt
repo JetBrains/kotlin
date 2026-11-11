@@ -22,6 +22,14 @@ public data class SwiftExportConfig(
     val outputPath: Path,
     val stableDeclarationsOrder: Boolean = false,
     val enableCoroutinesSupport: Boolean = false,
+    /**
+     * Export Kotlin type parameters as Swift type parameters: a generic Kotlin class is a generic Swift class,
+     * a generic interface is a protocol with primary associated types, a generic function is a generic function.
+     * See `docs/swift-export/generics.md`.
+     *
+     * When `false`, a type parameter is erased to its upper bound, as before generics support.
+     */
+    val enableGenericsSupport: Boolean = false,
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val konanTarget: KonanTarget,
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,

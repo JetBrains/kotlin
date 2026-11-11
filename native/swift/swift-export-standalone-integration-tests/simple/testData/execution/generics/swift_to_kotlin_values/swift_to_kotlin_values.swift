@@ -68,7 +68,7 @@ func boolAsKotlinBoolean() throws {
 
 @Test
 func nilAsKotlinNull() throws {
-    #expect(describeT(x: Optional<String>.none) == "null")
+    #expect(describeT(x: nil) == "null")
 }
 
 @Test

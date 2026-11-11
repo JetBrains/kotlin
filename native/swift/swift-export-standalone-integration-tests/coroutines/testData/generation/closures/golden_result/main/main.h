@@ -3,9 +3,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-_Bool main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure, void * continuation, void * exception, void * cancellation);
+_Bool main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * pointerToClosure, NSString * ctx0, void * continuation, void * exception, void * cancellation);
 
-_Bool main_internal_functional_type_callee_async_ctx1_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * pointerToClosure, NSString * ctx0, void * continuation, void * exception, void * cancellation);
+_Bool main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure, void * continuation, void * exception, void * cancellation);
 
 int32_t __root___accept_suspend_fun_with_context__TypesOfArguments__U28Swift_StringU2920asyncU20throwsU202D_U20Swift_Int32__(void * block);
 

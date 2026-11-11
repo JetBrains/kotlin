@@ -49,6 +49,7 @@ internal fun buildSirSession(
     targetPackageFqName = moduleConfig.targetPackageFqName,
     referencedTypeHandler = referenceHandler,
     enableCoroutinesSupport = config.enableCoroutinesSupport,
+    enableGenericsSupport = config.enableGenericsSupport,
     hiddenModules = kaModules.hiddenModules,
 )
 

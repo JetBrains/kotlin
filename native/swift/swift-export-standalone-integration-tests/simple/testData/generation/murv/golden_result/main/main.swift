@@ -394,12 +394,12 @@ public final class UnmarkedOperators: KotlinRuntime.KotlinBase {
         }
     }
 }
-@discardableResult @inlinable
-public func addAndIgnoreResult<T: KotlinRuntimeSupport._KotlinBridgeable>(
-    _ receiver: any ExportedKotlinPackages.kotlin.collections.MutableList<T>,
-    element: T
+@discardableResult
+public func addAndIgnoreResult(
+    _ receiver: any ExportedKotlinPackages.kotlin.collections.MutableList,
+    element: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> Swift.Bool {
-    return _cbridge___root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_T__T__(receiver.__externalRCRef(), element.__retainedToKotlinPointer())
+    return __root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), (element).flatMap { it in it.__retainedToKotlinPointer() })
 }
 @discardableResult
 public func ignorableInMarkedFile() -> Swift.Int32 {
@@ -462,9 +462,9 @@ extension main.MarkedGreeter {
 extension ExportedKotlinPackages.kotlin.collections.MutableList {
     @discardableResult
     public func addAndIgnoreResult(
-        element: E
+        element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        let receiver: any ExportedKotlinPackages.kotlin.collections.MutableList<E> = self
+        let receiver = self
         return main.addAndIgnoreResult(receiver, element: element)
     }
 }
@@ -521,10 +521,4 @@ package func UnmarkedBase_unmarked__reverse_swift(_ `self`: Swift.UnsafeMutableR
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.UnmarkedBase.Type.self) as! any main.UnmarkedBase
     let _result: Swift.Int32 = _self.unmarked()
     return _result
-}
-
-@usableFromInline
-@discardableResult
-internal func _cbridge___root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_T__T__(_ _p0: Swift.UnsafeMutableRawPointer, _ _p1: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    return __root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_T__T__(_p0, _p1)
 }

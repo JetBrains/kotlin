@@ -67,7 +67,9 @@ internal open class SirProtocolFromKtSymbol(
         get() = translatedTypeParams.constraints
 
     internal open val isPatProtocol: Boolean by lazyWithSessions {
-        typeParameters.isNotEmpty() || translatedProtocols.any { it.isPatProtocol }
+        // Without generics support no protocol has associated types. The check comes first: reading the parent
+        // interfaces here translates them early, which exports interfaces that nothing else refers to.
+        sirSession.enableGenericsSupport && (typeParameters.isNotEmpty() || translatedProtocols.any { it.isPatProtocol })
     }
 
     override val superClass: SirNominalType? by lazy {
@@ -736,8 +738,15 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
 
         val typeAliases = members
             .filterIsInstance<SirScopeDefiningDeclaration>()
-            .filter { it.visibility == SirVisibility.PUBLIC && it.origin.javaClass == KotlinSource::class.java }
+            .filter { it.visibility == SirVisibility.PUBLIC }
             .filter {
+                if (!sirSession.enableGenericsSupport) {
+                    return@filter it.origin !is KotlinMarkerProtocol && it.origin !is KotlinImplementationMarkerProtocol
+                }
+                // With generics support more declarations are declared next to the protocol: the wrapper classes
+                // of generic interfaces, and what is nested in a generic class. Only what Kotlin nests in this interface
+                // gets a typealias here.
+                if (it.origin.javaClass != KotlinSource::class.java) return@filter false
                 val origParent = it.kaSymbolOrNull<KaDeclarationSymbol>()?.let { sym ->
                     with(sirSession) { sym.getOriginalSirParent() }
                 }

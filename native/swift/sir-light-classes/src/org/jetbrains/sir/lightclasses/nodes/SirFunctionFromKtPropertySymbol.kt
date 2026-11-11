@@ -240,8 +240,8 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
     private fun buildPropertyAccessorForwardCall(): BridgeFunctionBuilder.() -> String = {
         val args = argNames
         val enclosingClassSymbol = ktPropertySymbol.containingDeclaration as? KaClassSymbol
-        val useLocalBridge = ktPropertySymbol.typeParameters.isNotEmpty() ||
-            hasNonTrivialKotlinBridgeBounds(enclosingClassSymbol, ktPropertySymbol.typeParameters)
+        val useLocalBridge = (sirSession.enableGenericsSupport && ktPropertySymbol.typeParameters.isNotEmpty()) ||
+            hasNonTrivialKotlinBridgeBounds(sirSession, enclosingClassSymbol, ktPropertySymbol.typeParameters)
         when (ktSymbol) {
             is KaPropertyGetterSymbol -> {
                 val expectedParameters = (if (extensionReceiverParameter != null) 1 else 0) + contextParameters.size

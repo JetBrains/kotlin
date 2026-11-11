@@ -81,9 +81,9 @@ void * __root___fooC();
 
 void * __root___fooD();
 
-NSString * __root___genericFunction__TypesOfArguments__T_lib_InternalLibInterface__(void * _Nullable a);
+NSString * __root___genericFunction__TypesOfArguments__anyU20lib_InternalLibInterface__(void * a);
 
-NSString * __root___genericProperty_get__TypesOfArgumentsE__T_lib_InternalLibInterface__(void * _Nullable receiver);
+NSString * __root___genericProperty_get__TypesOfArgumentsE__anyU20lib_InternalLibInterface__(void * receiver);
 
 _Bool __root___internalLibFunction();
 

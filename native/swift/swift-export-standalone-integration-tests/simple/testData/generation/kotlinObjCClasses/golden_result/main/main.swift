@@ -45,7 +45,6 @@ public func produceZarImpl() -> Swift.Never {
     fatalError()
 }
 // Can't export PlainNSObjectSubclass: Kotlin subclasses of Objective-C classes are not supported.
-// Can't export PlainNSObjectSubclass: Kotlin subclasses of Objective-C classes are not supported.
 // Can't export CopyableImpl: Kotlin subclasses of Objective-C classes are not supported.
 // Can't export ZarImpl: Kotlin subclasses of Objective-C classes are not supported.
 // Can't export PlainNSObjectSubclass: Kotlin subclasses of Objective-C classes are not supported.

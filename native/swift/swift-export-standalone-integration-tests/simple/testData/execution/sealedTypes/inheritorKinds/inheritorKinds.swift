@@ -117,10 +117,10 @@ func testPrivateRootConstructorStillProducesACase() throws {
 
 // ---------- generic sealed class ----------
 
-private func describeQuery(_ value: Query<String>) -> String {
+private func describeQuery(_ value: Query) -> String {
     switch value.sealedType() {
         case .queryLoading: "loading"
-        case let .queryValue(type): "value: \(type.value.value)"
+        case let .queryValue(type): "value: \(type.value.value.map { String(describing: $0) } ?? "nil")"
         case let .queryFailure(type): "failure: \(type.value.message)"
     }
 }

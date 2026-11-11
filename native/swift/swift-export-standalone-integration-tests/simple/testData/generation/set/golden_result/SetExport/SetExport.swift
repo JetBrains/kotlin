@@ -10,13 +10,14 @@ public protocol _Foo {
 }
 public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {
 }
-public var testSetFoo: Swift.Set<KotlinRuntimeSupport._KotlinExistential<any SetExport._Foo>> {
+@available(*, unavailable, message: "Declaration uses unsupported types")
+public var testSetFoo: Swift.Never {
     get {
-        return Swift.Set<KotlinRuntimeSupport._KotlinExistential<any SetExport._Foo>>.__fromKotlinPointer(__root___testSetFoo_get())
+        fatalError()
     }
 }
-public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableSet<Swift.String> {
-    return { let _ptr = __root___foo(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.MutableSet<Swift.String>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyMutableSet<Swift.String>.__createTypedWrapper(externalRCRef: _ptr) }()
+public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableSet {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___foo(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableSet.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
 }
 public func testOptSetInt(
     s: Swift.Set<Swift.Int32>?
@@ -28,10 +29,11 @@ public func testSetAny(
 ) -> Swift.Set<Swift.AnyHashable> {
     return __root___testSetAny__TypesOfArguments__Swift_Set_Swift_AnyHashable___(s) as! Swift.Set<Swift.AnyHashable>
 }
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public func testSetFooParam(
-    s: Swift.Set<KotlinRuntimeSupport._KotlinExistential<any SetExport._Foo>>
-) -> Swift.Set<KotlinRuntimeSupport._KotlinExistential<any SetExport._Foo>> {
-    return Swift.Set<KotlinRuntimeSupport._KotlinExistential<any SetExport._Foo>>.__fromKotlinPointer(__root___testSetFooParam__TypesOfArguments__Swift_Set_KotlinRuntimeSupport__KotlinExistential_anyU20SetExport__Foo____(s.__retainedToKotlinPointer()))
+    s: Swift.Never
+) -> Swift.Never {
+    fatalError()
 }
 public func testSetInt(
     s: Swift.Set<Swift.Int32>

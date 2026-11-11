@@ -91,6 +91,9 @@ internal fun translateTypeParametersAndConstraints(
     expandedType: KaType? = null,
     allowInputProjectionLifting: Boolean = false,
 ): TranslatedTypeParameters {
+    // Without generics support no declaration has type parameters in Swift: a Kotlin type parameter is erased
+    // to its upper bound where a type mentions it, see `SirTypeProviderImpl`.
+    if (!sirSession.enableGenericsSupport) return TranslatedTypeParameters(emptyList(), emptyList())
     val guardSet = translatingConstraintsGuard.get()
     val firstVisit = guardSet.add(declarationSymbol)
     try {
@@ -540,10 +543,18 @@ internal fun KaType.containsStarProjection(
     else -> false
 }
 
+/**
+ * Whether the Kotlin bridge of a member has to call it through a local generic function (see [buildLocalGenericBridgeCall]):
+ * its type parameters have bounds that a cast to the erased type can't satisfy.
+ *
+ * Only with generics support: without it such members are not exported, or are called through the erased type as before.
+ */
 internal fun hasNonTrivialKotlinBridgeBounds(
+    sirSession: SirSession,
     enclosingClassSymbol: KaClassSymbol?,
     callableTypeParams: List<KaTypeParameterSymbol>,
 ): Boolean {
+    if (!sirSession.enableGenericsSupport) return false
     val classParams = enclosingClassSymbol?.typeParameters.orEmpty()
     if (classParams.any { it.variance == Variance.IN_VARIANCE }) return true
     val allParams = classParams + callableTypeParams

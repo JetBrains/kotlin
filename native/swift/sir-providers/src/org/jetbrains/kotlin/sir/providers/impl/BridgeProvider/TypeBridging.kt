@@ -62,9 +62,12 @@ private fun SirFunctionalType.eraseGenericPositions(): SirFunctionalType {
     )
 }
 
+// With generics support a closure with a context parameter and one with an ordinary parameter of the same type
+// (`context(Box<String>) () -> Unit` and `(Box<String>) -> Unit`) are both exported, and need different bridges.
+context(session: SirSession)
 private val SirFunctionalType.bridgeNameSuffix: String
     get() = (if (isAsync) "async_" else "") +
-            (if (contextTypes.isNotEmpty()) "ctx${contextTypes.size}_" else "") +
+            (if (session.enableGenericsSupport && contextTypes.isNotEmpty()) "ctx${contextTypes.size}_" else "") +
             eraseGenericPositions().returnType.swiftName
 
 context(session: SirSession)

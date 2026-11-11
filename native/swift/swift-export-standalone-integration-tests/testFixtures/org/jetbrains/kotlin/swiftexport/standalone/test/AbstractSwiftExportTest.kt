@@ -133,11 +133,18 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         }
         val modulesToExport = inputModuleByTestModule.values.toSet()
 
+        // Generics support is off by default. A test turns it on with `// SWIFT_EXPORT_CONFIG: enableGenericsSupport=true`
+        // on any of its modules.
+        val enableGenericsSupport = isGenericsSupportForcedForTests() || inputModuleByTestModule.keys.any {
+            (it as? TestModule.Exclusive)?.swiftExportConfigMap()?.get(ENABLE_GENERICS_SUPPORT) == "true"
+        }
+
         val config = SwiftExportConfig(
             outputPath = buildDir(testPathFull).resolve("swift_export_results").toPath(),
             stableDeclarationsOrder = true,
             distribution = Distribution(KonanHome.konanHomePath),
             konanTarget = targets.testTarget,
+            enableGenericsSupport = enableGenericsSupport,
         )
 
         // run swift export
@@ -401,6 +408,18 @@ private fun getUnsupportedDeclarationsReporterKind(configMap: Map<String, String
                 .singleOrNull { it.name.equals(value, ignoreCase = true) }
         } ?: UnsupportedDeclarationReporterKind.Silent
 }
+
+private const val ENABLE_GENERICS_SUPPORT = "enableGenericsSupport"
+
+/**
+ * `SWIFT_EXPORT_TEST_FORCE_GENERICS_SUPPORT=true` turns generics support on for every Swift export integration test.
+ * It is for a manual check of generics support against the whole test data: the execution tests and the tests that
+ * compile the result must pass. The tests that compare with golden files fail by design, and so do the execution
+ * tests whose Swift code is written for the erased API (each has a copy in `execution/typed_generics`).
+ * Run it with `--no-configuration-cache` and with `--rerun` after each test task, or Gradle keeps the previous
+ * environment and results. The run adds golden files for the modules that only this mode exports: delete them after.
+ */
+fun isGenericsSupportForcedForTests(): Boolean = System.getenv("SWIFT_EXPORT_TEST_FORCE_GENERICS_SUPPORT") == "true"
 
 private fun TestCase.copyAndAddModules(givenModules: Set<TestModule.Given>?): TestCase = TestCase(
     id = id, kind = kind, modules = modules, freeCompilerArgs = freeCompilerArgs, nominalPackageName = nominalPackageName, checks = checks,

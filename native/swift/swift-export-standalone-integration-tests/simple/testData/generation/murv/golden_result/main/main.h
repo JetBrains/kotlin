@@ -115,7 +115,7 @@ void * __root___UnmarkedOperators_init_allocate();
 
 _Bool __root___UnmarkedOperators_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t value);
 
-_Bool __root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_T__T__(void * receiver, void * _Nullable element);
+_Bool __root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * receiver, void * _Nullable element);
 
 int32_t __root___ignorableInMarkedFile();
 

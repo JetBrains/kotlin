@@ -210,16 +210,16 @@ public func fooD() -> lib.ExperimentalLibClass {
     return lib.ExperimentalLibClass.__createClassWrapper(externalRCRef: __root___fooD())
 }
 @_spi(InternalLibApi)
-public func genericFunction<T: lib.InternalLibInterface>(
-    a: T
+public func genericFunction(
+    a: any lib.InternalLibInterface
 ) -> Swift.String {
-    return __root___genericFunction__TypesOfArguments__T_lib_InternalLibInterface__(a.__retainedToKotlinPointer())
+    return __root___genericFunction__TypesOfArguments__anyU20lib_InternalLibInterface__(a.__externalRCRef())
 }
 @_spi(InternalLibApi)
-public func getGenericProperty<T: lib.InternalLibInterface>(
-    _ receiver: T
+public func getGenericProperty(
+    _ receiver: any lib.InternalLibInterface
 ) -> Swift.String {
-    return __root___genericProperty_get__TypesOfArgumentsE__T_lib_InternalLibInterface__(receiver.__retainedToKotlinPointer())
+    return __root___genericProperty_get__TypesOfArgumentsE__anyU20lib_InternalLibInterface__(receiver.__externalRCRef())
 }
 @_spi(InternalLibApi)
 public func internalLibFunction() -> Swift.Void {

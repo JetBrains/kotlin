@@ -3,29 +3,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void * list2_testListAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_KotlinRuntimeSupport_KotlinAny___(void * l);
-
-void * list2_testListInt__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Swift_Int32___(void * l);
-
-void * list2_testListListInt__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_ExportedKotlinPackages_list2_AnyMyList_Swift_Int32____(void * l);
-
-void * list2_testListNothing__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Swift_Never___(void * l);
-
-void * list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(void * l);
-
-void * list2_testListOptInt__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Swift_Optional_Swift_Int32____(void * l);
-
-void * list2_testListOptListInt__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Swift_Optional_ExportedKotlinPackages_list2_AnyMyList_Swift_Int32_____(void * l);
-
-void * list2_testListOptNothing__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Swift_Optional_Swift_Never____(void * l);
-
-void * list2_testListOptString__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Swift_Optional_Swift_String____(void * l);
-
-void * list2_testListShort__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Swift_Int16___(void * l);
-
-void * list2_testListString__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList_Swift_String___(void * l);
-
-void * _Nullable list2_testOptListInt__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_list2_MyList_Swift_Int32____(void * _Nullable l);
+void * list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList__(void * l);
 
 void * list2_testStarList__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList__(void * l);
 

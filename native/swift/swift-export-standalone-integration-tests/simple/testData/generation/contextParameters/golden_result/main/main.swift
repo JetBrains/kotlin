@@ -173,7 +173,7 @@ public func contextBlockA(
 public func contextBlockB() -> ((main.ContextB, main.ContextA), Swift.String, Swift.Int32) -> Swift.Void {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___contextBlockB(), options: .asBestFittingWrapper)
-        return { context, _3, _4 in let (ctx0, ctx1) = context;return { main_internal_functional_type_caller_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__(pointerToBlock.__externalRCRef(), ctx0.__externalRCRef(), ctx1.__externalRCRef(), _3, _4); return () }() }
+        return { context, _3, _4 in let (ctx0, ctx1) = context;return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__(pointerToBlock.__externalRCRef(), ctx0.__externalRCRef(), ctx1.__externalRCRef(), _3, _4); return () }() }
     }()
 }
 public func contextBlockC(
@@ -184,7 +184,7 @@ public func contextBlockC(
 public func contextBlockD() -> (main.Context, Swift.Int32) -> Swift.Void {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___contextBlockD(), options: .asBestFittingWrapper)
-        return { context, _2 in let (ctx0) = context;return { main_internal_functional_type_caller_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__(pointerToBlock.__externalRCRef(), ctx0.__externalRCRef(), _2); return () }() }
+        return { context, _2 in let (ctx0) = context;return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__(pointerToBlock.__externalRCRef(), ctx0.__externalRCRef(), _2); return () }() }
     }()
 }
 public func foo(
@@ -267,14 +267,14 @@ extension Swift.String {
         return main.complexContextFunction(context, receiver, yes: yes)
     }
 }
-@_cdecl("main_internal_functional_type_callee_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__")
-package func main_internal_functional_type_callee_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ ctx0: Swift.UnsafeMutableRawPointer, _ _2: Swift.String) -> Swift.Bool {
-    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (main.Context, Swift.String) -> Swift.Void)((main.Context.__createClassWrapper(externalRCRef: ctx0)), _2)
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ ctx0: Swift.UnsafeMutableRawPointer, _ ctx1: Swift.UnsafeMutableRawPointer, _ _3: Swift.Int32, _ _4: Swift.String) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void)((main.ContextA.__createClassWrapper(externalRCRef: ctx0), main.ContextB.__createClassWrapper(externalRCRef: ctx1)), _3, _4)
     return { _result; return true }()
 }
 
-@_cdecl("main_internal_functional_type_callee_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__")
-package func main_internal_functional_type_callee_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ ctx0: Swift.UnsafeMutableRawPointer, _ ctx1: Swift.UnsafeMutableRawPointer, _ _3: Swift.Int32, _ _4: Swift.String) -> Swift.Bool {
-    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void)((main.ContextA.__createClassWrapper(externalRCRef: ctx0), main.ContextB.__createClassWrapper(externalRCRef: ctx1)), _3, _4)
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ ctx0: Swift.UnsafeMutableRawPointer, _ _2: Swift.String) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (main.Context, Swift.String) -> Swift.Void)((main.Context.__createClassWrapper(externalRCRef: ctx0)), _2)
     return { _result; return true }()
 }

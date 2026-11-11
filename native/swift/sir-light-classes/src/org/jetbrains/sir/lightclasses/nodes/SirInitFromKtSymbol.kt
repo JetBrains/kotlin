@@ -177,7 +177,7 @@ internal class SirRegularInitFromKtSymbol(
         val producingType: SirType = scopeDecl.parameterizedSelfNominalType()
         val enclosingClassSymbol = ktSymbol.containingDeclaration as? KaNamedClassSymbol
         val useLocalGenericHelper = enclosingClassSymbol != null &&
-            hasNonTrivialKotlinBridgeBounds(enclosingClassSymbol, emptyList())
+            hasNonTrivialKotlinBridgeBounds(sirSession, enclosingClassSymbol, emptyList())
 
         val abstractConstructorTarget: String? = "<init>".takeIf { isAbstractClass }
 

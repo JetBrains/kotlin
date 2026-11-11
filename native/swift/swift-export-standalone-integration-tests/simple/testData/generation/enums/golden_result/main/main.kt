@@ -155,8 +155,8 @@ public fun __root___Enum_ordinal(self: kotlin.native.internal.NativePtr): Int {
     return _result
 }
 
-@ExportedBridge("__root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__T0___")
-public fun __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__T0___(e: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__")
+public fun __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(e: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __e = kotlin.native.internal.ref.dereferenceExternalRCRef(e) as kotlin.Enum<*>
     val _result = enumId(__e)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)

@@ -24,6 +24,7 @@ import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
 class TestSirSession(
     kaModule: KaModule,
+    override val enableGenericsSupport: Boolean = false,
     referencedTypeHandler: SirKaClassReferenceHandler? = null,
 ) : SirSession {
     override val useSiteModule: KaModule = kaModule

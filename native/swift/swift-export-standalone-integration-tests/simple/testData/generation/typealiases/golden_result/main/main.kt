@@ -6,6 +6,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(DATA_CLASS_WITH_REF::class, "4main19DATA_CLASS_WITH_REFC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(DATA_OBJECT_WITH_PACKAGE::class, "4main24DATA_OBJECT_WITH_PACKAGEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ENUM.INSIDE_ENUM::class, "4main4ENUMO11INSIDE_ENUMC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(GENERIC_CLASS::class, "4main13GENERIC_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_COUPLE::class, "4main18INHERITANCE_COUPLEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_SINGLE_CLASS::class, "4main24INHERITANCE_SINGLE_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_SINGLE_PROTO::class, "4main24INHERITANCE_SINGLE_PROTOC")

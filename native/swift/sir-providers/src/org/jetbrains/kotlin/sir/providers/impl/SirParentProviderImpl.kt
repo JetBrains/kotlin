@@ -65,7 +65,9 @@ public class SirParentProviderImpl(
                 extensionForPackage
             }
         } else {
-            val isInsideGenericClass = generateSequence(parentSymbol as? KaNamedClassSymbol) {
+            // Swift allows no static stored property and no `@objc` class inside a generic class,
+            // so a class that is nested in a generic class is declared next to it.
+            val isInsideGenericClass = sirSession.enableGenericsSupport && generateSequence(parentSymbol as? KaNamedClassSymbol) {
                 it.containingDeclaration as? KaNamedClassSymbol
             }.any { it.typeParameters.isNotEmpty() }
             if (symbol is KaClassSymbol && parentSymbol is KaNamedClassSymbol &&

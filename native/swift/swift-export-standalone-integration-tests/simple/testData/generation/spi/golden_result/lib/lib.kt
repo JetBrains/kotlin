@@ -338,23 +338,20 @@ public fun __root___fooD(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___genericFunction__TypesOfArguments__T_lib_InternalLibInterface__")
+@ExportedBridge("__root___genericFunction__TypesOfArguments__anyU20lib_InternalLibInterface__")
 @OptIn(InternalLibApi::class)
-public fun __root___genericFunction__TypesOfArguments__T_lib_InternalLibInterface__(a: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __a = (dereferenceAndDisposeBridgeableRef(a) as InternalLibInterface)
+public fun __root___genericFunction__TypesOfArguments__anyU20lib_InternalLibInterface__(a: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __a = kotlin.native.internal.ref.dereferenceExternalRCRef(a) as InternalLibInterface
     val _result = genericFunction<InternalLibInterface>(__a)
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___genericProperty_get__TypesOfArgumentsE__T_lib_InternalLibInterface__")
+@ExportedBridge("__root___genericProperty_get__TypesOfArgumentsE__anyU20lib_InternalLibInterface__")
 @OptIn(InternalLibApi::class)
-public fun __root___genericProperty_get__TypesOfArgumentsE__T_lib_InternalLibInterface__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __receiver = (dereferenceAndDisposeBridgeableRef(`receiver`) as InternalLibInterface)
-                    val _result = run {
-        @Suppress("UNCHECKED_CAST") fun <__T0 : InternalLibInterface> __bridge(): kotlin.String = ((__receiver as __T0).`genericProperty` as kotlin.Any?) as kotlin.String
-        __bridge<Nothing>()
-    }
-                    return _result.objcPtr()
+public fun __root___genericProperty_get__TypesOfArgumentsE__anyU20lib_InternalLibInterface__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as InternalLibInterface
+    val _result = __receiver.genericProperty
+    return _result.objcPtr()
 }
 
 @ExportedBridge("__root___internalLibFunction")

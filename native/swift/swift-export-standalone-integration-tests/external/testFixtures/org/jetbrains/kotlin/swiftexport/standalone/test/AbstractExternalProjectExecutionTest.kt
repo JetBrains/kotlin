@@ -64,6 +64,7 @@ abstract class AbstractExternalProjectExecutionTest : AbstractSwiftExportExecuti
             outputPath = buildDir(testPath).toPath().resolve("swift_export_results"),
             konanTarget = targets.testTarget,
             enableCoroutinesSupport = true,
+            enableGenericsSupport = isGenericsSupportForcedForTests(),
         )
 
         val swiftExportResult = runSwiftExport(inputModules, swiftConfig).getOrThrow()

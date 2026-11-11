@@ -9,11 +9,11 @@ import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 
-@ImportedBridge("main_internal_functional_type_callee_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__")
-internal external fun main_internal_functional_type_callee_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(pointerToClosure: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, _2: kotlin.native.internal.NativePtr): Boolean
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__(pointerToClosure: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, ctx1: kotlin.native.internal.NativePtr, _3: Int, _4: kotlin.native.internal.NativePtr): Boolean
 
-@ImportedBridge("main_internal_functional_type_callee_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__")
-internal external fun main_internal_functional_type_callee_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__(pointerToClosure: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, ctx1: kotlin.native.internal.NativePtr, _3: Int, _4: kotlin.native.internal.NativePtr): Boolean
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(pointerToClosure: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, _2: kotlin.native.internal.NativePtr): Boolean
 
 @ExportedBridge("Foo_bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun Foo_bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -238,7 +238,7 @@ public fun __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_
             val _ctx1 = kotlin.native.internal.ref.createRetainedExternalRCRef(ctx1)
             val _arg0 = arg0
             val _arg1 = arg1.objcPtr()
-            val _result = main_internal_functional_type_callee_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__(closureBox.objcPtr(), _ctx0, _ctx1, _arg0, _arg1)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__(closureBox.objcPtr(), _ctx0, _ctx1, _arg0, _arg1)
             run<Unit> { _result }
         }
     }
@@ -260,7 +260,7 @@ public fun __root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_St
         { ctx0: Context, arg0: kotlin.String ->
             val _ctx0 = kotlin.native.internal.ref.createRetainedExternalRCRef(ctx0)
             val _arg0 = arg0.objcPtr()
-            val _result = main_internal_functional_type_callee_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(closureBox.objcPtr(), _ctx0, _arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(closureBox.objcPtr(), _ctx0, _arg0)
             run<Unit> { _result }
         }
     }
@@ -306,22 +306,22 @@ public fun __root___unnamedContextParametersProperty_set__TypesOfArgumentsC2__ma
     return true
 }
 
-@ExportedBridge("main_internal_functional_type_caller_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__")
-public fun main_internal_functional_type_caller_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, _2: Int): Boolean {
-    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val __ctx0 = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx0) as Context
-    val ___2 = _2
-    (__pointerToBlock as Function2<Context, Int, Unit>).invoke(__ctx0, ___2)
-    return true
-}
-
-@ExportedBridge("main_internal_functional_type_caller_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__")
-public fun main_internal_functional_type_caller_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, ctx1: kotlin.native.internal.NativePtr, _3: kotlin.native.internal.NativePtr, _4: Int): Boolean {
+@ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__")
+public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, ctx1: kotlin.native.internal.NativePtr, _3: kotlin.native.internal.NativePtr, _4: Int): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val __ctx0 = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx0) as ContextB
     val __ctx1 = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx1) as ContextA
     val ___3 = interpretObjCPointer<kotlin.String>(_3)
     val ___4 = _4
     (__pointerToBlock as Function4<ContextB, ContextA, kotlin.String, Int, Unit>).invoke(__ctx0, __ctx1, ___3, ___4)
+    return true
+}
+
+@ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__")
+public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, ctx0: kotlin.native.internal.NativePtr, _2: Int): Boolean {
+    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
+    val __ctx0 = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx0) as Context
+    val ___2 = _2
+    (__pointerToBlock as Function2<Context, Int, Unit>).invoke(__ctx0, ___2)
     return true
 }

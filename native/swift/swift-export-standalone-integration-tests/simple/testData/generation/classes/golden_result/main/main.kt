@@ -28,6 +28,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo.Companion::class, "4main3FooC9CompanionC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo.INSIDE_CLASS::class, "4main3FooC12INSIDE_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(GENERIC_CLASS::class, "4main13GENERIC_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_GENERIC::class, "4main19INHERITANCE_GENERICC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_UNSUPPORTED_BASE::class, "4main28INHERITANCE_UNSUPPORTED_BASEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INLINE_CLASS::class, "4main12INLINE_CLASSC")
@@ -42,7 +43,6 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED::class, "4main6SEALEDC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.C::class, "4main6SEALEDC1CC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.O::class, "4main6SEALEDC1OC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(GENERIC_CLASS::class, "4main19_GENERIC_CLASS_BaseC")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

@@ -3,7 +3,6 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public typealias AnyQueryResult<T: KotlinRuntimeSupport._KotlinBridgeable> = ExportedKotlinPackages.org.kotlin.foo.AnyQueryResult<T>
 public typealias ClassC = ExportedKotlinPackages.org.kotlin.foo.ClassC
 public typealias ClassC_SealedType = ExportedKotlinPackages.org.kotlin.foo.ClassC_SealedType
 public typealias ClassD = ExportedKotlinPackages.org.kotlin.foo.ClassD
@@ -45,7 +44,6 @@ public typealias NonSealedOptInClass = ExportedKotlinPackages.org.kotlin.foo.Non
 @_spi(org$kotlin$foo$OptInA) @_spi(org$kotlin$foo$OptInB)
 public typealias NonSealedOptInClass_SealedType = ExportedKotlinPackages.org.kotlin.foo.NonSealedOptInClass_SealedType
 public typealias QueryResult = ExportedKotlinPackages.org.kotlin.foo.QueryResult
-public typealias QueryResult_SealedType<T: KotlinRuntimeSupport._KotlinBridgeable> = ExportedKotlinPackages.org.kotlin.foo.QueryResult_SealedType<T>
 public typealias SealedClassA = ExportedKotlinPackages.org.kotlin.foo.SealedClassA
 public typealias SealedClassA_SealedType = ExportedKotlinPackages.org.kotlin.foo.SealedClassA_SealedType
 public typealias SealedClassB = ExportedKotlinPackages.org.kotlin.foo.SealedClassB
@@ -82,70 +80,44 @@ public typealias __QueryResult = ExportedKotlinPackages.org.kotlin.foo.__QueryRe
 public typealias __SealedInterfaceA = ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA
 public typealias __SealedInterfaceB = ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceB
 public typealias __SealedInterfaceWithContainedInheritor = ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceWithContainedInheritor
-public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinCustomPointerBridgeable, ExportedKotlinPackages.org.kotlin.foo.QueryResult, ExportedKotlinPackages.org.kotlin.foo.__QueryResult {
-    @inlinable
-    public var value: T {
+public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue: KotlinRuntime.KotlinBase {
+    public var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
-            return T.__fromKotlinPointer(_cbridge_org_kotlin_foo_QueryResult_AsyncValue_value_get(self.__externalRCRef()))
+            return { switch org_kotlin_foo_QueryResult_AsyncValue_value_get(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
     public init(
-        value: T
+        value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) {
         let __kt = org_kotlin_foo_QueryResult_AsyncValue_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asExistentialWrapper);
-        { org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_T__(__kt, value.__retainedToKotlinPointer()); return () }()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { org_kotlin_foo_QueryResult_AsyncValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, (value).flatMap { it in it.__retainedToKotlinPointer() }); return () }()
     }
-    @_documentation(visibility: internal)
-    public override init(
+    package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.QueryResult_SealedType<T> {
-        .asyncValue(.init(self))
-    }
 }
-public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinCustomPointerBridgeable, ExportedKotlinPackages.org.kotlin.foo.QueryResult, ExportedKotlinPackages.org.kotlin.foo.__QueryResult {
-    @inlinable
-    public var value: T {
+public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value: KotlinRuntime.KotlinBase {
+    public var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
-            return T.__fromKotlinPointer(_cbridge_org_kotlin_foo_QueryResult_Value_value_get(self.__externalRCRef()))
+            return { switch org_kotlin_foo_QueryResult_Value_value_get(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
     public init(
-        value: T
+        value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) {
         let __kt = org_kotlin_foo_QueryResult_Value_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asExistentialWrapper);
-        { org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_T__(__kt, value.__retainedToKotlinPointer()); return () }()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { org_kotlin_foo_QueryResult_Value_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, (value).flatMap { it in it.__retainedToKotlinPointer() }); return () }()
     }
-    @_documentation(visibility: internal)
-    public override init(
+    package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-    }
-    public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.QueryResult_SealedType<T> {
-        .value(.init(self))
-    }
-}
-public struct _ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue_SealedType<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntimeSupport.SealedType {
-    public let value: common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue<T>
-    init(
-        _ value: common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue<T>
-    ) {
-        self.value = value
-    }
-}
-public struct _ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value_SealedType<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntimeSupport.SealedType {
-    public let value: common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value<T>
-    init(
-        _ value: common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value<T>
-    ) {
-        self.value = value
     }
 }
 @_documentation(visibility: internal)
@@ -158,17 +130,10 @@ extension ExportedKotlinPackages.org.kotlin.foo.InterfaceC {
 }
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.org.kotlin.foo.QueryResult where Self : ExportedKotlinPackages.org.kotlin.foo.__QueryResult {
-    public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.QueryResult_SealedType<T> {
-        switch org_kotlin_foo_QueryResult_sealedType_tag(self.__externalRCRef()) {
-        case 0: .asyncValue(.init(common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue<T>.__fromKotlinPointer(KotlinRuntimeSupport._cloneBridgeableRef(self.__externalRCRef()))))
-        case 1: .value(.init(common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value<T>.__fromKotlinPointer(KotlinRuntimeSupport._cloneBridgeableRef(self.__externalRCRef()))))
-        default: fatalError("missing sealedType for \(self)")
-        }
-    }
 }
 extension ExportedKotlinPackages.org.kotlin.foo.QueryResult {
-    public typealias AsyncValue<T: KotlinRuntimeSupport._KotlinBridgeable> = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue<T>
-    public typealias Value<T: KotlinRuntimeSupport._KotlinBridgeable> = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value<T>
+    public typealias AsyncValue = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue
+    public typealias Value = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value
 }
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA where Self : ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
@@ -202,6 +167,9 @@ extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInhe
     }
 }
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.kotlin.foo.QueryResult, ExportedKotlinPackages.org.kotlin.foo.__QueryResult where Wrapped : ExportedKotlinPackages.org.kotlin.foo._QueryResult {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceWithContainedInheritor where Wrapped : ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceWithContainedInheritor {
@@ -359,19 +327,6 @@ extension ExportedKotlinPackages.org.kotlin.foo {
                 switch self {
                 case let .myClassAInner(type): type.value
                 case let .myClassBInner(type): type.value
-                }
-            }
-        }
-    }
-    @frozen
-    public enum QueryResult_SealedType<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntimeSupport.SealedType {
-        case asyncValue(common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue_SealedType<T>)
-        case value(common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value_SealedType<T>)
-        public var value: ExportedKotlinPackages.org.kotlin.foo.AnyQueryResult<T> {
-            get {
-                switch self {
-                case let .asyncValue(type): ExportedKotlinPackages.org.kotlin.foo.AnyQueryResult<T>.__createTypedWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(type.value.__externalRCRef()))
-                case let .value(type): ExportedKotlinPackages.org.kotlin.foo.AnyQueryResult<T>.__createTypedWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(type.value.__externalRCRef()))
                 }
             }
         }
@@ -537,9 +492,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     public protocol InterfaceC: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo._InterfaceC {
         func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType
     }
-    public protocol QueryResult<T>: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo._QueryResult {
-        associatedtype T: KotlinRuntimeSupport._KotlinBridgeable
-        func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.QueryResult_SealedType<T>
+    public protocol QueryResult: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo._QueryResult {
     }
     public protocol SealedInterfaceA: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
         func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType
@@ -574,15 +527,6 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     public protocol __SealedInterfaceB: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
     }
     public protocol __SealedInterfaceWithContainedInheritor: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    public final class AnyQueryResult<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.QueryResult, ExportedKotlinPackages.org.kotlin.foo.__QueryResult, KotlinRuntimeSupport._KotlinCustomPointerBridgeable {
-        @_documentation(visibility: internal)
-        public override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
     }
     public final class ClassC: ExportedKotlinPackages.org.kotlin.foo.SealedClassA {
         public init() {
@@ -1077,15 +1021,4 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             self.value = value
         }
     }
-}
-@usableFromInline
-@discardableResult
-internal func _cbridge_org_kotlin_foo_QueryResult_AsyncValue_value_get(_ _p0: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    return org_kotlin_foo_QueryResult_AsyncValue_value_get(_p0)
-}
-
-@usableFromInline
-@discardableResult
-internal func _cbridge_org_kotlin_foo_QueryResult_Value_value_get(_ _p0: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    return org_kotlin_foo_QueryResult_Value_value_get(_p0)
 }

@@ -333,8 +333,7 @@ extension ExportedKotlinPackages.namespace3 {
 }
 extension ExportedKotlinPackages.operators {
     public final class Foo: KotlinRuntime.KotlinBase {
-        public final class EmptyIterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator {
-            public typealias T = Swift.Int32
+        public final class EmptyIterator: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.operators.Foo.EmptyIterator {
                 get {
                     return ExportedKotlinPackages.operators.Foo.EmptyIterator.__createClassWrapper(externalRCRef: operators_Foo_EmptyIterator_get())
@@ -570,8 +569,8 @@ extension ExportedKotlinPackages.operators {
         public func inc() -> ExportedKotlinPackages.operators.Foo {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_inc(self.__externalRCRef()))
         }
-        public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.Int32> {
-            return { let _ptr = operators_Foo_iterator(self.__externalRCRef()); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.Iterator<Swift.Int32>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyIterator<Swift.Int32>.__createTypedWrapper(externalRCRef: _ptr) }()
+        public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: operators_Foo_iterator(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.collections.Iterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Iterator
         }
         public func rangeTo(
             other: ExportedKotlinPackages.operators.Foo

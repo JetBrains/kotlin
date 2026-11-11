@@ -3,13 +3,23 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int8_t kotlin_Number_toByte__reverse_swift(void * self);
+
+uint16_t kotlin_Number_toChar__reverse_swift(void * self);
+
+double kotlin_Number_toDouble__reverse_swift(void * self);
+
+float kotlin_Number_toFloat__reverse_swift(void * self);
+
+int32_t kotlin_Number_toInt__reverse_swift(void * self);
+
+int64_t kotlin_Number_toLong__reverse_swift(void * self);
+
+int16_t kotlin_Number_toShort__reverse_swift(void * self);
+
 _Bool kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(void * self);
 
 int32_t kotlin_collections_IntIterator_nextInt__reverse_swift(void * self);
-
-_Bool kotlin_collections_Iterator_hasNext__reverse_swift(void * self);
-
-void * _Nullable kotlin_collections_Iterator_next__reverse_swift(void * self);
 
 _Bool kotlin_BooleanArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
@@ -27,6 +37,24 @@ _Bool kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(void * se
 
 int32_t kotlin_IntArray_size_get(void * self);
 
+_Bool kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+int8_t kotlin_Number_toByte(void * self);
+
+uint16_t kotlin_Number_toChar(void * self);
+
+uint16_t kotlin_Number_toChar_direct(void * self);
+
+double kotlin_Number_toDouble(void * self);
+
+float kotlin_Number_toFloat(void * self);
+
+int32_t kotlin_Number_toInt(void * self);
+
+int64_t kotlin_Number_toLong(void * self);
+
+int16_t kotlin_Number_toShort(void * self);
+
 _Bool kotlin_collections_BooleanIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 _Bool kotlin_collections_BooleanIterator_next(void * self);
@@ -38,9 +66,5 @@ _Bool kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_Un
 int32_t kotlin_collections_IntIterator_next(void * self);
 
 int32_t kotlin_collections_IntIterator_nextInt(void * self);
-
-_Bool kotlin_collections_Iterator_hasNext(void * self);
-
-void * _Nullable kotlin_collections_Iterator_next(void * self);
 
 NS_ASSUME_NONNULL_END

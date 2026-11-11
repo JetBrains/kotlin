@@ -1,7 +1,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
-@_spi(InternalLibApi) @_spi(OpenClassOptIn) @_spi(InterfaceOptInOne) @_spi(InterfaceOptInTwo) @_spi(ExperimentalLibApi) import lib
+@_spi(ExperimentalLibApi) @_spi(InternalLibApi) @_spi(OpenClassOptIn) @_spi(InterfaceOptInOne) @_spi(InterfaceOptInTwo) import lib
 
 @_spi(InternalLibApi)
 public typealias MyAliasAlias = lib.InternalLibAlias

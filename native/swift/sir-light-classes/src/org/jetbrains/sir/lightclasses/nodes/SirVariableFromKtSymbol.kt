@@ -257,7 +257,7 @@ internal abstract class SirAbstractGetter(
         require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
         val varSym = variable?.kaSymbolOrNull<KaVariableSymbol>()
         val enclosingClassSym = (variable?.parent as? SirDeclaration)?.kaSymbolOrNull<KaClassSymbol>()
-        if (varSym != null && variable != null && hasNonTrivialKotlinBridgeBounds(enclosingClassSym, emptyList())) {
+        if (varSym != null && variable != null && hasNonTrivialKotlinBridgeBounds(sirSession, enclosingClassSym, emptyList())) {
             buildLocalGenericBridgeCall(enclosingClassSym, varSym, variable!!.type)
         } else {
             buildCall("")
@@ -384,7 +384,7 @@ internal abstract class SirAbstractSetter(
         require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
         val varSym = variable?.kaSymbolOrNull<KaVariableSymbol>()
         val enclosingClassSym = (variable?.parent as? SirDeclaration)?.kaSymbolOrNull<KaClassSymbol>()
-        if (varSym != null && hasNonTrivialKotlinBridgeBounds(enclosingClassSym, emptyList())) {
+        if (varSym != null && hasNonTrivialKotlinBridgeBounds(sirSession, enclosingClassSym, emptyList())) {
             buildLocalGenericBridgeCall(enclosingClassSym, varSym, SirType.void, isSetter = true, setterParamExpr = args.last())
         } else {
             buildCall(" = ${args.last()}")

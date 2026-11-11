@@ -100,9 +100,9 @@ public func retunsListOfSuspend() async throws -> [() async throws -> Swift.Void
         let _: Bool = __root___retunsListOfSuspend(Unmanaged.passRetained((continuation as (Swift.Array<() async throws -> Swift.Void>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
-public func returnSuspendGeneric<T: KotlinRuntimeSupport._KotlinBridgeable>() async throws -> T {
+public func returnSuspendGeneric() async throws -> any KotlinRuntimeSupport._KotlinBridgeable {
     return try await withKotlinContinuation { continuation, exception, cancellation in
-        let _: Bool = __root___returnSuspendGeneric(Unmanaged.passRetained(({ (_p0: Swift.Optional<Swift.UnsafeMutableRawPointer>) -> Swift.Void in return (continuation)(T.__fromKotlinPointer(_p0)) } as (Swift.Optional<Swift.UnsafeMutableRawPointer>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+        let _: Bool = __root___returnSuspendGeneric(Unmanaged.passRetained((continuation as (any KotlinRuntimeSupport._KotlinBridgeable) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
 public func returnSuspendUnit() -> () async throws -> Swift.Void {
@@ -208,12 +208,6 @@ package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments
     return { _result; return true }()
 }
 
-@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_UnsafeMutableRawPointer___")
-package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_UnsafeMutableRawPointer___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<Swift.UnsafeMutableRawPointer>) -> Swift.Void)(_1)
-    return { _result; return true }()
-}
-
 @_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")
 package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Bool) -> Swift.Bool {
     let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Void) -> Swift.Void)({ _1; return () }())
@@ -254,6 +248,12 @@ package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments
 @_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___")
 package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo>) -> Swift.Void)(KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, main.Foo.Type.self))
+    return { _result; return true }()
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (any KotlinRuntimeSupport._KotlinBridgeable) -> Swift.Void)(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: _1))
     return { _result; return true }()
 }
 

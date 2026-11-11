@@ -73,14 +73,13 @@ public final class DeprecatedBar: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class GenericClass<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinCustomPointerBridgeable {
+public final class GenericClass: KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___GenericClass_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asExistentialWrapper);
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___GenericClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
-    @_documentation(visibility: internal)
-    public override init(
+    package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -144,21 +143,15 @@ public func funExtFun(
 ) -> Swift.Bool {
     return __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__(Unmanaged.passRetained((receiver as () -> Swift.Void) as AnyObject).toOpaque())
 }
-public func genericConstrainedExtFun(
-    _ receiver: main.GenericClass<Swift.String>
+public func genericExtFun(
+    _ receiver: main.GenericClass
 ) -> Swift.String {
-    return __root___genericConstrainedExtFun__TypesOfArgumentsE__main_GenericClass_Swift_String___(receiver.__externalRCRef())
-}
-@inlinable
-public func genericExtFun<_T0: KotlinRuntimeSupport._KotlinBridgeable>(
-    _ receiver: main.GenericClass<_T0>
-) -> Swift.String {
-    return _cbridge___root___genericExtFun__TypesOfArgumentsE__main_GenericClass__T0___(receiver.__externalRCRef())
+    return __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__(receiver.__externalRCRef())
 }
 public func genericUpperBoundExtFun(
-    _ receiver: main.GenericClass<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>
+    _ receiver: main.GenericClass
 ) -> Swift.String {
-    return __root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(receiver.__externalRCRef())
+    return __root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass__(receiver.__externalRCRef())
 }
 @_spi(ExperimentalApi)
 public func getDeprecatedSetterProp(
@@ -177,20 +170,15 @@ public func getFunExtProp(
 ) -> Swift.Int32 {
     return __root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__(Unmanaged.passRetained((receiver as () -> Swift.Void) as AnyObject).toOpaque())
 }
-public func getGenericConstrainedExtProp(
-    _ receiver: main.GenericClass<Swift.String>
-) -> Swift.Int32 {
-    return __root___genericConstrainedExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_String___(receiver.__externalRCRef())
-}
 public func getGenericExtProp(
-    _ receiver: main.GenericClass<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>
+    _ receiver: main.GenericClass
 ) -> Swift.Int32 {
-    return __root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(receiver.__externalRCRef())
+    return __root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass__(receiver.__externalRCRef())
 }
 public func getGenericUpperBoundExtProp(
-    _ receiver: main.GenericClass<Swift.Optional<KotlinRuntimeSupport.KotlinAny>>
+    _ receiver: main.GenericClass
 ) -> Swift.Int32 {
-    return __root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(receiver.__externalRCRef())
+    return __root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass__(receiver.__externalRCRef())
 }
 @_spi(ExperimentalApi)
 public func getHiddenDeprecatedSetterProp(
@@ -427,12 +415,6 @@ extension ExportedKotlinPackages.foo.Foo {
     }
 }
 extension main.GenericClass {
-    public func genericExtFun() -> Swift.String {
-        let receiver = self
-        return main.genericExtFun(receiver)
-    }
-}
-extension main.GenericClass<Swift.Optional<KotlinRuntimeSupport.KotlinAny>> {
     public var genericExtProp: Swift.Int32 {
         get {
             let receiver = self
@@ -440,7 +422,7 @@ extension main.GenericClass<Swift.Optional<KotlinRuntimeSupport.KotlinAny>> {
         }
     }
 }
-extension main.GenericClass<Swift.Optional<KotlinRuntimeSupport.KotlinAny>> {
+extension main.GenericClass {
     public var genericUpperBoundExtProp: Swift.Int32 {
         get {
             let receiver = self
@@ -448,24 +430,16 @@ extension main.GenericClass<Swift.Optional<KotlinRuntimeSupport.KotlinAny>> {
         }
     }
 }
-extension main.GenericClass<Swift.Optional<KotlinRuntimeSupport.KotlinAny>> {
+extension main.GenericClass {
+    public func genericExtFun() -> Swift.String {
+        let receiver = self
+        return main.genericExtFun(receiver)
+    }
+}
+extension main.GenericClass {
     public func genericUpperBoundExtFun() -> Swift.String {
         let receiver = self
         return main.genericUpperBoundExtFun(receiver)
-    }
-}
-extension main.GenericClass<Swift.String> {
-    public var genericConstrainedExtProp: Swift.Int32 {
-        get {
-            let receiver = self
-            return main.getGenericConstrainedExtProp(receiver)
-        }
-    }
-}
-extension main.GenericClass<Swift.String> {
-    public func genericConstrainedExtFun() -> Swift.String {
-        let receiver = self
-        return main.genericConstrainedExtFun(receiver)
     }
 }
 extension ExportedKotlinPackages.foo.Foo? {
@@ -656,10 +630,4 @@ package func foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar____r
 package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Void)()
     return { _result; return true }()
-}
-
-@usableFromInline
-@discardableResult
-internal func _cbridge___root___genericExtFun__TypesOfArgumentsE__main_GenericClass__T0___(_ _p0: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    return __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__T0___(_p0)
 }

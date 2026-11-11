@@ -23,7 +23,7 @@ void * __root___Accessor_init_allocate();
 
 _Bool __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32__Vararg___(void * __kt, NSArray<NSNumber *> * x);
 
-void * _Nullable __root___asNumberList__TypesOfArguments__Swift_Array_T__Vararg___(NSArray<id> * x);
+NSArray<id> * _Nullable __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___(NSArray<id> * x);
 
 _Bool __root___extension__TypesOfArgumentsE__main_Accessor_Swift_Array_Swift_Double__Vararg___(void * receiver, NSArray<NSNumber *> * d);
 

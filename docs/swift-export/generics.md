@@ -1,7 +1,7 @@
 # Witness-Bridged Open Polymorphism: Generics in Kotlin Swift Export
 
 * **Area**: Kotlin/Native — Swift Export
-* **Status**: Implemented
+* **Status**: Implemented, off by default (see [Turning it on](#turning-it-on))
 * **Related Issues**: [KT-76337](https://youtrack.jetbrains.com/issue/KT-76337), [KT-80260](https://youtrack.jetbrains.com/issue/KT-80260), [KT-87798](https://youtrack.jetbrains.com/issue/KT-87798)
 * **Target Toolchain**: Kotlin 2.5+, Swift 6.0+ (`-swift-version 6` with `-enable-library-evolution`)
 * **Companion Document**: [Swift Export Architecture](./architecture.md)
@@ -25,6 +25,37 @@
 5. [Deliberate Scope Boundaries & Pragmatic Cuts](#5-deliberate-scope-boundaries--pragmatic-cuts)
 6. [Alternatives Considered & Empirical Comparison](#6-alternatives-considered--empirical-comparison)
 7. [Source/ABI Compatibility, Library Evolution & Future Directions](#7-sourceabi-compatibility-library-evolution--future-directions)
+
+---
+
+## Turning it on
+
+Generics support is behind a flag, and the flag is off by default:
+
+```kotlin
+SwiftExportConfig(
+    // ...
+    enableGenericsSupport = true,
+)
+```
+
+With the flag off, Swift export erases a type parameter to its upper bound, as it did before this work. The generated code is then the
+same as before, with one exception: two leak fixes apply in both modes. A Swift enum and a value passed as `Any` give Kotlin a `+1`
+reference, and the Kotlin bridge now releases it. The order of extensions in a generated file can also differ, because the sort key
+of an extension now includes the type arguments of the extended type (`Foo?` and `Int32?` are no longer equal keys).
+
+Things to know:
+
+* The flag is one switch for the whole export run. All exported modules, `KotlinStdlib` included, use the same mode.
+* The Kotlin Gradle Plugin has no option for the flag yet. Only a direct user of `SwiftExportConfig` can turn it on.
+* `IdeSirSession` keeps the flag off.
+* An integration test turns the flag on with `// SWIFT_EXPORT_CONFIG: enableGenericsSupport=true` on one of its modules. These tests
+  are in `testData/execution/typed_generics` and `testData/generation/typed_generics`.
+* To check the whole test data with the flag on, run the integration tests with the environment variable
+  `SWIFT_EXPORT_TEST_FORCE_GENERICS_SUPPORT=true`, with `--no-configuration-cache`, and with `--rerun` after each test task. The
+  execution tests and the tests that compile the result must pass. Two groups fail by design: the tests that compare the result with
+  golden files, and the execution tests whose Swift code is written for the erased API (each has a copy in `typed_generics`). The run
+  adds golden files for the modules that only this mode exports. Delete them after the run.
 
 ---
 

@@ -120,5 +120,23 @@ internal fun SirDeclaration.interfaceSelfType(ktSymbol: KaCallableSymbol): SirTy
     (parent as? SirProtocol)?.let {
         return SirExistentialType(listOf(it to it.typeParameters.map(::SirTypeParameterType)))
     }
-    return null
+    if (sirSession.enableGenericsSupport) return null
+
+    // Without generics support the bridge sees a class with an F-bounded type parameter as a star projection
+    // (`Enum<*>`), and Kotlin rejects a call of a member that takes the parameter (`compareTo(other: E)`) on it.
+    // Call the member through the interface that declares it instead.
+    val containingClass = (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>() ?: return null
+    if (!containingClass.hasFBoundedTypeParameters()) return null
+
+    val overriddenInterfaceMember = ktSymbol.allOverriddenSymbols.firstOrNull { overridden ->
+        val containingSymbol = overridden.containingSymbol
+        containingSymbol is KaClassSymbol && containingSymbol.classKind == KaClassKind.INTERFACE
+    } ?: return null
+
+    val interfaceSymbol = overriddenInterfaceMember.containingSymbol as? KaNamedClassSymbol ?: return null
+
+    val sirProtocol = with(sirSession) { interfaceSymbol.toSir().allDeclarations }.firstIsInstanceOrNull<SirProtocol>()
+        ?: return null
+
+    return SirExistentialType(sirProtocol)
 }

@@ -616,8 +616,12 @@ internal sealed class SirSealedTypeFunction : SirFunction(), SirFromKtSymbol<KaN
     }
 }
 
+context(sirSession: SirSession)
 private val KaClassSymbol?.isSealed: Boolean
-    get() = this?.modality == KaSymbolModality.SEALED
+    get() = this?.modality == KaSymbolModality.SEALED &&
+            // Without generics support a class doesn't conform to a generic interface (see `SirAbstractClassFromKtSymbol.protocols`),
+            // so it can't be a case of the sealed type of that interface.
+            (sirSession.enableGenericsSupport || this.classKind != KaClassKind.INTERFACE || this.typeParameters.isEmpty())
 
 private val SirDeclaration.propagatedAttributes: List<SirAttribute>
     get() = attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI || it is SirAttribute.Documentation }

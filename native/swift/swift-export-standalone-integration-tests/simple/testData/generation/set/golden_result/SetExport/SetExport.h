@@ -9,10 +9,6 @@ NSSet<NSNumber *> * _Nullable __root___testOptSetInt__TypesOfArguments__Swift_Op
 
 NSSet<id> * __root___testSetAny__TypesOfArguments__Swift_Set_Swift_AnyHashable___(NSSet<id> * s);
 
-void * _Nullable __root___testSetFooParam__TypesOfArguments__Swift_Set_KotlinRuntimeSupport__KotlinExistential_anyU20SetExport__Foo____(void * _Nullable s);
-
-void * _Nullable __root___testSetFoo_get();
-
 NSSet<NSNumber *> * __root___testSetInt__TypesOfArguments__Swift_Set_Swift_Int32___(NSSet<NSNumber *> * s);
 
 NSSet<NSArray<NSNumber *> *> * __root___testSetListInt__TypesOfArguments__Swift_Set_Swift_Array_Swift_Int32____(NSSet<NSArray<NSNumber *> *> * s);

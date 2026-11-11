@@ -48,6 +48,12 @@ public interface SirSession :
     public val useSiteModule: KaModule
     public val moduleToTranslate: KaModule
 
+    /**
+     * Whether Kotlin type parameters are exported as Swift type parameters.
+     * If not, a type parameter is erased to its upper bound, and no declaration has type parameters in Swift.
+     */
+    public val enableGenericsSupport: Boolean get() = false
+
     public val enumGenerator: SirEnumGenerator
 
     public val declarationNamer: SirDeclarationNamer

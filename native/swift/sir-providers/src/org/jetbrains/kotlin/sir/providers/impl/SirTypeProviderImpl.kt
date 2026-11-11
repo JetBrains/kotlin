@@ -194,11 +194,13 @@ public class SirTypeProviderImpl(
         typeParameterScope[symbol]?.let { sirTypeParam ->
             return@withSessions SirTypeParameterType(sirTypeParam).optionalIfNeeded(type)
         }
+        // The type parameter is erased: it is not in scope, or generics support is off.
+        val enableGenericsSupport = sirSession.enableGenericsSupport
         return@withSessions when (symbol.upperBounds.size) {
             0 -> anyRepresentativeType().optional()
             1 -> {
                 val ub = symbol.upperBounds.single()
-                if (ub.containsTypeParameterSymbol(symbol)) {
+                if (enableGenericsSupport && ub.containsTypeParameterSymbol(symbol)) {
                     anyRepresentativeType().optionalIfNeeded(type)
                 } else {
                     val upperBound = ub.translateType(this@translateTypeParameterType)
@@ -209,7 +211,7 @@ public class SirTypeProviderImpl(
                     }
                 }
             }
-            else -> anyRepresentativeType().optionalIfNeeded(type)
+            else -> if (enableGenericsSupport) anyRepresentativeType().optionalIfNeeded(type) else fallbackType
         }
     }
 
@@ -321,7 +323,10 @@ public class SirTypeProviderImpl(
         val protocol = sirResult.primaryDeclaration as? SirProtocol ?: return@withSessions null
         if (protocol.typeParameters.isEmpty()) {
             val anyWrapper = (sirResult as? SirTranslationResult.RegularInterface)?.anyWrapperDeclaration
-            if ((ctx.inGenericTypeArgument || ctx.requiresHashableAsAny) && sirResult is SirTranslationResult.RegularInterface) {
+            if (sirSession.enableGenericsSupport &&
+                (ctx.inGenericTypeArgument || ctx.requiresHashableAsAny) &&
+                sirResult is SirTranslationResult.RegularInterface
+            ) {
                 if (anyWrapper != null) {
                     SirNominalType(anyWrapper)
                 } else {

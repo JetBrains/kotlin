@@ -1,4 +1,5 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.Array::class, "22ExportedKotlinPackages6kotlinO12KotlinStdlibE5ArrayC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.ByteArray::class, "22ExportedKotlinPackages6kotlinO12KotlinStdlibE9ByteArrayC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.ByteIterator::class, "22ExportedKotlinPackages6kotlinO11collectionsO12KotlinStdlibE12ByteIteratorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.Iterator::class, "_ExportedKotlinPackages_kotlin_collections_Iterator")
@@ -35,7 +36,7 @@ internal external fun kotlin_collections_Iterator_next__reverse_swift(self: kotl
 public fun kotlin_collections_Iterator_next__reverse(self: kotlin.collections.Iterator<kotlin.Any?>): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_Iterator_next__reverse_swift(__self)
-    return (dereferenceAndDisposeBridgeableRef(_result) as kotlin.Any?)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else (dereferenceAndDisposeBridgeableRef(_result) as kotlin.Any)
 }
 
 @ExportedBridge("kotlin_Array_get__TypesOfArguments__Swift_Int32__")
@@ -53,11 +54,11 @@ public fun kotlin_Array_iterator(self: kotlin.native.internal.NativePtr): kotlin
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlin_Array_set__TypesOfArguments__Swift_Int32_T__")
-public fun kotlin_Array_set__TypesOfArguments__Swift_Int32_T__(self: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
     val __index = index
-    val __value = (dereferenceAndDisposeBridgeableRef(value) as kotlin.Any?)
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (dereferenceAndDisposeBridgeableRef(value) as kotlin.Any)
     __self.`set`(__index, __value)
     return true
 }

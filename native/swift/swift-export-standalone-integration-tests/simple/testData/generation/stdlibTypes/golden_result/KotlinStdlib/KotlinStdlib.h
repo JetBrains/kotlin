@@ -13,10 +13,6 @@ int8_t kotlin_collections_ByteIterator_nextByte__reverse_swift(void * self);
 
 uint16_t kotlin_collections_CharIterator_nextChar__reverse_swift(void * self);
 
-_Bool kotlin_collections_Iterator_hasNext__reverse_swift(void * self);
-
-void * _Nullable kotlin_collections_Iterator_next__reverse_swift(void * self);
-
 void * kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32____reverse_swift(void * self, void * _Nullable value, int32_t startIndex, int32_t endIndex);
 
 void * kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence_____reverse_swift(void * self, void * _Nullable value);
@@ -56,10 +52,6 @@ _Bool kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_U
 uint16_t kotlin_collections_CharIterator_next(void * self);
 
 uint16_t kotlin_collections_CharIterator_nextChar(void * self);
-
-_Bool kotlin_collections_Iterator_hasNext(void * self);
-
-void * _Nullable kotlin_collections_Iterator_next(void * self);
 
 void * kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(void * self, uint16_t value);
 

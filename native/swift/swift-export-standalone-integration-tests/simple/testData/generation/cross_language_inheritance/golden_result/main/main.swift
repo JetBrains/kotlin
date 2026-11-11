@@ -2,13 +2,12 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol Boxed<T>: KotlinRuntime.KotlinBase, main._Boxed {
-    associatedtype T: KotlinRuntimeSupport._KotlinBridgeable
+public protocol Boxed: KotlinRuntime.KotlinBase, main._Boxed {
     var boxLabel: Swift.String {
         get
     }
     func label() -> Swift.String
-    func unbox() -> T
+    func unbox() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
 }
 public protocol Defaulter: KotlinRuntime.KotlinBase, main._Defaulter {
     var kind: Swift.String {
@@ -79,15 +78,6 @@ open class AbstractBase: KotlinRuntime.KotlinBase {
         } else {
             return AbstractBase_concreteMethod_direct(self.__externalRCRef())
         }
-    }
-}
-public final class AnyBoxed<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntime.KotlinBase, main.Boxed, main.__Boxed, KotlinRuntimeSupport._KotlinCustomPointerBridgeable {
-    @_documentation(visibility: internal)
-    public override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-        options: KotlinRuntime.KotlinBaseConstructionOptions
-    ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 open class Base: KotlinRuntime.KotlinBase {
@@ -326,8 +316,8 @@ extension main.Boxed where Self : main.__Boxed {
     public func label() -> Swift.String {
         return Boxed_label(self.__externalRCRef())
     }
-    public func unbox() -> T {
-        return T.__fromKotlinPointer(Boxed_unbox(self.__externalRCRef()))
+    public func unbox() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch Boxed_unbox(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 extension main.Boxed {
@@ -405,6 +395,9 @@ extension KotlinRuntimeSupport._KotlinExistential: main.Greeter, main.__Greeter 
 extension KotlinRuntimeSupport._KotlinExistential: main.Defaulter, main.__Defaulter where Wrapped : main._Defaulter {
 }
 @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: main.Boxed, main.__Boxed where Wrapped : main._Boxed {
+}
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.OverloadedInterface, main.__OverloadedInterface where Wrapped : main._OverloadedInterface {
 }
 @_documentation(visibility: internal)
@@ -470,32 +463,23 @@ package func Base_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointe
 
 @_cdecl("Boxed_boxLabel_get__reverse_swift")
 package func Boxed_boxLabel_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _rawSelf = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: `self`) as! (any main.Boxed)
-    func _open<__Self: main.Boxed>(_ _self: __Self) -> Swift.String {
-        let _result: Swift.String = _self.boxLabel
-        return _result
-    }
-    return _open(_rawSelf)
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Boxed.Type.self) as! any main.Boxed
+    let _result: Swift.String = _self.boxLabel
+    return _result
 }
 
 @_cdecl("Boxed_label__reverse_swift")
 package func Boxed_label__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _rawSelf = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: `self`) as! (any main.Boxed)
-    func _open<__Self: main.Boxed>(_ _self: __Self) -> Swift.String {
-        let _result: Swift.String = _self.label()
-        return _result
-    }
-    return _open(_rawSelf)
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Boxed.Type.self) as! any main.Boxed
+    let _result: Swift.String = _self.label()
+    return _result
 }
 
 @_cdecl("Boxed_unbox__reverse_swift")
 package func Boxed_unbox__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _rawSelf = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: `self`) as! (any main.Boxed)
-    func _open<__Self: main.Boxed>(_ _self: __Self) -> Swift.UnsafeMutableRawPointer? {
-        let _result: __Self.T = _self.unbox()
-        return _result.__retainedToKotlinPointer()
-    }
-    return _open(_rawSelf)
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Boxed.Type.self) as! any main.Boxed
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.unbox()
+    return (_result).flatMap { it in it.__retainedToKotlinPointer() }
 }
 
 @_cdecl("Defaulter_describe__reverse_swift")

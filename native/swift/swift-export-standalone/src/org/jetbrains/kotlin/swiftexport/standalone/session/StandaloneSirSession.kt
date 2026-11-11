@@ -30,6 +30,7 @@ internal class StandaloneSirSession(
     moduleForPackageEnums: SirModule,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
     enableCoroutinesSupport: Boolean,
+    override val enableGenericsSupport: Boolean,
     override val moduleProvider: SirModuleProvider,
     val hiddenModules: List<KaModule>,
     val targetPackageFqName: FqName? = null,

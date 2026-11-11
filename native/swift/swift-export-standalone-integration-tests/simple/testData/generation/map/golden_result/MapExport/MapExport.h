@@ -7,8 +7,6 @@ void * __root___foo();
 
 NSDictionary<id, NSNumber *> * __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_Swift_Int64___(NSDictionary<id, NSNumber *> * m);
 
-void * _Nullable __root___testMapBarKey__TypesOfArguments__Swift_Dictionary_KotlinRuntimeSupport__KotlinExistential_anyU20MapExport__Bar__Swift_Int32___(void * _Nullable m);
-
 NSDictionary<NSNumber *, NSString *> * __root___testMapIntString__TypesOfArguments__Swift_Dictionary_Swift_Int32_Swift_String___(NSDictionary<NSNumber *, NSString *> * m);
 
 NSDictionary<NSArray<NSNumber *> *, NSSet<NSNumber *> *> * __root___testMapListIntSetInt__TypesOfArguments__Swift_Dictionary_Swift_Array_Swift_Int32__Swift_Set_Swift_Int32____(NSDictionary<NSArray<NSNumber *> *, NSSet<NSNumber *> *> * m);
