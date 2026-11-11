@@ -87,6 +87,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
 
         /**
          * Int literals desugars their unary operators right away, so the mapper has to restore them manually.
+         * The call has the type of the folded literal, which [FirElementsRecorder] maps to [expression].
          *
          * Details: [FirElementsRecorder.visitLiteralExpression], KT-70774.
          */
@@ -95,6 +96,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
             expression: KtPrefixExpression,
             mapping: Map<KtElement, FirElement>,
         ): FirElement? {
+            val foldedLiteral = mapping[expression] as? FirLiteralExpression ?: return null
             val operatorExpression = expression.operationReference
             val operatorName = when (operatorExpression.getReferencedNameElementType()) {
                 KtTokens.PLUS -> OperatorNameConventions.UNARY_PLUS
@@ -117,26 +119,28 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 dispatchReceiver = firReceiver
                 explicitReceiver = firReceiver
 
-                coneTypeOrNull = firReceiver.resolvedType
+                coneTypeOrNull = foldedLiteral.resolvedType
             }
         }
 
         /**
          * Resolves the FIR receiver for [fakeCallForIntLiteralWithUnaryExpression] strictly downwards.
          *
-         * The operand of a desugared unary integer literal is either the recorded (folded) literal itself,
-         * or another desugared `+`/`-` unary prefix. Resolving it via the general parent-walking [getFir]
-         * would climb back up to the enclosing prefix expression and recurse infinitely (KT-87131), since
-         * the folded prefix has no FIR mapping of its own. Descending into [operand] is guaranteed to
-         * terminate because the PSI tree is finite.
+         * The operand of a desugared unary integer literal is either another desugared `+`/`-` unary prefix,
+         * or the recorded integer literal itself. Resolving it via the general parent-walking [getFir]
+         * could climb back up to the enclosing prefix expression and recurse infinitely (KT-87131).
+         * Descending into [operand] is guaranteed to terminate because the PSI tree is finite.
          */
         context(session: FirSession)
         private fun firReceiverForUnaryIntLiteral(
             operand: KtElement,
             mapping: Map<KtElement, FirElement>,
         ): FirExpression? {
-            val fir = mapping[operand]
-                ?: (operand as? KtPrefixExpression)?.let { fakeCallForIntLiteralWithUnaryExpression(it, mapping) }
+            val fir = if (operand is KtPrefixExpression) {
+                fakeCallForIntLiteralWithUnaryExpression(operand, mapping)
+            } else {
+                mapping[operand]
+            }
 
             return fir as? FirExpression
         }
@@ -238,22 +242,20 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 current is KtDotQualifiedExpression ||
                 current is KtNullableType
             ) {
+                if (current is KtPrefixExpression) {
+                    fakeCallForIntLiteralWithUnaryExpression(
+                        expression = current,
+                        mapping = mapping,
+                        session = session,
+                    )?.let { return it }
+                }
+
                 // We are still referring to the same element with possible type parameter/name qualification/nullability,
                 // hence it is always correct to return a corresponding element if present
                 if (current is KtElement) mapping[current]?.let { return it }
-                when (current) {
-                    is KtCallExpression -> {
-                        fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
-                            return it
-                        }
-                    }
-
-                    is KtPrefixExpression -> {
-                        fakeCallForIntLiteralWithUnaryExpression(
-                            expression = current,
-                            mapping = mapping,
-                            session = session,
-                        )?.let { return it }
+                if (current is KtCallExpression) {
+                    fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
+                        return it
                     }
                 }
 
