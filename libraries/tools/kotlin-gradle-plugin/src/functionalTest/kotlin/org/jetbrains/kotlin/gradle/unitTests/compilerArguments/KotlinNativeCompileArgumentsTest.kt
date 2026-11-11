@@ -145,7 +145,7 @@ class KotlinNativeCompileArgumentsTest {
     }
 
     @Test
-    fun `native compilation dependency files should contain native platform dependencies and stdlib`() {
+    fun `leaf native compilation dependency files should contain stdlib but not native platform dependencies`() {
         val project = buildProjectWithMPP()
         project.repositories.kotlinBuildDeps()
         project.repositories.mavenCentralCacheRedirector()
@@ -156,7 +156,7 @@ class KotlinNativeCompileArgumentsTest {
         project.evaluate()
         val nativeCompilation = kotlin.linuxX64().compilations.main
 
-        val expectedDependencies = setOf("stdlib", "nativeDependencies")
+        val expectedDependencies = setOf("stdlib")
 
         val actualDependencies = nativeCompilation.compileDependencyFiles
             .map { it.name }

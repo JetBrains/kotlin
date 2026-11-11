@@ -41,12 +41,9 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
                     )
                 }
             } else if (compilation is AbstractKotlinNativeCompilation) {
-                launch {
-                    compilation.configureStdlibAndPlatformDependencies(
-                        stdlib,
-                        AbstractKotlinNativeCompilation::retrievePlatformDependenciesWithNativeDownloadTask
-                    )
-                }
+                // Platform libraries of leaf targets are provided by the Kotlin/Native compiler from its distribution
+                // and must not be passed explicitly (KT-65232, KT-91182)
+                compilation.configureStdlib(stdlib)
             }
         }
     }
@@ -54,13 +51,6 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
     launch { kotlin.excludeStdlibFromNativeSourceSetDependencies() }
 }
 
-internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependenciesWithNativeDownloadTask(): FileCollection {
-    val commonizerTarget = commonizerTarget.await() ?: return project.files()
-    val nativeDependency = project.getNativeDistributionDependenciesWithNativeDownloadTask(
-        commonizerTarget,
-    )
-    return nativeDependency
-}
 
 internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependenciesWithNativeDistribution(): FileCollection {
     val commonizerTarget = commonizerTarget.await() ?: return project.files()
@@ -77,6 +67,10 @@ internal fun CommonizerTarget.retrievePlatformDependenciesWithNativeDistribution
         nativeBundleBuildService
     )
     return nativeDependency
+}
+
+private fun AbstractKotlinNativeCompilation.configureStdlib(stdlib: FileCollection) {
+    compileDependencyFiles = project.files().from(stdlib, compileDependencyFiles)
 }
 
 private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDependencies(
