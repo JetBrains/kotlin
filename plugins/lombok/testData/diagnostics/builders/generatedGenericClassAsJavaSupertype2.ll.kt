@@ -23,4 +23,4 @@ public class Child extends Owner.OwnerBuilder<String> {}
 package test
 
 fun asBuilder(child: Child): Owner.OwnerBuilder<String> = <!RETURN_TYPE_MISMATCH("Owner.OwnerBuilder<String>; Child")!>child<!>
-fun buildOwner(child: Child): Owner<String> = <!RETURN_TYPE_MISMATCH("Owner<String>; Owner<CapturedType(*)>")!>child.build()<!>
+fun buildOwner(child: Child): Owner<String> = <!RETURN_TYPE_MISMATCH("Owner<String>; (Owner<Any!>..Owner<*>)")!>child.build()<!>
