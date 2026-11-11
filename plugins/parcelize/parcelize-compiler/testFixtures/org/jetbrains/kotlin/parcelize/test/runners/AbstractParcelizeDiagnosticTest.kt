@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -20,14 +21,25 @@ abstract class AbstractParcelizePhasedDiagnosticTest : AbstractPhasedJvmDiagnost
         super.configure(builder)
         enableLazyResolvePhaseChecking()
 
-        defaultDirectives {
-            +ENABLE_PARCELIZE
-            +ENABLE_PLUGIN_PHASES
-            +DISABLE_GENERATED_FIR_TAGS
-            // Robolectric 4.16 (onward) with Android SDK 36 requires JDK 21
-            JDK_KIND with TestJdkKind.FULL_JDK_21
-        }
-
-        useConfigurators(::ParcelizeEnvironmentConfigurator)
+        configureParcelize()
     }
+}
+
+abstract class AbstractParcelizeLLDiagnosticTest : AbstractLLDiagnosticsTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureParcelize()
+    }
+}
+
+private fun TestConfigurationBuilder.configureParcelize() {
+    defaultDirectives {
+        +ENABLE_PARCELIZE
+        +ENABLE_PLUGIN_PHASES
+        +DISABLE_GENERATED_FIR_TAGS
+        // Robolectric 4.16 (onward) with Android SDK 36 requires JDK 21
+        JDK_KIND with TestJdkKind.FULL_JDK_21
+    }
+
+    useConfigurators(::ParcelizeEnvironmentConfigurator)
 }
