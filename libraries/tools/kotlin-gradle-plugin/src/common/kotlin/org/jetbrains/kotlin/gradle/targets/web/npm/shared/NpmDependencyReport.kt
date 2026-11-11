@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.createParentDirectories
+import kotlin.io.path.writeText
 
 /**
  * npm dependencies of one JS or WasmJS compilation, named by its module name.
@@ -25,8 +28,8 @@ internal data class NpmDependencyReport(
 
 internal const val NPM_DEPENDENCY_REPORT_FILE_NAME = "npm-dep-report.json"
 
-internal fun NpmDependencyReport.writeTo(file: File) {
-    file.parentFile.mkdirs()
+internal fun NpmDependencyReport.writeTo(file: Path) {
+    file.createParentDirectories()
     file.writeText(KgpJson.prettyPrinted.encodeToString(NpmDependencyReport.serializer(), this))
 }
 

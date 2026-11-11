@@ -625,7 +625,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
     @GradleTest
     fun testNpmDependencyReportWithoutCompilationNameFailsSetup(gradleVersion: GradleVersion) {
         assertInvalidNpmDependencyReportFailsSetup(gradleVersion) { report ->
-            NpmDependencyReport(target = "js", compilation = "").writeTo(report.toFile())
+            NpmDependencyReport(target = "js", compilation = "").writeTo(report)
         }
     }
 
