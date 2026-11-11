@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -30,7 +31,8 @@ class CliVirtualFileFinderFactory(
     val enableSearchInCtSym: Boolean,
     private val perfManager: PerformanceManager?,
 ) : VirtualFileFinderFactory {
-    /** Scope-based lookup required by the shared [VirtualFileFinderFactory] contract (K1, Analysis API); K2 CLI uses [create] with [JvmClasspath]. */
+    /** Scope-based lookup required by the shared [VirtualFileFinderFactory] contract (Analysis API); the compiler uses [create] with [JvmClasspath]. */
+    @OptIn(VirtualFileBasedApi::class)
     override fun create(scope: GlobalSearchScope): VirtualFileFinder =
         CliVirtualFileFinder(index, { it in scope }, enableSearchInCtSym, perfManager)
 
