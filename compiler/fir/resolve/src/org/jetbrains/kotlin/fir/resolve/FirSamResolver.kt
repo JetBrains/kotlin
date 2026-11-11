@@ -80,7 +80,7 @@ class FirSamResolver(
             is ConeClassLikeType -> {
                 SamConversionInfo(
                     functionalType = getFunctionTypeForPossibleSamType(expandedType) ?: return null,
-                    samType = expandedType
+                    samType = type
                 )
             }
             is ConeFlexibleType -> {
@@ -89,7 +89,7 @@ class FirSamResolver(
                 if (expandedType.isTrivial) {
                     SamConversionInfo(
                         functionalType = lowerType.lowerBoundIfFlexible().toTrivialFlexibleType(session.typeContext),
-                        samType = expandedType
+                        samType = type
                     )
                 } else {
                     val upperType = getSamInfoForPossibleSamType(expandedType.upperBound)?.functionalType ?: return null
@@ -99,7 +99,7 @@ class FirSamResolver(
                             upperType.upperBoundIfFlexible(),
                             isTrivial = false,
                         ),
-                        samType = expandedType
+                        samType = type
                     )
                 }
             }
