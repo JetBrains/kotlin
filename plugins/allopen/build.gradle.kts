@@ -18,6 +18,7 @@ dependencies {
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k2"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.cli"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-compiler-tests")))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
