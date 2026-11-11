@@ -6,17 +6,21 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
-import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmJsBrowserDsl
+import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
@@ -86,6 +90,12 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 it.configureRun(body)
             }
     }
+
+    @ExperimentalWasmDsl
+    override val bundler: Provider<KotlinBrowserBundler> =
+        project.objects.providerWithLazyConvention {
+            (target as KotlinWasmTarget).bundler
+        }
 
     private val testDsl: Lazy<KotlinJsBrowserTestImpl> = lazy {
         project.objects.createKotlinJsBrowserTestImpl(target.compilations.getByName(TEST_COMPILATION_NAME))
