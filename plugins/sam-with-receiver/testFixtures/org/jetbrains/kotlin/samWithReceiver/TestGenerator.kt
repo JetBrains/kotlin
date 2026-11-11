@@ -15,6 +15,9 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLightTreeSamWithReceiverDiagnosticTest> {
                 model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
+            testClass<AbstractLLSamWithReceiverDiagnosticTest> {
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver> {
                 model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
