@@ -48,12 +48,6 @@ internal class KotlinWasmNode(
             projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
         }
 
-    private val startUnitTestsExport: String = when (compilation.target.wasmTargetType) {
-        KotlinWasmTargetType.WASI -> WASM_WASI_START_UNIT_TESTS_EXPORT
-        KotlinWasmTargetType.JS -> WASM_JS_START_UNIT_TESTS_EXPORT
-        null -> throw IllegalStateException("Wasm target type is not set")
-    }
-
     override val executable: Provider<String> = nodeJsEnvSpec.executable
 
     override fun createTestExecutionSpec(
@@ -65,7 +59,7 @@ internal class KotlinWasmNode(
         val testRunnerFile = writeWasmUnitTestRunner(
             workingDir = launchOpts.workingDir.getFile(),
             compiledFile = task.inputFileProperty.get().asFile,
-            startUnitTestsExport = startUnitTestsExport,
+            startUnitTestsExport = WASM_JS_START_UNIT_TESTS_EXPORT,
         )
 
         val clientSettings = TCServiceMessagesClientSettings(
