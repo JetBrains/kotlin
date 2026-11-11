@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.incremental.js
 
-import org.jetbrains.kotlin.incremental.IncrementalJsCache
+import org.jetbrains.kotlin.incremental.IncrementalKlibCache
 import java.io.File
 
-class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : IncrementalDataProvider {
+class IncrementalDataProviderFromCache(private val cache: IncrementalKlibCache) : IncrementalDataProvider {
     override val compiledPackageParts: Map<File, TranslationResultValue>
         get() = cache.nonDirtyPackageParts()
 
@@ -20,7 +20,7 @@ class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : 
 }
 
 class KmpIncrementalDataProviderFromCache(
-    private val cache: IncrementalJsCache,
+    private val cache: IncrementalKlibCache,
 ) : KmpIncrementalDataProvider, IncrementalDataProvider by IncrementalDataProviderFromCache(cache) {
 
     override fun commonMetadata(fragmentName: String): Map<File, ByteArray> {
