@@ -7,22 +7,21 @@ package org.jetbrains.kotlin.code
 
 import kotlin.io.path.Path
 import kotlin.io.path.isRegularFile
-import kotlin.test.assertTrue
 
-val projectDir = Path("").also { path ->
-    assertTrue(path.resolve("settings.gradle.kts").isRegularFile())
+internal val projectDir = Path("").also { path ->
+    check(path.resolve("settings.gradle.kts").isRegularFile())
 }
 
-const val defaultGradleXmx = "2g"
+internal const val defaultGradleXmx = "2g"
 
-fun defaultGradleArguments(xmx: String = "1g") = buildList {
+internal fun defaultGradleArguments(xmx: String = "1g") = buildList {
     add("-Dkotlin.compiler.execution.strategy=in-process") // Prevents spawning a 3rd Kotlin compiler daemon
     add("-Dkotlin.daemon.options=\"autoshutdownIdleSeconds=5\"")
     add("-Dorg.gradle.daemon.idletimeout=1000")
     add("-Dorg.gradle.jvmargs=${defaultGradleJvmArguments(xmx = xmx).joinToString(" ")}")
 }
 
-fun defaultGradleJvmArguments(xmx: String = defaultGradleXmx) = buildList {
+internal fun defaultGradleJvmArguments(xmx: String = defaultGradleXmx) = buildList {
     add("-Xms256m")
     add("-Xmx${xmx}")
 
