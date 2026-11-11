@@ -1166,7 +1166,9 @@ class FirSignatureEnhancement(
             // TODO: drop this branch together with old Java facade (KT-70023)
             getClassLikeSymbolFromExtensionService()?.constructType(
                 typeArguments = coneType.typeArguments
-            )?.toTrivialFlexibleType(session.typeContext)
+            )?.let {
+                if (mode == FirJavaTypeConversionMode.SUPERTYPE) it else it.toTrivialFlexibleType(session.typeContext)
+            }
         } ?: coneType
     }
 
