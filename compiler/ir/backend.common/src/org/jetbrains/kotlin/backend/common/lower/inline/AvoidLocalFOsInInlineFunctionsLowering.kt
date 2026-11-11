@@ -22,13 +22,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.AbstractIrTypeSubstitutor
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
-import org.jetbrains.kotlin.ir.types.chainedWith
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.typeConstructorParameters
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -80,12 +77,9 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
                         // rather than from the local class declaration, because for a generic local class the declared supertype
                         // is expressed via the class's own type parameters (e.g. `Base<T of Local>`), and those must not leak
                         // into the call site. Substituting through the receiver type gives the specialized one (e.g. `Base<Int>`).
-                        // If the receiver type is not a simple type, fall back to the declared (unsubstituted) supertype.
+                        // If the receiver type is not a class type, the receiver is left without a cast.
                         val dispatchReceiver = expression.arguments[dispatchParam]
-                        val receiverType = dispatchReceiver?.type as? IrSimpleType
-                        val newDispatcherType = receiverType
-                            ?.let { createSupertypeSubstitutor(superClass.symbol, it) }
-                            ?.substitute(superClass.defaultType)
+                        val newDispatcherType = (dispatchReceiver?.type as? IrSimpleType)?.substitutedSupertype(superClass.symbol)
                         expression.arguments[dispatchParam] = dispatchReceiver?.implicitCastTo(newDispatcherType)
                     }
                 }
@@ -107,16 +101,26 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
                 }
             }
 
-            private fun createSupertypeSubstitutor(superClass: IrClassSymbol, receiverType: IrSimpleType): AbstractIrTypeSubstitutor? {
-                val receiverClass = receiverType.classOrNull ?: return null
-                val typeParameters = receiverClass.owner.typeConstructorParameters.map { it.symbol }.toList()
-                // The type of a local class may carry more arguments than the class has type constructor parameters: in addition to
-                // its own type parameters, the frontend also captures the type parameters of the enclosing declarations, including
-                // those outside an enclosing anonymous object (where `typeConstructorParameters` stops). The own type parameters
-                // always come first, so only the leading arguments are used for the substitution.
-                val typeArguments = receiverType.arguments.take(typeParameters.size)
-                return AbstractIrTypeSubstitutor.forSuperClass(superClass, receiverClass)
-                    ?.chainedWith(IrTypeSubstitutor(typeParameters, typeArguments, allowEmptySubstitution = true))
+            /**
+             * Returns this type viewed as its supertype of class [superClass], with type parameters of all classes in between
+             * substituted, or `null` if this type is not a subtype of [superClass].
+             *
+             * The type of a local class (both a receiver type and a declared supertype, e.g. `L1<T, R>` in `class L2<T> : L1<T>`)
+             * may carry more arguments than the class has type constructor parameters: in addition to its own type parameters,
+             * the frontend also captures the type parameters of the enclosing declarations, including those outside an enclosing
+             * anonymous object (where `typeConstructorParameters` stops). Such extra arguments always come last and are just
+             * the captured type parameters themselves, which are in scope at the call site, so they don't need substitution.
+             * That's why the generic [org.jetbrains.kotlin.ir.types.AbstractIrTypeSubstitutor.forSuperClass], which requires
+             * an exact match of type parameters and arguments, can't be used here.
+             */
+            private fun IrSimpleType.substitutedSupertype(superClass: IrClassSymbol): IrSimpleType? {
+                val clazz = classOrNull ?: return null
+                if (clazz == superClass) return this
+                val typeParameters = clazz.owner.typeConstructorParameters.map { it.symbol }
+                val substitutor = IrTypeSubstitutor(typeParameters.zip(arguments.asSequence()).toMap(), allowEmptySubstitution = true)
+                return clazz.owner.superTypes.firstNotNullOfOrNull { superType ->
+                    (substitutor.substitute(superType) as? IrSimpleType)?.substitutedSupertype(superClass)
+                }
             }
 
             private fun findOverriddenNonLocalFo(member: IrOverridableDeclaration<*>): IrSymbol? {
