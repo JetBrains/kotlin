@@ -42,7 +42,7 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group
-    }, %composer, 0)
+    }, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

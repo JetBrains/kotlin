@@ -3285,10 +3285,9 @@ class ComposableFunctionBodyTransformer(
                 )
             }
         }.also { expr ->
-            if (
-                stabilityInferencer.stabilityOf(expr.type, fileContainingDependent = fileContainingRememberCall).knownStable() &&
-                inputArgMetas.all { it.isStatic }
-            ) {
+            if (inputArgMetas.all { it.isStatic }) {
+                // The result of a remember call whose inputs are all static is static because it
+                // will be the same instance for the lifetime of its group.
                 expr.isStaticExpression = true
             }
         }
