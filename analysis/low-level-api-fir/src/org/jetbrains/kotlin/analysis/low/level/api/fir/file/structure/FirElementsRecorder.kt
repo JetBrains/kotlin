@@ -94,21 +94,13 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             is KtPrefixExpression -> {
                 val constantLiteralExpression = psi.constantExpression ?: return
                 val sourceElement = constantLiteralExpression.toKtPsiSourceElement()
-                val adjustedFirLiteral = when (psi.operationToken) {
-                    KtTokens.MINUS -> {
-                        // KtPrefixExpression(-, KtConstExpression(n)) is represented as FirLiteralExpression(-n) with converted constant value.
-                        // If one queries FIR for KtConstExpression, we still return FirLiteralExpression(-n) even though its source is KtPrefixExpression.
-                        // Here, we cache FirLiteralExpression(n) for KtConstExpression(n) to make everything natural and intuitive!
-                        literalExpression.kind.reverseConverted(
-                            original = literalExpression,
-                            sourceElement = sourceElement,
-                        )
-                    }
-
-                    // Even `+` has to be converted to drop redundant noise from the constant expression.
-                    // E.g., +(@Anno() (1))
-                    KtTokens.PLUS -> literalExpression.copy(newValue = literalExpression.value, newSource = sourceElement)
-                    else -> literalExpression
+                val adjustedFirLiteral = if (psi.negatesLiteral) {
+                    literalExpression.kind.reverseConverted(
+                        original = literalExpression,
+                        sourceElement = sourceElement,
+                    )
+                } else {
+                    literalExpression.copy(newValue = literalExpression.value, newSource = sourceElement)
                 } ?: return
 
                 // Cache only on the constant expression, not on `KtPrefixExpression`
@@ -169,6 +161,20 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             } while (true)
 
             return current as? KtConstantExpression
+        }
+
+    /**
+     * Whether the unary minuses in the chain of prefix expressions that starts with this one negate the integer literal inside it.
+     */
+    private val KtPrefixExpression.negatesLiteral: Boolean
+        get() {
+            var negates = false
+            var current: PsiElement? = this
+            while (current is KtPrefixExpression) {
+                if (current.operationToken == KtTokens.MINUS) negates = !negates
+                current = current.baseExpression.unwrapParenthesesLabelsAndAnnotations()
+            }
+            return negates
         }
 
     private fun ConstantValueKind.reverseConverted(original: FirLiteralExpression, sourceElement: KtSourceElement?): FirLiteralExpression? {
