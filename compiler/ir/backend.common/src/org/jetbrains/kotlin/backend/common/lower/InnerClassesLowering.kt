@@ -88,9 +88,14 @@ open class InnerClassesLowering(val context: CommonBackendContext) : Declaration
                 statements.addAll(blockBody.statements)
 
                 if (statements.find { it is IrInstanceInitializerCall } == null) {
-                    val delegatingConstructorCall =
-                        statements.find { it is IrDelegatingConstructorCall } as IrDelegatingConstructorCall?
-                            ?: throw AssertionError("Delegating constructor call expected: ${irConstructor.dump()}")
+                    val delegatingConstructorCall = statements.firstNotNullOfOrNull { statement ->
+                        when {
+                            statement is IrDelegatingConstructorCall -> statement
+                            statement is IrBlock && statement.origin == IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL ->
+                                statement.statements.lastOrNull() as? IrDelegatingConstructorCall
+                            else -> null
+                        }
+                    } ?: throw AssertionError("Delegating constructor call expected: ${irConstructor.dump()}")
                     delegatingConstructorCall.apply { dispatchReceiver = IrGetValueImpl(startOffset, endOffset, outerThisParameter.symbol) }
                 }
                 patchDeclarationParents(loweredConstructor)
