@@ -97,4 +97,56 @@ class SharedNpmManagerProjectTest {
 
         assertFailsWith<GradleException> { assembleJsSharedNpmProject() }
     }
+
+    @Test
+    fun `the plugin can be applied to a non-root project`() {
+        val root = buildProject(
+            projectBuilder = {
+                withName("root")
+            }
+        )
+
+        val manager = buildProject(
+            projectBuilder = {
+                withParent(root)
+                withName("npm-manager")
+            }
+        )
+        manager.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
+
+        val lib = buildProjectWithMPP(
+            projectBuilder = {
+                withParent(root)
+                withName("lib")
+            }
+        )
+        lib.kotlin {
+            js {
+                nodejs()
+            }
+        }
+
+        val libDependency = manager.dependencies.project(mapOf("path" to lib.path))
+        manager.dependencies.add("kotlinJsNpmSharedDependencies", libDependency)
+
+        lib.evaluate()
+
+        val resolvedReports = manager.configurations.getByName("kotlinNpmDependenciesReportJsResolver")
+            .incoming
+            .artifactView { it.lenient(true) }
+            .files
+            .files
+            .sorted()
+        assertEquals(reportFiles(lib), resolvedReports)
+
+        val setupTask = manager.tasks.getByName("kotlinJsSetupSharedNpmProject") as KotlinSetupSharedNpmProjectTask
+
+        val expectedOutputDirectory = manager.layout.buildDirectory
+            .dir("js/shared-npm-project")
+            .get()
+            .asFile
+        assertEquals(expectedOutputDirectory, setupTask.outputDirectory.get().asFile)
+
+        assertEquals("npm-manager", setupTask.rootPackageName.get())
+    }
 }

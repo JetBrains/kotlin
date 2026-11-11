@@ -122,6 +122,7 @@ class ProjectIsolationIT : KGPBaseTest() {
                 kotlin("multiplatform").apply(false)
             }
             buildScriptInjection {
+                @OptIn(DelicateKotlinGradlePluginApi::class)
                 project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
                 for (configuration in listOf("kotlinJsNpmSharedDependencies", "kotlinWasmNpmSharedDependencies")) {
                     project.dependencies.add(configuration, project.dependencies.project(mapOf("path" to ":lib-a")))
