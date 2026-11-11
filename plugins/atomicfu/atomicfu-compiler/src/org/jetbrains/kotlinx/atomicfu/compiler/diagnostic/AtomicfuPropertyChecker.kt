@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInstanceExtension
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -128,15 +129,13 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext)
     private fun FirPropertySymbol.isInDifferentContainerThan(other: FirPropertySymbol): Boolean {
-        val containingClassId = context.session.firProvider.getContainingClass(this)?.classId
-        val otherContainingClassId = context.session.firProvider.getContainingClass(other)?.classId
-        if (containingClassId != null || otherContainingClassId != null) {
-            return containingClassId != otherContainingClassId
+        val containingSymbol = this.getContainingSymbol(context.session)
+        val otherContainingSymbol = other.getContainingSymbol(context.session)
+
+        if (containingSymbol != null || otherContainingSymbol != null) {
+            return containingSymbol != otherContainingSymbol
         }
 
-        val containingFileSymbol = context.containingFileSymbol ?: return false
-        val otherContainingFileSymbol = context.session.firProvider.getFirCallableContainerFile(other)?.symbol
-            ?: return false
-        return containingFileSymbol != otherContainingFileSymbol
+        return false
     }
 }
