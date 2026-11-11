@@ -51,21 +51,30 @@ internal class TestFederationPlan private constructor(
                     .filter { it.domain in changedDomains }
                     .map { it.domain }
 
+                val testSubsets = when {
+                    forcedSubsets.isNotEmpty() -> forcedSubsets.toList()
+                    isAffected -> listOf(AllTests)
+                    else -> listOf(SmokeTests) + changedDomains.sorted().map(::contractTestsSubsetOf)
+                }
+                val subsetReasons = testSubsets.associateWith { subset ->
+                    when (subset) {
+                        AllTests -> when {
+                            forcedSubsets.isNotEmpty() -> "Because subsets were forced"
+                            isDefaultBranch && changedDomains.containsAll(Domain.entries) -> "Because running on the default branch"
+                            isChanged -> "Because this domain is changed"
+                            changedDependencies.isNotEmpty() -> "Because this domain declares $MUST_RUN_ALL_TESTS_REASON_PREFIX: ${changedDependencies.joinToString(", ")}"
+                            else -> ""
+                        }
+                        SmokeTests -> "Because this domain is not changed"
+                        else -> "Because other domain ${Domain.entries.first { contractTestsSubsetOf(it) == subset }.name} is changed"
+                    }
+                }
+
                 PlanEntry(
                     domain = domainInfo.domain,
-                    testSubsets = when {
-                        forcedSubsets.isNotEmpty() -> forcedSubsets.toList()
-                        isAffected -> listOf(AllTests)
-                        else -> listOf(SmokeTests) + changedDomains.sorted().map(::contractTestsSubsetOf)
-                    },
+                    testSubsets = testSubsets,
+                    reasonPerSubset = subsetReasons,
                     isChanged = isChanged,
-                    reason = when {
-                        forcedSubsets.isNotEmpty() -> "subsets were forced"
-                        isDefaultBranch && changedDomains.containsAll(Domain.entries) -> "running on the default branch"
-                        isChanged -> "this domain is changed"
-                        changedDependencies.isNotEmpty() -> "$MUST_RUN_ALL_TESTS_REASON_PREFIX: ${changedDependencies.joinToString(", ")}"
-                        else -> ""
-                    },
                 )
             }
             return TestFederationPlan(rows)
@@ -99,8 +108,8 @@ internal class TestFederationPlan private constructor(
     internal class PlanEntry(
         val domain: Domain,
         val testSubsets: List<TestSubset>,
+        val reasonPerSubset: Map<TestSubset, String>,
         val isChanged: Boolean,
-        val reason: String,
     )
 }
 
