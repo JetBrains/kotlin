@@ -96,10 +96,8 @@ abstract class AbstractNativeCExportInterfaceV1HeaderIrTest : AbstractNativeCExp
 }
 
 /**
- * Same as [AbstractNativeCExportInterfaceV1HeaderIrTest], but the library is built with IC, so the main klib is
- * served from the freshly built per-file IC caches at the final link.
- *
- * Module-based fixtures are excluded.
+ * Same as [AbstractNativeCExportInterfaceV1HeaderIrTest], but the library is built with IC, so the exported
+ * klibs are served from the freshly built per-file IC caches at the final link.
  */
 @Tag("caches")
 abstract class AbstractNativeCExportInterfaceV1HeaderIrIncrementalTest : AbstractNativeCExportInterfaceV1HeaderIrTest() {
@@ -119,12 +117,8 @@ abstract class AbstractNativeCExportInterfaceV1HeaderIrIncrementalTest : Abstrac
     }
 
     override fun runTest(@TestDataFile testFile: String) {
-        val testPath = File(ForTestCompileRuntime.transformTestDataPath(testFile).path)
-        Assumptions.assumeTrue(HeaderTestModuleMarkers.parse(testPath) !is HeaderTestModuleMarkers.HeaderTest.MultiModule) {
-            "A `// MODULE:` fixture links a binary with no sources of its own, so incremental compilation has nothing to cache"
-        }
-
-        val icCacheDir = buildDir.resolve("${testPath.nameWithoutExtension}-ic_cache").apply {
+        val testName = File(ForTestCompileRuntime.transformTestDataPath(testFile).path).nameWithoutExtension
+        val icCacheDir = buildDir.resolve("$testName-ic_cache").apply {
             deleteRecursively()
             mkdirs()
         }

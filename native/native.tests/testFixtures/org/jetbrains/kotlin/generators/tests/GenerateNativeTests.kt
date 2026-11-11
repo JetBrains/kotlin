@@ -249,7 +249,7 @@ fun main(args: Array<String>) {
             ) {
                 model("InterfaceV1HeaderTests")
             }
-            // Same goldens, but the library is linked from the IC-cached main klib instead of freshly compiled IR
+            // Same goldens, but the library is linked from the IC-cached klibs instead of freshly compiled IR
             testClass<AbstractNativeCExportInterfaceV1HeaderIrIncrementalTest>(
                 "CExportInterfaceV1HeaderIrIncrementalTestGenerated",
             ) {

@@ -446,10 +446,11 @@ enum class DeserializationStrategy(
 
     /**
      * All top-level declarations of the file are deserialized, whether referenced or not, but no function
-     * bodies are loaded, not even the inline ones: the library's bitcode is taken from the Kotlin/Native cache.
+     * bodies are loaded.
      *
-     * Used for an exported library that is fully present in the cache, so nothing of it is compiled here,
-     * but the IR-based C export discovery of Kotlin/Native still has to walk every declaration of it.
+     * Used when every declaration has to be visible in the linked IR although nothing will be generated
+     * from this library, e.g. when a library is fully present in the compiler cache, but we still need to
+     * walk every declaration of it.
      */
     ALL_WITHOUT_BODIES(theWholeWorld = true),
 
