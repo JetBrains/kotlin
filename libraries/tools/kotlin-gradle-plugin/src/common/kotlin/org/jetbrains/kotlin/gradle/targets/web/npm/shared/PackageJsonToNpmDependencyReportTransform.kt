@@ -46,7 +46,7 @@ internal abstract class PackageJsonToNpmDependencyReportTransform : TransformAct
             dependencies = dependencies.dependencies,
             peerDependencies = dependencies.peerDependencies,
             optionalDependencies = dependencies.optionalDependencies,
-        ).writeTo(outputs.file(NPM_DEPENDENCY_REPORT_FILE_NAME))
+        ).writeTo(outputs.file(NPM_DEPENDENCY_REPORT_FILE_NAME).toPath())
     }
 }
 

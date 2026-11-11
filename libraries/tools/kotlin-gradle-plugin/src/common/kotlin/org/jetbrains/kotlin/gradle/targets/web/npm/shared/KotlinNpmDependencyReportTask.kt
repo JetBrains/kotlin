@@ -36,7 +36,7 @@ abstract class KotlinNpmDependencyReportTask internal constructor() : DefaultTas
 
         val report = createNpmDependencyReport(dependencies, target.get(), compilation.moduleName.get())
 
-        report.writeTo(outputFile.get().asFile)
+        report.writeTo(outputFile.get().asFile.toPath())
     }
 
     private fun resolveNpmDependencyEntries(): Set<NpmDependencyEntry> {
