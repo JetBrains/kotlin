@@ -72,7 +72,7 @@ open class TestSystemPropertiesProvider @Inject constructor(
     val teamcity = objectFactory.property<Boolean>()
 
     override fun asArguments(): Iterable<String> = listOfNotNull(
-        "-DcodeOwnersTest.spaceCodeOwnersFile=${spaceCodeOwnersFile.singleFile.absolutePath}",
+        spaceCodeOwnersFile.takeIf { it.files.isNotEmpty() }?.let { "-DcodeOwnersTest.spaceCodeOwnersFile=${it.singleFile.absolutePath}" },
         "-Dgradle.user.home=${gradleUserHome.asFile.get().absolutePath}",
         "-Dteamcity=${teamcity.get()}",
         qualityGateMasterTasks.orNull?.let { "-Dquality.gate.master.tasks=$it" },
@@ -98,10 +98,22 @@ projectTests {
         testFederation {
             smokeTests { includeAll() }
         }
-        forkEvery = 1
+
+        useJUnitPlatform {
+            excludeTags("nightly")
+        }
     }
 
     testTask("nightlyTests", javaLauncher = JdkMajorVersion.JDK_21_0, skipInLocalBuild = false) {
+        workingDir = rootDir
+
+        jvmArgumentProviders.add(objects.newInstance<TestSystemPropertiesProvider>().apply {
+            gradleUserHome.set(gradle.gradleUserHomeDir)
+            teamcity = kotlinBuildProperties.isTeamcityBuild
+        })
+
+        forkEvery = 1
+
         useJUnitPlatform {
             includeTags("nightly")
         }
