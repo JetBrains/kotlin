@@ -90,8 +90,116 @@ public final class org/jetbrains/kotlin/buildtools/apple/ProcessAppleToolRunner 
 	public fun run (Lorg/jetbrains/kotlin/buildtools/apple/AppleToolInvocation;)Lorg/jetbrains/kotlin/buildtools/apple/AppleToolResult;
 }
 
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeInstallation {
+	public fun <init> (Ljava/nio/file/Path;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/apple/XcodeKind;Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/nio/file/Path;
+	public final fun component2 ()Ljava/nio/file/Path;
+	public final fun component3 ()Lorg/jetbrains/kotlin/buildtools/apple/XcodeKind;
+	public final fun component4 ()Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/nio/file/Path;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/apple/XcodeKind;Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;Ljava/nio/file/Path;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/apple/XcodeKind;Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAppBundle ()Ljava/nio/file/Path;
+	public final fun getBuildVersion ()Ljava/lang/String;
+	public final fun getDeveloperDir ()Ljava/nio/file/Path;
+	public final fun getKind ()Lorg/jetbrains/kotlin/buildtools/apple/XcodeKind;
+	public final fun getVersion ()Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeKind : java/lang/Enum {
+	public static final field COMMAND_LINE_TOOLS Lorg/jetbrains/kotlin/buildtools/apple/XcodeKind;
+	public static final field XCODE Lorg/jetbrains/kotlin/buildtools/apple/XcodeKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/apple/XcodeKind;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeLocator {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/apple/XcodeLocator$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/apple/AppleToolRunner;Ljava/util/Map;Ljava/util/List;Z)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/buildtools/apple/AppleToolRunner;Ljava/util/Map;Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun defaultSearchDirectories (Ljava/util/Map;)Ljava/util/List;
+	public static final fun installationAt (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;
+	public final fun installations ()Ljava/util/List;
+	public final fun resolve (Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;
+	public static synthetic fun resolve$default (Lorg/jetbrains/kotlin/buildtools/apple/XcodeLocator;Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeLocator$Companion {
+	public final fun defaultSearchDirectories (Ljava/util/Map;)Ljava/util/List;
+	public final fun installationAt (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeInstallation;
+}
+
 public final class org/jetbrains/kotlin/buildtools/apple/XcodeNotFoundException : java/lang/RuntimeException {
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/apple/XcodeRequest {
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeRequest$DeveloperDir : org/jetbrains/kotlin/buildtools/apple/XcodeRequest {
+	public fun <init> (Ljava/nio/file/Path;)V
+	public final fun component1 ()Ljava/nio/file/Path;
+	public final fun copy (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$DeveloperDir;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$DeveloperDir;Ljava/nio/file/Path;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$DeveloperDir;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPath ()Ljava/nio/file/Path;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeRequest$Selected : org/jetbrains/kotlin/buildtools/apple/XcodeRequest {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$Selected;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeRequest$Version : org/jetbrains/kotlin/buildtools/apple/XcodeRequest {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$Version;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$Version;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$Version;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSpec ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeVersion : java/lang/Comparable {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion$Companion;
+	public fun <init> (III)V
+	public synthetic fun <init> (IIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;)I
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (III)Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;IIIILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMajor ()I
+	public final fun getMinor ()I
+	public final fun getPatch ()I
+	public fun hashCode ()I
+	public static final fun parse (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeVersion$Companion {
+	public final fun parse (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersion;
+}
+
+public final class org/jetbrains/kotlin/buildtools/apple/XcodeVersionFile {
+	public static final field FILE_NAME Ljava/lang/String;
+	public static final field INSTANCE Lorg/jetbrains/kotlin/buildtools/apple/XcodeVersionFile;
+	public static final fun find (Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/nio/file/Path;
+	public static synthetic fun find$default (Ljava/nio/file/Path;Ljava/nio/file/Path;ILjava/lang/Object;)Ljava/nio/file/Path;
+	public static final fun parse (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$Version;
+	public static final fun read (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/apple/XcodeRequest$Version;
 }
 
