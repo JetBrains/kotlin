@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterRequest
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsRequest
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.KOTLIN_WASM_WIT_ARTIFACT_TYPE
-import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.requestDefaultWasiAdapter
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.requestDefaultWasmTools
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.wasiadapter.UsesWasiAdapterToolchainService
@@ -225,7 +224,6 @@ internal constructor() :
                 name,
             ) {
                 it.wasmToolsRequest.convention(project.requestDefaultWasmTools())
-                it.wasiAdapterRequest.convention(project.requestDefaultWasiAdapter())
                 it.witProjects.from(project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME))
                 it.witProjects.from(witDirectories)
                 it.configuration()

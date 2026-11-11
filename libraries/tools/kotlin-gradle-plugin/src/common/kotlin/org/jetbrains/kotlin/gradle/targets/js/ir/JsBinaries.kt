@@ -15,6 +15,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.addToAssemble
@@ -32,12 +33,15 @@ import org.jetbrains.kotlin.gradle.targets.js.typescript.KotlinJsDtsGenerationTa
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.DEFAULT_WASI_ADAPTER_VERSION
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.requestDefaultWasiAdapter
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
+import org.jetbrains.kotlin.gradle.utils.newInstance
 
 interface JsBinary {
     val compilation: KotlinJsCompilation
@@ -381,6 +385,13 @@ internal class ExecutableWasmWasi(
         WasmComponentizeTask.register(compilation, componentTaskName()) {
             inputFile.set(wasmFileFromJsFileByMode())
             outputDirectory.set(outputDirBase.map { it.dir(COMPONENT_DIRECTORY_NAME) })
+            wasiAdapterRequest.convention(
+                if (compilation.isMain()) {
+                    project.requestDefaultWasiAdapter()
+                } else {
+                    project.requestDefaultWasiAdapter(flavor = WasiAdapterFlavor.REACTOR)
+                }
+            )
         }
 
     override val mainWasmFile: Provider<RegularFile> = componentTask.flatMap {
