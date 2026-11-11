@@ -18,6 +18,8 @@ internal class SirTypealiasImpl(
     override val documentation: String?,
     override val attributes: MutableList<SirAttribute>,
     override val name: String,
+    override val typeParameters: MutableList<SirTypeParameter>,
+    override val constraints: MutableList<SirTypeConstraint>,
     override val type: SirType,
 ) : SirTypealias() {
     override lateinit var parent: SirDeclarationParent

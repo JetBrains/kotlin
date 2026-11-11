@@ -55,7 +55,7 @@ private final class SwiftAnyProducerImpl: KotlinBase, AnyProducer {
 }
 
 private final class SwiftGenericProducerImpl: KotlinBase, Producer {
-    func produce() -> (any _KotlinBridgeable)? { Int32(5) }
+    func produce() -> Int32 { 5 }
 }
 
 private final class NullableInt32Source: NullableAnySource {
@@ -65,9 +65,9 @@ private final class NullableInt32Source: NullableAnySource {
 }
 
 // `initial` differs from the override's value, so the result proves Kotlin dispatched to Swift.
-private final class GenericInt32Source: GenericSource {
-    init() { super.init(initial: Int32(0)) }
-    override func get() -> (any _KotlinBridgeable)? { Int32(21) }
+private final class GenericInt32Source: GenericSource<Int32> {
+    init() { super.init(initial: 0) }
+    override func get() -> Int32 { 21 }
 }
 
 private final class Int32Sink: AnySink {
@@ -78,12 +78,12 @@ private final class Int32Sink: AnySink {
 }
 
 private final class SwiftConsumer: KotlinBase, Consumer {
-    func consume(x: (any _KotlinBridgeable)?) -> String {
-        switch x {
+    func consume(x: KotlinAny) -> String {
+        switch x.value {
         case is String: "String"
         case is Int32: "Int32"
         case is [String]: "[String]"
-        default: "other:\(String(describing: x.map { type(of: $0) }))"
+        default: "other:\(type(of: x.value))"
         }
     }
 }

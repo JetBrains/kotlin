@@ -74,7 +74,7 @@ public fun a_b_c_E_C(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("a_b_c_E_ordinal")
 public fun a_b_c_E_ordinal(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as a.b.c.E
-    val _result = __self.ordinal
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self)!!
+    val _result = (__self as a.b.c.E).ordinal
     return _result
 }

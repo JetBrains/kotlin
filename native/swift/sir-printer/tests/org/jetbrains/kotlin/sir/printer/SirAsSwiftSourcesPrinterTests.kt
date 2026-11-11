@@ -1779,6 +1779,98 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(module, "testData/enum_with_associated_values")
     }
 
+    @Test
+    fun `should print generic declarations, PAT protocols, and where clauses`() {
+        val runtimeSupportModule = buildModule { name = "KotlinRuntimeSupport" }
+        val bridgeable = runtimeSupportModule.addChild {
+            buildProtocol { name = "_KotlinBridgeable" }
+        }
+        val module = buildModule {
+            name = "Test"
+            val repo = buildProtocol {
+                visibility = SirVisibility.PUBLIC
+                name = "Repo"
+                val tParam = SirTypeParameter(
+                    name = "T",
+                    bounds = listOf(SirNominalType(bridgeable)),
+                    isPrimaryAssociatedType = true,
+                )
+                typeParameters.add(tParam)
+                protocols.add(bridgeable)
+                buildFunction {
+                    visibility = SirVisibility.PUBLIC
+                    name = "get"
+                    returnType = SirTypeParameterType(tParam)
+                }.also(declarations::add)
+            }.attachDeclarations().also(declarations::add)
+
+            val box = buildClass {
+                visibility = SirVisibility.PUBLIC
+                modality = SirModality.OPEN
+                name = "Box"
+                val tParam = SirTypeParameter(
+                    name = "T",
+                    bounds = listOf(SirNominalType(bridgeable)),
+                )
+                typeParameters.add(tParam)
+                superClass = SirNominalType(kotlinBase)
+                buildVariable {
+                    visibility = SirVisibility.PUBLIC
+                    name = "value"
+                    type = SirTypeParameterType(tParam)
+                    getter = buildGetter {}
+                }.also {
+                    it.getter?.parent = it
+                    declarations.add(it)
+                }
+                buildInit {
+                    visibility = SirVisibility.PUBLIC
+                    isFailable = false
+                    parameters.add(SirParameter(argumentName = "value", type = SirTypeParameterType(tParam)))
+                }.also(declarations::add)
+            }.attachDeclarations().also(declarations::add)
+
+            buildTypealias {
+                visibility = SirVisibility.PUBLIC
+                name = "BoxAlias"
+                val tParam = SirTypeParameter(name = "T", bounds = listOf(SirNominalType(bridgeable)))
+                typeParameters.add(tParam)
+                type = SirNominalType(box, listOf(SirTypeParameterType(tParam)))
+            }.also(declarations::add)
+
+            buildEnum {
+                visibility = SirVisibility.PUBLIC
+                attributes.add(SirAttribute.Frozen)
+                name = "Result_SealedType"
+                val tParam = SirTypeParameter(name = "T", bounds = listOf(SirNominalType(bridgeable)))
+                typeParameters.add(tParam)
+                buildEnumCase {
+                    name = "ok"
+                    associatedValueTypes.add(SirTypeParameterType(tParam))
+                }.also(declarations::add)
+            }.attachDeclarations().also(declarations::add)
+
+            buildFunction {
+                visibility = SirVisibility.PUBLIC
+                attributes.add(SirAttribute.Inlinable)
+                name = "identity"
+                val tParam = SirTypeParameter(name = "T", bounds = listOf(SirNominalType(bridgeable)))
+                typeParameters.add(tParam)
+                parameters.add(SirParameter(argumentName = "value", type = SirTypeParameterType(tParam)))
+                returnType = SirTypeParameterType(tParam)
+                constraints.add(
+                    SirTypeConstraint.Conformance(
+                        SirNominalType(repo, listOf(SirNominalType(SirSwiftModule.int32))),
+                        listOf("T"),
+                    )
+                )
+                body = SirFunctionBody(listOf("return value"))
+            }.also(declarations::add)
+        }.attachDeclarations()
+
+        runTest(module, "testData/generic_declarations")
+    }
+
     companion object {
         val kotlinRuntimeModule = buildModule {
             name = "KotlinRuntime"

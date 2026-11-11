@@ -131,7 +131,7 @@ public fun Foo_d_set__TypesOfArguments__Swift_Bool__(self: kotlin.native.interna
 @ExportedBridge("Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
+    val __c = (dereferenceAndDisposeBridgeableRef(c) as kotlin.Any)
     val _result = context(__c) { __self.e }
     return _result
 }
@@ -139,7 +139,7 @@ public fun Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBrid
 @ExportedBridge("Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__")
 public fun Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__(self: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr, `_`: Int): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
+    val __c = (dereferenceAndDisposeBridgeableRef(c) as kotlin.Any)
     val `___` = `_`
     context(__c) { __self.e = `___` }
     return true
@@ -201,7 +201,7 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
+    val __arg = (dereferenceAndDisposeBridgeableRef(arg) as kotlin.Any)
     kotlin.native.internal.initInstance(____kt, Foo(__arg))
     return true
 }

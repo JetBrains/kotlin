@@ -53,6 +53,7 @@ public class SirDeclarationFromKtSymbolProvider(
                             auxExtension = protocol.auxExtension,
                             samConverter = protocol.samConverter,
                             sealedType = protocol.sealedType,
+                            anyWrapperDeclaration = protocol.anyWrapperDeclaration,
                         )
                     }
                     KaClassKind.ENUM_CLASS -> {
@@ -65,7 +66,10 @@ public class SirDeclarationFromKtSymbolProvider(
                         ).let {
                             SirTranslationResult.RegularClass(
                                 declaration = it,
-                                sealedType = it.sealedType
+                                sealedType = it.sealedType,
+                                openGenericBaseClass = it.openGenericBaseClass,
+                                openGenericReverseDispatchProtocol = it.openGenericReverseDispatchProtocol,
+                                relocatedNestedDeclarationsProvider = { it.relocatedNestedDeclarations },
                             )
                         }
                     }

@@ -29,7 +29,7 @@ func swiftOverrideReceivesKotlinValueAsNativeString() throws {
 @Test
 func swiftSubclassKeepsIdentityThroughT() throws {
     let h = SwiftGetHolder()
-    #expect((echoT(x: h) as? SwiftGetHolder) === h, "T lost the Swift subclass")
+    #expect((echoT(x: h as Holder<String>) as? SwiftGetHolder) === h, "T lost the Swift subclass")
     #expect((echoAny(x: h) as? SwiftGetHolder) === h, "Any lost the Swift subclass")
 }
 
@@ -37,33 +37,33 @@ func swiftSubclassKeepsIdentityThroughT() throws {
 func genericSwiftSubclassKeepsSpecialization() throws {
     let h = STypedHolder(fixed: 2)
     #expect(callGet(h: h) == "String:2")
-    #expect((echoT(x: h) as? STypedHolder<Int>) === h, "Int specialization lost")
-    #expect(echoT(x: h) as? STypedHolder<String> == nil, "cast to the wrong specialization succeeded")
+    #expect((echoT(x: h as Holder<String>) as? STypedHolder<Int>) === h, "Int specialization lost")
+    #expect(echoT(x: h as Holder<String>) as? STypedHolder<String> == nil, "cast to the wrong specialization succeeded")
 }
 
 // Swift-side subclasses and implementations used by the tests above.
 
-private final class SwiftGetHolder: Holder {
+private final class SwiftGetHolder: Holder<String> {
     init() { super.init(item: "base") }
-    override func get() -> (any _KotlinBridgeable)? { "swift" }
+    override func get() -> String { "swift" }
 }
 
-private final class SwiftItemHolder: Holder {
-    init() { super.init(item: "base") }
-    override var item: (any _KotlinBridgeable)? { Int32(7) }
+private final class SwiftItemHolder: Holder<KotlinAny> {
+    init() { super.init(item: KotlinAny("base")) }
+    override var item: KotlinAny { KotlinAny(Int32(7)) }
 }
 
-private final class SwiftTransformHolder: Holder {
+private final class SwiftTransformHolder: Holder<String> {
     var received: String?
     init() { super.init(item: "base") }
-    override func transform(x: (any _KotlinBridgeable)?) -> (any _KotlinBridgeable)? {
-        received = x as? String
+    override func transform(x: String) -> String {
+        received = x
         return "from-swift"
     }
 }
 
-private final class STypedHolder<T: CustomStringConvertible>: Holder {
+private final class STypedHolder<T: CustomStringConvertible>: Holder<String> {
     let fixed: T
     init(fixed: T) { self.fixed = fixed; super.init(item: "base") }
-    override func get() -> (any _KotlinBridgeable)? { fixed.description }
+    override func get() -> String { fixed.description }
 }

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.renderAsSwiftSourceLine
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.sir.util.swiftStringLiteral
@@ -62,6 +64,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         extensionReceiverParameter: SirParameter?,
         errorParameter: SirParameter?,
         isAsync: Boolean,
+        isInlinable: Boolean,
     ): BridgeFunctionProxy? = session.withSessions {
         val covariantTypes = listOfNotNull(returnType, errorParameter?.type)
         val contravariantTypes = (explicitParameters + listOfNotNull(selfParameter, extensionReceiverParameter))
@@ -99,29 +102,32 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
                 )
             },
             isAsync = isAsync,
+            requestedInlinable = isInlinable,
             typeNamer = typeNamer,
         )
     }
 }
 
 context(ka: KaSession, sir: SirSession)
-internal fun isSupported(type: SirType): Boolean = when (type) {
+internal fun isSupported(type: SirType, visitedParams: MutableSet<SirTypeParameter> = mutableSetOf()): Boolean = when (type) {
     is SirNominalType -> {
         val declarationSupported = when (val declaration = type.typeDeclaration) {
-            is SirTypealias -> isSupported(declaration.type)
+            is SirTypealias -> isSupported(declaration.type, visitedParams)
             else -> type.typeDeclaration.kaSymbolOrNull<KaNamedClassSymbol>()?.sirAvailability()
                 ?.let { it is SirAvailability.Available } != false
         }
-        declarationSupported && type.typeArguments.all { isSupported(it) }
+        declarationSupported && (type.parent?.let { isSupported(it, visitedParams) } != false) && type.typeArguments.all { isSupported(it, visitedParams) }
     }
-    is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all { isSupported(it) }
+    is SirFunctionalType -> isSupported(type.returnType, visitedParams) && type.parameterTypes.all { isSupported(it, visitedParams) }
     is SirExistentialType -> type.protocols.all { [protocol, typeArguments] ->
         val protocolSupported = protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability()
             ?.let { it is SirAvailability.Available } != false
-        protocolSupported && typeArguments.all { isSupported(it) }
+        protocolSupported && typeArguments.all { isSupported(it, visitedParams) }
     }
-    is SirTupleType -> type.types.all { isSupported(it.second) }
-    is SirType.Metatype -> isSupported(type.type)
+    is SirTupleType -> type.types.all { isSupported(it.second, visitedParams) }
+    is SirType.Metatype -> isSupported(type.type, visitedParams)
+    is SirTypeParameterType -> !visitedParams.add(type.parameter) || type.parameter.bounds.all { isSupported(it, visitedParams) }
+    is SirSelfType -> true
     is SirErrorType, SirUnsupportedType -> false
 }
 
@@ -145,6 +151,7 @@ public interface BridgeFunctionBuilder {
 
 public interface BridgeFunctionProxy {
     public val cBridgeName: String
+    public val isSwiftInlinable: Boolean
 
     context(sir: SirSession)
     public fun createSirBridges(
@@ -174,6 +181,7 @@ public interface BridgeFunctionProxy {
         targetMethodName: String,
         swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
         swiftDeprecation: SirAttribute.Available? = null,
+        openExistentialProtocol: SirProtocol? = null,
     ): List<SirBridge>
 
     context(sir: SirSession)
@@ -193,11 +201,21 @@ private class BridgeFunctionDescriptor(
     override val extensionReceiverParameter: BridgedParameter?,
     override val errorParameter: BridgedParameter.InOut?,
     override val isAsync: Boolean,
+    val requestedInlinable: Boolean,
     override val typeNamer: SirTypeNamer,
 ) : BridgeFunctionBuilder, BridgeFunctionProxy {
     val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, contextParameters, extensionReceiverParameter, typeNamer)
     override val cBridgeName = kotlinBridgeName
     val directCBridgeName get() = "${cBridgeName}_direct"
+    val swiftInlinableTrampolineName get() = "_cbridge_${cBridgeName}"
+
+    override val isSwiftInlinable: Boolean by lazy {
+        requestedInlinable &&
+                !isAsync &&
+                errorParameter == null &&
+                (listOfNotNull(selfParameter, extensionReceiverParameter) + parameters).all { it.bridge.isSwiftInlinableSafe() } &&
+                returnType.isSwiftInlinableSafe()
+    }
 
     context(session: SirSession)
     val allParameters
@@ -278,11 +296,12 @@ private class BridgeFunctionDescriptor(
             add(
                 SirFunctionBridge(
                     name = baseBridgeName,
-                    KotlinFunctionBridge(
+                    kotlinFunctionBridge = KotlinFunctionBridge(
                         createKotlinBridge(typeNamer, nonVirtualTargetMethod = nonVirtualTargetMethod, buildCallSite = kotlinCall),
                         listOf(exportAnnotationFqName, cinterop) + additionalImports()
                     ),
-                    CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
+                    cDeclarationBridge = CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader)),
+                    swiftTrampolineBridge = if (isSwiftInlinable) createInlinableSwiftTrampolineBridge() else null,
                 )
             )
             (allParameters + listOfNotNull(extensionReceiverParameter)).forEach {
@@ -290,6 +309,23 @@ private class BridgeFunctionDescriptor(
             }
             addAll(returnType.helperBridges(typeNamer, SirTypeVariance.COVARIANT))
         }.distinct()
+    }
+
+    context(session: SirSession)
+    private fun createInlinableSwiftTrampolineBridge(): SwiftFunctionBridge {
+        val swiftCParams = allParameters.mapIndexed { idx, param ->
+            "_ _p$idx: ${param.bridge.cType.toSwiftTypeName()}"
+        }.joinToString()
+        val forwardArgs = allParameters.indices.joinToString { "_p$it" }
+        val swiftReturnType = returnType.cType.toSwiftTypeName()
+        val lines = listOf(
+            "@usableFromInline",
+            "@discardableResult",
+            "internal func $swiftInlinableTrampolineName($swiftCParams) -> $swiftReturnType {",
+            "    return $cBridgeName($forwardArgs)",
+            "}",
+        )
+        return SwiftFunctionBridge(lines)
     }
 
     context(sir: SirSession)
@@ -339,11 +375,13 @@ private class BridgeFunctionDescriptor(
         targetMethodName: String,
         swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
         swiftDeprecation: SirAttribute.Available?,
+        openExistentialProtocol: SirProtocol?,
     ): List<SirBridge> = createReverseBridges(
         targetClassFqName = targetClassFqName,
         targetMethodName = targetMethodName,
         swiftDynamicCall = swiftDynamicCall,
         swiftDeprecation = swiftDeprecation,
+        openExistentialProtocol = openExistentialProtocol,
     )
 
     context(sir: SirSession)
@@ -354,14 +392,15 @@ private class BridgeFunctionDescriptor(
         targetMethodName = null,
         swiftDynamicCall = { _, paramExprs -> swiftDynamicCall(paramExprs) },
         swiftDeprecation = null,
+        openExistentialProtocol = null,
     )
 
     context(sir: SirSession)
-    private fun reverseSwiftCallArguments(): List<String> {
+    private fun reverseSwiftCallArguments(effectiveTypeNamer: SirTypeNamer = typeNamer): List<String> {
         val exprs = parameters.map { param ->
             val bridge = param.bridge
             require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
-            bridge.inSwiftSources.kotlinToSwift(typeNamer, param.name.swiftIdentifier)
+            bridge.inSwiftSources.kotlinToSwift(effectiveTypeNamer, param.name.swiftIdentifier)
         }
         val contextParamCount = contextParameters.size
         if (contextParamCount == 0) return exprs
@@ -385,6 +424,7 @@ private class BridgeFunctionDescriptor(
         targetMethodName: String?,
         swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
         swiftDeprecation: SirAttribute.Available?,
+        openExistentialProtocol: SirProtocol? = null,
     ): List<SirBridge> {
         val isBoundToVtableSlot = targetClassFqName != null && targetMethodName != null
         val cBridgeName = if (isBoundToVtableSlot) "${this@BridgeFunctionDescriptor.cBridgeName}__reverse"
@@ -422,7 +462,8 @@ private class BridgeFunctionDescriptor(
                             cancellation = cancellation,
                             swiftBridgeName = swiftBridgeName,
                             swiftDynamicCall = swiftDynamicCall,
-                            swiftDeprecation = swiftDeprecation
+                            swiftDeprecation = swiftDeprecation,
+                            openExistentialProtocol = openExistentialProtocol,
                         ),
                         cDeclarationBridge = createReverseAsyncCBridge(
                             cLevelParams = cLevelParams,
@@ -447,7 +488,14 @@ private class BridgeFunctionDescriptor(
                     kotlinFunctionBridge = createReverseKotlinBridge(
                         cLevelParams, cBridgeName, swiftBridgeName, targetClassFqName, targetMethodName, errorParameter
                     ),
-                    swiftFunctionBridge = createReverseSwiftBridge(cLevelParams, swiftBridgeName, swiftDynamicCall, swiftDeprecation, errorParameter),
+                    swiftFunctionBridge = createReverseSwiftBridge(
+                        cLevelParams,
+                        swiftBridgeName,
+                        swiftDynamicCall,
+                        swiftDeprecation,
+                        errorParameter,
+                        openExistentialProtocol,
+                    ),
                     cDeclarationBridge = createReverseCBridge(cLevelParams, swiftBridgeName, errorParameter)
                 )
             )
@@ -482,7 +530,13 @@ private class BridgeFunctionDescriptor(
         swiftBridgeName: String,
         swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
         swiftDeprecation: SirAttribute.Available?,
+        openExistentialProtocol: SirProtocol? = null,
     ): SwiftFunctionBridge {
+        val effectiveTypeNamer = OpenedSelfTypeNamer(
+            session,
+            typeNamer,
+            openExistentialProtocol?.typeParameters.orEmpty().mapTo(mutableSetOf()) { it.name },
+        )
         val swiftCParams = buildList {
             cLevelParams.forEach { add("_ ${it.name.swiftIdentifier}: ${it.bridge.cType.toSwiftTypeName()}") }
             add("_ continuation: ${continuation.cType.toSwiftTypeName()}")
@@ -492,26 +546,51 @@ private class BridgeFunctionDescriptor(
 
         val selfBridge = selfParameter
         val selfConversion = if (selfBridge != null) {
-            val bridge = selfBridge.bridge
-            require(bridge is BidirectionalBridge) { "Receiver parameter bridge must be bidirectional" }
-            bridge.inSwiftSources.kotlinToSwift(typeNamer, selfBridge.name.swiftIdentifier)
+            if (openExistentialProtocol != null) {
+                "KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: ${selfBridge.name.swiftIdentifier}) as! (any ${openExistentialProtocol.swiftFqName})"
+            } else {
+                val bridge = selfBridge.bridge
+                require(bridge is BidirectionalBridge) { "Receiver parameter bridge must be bidirectional" }
+                bridge.inSwiftSources.kotlinToSwift(effectiveTypeNamer, selfBridge.name.swiftIdentifier)
+            }
         } else {
             ""
         }
-        val convertedParamExprs = reverseSwiftCallArguments()
+        val convertedParamExprs = reverseSwiftCallArguments(effectiveTypeNamer)
         val callExpr = swiftDynamicCall(if (selfBridge != null) "_self" else selfConversion, convertedParamExprs)
 
         val deprecationPrefix = swiftDeprecation?.let { "${it.renderAsSwiftSourceLine()}\n" }.orEmpty()
-        val selfDeclaration = if (selfBridge != null) {
-            "    let _self = $selfConversion\n"
-        } else {
-            ""
-        }
 
-        val swiftSource = """
+        val swiftSource = if (openExistentialProtocol != null && selfBridge != null) {
+            val protoFqName = openExistentialProtocol.swiftFqName
+            val contSwiftType = effectiveTypeNamer.swiftFqName(continuation.swiftType)
+            val contExpr = continuation.inSwiftSources.kotlinToSwift(effectiveTypeNamer, "continuation")
+            """
             |$deprecationPrefix@_cdecl("$swiftBridgeName")
             |package func $swiftBridgeName($swiftCParams) -> Swift.Bool {
-            |$selfDeclaration    let __continuation: ${typeNamer.swiftFqName(continuation.swiftType)} = ${continuation.inSwiftSources.kotlinToSwift(typeNamer, "continuation")}
+            |    let _rawSelf = $selfConversion
+            |    let __exception: ${typeNamer.swiftFqName(exception.swiftType)} = ${exception.inSwiftSources.kotlinToSwift(typeNamer, "exception")}
+            |    let __cancellation: ${typeNamer.swiftFqName(cancellation.swiftType)} = ${cancellation.inSwiftSources.kotlinToSwift(typeNamer, "cancellation")}
+            |    func _open<__Self: $protoFqName>(_ _self: __Self) -> Swift.Bool {
+            |        let __continuation: $contSwiftType = $contExpr
+            |        withKotlinTask(__continuation, __exception, __cancellation) {
+            |            $callExpr
+            |        }
+            |        return true
+            |    }
+            |    return _open(_rawSelf)
+            |}
+            """.trimMargin()
+        } else {
+            val selfDeclaration = if (selfBridge != null) {
+                "    let _self = $selfConversion\n"
+            } else {
+                ""
+            }
+            """
+            |$deprecationPrefix@_cdecl("$swiftBridgeName")
+            |package func $swiftBridgeName($swiftCParams) -> Swift.Bool {
+            |$selfDeclaration    let __continuation: ${effectiveTypeNamer.swiftFqName(continuation.swiftType)} = ${continuation.inSwiftSources.kotlinToSwift(effectiveTypeNamer, "continuation")}
             |    let __exception: ${typeNamer.swiftFqName(exception.swiftType)} = ${exception.inSwiftSources.kotlinToSwift(typeNamer, "exception")}
             |    let __cancellation: ${typeNamer.swiftFqName(cancellation.swiftType)} = ${cancellation.inSwiftSources.kotlinToSwift(typeNamer, "cancellation")}
             |    withKotlinTask(__continuation, __exception, __cancellation) {
@@ -519,7 +598,8 @@ private class BridgeFunctionDescriptor(
             |    }
             |    return true
             |}
-        """.trimMargin()
+            """.trimMargin()
+        }
 
         return SwiftFunctionBridge(swiftSource.lines())
     }
@@ -612,7 +692,13 @@ private class BridgeFunctionDescriptor(
         swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
         swiftDeprecation: SirAttribute.Available?,
         errorParameter: BridgedParameter.InOut?,
+        openExistentialProtocol: SirProtocol? = null,
     ): SwiftFunctionBridge {
+        val effectiveTypeNamer = OpenedSelfTypeNamer(
+            session,
+            typeNamer,
+            openExistentialProtocol?.typeParameters.orEmpty().mapTo(mutableSetOf()) { it.name },
+        )
         val swiftCParams = (cLevelParams + listOfNotNull(errorParameter))
             .joinToString { "_ ${it.name.swiftIdentifier}: ${it.bridge.cType.toSwiftTypeName()}" }
 
@@ -622,24 +708,24 @@ private class BridgeFunctionDescriptor(
 
         val selfBridge = selfParameter
         val selfConversion = if (selfBridge != null) {
-            val bridge = selfBridge.bridge
-            require(bridge is BidirectionalBridge) { "Receiver parameter bridge must be bidirectional" }
-            bridge.inSwiftSources.kotlinToSwift(typeNamer, selfBridge.name.swiftIdentifier)
+            if (openExistentialProtocol != null) {
+                "KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: ${selfBridge.name.swiftIdentifier}) as! (any ${openExistentialProtocol.swiftFqName})"
+            } else {
+                val bridge = selfBridge.bridge
+                require(bridge is BidirectionalBridge) { "Receiver parameter bridge must be bidirectional" }
+                bridge.inSwiftSources.kotlinToSwift(effectiveTypeNamer, selfBridge.name.swiftIdentifier)
+            }
         } else {
             "" // no self
         }
 
-        val convertedParamExprs = reverseSwiftCallArguments()
+        val convertedParamExprs = reverseSwiftCallArguments(effectiveTypeNamer)
         val callExpr = swiftDynamicCall(if (selfBridge != null) "_self" else selfConversion, convertedParamExprs)
-        val swiftReturnTypeName = typeNamer.swiftFqName(returnType.swiftType)
+        val swiftReturnTypeName = effectiveTypeNamer.swiftFqName(returnType.swiftType)
 
         val returnBridge = returnType
         require(returnBridge is BidirectionalBridge) { "Return type bridge must be bidirectional" }
-        val resultLine = returnBridge.inSwiftSources.swiftToKotlin(typeNamer, "_result")
-
-        val selfDeclaration = selfBridge?.let {
-            "\n    let _self = $selfConversion"
-        }.orEmpty()
+        val resultLine = returnBridge.inSwiftSources.swiftToKotlin(effectiveTypeNamer, "_result")
 
         val callBody = if (errorParameter != null) {
             """
@@ -660,12 +746,30 @@ private class BridgeFunctionDescriptor(
 
         val deprecationPrefix = swiftDeprecation?.let { "${it.renderAsSwiftSourceLine()}\n" }.orEmpty()
 
-        val swiftSource = """
+        val swiftSource = if (openExistentialProtocol != null && selfBridge != null) {
+            val protoFqName = openExistentialProtocol.swiftFqName
+            val indentedCallBody = callBody.prependIndent("    ")
+            """
+            |$deprecationPrefix@_cdecl("$swiftBridgeName")
+            |package func $swiftBridgeName($swiftCParams) -> $swiftReturnType {
+            |    let _rawSelf = $selfConversion
+            |    func _open<__Self: $protoFqName>(_ _self: __Self) -> $swiftReturnType {
+            |$indentedCallBody
+            |    }
+            |    return _open(_rawSelf)
+            |}
+            """.trimMargin()
+        } else {
+            val selfDeclaration = selfBridge?.let {
+                "\n    let _self = $selfConversion"
+            }.orEmpty()
+            """
             |$deprecationPrefix@_cdecl("$swiftBridgeName")
             |package func $swiftBridgeName($swiftCParams) -> $swiftReturnType {$selfDeclaration
             |$callBody
             |}
-        """.trimMargin()
+            """.trimMargin()
+        }
 
         return SwiftFunctionBridge(swiftSource.lines())
     }
@@ -765,6 +869,66 @@ private class BridgeFunctionDescriptor(
     }
 }
 
+private class OpenedSelfTypeNamer(
+    private val sirSession: SirSession,
+    private val delegate: SirTypeNamer,
+    private val openedAssociatedTypeNames: Set<String>,
+) : SirTypeNamer {
+    override fun swiftFqName(type: SirType): String = renderSwiftType(type)
+
+    context(session: SirSession)
+    override fun kotlinFqName(sirType: SirType, nameType: SirTypeNamer.KotlinNameType): String =
+        delegate.kotlinFqName(sirType, nameType)
+
+    override fun kotlinPrimitiveFqNameIfAny(sirType: SirType): String? =
+        delegate.kotlinPrimitiveFqNameIfAny(sirType)
+
+    private fun renderSwiftType(type: SirType): String = when (type) {
+        is SirTypeParameterType -> {
+            val tp = type.parameter
+            if (tp.name in openedAssociatedTypeNames) {
+                "__Self.${tp.name.swiftIdentifier}"
+            } else {
+                renderSwiftType(with(sirSession) { concreteTypeForExistentialWrapperArg(tp) })
+            }
+        }
+        is SirNominalType -> listOfNotNull(
+            type.parent?.let { "${renderSwiftType(it)}." },
+            type.typeDeclaration.swiftFqName,
+            type.typeArguments.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">", separator = ",") { renderSwiftType(it) }
+        ).joinToString("")
+        is SirExistentialType -> type.protocols.takeIf { it.isNotEmpty() }?.joinToString(prefix = "any ", separator = " & ") { [protocol, args] ->
+            val renderedArgs = args.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">", separator = ",") { renderSwiftType(it) } ?: ""
+            "${protocol.swiftFqName}$renderedArgs"
+        } ?: "Any"
+        is SirFunctionalType -> {
+            val params = buildList {
+                type.contextType?.let(::add)
+                addAll(type.parameterTypes)
+            }.joinToString { renderAnnotatedSwiftType(it) }
+            val asyncStr = " async".takeIf { type.isAsync } ?: ""
+            val throwsStr = when (type.errorType) {
+                SirType.never -> ""
+                SirType.any -> " throws"
+                else -> " throws(${renderSwiftType(type.errorType)})"
+            }
+            "($params)$asyncStr$throwsStr -> ${renderSwiftType(type.returnType)}"
+        }
+        is SirTupleType -> "(${type.types.joinToString { [name, elem] -> "${name?.let { "$it: " } ?: ""}${renderSwiftType(elem)}" }})"
+        is SirType.Metatype -> when (val inner = type.type) {
+            is SirNominalType, is SirType.Metatype, is SirTypeParameterType, is SirSelfType -> renderSwiftType(inner)
+            is SirExistentialType -> renderSwiftType(inner).removePrefix("any ").let { if (inner.protocols.size == 1) it else "($it)" }
+            else -> "(${renderSwiftType(inner)})"
+        }.let { "$it.Type" }
+        else -> delegate.swiftFqName(type)
+    }
+
+    private fun renderAnnotatedSwiftType(type: SirType): String {
+        val attrs = type.attributes.map { "@${it.identifier.swiftIdentifier}${it.arguments?.let { "()" } ?: ""}" }
+        return (attrs + renderSwiftType(type)).joinToString(" ")
+    }
+}
+
 // TODO: we need to mangle C name in more elegant way. KT-64970
 // problems with this approach are:
 // 1. there can be limit for declaration names in Clang compiler
@@ -776,9 +940,22 @@ private fun bridgeDeclarationName(
     extensionReceiverParameter: BridgedParameter?,
     typeNamer: SirTypeNamer
 ): String {
+    fun mangleOverloadType(type: SirType): String = when (type) {
+        is SirTypeParameterType -> {
+            val specificBounds = type.parameter.bounds.filter {
+                (it as? SirNominalType)?.typeDeclaration != KotlinRuntimeSupportModule.kotlinBridgeable
+            }
+            if (specificBounds.isEmpty()) {
+                type.parameter.name
+            } else {
+                "${type.parameter.name}_${specificBounds.joinToString("_") { typeNamer.swiftFqName(it) }}"
+            }
+        }
+        else -> typeNamer.swiftFqName(type)
+    }
     val suffixString = if (parameterBridges.isNotEmpty()) {
         val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
-            typeNamer.swiftFqName(it.bridge.swiftType)
+            mangleOverloadType(it.bridge.swiftType)
                 .replace(".", "_")
                 .replace(",", "_")
                 .replace("<", "_")
@@ -870,7 +1047,11 @@ private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: Si
         // We fix ugly `self` escaping here. This is the only place we'd otherwise need full support for swift's contextual keywords
         argumentOverrides[nameExpr] ?: it.bridge.inSwiftSources.swiftToKotlin(typeNamer, nameExpr)
     }
-    val bridgeName = if (useDirectDispatch) directCBridgeName else cBridgeName
+    val bridgeName = when {
+        useDirectDispatch -> directCBridgeName
+        isSwiftInlinable -> swiftInlinableTrampolineName
+        else -> cBridgeName
+    }
     return "$bridgeName($parameters)"
 }
 

@@ -23,6 +23,8 @@ class SirEnumBuilder {
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = []
     val protocols: MutableList<SirProtocol> = []
+    val typeParameters: MutableList<SirTypeParameter> = []
+    val constraints: MutableList<SirTypeConstraint> = []
 
     fun build(): SirEnum {
         return SirEnumImpl(
@@ -33,6 +35,8 @@ class SirEnumBuilder {
             name,
             declarations,
             protocols,
+            typeParameters,
+            constraints,
         )
     }
 

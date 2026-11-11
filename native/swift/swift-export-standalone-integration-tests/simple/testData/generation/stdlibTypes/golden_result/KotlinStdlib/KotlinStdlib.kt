@@ -4,6 +4,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.CharSequence::class, "_ExportedKotlinPackages_kotlin_CharSequence")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.ByteIterator::class, "22ExportedKotlinPackages6kotlinO11collectionsO12KotlinStdlibE12ByteIteratorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.CharIterator::class, "22ExportedKotlinPackages6kotlinO11collectionsO12KotlinStdlibE12CharIteratorC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.Iterator::class, "_ExportedKotlinPackages_kotlin_collections_Iterator")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.text.StringBuilder::class, "22ExportedKotlinPackages6kotlinO4textO12KotlinStdlibE13StringBuilderC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.text.Appendable::class, "_ExportedKotlinPackages_kotlin_text_Appendable")
 
@@ -60,6 +61,26 @@ public fun kotlin_collections_CharIterator_nextChar__reverse(self: kotlin.collec
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_CharIterator_nextChar__reverse_swift(__self)
     return _result
+}
+
+@ImportedBridge("kotlin_collections_Iterator_hasNext__reverse_swift")
+internal external fun kotlin_collections_Iterator_hasNext__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlin.collections.Iterator::class, "hasNext")
+public fun kotlin_collections_Iterator_hasNext__reverse(self: kotlin.collections.Iterator<kotlin.Any?>): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_collections_Iterator_hasNext__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("kotlin_collections_Iterator_next__reverse_swift")
+internal external fun kotlin_collections_Iterator_next__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlin.collections.Iterator::class, "next")
+public fun kotlin_collections_Iterator_next__reverse(self: kotlin.collections.Iterator<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_collections_Iterator_next__reverse_swift(__self)
+    return (dereferenceAndDisposeBridgeableRef(_result) as kotlin.Any?)
 }
 
 @ImportedBridge("kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32____reverse_swift")
@@ -222,6 +243,20 @@ public fun kotlin_collections_CharIterator_nextChar(self: kotlin.native.internal
     return _result
 }
 
+@ExportedBridge("kotlin_collections_Iterator_hasNext")
+public fun kotlin_collections_Iterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>
+    val _result = __self.hasNext()
+    return _result
+}
+
+@ExportedBridge("kotlin_collections_Iterator_next")
+public fun kotlin_collections_Iterator_next(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>
+    val _result = __self.next()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__")
 public fun kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(self: kotlin.native.internal.NativePtr, value: Char): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.Appendable
@@ -277,7 +312,7 @@ public fun kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_an
 @ExportedBridge("kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (dereferenceAndDisposeBridgeableRef(value) as kotlin.Any)
     val _result = __self.append(__value)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -562,7 +597,7 @@ public fun kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift
 public fun kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
     val __index = index
-    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
+    val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else (dereferenceAndDisposeBridgeableRef(value) as kotlin.Any)
     val _result = __self.insert(__index, __value)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

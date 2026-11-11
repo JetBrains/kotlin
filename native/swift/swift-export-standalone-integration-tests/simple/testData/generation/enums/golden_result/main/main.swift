@@ -264,17 +264,23 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         return EnumWithMembers_foo(self.__externalRCRef())
     }
 }
-public func enumId(
-    e: ExportedKotlinPackages.kotlin.Enum
-) -> ExportedKotlinPackages.kotlin.Enum {
-    return ExportedKotlinPackages.kotlin.Enum.__createClassWrapper(externalRCRef: __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(e.__externalRCRef()))
+@inlinable
+public func enumId<_T0: KotlinRuntimeSupport._KotlinBridgeable>(
+    e: ExportedKotlinPackages.kotlin.Enum<_T0>
+) -> ExportedKotlinPackages.kotlin.Enum<KotlinRuntimeSupport.KotlinAny> {
+    return ExportedKotlinPackages.kotlin.Enum<KotlinRuntimeSupport.KotlinAny>.__fromKotlinPointer(_cbridge___root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__T0___(e.__externalRCRef()))
 }
-public func ewamEntries() -> any ExportedKotlinPackages.kotlin.enums.EnumEntries {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___ewamEntries(), conformsTo: ExportedKotlinPackages.kotlin.enums.EnumEntries.Type.self) as! any ExportedKotlinPackages.kotlin.enums.EnumEntries
+public func ewamEntries() -> any ExportedKotlinPackages.kotlin.enums.EnumEntries<main.EnumWithAbstractMembers> {
+    return { let _ptr = __root___ewamEntries(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.enums.EnumEntries<main.EnumWithAbstractMembers>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.enums.AnyEnumEntries<main.EnumWithAbstractMembers>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
 }
-public func ewamValues() -> ExportedKotlinPackages.kotlin.Array {
-    return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: __root___ewamValues())
+public func ewamValues() -> ExportedKotlinPackages.kotlin.Array<main.EnumWithAbstractMembers> {
+    return ExportedKotlinPackages.kotlin.Array<main.EnumWithAbstractMembers>.__fromKotlinPointer(__root___ewamValues())
 }
 public func yellow() -> main.EnumWithAbstractMembers {
-    return main.EnumWithAbstractMembers(__externalRCRefUnsafe: __root___yellow(), options: .asBestFittingWrapper)
+    return main.EnumWithAbstractMembers.__fromKotlinPointer(__root___yellow())
+}
+@usableFromInline
+@discardableResult
+internal func _cbridge___root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__T0___(_ _p0: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    return __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__T0___(_p0)
 }

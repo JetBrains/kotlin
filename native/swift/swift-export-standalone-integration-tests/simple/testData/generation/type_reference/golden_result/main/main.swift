@@ -478,18 +478,6 @@ extension main.INTERFACE where Self : main.__INTERFACE {
 }
 extension main.INTERFACE {
 }
-extension Swift.Int32? {
-    public var extensionVarOnNullablePrimitive: Swift.String {
-        get {
-            let receiver = self
-            return main.getExtensionVarOnNullablePrimitive(receiver)
-        }
-        set(v) {
-            let receiver = self
-            return main.setExtensionVarOnNullablePrimitive(receiver, v: v)
-        }
-    }
-}
 extension main.Class_without_package? {
     public var extensionVarOnNullableRef: Swift.String {
         get {
@@ -502,16 +490,28 @@ extension main.Class_without_package? {
         }
     }
 }
-extension Swift.Int32? {
-    public func extensionOnNullablePrimitive() -> Swift.Void {
-        let receiver = self
-        return main.extensionOnNullablePrimitive(receiver)
-    }
-}
 extension main.Class_without_package? {
     public func extensionOnNullabeRef() -> Swift.Void {
         let receiver = self
         return main.extensionOnNullabeRef(receiver)
+    }
+}
+extension Swift.Int32? {
+    public var extensionVarOnNullablePrimitive: Swift.String {
+        get {
+            let receiver = self
+            return main.getExtensionVarOnNullablePrimitive(receiver)
+        }
+        set(v) {
+            let receiver = self
+            return main.setExtensionVarOnNullablePrimitive(receiver, v: v)
+        }
+    }
+}
+extension Swift.Int32? {
+    public func extensionOnNullablePrimitive() -> Swift.Void {
+        let receiver = self
+        return main.extensionOnNullablePrimitive(receiver)
     }
 }
 @_documentation(visibility: internal)
@@ -700,7 +700,7 @@ extension ExportedKotlinPackages.ignored {
         }
     }
     public static func produce_ENUM() -> ExportedKotlinPackages.ignored.ENUM {
-        return ExportedKotlinPackages.ignored.ENUM(__externalRCRefUnsafe: ignored_produce_ENUM(), options: .asBestFittingWrapper)
+        return ExportedKotlinPackages.ignored.ENUM.__fromKotlinPointer(ignored_produce_ENUM())
     }
     public static func produce_VALUE_CLASS() -> ExportedKotlinPackages.ignored.VALUE_CLASS {
         return ExportedKotlinPackages.ignored.VALUE_CLASS.__createClassWrapper(externalRCRef: ignored_produce_VALUE_CLASS())

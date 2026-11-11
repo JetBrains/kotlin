@@ -3,9 +3,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-_Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__(void * pointerToClosure, void * ctx0, void * ctx1, int32_t _3, NSString * _4);
+_Bool main_internal_functional_type_callee_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(void * pointerToClosure, void * ctx0, NSString * _2);
 
-_Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(void * pointerToClosure, void * ctx0, NSString * _2);
+_Bool main_internal_functional_type_callee_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextA_main_ContextB_Swift_Int32_Swift_String__(void * pointerToClosure, void * ctx0, void * ctx1, int32_t _3, NSString * _4);
 
 void * Foo_bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * ctx, void * arg);
 
@@ -75,8 +75,8 @@ int32_t __root___unnamedContextParametersProperty_get__TypesOfArgumentsC2__main_
 
 _Bool __root___unnamedContextParametersProperty_set__TypesOfArgumentsC2__main_ContextA_main_Context_Swift_Int32__(void * _0, void * ctx, int32_t value);
 
-_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__(void * pointerToBlock, void * ctx0, void * ctx1, NSString * _3, int32_t _4);
+_Bool main_internal_functional_type_caller_ctx1_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__(void * pointerToBlock, void * ctx0, int32_t _2);
 
-_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__(void * pointerToBlock, void * ctx0, int32_t _2);
+_Bool main_internal_functional_type_caller_ctx2_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__(void * pointerToBlock, void * ctx0, void * ctx1, NSString * _3, int32_t _4);
 
 NS_ASSUME_NONNULL_END

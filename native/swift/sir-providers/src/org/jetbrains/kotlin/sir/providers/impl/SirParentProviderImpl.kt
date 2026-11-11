@@ -65,7 +65,12 @@ public class SirParentProviderImpl(
                 extensionForPackage
             }
         } else {
-            if (symbol is KaClassSymbol && parentSymbol is KaNamedClassSymbol && parentSymbol.classKind == KaClassKind.INTERFACE) {
+            val isInsideGenericClass = generateSequence(parentSymbol as? KaNamedClassSymbol) {
+                it.containingDeclaration as? KaNamedClassSymbol
+            }.any { it.typeParameters.isNotEmpty() }
+            if (symbol is KaClassSymbol && parentSymbol is KaNamedClassSymbol &&
+                (parentSymbol.classKind == KaClassKind.INTERFACE || isInsideGenericClass)
+            ) {
                 parentSymbol.containingModule.sirModule()
             } else {
                 parentSymbol.toSir().primaryDeclaration as? SirDeclarationContainer

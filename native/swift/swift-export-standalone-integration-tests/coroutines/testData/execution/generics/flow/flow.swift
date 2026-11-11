@@ -18,8 +18,8 @@ func flowOfAnyElements() async throws {
 
 @Test
 func flowOfT() async throws {
-    var xs: [String?] = []
-    for try await e in flowOfRepeatedT(x: "t").asAsyncSequence() { xs.append(e as? String) }
+    var xs: [String] = []
+    for try await e in flowOfRepeatedT(x: "t").asAsyncSequence() { xs.append(e) }
     #expect(xs == ["t", "t"])
 }
 

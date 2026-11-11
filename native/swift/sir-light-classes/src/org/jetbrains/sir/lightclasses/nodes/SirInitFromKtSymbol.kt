@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProx
 import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
@@ -69,7 +70,7 @@ internal sealed class SirInitFromKtSymbol(
         }
         set(_) = Unit
 
-    override val attributes: List<SirAttribute> by lazy {
+    protected val baseAttributes: List<SirAttribute> by lazy {
         buildList {
             addAll(this@SirInitFromKtSymbol.translatedAttributes)
             if (overrideStatus is OverrideStatus.Conflicts) {
@@ -80,14 +81,32 @@ internal sealed class SirInitFromKtSymbol(
         }
     }
 
+    protected val isSelfUnavailable: Boolean
+        get() = baseAttributes.any { it is SirAttribute.Available && it.unavailable }
+
+    override val attributes: List<SirAttribute> by lazy {
+        if (isSwiftInlinableInit) {
+            baseAttributes + SirAttribute.Inlinable
+        } else {
+            baseAttributes
+        }
+    }
+
+    protected open val isSwiftInlinableInit: Boolean
+        get() = false
+
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
 
     override val isAsync: Boolean get() = false
 
+    override val typeParameters: List<SirTypeParameter> get() = emptyList()
+
+    override val constraints: List<SirTypeConstraint> get() = emptyList()
+
     protected val isBridged: Boolean
         get() = withSessions {
             (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.let {
-                !it.defaultType.isArrayOrPrimitiveArray && !it.hasFBoundedTypeParameters()
+                !it.defaultType.isArrayOrPrimitiveArray
             } ?: false
         }
 
@@ -131,25 +150,53 @@ internal class SirRegularInitFromKtSymbol(
     override val isFailable: Boolean
         get() = false
 
+    private val canRequestInlinable: Boolean by lazyWithSessions {
+        val enclosingClass = parent as? SirAbstractClassFromKtSymbol ?: return@lazyWithSessions false
+        visibility == SirVisibility.PUBLIC &&
+            enclosingClass.typeParameters.isNotEmpty() &&
+            !isInheritableClass &&
+            !isAbstractClass &&
+            enclosingClass.rawSuperClass.typeDeclaration == KotlinRuntimeModule.kotlinBase &&
+            errorType == SirType.never &&
+            origin !is InnerInitSource &&
+            !enclosingClass.isUnavailable &&
+            enclosingClass.attributes.none { it is SirAttribute.SPI || it is SirAttribute.Available } &&
+            !isSelfUnavailable &&
+            baseAttributes.none { it is SirAttribute.SPI || it is SirAttribute.Available }
+    }
+
+    override val isSwiftInlinableInit: Boolean by lazyWithSessions {
+        canRequestInlinable &&
+            bridgeAllocProxy?.isSwiftInlinable == true &&
+            bridgeInitProxy?.isSwiftInlinable == true
+    }
+
     override val bridges: List<SirBridge> by lazyWithSessions {
-        val producingType: SirType = SirNominalType(
-            parent as? SirScopeDefiningDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
-        )
+        val scopeDecl = parent as? SirScopeDefiningDeclaration
+            ?: error("Encountered an Init that produces non-named type: $parent")
+        val producingType: SirType = scopeDecl.parameterizedSelfNominalType()
+        val enclosingClassSymbol = ktSymbol.containingDeclaration as? KaNamedClassSymbol
+        val useLocalGenericHelper = enclosingClassSymbol != null &&
+            hasNonTrivialKotlinBridgeBounds(enclosingClassSymbol, emptyList())
 
         val abstractConstructorTarget: String? = "<init>".takeIf { isAbstractClass }
 
         buildList {
             addAll(
                 bridgeAllocProxy?.createSirBridges {
-                    val args = argNames
-                    "kotlin.native.internal.createUninitializedInstance<${
-                        typeNamer.kotlinFqName(
-                            producingType,
-                            SirTypeNamer.KotlinNameType.PARAMETRIZED
-                        )
-                    }>(${args.joinToString()})${
-                        if ((ktSymbol.containingDeclaration as KaNamedClassSymbol).isInline) " as Any?" else ""
-                    }"
+                    if (useLocalGenericHelper) {
+                        buildLocalGenericAllocBridgeCall(enclosingClassSymbol)
+                    } else {
+                        val args = argNames
+                        "kotlin.native.internal.createUninitializedInstance<${
+                            typeNamer.kotlinFqName(
+                                producingType,
+                                SirTypeNamer.KotlinNameType.PARAMETRIZED
+                            )
+                        }>(${args.joinToString()})${
+                            if ((ktSymbol.containingDeclaration as KaNamedClassSymbol).isInline) " as Any?" else ""
+                        }"
+                    }
                 }.orEmpty()
             )
             if (origin is InnerInitSource) {
@@ -174,13 +221,17 @@ internal class SirRegularInitFromKtSymbol(
             } else {
                 addAll(
                     bridgeInitProxy?.createSirBridges(nonVirtualTargetMethod = abstractConstructorTarget) {
-                        val args = argNames
-                        "kotlin.native.internal.initInstance(${args.first()}, ${
-                            typeNamer.kotlinFqName(
-                                producingType,
-                                SirTypeNamer.KotlinNameType.PARAMETRIZED
-                            )
-                        }(${args.drop(1).joinToString()}))"
+                        if (useLocalGenericHelper) {
+                            buildLocalGenericInitBridgeCall(enclosingClassSymbol, ktSymbol)
+                        } else {
+                            val args = argNames
+                            "kotlin.native.internal.initInstance(${args.first()}, ${
+                                typeNamer.kotlinFqName(
+                                    producingType,
+                                    SirTypeNamer.KotlinNameType.PARAMETRIZED
+                                )
+                            }(${args.drop(1).joinToString()}))"
+                        }
                     }.orEmpty()
                 )
             }
@@ -192,11 +243,13 @@ internal class SirRegularInitFromKtSymbol(
         get() = withSessions {
             val initDescriptor = bridgeInitProxy ?: return@withSessions null
             val scope = parent as? SirScopeDefiningDeclaration
+            val scopeTypeName = scope?.parameterizedSelfNominalType()?.swiftName
+            val isGenericClass = (scope as? SirGenericDeclaration)?.typeParameters?.isNotEmpty() == true
 
             return@withSessions SirFunctionBody(buildList {
                 if (isAbstractClass) {
                     scope?.let {
-                        add("precondition(Self.self != ${it.swiftFqName}.self, \"${it.swiftFqName} is an abstract class and cannot be instantiated directly\")")
+                        add("precondition(Self.self != ${scopeTypeName ?: it.swiftFqName}.self, \"${it.swiftFqName} is an abstract class and cannot be instantiated directly\")")
                     }
                 }
 
@@ -206,7 +259,7 @@ internal class SirRegularInitFromKtSymbol(
                         val allocDescriptor = bridgeAllocProxy ?: return@withSessions null
                         add("""
                         | let ${obj.name}: Swift.UnsafeMutableRawPointer!
-                        | if Self.self == ${scope.swiftFqName}.self {
+                        | if Self.self == ${scopeTypeName ?: scope.swiftFqName}.self {
                         | ${allocDescriptor.createSwiftInvocation { "${obj.name} = $it" }.joinToString("\n|").prependIndent()}
                         | } else {
                         |     ${obj.name} = _kotlinAllocInstanceForSwiftSubclass(Self.self)
@@ -219,7 +272,13 @@ internal class SirRegularInitFromKtSymbol(
                     }
                 }
 
-                add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge);")
+                val superInitOptions = when {
+                    !isGenericClass -> ".asBoundBridge"
+                    isAbstractClass -> ".asBoundBridge"
+                    isInheritableClass && scopeTypeName != null -> "Self.self == $scopeTypeName.self ? .asExistentialWrapper : .asBoundBridge"
+                    else -> ".asExistentialWrapper"
+                }
+                add("super.init(__externalRCRefUnsafe: ${obj.name}, options: $superInitOptions);")
 
                 addAll(initDescriptor.createSwiftInvocation(resultTransformer = null))
             })
@@ -246,12 +305,13 @@ internal class SirRegularInitFromKtSymbol(
             extensionReceiverParameter = null,
             errorParameter = null,
             isAsync = false,
+            isInlinable = canRequestInlinable,
         )
     }
 
     private val bridgeInitProxy: BridgeFunctionProxy? by lazyWithSessions {
         if (!isBridged) return@lazyWithSessions null
-        if (isUnavailable) return@lazyWithSessions null
+        if (isSelfUnavailable) return@lazyWithSessions null
 
         val fqName = ktSymbol.containingClassId?.asSingleFqName()
             ?: return@lazyWithSessions null
@@ -273,6 +333,7 @@ internal class SirRegularInitFromKtSymbol(
                 SirParameter(null, "__error", it)
             },
             isAsync = false,
+            isInlinable = canRequestInlinable,
         )
     }
 }

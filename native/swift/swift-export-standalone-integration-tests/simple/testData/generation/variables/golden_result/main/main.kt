@@ -95,7 +95,7 @@ public fun __root___foo_get(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("__root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue: kotlin.native.internal.NativePtr): Boolean {
-    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.Any
+    val __newValue = (dereferenceAndDisposeBridgeableRef(newValue) as kotlin.Any)
     foo = __newValue
     return true
 }
@@ -108,7 +108,7 @@ public fun __root___lateinit_foo_get(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("__root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue: kotlin.native.internal.NativePtr): Boolean {
-    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.Any
+    val __newValue = (dereferenceAndDisposeBridgeableRef(newValue) as kotlin.Any)
     lateinit_foo = __newValue
     return true
 }

@@ -58,13 +58,28 @@ public class SirTrampolineDeclarationsProviderImpl(
     }?.also { it.parent = this.containingModule() }
 
     private fun SirDeclaration.trampolineDeclaration(): SirDeclaration? = when (val declaration = this@trampolineDeclaration) {
-        is SirScopeDefiningDeclaration -> {
+        is SirProtocol -> {
             buildTypealias {
                 origin = SirOrigin.Trampoline(declaration)
                 visibility = declaration.visibility
                 documentation = declaration.documentation
                 name = declaration.name
                 type = SirNominalType(declaration)
+                attributes += declaration.attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI }
+            }
+        }
+        is SirScopeDefiningDeclaration -> {
+            buildTypealias {
+                origin = SirOrigin.Trampoline(declaration)
+                visibility = declaration.visibility
+                documentation = declaration.documentation
+                name = declaration.name
+                val declTypeParams = (declaration as? SirGenericDeclaration)?.typeParameters.orEmpty()
+                typeParameters += declTypeParams
+                if (declaration is SirConstrainedDeclaration) {
+                    constraints += declaration.constraints
+                }
+                type = SirNominalType(declaration, declTypeParams.map(::SirTypeParameterType))
                 attributes += declaration.attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI }
             }
         }

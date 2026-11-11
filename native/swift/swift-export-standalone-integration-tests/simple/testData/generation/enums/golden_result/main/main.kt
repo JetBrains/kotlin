@@ -41,28 +41,28 @@ public fun EnumWithAbstractMembers_YELLOW(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("EnumWithAbstractMembers_blue")
 public fun EnumWithAbstractMembers_blue(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithAbstractMembers
+    val __self = (dereferenceAndDisposeBridgeableRef(self) as EnumWithAbstractMembers)
     val _result = __self.blue()
     return _result
 }
 
 @ExportedBridge("EnumWithAbstractMembers_green")
 public fun EnumWithAbstractMembers_green(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithAbstractMembers
+    val __self = (dereferenceAndDisposeBridgeableRef(self) as EnumWithAbstractMembers)
     val _result = __self.green()
     return _result
 }
 
 @ExportedBridge("EnumWithAbstractMembers_ordinalSquare")
 public fun EnumWithAbstractMembers_ordinalSquare(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithAbstractMembers
+    val __self = (dereferenceAndDisposeBridgeableRef(self) as EnumWithAbstractMembers)
     val _result = __self.ordinalSquare()
     return _result
 }
 
 @ExportedBridge("EnumWithAbstractMembers_red_get")
 public fun EnumWithAbstractMembers_red_get(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithAbstractMembers
+    val __self = (dereferenceAndDisposeBridgeableRef(self) as EnumWithAbstractMembers)
     val _result = __self.red
     return _result
 }
@@ -81,14 +81,14 @@ public fun EnumWithMembers_SOUTH(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("EnumWithMembers_foo")
 public fun EnumWithMembers_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithMembers
+    val __self = (dereferenceAndDisposeBridgeableRef(self) as EnumWithMembers)
     val _result = __self.foo()
     return _result.objcPtr()
 }
 
 @ExportedBridge("EnumWithMembers_isNorth_get")
 public fun EnumWithMembers_isNorth_get(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithMembers
+    val __self = (dereferenceAndDisposeBridgeableRef(self) as EnumWithMembers)
     val _result = __self.isNorth
     return _result
 }
@@ -107,14 +107,14 @@ public fun Enum_b(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("Enum_i_get")
 public fun Enum_i_get(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Enum
+    val __self = (dereferenceAndDisposeBridgeableRef(self) as Enum)
     val _result = __self.i
     return _result
 }
 
 @ExportedBridge("Enum_i_set__TypesOfArguments__Swift_Int32__")
 public fun Enum_i_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Enum
+    val __self = (dereferenceAndDisposeBridgeableRef(self) as Enum)
     val __newValue = newValue
     __self.i = __newValue
     return true
@@ -122,41 +122,41 @@ public fun Enum_i_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.inter
 
 @ExportedBridge("Enum_print")
 public fun Enum_print(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Enum
+    val __self = (dereferenceAndDisposeBridgeableRef(self) as Enum)
     val _result = __self.print()
     return _result.objcPtr()
 }
 
 @ExportedBridge("__root___EnumSimple_ordinal")
 public fun __root___EnumSimple_ordinal(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumSimple
-    val _result = __self.ordinal
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self)!!
+    val _result = (__self as EnumSimple).ordinal
     return _result
 }
 
 @ExportedBridge("__root___EnumWithAbstractMembers_ordinal")
 public fun __root___EnumWithAbstractMembers_ordinal(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithAbstractMembers
-    val _result = __self.ordinal
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self)!!
+    val _result = (__self as EnumWithAbstractMembers).ordinal
     return _result
 }
 
 @ExportedBridge("__root___EnumWithMembers_ordinal")
 public fun __root___EnumWithMembers_ordinal(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithMembers
-    val _result = __self.ordinal
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self)!!
+    val _result = (__self as EnumWithMembers).ordinal
     return _result
 }
 
 @ExportedBridge("__root___Enum_ordinal")
 public fun __root___Enum_ordinal(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Enum
-    val _result = __self.ordinal
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self)!!
+    val _result = (__self as Enum).ordinal
     return _result
 }
 
-@ExportedBridge("__root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__")
-public fun __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(e: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__T0___")
+public fun __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__T0___(e: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __e = kotlin.native.internal.ref.dereferenceExternalRCRef(e) as kotlin.Enum<*>
     val _result = enumId(__e)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)

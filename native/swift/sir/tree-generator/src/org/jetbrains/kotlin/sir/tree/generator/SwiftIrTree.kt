@@ -73,6 +73,10 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("constraints", typeConstraintType)
     }
 
+    val genericDeclaration by sealedElement {
+        +listField("typeParameters", typeParameterType)
+    }
+
     val protocolConformingDeclaration by sealedElement {
         +listField("protocols", protocol)
     }
@@ -112,6 +116,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(scopeDefiningDeclaration)
         parent(declarationContainer)
         parent(protocolConformingDeclaration)
+        parent(genericDeclaration)
+        parent(constrainedDeclaration)
     }
 
     val enumCase: Element by element {
@@ -128,6 +134,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(scopeDefiningDeclaration)
         parent(declarationContainer)
         parent(protocolConformingDeclaration)
+        parent(genericDeclaration)
+        parent(constrainedDeclaration)
     }
 
     val protocol: Element by element {
@@ -137,6 +145,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(mutableDeclarationContainer)
         parent(classInhertingDeclaration)
         parent(protocolConformingDeclaration)
+        parent(genericDeclaration)
+        parent(constrainedDeclaration)
         parent(bridged)
     }
 
@@ -146,6 +156,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declarationContainer)
         parent(classInhertingDeclaration)
         parent(protocolConformingDeclaration)
+        parent(genericDeclaration)
+        parent(constrainedDeclaration)
         parent(bridged)
 
         +field("modality", modalityKind)
@@ -154,6 +166,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val `typealias`: Element by element {
         customParentInVisitor = scopeDefiningDeclaration
         parent(scopeDefiningDeclaration)
+        parent(genericDeclaration)
+        parent(constrainedDeclaration)
 
         +field("type", typeType)
     }
@@ -171,6 +185,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val init by element {
         customParentInVisitor = callable
         parent(callable)
+        parent(genericDeclaration)
+        parent(constrainedDeclaration)
 
         +field("isFailable", boolean)
         +listField("parameters", parameterType)
@@ -185,6 +201,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = callable
         parent(callable)
         parent(classMemberDeclaration)
+        parent(genericDeclaration)
+        parent(constrainedDeclaration)
 
         +field("name", string)
         +field("contextParameter", parameterType, nullable = true)
@@ -254,6 +272,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declaration)
         parent(declarationParent)
         parent(classMemberDeclaration)
+        parent(genericDeclaration)
+        parent(constrainedDeclaration)
 
         +listField("parameters", parameterType)
         +field("returnType", typeType)

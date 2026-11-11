@@ -65,10 +65,10 @@ public final class Accessor: KotlinRuntime.KotlinBase {
         }
     }
 }
-public func asNumberList(
-    x: ExportedKotlinPackages.kotlin.Number...
-) -> [ExportedKotlinPackages.kotlin.Number]? {
-    return __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___(x).map { it in it as! Swift.Array<ExportedKotlinPackages.kotlin.Number> }
+public func asNumberList<T: KotlinRuntimeSupport._KotlinBridgeable>(
+    x: T...
+) -> [T]? {
+    return Swift.Optional<Swift.Array<T>>.__fromKotlinPointer(__root___asNumberList__TypesOfArguments__Swift_Array_T__Vararg___(x))
 }
 public func `extension`(
     _ receiver: main.Accessor,

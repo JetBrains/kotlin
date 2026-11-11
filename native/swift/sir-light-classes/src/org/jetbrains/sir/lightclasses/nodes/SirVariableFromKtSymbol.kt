@@ -107,7 +107,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
         }
         set(_) = Unit
 
-    override val attributes: List<SirAttribute> by lazy {
+    internal val baseAttributes: List<SirAttribute> by lazy {
         buildList {
             addAll(this@SirAbstractVariableFromKtSymbol.translatedAttributes)
             if (overrideStatus is OverrideStatus.Conflicts) {
@@ -115,6 +115,31 @@ internal abstract class SirAbstractVariableFromKtSymbol(
             }
             replaceOrAddPropagatedUnavailability { type.unavailableTypes }
             addDocumentationVisibility(kdocElements)
+        }
+    }
+
+    internal val isSelfUnavailable: Boolean
+        get() = baseAttributes.any { it is SirAttribute.Available && it.unavailable }
+
+    internal val canRequestInlinable: Boolean by lazyWithSessions {
+        val parentDecl = parent as? SirDeclaration
+        (parent as? SirGenericDeclaration)?.typeParameters?.isNotEmpty() == true &&
+            parent !is SirProtocol &&
+            visibility == SirVisibility.PUBLIC &&
+            modality == SirModality.FINAL &&
+            !isSelfUnavailable &&
+            (parentDecl?.isUnavailable != true) &&
+            (parentDecl?.attributes.orEmpty().none { it is SirAttribute.SPI || it is SirAttribute.Available }) &&
+            baseAttributes.none { it is SirAttribute.SPI || it is SirAttribute.Available }
+    }
+
+    override val attributes: List<SirAttribute> by lazy {
+        val getterInlinable = (getter as? SirAbstractGetter)?.isSwiftInlinableAccessor == true
+        val setterInlinable = setter?.let { (it as? SirAbstractSetter)?.isSwiftInlinableAccessor == true } ?: true
+        if (canRequestInlinable && getterInlinable && setterInlinable) {
+            baseAttributes + SirAttribute.Inlinable
+        } else {
+            baseAttributes
         }
     }
 
@@ -188,12 +213,22 @@ internal abstract class SirAbstractGetter(
             ?.callableId?.asSingleFqName()
     }
 
+    internal val isSwiftInlinableAccessor: Boolean by lazyWithSessions {
+        (variable as? SirAbstractVariableFromKtSymbol)?.canRequestInlinable == true &&
+            errorType == SirType.never &&
+            attributes.none { it is SirAttribute.SPI || it is SirAttribute.Available } &&
+            bridgeProxy?.isSwiftInlinable == true
+    }
+
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val suffix = "_get"
-        val variable = variable?.takeUnless { it.isUnavailable } ?: return@lazyWithSessions null
+        val variable = variable?.takeUnless { (it as? SirAbstractVariableFromKtSymbol)?.isSelfUnavailable ?: it.isUnavailable } ?: return@lazyWithSessions null
         val fqName = fqName ?: return@lazyWithSessions null
         val baseName = fqName.baseBridgeName + suffix
         val getterSymbol = variable.kaSymbolOrNull<KaPropertySymbol>()?.getter ?: variable.kaSymbolOrNull<KaVariableSymbol>()
+        val requestInlinable = (variable as? SirAbstractVariableFromKtSymbol)?.canRequestInlinable == true &&
+            errorType == SirType.never &&
+            attributes.none { it is SirAttribute.SPI || it is SirAttribute.Available }
 
         generateFunctionBridge(
             baseBridgeName = baseName,
@@ -211,20 +246,29 @@ internal abstract class SirAbstractGetter(
                 SirParameter(null, "_out_error", it)
             },
             isAsync = false,
+            isInlinable = requestInlinable,
         )
     }
 
-    private val forwardCall: BridgeFunctionBuilder.() -> String = {
+    context(_: KaSession, _: SirSession)
+    private fun buildGetterForwardCall(): BridgeFunctionBuilder.() -> String = {
         val args = argNames
         val expectedParameters = if (extensionReceiverParameter != null) 1 else 0
         require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
-        buildCall("")
+        val varSym = variable?.kaSymbolOrNull<KaVariableSymbol>()
+        val enclosingClassSym = (variable?.parent as? SirDeclaration)?.kaSymbolOrNull<KaClassSymbol>()
+        if (varSym != null && variable != null && hasNonTrivialKotlinBridgeBounds(enclosingClassSym, emptyList())) {
+            buildLocalGenericBridgeCall(enclosingClassSym, varSym, variable!!.type)
+        } else {
+            buildCall("")
+        }
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
         val proxy = bridgeProxy ?: return@lazyWithSessions emptyList()
         val variable = variable
         val propName = variable?.kotlinPropertyName
+        val forwardCall = buildGetterForwardCall()
         buildList {
             addAll(proxy.createSirBridges(nonVirtualTargetMethod = null, forwardCall))
 
@@ -241,6 +285,7 @@ internal abstract class SirAbstractGetter(
                             targetMethodName = "<get-$propName>",
                             swiftDynamicCall = { selfExpr, _ -> "$tryPrefix$selfExpr.$swiftName" },
                             swiftDeprecation = variable.effectiveReverseBridgeDeprecation(),
+                            openExistentialProtocol = variable.openExistentialProtocolForReverseBridge(),
                         )
                     )
                 }
@@ -258,7 +303,7 @@ internal abstract class SirAbstractGetter(
         if (isUnavailable) return null
         val proxy = bridgeProxy ?: return null
         val propName = variable?.kotlinPropertyName ?: return null
-        val bridge = proxy.createDirectDispatchForwardBridge("<get-$propName>", forwardCall)
+        val bridge = proxy.createDirectDispatchForwardBridge("<get-$propName>", buildGetterForwardCall())
         val body = SirFunctionBody(proxy.createSwiftInvocation(useDirectDispatch = true) { "return $it" })
         return bridge to body
     }
@@ -295,12 +340,22 @@ internal abstract class SirAbstractSetter(
             ?.callableId?.asSingleFqName()
     }
 
+    internal val isSwiftInlinableAccessor: Boolean by lazyWithSessions {
+        (variable as? SirAbstractVariableFromKtSymbol)?.canRequestInlinable == true &&
+            errorType == SirType.never &&
+            attributes.none { it is SirAttribute.SPI || it is SirAttribute.Available } &&
+            bridgeProxy?.isSwiftInlinable == true
+    }
+
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val suffix = "_set"
-        val variable = variable?.takeUnless { it.isUnavailable } ?: return@lazyWithSessions null
+        val variable = variable?.takeUnless { (it as? SirAbstractVariableFromKtSymbol)?.isSelfUnavailable ?: it.isUnavailable } ?: return@lazyWithSessions null
         val fqName = fqName ?: return@lazyWithSessions null
         val baseName = fqName.baseBridgeName + suffix
         val setterSymbol = variable.kaSymbolOrNull<KaPropertySymbol>()?.setter ?: variable.kaSymbolOrNull<KaVariableSymbol>()
+        val requestInlinable = (variable as? SirAbstractVariableFromKtSymbol)?.canRequestInlinable == true &&
+            errorType == SirType.never &&
+            attributes.none { it is SirAttribute.SPI || it is SirAttribute.Available }
 
         generateFunctionBridge(
             baseBridgeName = baseName,
@@ -318,20 +373,29 @@ internal abstract class SirAbstractSetter(
                 SirParameter(null, "_out_error", it)
             },
             isAsync = false,
+            isInlinable = requestInlinable,
         )
     }
 
-    private val forwardCall: BridgeFunctionBuilder.() -> String = {
+    context(_: KaSession, _: SirSession)
+    private fun buildSetterForwardCall(): BridgeFunctionBuilder.() -> String = {
         val args = argNames
         val expectedParameters = if (extensionReceiverParameter != null) 2 else 1
         require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
-        buildCall(" = ${args.last()}")
+        val varSym = variable?.kaSymbolOrNull<KaVariableSymbol>()
+        val enclosingClassSym = (variable?.parent as? SirDeclaration)?.kaSymbolOrNull<KaClassSymbol>()
+        if (varSym != null && hasNonTrivialKotlinBridgeBounds(enclosingClassSym, emptyList())) {
+            buildLocalGenericBridgeCall(enclosingClassSym, varSym, SirType.void, isSetter = true, setterParamExpr = args.last())
+        } else {
+            buildCall(" = ${args.last()}")
+        }
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
         val proxy = bridgeProxy ?: return@lazyWithSessions emptyList()
         val variable = variable
         val propName = variable?.kotlinPropertyName
+        val forwardCall = buildSetterForwardCall()
         buildList {
             addAll(proxy.createSirBridges(nonVirtualTargetMethod = null, forwardCall))
 
@@ -347,6 +411,7 @@ internal abstract class SirAbstractSetter(
                             targetMethodName = "<set-$propName>",
                             swiftDynamicCall = { selfExpr, paramExprs -> "{ $selfExpr.$swiftName = ${paramExprs.single()} }()" },
                             swiftDeprecation = variable.effectiveReverseBridgeDeprecation(),
+                            openExistentialProtocol = variable.openExistentialProtocolForReverseBridge(),
                         )
                     )
                 }
@@ -364,7 +429,7 @@ internal abstract class SirAbstractSetter(
         if (isUnavailable) return null
         val proxy = bridgeProxy ?: return null
         val propName = variable?.kotlinPropertyName ?: return null
-        val bridge = proxy.createDirectDispatchForwardBridge("<set-$propName>", forwardCall)
+        val bridge = proxy.createDirectDispatchForwardBridge("<set-$propName>", buildSetterForwardCall())
         val body = SirFunctionBody(proxy.createSwiftInvocation(useDirectDispatch = true) { "return $it" })
         return bridge to body
     }

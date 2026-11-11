@@ -70,8 +70,12 @@ object Comparators {
 
     private val SirType.swift
         get(): String = when (this) {
-            is SirExistentialType -> "Any" + protocols.count() + this.protocols.joinToString(separator = "_") { it.first.name }
-            is SirNominalType -> typeDeclaration.name
+            is SirExistentialType -> "Any" + protocols.count() + this.protocols.joinToString(separator = "_") { pair ->
+                pair.first.name + (pair.second.takeIf { it.isNotEmpty() }?.joinToString(",", "<", ">") { it.swift } ?: "")
+            }
+            is SirNominalType -> typeDeclaration.name + (typeArguments.takeIf { it.isNotEmpty() }?.joinToString(",", "<", ">") { it.swift } ?: "")
+            is SirTypeParameterType -> "SirTypeParameter_${parameter.name}"
+            is SirSelfType -> "SirSelf_${memberName.orEmpty()}"
             is SirErrorType -> "SirErrorType"
             is SirUnsupportedType -> "SirUnsupportedType"
             is SirFunctionalType -> "SirFunctionalType"

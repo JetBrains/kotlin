@@ -27,6 +27,14 @@ public fun throwErrorFromReverseBridge(errorRef: kotlinx.cinterop.COpaquePointer
     throw throwableFromReverseBridge(errorRef.rawValue)
 }
 
+public fun dereferenceAndDisposeBridgeableRef(ref: kotlin.native.internal.NativePtr): kotlin.Any? {
+    if (ref == kotlin.native.internal.NativePtr.NULL) return null
+    val obj = kotlin.native.internal.ref.dereferenceExternalRCRef(ref)
+    kotlin.native.internal.ref.releaseExternalRCRef(ref)
+    kotlin.native.internal.ref.disposeExternalRCRef(ref)
+    return obj
+}
+
 @ExportedBridge("SwiftError_create")
 public fun SwiftError_create(box: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val boxObject = interpretObjCPointer<NSObject>(box)
@@ -111,7 +119,21 @@ public fun KotlinBridgeable_UInt16_box(value: UShort): kotlin.native.internal.Na
 
 @ExportedBridge("KotlinBridgeable_UInt16_unbox")
 public fun KotlinBridgeable_UInt16_unbox(ref: kotlin.native.internal.NativePtr): UShort {
-    return kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as UShort
+    return when (val v = kotlin.native.internal.ref.dereferenceExternalRCRef(ref)) {
+        is UShort -> v
+        is Char -> v.code.toUShort()
+        else -> v as UShort
+    }
+}
+
+@ExportedBridge("KotlinBridgeable_Char_unbox")
+public fun KotlinBridgeable_Char_unbox(ref: kotlin.native.internal.NativePtr): UShort {
+    return (kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as Char).code.toUShort()
+}
+
+@ExportedBridge("KotlinBridgeable_Unit_box")
+public fun KotlinBridgeable_Unit_box(): kotlin.native.internal.NativePtr {
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(Unit)
 }
 
 @ExportedBridge("KotlinBridgeable_UInt32_box")
@@ -216,6 +238,74 @@ public fun KotlinBridgeable_Dictionary_unbox(ref: kotlin.native.internal.NativeP
     return map.objcPtr()
 }
 
+@ExportedBridge("KotlinBridgeable_List_create")
+public fun KotlinBridgeable_List_create(capacity: Int): kotlin.native.internal.NativePtr {
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(ArrayList<kotlin.Any?>(capacity))
+}
+
+@ExportedBridge("KotlinBridgeable_List_add")
+@Suppress("UNCHECKED_CAST")
+public fun KotlinBridgeable_List_add(listRef: kotlin.native.internal.NativePtr, elemRef: kotlin.native.internal.NativePtr) {
+    val list = kotlin.native.internal.ref.dereferenceExternalRCRef(listRef) as MutableList<kotlin.Any?>
+    list.add(dereferenceAndDisposeBridgeableRef(elemRef))
+}
+
+@ExportedBridge("KotlinBridgeable_List_size")
+public fun KotlinBridgeable_List_size(ref: kotlin.native.internal.NativePtr): Int {
+    return (kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as List<*>).size
+}
+
+@ExportedBridge("KotlinBridgeable_List_get")
+public fun KotlinBridgeable_List_get(ref: kotlin.native.internal.NativePtr, index: Int): kotlin.native.internal.NativePtr {
+    val elem = (kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as List<*>)[index]
+    return if (elem == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(elem)
+}
+
+@ExportedBridge("KotlinBridgeable_Set_create")
+public fun KotlinBridgeable_Set_create(capacity: Int): kotlin.native.internal.NativePtr {
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(LinkedHashSet<kotlin.Any?>(capacity))
+}
+
+@ExportedBridge("KotlinBridgeable_Set_add")
+@Suppress("UNCHECKED_CAST")
+public fun KotlinBridgeable_Set_add(setRef: kotlin.native.internal.NativePtr, elemRef: kotlin.native.internal.NativePtr) {
+    val set = kotlin.native.internal.ref.dereferenceExternalRCRef(setRef) as MutableSet<kotlin.Any?>
+    set.add(dereferenceAndDisposeBridgeableRef(elemRef))
+}
+
+@ExportedBridge("KotlinBridgeable_Set_toList")
+public fun KotlinBridgeable_Set_toList(ref: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val set = kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as Set<*>
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(set.toList())
+}
+
+@ExportedBridge("KotlinBridgeable_Map_create")
+public fun KotlinBridgeable_Map_create(capacity: Int): kotlin.native.internal.NativePtr {
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(LinkedHashMap<kotlin.Any?, kotlin.Any?>(capacity))
+}
+
+@ExportedBridge("KotlinBridgeable_Map_put")
+@Suppress("UNCHECKED_CAST")
+public fun KotlinBridgeable_Map_put(
+    mapRef: kotlin.native.internal.NativePtr,
+    keyRef: kotlin.native.internal.NativePtr,
+    valRef: kotlin.native.internal.NativePtr,
+) {
+    val map = kotlin.native.internal.ref.dereferenceExternalRCRef(mapRef) as MutableMap<kotlin.Any?, kotlin.Any?>
+    map[dereferenceAndDisposeBridgeableRef(keyRef)] = dereferenceAndDisposeBridgeableRef(valRef)
+}
+
+@ExportedBridge("KotlinBridgeable_Map_entriesList")
+public fun KotlinBridgeable_Map_entriesList(ref: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val map = kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as Map<*, *>
+    val flat = ArrayList<kotlin.Any?>(map.size * 2)
+    for (entry in map.entries) {
+        flat.add(entry.key)
+        flat.add(entry.value)
+    }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(flat)
+}
+
 // _KotlinBridgeable type-tag dispatch for __createBridgeable
 
 @ExportedBridge("KotlinBridgeable_getTypeTag")
@@ -237,8 +327,17 @@ public fun KotlinBridgeable_getTypeTag(ref: kotlin.native.internal.NativePtr): I
         is List<*> -> 13
         is Set<*> -> 14
         is Map<*, *> -> 15
+        is Char -> 16
+        is Unit -> 17
         else -> 0
     }
+}
+
+@ExportedBridge("KotlinBridgeable_cloneRef")
+public fun KotlinBridgeable_cloneRef(ref: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    if (ref == kotlin.native.internal.NativePtr.NULL) return kotlin.native.internal.NativePtr.NULL
+    val obj = kotlin.native.internal.ref.dereferenceExternalRCRef(ref)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(obj)
 }
 
 @ExportedBridge("KotlinBridgeable_disposeRef")

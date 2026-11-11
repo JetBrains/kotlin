@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTranslationResult
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.*
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.toBridge
+import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
@@ -22,14 +24,36 @@ import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformLikeModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.containsTypeParameter
+import org.jetbrains.kotlin.sir.util.expandedType
 import org.jetbrains.kotlin.sir.util.isValueType
 import org.jetbrains.kotlin.sir.util.name
+import org.jetbrains.kotlin.sir.util.substituteTypeParameters
+import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
+private val rawNullablePointerSirType: SirType
+    get() = SirSwiftModule.unsafeMutableRawPointer.nominalType().optional()
+
+private fun SirFunctionalType.eraseGenericPositions(): SirFunctionalType {
+    if (!this.containsTypeParameter()) return this
+    return SirFunctionalType(
+        contextTypes = contextTypes.map { if (it.containsTypeParameter()) rawNullablePointerSirType else it },
+        parameterTypes = parameterTypes.map { if (it.containsTypeParameter()) rawNullablePointerSirType else it },
+        isAsync = isAsync,
+        errorType = errorType,
+        returnType = if (returnType.containsTypeParameter()) rawNullablePointerSirType else returnType,
+        origin = origin,
+        attributes = attributes,
+    )
+}
+
 private val SirFunctionalType.bridgeNameSuffix: String
-    get() = (if (isAsync) "async_" else "") + returnType.swiftName
+    get() = (if (isAsync) "async_" else "") +
+            (if (contextTypes.isNotEmpty()) "ctx${contextTypes.size}_" else "") +
+            eraseGenericPositions().returnType.swiftName
 
 context(session: SirSession)
 internal fun bridgeType(type: SirType): BidirectionalBridge =
@@ -93,6 +117,7 @@ private fun bridgeTypeForVariadicParameter(type: SirType): Bridge =
 context(session: SirSession)
 internal fun bridgeType(type: SirType, position: SirTypeVariance): Bridge =
     bridgeReifiedType(type, position) ?: when (type) {
+        is SirTypeParameterType -> AsBridgeableValue(type)
         is SirNominalType -> bridgeNominalType(type, position)
         is SirExistentialType -> bridgeExistential(type, position)
         is SirFunctionalType -> AsInvariantBlock(type)
@@ -109,14 +134,67 @@ private fun bridgeReifiedType(type: SirType, position: SirTypeVariance): Bridge?
     }
 }
 
+context(session: SirSession)
 private fun bridgeExistential(type: SirExistentialType, position: SirTypeVariance): Bridge {
-    if (type.protocols.singleOrNull()?.first == KotlinRuntimeSupportModule.kotlinBridgeable) {
+    val singleProto = type.protocols.singleOrNull()
+    if (singleProto?.first == KotlinRuntimeSupportModule.kotlinBridgeable) {
         return AsAnyBridgeable
     }
-    if (type.protocols.singleOrNull()?.first?.parent is SirPlatformLikeModule) {
+    if (singleProto?.first?.parent is SirPlatformLikeModule) {
         return AsObjCProtocol(type)
     }
+    if (singleProto != null) {
+        val anyWrapper = singleProto.first.kaSymbolOrNull<KaDeclarationSymbol>()?.let { sym ->
+            session.withSessions {
+                (sym.toSir() as? SirTranslationResult.RegularInterface)?.anyWrapperDeclaration
+            }
+        }
+        if (anyWrapper != null) {
+            val wrapperArgs = when {
+                singleProto.first.typeParameters.isEmpty() -> emptyList()
+                singleProto.second.isNotEmpty() -> singleProto.second
+                else -> singleProto.first.typeParameters.map { concreteTypeForExistentialWrapperArg(it) }
+            }
+            return AsPatExistential(type, SirNominalType(anyWrapper, wrapperArgs))
+        }
+    }
     return AsExistential(type)
+}
+
+context(session: SirSession)
+internal fun concreteTypeForExistentialWrapperArg(tp: SirTypeParameter): SirType {
+    val nonTrivial = tp.bounds.singleOrNull { bound ->
+        val decl = (bound as? SirNominalType)?.typeDeclaration
+        decl != KotlinRuntimeSupportModule.kotlinBridgeable && decl != SirSwiftModule.hashable
+    }
+    if (nonTrivial is SirNominalType) {
+        when (val decl = nonTrivial.typeDeclaration) {
+            is SirClass -> return nonTrivial
+            is SirProtocol -> {
+                val res = decl.kaSymbolOrNull<KaDeclarationSymbol>()?.let { sym ->
+                    session.withSessions { sym.toSir() as? SirTranslationResult.RegularInterface }
+                }
+                if (res != null) {
+                    val subAny = res.anyWrapperDeclaration
+                    return if (subAny != null) {
+                        SirNominalType(subAny, decl.typeParameters.map { concreteTypeForExistentialWrapperArg(it) })
+                    } else {
+                        SirNominalType(
+                            KotlinRuntimeSupportModule.kotlinExistential,
+                            listOf(SirExistentialType(res.markerDeclaration)),
+                        )
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+    val needsHashable = tp.bounds.any { (it as? SirNominalType)?.typeDeclaration == SirSwiftModule.hashable }
+    return if (needsHashable) {
+        SirType.anyHashable.optional()
+    } else {
+        SirNominalType(KotlinRuntimeSupportModule.kotlinAny).optional()
+    }
 }
 
 context(session: SirSession)
@@ -127,8 +205,16 @@ internal fun bridgeAsNSCollectionElement(type: SirType): BidirectionalBridge = w
         else -> AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
     }
     is AsOptionalNothing -> AsObjCBridgedOptional(bridge.swiftType)
-    is AsOptionalVoid -> AsObjCBridgedOptional(bridge.swiftType)
+    is AsOptionalVoid,
+    is AsNestedOptionalVoid,
+        -> AsObjCBridgedOptional(bridge.swiftType)
     is AsObject,
+    is AsGenericObject,
+    is AsPatExistential,
+    is AsRetainedPatExistential,
+    is AsRetainedTypedFlow,
+    is AsBridgeableValue,
+    is AsRawNullableBridgePtr,
     is AsExistential,
     is AsAnyBridgeable,
     is AsTyped,
@@ -153,37 +239,63 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
         SirSwiftModule.unsafeMutableRawPointer -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
         SirSwiftModule.never -> AsNothing
         SirSwiftModule.error -> AsError()
+        KotlinRuntimeSupportModule.kotlinUnit,
+        KotlinRuntimeSupportModule.kotlinAny,
+            -> AsBridgeableValue(type)
 
-        SirSwiftModule.optional -> when (val bridge = bridgeType(type.typeArguments.first(), position)) {
-            is AsObject,
-            is AsObjCBridged,
-            is AsExistential,
-            is AsAnyBridgeable,
-            is AsTyped,
-            is AsInvariantBlock,
-            is AsError,
-            is SirCustomTypeTranslatorImpl.RangeBridge
-                -> AsOptionalWrapper(bridge)
+        SirSwiftModule.optional -> {
+            val wrappedArg = type.typeArguments.first()
+            if (wrappedArg is SirNominalType && wrappedArg.typeDeclaration == SirSwiftModule.unsafeMutableRawPointer) {
+                return AsRawNullableBridgePtr(type)
+            }
+            when (val bridge = bridgeType(wrappedArg, position)) {
+                is AsBridgeableValue -> AsBridgeableValue(type)
+                is AsOptionalNothing -> AsBridgeableValue(type)
+                is AsOptionalVoid -> AsNestedOptionalVoid(type)
+                is AsOptionalWrapper,
+                is AsObject,
+                is AsGenericObject,
+                is AsPatExistential,
+                is AsRetainedPatExistential,
+                is AsRetainedTypedFlow,
+                is AsObjCBridged,
+                is AsExistential,
+                is AsAnyBridgeable,
+                is AsTyped,
+                is AsInvariantBlock,
+                is AsError,
+                is SirCustomTypeTranslatorImpl.RangeBridge
+                    -> AsOptionalWrapper(bridge)
 
-            is AsNothing -> AsOptionalNothing
-            is AsVoid -> AsOptionalVoid
+                is AsNothing -> AsOptionalNothing
+                is AsVoid -> AsOptionalVoid
 
-            is AsIs,
-                -> AsOptionalWrapper(
-                if (bridge.swiftType.isChar)
-                    OptionalChar(bridge.swiftType)
-                else
-                    AsNSNumber(bridge.swiftType)
-            )
+                is AsIs,
+                    -> AsOptionalWrapper(
+                    if (bridge.swiftType.isChar)
+                        OptionalChar(bridge.swiftType)
+                    else
+                        AsNSNumber(bridge.swiftType)
+                )
 
-            else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
+                else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
+            }
         }
 
-        is SirTypealias -> bridgeType(subtype.type, position)
+        is SirTypealias -> {
+            val expanded = if (subtype.typeParameters.isNotEmpty() && type.typeArguments.size == subtype.typeParameters.size) {
+                subtype.type.substituteTypeParameters(subtype.typeParameters.zip(type.typeArguments).toMap())
+            } else {
+                subtype.type
+            }
+            bridgeType(expanded, position)
+        }
 
         // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
         else -> if (type.typeDeclaration.parent is SirPlatformLikeModule) {
             AsNSObject(type)
+        } else if (subtype is SirClass && (subtype.typeParameters.isNotEmpty() || type.typeArguments.isNotEmpty())) {
+            AsGenericObject(type)
         } else {
             AsObject(type, KotlinType.KotlinObject, CType.Object)
         }
@@ -378,6 +490,30 @@ internal sealed interface Bridge {
         }
     }
 
+    class AsNestedOptionalVoid(override val swiftType: SirNominalType) : BidirectionalBridge {
+        override val kotlinType = KotlinType.Boolean
+        override val cType = CType.Bool
+        override val inKotlinSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "(if ($valueExpression) Unit else null)"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "($valueExpression != null)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "(($valueExpression ?? nil) != nil)"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "($valueExpression ? .some(()) : .none)"
+        }
+    }
+
     /**
      * A bridge that converts a Swift class-based type to the corresponding Kotlin class-based type using native pointers.
      *
@@ -394,8 +530,91 @@ internal sealed interface Bridge {
      * Exception: Some Kotlin class-like types are represented by Swift value types (for example, enums) and consequently use some different bridge strategy instead.
      */
     class AsObject(override val swiftType: SirNominalType, override val kotlinType: KotlinType, override val cType: CType) : BidirectionalBridge {
+        private val isKotlinEnum: Boolean
+            get() = when (val decl = swiftType.typeDeclaration) {
+                is SirEnum -> true
+                is SirTypealias -> (decl.expandedType as? SirNominalType)?.typeDeclaration is SirEnum
+                else -> false
+            }
+
         override val inKotlinSources = object : ValueConversion {
             // nulls are handled by AsOptionalWrapper, so safe to cast from nullable to non-nullable
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val ktTypeName = typeNamer.kotlinFqName(
+                    swiftType,
+                    SirTypeNamer.KotlinNameType.PARAMETRIZED
+                )
+                return if (isKotlinEnum) {
+                    "(dereferenceAndDisposeBridgeableRef($valueExpression) as $ktTypeName)"
+                } else {
+                    "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as $ktTypeName"
+                }
+            }
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val swiftFqName = typeNamer.swiftFqName(swiftType)
+                return if (isKotlinEnum) {
+                    "$swiftFqName.__fromKotlinPointer($valueExpression)"
+                } else if (swiftType.isValueType) {
+                    "$swiftFqName(__externalRCRefUnsafe: $valueExpression, options: .asBestFittingWrapper)"
+                } else {
+                    "$swiftFqName.__createClassWrapper(externalRCRef: $valueExpression)"
+                }
+            }
+        }
+    }
+
+    /**
+     * Symmetric `+1` retained `_KotlinBridgeable` PWT witness bridge for generic type parameters (`T`),
+     * `Optional<T>`, `KotlinUnit`, `KotlinAny`, and generic collections (`[T]`, `Set<T>`, `[K: V]`).
+     */
+    class AsBridgeableValue(override val swiftType: SirType) : BidirectionalBridge {
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object.nullable
+
+        override val inKotlinSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val ktType = typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+                return "(dereferenceAndDisposeBridgeableRef($valueExpression) as $ktType)"
+            }
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "if ($valueExpression == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "$valueExpression.__retainedToKotlinPointer()"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "${typeNamer.swiftFqName(swiftType)}.__fromKotlinPointer($valueExpression)"
+        }
+    }
+
+    /**
+     * Bridge for generic `SirClass` instances (`Box<T>`, `AnyRepo<T>`, `_KotlinExistential<any _Shape>`),
+     * reconstructed via `Type.__fromKotlinPointer` (`_KotlinCustomPointerBridgeable`).
+     */
+    class AsGenericObject(override val swiftType: SirNominalType) : BidirectionalBridge {
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object
+
+        override val inKotlinSources = object : ValueConversion {
             context(session: SirSession)
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
                 "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${
@@ -412,18 +631,131 @@ internal sealed interface Bridge {
 
         override val inSwiftSources = object : ValueConversion {
             context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "${valueExpression}.__externalRCRef()"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "${typeNamer.swiftFqName(swiftType)}.__fromKotlinPointer($valueExpression)"
+        }
+    }
+
+    /**
+     * Bridge for Swift 5.7+ parameterized PAT existentials (`any Repo<Int32>`, `any Repo<T>`).
+     * Prefers exact `KotlinBase.__createClassWrapper` conformer identity, falling back to `AnyRepo<Args>`.
+     */
+    class AsPatExistential(
+        override val swiftType: SirExistentialType,
+        val anyWrapperType: SirNominalType,
+    ) : BidirectionalBridge {
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object
+
+        override val inKotlinSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val fqName = typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+                return "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as $fqName"
+            }
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "${valueExpression}.__externalRCRef()"
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val swiftFqName = typeNamer.swiftFqName(swiftType)
-                return if (swiftType.isValueType) {
-                    "$swiftFqName(__externalRCRefUnsafe: $valueExpression, options: .asBestFittingWrapper)"
-                } else {
-                    "$swiftFqName.__createClassWrapper(externalRCRef: $valueExpression)"
-                }
+                val wrapperFqName = typeNamer.swiftFqName(anyWrapperType)
+                return "{ let _ptr = $valueExpression; if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? ($swiftFqName) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return $wrapperFqName(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()"
             }
         }
+    }
+
+    /**
+     * `+1` retained variant of [AsPatExistential] used when adapting generic closure slots.
+     */
+    class AsRetainedPatExistential(val patBridge: AsPatExistential) : BidirectionalBridge {
+        override val swiftType: SirExistentialType get() = patBridge.swiftType
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object.nullable
+
+        override val inKotlinSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val fqName = typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+                return "(dereferenceAndDisposeBridgeableRef($valueExpression) as $fqName)"
+            }
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "if ($valueExpression == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "KotlinRuntimeSupport._cloneBridgeableRef(($valueExpression).__externalRCRef())"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                patBridge.inSwiftSources.kotlinToSwift(typeNamer, "$valueExpression!")
+        }
+    }
+
+    /**
+     * `+1` retained variant of [AsTyped.Flow] used when adapting generic closure slots (`KotlinTypedFlow<R>`).
+     */
+    class AsRetainedTypedFlow(val flowBridge: AsTyped.Flow) : BidirectionalBridge {
+        override val swiftType: SirType get() = flowBridge.swiftType
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object.nullable
+
+        override val inKotlinSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val fqName = typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+                return "(dereferenceAndDisposeBridgeableRef($valueExpression) as $fqName)"
+            }
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "if ($valueExpression == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "KotlinRuntimeSupport._cloneBridgeableRef(($valueExpression).wrapped.__externalRCRef())"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                flowBridge.inSwiftSources.kotlinToSwift(typeNamer, "$valueExpression!")
+        }
+    }
+
+    /**
+     * Raw nullable pointer (`void * _Nullable` / `UnsafeMutableRawPointer?`) used as C-level transport
+     * for erased generic closure parameters and returns.
+     */
+    class AsRawNullableBridgePtr(override val swiftType: SirType) : BidirectionalBridge {
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object.nullable
+        override val inKotlinSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                valueExpression
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "($valueExpression ?: kotlin.native.internal.NativePtr.NULL)"
+        }
+        override val inSwiftSources = IdentityValueConversion
     }
 
     /**
@@ -483,7 +815,7 @@ internal sealed interface Bridge {
         override val inKotlinSources = object : ValueConversion {
             context(session: SirSession)
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as kotlin.Any"
+                "(dereferenceAndDisposeBridgeableRef($valueExpression) as kotlin.Any)"
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
@@ -496,7 +828,7 @@ internal sealed interface Bridge {
                 typeNamer: SirTypeNamer,
                 valueExpression: String,
             ): String {
-                return "$valueExpression.__externalRCRef()"
+                return "($valueExpression).__retainedToKotlinPointer()!"
             }
 
             context(session: SirSession)
@@ -952,9 +1284,19 @@ internal sealed interface Bridge {
         val inSwiftSources: ValueConversion = object : ValueConversion {
             context(session: SirSession)
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                if (wrappedObject is AsOptionalWrapper) {
+                    return "($valueExpression).flatMap { it in ${wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, "it")} }"
+                }
+                if (wrappedObject is AsAnyBridgeable) {
+                    return "($valueExpression).flatMap { it in it.__retainedToKotlinPointer() }"
+                }
+                if (wrappedObject is AsPatExistential || wrappedObject is AsRetainedPatExistential || wrappedObject is AsRetainedTypedFlow) {
+                    return "{ if let it = $valueExpression { return ${wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, "it")} } else { return nil } }()"
+                }
                 require(
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
-                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsTyped ||
+                            wrappedObject is AsGenericObject ||
+                            wrappedObject is AsExistential || wrappedObject is AsTyped ||
                             wrappedObject is AsInvariantBlock ||
                             wrappedObject is AsError ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
@@ -966,12 +1308,24 @@ internal sealed interface Bridge {
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return when (wrappedObject) {
+                    is AsOptionalWrapper ->
+                        "{ switch $valueExpression { case ${wrappedObject.renderNil()}: return .none; default: return .some(${
+                            wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, valueExpression)
+                        }); } }()"
+                    is AsPatExistential, is AsRetainedPatExistential, is AsRetainedTypedFlow -> {
+                        val innerSwiftType = typeNamer.swiftFqName(wrappedObject.swiftType)
+                        "{ () -> ($innerSwiftType)? in guard let res = $valueExpression else { return nil }; return ${
+                            wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
+                        } }()"
+                    }
                     is AsObjCBridged, is AsInvariantBlock ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTyped, is AsError, is SirCustomTypeTranslatorImpl.RangeBridge ->
+                    is AsObject, is AsGenericObject, is AsExistential, is AsAnyBridgeable, is AsTyped, is AsError, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res?: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
+                    is AsBridgeableValue,
+                    is AsRawNullableBridgePtr,
                     is AsBlockPointerInCollection,
                     is AsIs,
                     is AsOpaqueObject,
@@ -979,8 +1333,8 @@ internal sealed interface Bridge {
                         -> TODO("not yet supported")
 
                     is AsNothing -> error("AsOptionalNothing must be used for AsNothing")
-                    is AsVoid -> error("AsOptionalVoid must be used for AsVoid")
-                    is AsOptionalWrapper, AsOptionalNothing, AsOptionalVoid -> error("there is not optional wrappers for optional")
+                    is AsVoid, is AsNestedOptionalVoid -> error("AsOptionalVoid must be used for AsVoid")
+                    is AsOptionalNothing, AsOptionalVoid -> error("there is not optional wrappers for optional")
                 }
             }
         }
@@ -1047,9 +1401,11 @@ internal sealed interface Bridge {
 
         private class AsContravariantBlock private constructor(
             val swiftType: SirFunctionalType,
+            private val erasedSwiftType: SirFunctionalType,
             private val contextParameters: List<KotlinToSwiftBridge>,
             private val parameters: List<KotlinToSwiftBridge>,
             private val returnType: SwiftToKotlinBridge,
+            private val rawReturnBridge: BidirectionalBridge?,
             private val asyncParameters: Triple<KotlinToSwiftBridge, KotlinToSwiftBridge, KotlinToSwiftBridge>?,
             private val bridgeProxy: BridgeFunctionProxy?,
         ) {
@@ -1060,42 +1416,59 @@ internal sealed interface Bridge {
                 ): Triple<KotlinToSwiftBridge, KotlinToSwiftBridge, KotlinToSwiftBridge> = asyncContinuationBridges(returnType)
 
                 context(session: SirSession)
-                private fun generateCalleeBridge(swiftType: SirFunctionalType): BridgeFunctionProxy? = session.generateFunctionBridge(
-                    baseBridgeName = session.moduleToTranslate.sirModule().name + "_internal_functional_type_callee_" + swiftType.bridgeNameSuffix,
+                private fun generateCalleeBridge(erasedSwiftType: SirFunctionalType): BridgeFunctionProxy? = session.generateFunctionBridge(
+                    baseBridgeName = session.moduleToTranslate.sirModule().name + "_internal_functional_type_callee_" + erasedSwiftType.bridgeNameSuffix,
                     explicitParameters = listOf(
                         SirParameter(
                             argumentName = "pointerToClosure",
                             type = SirSwiftModule.unsafeMutableRawPointer.nominalType()
                         )
-                    ) + swiftType.contextTypes.mapIndexed { idx, type ->
+                    ) + erasedSwiftType.contextTypes.mapIndexed { idx, type ->
                         SirParameter(argumentName = "ctx${idx}", type = type)
-                    } + swiftType.parameterTypes.map { SirParameter(type = it) },
-                    returnType = swiftType.returnType,
+                    } + erasedSwiftType.parameterTypes.map { SirParameter(type = it) },
+                    returnType = erasedSwiftType.returnType,
                     kotlinFqName = FqName(""),
-                    kotlinOptIns = swiftType.allRequiredOptIns,
+                    kotlinOptIns = erasedSwiftType.allRequiredOptIns,
                     selfParameter = null,
                     contextParameters = emptyList(),
                     extensionReceiverParameter = null,
                     errorParameter = null,
-                    isAsync = swiftType.isAsync
+                    isAsync = erasedSwiftType.isAsync
                 )
 
                 context(session: SirSession)
                 operator fun invoke(
                     swiftType: SirFunctionalType,
                 ): AsContravariantBlock {
-                    val parameters = swiftType.parameterTypes.map { bridgeReturnType(it) }
-                    val contextParameters = swiftType.contextTypes.map { bridgeReturnType(it) }
-                    val returnType = bridgeParameterType(swiftType.returnType)
-                    val asyncParameters = swiftType.isAsync.ifTrue { computeAsyncParameters(returnType) }
+                    val erasedSwiftType = swiftType.eraseGenericPositions()
+                    val parameters = swiftType.parameterTypes.map {
+                        if (it.containsTypeParameter()) bridgeGenericClosureSlot(it) else bridgeReturnType(it)
+                    }
+                    val contextParameters = swiftType.contextTypes.map {
+                        if (it.containsTypeParameter()) bridgeGenericClosureSlot(it) else bridgeReturnType(it)
+                    }
+                    val rawReturnBridge = if (swiftType.returnType.containsTypeParameter()) {
+                        bridgeGenericClosureSlot(swiftType.returnType)
+                    } else {
+                        null
+                    }
+                    val returnType = rawReturnBridge ?: bridgeParameterType(swiftType.returnType)
+                    val erasedReturnType = if (erasedSwiftType.returnType.containsTypeParameter()) {
+                        AsRawNullableBridgePtr(rawNullablePointerSirType)
+                    } else {
+                        bridgeParameterType(erasedSwiftType.returnType)
+                    }
+                    val asyncParameters = swiftType.isAsync.ifTrue { computeAsyncParameters(erasedReturnType) }
 
                     return AsContravariantBlock(
                         swiftType,
+                        erasedSwiftType,
                         contextParameters,
                         parameters,
                         asyncParameters?.let { AsVoid } ?: returnType,
+                        rawReturnBridge,
                         asyncParameters,
-                        generateCalleeBridge(swiftType),
+                        generateCalleeBridge(erasedSwiftType),
                     )
                 }
             }
@@ -1113,9 +1486,14 @@ internal sealed interface Bridge {
                     val regularCallArgs = argsInClosure.orEmpty().map { [name, _] -> "_$name" }
 
                     val body = asyncParameters?.let { async ->
-                        renderKotlinSuspendSwiftCoroutine(typeNamer, async, prelude = regularConversions) { continuation, exception, cancellation ->
+                        val asyncResultExpr = renderKotlinSuspendSwiftCoroutine(typeNamer, async, prelude = regularConversions) { continuation, exception, cancellation ->
                             "val _result = ${invokeClosure(regularCallArgs + listOf(continuation, exception, cancellation))}\n" +
                                     returnType.inKotlinSources.swiftToKotlin(typeNamer, "_result")
+                        }
+                        if (rawReturnBridge != null) {
+                            "val _rawAsync = $asyncResultExpr\n" + rawReturnBridge.inKotlinSources.swiftToKotlin(typeNamer, "(_rawAsync ?: kotlin.native.internal.NativePtr.NULL)")
+                        } else {
+                            asyncResultExpr
                         }
                     } ?: run {
                         val mappedArgs = regularConversions.takeIf { it.isNotEmpty() }?.let { "$it\n" } ?: ""
@@ -1149,8 +1527,39 @@ internal sealed interface Bridge {
 
             val inSwiftSources = object : SwiftToKotlinValueConversion {
                 context(session: SirSession)
-                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                    "Unmanaged.passRetained(($valueExpression as ${swiftType.swiftName}) as AnyObject).toOpaque()"
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    if (!swiftType.containsTypeParameter()) {
+                        return "Unmanaged.passRetained(($valueExpression as ${swiftType.swiftName}) as AnyObject).toOpaque()"
+                    }
+                    val allOrigParams = swiftType.contextTypes + swiftType.parameterTypes
+                    val allErasedParams = erasedSwiftType.contextTypes + erasedSwiftType.parameterTypes
+                    val paramDecls = allErasedParams.mapIndexed { idx, erasedTy ->
+                        "_p$idx: ${erasedTy.swiftName}"
+                    }.joinToString()
+                    val convertedArgs = allOrigParams.mapIndexed { idx, origTy ->
+                        if (origTy.containsTypeParameter()) {
+                            bridgeGenericClosureSlot(origTy).inSwiftSources.kotlinToSwift(typeNamer, "_p$idx")
+                        } else {
+                            "_p$idx"
+                        }
+                    }
+                    val ctxCount = swiftType.contextTypes.size
+                    val callArgs = buildList {
+                        if (ctxCount > 0) add(convertedArgs.take(ctxCount).joinToString(prefix = "(", postfix = ")"))
+                        addAll(convertedArgs.drop(ctxCount))
+                    }.joinToString()
+                    val awaitPrefix = if (swiftType.isAsync) "try await " else ""
+                    val callOrig = "$awaitPrefix($valueExpression)($callArgs)"
+                    val closureBody = if (rawReturnBridge != null) {
+                        "let _res: ${swiftType.returnType.swiftName} = $callOrig; return ${rawReturnBridge.inSwiftSources.swiftToKotlin(typeNamer, "_res")}"
+                    } else {
+                        "return $callOrig"
+                    }
+                    val asyncThrows = if (swiftType.isAsync) " async throws" else ""
+                    val header = if (allErasedParams.isEmpty() && !swiftType.isAsync) "" else " ($paramDecls)$asyncThrows -> ${erasedSwiftType.returnType.swiftName} in"
+                    val adaptedClosure = "{$header $closureBody }"
+                    return "Unmanaged.passRetained(($adaptedClosure as ${erasedSwiftType.swiftName}) as AnyObject).toOpaque()"
+                }
             }
 
             private fun invokeBoxedClosure(paramExprs: List<String>): String {
@@ -1159,9 +1568,9 @@ internal sealed interface Bridge {
                 val contextArgument = arguments.take(contextParameters.size)
                     .takeIf { it.isNotEmpty() }?.joinToString(prefix = "(", postfix = ")")
                 val callArgs = (listOfNotNull(contextArgument) + arguments.drop(contextParameters.size)).joinToString()
-                val awaitPrefix = if (swiftType.isAsync) "try await " else ""
+                val awaitPrefix = if (erasedSwiftType.isAsync) "try await " else ""
                 return "$awaitPrefix(Unmanaged<AnyObject>.fromOpaque($pointerToClosure)" +
-                        ".takeUnretainedValue() as! ${swiftType.swiftName})($callArgs)"
+                        ".takeUnretainedValue() as! ${erasedSwiftType.swiftName})($callArgs)"
             }
 
             context(sir: SirSession)
@@ -1170,36 +1579,47 @@ internal sealed interface Bridge {
             }
         }
 
-        private class AsCovariantBlock private constructor(
+        private class AsCovariantBlock(
             val swiftType: SirFunctionalType,
-            private val bridgeProxy: BridgeFunctionProxy?,
         ) {
-            companion object {
-                context(session: SirSession)
-                operator fun invoke(
-                    swiftType: SirFunctionalType,
-                ): AsCovariantBlock = AsCovariantBlock(
-                    swiftType,
-                    bridgeProxy = session.generateFunctionBridge(
-                        baseBridgeName = session.moduleToTranslate.sirModule().name + "_internal_functional_type_caller_" + swiftType.bridgeNameSuffix,
+            private val erasedSwiftType: SirFunctionalType = swiftType.eraseGenericPositions()
+            private var cachedProxy: BridgeFunctionProxy? = null
+            private var proxyInitialized: Boolean = false
+
+            context(session: SirSession)
+            private fun getBridgeProxy(typeNamer: SirTypeNamer): BridgeFunctionProxy? {
+                if (!proxyInitialized) {
+                    val genericSuffix = if (swiftType.containsTypeParameter()) {
+                        val optPatTag = (swiftType.contextTypes + swiftType.parameterTypes).joinToString("") {
+                            if (it is SirOptionalType && it.wrappedType is SirExistentialType) "optpat_" else ""
+                        }
+                        "_generic_" + optPatTag + typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+                            .replace(Regex("[^A-Za-z0-9_]"), "_")
+                    } else {
+                        ""
+                    }
+                    cachedProxy = session.generateFunctionBridge(
+                        baseBridgeName = session.moduleToTranslate.sirModule().name + "_internal_functional_type_caller_" + erasedSwiftType.bridgeNameSuffix + genericSuffix,
                         explicitParameters = listOf(
                             SirParameter(
                                 argumentName = "pointerToBlock",
                                 type = SirSwiftModule.unsafeMutableRawPointer.nominalType()
                             )
-                        ) + swiftType.contextTypes.mapIndexed { idx, type ->
+                        ) + erasedSwiftType.contextTypes.mapIndexed { idx, type ->
                             SirParameter(argumentName = "ctx${idx}", type = type)
-                        } + swiftType.parameterTypes.map { SirParameter(type = it) },
-                        returnType = swiftType.returnType,
+                        } + erasedSwiftType.parameterTypes.map { SirParameter(type = it) },
+                        returnType = erasedSwiftType.returnType,
                         kotlinFqName = FqName(""),
-                        kotlinOptIns = swiftType.allRequiredOptIns,
+                        kotlinOptIns = erasedSwiftType.allRequiredOptIns,
                         selfParameter = null,
                         contextParameters = emptyList(),
                         extensionReceiverParameter = null,
                         errorParameter = null,
-                        isAsync = swiftType.isAsync
+                        isAsync = erasedSwiftType.isAsync
                     )
-                )
+                    proxyInitialized = true
+                }
+                return cachedProxy
             }
 
             val inKotlinSources: KotlinToSwiftValueConversion
@@ -1212,6 +1632,7 @@ internal sealed interface Bridge {
             val inSwiftSources = object : KotlinToSwiftValueConversion {
                 context(session: SirSession)
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    val bridgeProxy = getBridgeProxy(typeNamer)
                     val allArgs = bridgeProxy?.argumentsForInvocation()?.applyIf(swiftType.isAsync) { dropLast(3) }
                         ?: List(1 + swiftType.contextTypes.size + swiftType.parameterTypes.size) { "_" }
                     val defineArgs = buildList {
@@ -1219,12 +1640,32 @@ internal sealed interface Bridge {
                         addAll(allArgs.drop(1 + swiftType.contextTypes.size))
                     }.takeIf { it.isNotEmpty() }?.let { " ${it.joinToString()} in" } ?: ""
                     val closureHolderRef = "${allArgs.first()}.__externalRCRef()"
+                    val allOrigParams = swiftType.contextTypes + swiftType.parameterTypes
+                    val overrides = buildMap {
+                        put(allArgs.first(), closureHolderRef)
+                        if (swiftType.containsTypeParameter()) {
+                            allOrigParams.forEachIndexed { idx, origTy ->
+                                if (origTy.containsTypeParameter()) {
+                                    val argName = if (idx < swiftType.contextTypes.size) "ctx$idx" else allArgs[1 + idx]
+                                    put(argName, bridgeGenericClosureSlot(origTy).inSwiftSources.swiftToKotlin(typeNamer, argName))
+                                }
+                            }
+                        }
+                    }
+                    val returnSlotBridge = if (swiftType.returnType.containsTypeParameter()) {
+                        bridgeGenericClosureSlot(swiftType.returnType)
+                    } else {
+                        null
+                    }
                     val swiftInvocation = buildList {
                         if (swiftType.contextType != null) {
                             add(List(swiftType.contextTypes.size) { idx -> "ctx$idx" }.joinToString(prefix = "let (", postfix = ") = context"))
                         }
                         if (bridgeProxy != null) {
-                            addAll(bridgeProxy.createSwiftInvocation(mapOf(allArgs.first() to closureHolderRef)) { "return $it" })
+                            addAll(bridgeProxy.createSwiftInvocation(overrides) { rawRes ->
+                                val converted = returnSlotBridge?.inSwiftSources?.kotlinToSwift(typeNamer, rawRes) ?: rawRes
+                                "return $converted"
+                            })
                         } else {
                             add("fatalError()")
                         }
@@ -1240,9 +1681,26 @@ internal sealed interface Bridge {
 
             context(sir: SirSession)
             fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> {
+                val bridgeProxy = getBridgeProxy(typeNamer)
+                val allOrigParams = swiftType.contextTypes + swiftType.parameterTypes
+                val returnHasGeneric = swiftType.returnType.containsTypeParameter()
                 return bridgeProxy?.createSirBridges {
-                    val actualArgs = argNames.drop(1 + if (extensionReceiverParameter != null) 1 else 0)
-                    buildCall("(${argNames.first()} as ${typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}).invoke(${actualArgs.joinToString()})")
+                    val rawActualArgs = argNames.drop(1 + if (extensionReceiverParameter != null) 1 else 0)
+                    val adaptedArgs = rawActualArgs.mapIndexed { idx, argExpr ->
+                        val origTy = allOrigParams.getOrNull(idx)
+                        if (origTy != null && origTy.containsTypeParameter()) {
+                            bridgeGenericClosureSlot(origTy).inKotlinSources.swiftToKotlin(typeNamer, argExpr)
+                        } else {
+                            argExpr
+                        }
+                    }
+                    val invokeCall = buildCall("(${argNames.first()} as ${typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}).invoke(${adaptedArgs.joinToString()})")
+                    if (returnHasGeneric) {
+                        val retBridge = bridgeGenericClosureSlot(swiftType.returnType)
+                        "$invokeCall.let { _r -> ${retBridge.inKotlinSources.kotlinToSwift(typeNamer, "_r")} }"
+                    } else {
+                        invokeCall
+                    }
                 } ?: emptyList()
             }
         }
@@ -1327,30 +1785,86 @@ internal sealed interface Bridge {
 private fun Bridge.renderNil(): String = if (this is AsObjCBridgedOptional) "NSNull()" else "nil"
 
 context(session: SirSession)
-private val SirType.allRequiredOptIns: List<ClassId>
-    get() = when (this) {
-        is SirNominalType -> buildList {
-            generateSequence(this@allRequiredOptIns) { it.parent }.forEach { type ->
-                addAll(type.typeArguments.flatMap { it.allRequiredOptIns })
-                addAll(type.typeDeclaration.allRequiredOptIns)
-            }
-        }
-        is SirExistentialType -> buildList {
-            protocols.forEach { [protocol, typeArguments] ->
-                addAll(typeArguments.flatMap { it.allRequiredOptIns })
-                addAll(protocol.allRequiredOptIns)
-            }
-        }
-        is SirFunctionalType -> buildList {
-            addAll(contextTypes.flatMap { it.allRequiredOptIns })
-            addAll(parameterTypes.flatMap { it.allRequiredOptIns })
-            addAll(errorType.allRequiredOptIns)
-            addAll(returnType.allRequiredOptIns)
-        }
-        is SirTupleType -> types.flatMap { it.second.allRequiredOptIns }
-        is SirType.Metatype -> type.allRequiredOptIns
-        is SirErrorType, SirUnsupportedType -> emptyList()
+private fun bridgeGenericClosureSlot(type: SirType): BidirectionalBridge {
+    if (type is SirExistentialType) {
+        val b = bridgeType(type, SirTypeVariance.INVARIANT)
+        if (b is AsPatExistential) return AsRetainedPatExistential(b)
+        if (b is AsTyped.Flow) return AsRetainedTypedFlow(b)
     }
+    if (type is SirOptionalType) {
+        val wrapped = type.wrappedType
+        if (wrapped is SirExistentialType) {
+            val b = bridgeType(wrapped, SirTypeVariance.INVARIANT)
+            if (b is AsPatExistential) return AsOptionalWrapper(AsRetainedPatExistential(b))
+            if (b is AsTyped.Flow) return AsOptionalWrapper(AsRetainedTypedFlow(b))
+        }
+    }
+    return AsBridgeableValue(type)
+}
+
+internal fun SirType.isPublicInSwift(): Boolean = when (this) {
+    is SirTypeParameterType, is SirSelfType -> true
+    is SirNominalType -> {
+        val decl = typeDeclaration
+        val declPublic = decl.visibility == SirVisibility.PUBLIC ||
+                decl.parent == SirSwiftModule ||
+                decl.parent == KotlinRuntimeModule ||
+                decl.parent == KotlinRuntimeSupportModule
+        declPublic && (parent?.isPublicInSwift() != false) && typeArguments.all { it.isPublicInSwift() }
+    }
+    is SirExistentialType -> protocols.all { [proto, args] ->
+        (proto.visibility == SirVisibility.PUBLIC || proto.parent == KotlinRuntimeSupportModule) &&
+                args.all { it.isPublicInSwift() }
+    }
+    else -> false
+}
+
+internal fun Bridge.isSwiftInlinableSafe(): Boolean = when (this) {
+    is AsIs, AsVoid, AsOptionalVoid, AsOptionalNothing -> true
+    is AsBridgeableValue -> swiftType.isPublicInSwift()
+    is AsObject -> !swiftType.isValueType && swiftType.isPublicInSwift()
+    is AsGenericObject -> swiftType.isPublicInSwift()
+    is AsPatExistential -> swiftType.isPublicInSwift() && anyWrapperType.isPublicInSwift()
+    is AsNSNumber -> swiftType.isPublicInSwift()
+    is AsObjCBridged -> swiftType == SirNominalType(SirSwiftModule.string)
+    is AsOptionalWrapper -> wrappedObject.isSwiftInlinableSafe()
+    else -> false
+}
+
+context(session: SirSession)
+private val SirType.allRequiredOptIns: List<ClassId>
+    get() = collectRequiredOptIns(mutableSetOf())
+
+context(session: SirSession)
+private fun SirType.collectRequiredOptIns(visitedParams: MutableSet<SirTypeParameter>): List<ClassId> = when (this) {
+    is SirNominalType -> buildList {
+        generateSequence(this@collectRequiredOptIns) { it.parent }.forEach { type ->
+            addAll(type.typeArguments.flatMap { it.collectRequiredOptIns(visitedParams) })
+            addAll(type.typeDeclaration.allRequiredOptIns)
+        }
+    }
+    is SirExistentialType -> buildList {
+        protocols.forEach { [protocol, typeArguments] ->
+            addAll(typeArguments.flatMap { it.collectRequiredOptIns(visitedParams) })
+            addAll(protocol.allRequiredOptIns)
+        }
+    }
+    is SirFunctionalType -> buildList {
+        addAll(contextTypes.flatMap { it.collectRequiredOptIns(visitedParams) })
+        addAll(parameterTypes.flatMap { it.collectRequiredOptIns(visitedParams) })
+        addAll(errorType.collectRequiredOptIns(visitedParams))
+        addAll(returnType.collectRequiredOptIns(visitedParams))
+    }
+    is SirTupleType -> types.flatMap { it.second.collectRequiredOptIns(visitedParams) }
+    is SirType.Metatype -> type.collectRequiredOptIns(visitedParams)
+    is SirTypeParameterType -> if (visitedParams.add(parameter)) {
+        parameter.bounds.flatMap { it.collectRequiredOptIns(visitedParams) }
+    } else {
+        emptyList()
+    }
+    is SirSelfType -> emptyList()
+    is SirErrorType, SirUnsupportedType -> emptyList()
+}
 
 context(session: SirSession)
 private val SirDeclaration.allRequiredOptIns: List<ClassId>

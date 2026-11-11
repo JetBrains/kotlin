@@ -24,6 +24,8 @@ class SirProtocolBuilder {
     val declarations: MutableList<SirDeclaration> = []
     var superClass: SirNominalType? = null
     val protocols: MutableList<SirProtocol> = []
+    val typeParameters: MutableList<SirTypeParameter> = []
+    val constraints: MutableList<SirTypeConstraint> = []
     val bridges: MutableList<SirBridge> = []
 
     fun build(): SirProtocol {
@@ -36,6 +38,8 @@ class SirProtocolBuilder {
             declarations,
             superClass,
             protocols,
+            typeParameters,
+            constraints,
             bridges,
         )
     }

@@ -20,6 +20,8 @@ internal class SirSubscriptImpl(
     override val isOverride: Boolean,
     override val isInstance: Boolean,
     override val modality: SirModality,
+    override val typeParameters: MutableList<SirTypeParameter>,
+    override val constraints: MutableList<SirTypeConstraint>,
     override val parameters: MutableList<SirParameter>,
     override val returnType: SirType,
     override val getter: SirGetter,

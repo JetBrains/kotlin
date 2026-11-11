@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.subscript]
  */
-abstract class SirSubscript : SirElementBase(), SirDeclaration, SirDeclarationParent, SirClassMemberDeclaration {
+abstract class SirSubscript : SirElementBase(), SirDeclaration, SirDeclarationParent, SirClassMemberDeclaration, SirGenericDeclaration, SirConstrainedDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
@@ -22,6 +22,8 @@ abstract class SirSubscript : SirElementBase(), SirDeclaration, SirDeclarationPa
     abstract override val isOverride: Boolean
     abstract override val isInstance: Boolean
     abstract override val modality: SirModality
+    abstract override val typeParameters: List<SirTypeParameter>
+    abstract override val constraints: List<SirTypeConstraint>
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
     abstract val getter: SirGetter

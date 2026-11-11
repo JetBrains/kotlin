@@ -19,4 +19,8 @@ class SirEnumStub(
     override val declarations: MutableList<SirDeclaration> = mutableListOf()
     override val protocols: List<SirProtocol>
         get() = emptyList()
+    override val typeParameters: List<SirTypeParameter>
+        get() = emptyList()
+    override val constraints: List<SirTypeConstraint>
+        get() = emptyList()
 }

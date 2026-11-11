@@ -6,6 +6,8 @@
 package org.jetbrains.sir.lightclasses.utils;
 
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.substituteTypeParameters
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
@@ -17,10 +19,37 @@ internal inline val <reified T : SirClassMemberDeclaration> T.overridableCandida
             .filter { it.modality != SirModality.FINAL && !it.isUnsuitablyDeprecatedToOverride }
             .toList()
 
+internal fun SirClass.substitutionMapToAncestor(ancestor: SirClass): Map<SirTypeParameter, SirType> {
+    var current: SirClass = this
+    var accSub: Map<SirTypeParameter, SirType> = emptyMap()
+    val visited = mutableSetOf<SirClass>()
+    while (current != ancestor && visited.add(current)) {
+        val supNominal = current.superClass ?: return emptyMap()
+        val supClass = supNominal.typeDeclaration as? SirClass ?: return emptyMap()
+        val stepArgs = supNominal.typeArguments.map { it.substituteTypeParameters(accSub) }
+        accSub = if (supClass.typeParameters.size == stepArgs.size) {
+            supClass.typeParameters.zip(stepArgs).toMap()
+        } else {
+            emptyMap()
+        }
+        current = supClass
+    }
+    return if (current == ancestor) accSub else emptyMap()
+}
+
+private fun SirDeclarationParent.ancestorSubstitutionFor(member: SirDeclaration): Map<SirTypeParameter, SirType> {
+    val subClass = this as? SirClass ?: return emptyMap()
+    val supClass = member.parent as? SirClass ?: return emptyMap()
+    return subClass.substitutionMapToAncestor(supClass)
+}
 
 internal val SirClassInhertingDeclaration.superClassDeclaration: SirClass? get() = superClass?.typeDeclaration as? SirClass
 
 internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
+    is SirTypeParameterType -> this == other ||
+            (other is SirExistentialType && other.protocols.isEmpty()) ||
+            parameter.bounds.any { it.isSubtypeOf(other) }
+    is SirSelfType -> other is SirSelfType
     is SirOptionalType -> (other as? SirOptionalType)?.let { wrappedType.isSubtypeOf(it.wrappedType) } ?: false
     is SirNominalType -> when (other) {
         is SirOptionalType -> this.isSubtypeOf(other.wrappedType)
@@ -29,14 +58,20 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
         } else {
             this.typeDeclaration.isSubclassOf(other.typeDeclaration)
         }
-        is SirExistentialType -> other.protocols.singleOrNull()?.let {
-            this.typeDeclaration == it.first && this.typeArguments == it.second
-        } ?: false
+        is SirExistentialType -> if (other.protocols.isEmpty()) {
+            this.typeDeclaration != SirSwiftModule.never
+        } else {
+            other.protocols.singleOrNull()?.let {
+                this.typeDeclaration == it.first && (it.second.isEmpty() || this.typeArguments == it.second)
+            } ?: false
+        }
         else -> false
     }
     is SirExistentialType -> when (other) {
-        is SirExistentialType -> this.protocols == other.protocols
-        is SirNominalType -> other.isSubtypeOf(this)
+        is SirExistentialType -> other.protocols.isEmpty() || this.protocols == other.protocols ||
+                (this.protocols.size == 1 && other.protocols.size == 1 &&
+                        this.protocols.single().first == other.protocols.single().first &&
+                        other.protocols.single().second.isEmpty())
         else -> false
     }
     is SirFunctionalType -> other is SirFunctionalType
@@ -49,11 +84,32 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
 private fun SirDeclaration.isSubclassOf(other: SirDeclaration): Boolean = this == other || this is SirClass && superClass?.typeDeclaration?.isSubclassOf(other) ?: false
 
 private fun SirInit.bestOverrideCandidate(): SirInit? = (this.parent as? SirClass)?.superClassDeclaration?.let { cls ->
-    cls.overrideableInitializers.firstOrNull { other -> this.hasOverridingSignatureOf(other) }
+    cls.overrideableInitializers.firstOrNull { other ->
+        val otherSub = this.parent.ancestorSubstitutionFor(other)
+        this.hasOverridingSignatureOf(other, otherSub)
+    }
 }
 
-private fun SirInit.hasOverridingSignatureOf(other: SirInit): Boolean = this.parameters.isSuitableForOverrideOf(other.parameters)
-        && this.parameters.zip(other.parameters).all { it.first.argumentName == it.second.argumentName }
+private fun SirInit.hasOverridingSignatureOf(
+    other: SirInit,
+    otherSub: Map<SirTypeParameter, SirType> = emptyMap(),
+): Boolean {
+    val substitutedOtherParams = if (otherSub.isEmpty()) {
+        other.parameters
+    } else {
+        other.parameters.map { p ->
+            SirParameter(
+                argumentName = p.argumentName,
+                parameterName = p.parameterName,
+                type = p.type.substituteTypeParameters(otherSub),
+                origin = p.origin,
+                isVariadic = p.isVariadic,
+            )
+        }
+    }
+    return this.parameters.isSuitableForOverrideOf(substitutedOtherParams)
+            && this.parameters.zip(substitutedOtherParams).all { it.first.argumentName == it.second.argumentName }
+}
 
 internal sealed class OverrideStatus<T: SirDeclaration>(val declaration: T) {
     class Overrides<T: SirDeclaration>(declaration: T): OverrideStatus<T>(declaration)
@@ -75,11 +131,17 @@ internal fun SirInit.computeIsOverride(): OverrideStatus<SirInit>? = bestOverrid
     )
 }
 
-private fun SirFunction.bestOverrideCandidate(): SirFunction? = overridableCandidates.firstOrNull {
-    this.name == it.name &&
-            this.parameters.isSuitableForOverrideOf(it.parameters) &&
-            this.returnType.isSubtypeOf(it.returnType) &&
-            this.isInstance == it.isInstance
+private fun SirFunction.bestOverrideCandidate(): SirFunction? = overridableCandidates.firstOrNull { candidate ->
+    if (this.name != candidate.name || this.isInstance != candidate.isInstance || this.typeParameters.size != candidate.typeParameters.size) {
+        return@firstOrNull false
+    }
+    val sub = this.parent.ancestorSubstitutionFor(candidate) +
+            candidate.typeParameters.zip(this.typeParameters.map(::SirTypeParameterType)).toMap()
+    val candParams = if (sub.isEmpty()) candidate.parameters else candidate.parameters.map { p ->
+        SirParameter(p.argumentName, p.parameterName, p.type.substituteTypeParameters(sub), p.origin, p.isVariadic)
+    }
+    val candReturn = candidate.returnType.substituteTypeParameters(sub)
+    this.parameters.isSuitableForOverrideOf(candParams) && this.returnType.isSubtypeOf(candReturn)
 }
 
 internal fun SirFunction.computeIsOverride(): OverrideStatus<SirFunction>? = bestOverrideCandidate()?.let {
@@ -91,12 +153,14 @@ private fun SirVariable.bestOverrideCandidate(): SirVariable? = overridableCandi
 }
 
 internal fun SirVariable.computeIsOverride(): OverrideStatus<SirVariable>? = bestOverrideCandidate()?.let {
+    val sub = this.parent.ancestorSubstitutionFor(it)
+    val superVarType = it.type.substituteTypeParameters(sub)
     OverrideStatus(
         it,
         isOverride = !it.isUnsuitablyDeprecatedToOverride
                 && !it.isConstant
-                && (this.type != SirType.never || it.type == SirType.never)
-                && (it.setter == null && this.type.isSubtypeOf(it.type) || it.setter != null && this.setter != null && this.type == it.type)
+                && (this.type != SirType.never || superVarType == SirType.never)
+                && (it.setter == null && this.type.isSubtypeOf(superVarType) || it.setter != null && this.setter != null && this.type == superVarType)
                 && ((this.getter?.errorType ?: SirType.never).isSubtypeOf(it.getter?.errorType ?: SirType.never))
     )
 }

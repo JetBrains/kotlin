@@ -76,11 +76,11 @@ public fun __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMuta
     return true
 }
 
-@ExportedBridge("__root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___")
-public fun __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___(x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___asNumberList__TypesOfArguments__Swift_Array_T__Vararg___")
+public fun __root___asNumberList__TypesOfArguments__Swift_Array_T__Vararg___(x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __x = interpretObjCPointer<kotlin.collections.List<kotlin.Number>>(x).toTypedArray()
     val _result = asNumberList<kotlin.Number>(*__x)
-    return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___extension__TypesOfArgumentsE__main_Accessor_Swift_Array_Swift_Double__Vararg___")

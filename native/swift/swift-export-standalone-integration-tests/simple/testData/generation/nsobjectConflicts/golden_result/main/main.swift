@@ -37,7 +37,7 @@ public final class ClassB: KotlinRuntime.KotlinBase {
     public func hash(
         intoOk: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> Swift.Void {
-        return { ClassB_hash__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), intoOk.__externalRCRef()); return () }()
+        return { ClassB_hash__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), (intoOk).__retainedToKotlinPointer()!); return () }()
     }
     public func mutableCopyOk() -> any KotlinRuntimeSupport._KotlinBridgeable {
         return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: ClassB_mutableCopy(self.__externalRCRef()))
@@ -51,7 +51,7 @@ public var hash: Swift.Int32 {
 public func forwardingTarget(
     `for`: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> Swift.Void {
-    return { __root___forwardingTarget__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(`for`.__externalRCRef()); return () }()
+    return { __root___forwardingTarget__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__((`for`).__retainedToKotlinPointer()!); return () }()
 }
 @_documentation(visibility: internal)
 extension main.Semaphore where Self : main.__Semaphore {

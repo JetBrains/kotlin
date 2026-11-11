@@ -594,8 +594,8 @@ public fun ignored_ENUM_A(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("ignored_ENUM_ordinal")
 public fun ignored_ENUM_ordinal(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ignored.ENUM
-    val _result = __self.ordinal
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self)!!
+    val _result = (__self as ignored.ENUM).ordinal
     return _result
 }
 
@@ -634,7 +634,7 @@ public fun ignored_produce_VALUE_CLASS(): kotlin.native.internal.NativePtr {
 
 @ExportedBridge("ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__")
 public fun ignored_receive_ENUM__TypesOfArguments__ExportedKotlinPackages_ignored_ENUM__(x: kotlin.native.internal.NativePtr): Boolean {
-    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as ignored.ENUM
+    val __x = (dereferenceAndDisposeBridgeableRef(x) as ignored.ENUM)
     ignored.receive_ENUM(__x)
     return true
 }

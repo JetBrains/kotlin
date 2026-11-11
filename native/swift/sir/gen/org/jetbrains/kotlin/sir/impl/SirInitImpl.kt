@@ -21,6 +21,8 @@ internal class SirInitImpl(
     override var body: SirFunctionBody?,
     override val errorType: SirType,
     override val isAsync: Boolean,
+    override val typeParameters: MutableList<SirTypeParameter>,
+    override val constraints: MutableList<SirTypeConstraint>,
     override val isFailable: Boolean,
     override val parameters: MutableList<SirParameter>,
     override val isConvenience: Boolean,

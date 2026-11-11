@@ -128,13 +128,13 @@ public val KaAnnotated.requiresOptInAnnotation: RequiresOptIn?
 context(session: KaSession)
 public val KaDeclarationSymbol.allRequiredOptIns: List<ClassId>
     get() = sequence {
-        allRequiredOptInClassIds(this@allRequiredOptIns)
+        allRequiredOptInClassIds(this@allRequiredOptIns, mutableSetOf())
     }.mapNotNull { it.classId }.distinct().toList().sortedBy { it.asFqNameString() }
 
 context(session: KaSession)
 public val KaDeclarationSymbol.hasNonPublicOptIns: Boolean
     get() = sequence {
-        allRequiredOptInClassIds(this@hasNonPublicOptIns)
+        allRequiredOptInClassIds(this@hasNonPublicOptIns, mutableSetOf())
     }.any { it.visibility != KaSymbolVisibility.PUBLIC }
 
 private val KaAnnotation.classSymbolForOptInOrNull: KaClassLikeSymbol?
@@ -143,24 +143,32 @@ private val KaAnnotation.classSymbolForOptInOrNull: KaClassLikeSymbol?
     }
 
 context(session: KaSession)
-private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaDeclarationSymbol): Unit = when (symbol) {
-    is KaCallableSymbol -> allRequiredOptInClassIds(symbol)
-    is KaClassLikeSymbol -> allRequiredOptInClassIds(symbol)
+private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(
+    symbol: KaDeclarationSymbol,
+    visited: MutableSet<KaDeclarationSymbol>,
+): Unit = when (symbol) {
+    is KaCallableSymbol -> allRequiredOptInClassIds(symbol, visited)
+    is KaClassLikeSymbol -> allRequiredOptInClassIds(symbol, visited)
     else -> {}
 }
 
 context(session: KaSession)
-private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaClassLikeSymbol): Unit = with(session) {
+private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(
+    symbol: KaClassLikeSymbol,
+    visited: MutableSet<KaDeclarationSymbol>,
+): Unit = with(session) {
+    if (!visited.add(symbol)) return@with
+
     // Add supertype opt-in markers
     (symbol as? KaClassSymbol)?.superTypes.orEmpty().mapNotNull { type ->
         type.symbol as? KaClassSymbol
-    }.forEach { allRequiredOptInClassIds(it) }
+    }.forEach { allRequiredOptInClassIds(it, visited) }
 
     // Add expanded type opt-in markers
-    (symbol as? KaTypeAliasSymbol)?.expandedType?.let { allRequiredOptInClassIds(it) }
+    (symbol as? KaTypeAliasSymbol)?.expandedType?.let { allRequiredOptInClassIds(it, visited) }
 
     // Add opt-in markers from lexical scope
-    symbol.containingDeclaration?.let { allRequiredOptInClassIds(it) }
+    symbol.containingDeclaration?.let { allRequiredOptInClassIds(it, visited) }
 
     // Add own opt-in markers
     symbol.annotations.forEach { it.classSymbolForOptInOrNull?.let { yield(it) } }
@@ -169,47 +177,53 @@ private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(sy
 context(session: KaSession)
 private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(
     type: KaType,
+    visited: MutableSet<KaDeclarationSymbol>,
     shouldExpand: Boolean = true,
 ): Unit = with(session) {
     if (shouldExpand) {
-        allRequiredOptInClassIds(type.fullyExpandedType, shouldExpand = false)
-        type.abbreviation?.let { allRequiredOptInClassIds(it, shouldExpand = false) }
+        allRequiredOptInClassIds(type.fullyExpandedType, visited, shouldExpand = false)
+        type.abbreviation?.let { allRequiredOptInClassIds(it, visited, shouldExpand = false) }
         return@with
     }
     when (type) {
         is KaFunctionType -> {
-            type.contextParameterTypes.forEach { allRequiredOptInClassIds(it) }
-            type.receiverType?.let { allRequiredOptInClassIds(it) }
-            type.parameterTypes.forEach { allRequiredOptInClassIds(it) }
-            allRequiredOptInClassIds(type.returnType)
+            type.contextParameterTypes.forEach { allRequiredOptInClassIds(it, visited) }
+            type.receiverType?.let { allRequiredOptInClassIds(it, visited) }
+            type.parameterTypes.forEach { allRequiredOptInClassIds(it, visited) }
+            allRequiredOptInClassIds(type.returnType, visited)
         }
         is KaClassType -> {
-            allRequiredOptInClassIds(type.symbol)
-            type.typeArguments.forEach { it.type?.let { allRequiredOptInClassIds(it) } }
+            allRequiredOptInClassIds(type.symbol, visited)
+            type.typeArguments.forEach { it.type?.let { allRequiredOptInClassIds(it, visited) } }
         }
         else -> {}
     }
 }
 
 context(session: KaSession)
-private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaCallableSymbol): Unit = with(session) {
+private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(
+    symbol: KaCallableSymbol,
+    visited: MutableSet<KaDeclarationSymbol>,
+): Unit = with(session) {
+    if (!visited.add(symbol)) return@with
+
     // Add opt-in markers from lexical scope
-    symbol.containingDeclaration?.let { allRequiredOptInClassIds(it) }
+    symbol.containingDeclaration?.let { allRequiredOptInClassIds(it, visited) }
 
     // Add own opt-in markers
     symbol.annotations.forEach { it.classSymbolForOptInOrNull?.let { yield(it) } }
 
     // Add opt-in markers from the types used in signature
-    symbol.typeParameters.forEach { it.upperBounds.forEach { allRequiredOptInClassIds(it) } }
-    symbol.contextParameters.forEach { allRequiredOptInClassIds(it.returnType) }
-    symbol.receiverParameter?.let { allRequiredOptInClassIds(it.returnType) }
+    symbol.typeParameters.forEach { it.upperBounds.forEach { allRequiredOptInClassIds(it, visited) } }
+    symbol.contextParameters.forEach { allRequiredOptInClassIds(it.returnType, visited) }
+    symbol.receiverParameter?.let { allRequiredOptInClassIds(it.returnType, visited) }
     if (symbol is KaFunctionSymbol) {
-        symbol.valueParameters.forEach { allRequiredOptInClassIds(it.returnType) }
+        symbol.valueParameters.forEach { allRequiredOptInClassIds(it.returnType, visited) }
     }
-    allRequiredOptInClassIds(symbol.returnType)
+    allRequiredOptInClassIds(symbol.returnType, visited)
 
     // Add opt-in markers from overridden declarations
-    symbol.allOverriddenSymbols.forEach { allRequiredOptInClassIds(it) }
+    symbol.allOverriddenSymbols.forEach { allRequiredOptInClassIds(it, visited) }
 }
 
 /**

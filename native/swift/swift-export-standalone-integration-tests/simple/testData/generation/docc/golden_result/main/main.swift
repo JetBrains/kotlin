@@ -106,7 +106,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
     ) {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, arg.__externalRCRef()); return () }()
+        { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, (arg).__retainedToKotlinPointer()!); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -183,7 +183,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         _ context: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> Swift.Int32 {
         let (c) = context
-        return Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), c.__externalRCRef())
+        return Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), (c).__retainedToKotlinPointer()!)
     }
     /// A property with a receiver parameter
     ///
@@ -206,7 +206,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         `_`: Swift.Int32
     ) -> Swift.Void {
         let (c) = context
-        return { Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__(self.__externalRCRef(), c.__externalRCRef(), `_`); return () }()
+        return { Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__(self.__externalRCRef(), (c).__retainedToKotlinPointer()!, `_`); return () }()
     }
 }
 @_documentation(visibility: internal)

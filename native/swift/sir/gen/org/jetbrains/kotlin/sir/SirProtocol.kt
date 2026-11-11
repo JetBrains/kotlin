@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.protocol]
  */
-abstract class SirProtocol : SirBridged(), SirScopeDefiningDeclaration, SirMutableDeclarationContainer, SirClassInhertingDeclaration, SirProtocolConformingDeclaration {
+abstract class SirProtocol : SirBridged(), SirScopeDefiningDeclaration, SirMutableDeclarationContainer, SirClassInhertingDeclaration, SirProtocolConformingDeclaration, SirGenericDeclaration, SirConstrainedDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
@@ -23,6 +23,8 @@ abstract class SirProtocol : SirBridged(), SirScopeDefiningDeclaration, SirMutab
     abstract override val declarations: MutableList<SirDeclaration>
     abstract override val superClass: SirNominalType?
     abstract override val protocols: List<SirProtocol>
+    abstract override val typeParameters: List<SirTypeParameter>
+    abstract override val constraints: List<SirTypeConstraint>
     abstract override val bridges: List<SirBridge>
     override fun toString(): String {
         return this.debugString

@@ -3,8 +3,60 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
+    public func hasNext() -> Swift.Bool {
+        return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
+    }
+    public func next() -> T {
+        return T.__fromKotlinPointer(kotlin_collections_Iterator_next(self.__externalRCRef()))
+    }
+}
+extension ExportedKotlinPackages.kotlin.collections.Iterator {
+    @inlinable
+    public var covariant: KotlinRuntimeSupport.KotlinCovariant<T> {
+        get {
+            return (_owner: self, _variance: KotlinRuntimeSupport._absurd)
+        }
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
+}
 extension ExportedKotlinPackages.kotlin.collections {
-    open class BooleanIterator: KotlinRuntime.KotlinBase {
+    public protocol Iterator<T>: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterator {
+        associatedtype T: KotlinRuntimeSupport._KotlinBridgeable
+        func hasNext() -> Swift.Bool
+        func next() -> T
+    }
+    @objc(_ExportedKotlinPackages_kotlin_collections_Iterator)
+    public protocol _Iterator {
+    }
+    public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public final class AnyIterator<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator, KotlinRuntimeSupport._KotlinCustomPointerBridgeable {
+        @inlinable
+        public var covariant: KotlinRuntimeSupport.KotlinCovariant<T> {
+            get {
+                return (_owner: self, _variance: KotlinRuntimeSupport._absurd)
+            }
+        }
+        @inlinable
+        public convenience init(
+            _ projection: KotlinRuntimeSupport.KotlinCovariant<T>
+        ) {
+            self.init(__externalRCRefUnsafe: KotlinRuntimeSupport._cloneBridgeableRef(projection._owner.__externalRCRef()), options: .asExistentialWrapper)
+        }
+        @_documentation(visibility: internal)
+        public override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    open class BooleanIterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator {
+        public typealias T = Swift.Bool
         public override init() {
             precondition(Self.self != ExportedKotlinPackages.kotlin.collections.BooleanIterator.self, "ExportedKotlinPackages.kotlin.collections.BooleanIterator is an abstract class and cannot be instantiated directly")
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
@@ -28,7 +80,8 @@ extension ExportedKotlinPackages.kotlin.collections {
             }
         }
     }
-    open class IntIterator: KotlinRuntime.KotlinBase {
+    open class IntIterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator {
+        public typealias T = Swift.Int32
         public override init() {
             precondition(Self.self != ExportedKotlinPackages.kotlin.collections.IntIterator.self, "ExportedKotlinPackages.kotlin.collections.IntIterator is an abstract class and cannot be instantiated directly")
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
@@ -150,129 +203,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    open class Number: KotlinRuntime.KotlinBase {
-        public override init() {
-            precondition(Self.self != ExportedKotlinPackages.kotlin.Number.self, "ExportedKotlinPackages.kotlin.Number is an abstract class and cannot be instantiated directly")
-            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-        open func toByte() -> Swift.Int8 {
-            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
-                return kotlin_Number_toByte(self.__externalRCRef())
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toByte': a Swift subclass must override it and must not call super.")
-            }
-        }
-        @available(*, deprecated, message: """
-Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
-If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration. Replacement: this.toInt().toChar()
-""")
-        open func toChar() -> Swift.Unicode.UTF16.CodeUnit {
-            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
-                return kotlin_Number_toChar(self.__externalRCRef())
-            } else {
-                return kotlin_Number_toChar_direct(self.__externalRCRef())
-            }
-        }
-        open func toDouble() -> Swift.Double {
-            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
-                return kotlin_Number_toDouble(self.__externalRCRef())
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toDouble': a Swift subclass must override it and must not call super.")
-            }
-        }
-        open func toFloat() -> Swift.Float {
-            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
-                return kotlin_Number_toFloat(self.__externalRCRef())
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toFloat': a Swift subclass must override it and must not call super.")
-            }
-        }
-        open func toInt() -> Swift.Int32 {
-            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
-                return kotlin_Number_toInt(self.__externalRCRef())
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toInt': a Swift subclass must override it and must not call super.")
-            }
-        }
-        open func toLong() -> Swift.Int64 {
-            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
-                return kotlin_Number_toLong(self.__externalRCRef())
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toLong': a Swift subclass must override it and must not call super.")
-            }
-        }
-        open func toShort() -> Swift.Int16 {
-            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
-                return kotlin_Number_toShort(self.__externalRCRef())
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toShort': a Swift subclass must override it and must not call super.")
-            }
-        }
-    }
 }
-@_cdecl("kotlin_Number_toByte__reverse_swift")
-package func kotlin_Number_toByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
-    let _result: Swift.Int8 = _self.toByte()
-    return _result
-}
-
-@available(*, deprecated, message: """
-Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
-If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration. Replacement: this.toInt().toChar()
-""")
-@_cdecl("kotlin_Number_toChar__reverse_swift")
-package func kotlin_Number_toChar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UInt16 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
-    let _result: Swift.Unicode.UTF16.CodeUnit = _self.toChar()
-    return _result
-}
-
-@_cdecl("kotlin_Number_toDouble__reverse_swift")
-package func kotlin_Number_toDouble__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Double {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
-    let _result: Swift.Double = _self.toDouble()
-    return _result
-}
-
-@_cdecl("kotlin_Number_toFloat__reverse_swift")
-package func kotlin_Number_toFloat__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Float {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
-    let _result: Swift.Float = _self.toFloat()
-    return _result
-}
-
-@_cdecl("kotlin_Number_toInt__reverse_swift")
-package func kotlin_Number_toInt__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
-    let _result: Swift.Int32 = _self.toInt()
-    return _result
-}
-
-@_cdecl("kotlin_Number_toLong__reverse_swift")
-package func kotlin_Number_toLong__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int64 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
-    let _result: Swift.Int64 = _self.toLong()
-    return _result
-}
-
-@_cdecl("kotlin_Number_toShort__reverse_swift")
-package func kotlin_Number_toShort__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int16 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
-    let _result: Swift.Int16 = _self.toShort()
-    return _result
-}
-
 @_cdecl("kotlin_collections_BooleanIterator_nextBoolean__reverse_swift")
 package func kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = ExportedKotlinPackages.kotlin.collections.BooleanIterator.__createClassWrapper(externalRCRef: `self`)
@@ -285,4 +216,24 @@ package func kotlin_collections_IntIterator_nextInt__reverse_swift(_ `self`: Swi
     let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.nextInt()
     return _result
+}
+
+@_cdecl("kotlin_collections_Iterator_hasNext__reverse_swift")
+package func kotlin_collections_Iterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _rawSelf = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: `self`) as! (any ExportedKotlinPackages.kotlin.collections.Iterator)
+    func _open<__Self: ExportedKotlinPackages.kotlin.collections.Iterator>(_ _self: __Self) -> Swift.Bool {
+        let _result: Swift.Bool = _self.hasNext()
+        return _result
+    }
+    return _open(_rawSelf)
+}
+
+@_cdecl("kotlin_collections_Iterator_next__reverse_swift")
+package func kotlin_collections_Iterator_next__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _rawSelf = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: `self`) as! (any ExportedKotlinPackages.kotlin.collections.Iterator)
+    func _open<__Self: ExportedKotlinPackages.kotlin.collections.Iterator>(_ _self: __Self) -> Swift.UnsafeMutableRawPointer? {
+        let _result: __Self.T = _self.next()
+        return _result.__retainedToKotlinPointer()
+    }
+    return _open(_rawSelf)
 }

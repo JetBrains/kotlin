@@ -24,12 +24,12 @@ func memberExtensionOverloadsByReceiverDispatchToSwift() throws {
 @Test
 func genericSaverMemberExtensionDispatchesToSwift() throws {
     class SwiftSaver: MemberExtensionAnchor, Saver {
-        func save(_ receiver: any SaverScope, value: (any KotlinRuntimeSupport._KotlinBridgeable)?) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-            Payload(text: "saved:\((value as! Payload).text)")
+        func save(_ receiver: any SaverScope, value: Payload) -> Payload? {
+            Payload(text: "saved:\(value.text)")
         }
-        func restore(value: any KotlinRuntimeSupport._KotlinBridgeable) -> (any KotlinRuntimeSupport._KotlinBridgeable)? { value }
+        func restore(value: Payload) -> Payload? { value }
     }
-    let saved = saveWith(saver: SwiftSaver(), value: Payload(text: "x")) as! Payload
+    let saved = saveWith(saver: SwiftSaver(), value: Payload(text: "x"))!
     #expect(saved.text == "saved:x")
 }
 

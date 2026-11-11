@@ -13,13 +13,15 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.typealias]
  */
-abstract class SirTypealias : SirElementBase(), SirScopeDefiningDeclaration {
+abstract class SirTypealias : SirElementBase(), SirScopeDefiningDeclaration, SirGenericDeclaration, SirConstrainedDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
     abstract override val name: String
+    abstract override val typeParameters: List<SirTypeParameter>
+    abstract override val constraints: List<SirTypeConstraint>
     abstract val type: SirType
     override fun toString(): String {
         return this.debugString

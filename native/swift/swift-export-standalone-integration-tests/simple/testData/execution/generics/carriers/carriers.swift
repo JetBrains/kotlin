@@ -8,7 +8,7 @@ import Testing
 
 @Test
 func boxPropertyGet() throws {
-    #expect(stringBox().value as? String == "boxed")
+    #expect(stringBox().value == "boxed")
     #expect(boxNothing().value == nil)  // Box<Nothing>: Nothing as a type argument
 }
 
@@ -34,7 +34,7 @@ func varargT() throws {
     #expect(describeVararg(xs: Double(10.25)) == "Double:10.25")
     #expect(describeVararg(xs: true) == "Boolean:true")
     #expect(describeVararg(xs: "s") == "String:s")
-    #expect(describeVararg(xs: nil) == "null")
+    #expect(describeVararg(xs: Optional<String>.none) == "null")
     #expect(describeVararg(xs: [Int32(1), Int32(2)]) == "List[Int:1,Int:2]")
     #expect(describeVararg(xs: [Int32]()) == "List[]")
     #expect(describeVararg(xs: Foo(id: 5)) == "Foo:5")
@@ -43,42 +43,42 @@ func varargT() throws {
 @Test
 func swiftClosureReturnsT() throws {
     #expect(produce { "s" } == "String:s")
-    #expect(produce { nil } == "null")
+    #expect(produce { Optional<String>.none } == "null")
 }
 
 @Test
 func swiftClosureMapsT() throws {
     var received: String?
-    let result = mapValue(x: "a") { received = $0 as? String; return "b" }
+    let result = mapValue(x: "a") { received = $0; return "b" }
     #expect(received == "a")
-    #expect(result as? String == "b")
+    #expect(result == "b")
 }
 
 @Test
 func kotlinLambdaReturnsT() throws {
-    #expect(constant(x: "c")() as? String == "c")
-    #expect(constant(x: nil)() == nil, "nil not preserved")
+    #expect(constant(x: "c")() == "c")
+    #expect(constant(x: Optional<String>.none)() == nil, "nil not preserved")
 }
 
 @Test
 func kotlinLambdaTakesT() throws {
-    let f = describer()
+    let f: (String?) -> String = describer()
     #expect(f("s") == "String:s")
     #expect(f(nil) == "null")
 }
 
 @Test
 func closurePropertyOnGenericClass() throws {
-    let c = Callback()
+    let c = Callback<String>()
     #expect(c.fire(x: "k") == "null")            // property unset: Kotlin sees null
     c.listener = { $0 }
     #expect(c.fire(x: "k") == "String:k")        // setter: Kotlin calls the Swift closure, T in and out
-    #expect(c.listener?("s") as? String == "s")  // getter: the closure comes back to Swift and is callable
+    #expect(c.listener?("s") == "s")             // getter: the closure comes back to Swift and is callable
 }
 
 @Test
 func kotlinLambdaRoundTripsAsAny() throws {
-    let f = try #require(lambdaAsT())
+    let f: KotlinAny = lambdaAsT()
     #expect(invokeAny(f: f) == "String:lambda")
 }
 

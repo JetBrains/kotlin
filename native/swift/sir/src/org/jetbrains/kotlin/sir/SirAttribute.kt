@@ -94,4 +94,19 @@ public sealed interface SirAttribute {
         override val identifier: String get() = "discardableResult"
         override val arguments: List<SirArgument>? get() = null
     }
+
+    object Frozen : SirAttribute {
+        override val identifier: String get() = "frozen"
+        override val arguments: List<SirArgument>? get() = null
+    }
+
+    object Inlinable : SirAttribute {
+        override val identifier: String get() = "inlinable"
+        override val arguments: List<SirArgument>? get() = null
+    }
+
+    object UsableFromInline : SirAttribute {
+        override val identifier: String get() = "usableFromInline"
+        override val arguments: List<SirArgument>? get() = null
+    }
 }

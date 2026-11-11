@@ -94,12 +94,12 @@ public func foo(
 public func foo_any(
     a: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> Swift.Void {
-    return { __root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(a.__externalRCRef()); return () }()
+    return { __root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__((a).__retainedToKotlinPointer()!); return () }()
 }
 public func foo_any(
     a: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> Swift.Void {
-    return { __root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(a.map { it in it.__externalRCRef() } ?? nil); return () }()
+    return { __root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___((a).flatMap { it in it.__retainedToKotlinPointer() }); return () }()
 }
 public func opt_to_non_opt_usage(
     i: main.OptToNonOptTypealias

@@ -7,19 +7,21 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinImplementationMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol
+import org.jetbrains.kotlin.sir.providers.source.KotlinPatWrapperClass
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
+import org.jetbrains.kotlin.sir.util.substituteTypeParameters
 import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -49,6 +51,25 @@ internal open class SirProtocolFromKtSymbol(
         }
         set(_) = Unit
 
+    private val translatedTypeParams: TranslatedTypeParameters by lazyWithSessions {
+        translateTypeParametersAndConstraints(
+            declarationSymbol = ktSymbol,
+            ownKtTypeParams = ktSymbol.typeParameters,
+            isProtocol = true,
+            selfClassSymbol = ktSymbol,
+        )
+    }
+
+    override val typeParameters: List<SirTypeParameter>
+        get() = translatedTypeParams.typeParameters
+
+    override val constraints: List<SirTypeConstraint>
+        get() = translatedTypeParams.constraints
+
+    internal open val isPatProtocol: Boolean by lazyWithSessions {
+        typeParameters.isNotEmpty() || translatedProtocols.any { it.isPatProtocol }
+    }
+
     override val superClass: SirNominalType? by lazy {
         SirNominalType(KotlinRuntimeModule.kotlinBase)
     }
@@ -57,7 +78,7 @@ internal open class SirProtocolFromKtSymbol(
         if (isUnavailable) translatedProtocols else translatedProtocols + existentialMarker
     }
 
-    internal val translatedProtocols: List<SirProtocolFromKtSymbol> by lazyWithSessions {
+    internal open val translatedProtocols: List<SirProtocolFromKtSymbol> by lazyWithSessions {
         val isUnavailable = this.isUnavailable
         ktSymbol.superTypes
             .asSequence()
@@ -91,8 +112,53 @@ internal open class SirProtocolFromKtSymbol(
         }
     }
 
-    internal open val existentialExtension: SirExtension by lazy {
-        SirExistentialProtocolImplementationFromKtSymbol(this)
+    internal open val existentialExtension: SirExtension? by lazyWithSessions {
+        if (isPatProtocol) null else SirExistentialProtocolImplementationFromKtSymbol(this)
+    }
+
+    internal open val anyWrapperDeclaration: SirClass? by lazyWithSessions {
+        if (isPatProtocol) SirAnyProtocolWrapperFromKtSymbol(this) else null
+    }
+
+    internal fun computeAssocBindingsForSubtypes(sirArgs: List<SirType>): Map<String, SirType>? = withSessions {
+        if (sirArgs.size != typeParameters.size) return@withSessions null
+        val sirSub: Map<SirTypeParameter, SirType> = typeParameters.zip(sirArgs).toMap()
+        val result = LinkedHashMap<String, SirType>()
+        for ([tp, arg] in typeParameters.zip(sirArgs)) {
+            val existing = result[tp.name]
+            if (existing != null && existing != arg) return@withSessions null
+            result[tp.name] = arg
+        }
+        val scope = lexicalTypeParameterScope()
+        for (supType in ktSymbol.superTypes.filterIsInstance<KaClassType>()) {
+            val usType = supType.fullyExpandedType as? KaUsualClassType ?: continue
+            val supSym = usType.symbol as? KaNamedClassSymbol ?: continue
+            if (supSym.classKind != KaClassKind.INTERFACE) continue
+            val avail = supSym.sirAvailability()
+            if (avail !is SirAvailability.Available || avail.visibility <= SirVisibility.INTERNAL) continue
+            val supProto = supSym.toSir().primaryDeclaration as? SirProtocolFromKtSymbol ?: continue
+            if (!supProto.isPatProtocol) continue
+            if (usType.typeArguments.size != supProto.typeParameters.size) return@withSessions null
+            val subArgs = mutableListOf<SirType>()
+            for (proj in usType.typeArguments) {
+                if (proj !is KaTypeArgumentWithVariance) return@withSessions null
+                val translated = proj.type.translateTypeOrNull(
+                    position = SirTypeVariance.INVARIANT,
+                    processTypeImports = ktSymbol.containingModule.sirModule()::updateImports,
+                    typeParameterScope = scope,
+                    inGenericTypeArgument = true,
+                ) ?: return@withSessions null
+                if (translated is SirErrorType || translated is SirUnsupportedType) return@withSessions null
+                subArgs.add(translated.substituteTypeParameters(sirSub))
+            }
+            val supBindings = supProto.computeAssocBindingsForSubtypes(subArgs) ?: return@withSessions null
+            for ([k, v] in supBindings) {
+                val existing = result[k]
+                if (existing != null && existing != v) return@withSessions null
+                result[k] = v
+            }
+        }
+        result
     }
 
     internal val auxExtension: SirExtension by lazy {
@@ -174,6 +240,8 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val superClass: SirNominalType? get() = null
     override val protocols: List<SirProtocol>
         get() = target.translatedProtocols.map { it.existentialMarker }
+    override val typeParameters: List<SirTypeParameter> get() = emptyList()
+    override val constraints: List<SirTypeConstraint> get() = emptyList()
 
     override val bridges: List<SirBridge> by lazyWithSessions {
         listOfNotNull(
@@ -225,6 +293,8 @@ internal class SirImplementationMarkerProtocolFromKtSymbol(
                 add(protocol.implementationMarker)
             }
         }
+    override val typeParameters: List<SirTypeParameter> get() = emptyList()
+    override val constraints: List<SirTypeConstraint> get() = emptyList()
     override val bridges: List<SirBridge> = emptyList()
 }
 
@@ -320,6 +390,8 @@ private class SirRelocatedFunction(
     override val parameters: List<SirParameter> get() = source.parameters
     override val errorType: SirType get() = source.errorType
     override val isAsync: Boolean get() = source.isAsync
+    override val typeParameters: List<SirTypeParameter> get() = source.typeParameters
+    override val constraints: List<SirTypeConstraint> get() = source.constraints
     override val bridges: List<SirBridge> get() {
             val result = source.bridges
             return result
@@ -376,6 +448,8 @@ private class SirRelocatedSubscript(
     override val modality: SirModality get() = source.modality
     override val parameters: List<SirParameter> get() = source.parameters
     override val returnType: SirType get() = source.returnType
+    override val typeParameters: List<SirTypeParameter> get() = source.typeParameters
+    override val constraints: List<SirTypeConstraint> get() = source.constraints
     override val getter: SirGetter get() = source.getter
     override val setter: SirSetter? get() = source.setter
 }
@@ -490,6 +564,132 @@ internal class SirStubProtocol(
     override val protocols: List<SirProtocol> get() = emptyList()
 }
 
+internal class SirAnyProtocolWrapperFromKtSymbol(
+    val target: SirProtocolFromKtSymbol,
+) : SirClass(), SirFromKtSymbol<KaNamedClassSymbol> {
+    override val ktSymbol: KaNamedClassSymbol get() = target.ktSymbol
+    override val sirSession: SirSession get() = target.sirSession
+
+    override val origin: SirOrigin get() = KotlinPatWrapperClass(ktSymbol)
+    override val visibility: SirVisibility = SirVisibility.PUBLIC
+    override val modality: SirModality = SirModality.FINAL
+    override val documentation: String? = null
+
+    override var parent: SirDeclarationParent
+        get() = target.parent
+        set(_) = Unit
+
+    override val name: String by lazyWithSessions {
+        val rawDeclName = ktSymbol.sirDeclarationName()
+        val relocatedPrefix = target.relocatedDeclarationNamePrefix() ?: ""
+        fun hasSiblingNamed(candidate: String): Boolean {
+            val outer = ktSymbol.containingDeclaration as? KaClassSymbol
+            if (outer != null) {
+                return outer.combinedDeclaredMemberScope.classifiers(Name.identifier(candidate)).any()
+            }
+            val pkg = ktSymbol.classId?.packageFqName ?: return false
+            val cid = ClassId(pkg, Name.identifier(candidate))
+            return findClass(cid) != null || findTypeAlias(cid) != null
+        }
+        var prefix = "Any"
+        while (hasSiblingNamed("$prefix$rawDeclName")) {
+            prefix = "_$prefix"
+        }
+        "$relocatedPrefix$prefix$rawDeclName"
+    }
+
+    override val superClass: SirNominalType = SirNominalType(KotlinRuntimeModule.kotlinBase)
+
+    override val protocols: List<SirProtocol> by lazy {
+        if (target.isUnavailable) {
+            listOf(KotlinRuntimeSupportModule.kotlinCustomPointerBridgeable)
+        } else {
+            listOf(target, target.implementationMarker, KotlinRuntimeSupportModule.kotlinCustomPointerBridgeable)
+        }
+    }
+
+    private val copiedHeader: Pair<List<SirTypeParameter>, Map<SirTypeParameter, SirType>> by lazy {
+        val subst = LinkedHashMap<SirTypeParameter, SirType>()
+        val params = target.typeParameters.map { protoTp ->
+            SirTypeParameter(
+                name = protoTp.name,
+                variance = protoTp.variance,
+                bounds = mutableListOf(),
+                isPrimaryAssociatedType = false,
+                origin = protoTp.origin,
+            ).also { subst[protoTp] = SirTypeParameterType(it) }
+        }
+        target.typeParameters.zip(params).forEach { [protoTp, clsTp] ->
+            clsTp.bounds.addAll(protoTp.bounds.map { it.substituteTypeParameters(subst) })
+        }
+        params to subst
+    }
+
+    override val typeParameters: List<SirTypeParameter>
+        get() = copiedHeader.first
+
+    override val constraints: List<SirTypeConstraint> by lazy {
+        val subst = copiedHeader.second
+        target.constraints
+            .filter { it.subjectPath.firstOrNull() != "Self" }
+            .map { it.substituteConstraint(subst) }
+    }
+
+    override val attributes: List<SirAttribute> by lazy {
+        buildList {
+            addAll(target.attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI })
+            addDocumentationVisibility(target.kdocElements)
+        }
+    }
+
+    override val declarations: List<SirDeclaration> by lazyWithSessions {
+        val ownParamNames = typeParameters.mapTo(mutableSetOf()) { it.name }
+        val assocBindings = target.computeAssocBindingsForSubtypes(typeParameters.map(::SirTypeParameterType)).orEmpty()
+        val patAliases = assocBindings
+            .filterKeys { it !in ownParamNames }
+            .map { [assocName, assocType] ->
+                buildTypealias {
+                    origin = SirOrigin.ExternallyDefined("patTypealias")
+                    visibility = SirVisibility.PUBLIC
+                    name = assocName
+                    type = assocType
+                }.also { it.parent = this@SirAnyProtocolWrapperFromKtSymbol }
+            }
+
+        val designatedInit = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
+            origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
+            visibility = SirVisibility.PUBLIC
+            isOverride = true
+            attributes += SirAttribute.Documentation(SirVisibility.INTERNAL)
+            body = SirFunctionBody(
+                listOf("super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);")
+            )
+        }.also { it.parent = this@SirAnyProtocolWrapperFromKtSymbol }
+
+        val canInline = attributes.none { it is SirAttribute.SPI || it is SirAttribute.Available }
+        val varianceDecls = if (typeParameters.size == 1 && !target.isUnavailable) {
+            val tp = typeParameters.single()
+            when (tp.variance) {
+                SirTypeVariance.COVARIANT -> listOf(
+                    buildCovariantProperty(this@SirAnyProtocolWrapperFromKtSymbol, tp, isInlinable = canInline),
+                    buildCovariantConvenienceInit(this@SirAnyProtocolWrapperFromKtSymbol, tp, isInlinable = canInline),
+                )
+                SirTypeVariance.CONTRAVARIANT -> listOf(
+                    buildContravariantProperty(this@SirAnyProtocolWrapperFromKtSymbol, tp, isInlinable = canInline),
+                    buildContravariantConvenienceInit(this@SirAnyProtocolWrapperFromKtSymbol, tp, isInlinable = canInline),
+                )
+                SirTypeVariance.INVARIANT -> emptyList()
+            }
+        } else {
+            emptyList()
+        }
+
+        patAliases + listOf(designatedInit) + varianceDecls
+    }
+
+    override val bridges: List<SirBridge> = emptyList()
+}
+
 /**
  * An extension for miscellaneous supporting declarations for [targetProtocol], like convenience typealiases or default implementations.
  *
@@ -536,14 +736,37 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
 
         val typeAliases = members
             .filterIsInstance<SirScopeDefiningDeclaration>()
-            .filter { it.visibility == SirVisibility.PUBLIC }
-            .filter { it.origin !is KotlinMarkerProtocol && it.origin !is KotlinImplementationMarkerProtocol }
+            .filter { it.visibility == SirVisibility.PUBLIC && it.origin.javaClass == KotlinSource::class.java }
+            .filter {
+                val origParent = it.kaSymbolOrNull<KaDeclarationSymbol>()?.let { sym ->
+                    with(sirSession) { sym.getOriginalSirParent() }
+                }
+                origParent == targetProtocol
+            }
             .map { declaration ->
+                val declTypeParams = (declaration as? SirGenericDeclaration)?.typeParameters.orEmpty()
+                val tpSubst = LinkedHashMap<SirTypeParameter, SirType>()
+                val copiedTps = declTypeParams.map { tp ->
+                    SirTypeParameter(
+                        name = tp.name,
+                        variance = tp.variance,
+                        bounds = mutableListOf(),
+                        isPrimaryAssociatedType = false,
+                        origin = tp.origin,
+                    ).also { tpSubst[tp] = SirTypeParameterType(it) }
+                }
+                declTypeParams.zip(copiedTps).forEach { [origTp, copyTp] ->
+                    copyTp.bounds.addAll(origTp.bounds.map { it.substituteTypeParameters(tpSubst) })
+                }
                 buildTypealias {
                     origin = SirOrigin.Trampoline(declaration)
-                    // FIXME: we make here the best effort to restore the original name of a relocated declaration
                     name = declaration.kaSymbolOrNull<KaDeclarationSymbol>()?.sirDeclarationName() ?: declaration.name
-                    type = SirNominalType(declaration) // Has to be nominal even for protocol declarations
+                    typeParameters += copiedTps
+                    if (declaration is SirConstrainedDeclaration) {
+                        constraints += declaration.constraints.map { it.substituteConstraint(tpSubst) }
+                    }
+                    type = SirNominalType(declaration, copiedTps.map(::SirTypeParameterType))
+                    attributes += declaration.attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI }
                 }
             }
 
@@ -610,7 +833,21 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             SirRelocatedFunction(it)
         }
 
-        (typeAliases + defaultFunctions + defaultVariables + sealedTypeLeafFunctions).onEach { it.parent = this }.toMutableList()
+        val varianceProperties = if (targetProtocol.typeParameters.size == 1 && !targetProtocol.isUnavailable) {
+            val tp = targetProtocol.typeParameters.single()
+            val canInline = targetProtocol.attributes.none { it is SirAttribute.SPI || it is SirAttribute.Available }
+            when (tp.variance) {
+                SirTypeVariance.COVARIANT -> listOf(buildCovariantProperty(this, tp, isInlinable = canInline))
+                SirTypeVariance.CONTRAVARIANT -> listOf(buildContravariantProperty(this, tp, isInlinable = canInline))
+                SirTypeVariance.INVARIANT -> emptyList()
+            }
+        } else {
+            emptyList()
+        }
+
+        (typeAliases + defaultFunctions + defaultVariables + sealedTypeLeafFunctions + varianceProperties)
+            .onEach { it.parent = this }
+            .toMutableList()
     }
 }
 
@@ -643,6 +880,14 @@ internal class SirFlowFromKtSymbol(
         STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinStateFlow
         MUTABLE_STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinMutableStateFlow
         else -> throw IllegalArgumentException("Unsupported flow kind: ${ktSymbol.classId}")
+    }
+
+    override val typeParameters: List<SirTypeParameter> get() = emptyList()
+    override val constraints: List<SirTypeConstraint> get() = emptyList()
+    override val isPatProtocol: Boolean get() = false
+    override val anyWrapperDeclaration: SirClass? get() = null
+    override val translatedProtocols: List<SirProtocolFromKtSymbol> by lazy {
+        super.translatedProtocols.filter { !it.isPatProtocol }
     }
 
     internal inner class SirExistentialProtocolImplementation : SirExistentialProtocolImplementationFromKtSymbol(this@SirFlowFromKtSymbol) {

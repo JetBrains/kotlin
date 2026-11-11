@@ -28,6 +28,8 @@ uint8_t KotlinBridgeable_UInt8_unbox(void * ref);
 
 void * KotlinBridgeable_UInt16_box(uint16_t value);
 uint16_t KotlinBridgeable_UInt16_unbox(void * ref);
+uint16_t KotlinBridgeable_Char_unbox(void * ref);
+void * KotlinBridgeable_Unit_box(void);
 
 void * KotlinBridgeable_UInt32_box(uint32_t value);
 uint32_t KotlinBridgeable_UInt32_unbox(void * ref);
@@ -58,8 +60,22 @@ NSSet * KotlinBridgeable_Set_unbox(void * ref);
 void * KotlinBridgeable_Dictionary_box(NSDictionary * value);
 NSDictionary * KotlinBridgeable_Dictionary_unbox(void * ref);
 
+void * KotlinBridgeable_List_create(int32_t capacity);
+void KotlinBridgeable_List_add(void * listRef, void * _Nullable elemRef);
+int32_t KotlinBridgeable_List_size(void * ref);
+void * _Nullable KotlinBridgeable_List_get(void * ref, int32_t index);
+
+void * KotlinBridgeable_Set_create(int32_t capacity);
+void KotlinBridgeable_Set_add(void * setRef, void * _Nullable elemRef);
+void * KotlinBridgeable_Set_toList(void * ref);
+
+void * KotlinBridgeable_Map_create(int32_t capacity);
+void KotlinBridgeable_Map_put(void * mapRef, void * _Nullable keyRef, void * _Nullable valRef);
+void * KotlinBridgeable_Map_entriesList(void * ref);
+
 // _KotlinBridgeable type-tag dispatch for __createBridgeable
 int32_t KotlinBridgeable_getTypeTag(void * ref);
+void * KotlinBridgeable_cloneRef(void * ref);
 void KotlinBridgeable_disposeRef(void * ref);
 
 void * Kotlin_SwiftExport_allocInstanceForSwiftSubclass(Class swiftSubclass);

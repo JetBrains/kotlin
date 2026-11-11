@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.sir.SirBridge
 import org.jetbrains.kotlin.sir.SirBridged
 import org.jetbrains.kotlin.sir.SirDeclarationContainer
 import org.jetbrains.kotlin.sir.SirFunctionBody
+import org.jetbrains.kotlin.sir.SirFunctionBridge
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirReverseFunctionBridge
 import org.jetbrains.kotlin.sir.SirSubscript
@@ -32,9 +33,13 @@ public class SirPrinter(
                 renderDeclarationOrigins = this@SirPrinter.renderDeclarationOrigins,
                 emptyBodyStub = this@SirPrinter.emptyBodyStub,
             )
-            val reverseBridgeLines = bridges
-                .filterIsInstance<SirReverseFunctionBridge>()
-                .flatMap { it.swiftFunctionBridge.lines + "" }
+            val reverseBridgeLines = bridges.flatMap { bridge ->
+                when (bridge) {
+                    is SirReverseFunctionBridge -> bridge.swiftFunctionBridge.lines + ""
+                    is SirFunctionBridge -> bridge.swiftTrampolineBridge?.let { it.lines + "" }.orEmpty()
+                    else -> emptyList()
+                }
+            }
             if (reverseBridgeLines.isEmpty()) {
                 listOf(sirTree).asSequence()
             } else {

@@ -86,6 +86,8 @@ public val SirType.mangledNameOrNull: String?
         is SirFunctionalType -> null
         is SirTupleType -> null
         is SirType.Metatype -> null
+        is SirTypeParameterType -> null
+        is SirSelfType -> null
     }
 
 /**

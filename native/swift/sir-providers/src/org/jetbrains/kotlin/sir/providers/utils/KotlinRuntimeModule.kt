@@ -70,10 +70,78 @@ public object KotlinRuntimeSupportModule : SirModule() {
             kotlinError,
             sealedType,
             kotlinBridgeable,
+            kotlinCustomPointerBridgeable,
+            kotlinOpenGenericBridgeable,
+            kotlinUnit,
+            kotlinAny,
+            kotlinCovariant,
+            kotlinContravariant,
             kotlinExistentialPenBox,
             kotlinExistential,
         )
     }
+
+    public val kotlinUnit: SirStruct = buildStruct {
+        origin = KotlinRuntimeElement()
+        name = "KotlinUnit"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
+
+    public val kotlinAny: SirStruct = buildStruct {
+        origin = KotlinRuntimeElement()
+        name = "KotlinAny"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
+
+    public val kotlinCovariant: SirTypealias by lazy {
+        val tParam = SirTypeParameter(name = "T")
+        buildTypealias {
+            origin = KotlinRuntimeElement()
+            name = "KotlinCovariant"
+            visibility = SirVisibility.PUBLIC
+            typeParameters += tParam
+            type = SirTupleType(
+                listOf(
+                    "_owner" to SirNominalType(KotlinRuntimeModule.kotlinBase),
+                    "_variance" to SirFunctionalType(
+                        parameterTypes = listOf(SirType.never),
+                        returnType = SirTypeParameterType(tParam),
+                    ),
+                )
+            )
+        }.also { it.parent = KotlinRuntimeSupportModule }
+    }
+
+    public val kotlinContravariant: SirTypealias by lazy {
+        val tParam = SirTypeParameter(name = "T")
+        buildTypealias {
+            origin = KotlinRuntimeElement()
+            name = "KotlinContravariant"
+            visibility = SirVisibility.PUBLIC
+            typeParameters += tParam
+            type = SirTupleType(
+                listOf(
+                    "_owner" to SirNominalType(KotlinRuntimeModule.kotlinBase),
+                    "_variance" to SirFunctionalType(
+                        parameterTypes = listOf(SirTypeParameterType(tParam)),
+                        returnType = SirType.void,
+                    ),
+                )
+            )
+        }.also { it.parent = KotlinRuntimeSupportModule }
+    }
+
+    public val kotlinCustomPointerBridgeable: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinCustomPointerBridgeable"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
+
+    public val kotlinOpenGenericBridgeable: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinOpenGenericBridgeable"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
 
     public val kotlinError: SirStruct = buildStruct {
         origin = KotlinRuntimeElement()

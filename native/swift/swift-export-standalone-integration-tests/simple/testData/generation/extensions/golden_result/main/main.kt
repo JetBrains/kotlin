@@ -5,7 +5,6 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "4main3BarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Baz::class, "4main3BazC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(DeprecatedBar::class, "4main13DeprecatedBarC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(GenericClass::class, "4main12GenericClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OpenBaz::class, "4main7OpenBazC")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
@@ -279,29 +278,43 @@ public fun __root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__
     return _result
 }
 
-@ExportedBridge("__root___genericExtFun__TypesOfArgumentsE__main_GenericClass__")
-public fun __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___genericConstrainedExtFun__TypesOfArgumentsE__main_GenericClass_Swift_String___")
+public fun __root___genericConstrainedExtFun__TypesOfArgumentsE__main_GenericClass_Swift_String___(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.String>
+    val _result = __receiver.genericConstrainedExtFun()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("__root___genericConstrainedExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_String___")
+public fun __root___genericConstrainedExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_String___(`receiver`: kotlin.native.internal.NativePtr): Int {
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.String>
+    val _result = __receiver.genericConstrainedExtProp
+    return _result
+}
+
+@ExportedBridge("__root___genericExtFun__TypesOfArgumentsE__main_GenericClass__T0___")
+public fun __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__T0___(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.Any?>
     val _result = __receiver.genericExtFun()
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass__")
-public fun __root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass__(`receiver`: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("__root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____")
+public fun __root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(`receiver`: kotlin.native.internal.NativePtr): Int {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.Any?>
     val _result = __receiver.genericExtProp
     return _result
 }
 
-@ExportedBridge("__root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass__")
-public fun __root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____")
+public fun __root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.Any?>
     val _result = __receiver.genericUpperBoundExtFun()
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass__")
-public fun __root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass__(`receiver`: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("__root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____")
+public fun __root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(`receiver`: kotlin.native.internal.NativePtr): Int {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.Any?>
     val _result = __receiver.genericUpperBoundExtProp
     return _result

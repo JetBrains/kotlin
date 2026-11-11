@@ -2,6 +2,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
+import KotlinStdlib
 
 public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case A
@@ -96,7 +97,7 @@ public typealias dataClassWithRef = main.DATA_CLASS_WITH_REF
 public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
 public typealias deeper_closure_typealias = main.closure
 public typealias enumClass = main.ENUM
-public typealias generic = main.GENERIC_CLASS
+public typealias generic = main.GENERIC_CLASS<Swift.Int32>
 public typealias inheritanceCouple = main.INHERITANCE_COUPLE
 public typealias inheritanceSingleClass = main.INHERITANCE_SINGLE_CLASS
 public typealias inhertanceSingleProto = main.INHERITANCE_SINGLE_PROTO
@@ -169,7 +170,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     ) {
         let __kt = __root___DATA_CLASS_WITH_REF_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, o.__externalRCRef()); return () }()
+        { __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, (o).__retainedToKotlinPointer()!); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -180,7 +181,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     public func copy(
         o: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> main.DATA_CLASS_WITH_REF {
-        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), o.__externalRCRef()))
+        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), (o).__retainedToKotlinPointer()!))
     }
 }
 public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
@@ -215,13 +216,14 @@ public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
         return DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
     }
 }
-public final class GENERIC_CLASS: KotlinRuntime.KotlinBase {
+public final class GENERIC_CLASS<T: KotlinRuntimeSupport._KotlinBridgeable>: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinCustomPointerBridgeable {
     public override init() {
         let __kt = __root___GENERIC_CLASS_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        super.init(__externalRCRefUnsafe: __kt, options: .asExistentialWrapper);
         { __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
-    package override init(
+    @_documentation(visibility: internal)
+    public override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -323,7 +325,8 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
+public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.ListIterator, ExportedKotlinPackages.kotlin.collections.__ListIterator {
+    public typealias T = Swift.Never
     public static var shared: main.OBJECT_WITH_GENERIC_INHERITANCE {
         get {
             return main.OBJECT_WITH_GENERIC_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_GENERIC_INHERITANCE_get())

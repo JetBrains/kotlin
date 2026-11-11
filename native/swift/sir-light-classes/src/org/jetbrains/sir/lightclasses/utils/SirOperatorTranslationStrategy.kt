@@ -64,6 +64,7 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
                     "equals" -> AsIsWithAdditions(kaSymbol) { listOf(SirBinaryMathOperatorTrampolineFunction(it, "==")) }
                     "compareTo" -> AsComparisonOperator(kaSymbol)
                     "invoke" -> AsInvokeOperator(kaSymbol)
+                    "of" -> Skip(kaSymbol)
 
                     else if name.startsWith("component") -> Skip(kaSymbol) // componentN – ignored
                     else -> error("Unknown operator name: $name in SirOperatorTranslationStrategy.")

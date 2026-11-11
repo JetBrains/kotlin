@@ -2,6 +2,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
+import KotlinStdlib
 
 public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
     case A
@@ -87,6 +88,10 @@ public enum SEALED_SealedType: KotlinRuntimeSupport.SealedType {
             }
         }
     }
+}
+@_documentation(visibility: internal)
+public protocol _GENERIC_CLASS_ReverseDispatch<T>: KotlinRuntime.KotlinBase {
+    associatedtype T: KotlinRuntimeSupport._KotlinBridgeable
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     public override init() {
@@ -195,14 +200,14 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase {
     ) {
         let __kt = __root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, a, b, c.__externalRCRef()); return () }()
+        { __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, a, b, (c).__retainedToKotlinPointer()!); return () }()
     }
     public func copy(
         a: Swift.Int32,
         b: Swift.String,
         c: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> main.DATA_CLASS_WITH_MANY_FIELDS {
-        return main.DATA_CLASS_WITH_MANY_FIELDS.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), a, b, c.__externalRCRef()))
+        return main.DATA_CLASS_WITH_MANY_FIELDS.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), a, b, (c).__retainedToKotlinPointer()!))
     }
 }
 public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
@@ -216,7 +221,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     ) {
         let __kt = __root___DATA_CLASS_WITH_REF_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-        { __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, o.__externalRCRef()); return () }()
+        { __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, (o).__retainedToKotlinPointer()!); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -227,7 +232,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     public func copy(
         o: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> main.DATA_CLASS_WITH_REF {
-        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), o.__externalRCRef()))
+        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), (o).__retainedToKotlinPointer()!))
     }
 }
 public final class Foo: KotlinRuntime.KotlinBase {
@@ -329,25 +334,26 @@ public final class Foo: KotlinRuntime.KotlinBase {
         return Foo_foo(self.__externalRCRef())
     }
 }
-open class GENERIC_CLASS: KotlinRuntime.KotlinBase {
-    public override init() {
+open class GENERIC_CLASS<T: KotlinRuntimeSupport._KotlinBridgeable>: main._GENERIC_CLASS_Base, KotlinRuntimeSupport._KotlinOpenGenericBridgeable, main._GENERIC_CLASS_ReverseDispatch {
+    public init() {
          let __kt: Swift.UnsafeMutableRawPointer!
-         if Self.self == main.GENERIC_CLASS.self {
+         if Self.self == main.GENERIC_CLASS<T>.self {
              __kt = __root___GENERIC_CLASS_init_allocate()
          } else {
              __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
          }
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        super.init(__externalRCRefUnsafe: __kt, options: Self.self == main.GENERIC_CLASS<T>.self ? .asExistentialWrapper : .asBoundBridge);
         { __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
-    package override init(
+    @_documentation(visibility: internal)
+    public override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-open class INHERITANCE_GENERIC: main.GENERIC_CLASS {
+open class INHERITANCE_GENERIC: main.GENERIC_CLASS<Swift.Int32> {
     public override init() {
          let __kt: Swift.UnsafeMutableRawPointer!
          if Self.self == main.INHERITANCE_GENERIC.self {
@@ -534,7 +540,8 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
         return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
     }
 }
-public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
+public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.ListIterator, ExportedKotlinPackages.kotlin.collections.__ListIterator {
+    public typealias T = Swift.Never
     public static var shared: main.OBJECT_WITH_GENERIC_INHERITANCE {
         get {
             return main.OBJECT_WITH_GENERIC_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_GENERIC_INHERITANCE_get())
@@ -632,6 +639,16 @@ open class SEALED: KotlinRuntime.KotlinBase {
         case let value as main.SEALED.O: .o(.init(value))
         default: fatalError("missing sealedType for \(self)")
         }
+    }
+}
+@_documentation(visibility: internal)
+open class _GENERIC_CLASS_Base: KotlinRuntime.KotlinBase {
+    @_documentation(visibility: internal)
+    public override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 @_documentation(visibility: internal)

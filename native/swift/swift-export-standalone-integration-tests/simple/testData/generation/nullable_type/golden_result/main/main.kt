@@ -99,14 +99,14 @@ public fun __root___foo__TypesOfArguments__Swift_Optional_main_Bar___(a: kotlin.
 
 @ExportedBridge("__root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun __root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(a: kotlin.native.internal.NativePtr): Boolean {
-    val __a = kotlin.native.internal.ref.dereferenceExternalRCRef(a) as kotlin.Any
+    val __a = (dereferenceAndDisposeBridgeableRef(a) as kotlin.Any)
     foo_any(__a)
     return true
 }
 
 @ExportedBridge("__root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun __root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(a: kotlin.native.internal.NativePtr): Boolean {
-    val __a = if (a == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(a) as kotlin.Any
+    val __a = if (a == kotlin.native.internal.NativePtr.NULL) null else (dereferenceAndDisposeBridgeableRef(a) as kotlin.Any)
     foo_any(__a)
     return true
 }

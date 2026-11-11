@@ -113,7 +113,7 @@ internal external fun Boxed_unbox__reverse_swift(self: kotlin.native.internal.Na
 public fun Boxed_unbox__reverse(self: Boxed<kotlin.Any?>): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = Boxed_unbox__reverse_swift(__self)
-    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+    return (dereferenceAndDisposeBridgeableRef(_result) as kotlin.Any?)
 }
 
 @ImportedBridge("Defaulter_describe__reverse_swift")

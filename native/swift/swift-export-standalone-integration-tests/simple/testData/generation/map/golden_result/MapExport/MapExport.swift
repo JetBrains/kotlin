@@ -10,19 +10,18 @@ public protocol _Bar {
 }
 public protocol __Bar: KotlinRuntimeSupport._KotlinBridgeable {
 }
-public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableMap {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___foo(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableMap.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableMap
+public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableMap<Swift.String,Swift.String> {
+    return { let _ptr = __root___foo(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.collections.MutableMap<Swift.String,Swift.String>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.collections.AnyMutableMap<Swift.String,Swift.String>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
 }
 public func testMapAnyLong(
     m: [Swift.AnyHashable: Swift.Int64]
 ) -> [Swift.AnyHashable: Swift.Int64] {
     return __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_Swift_Int64___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<Swift.AnyHashable,Swift.Int64>
 }
-@available(*, unavailable, message: "Declaration uses unsupported types")
 public func testMapBarKey(
-    m: Swift.Never
-) -> Swift.Never {
-    fatalError()
+    m: [KotlinRuntimeSupport._KotlinExistential<any MapExport._Bar>: Swift.Int32]
+) -> [KotlinRuntimeSupport._KotlinExistential<any MapExport._Bar>: Swift.Int32] {
+    return Swift.Dictionary<KotlinRuntimeSupport._KotlinExistential<any MapExport._Bar>,Swift.Int32>.__fromKotlinPointer(__root___testMapBarKey__TypesOfArguments__Swift_Dictionary_KotlinRuntimeSupport__KotlinExistential_anyU20MapExport__Bar__Swift_Int32___(m.__retainedToKotlinPointer()))
 }
 public func testMapIntString(
     m: [Swift.Int32: Swift.String]

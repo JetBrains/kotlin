@@ -438,10 +438,10 @@ public fun __root___UnmarkedOperators_init_initialize__TypesOfArguments__Swift_U
     return true
 }
 
-@ExportedBridge("__root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun __root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(`receiver`: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_T__T__")
+public fun __root___addAndIgnoreResult__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_collections_MutableList_T__T__(`receiver`: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as kotlin.collections.MutableList<kotlin.Any?>
-    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val __element = (dereferenceAndDisposeBridgeableRef(element) as kotlin.Any?)
     val _result = __receiver.addAndIgnoreResult<kotlin.Any?>(__element)
     return _result
 }

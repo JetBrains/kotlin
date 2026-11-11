@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.init]
  */
-abstract class SirInit : SirCallable() {
+abstract class SirInit : SirCallable(), SirGenericDeclaration, SirConstrainedDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
@@ -23,6 +23,8 @@ abstract class SirInit : SirCallable() {
     abstract override var body: SirFunctionBody?
     abstract override val errorType: SirType
     abstract override val isAsync: Boolean
+    abstract override val typeParameters: List<SirTypeParameter>
+    abstract override val constraints: List<SirTypeConstraint>
     abstract val isFailable: Boolean
     abstract val parameters: List<SirParameter>
     abstract val isConvenience: Boolean

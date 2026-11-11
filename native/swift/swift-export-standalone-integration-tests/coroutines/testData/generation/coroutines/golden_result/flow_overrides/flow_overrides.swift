@@ -32,7 +32,6 @@ extension ExportedKotlinPackages.namespace.I1 where Self : ExportedKotlinPackage
 }
 extension ExportedKotlinPackages.namespace.I1 {
     public typealias I2 = flow_overrides._ExportedKotlinPackages_namespace_I1_I2
-    public typealias _ExportedKotlinPackages_namespace_I1_I2_SealedType = flow_overrides._ExportedKotlinPackages_namespace_I1_I2_SealedType
 }
 @_documentation(visibility: internal)
 extension flow_overrides._ExportedKotlinPackages_namespace_I1_I2 where Self : flow_overrides.___ExportedKotlinPackages_namespace_I1_I2 {

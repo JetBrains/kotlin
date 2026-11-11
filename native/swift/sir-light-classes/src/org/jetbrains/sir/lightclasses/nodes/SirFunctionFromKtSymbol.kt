@@ -45,15 +45,95 @@ internal open class SirFunctionFromKtSymbol(
     override val name: String by lazyWithSessions {
         ktSymbol.sirDeclarationName()
     }
+
+    private val translatedTypeParams: TranslatedTypeParameters by lazyWithSessions {
+        val allowLifting = this@SirFunctionFromKtSymbol !is SirRenamedFunction &&
+            parent !is SirProtocol &&
+            modality == SirModality.FINAL &&
+            ktSymbol.allOverriddenSymbols.none()
+        translateTypeParametersAndConstraints(
+            declarationSymbol = ktSymbol,
+            ownKtTypeParams = ktSymbol.typeParameters,
+            enclosingScope = enclosingTypeParameterScope(),
+            callableSymbol = ktSymbol,
+            allowInputProjectionLifting = allowLifting,
+        )
+    }
+
+    private val usedTypeParamsAndConstraints: Pair<List<SirTypeParameter>, List<SirTypeConstraint>> by lazy {
+        val rawParams = translatedTypeParams.typeParameters
+        if (rawParams.isEmpty()) return@lazy emptyList<SirTypeParameter>() to emptyList()
+        val ownSet = rawParams.toSet()
+        fun SirType.collectOwnParams(out: MutableSet<SirTypeParameter>) {
+            when (this) {
+                is SirTypeParameterType -> if (parameter in ownSet) out.add(parameter)
+                is SirNominalType -> {
+                    parent?.collectOwnParams(out)
+                    typeArguments.forEach { it.collectOwnParams(out) }
+                }
+                is SirExistentialType -> protocols.forEach { [_, args] -> args.forEach { it.collectOwnParams(out) } }
+                is SirOptionalType -> wrappedType.collectOwnParams(out)
+                is SirFunctionalType -> {
+                    contextTypes.forEach { it.collectOwnParams(out) }
+                    parameterTypes.forEach { it.collectOwnParams(out) }
+                    errorType.collectOwnParams(out)
+                    returnType.collectOwnParams(out)
+                }
+                is SirTupleType -> types.forEach { [_, ty] -> ty.collectOwnParams(out) }
+                is SirType.Metatype -> type.collectOwnParams(out)
+                else -> {}
+            }
+        }
+        val used = HashSet<SirTypeParameter>()
+        contextParameter?.type?.collectOwnParams(used)
+        extensionReceiverParameter?.type?.collectOwnParams(used)
+        parameters.forEach { it.type.collectOwnParams(used) }
+        returnType.collectOwnParams(used)
+
+        var changed = true
+        while (changed) {
+            changed = false
+            val snapshot = used.toList()
+            for (tp in snapshot) {
+                val before = used.size
+                tp.bounds.forEach { it.collectOwnParams(used) }
+                translatedTypeParams.constraints.forEach { c ->
+                    if (c.subjectPath.firstOrNull() == tp.name) {
+                        c.constraint.collectOwnParams(used)
+                    }
+                }
+                if (used.size != before) changed = true
+            }
+        }
+
+        val keptParams = rawParams.filter { it in used }
+        val keptNames = keptParams.mapTo(HashSet()) { it.name }
+        val keptConstraints = translatedTypeParams.constraints.filter { c ->
+            val head = c.subjectPath.firstOrNull()
+            val cRefs = HashSet<SirTypeParameter>().also { c.constraint.collectOwnParams(it) }
+            (head == null || head in keptNames) && cRefs.all { it in used }
+        }
+        keptParams to keptConstraints
+    }
+
+    internal val rawOwnTypeParameters: List<SirTypeParameter>
+        get() = translatedTypeParams.typeParameters
+
+    override val typeParameters: List<SirTypeParameter>
+        get() = usedTypeParamsAndConstraints.first
+
+    override val constraints: List<SirTypeConstraint>
+        get() = usedTypeParamsAndConstraints.second
+
     internal val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
         translateContextParameters()
     }
     override val contextParameter: SirParameter? get() = contextParameters?.first
     override val extensionReceiverParameter: SirParameter? by lazy {
-        translateExtensionParameter()
+        translateExtensionParameter(liftedReceiverType = translatedTypeParams.liftedExtensionReceiverType)
     }
     override val parameters: List<SirParameter> by lazy {
-        translateParameters()
+        translateParameters(liftedParameterTypes = translatedTypeParams.liftedValueParameterTypes)
     }
     override val returnType: SirType by lazy {
         translateReturnType()
@@ -84,7 +164,7 @@ internal open class SirFunctionFromKtSymbol(
     override val fixity: SirFixity?
         get() = null
 
-    override val attributes: List<SirAttribute> by lazy {
+    private val baseAttributes: List<SirAttribute> by lazy {
         buildList {
             addAll(this@SirFunctionFromKtSymbol.translatedAttributes)
             addIfNotNull(translatedDiscardableResultAttribute)
@@ -103,12 +183,40 @@ internal open class SirFunctionFromKtSymbol(
         }
     }
 
+    private val isSelfUnavailable: Boolean
+        get() = baseAttributes.any { it is SirAttribute.Available && it.unavailable }
+
+    private val canRequestInlinable: Boolean by lazyWithSessions {
+        val parentDecl = parent as? SirDeclaration
+        val isGenericContext = typeParameters.isNotEmpty() ||
+            (parent as? SirGenericDeclaration)?.typeParameters?.isNotEmpty() == true
+        isGenericContext &&
+            parent !is SirProtocol &&
+            visibility == SirVisibility.PUBLIC &&
+            modality == SirModality.FINAL &&
+            !isAsync &&
+            errorType == SirType.never &&
+            contextParameter == null &&
+            !isSelfUnavailable &&
+            (parentDecl?.isUnavailable != true) &&
+            (parentDecl?.attributes.orEmpty().none { it is SirAttribute.SPI || it is SirAttribute.Available }) &&
+            baseAttributes.none { it is SirAttribute.SPI || it is SirAttribute.Available }
+    }
+
+    override val attributes: List<SirAttribute> by lazy {
+        if (canRequestInlinable && bridgeProxy?.isSwiftInlinable == true) {
+            baseAttributes + SirAttribute.Inlinable
+        } else {
+            baseAttributes
+        }
+    }
+
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null || isAsync) SirType.any else SirType.never
 
     override val isAsync: Boolean get() = ktSymbol.isSuspend
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
-        if (isUnavailable) return@lazyWithSessions null
+        if (isSelfUnavailable) return@lazyWithSessions null
         val fqName = bridgeFqName ?: return@lazyWithSessions null
         val suffix = ""
         val baseName = fqName.baseBridgeName + suffix
@@ -137,18 +245,24 @@ internal open class SirFunctionFromKtSymbol(
                 SirParameter(null, "_out_error", it)
             },
             isAsync = isAsync,
+            isInlinable = canRequestInlinable,
         )
     }
 
     context(_: KaSession, _: SirSession)
     private fun buildForwardKotlinCall(): BridgeFunctionBuilder.() -> String = {
-        val typeArgs = ktSymbol.typeParameters.map { it.resolveUpperBound() ?: builtinTypes.nullableAny }
-        val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
-        val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
-            it.render(renderer, position = Variance.INVARIANT)
-        } ?: ""
-        val actualArgs = argNames.drop(contextParameters.size + if (extensionReceiverParameter != null) 1 else 0)
-        buildCall("$typesAsString(${actualArgs.joinToString()})")
+        val enclosingClassSymbol = ktSymbol.containingDeclaration as? KaClassSymbol
+        if (hasNonTrivialKotlinBridgeBounds(enclosingClassSymbol, ktSymbol.typeParameters)) {
+            buildLocalGenericBridgeCall(enclosingClassSymbol, ktSymbol, this@SirFunctionFromKtSymbol.returnType)
+        } else {
+            val typeArgs = ktSymbol.typeParameters.map { it.resolveUpperBound() ?: builtinTypes.nullableAny }
+            val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
+            val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
+                it.render(renderer, position = Variance.INVARIANT)
+            } ?: ""
+            val actualArgs = argNames.drop(contextParameters.size + if (extensionReceiverParameter != null) 1 else 0)
+            buildCall("$typesAsString(${actualArgs.joinToString()})")
+        }
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
@@ -170,6 +284,7 @@ internal open class SirFunctionFromKtSymbol(
                 targetMethodName = ktSymbol.name?.asString() ?: "",
                 swiftDynamicCall = this@SirFunctionFromKtSymbol::reverseBridgeSwiftCall,
                 swiftDeprecation = effectiveReverseBridgeDeprecation(),
+                openExistentialProtocol = openExistentialProtocolForReverseBridge(),
             ).orEmpty()
         } else {
             emptyList()

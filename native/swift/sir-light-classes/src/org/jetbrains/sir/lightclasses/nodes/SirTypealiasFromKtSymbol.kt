@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
-import org.jetbrains.sir.lightclasses.utils.KDocElements
-import org.jetbrains.sir.lightclasses.utils.addDocumentationVisibility
-import org.jetbrains.sir.lightclasses.utils.translateDocumentation
-import org.jetbrains.sir.lightclasses.utils.translatedAttributes
+import org.jetbrains.sir.lightclasses.utils.*
 
 internal class SirTypealiasFromKtSymbol(
     override val ktSymbol: KaTypeAliasSymbol,
@@ -40,12 +37,28 @@ internal class SirTypealiasFromKtSymbol(
         ktSymbol.name.asString()
     }
 
+    private val translatedTypeParams: TranslatedTypeParameters by lazyWithSessions {
+        translateTypeParametersAndConstraints(
+            declarationSymbol = ktSymbol,
+            ownKtTypeParams = ktSymbol.typeParameters,
+            enclosingScope = enclosingTypeParameterScope(),
+            expandedType = ktSymbol.expandedType,
+        )
+    }
+
+    override val typeParameters: List<SirTypeParameter>
+        get() = translatedTypeParams.typeParameters
+
+    override val constraints: List<SirTypeConstraint>
+        get() = translatedTypeParams.constraints
+
     override val type: SirType by lazyWithSessions {
         ktSymbol.expandedType.translateType(
             SirTypeVariance.INVARIANT,
             reportErrorType = { error("Can't translate ${ktSymbol.render()} type: $it") },
             reportUnsupportedType = { error("Can't translate ${ktSymbol.render()} type: it is not supported") },
-            processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
+            processTypeImports = ktSymbol.containingModule.sirModule()::updateImports,
+            typeParameterScope = lexicalTypeParameterScope(),
         )
     }
 

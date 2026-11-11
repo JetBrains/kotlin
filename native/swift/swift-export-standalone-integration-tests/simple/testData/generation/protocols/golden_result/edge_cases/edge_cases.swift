@@ -115,7 +115,7 @@ extension edge_cases.Baz where Self : edge_cases.__Baz {
     public func foo(
         result: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> Swift.Void {
-        return { Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), result.__externalRCRef()); return () }()
+        return { Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), (result).__retainedToKotlinPointer()!); return () }()
     }
 }
 extension edge_cases.Baz {

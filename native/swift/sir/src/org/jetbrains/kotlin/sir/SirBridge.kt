@@ -19,17 +19,20 @@ public class SirFunctionBridge(
     name: String,
     public val kotlinFunctionBridge: KotlinFunctionBridge,
     public val cDeclarationBridge: CFunctionBridge,
+    public val swiftTrampolineBridge: SwiftFunctionBridge? = null,
 ) : SirBridge(name) {
     override fun equals(other: Any?): Boolean {
         return other is SirFunctionBridge && name == other.name &&
                 kotlinFunctionBridge == other.kotlinFunctionBridge &&
-                cDeclarationBridge == other.cDeclarationBridge
+                cDeclarationBridge == other.cDeclarationBridge &&
+                swiftTrampolineBridge == other.swiftTrampolineBridge
     }
 
     override fun hashCode(): Int {
         var result = name.hashCode()
         result = 31 * result + kotlinFunctionBridge.hashCode()
         result = 31 * result + cDeclarationBridge.hashCode()
+        result = 31 * result + (swiftTrampolineBridge?.hashCode() ?: 0)
         return result
     }
 }

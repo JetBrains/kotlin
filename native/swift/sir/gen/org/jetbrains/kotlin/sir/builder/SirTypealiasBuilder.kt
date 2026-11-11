@@ -21,6 +21,8 @@ class SirTypealiasBuilder {
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = []
     lateinit var name: String
+    val typeParameters: MutableList<SirTypeParameter> = []
+    val constraints: MutableList<SirTypeConstraint> = []
     lateinit var type: SirType
 
     fun build(): SirTypealias {
@@ -30,6 +32,8 @@ class SirTypealiasBuilder {
             documentation,
             attributes,
             name,
+            typeParameters,
+            constraints,
             type,
         )
     }

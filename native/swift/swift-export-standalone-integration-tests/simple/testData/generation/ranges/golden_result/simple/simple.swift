@@ -25,6 +25,6 @@ public func foo() -> Swift.ClosedRange<Swift.Int32> {
 public func foo_opt() -> Swift.ClosedRange<Swift.Int32>? {
     return { switch __root___foo_opt() { case nil: .none; case let res?: { let _ref = res; return kotlin_ranges_intRange_getStart_int_simple(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_simple(_ref) }(); } }()
 }
-public func unsupported() -> any ExportedKotlinPackages.kotlin.ranges.ClosedRange {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___unsupported(), conformsTo: ExportedKotlinPackages.kotlin.ranges.ClosedRange.Type.self) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
+public func unsupported() -> any ExportedKotlinPackages.kotlin.ranges.ClosedRange<Swift.String> {
+    return { let _ptr = __root___unsupported(); if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *), let _w = KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: KotlinRuntimeSupport._cloneBridgeableRef(_ptr)) as? (any ExportedKotlinPackages.kotlin.ranges.ClosedRange<Swift.String>) { KotlinRuntimeSupport._disposeBridgeableRef(_ptr); return _w }; return ExportedKotlinPackages.kotlin.ranges.AnyClosedRange<Swift.String>(__externalRCRefUnsafe: _ptr, options: .asExistentialWrapper) }()
 }

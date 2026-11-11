@@ -545,11 +545,8 @@ extension main.SealedFoeble where Self : main.__SealedFoeble {
 }
 extension main.SealedFoeble {
     public typealias SealedBarable = main._SealedFoeble_SealedBarable
-    public typealias SealedBarable_SealedType = main.SealedBarable_SealedType
     public typealias SomeBarable = main._SealedFoeble_SomeBarable
     public typealias SomeFoeble = main._SealedFoeble_SomeFoeble
-    public typealias _SealedFoeble_SomeBarable_SealedType = main._SealedFoeble_SomeBarable_SealedType
-    public typealias _SealedFoeble_SomeFoeble_SealedType = main._SealedFoeble_SomeFoeble_SealedType
 }
 @_documentation(visibility: internal)
 extension main.SiblingProtocol where Self : main.__SiblingProtocol {

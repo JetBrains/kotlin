@@ -141,15 +141,25 @@ public protocol KotlinSharedFlow: KotlinFlow {
 
 public protocol KotlinTypedSharedFlow<Element>: KotlinTypedFlow { }
 
+private func _unboxFlowElement<Element>(
+    _ ptr: UnsafeMutableRawPointer?,
+    conformsTo: @escaping ((AnyClass?) -> Bool)
+) -> Element {
+    if let bridgeableType = Element.self as? any KotlinRuntimeSupport._KotlinBridgeable.Type {
+        return bridgeableType.__fromKotlinPointer(ptr) as! Element
+    }
+    return ptr.flatMap {
+        KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: conformsTo)
+    } as! Element
+}
+
 extension KotlinTypedSharedFlow {
     public var wrapped: any KotlinSharedFlow { _flow as! (any KotlinSharedFlow) }
 
     public var replayCache: [Element] {
         let replayCache = _kotlin_swift_SharedFlow_replayCache_get(_flow.__externalRCRef())
         return replayCache.map {
-            $0.pointerValue.flatMap {
-                KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: _conformsTo)
-            } as! Element
+            _unboxFlowElement($0.pointerValue, conformsTo: _conformsTo)
         }
     }
 }
@@ -240,9 +250,7 @@ extension KotlinTypedStateFlow {
 
     public var value: Element {
         let value = _kotlin_swift_StateFlow_value_get(_flow.__externalRCRef())
-        return value.flatMap {
-            KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: _conformsTo)
-        } as! Element
+        return _unboxFlowElement(value, conformsTo: _conformsTo)
     }
 }
 
@@ -281,9 +289,7 @@ extension KotlinTypedMutableStateFlow {
     public var value: Element {
         get {
             let value = _kotlin_swift_StateFlow_value_get(_flow.__externalRCRef())
-            return value.flatMap {
-                KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: _conformsTo)
-            } as! Element
+            return _unboxFlowElement(value, conformsTo: _conformsTo)
         }
         nonmutating set { wrapped.value = newValue as! (any KotlinRuntimeSupport._KotlinBridgeable)? }
     }
@@ -368,9 +374,7 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
         let result: Element? = try await withKotlinContinuation { continuation, exception, cancellation in
             let _continuation: (Bool, UnsafeMutableRawPointer?) -> Void = { arg0, arg1 in
                 if arg0 {
-                    let element = arg1.flatMap {
-                        KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: conformsTo)
-                    } as! Element
+                    let element: Element = _unboxFlowElement(arg1, conformsTo: conformsTo)
                     continuation(.some(element))
                 } else {
                     continuation(.none)

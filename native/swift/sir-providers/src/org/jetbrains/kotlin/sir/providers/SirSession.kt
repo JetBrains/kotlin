@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
@@ -88,6 +89,9 @@ public interface SirSession :
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
         requiresHashableAsAny: Boolean,
+        typeParameterScope: Map<KaTypeParameterSymbol, SirTypeParameter>,
+        inGenericTypeArgument: Boolean,
+        inContainerElement: Boolean,
     ): SirType =
         with(typeProvider) {
             this@translateType.translateType(
@@ -97,6 +101,9 @@ public interface SirSession :
                 reportUnsupportedType,
                 processTypeImports,
                 requiresHashableAsAny,
+                typeParameterScope,
+                inGenericTypeArgument,
+                inContainerElement,
             )
         }
 
@@ -136,6 +143,7 @@ public interface SirSession :
         extensionReceiverParameter: SirParameter?,
         errorParameter: SirParameter?,
         isAsync: Boolean,
+        isInlinable: Boolean,
     ): BridgeFunctionProxy? = with(bridgeProvider) {
         generateFunctionBridge(
             baseBridgeName,
@@ -148,6 +156,7 @@ public interface SirSession :
             extensionReceiverParameter,
             errorParameter,
             isAsync,
+            isInlinable,
         )
     }
 
@@ -196,8 +205,15 @@ public sealed interface SirTranslationResult {
     public data class RegularClass(
         public override val declaration: SirClass,
         public val sealedType: SirScopeDefiningDeclaration?,
+        public val openGenericBaseClass: SirClass? = null,
+        public val openGenericReverseDispatchProtocol: SirProtocol? = null,
+        public val relocatedNestedDeclarationsProvider: () -> List<SirDeclaration> = { emptyList() },
     ) : TypeDeclaration {
-        override val allDeclarations: List<SirDeclaration> = listOfNotNull(declaration, sealedType)
+        // `declaration` MUST stay first: callers use `allDeclarations.firstIsInstanceOrNull<SirClass>()`
+        override val allDeclarations: List<SirDeclaration> by lazy {
+            listOfNotNull(declaration, openGenericBaseClass, openGenericReverseDispatchProtocol, sealedType) +
+                relocatedNestedDeclarationsProvider()
+        }
     }
 
     public data class TypeAlias(public override val declaration: SirTypealias) : TypeDeclaration {
@@ -259,10 +275,11 @@ public sealed interface SirTranslationResult {
         public val markerDeclaration: SirProtocol,
         public val implementationMarkerDeclaration: SirProtocol,
         public val penBoxMarkerConformance: SirExtension,
-        public val existentialExtension: SirExtension,
+        public val existentialExtension: SirExtension?,
         public val auxExtension: SirExtension,
         public val samConverter: SirDeclaration?,
         public val sealedType: SirScopeDefiningDeclaration?,
+        public val anyWrapperDeclaration: SirClass? = null,
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
         // `declaration` MUST stay first: callers use `allDeclarations.firstIsInstanceOrNull<SirProtocol>()`
@@ -270,6 +287,7 @@ public sealed interface SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> =
             listOfNotNull(
                 declaration,
+                anyWrapperDeclaration,
                 bridgedImplementation,
                 markerDeclaration,
                 implementationMarkerDeclaration,
@@ -401,6 +419,9 @@ public interface SirTypeProvider {
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
         requiresHashableAsAny: Boolean = false,
+        typeParameterScope: Map<KaTypeParameterSymbol, SirTypeParameter> = emptyMap(),
+        inGenericTypeArgument: Boolean = false,
+        inContainerElement: Boolean = false,
     ): SirType
 }
 
@@ -410,7 +431,20 @@ public fun KaType.translateType(
     reportErrorType: (String) -> Nothing,
     reportUnsupportedType: () -> Nothing,
     processTypeImports: (List<SirImport>) -> Unit,
-): SirType = with(sir) { translateType(ka, position, reportErrorType, reportUnsupportedType, processTypeImports) }
+    typeParameterScope: Map<KaTypeParameterSymbol, SirTypeParameter> = emptyMap(),
+    inGenericTypeArgument: Boolean = false,
+): SirType = with(sir) {
+    translateType(
+        ka,
+        position,
+        reportErrorType,
+        reportUnsupportedType,
+        processTypeImports,
+        requiresHashableAsAny = false,
+        typeParameterScope = typeParameterScope,
+        inGenericTypeArgument = inGenericTypeArgument,
+    )
+}
 
 context(kaSession: KaSession, sir: SirSession)
 public fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): SirCustomTypeTranslator.BridgeWrapper? =
@@ -446,6 +480,7 @@ public interface SirBridgeProvider {
         extensionReceiverParameter: SirParameter?,
         errorParameter: SirParameter?,
         isAsync: Boolean,
+        isInlinable: Boolean = false,
     ): BridgeFunctionProxy?
 
     public fun generateTypeBridge(
@@ -468,6 +503,7 @@ public fun generateFunctionBridge(
     extensionReceiverParameter: SirParameter?,
     errorParameter: SirParameter?,
     isAsync: Boolean,
+    isInlinable: Boolean = false,
 ): BridgeFunctionProxy? = with(sir) {
     generateFunctionBridge(
         baseBridgeName,
@@ -480,6 +516,7 @@ public fun generateFunctionBridge(
         extensionReceiverParameter,
         errorParameter,
         isAsync,
+        isInlinable,
     )
 }
 

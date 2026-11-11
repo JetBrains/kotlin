@@ -122,7 +122,7 @@ public fun SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_In
 @ExportedBridge("Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, result: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Baz
-    val __result = kotlin.native.internal.ref.dereferenceExternalRCRef(result) as kotlin.Any
+    val __result = (dereferenceAndDisposeBridgeableRef(result) as kotlin.Any)
     __self.foo(__result)
     return true
 }

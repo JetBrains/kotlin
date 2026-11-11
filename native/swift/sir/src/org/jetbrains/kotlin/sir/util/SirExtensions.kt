@@ -69,7 +69,7 @@ val SirType.swiftName
         } ?: "Any"
         is SirNominalType -> listOfNotNull(
             parent?.swiftName?.let { "$it." },
-            typeDeclaration.swiftFqName,
+            if (parent != null) typeDeclaration.name.swiftSanitizedName.swiftIdentifier else typeDeclaration.swiftFqName,
             typeArguments.takeIf { it.isNotEmpty() }?.let { it.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftName } }
         ).joinToString("")
         is SirErrorType -> "ERROR_TYPE"
@@ -90,10 +90,12 @@ val SirType.swiftName
         }
         is SirTupleType -> "(${types.joinToString { [name, type] -> "${name?.let { "$it: " } ?: ""}${type.swiftName}" }})"
         is SirType.Metatype -> when (type) {
-            is SirNominalType, is SirType.Metatype -> type.swiftName
+            is SirNominalType, is SirType.Metatype, is SirTypeParameterType, is SirSelfType -> type.swiftName
             is SirExistentialType -> type.swiftName.removePrefix("any ").let { if (type.protocols.size == 1) it else "($it)" }
             else -> "(${type.swiftName})"
         }.let { "$it.Type" }
+        is SirTypeParameterType -> parameter.name.swiftIdentifier
+        is SirSelfType -> memberName?.let { "Self.${it.swiftIdentifier}" } ?: "Self"
     }
 
 val SirType.annotatedSwiftName
@@ -152,14 +154,57 @@ val SirTypealias.expandedType: SirType
 
 private val SirFunction.isConfusable: Boolean get() = this.parameters.isEmpty() && this.extensionReceiverParameter == null
 
+private fun SirParameter.substituteTypeParameters(substitution: Map<SirTypeParameter, SirType>): SirParameter =
+    if (substitution.isEmpty()) this else SirParameter(
+        argumentName = argumentName,
+        parameterName = parameterName,
+        type = type.substituteTypeParameters(substitution),
+        origin = origin,
+        isVariadic = isVariadic,
+    )
+
+private fun SirFunction.hasAlphaEquivalentSignatureWith(other: SirFunction): Boolean {
+    if (this.typeParameters.size != other.typeParameters.size) return false
+    if (this.typeParameters.isEmpty()) {
+        return this.contextParameter == other.contextParameter
+                && this.extensionReceiverParameter == other.extensionReceiverParameter
+                && this.errorType == other.errorType
+                && this.parameters == other.parameters
+    }
+    val canonParams = this.typeParameters.indices.map { SirTypeParameter("_C$it") }
+    val thisSub = this.typeParameters.mapIndexed { idx, tp -> tp to SirTypeParameterType(canonParams[idx]) }.toMap()
+    val otherSub = other.typeParameters.mapIndexed { idx, tp -> tp to SirTypeParameterType(canonParams[idx]) }.toMap()
+    val thisNameMap = this.typeParameters.mapIndexed { idx, tp -> tp.name to "_C$idx" }.toMap()
+    val otherNameMap = other.typeParameters.mapIndexed { idx, tp -> tp.name to "_C$idx" }.toMap()
+
+    for (i in canonParams.indices) {
+        val b1 = this.typeParameters[i].bounds.map { it.substituteTypeParameters(thisSub) }.toSet()
+        val b2 = other.typeParameters[i].bounds.map { it.substituteTypeParameters(otherSub) }.toSet()
+        if (b1 != b2) return false
+    }
+    fun normalizeConstraint(c: SirTypeConstraint, sub: Map<SirTypeParameter, SirType>, names: Map<String, String>): SirTypeConstraint {
+        val normPath = c.subjectPath.mapIndexed { idx, seg -> if (idx == 0) (names[seg] ?: seg) else seg }
+        val normType = c.constraint.substituteTypeParameters(sub)
+        return when (c) {
+            is SirTypeConstraint.Conformance -> SirTypeConstraint.Conformance(normType, normPath)
+            is SirTypeConstraint.Equality -> SirTypeConstraint.Equality(normType, normPath)
+        }
+    }
+    val c1 = this.constraints.map { normalizeConstraint(it, thisSub, thisNameMap) }.toSet()
+    val c2 = other.constraints.map { normalizeConstraint(it, otherSub, otherNameMap) }.toSet()
+    if (c1 != c2) return false
+
+    return this.contextParameter?.substituteTypeParameters(thisSub) == other.contextParameter?.substituteTypeParameters(otherSub)
+            && this.extensionReceiverParameter?.substituteTypeParameters(thisSub) == other.extensionReceiverParameter?.substituteTypeParameters(otherSub)
+            && this.errorType.substituteTypeParameters(thisSub) == other.errorType.substituteTypeParameters(otherSub)
+            && this.parameters.map { it.substituteTypeParameters(thisSub) } == other.parameters.map { it.substituteTypeParameters(otherSub) }
+}
+
 fun SirDeclaration.conflictsWith(other: SirDeclaration): Boolean = when (this) {
     is SirFunction -> when (other) {
         is SirFunction -> this.name == other.name
                 && this.isInstance == other.isInstance
-                && this.contextParameter == other.contextParameter
-                && this.extensionReceiverParameter == other.extensionReceiverParameter
-                && this.errorType == other.errorType
-                && this.parameters == other.parameters
+                && this.hasAlphaEquivalentSignatureWith(other)
         is SirVariable -> this.name == other.name && this.isInstance == other.isInstance && this.isConfusable
         is SirScopeDefiningDeclaration -> this.name == other.name && this.isInstance.not()
         else -> false
@@ -182,17 +227,91 @@ fun SirDeclaration.conflictsWith(other: SirDeclaration): Boolean = when (this) {
 val SirDeclaration.isUnavailable: Boolean get() = attributes.any { it is SirAttribute.Available && it.unavailable }
 
 val SirType.unavailableTypes: List<SirType>
-    get() = when (this) {
-        is SirNominalType -> listOfNotNull(this.takeIf { typeDeclaration.isUnavailable }) + typeArguments.flatMap { it.unavailableTypes }
-        is SirExistentialType -> protocols.mapNotNull { [protocol, _] ->
-            protocol.takeIf { it.isUnavailable }?.let(::SirNominalType)
-        } + protocols.flatMap { [_, types] -> types.flatMap { it.unavailableTypes } }
-        is SirTupleType -> types.flatMap { it.second.unavailableTypes }
-        is SirFunctionalType -> (contextTypes + parameterTypes + errorType + returnType).flatMap { it.unavailableTypes }
-        is SirType.Metatype -> type.unavailableTypes
-        is SirUnsupportedType -> listOf(this)
-        is SirErrorType -> emptyList()
+    get() = collectUnavailableTypes(mutableSetOf(), mutableSetOf())
+
+private fun SirType.collectUnavailableTypes(
+    visitedParams: MutableSet<SirTypeParameter>,
+    visitedDecls: MutableSet<SirDeclaration>,
+): List<SirType> = when (this) {
+    is SirNominalType -> listOfNotNull(this.takeIf { visitedDecls.add(typeDeclaration) && typeDeclaration.isUnavailable }) +
+        (parent?.collectUnavailableTypes(visitedParams, visitedDecls).orEmpty()) +
+        typeArguments.flatMap { it.collectUnavailableTypes(visitedParams, visitedDecls) }
+    is SirExistentialType -> protocols.mapNotNull { [protocol, _] ->
+        protocol.takeIf { visitedDecls.add(protocol) && it.isUnavailable }?.let(::SirNominalType)
+    } + protocols.flatMap { [_, types] -> types.flatMap { it.collectUnavailableTypes(visitedParams, visitedDecls) } }
+    is SirTupleType -> types.flatMap { it.second.collectUnavailableTypes(visitedParams, visitedDecls) }
+    is SirFunctionalType -> (contextTypes + parameterTypes + errorType + returnType).flatMap { it.collectUnavailableTypes(visitedParams, visitedDecls) }
+    is SirType.Metatype -> type.collectUnavailableTypes(visitedParams, visitedDecls)
+    is SirTypeParameterType -> if (visitedParams.add(parameter)) {
+        parameter.bounds.flatMap { it.collectUnavailableTypes(visitedParams, visitedDecls) }
+    } else {
+        emptyList()
     }
+    is SirSelfType -> emptyList()
+    is SirUnsupportedType -> listOf(this)
+    is SirErrorType -> emptyList()
+}
+
+fun SirType.containsTypeParameter(): Boolean = when (this) {
+    is SirTypeParameterType -> true
+    is SirSelfType -> true
+    is SirNominalType -> typeArguments.any { it.containsTypeParameter() } || (parent?.containsTypeParameter() == true)
+    is SirExistentialType -> protocols.any { pair -> pair.second.any { it.containsTypeParameter() } }
+    is SirFunctionalType -> contextTypes.any { it.containsTypeParameter() } ||
+        parameterTypes.any { it.containsTypeParameter() } ||
+        errorType.containsTypeParameter() ||
+        returnType.containsTypeParameter()
+    is SirTupleType -> types.any { it.second.containsTypeParameter() }
+    is SirType.Metatype -> type.containsTypeParameter()
+    is SirErrorType, is SirUnsupportedType -> false
+}
+
+fun SirType.substituteTypeParameters(substitution: Map<SirTypeParameter, SirType>): SirType {
+    if (substitution.isEmpty()) return this
+    return when (this) {
+        is SirTypeParameterType -> substitution[parameter] ?: this
+        is SirImplicitlyUnwrappedOptionalType -> wrappedType.substituteTypeParameters(substitution).implicitlyUnwrappedOptional()
+        is SirOptionalType -> wrappedType.substituteTypeParameters(substitution).optional()
+        is SirArrayType -> SirArrayType(elementType.substituteTypeParameters(substitution))
+        is SirDictionaryType -> SirDictionaryType(
+            keyType.substituteTypeParameters(substitution),
+            valueType.substituteTypeParameters(substitution),
+        )
+        is SirNominalType -> if (typeArguments.isEmpty() && parent == null) {
+            this
+        } else {
+            SirNominalType(
+                typeDeclaration = typeDeclaration,
+                typeArguments = typeArguments.map { it.substituteTypeParameters(substitution) },
+                parent = parent?.substituteTypeParameters(substitution) as? SirNominalType,
+                origin = origin,
+                attributes = attributes,
+            )
+        }
+        is SirExistentialType -> SirExistentialType(
+            protocols = protocols.map { pair ->
+                pair.first to pair.second.map { it.substituteTypeParameters(substitution) }
+            },
+            origin = origin,
+        )
+        is SirFunctionalType -> SirFunctionalType(
+            contextTypes = contextTypes.map { it.substituteTypeParameters(substitution) },
+            parameterTypes = parameterTypes.map { it.substituteTypeParameters(substitution) },
+            isAsync = isAsync,
+            errorType = errorType.substituteTypeParameters(substitution),
+            returnType = returnType.substituteTypeParameters(substitution),
+            origin = origin,
+            attributes = attributes,
+        )
+        is SirTupleType -> SirTupleType(
+            types = types.map { pair -> pair.first to pair.second.substituteTypeParameters(substitution) },
+            origin = origin,
+            attributes = attributes,
+        )
+        is SirType.Metatype -> SirType.Metatype(type.substituteTypeParameters(substitution), attributes)
+        is SirSelfType, is SirErrorType, is SirUnsupportedType -> this
+    }
+}
 
 inline fun MutableList<SirAttribute>.replaceOrAddPropagatedUnavailability(unavailableTypes: () -> List<SirType>) {
     if (this.any { it is SirAttribute.Available && it.unavailable }) return

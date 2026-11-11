@@ -170,6 +170,7 @@ open class SirNominalType(
 
     override fun hashCode(): Int {
         var result = typeDeclaration.hashCode()
+        result = 31 * result + typeArguments.hashCode()
         result = 31 * result + (parent?.hashCode() ?: 0)
         return result
     }
@@ -221,7 +222,43 @@ class SirExistentialType(
     }
 
     override fun hashCode(): Int {
-        return this::class.hashCode()
+        return protocols.hashCode()
+    }
+}
+
+class SirTypeParameterType(
+    val parameter: SirTypeParameter,
+    override val origin: SirType.Origin = SirType.Origin.Unknown,
+    override val attributes: List<SirAttribute> = emptyList(),
+) : SirType {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SirTypeParameterType) return false
+        return parameter == other.parameter && attributes == other.attributes
+    }
+
+    override fun hashCode(): Int {
+        var result = parameter.hashCode()
+        result = 31 * result + attributes.hashCode()
+        return result
+    }
+}
+
+class SirSelfType(
+    val memberName: String? = null,
+    override val origin: SirType.Origin = SirType.Origin.Unknown,
+    override val attributes: List<SirAttribute> = emptyList(),
+) : SirType {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SirSelfType) return false
+        return memberName == other.memberName && attributes == other.attributes
+    }
+
+    override fun hashCode(): Int {
+        var result = memberName?.hashCode() ?: 0
+        result = 31 * result + attributes.hashCode()
+        return result
     }
 }
 

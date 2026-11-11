@@ -50,36 +50,61 @@ public class SirCustomTypeTranslatorImpl(
                     AsObjCBridged(swiftType, CType.NSString).wrapper()
                 }
                 classId == StandardClassIds.List -> {
-                    val swiftArgumentType = typeArguments.single().sirType(ctx)
+                    var swiftArgumentType = typeArguments.single().sirType(ctx)
                     if (!swiftArgumentType.isBridgeableCollectionElement()) return null
-                    swiftType = SirArrayType(
-                        swiftArgumentType,
-                    )
-                    AsNSArray(swiftType, bridgeAsNSCollectionElement(swiftArgumentType)).wrapper()
+                    if (swiftArgumentType.requiresBridgeableCollectionAdapter() || ctx.inGenericTypeArgument) {
+                        if (!swiftArgumentType.conformsToKotlinBridgeableInRuntime()) {
+                            swiftArgumentType = typeArguments.single().sirType(ctx.copy(inGenericTypeArgument = true))
+                        }
+                        if (!swiftArgumentType.conformsToKotlinBridgeableInRuntime()) return null
+                        swiftType = SirArrayType(swiftArgumentType)
+                        AsBridgeableValue(swiftType).wrapper()
+                    } else {
+                        swiftType = SirArrayType(swiftArgumentType)
+                        AsNSArray(swiftType, bridgeAsNSCollectionElement(swiftArgumentType)).wrapper()
+                    }
                 }
 
                 classId == StandardClassIds.Set -> {
-                    val swiftArgumentType = typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true))
+                    var swiftArgumentType = typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true))
                     if (swiftArgumentType.containsExistential()) return null
                     if (!swiftArgumentType.isBridgeableCollectionElement()) return null
-                    swiftType = SirNominalType(
-                        SirSwiftModule.set,
-                        listOf(swiftArgumentType)
-                    )
-                    AsNSSet(swiftType, bridgeAsNSCollectionElement(swiftArgumentType)).wrapper()
+                    if (swiftArgumentType.requiresBridgeableCollectionAdapter() || ctx.inGenericTypeArgument) {
+                        if (!swiftArgumentType.conformsToKotlinBridgeableInRuntime()) {
+                            swiftArgumentType = typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true, inGenericTypeArgument = true))
+                        }
+                        if (!swiftArgumentType.conformsToKotlinBridgeableInRuntime()) return null
+                        swiftType = SirNominalType(SirSwiftModule.set, listOf(swiftArgumentType))
+                        AsBridgeableValue(swiftType).wrapper()
+                    } else {
+                        swiftType = SirNominalType(SirSwiftModule.set, listOf(swiftArgumentType))
+                        AsNSSet(swiftType, bridgeAsNSCollectionElement(swiftArgumentType)).wrapper()
+                    }
                 }
 
                 classId == StandardClassIds.Map -> {
-                    val swiftKeyType = typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true))
+                    var swiftKeyType = typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true))
                     if (swiftKeyType.containsExistential()) return null
-                    val swiftValueType = typeArguments.last().sirType(ctx)
+                    var swiftValueType = typeArguments.last().sirType(ctx)
                     if (!swiftKeyType.isBridgeableCollectionElement() || !swiftValueType.isBridgeableCollectionElement()) return null
-                    swiftType = SirDictionaryType(swiftKeyType, swiftValueType)
-                    AsNSDictionary(
-                        swiftType,
-                        bridgeAsNSCollectionElement(swiftKeyType),
-                        bridgeAsNSCollectionElement(swiftValueType),
-                    ).wrapper()
+                    if (swiftKeyType.requiresBridgeableCollectionAdapter() || swiftValueType.requiresBridgeableCollectionAdapter() || ctx.inGenericTypeArgument) {
+                        if (!swiftKeyType.conformsToKotlinBridgeableInRuntime()) {
+                            swiftKeyType = typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true, inGenericTypeArgument = true))
+                        }
+                        if (!swiftValueType.conformsToKotlinBridgeableInRuntime()) {
+                            swiftValueType = typeArguments.last().sirType(ctx.copy(inGenericTypeArgument = true))
+                        }
+                        if (!swiftKeyType.conformsToKotlinBridgeableInRuntime() || !swiftValueType.conformsToKotlinBridgeableInRuntime()) return null
+                        swiftType = SirDictionaryType(swiftKeyType, swiftValueType)
+                        AsBridgeableValue(swiftType).wrapper()
+                    } else {
+                        swiftType = SirDictionaryType(swiftKeyType, swiftValueType)
+                        AsNSDictionary(
+                            swiftType,
+                            bridgeAsNSCollectionElement(swiftKeyType),
+                            bridgeAsNSCollectionElement(swiftValueType),
+                        ).wrapper()
+                    }
                 }
 
                 classId == ClassId.topLevel(openEndRangeFqName) || classId == ClassId.topLevel(closedRangeFqName) -> {
@@ -164,7 +189,11 @@ public class SirCustomTypeTranslatorImpl(
 
     context(kaSession: KaSession)
     private fun KaTypeProjection.sirType(ctx: TypeTranslationCtx): SirType = when (this) {
-        is KaStarTypeProjection -> ctx.anyRepresentativeType()
+        is KaStarTypeProjection -> if (ctx.inGenericTypeArgument && !ctx.requiresHashableAsAny) {
+            ctx.anyRepresentativeType().optional()
+        } else {
+            ctx.anyRepresentativeType()
+        }
         is KaTypeArgumentWithVariance -> with(session) {
             type.translateType(
                 kaSession,
@@ -173,12 +202,45 @@ public class SirCustomTypeTranslatorImpl(
                 ctx.reportUnsupportedType,
                 ctx.processTypeImports,
                 ctx.requiresHashableAsAny,
+                ctx.typeParameterScope,
+                inGenericTypeArgument = ctx.inGenericTypeArgument,
+                inContainerElement = true,
             )
         }
     }
 
     override fun SirNominalType.toBridge(): SirCustomTypeTranslator.BridgeWrapper? {
-        return primitiveTypeToWrapperMap[this] ?: dynamicTypeToWrapperMap[this]
+        primitiveTypeToWrapperMap[this]?.let { return it }
+        dynamicTypeToWrapperMap[this]?.let { return it }
+        val computed = context(session) {
+            when (typeDeclaration) {
+                SirSwiftModule.string -> AsObjCBridged(this@toBridge, CType.NSString).wrapper()
+                SirSwiftModule.array -> {
+                    val elem = typeArguments.single()
+                    if (elem.requiresBridgeableCollectionAdapter()) AsBridgeableValue(this@toBridge).wrapper()
+                    else AsNSArray(this@toBridge, bridgeAsNSCollectionElement(elem)).wrapper()
+                }
+                SirSwiftModule.set -> {
+                    val elem = typeArguments.single()
+                    if (elem.requiresBridgeableCollectionAdapter()) AsBridgeableValue(this@toBridge).wrapper()
+                    else AsNSSet(this@toBridge, bridgeAsNSCollectionElement(elem)).wrapper()
+                }
+                SirSwiftModule.dictionary -> {
+                    val k = typeArguments[0]
+                    val v = typeArguments[1]
+                    if (k.requiresBridgeableCollectionAdapter() || v.requiresBridgeableCollectionAdapter()) {
+                        AsBridgeableValue(this@toBridge).wrapper()
+                    } else {
+                        AsNSDictionary(this@toBridge, bridgeAsNSCollectionElement(k), bridgeAsNSCollectionElement(v)).wrapper()
+                    }
+                }
+                else -> null
+            }
+        }
+        if (computed != null) {
+            dynamicTypeToWrapperMap[this] = computed
+        }
+        return computed
     }
 
     internal class RangeBridge private constructor(
@@ -382,6 +444,40 @@ public class SirCustomTypeTranslatorImpl(
 }
 
 private fun SirType.isBridgeableCollectionElement(): Boolean = when (this) {
-    is SirNominalType, is SirExistentialType, is SirFunctionalType -> true
+    is SirNominalType, is SirExistentialType, is SirFunctionalType, is SirTypeParameterType -> true
+    else -> false
+}
+
+private fun SirType.requiresBridgeableCollectionAdapter(): Boolean = when (this) {
+    is SirTypeParameterType -> true
+    is SirNominalType -> {
+        val decl = typeDeclaration
+        when {
+            decl == SirSwiftModule.optional -> typeArguments.first().requiresBridgeableCollectionAdapter()
+            decl == SirSwiftModule.array || decl == SirSwiftModule.set || decl == SirSwiftModule.dictionary ->
+                typeArguments.any { it.requiresBridgeableCollectionAdapter() }
+            decl == SirSwiftModule.range || decl == SirSwiftModule.closedRange -> false
+            else -> (decl as? SirGenericDeclaration)?.typeParameters?.isNotEmpty() == true || typeArguments.isNotEmpty()
+        }
+    }
+    is SirExistentialType -> protocols.any { it.second.isNotEmpty() }
+    else -> false
+}
+
+private fun SirType.conformsToKotlinBridgeableInRuntime(): Boolean = when (this) {
+    is SirTypeParameterType -> true
+    is SirNominalType -> {
+        val decl = typeDeclaration
+        when {
+            decl == SirSwiftModule.optional -> typeArguments.first().conformsToKotlinBridgeableInRuntime()
+            decl == SirSwiftModule.array || decl == SirSwiftModule.set || decl == SirSwiftModule.dictionary ->
+                typeArguments.all { it.conformsToKotlinBridgeableInRuntime() }
+            decl == SirSwiftModule.range || decl == SirSwiftModule.closedRange || decl == SirSwiftModule.void -> false
+            decl.parent == SirSwiftModule || decl.parent == KotlinRuntimeSupportModule -> true
+            decl is SirClass || decl is SirEnum -> true
+            decl is SirTypealias -> decl.type.conformsToKotlinBridgeableInRuntime()
+            else -> false
+        }
+    }
     else -> false
 }

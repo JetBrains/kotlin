@@ -28,7 +28,6 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo.Companion::class, "4main3FooC9CompanionC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo.INSIDE_CLASS::class, "4main3FooC12INSIDE_CLASSC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(GENERIC_CLASS::class, "4main13GENERIC_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_GENERIC::class, "4main19INHERITANCE_GENERICC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_UNSUPPORTED_BASE::class, "4main28INHERITANCE_UNSUPPORTED_BASEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INLINE_CLASS::class, "4main12INLINE_CLASSC")
@@ -43,6 +42,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED::class, "4main6SEALEDC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.C::class, "4main6SEALEDC1CC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.O::class, "4main6SEALEDC1OC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(GENERIC_CLASS::class, "4main19_GENERIC_CLASS_BaseC")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
@@ -169,7 +169,7 @@ public fun DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
     val __a = a
     val __b = interpretObjCPointer<kotlin.String>(b)
-    val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
+    val __c = (dereferenceAndDisposeBridgeableRef(c) as kotlin.Any)
     val _result = __self.copy(__a, __b, __c)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -191,7 +191,7 @@ public fun DATA_CLASS_WITH_MANY_FIELDS_e_get(self: kotlin.native.internal.Native
 @ExportedBridge("DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
-    val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
+    val __o = (dereferenceAndDisposeBridgeableRef(o) as kotlin.Any)
     val _result = __self.copy(__o)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
@@ -563,7 +563,7 @@ public fun __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArgument
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = a
     val __b = interpretObjCPointer<kotlin.String>(b)
-    val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
+    val __c = (dereferenceAndDisposeBridgeableRef(c) as kotlin.Any)
     kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_MANY_FIELDS(__a, __b, __c))
     return true
 }
@@ -577,7 +577,7 @@ public fun __root___DATA_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.
 @ExportedBridge("__root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
+    val __o = (dereferenceAndDisposeBridgeableRef(o) as kotlin.Any)
     kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_REF(__o))
     return true
 }
@@ -598,8 +598,8 @@ public fun __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMu
 
 @ExportedBridge("__root___ENUM_ordinal")
 public fun __root___ENUM_ordinal(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ENUM
-    val _result = __self.ordinal
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self)!!
+    val _result = (__self as ENUM).ordinal
     return _result
 }
 

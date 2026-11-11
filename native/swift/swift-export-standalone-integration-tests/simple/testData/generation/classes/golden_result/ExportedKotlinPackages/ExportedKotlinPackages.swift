@@ -1,5 +1,9 @@
 public enum intersection_overrides {
 }
+public enum kotlin {
+    public enum collections {
+    }
+}
 public enum namespace {
     public enum deeper {
     }

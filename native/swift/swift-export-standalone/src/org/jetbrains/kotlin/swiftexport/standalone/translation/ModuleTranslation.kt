@@ -242,8 +242,20 @@ private fun deepTouch(
     if (container is SirClassInhertingDeclaration) {
         container.superClass
     }
+    if (container is SirGenericDeclaration) {
+        container.typeParameters.forEach { it.bounds }
+    }
+    if (container is SirConstrainedDeclaration) {
+        container.constraints
+    }
 
     filterIsInstance<SirCallable>().forEach {
+        if (it is SirGenericDeclaration) {
+            it.typeParameters.forEach { tp -> tp.bounds }
+        }
+        if (it is SirConstrainedDeclaration) {
+            it.constraints
+        }
         it.allParameters
         it.returnType
     }
@@ -253,11 +265,13 @@ private fun deepTouch(
     }
 
     filterIsInstance<SirTypealias>().forEach {
+        it.typeParameters.forEach { tp -> tp.bounds }
+        it.constraints
         it.type
     }
 
     filterIsInstance<SirDeclarationContainer>().forEach {
-        deepTouch(it)
+        deepTouch(it, symbolHandler)
     }
 
     // Ensure each newly occuring declaration gets included in `unprocessedReferences`

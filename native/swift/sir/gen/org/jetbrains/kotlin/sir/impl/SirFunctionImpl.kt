@@ -24,6 +24,8 @@ internal class SirFunctionImpl(
     override val isOverride: Boolean,
     override val isInstance: Boolean,
     override val modality: SirModality,
+    override val typeParameters: MutableList<SirTypeParameter>,
+    override val constraints: MutableList<SirTypeConstraint>,
     override val name: String,
     override val contextParameter: SirParameter?,
     override val extensionReceiverParameter: SirParameter?,

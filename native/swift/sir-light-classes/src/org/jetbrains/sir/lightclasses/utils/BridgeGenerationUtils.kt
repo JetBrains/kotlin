@@ -25,9 +25,12 @@ internal val FqName.baseBridgeName: String
 internal val <T : KaCallableSymbol> SirFromKtSymbol<T>.bridgeFqName
     get() = ktSymbol.callableId?.asSingleFqName()
 
+internal fun SirScopeDefiningDeclaration.parameterizedSelfNominalType(): SirNominalType =
+    SirNominalType(this, (this as? SirGenericDeclaration)?.typeParameters.orEmpty().map(::SirTypeParameterType))
+
 internal val SirCallable.selfType: SirType? get() = when (val parent = this.parent) {
-        is SirScopeDefiningDeclaration -> SirNominalType(parent)
-        is SirVariable -> (parent.parent as? SirScopeDefiningDeclaration)?.let(::SirNominalType)
+        is SirScopeDefiningDeclaration -> parent.parameterizedSelfNominalType()
+        is SirVariable -> (parent.parent as? SirScopeDefiningDeclaration)?.parameterizedSelfNominalType()
         is SirExtension -> parent.extendedType
         else -> null
     }

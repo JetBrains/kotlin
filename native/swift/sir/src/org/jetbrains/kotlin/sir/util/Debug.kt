@@ -53,7 +53,9 @@ private val SirType.render: String
             val typeArguments = typeArguments.takeIf { it.isNotEmpty() }
             "${protocol.swiftFqName}${typeArguments?.joinToString(prefix = "<", postfix = ">", separator = ",") { it.render } ?: ""}"
         } ?: "Any"
-        is SirNominalType -> typeDeclaration.swiftFqName
+        is SirNominalType -> typeDeclaration.swiftFqName + (typeArguments.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">", separator = ", ") { it.render } ?: "")
+        is SirTypeParameterType -> parameter.name
+        is SirSelfType -> memberName?.let { "Self.$it" } ?: "Self"
         is SirErrorType -> "<ERROR>"
         is SirUnsupportedType -> "<UNSUPPORTED>"
         is SirFunctionalType -> "(${parameterTypes.joinToString { it.render }}) -> ${returnType.render}"

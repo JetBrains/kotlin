@@ -58,6 +58,7 @@ object SirSwiftModule : SirModule() {
     val optional: SirEnum = enumStub("Optional")
 
     val caseIterable = protocol("CaseIterable")
+    val hashable = protocol("Hashable")
     val losslessStringConvertible = protocol("LosslessStringConvertible")
     val rawRepresentable = protocol("RawRepresentable")
 }

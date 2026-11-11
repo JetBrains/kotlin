@@ -49,7 +49,7 @@ int32_t __root___EnumWithMembers_ordinal(void * self);
 
 int32_t __root___Enum_ordinal(void * self);
 
-void * __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(void * e);
+void * __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__T0___(void * e);
 
 void * __root___ewamEntries();
 

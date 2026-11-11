@@ -23,6 +23,15 @@ import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
+import org.jetbrains.sir.lightclasses.nodes.SirAbstractClassFromKtSymbol
+import org.jetbrains.sir.lightclasses.nodes.SirProtocolFromKtSymbol
+
+internal fun SirClassMemberDeclaration.openExistentialProtocolForReverseBridge(): SirProtocol? = when (val p = parent) {
+    is SirProtocol -> p.takeIf { it.typeParameters.isNotEmpty() || (p as? SirProtocolFromKtSymbol)?.isPatProtocol == true }
+    is SirAbstractClassFromKtSymbol -> p.openGenericReverseDispatchProtocol
+    else -> null
+}
+
 internal fun SirClassMemberDeclaration.needsReverseBridge(): Boolean {
     if (!isInstance) return false
     if (isUnavailable) return false
@@ -83,7 +92,9 @@ internal fun SirClassMemberDeclaration.forwardBridgedBody(
     if (!needsNonVirtualForwardBridge()) {
         return SirFunctionBody(proxy.createSwiftInvocation { "return $it" })
     }
-    val wrapperFqName = (parent as SirClass).swiftFqName
+    val parentClass = parent as SirClass
+    val wrapperFqName = parentClass.swiftFqName
+    val wrapperTypeName = SirNominalType(parentClass, parentClass.typeParameters.map(::SirTypeParameterType)).swiftName
     val virtualLines = proxy.createSwiftInvocation { "return $it" }
     val fallbackLines = if (isAbstractKotlinMember) {
         listOf("fatalError(\"Cannot invoke the inherited implementation of abstract $memberKind '$wrapperFqName.$memberName': a Swift subclass must override it and must not call super.\")")
@@ -91,7 +102,7 @@ internal fun SirClassMemberDeclaration.forwardBridgedBody(
         proxy.createSwiftInvocation(useDirectDispatch = true) { "return $it" }
     }
     return SirFunctionBody(buildList {
-        add("if Self.self == $wrapperFqName.self {")
+        add("if Self.self == $wrapperTypeName.self {")
         virtualLines.forEach { add("    $it") }
         add("} else {")
         fallbackLines.forEach { add("    $it") }
@@ -106,20 +117,8 @@ internal val KaCallableSymbol.reverseBridgeTargetClassFqName: String
 
 context(_: KaSession, sirSession: SirSession)
 internal fun SirDeclaration.interfaceSelfType(ktSymbol: KaCallableSymbol): SirType? {
-    (parent as? SirProtocol)?.let { return SirExistentialType(it) }
-
-    val containingClass = (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>() ?: return null
-    if (!containingClass.hasFBoundedTypeParameters()) return null
-
-    val overriddenInterfaceMember = ktSymbol.allOverriddenSymbols.firstOrNull { overridden ->
-        val containingSymbol = overridden.containingSymbol
-        containingSymbol is KaClassSymbol && containingSymbol.classKind == KaClassKind.INTERFACE
-    } ?: return null
-
-    val interfaceSymbol = overriddenInterfaceMember.containingSymbol as? KaNamedClassSymbol ?: return null
-
-    val sirProtocol = with(sirSession) { interfaceSymbol.toSir().allDeclarations }.firstIsInstanceOrNull<SirProtocol>()
-        ?: return null
-
-    return SirExistentialType(sirProtocol)
+    (parent as? SirProtocol)?.let {
+        return SirExistentialType(listOf(it to it.typeParameters.map(::SirTypeParameterType)))
+    }
+    return null
 }

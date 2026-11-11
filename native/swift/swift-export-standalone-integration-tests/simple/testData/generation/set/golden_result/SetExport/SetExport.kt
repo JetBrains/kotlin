@@ -24,6 +24,19 @@ public fun __root___testSetAny__TypesOfArguments__Swift_Set_Swift_AnyHashable___
     return _result.objcPtr()
 }
 
+@ExportedBridge("__root___testSetFooParam__TypesOfArguments__Swift_Set_KotlinRuntimeSupport__KotlinExistential_anyU20SetExport__Foo____")
+public fun __root___testSetFooParam__TypesOfArguments__Swift_Set_KotlinRuntimeSupport__KotlinExistential_anyU20SetExport__Foo____(s: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __s = (dereferenceAndDisposeBridgeableRef(s) as kotlin.collections.Set<Foo>)
+    val _result = testSetFooParam(__s)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___testSetFoo_get")
+public fun __root___testSetFoo_get(): kotlin.native.internal.NativePtr {
+    val _result = testSetFoo
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___testSetInt__TypesOfArguments__Swift_Set_Swift_Int32___")
 public fun __root___testSetInt__TypesOfArguments__Swift_Set_Swift_Int32___(s: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __s = interpretObjCPointer<kotlin.collections.Set<Int>>(s)

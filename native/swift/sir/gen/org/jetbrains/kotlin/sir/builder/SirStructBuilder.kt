@@ -23,6 +23,8 @@ class SirStructBuilder {
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = []
     val protocols: MutableList<SirProtocol> = []
+    val typeParameters: MutableList<SirTypeParameter> = []
+    val constraints: MutableList<SirTypeConstraint> = []
 
     fun build(): SirStruct {
         return SirStructImpl(
@@ -33,6 +35,8 @@ class SirStructBuilder {
             name,
             declarations,
             protocols,
+            typeParameters,
+            constraints,
         )
     }
 

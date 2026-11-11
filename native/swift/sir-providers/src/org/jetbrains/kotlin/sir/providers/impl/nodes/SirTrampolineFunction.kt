@@ -24,8 +24,10 @@ public open class SirTrampolineFunction(
     override val isInstance: Boolean get() = false
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val fixity: SirFixity? get() = source.fixity
+    override val typeParameters: List<SirTypeParameter> get() = source.typeParameters
+    override val constraints: List<SirTypeConstraint> get() = source.constraints
 
-    override val attributes: List<SirAttribute> get() = source.attributes
+    override val attributes: List<SirAttribute> get() = source.attributes.filter { it !is SirAttribute.Inlinable }
 
     override val contextParameter: SirParameter?
         get() = source.contextParameter

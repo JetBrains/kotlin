@@ -63,13 +63,17 @@ _Bool __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__(void * re
 
 int32_t __root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__(void * receiver);
 
-NSString * __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__(void * receiver);
+NSString * __root___genericConstrainedExtFun__TypesOfArgumentsE__main_GenericClass_Swift_String___(void * receiver);
 
-int32_t __root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass__(void * receiver);
+int32_t __root___genericConstrainedExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_String___(void * receiver);
 
-NSString * __root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass__(void * receiver);
+NSString * __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__T0___(void * receiver);
 
-int32_t __root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass__(void * receiver);
+int32_t __root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(void * receiver);
+
+NSString * __root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(void * receiver);
+
+int32_t __root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass_Swift_Optional_KotlinRuntimeSupport_KotlinAny____(void * receiver);
 
 _Bool __root___hiddenDeprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__(void * receiver);
 

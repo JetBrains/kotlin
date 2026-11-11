@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypeConstraint
+import org.jetbrains.kotlin.sir.SirTypeParameter
 import org.jetbrains.kotlin.sir.SirVariable
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.sir.builder.buildInit
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.extractDeclarations
 import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
 import org.jetbrains.kotlin.sir.providers.getSirParent
@@ -89,6 +92,8 @@ private class SirEnumFromKtSymbol(
             SirSwiftModule.rawRepresentable
         )
     }
+    override val typeParameters: List<SirTypeParameter> = emptyList()
+    override val constraints: List<SirTypeConstraint> = emptyList()
     override var parent: SirDeclarationParent
         get() = withSessions {
             ktSymbol.getSirParent()
@@ -132,7 +137,7 @@ private class SirEnumFromKtSymbol(
             kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = SirParameter(
                 argumentName = "self",
-                type = SirNominalType(this@SirEnumFromKtSymbol),
+                type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer),
             ),
             contextParameters = emptyList(),
             extensionReceiverParameter = null,
@@ -148,7 +153,15 @@ private class SirEnumFromKtSymbol(
             type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
         )
         val ordinalBridges = this@SirEnumFromKtSymbol.withSessions {
-            ordinalBridgeProxy?.createSirBridges { buildCall("") }.orEmpty()
+            ordinalBridgeProxy?.createSirBridges {
+                buildCall(
+                    "",
+                    selfCastType = typeNamer.kotlinFqName(
+                        SirNominalType(this@SirEnumFromKtSymbol),
+                        SirTypeNamer.KotlinNameType.PARAMETRIZED,
+                    ),
+                )
+            }.orEmpty()
         }
         bridges.addAll(ordinalBridges)
         val ordinalBridgeName = ordinalBridges.filterIsInstance<SirFunctionBridge>().first().name

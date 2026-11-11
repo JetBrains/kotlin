@@ -22,28 +22,35 @@ import org.jetbrains.sir.lightclasses.nodes.SirFunctionFromKtPropertySymbol
 
 @OptIn(KaExperimentalApi::class)
 internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType = withSessions {
+    val scope = (this@translateReturnType as? SirDeclaration)?.lexicalTypeParameterScope().orEmpty()
     this@translateReturnType.ktSymbol.returnType.translateType(
         SirTypeVariance.COVARIANT,
         reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
         reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
-        processTypeImports = this@translateReturnType.ktSymbol.containingModule.sirModule()::updateImports
+        processTypeImports = this@translateReturnType.ktSymbol.containingModule.sirModule()::updateImports,
+        typeParameterScope = scope,
     )
 }
 
 @OptIn(KaExperimentalApi::class)
 internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateInvariantType(): SirType = withSessions {
+    val scope = (this@translateInvariantType as? SirDeclaration)?.lexicalTypeParameterScope().orEmpty()
     this@translateInvariantType.ktSymbol.returnType.translateType(
         SirTypeVariance.INVARIANT,
         reportErrorType = { error("Can't translate invariant type in ${ktSymbol.render()}: ${it}") },
         reportUnsupportedType = { error("Can't translate invariant type in ${ktSymbol.render()}: type is not supported") },
-        processTypeImports = this@translateInvariantType.ktSymbol.containingModule.sirModule()::updateImports
+        processTypeImports = this@translateInvariantType.ktSymbol.containingModule.sirModule()::updateImports,
+        typeParameterScope = scope,
     )
 }
 
-internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateParameters(): List<SirParameter> {
+internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateParameters(
+    liftedParameterTypes: Map<Int, SirType> = emptyMap(),
+): List<SirParameter> {
     return withSessions {
-        this@translateParameters.ktSymbol.valueParameters.map { parameter ->
-            val sirType = createParameterType(ktSymbol, parameter).escaping
+        val scope = (this@translateParameters as? SirDeclaration)?.lexicalTypeParameterScope().orEmpty()
+        this@translateParameters.ktSymbol.valueParameters.mapIndexed { index, parameter ->
+            val sirType = (liftedParameterTypes[index] ?: createParameterType(ktSymbol, parameter, scope)).escaping
             val objCNameAnnotation = parameter.objCNameAnnotation
             val argumentName: String? = when (val raw = objCNameAnnotation?.argumentName) {
                 null -> parameter.name.asString()
@@ -63,10 +70,13 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
     }
 }
 
-internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateExtensionParameter(): SirParameter? {
+internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateExtensionParameter(
+    liftedReceiverType: SirType? = null,
+): SirParameter? {
     return withSessions {
+        val scope = (this@translateExtensionParameter as? SirDeclaration)?.lexicalTypeParameterScope().orEmpty()
         this@translateExtensionParameter.ktSymbol.receiverParameter?.let { receiver ->
-            val sirType = createParameterType(ktSymbol, receiver)
+            val sirType = liftedReceiverType ?: createParameterType(ktSymbol, receiver, scope)
             SirParameter(
                 parameterName = receiver.name.asStringStripSpecialMarkers(),
                 type = sirType,
@@ -78,12 +88,13 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
 
 internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateContextParameters(): Pair<SirParameter, List<SirParameter>>? {
     val parameters = withSessions {
+        val scope = (this@translateContextParameters as? SirDeclaration)?.lexicalTypeParameterScope().orEmpty()
         val symbol = when (this@translateContextParameters) {
             is SirFunctionFromKtPropertySymbol -> ktPropertySymbol
             else -> ktSymbol
         }
         symbol.contextParameters.map { parameter ->
-            val sirType = createParameterType(ktSymbol, parameter)
+            val sirType = createParameterType(ktSymbol, parameter, scope)
             SirParameter(
                 parameterName = parameter.name.identifierOrNullIfSpecial,
                 type = sirType,
@@ -104,11 +115,16 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateC
 
 @OptIn(KaExperimentalApi::class)
 context(ka: KaSession, sir: SirSession)
-private fun <P : KaParameterSymbol> createParameterType(ktSymbol: KaDeclarationSymbol, parameter: P): SirType {
+private fun <P : KaParameterSymbol> createParameterType(
+    ktSymbol: KaDeclarationSymbol,
+    parameter: P,
+    scope: Map<KaTypeParameterSymbol, SirTypeParameter>,
+): SirType {
     return parameter.returnType.translateType(
         position = SirTypeVariance.CONTRAVARIANT,
         reportErrorType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: $it") },
         reportUnsupportedType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: type is not supported") },
-        processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
+        processTypeImports = ktSymbol.containingModule.sirModule()::updateImports,
+        typeParameterScope = scope,
     )
 }

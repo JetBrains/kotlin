@@ -5,18 +5,24 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
+import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirBridge
+import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirDeclarationParent
 import org.jetbrains.kotlin.sir.SirFixity
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirFunctionBody
+import org.jetbrains.kotlin.sir.SirGenericDeclaration
 import org.jetbrains.kotlin.sir.SirGetterFunction
 import org.jetbrains.kotlin.sir.SirModality
 import org.jetbrains.kotlin.sir.SirModule
@@ -25,6 +31,8 @@ import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirSetterFunction
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypeConstraint
+import org.jetbrains.kotlin.sir.SirTypeParameter
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -44,25 +52,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.sirModality
 import org.jetbrains.sir.lightclasses.extensions.withSessions
-import org.jetbrains.sir.lightclasses.utils.KDocElements
-import org.jetbrains.sir.lightclasses.utils.OverrideStatus
-import org.jetbrains.sir.lightclasses.utils.baseBridgeName
-import org.jetbrains.sir.lightclasses.utils.computeIsOverride
-import org.jetbrains.sir.lightclasses.utils.effectiveReverseBridgeDeprecation
-import org.jetbrains.sir.lightclasses.utils.forwardBridgedBody
-import org.jetbrains.sir.lightclasses.utils.interfaceSelfType
-import org.jetbrains.sir.lightclasses.utils.needsNonVirtualForwardBridge
-import org.jetbrains.sir.lightclasses.utils.needsReverseBridge
-import org.jetbrains.sir.lightclasses.utils.reverseBridgeSwiftCall
-import org.jetbrains.sir.lightclasses.utils.reverseBridgeTargetClassFqName
-import org.jetbrains.sir.lightclasses.utils.addDocumentationVisibility
-import org.jetbrains.sir.lightclasses.utils.selfType
-import org.jetbrains.sir.lightclasses.utils.translateContextParameters
-import org.jetbrains.sir.lightclasses.utils.translateDocumentation
-import org.jetbrains.sir.lightclasses.utils.translateExtensionParameter
-import org.jetbrains.sir.lightclasses.utils.translateParameters
-import org.jetbrains.sir.lightclasses.utils.translateReturnType
-import org.jetbrains.sir.lightclasses.utils.translatedAttributes
+import org.jetbrains.sir.lightclasses.utils.*
 import kotlin.getValue
 import kotlin.lazy
 
@@ -104,6 +94,22 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
         }
         prefix + variableName.replaceFirstChar { it.titlecase() }
     }
+
+    private val translatedTypeParams: TranslatedTypeParameters by lazyWithSessions {
+        translateTypeParametersAndConstraints(
+            declarationSymbol = ktPropertySymbol,
+            ownKtTypeParams = ktPropertySymbol.typeParameters,
+            enclosingScope = enclosingTypeParameterScope(),
+            callableSymbol = ktPropertySymbol,
+        )
+    }
+
+    override val typeParameters: List<SirTypeParameter>
+        get() = translatedTypeParams.typeParameters
+
+    override val constraints: List<SirTypeConstraint>
+        get() = translatedTypeParams.constraints
+
     internal val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
         translateContextParameters()
     }
@@ -143,7 +149,7 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
     override val fixity: SirFixity?
         get() = null
 
-    override val attributes: List<SirAttribute> by lazy {
+    private val baseAttributes: List<SirAttribute> by lazy {
         buildList {
             addAll(this@SirFunctionFromKtPropertySymbol.translatedAttributes)
             if (overrideStatus is OverrideStatus.Conflicts) {
@@ -161,12 +167,40 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
         }
     }
 
+    private val isSelfUnavailable: Boolean
+        get() = baseAttributes.any { it is SirAttribute.Available && it.unavailable }
+
+    private val canRequestInlinable: Boolean by lazyWithSessions {
+        val parentDecl = parent as? SirDeclaration
+        val isGenericContext = typeParameters.isNotEmpty() ||
+            (parent as? SirGenericDeclaration)?.typeParameters?.isNotEmpty() == true
+        isGenericContext &&
+            parent !is SirProtocol &&
+            visibility == SirVisibility.PUBLIC &&
+            modality == SirModality.FINAL &&
+            !isAsync &&
+            errorType == SirType.never &&
+            contextParameter == null &&
+            !isSelfUnavailable &&
+            (parentDecl?.isUnavailable != true) &&
+            (parentDecl?.attributes.orEmpty().none { it is SirAttribute.SPI || it is SirAttribute.Available }) &&
+            baseAttributes.none { it is SirAttribute.SPI || it is SirAttribute.Available }
+    }
+
+    override val attributes: List<SirAttribute> by lazy {
+        if (canRequestInlinable && bridgeProxy?.isSwiftInlinable == true) {
+            baseAttributes + SirAttribute.Inlinable
+        } else {
+            baseAttributes
+        }
+    }
+
     override val errorType: SirType get() = if (ktPropertySymbol.throwsAnnotation != null) SirType.any else SirType.never
 
     override val isAsync: Boolean get() = false
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
-        if (isUnavailable) return@lazyWithSessions null
+        if (isSelfUnavailable) return@lazyWithSessions null
         val fqName = ktPropertySymbol
             .callableId?.asSingleFqName() ?: return@lazyWithSessions null
 
@@ -198,22 +232,41 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
                 SirParameter(null, "_out_error", it)
             },
             isAsync = false,
+            isInlinable = canRequestInlinable,
         )
     }
 
-    private val forwardCall: BridgeFunctionBuilder.() -> String = {
+    context(_: KaSession, _: SirSession)
+    private fun buildPropertyAccessorForwardCall(): BridgeFunctionBuilder.() -> String = {
         val args = argNames
+        val enclosingClassSymbol = ktPropertySymbol.containingDeclaration as? KaClassSymbol
+        val useLocalBridge = ktPropertySymbol.typeParameters.isNotEmpty() ||
+            hasNonTrivialKotlinBridgeBounds(enclosingClassSymbol, ktPropertySymbol.typeParameters)
         when (ktSymbol) {
             is KaPropertyGetterSymbol -> {
                 val expectedParameters = (if (extensionReceiverParameter != null) 1 else 0) + contextParameters.size
                 require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
-                buildCall("")
+                if (useLocalBridge) {
+                    buildLocalGenericBridgeCall(enclosingClassSymbol, ktPropertySymbol, this@SirFunctionFromKtPropertySymbol.returnType)
+                } else {
+                    buildCall("")
+                }
             }
             is KaPropertySetterSymbol -> {
                 val contextParameterCount = contextParameters.size
                 val expectedParameters = (if (extensionReceiverParameter != null) 2 else 1) + contextParameterCount
                 require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
-                buildCall(" = ${args.last()}")
+                if (useLocalBridge) {
+                    buildLocalGenericBridgeCall(
+                        enclosingClassSymbol,
+                        ktPropertySymbol,
+                        SirType.void,
+                        isSetter = true,
+                        setterParamExpr = args.last(),
+                    )
+                } else {
+                    buildCall(" = ${args.last()}")
+                }
             }
         }
     }
@@ -230,6 +283,7 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
 
     override val bridges: List<SirBridge> by lazyWithSessions {
         val proxy = bridgeProxy ?: return@lazyWithSessions emptyList()
+        val forwardCall = buildPropertyAccessorForwardCall()
         buildList {
             addAll(proxy.createSirBridges(nonVirtualTargetMethod = null, forwardCall))
             if (needsNonVirtualForwardBridge() && !isAbstractKotlinProperty) {
@@ -242,6 +296,7 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
                         targetMethodName = kotlinAccessorName,
                         swiftDynamicCall = this@SirFunctionFromKtPropertySymbol::reverseBridgeSwiftCall,
                         swiftDeprecation = effectiveReverseBridgeDeprecation(),
+                        openExistentialProtocol = openExistentialProtocolForReverseBridge(),
                     )
                 )
             }
@@ -257,6 +312,7 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
         if (!isInstance || isUnavailable || isAbstractKotlinProperty) return@withSessions null
         if (!needsReverseBridge()) return@withSessions null
         val proxy = bridgeProxy ?: return@withSessions null
+        val forwardCall = buildPropertyAccessorForwardCall()
 
         buildFunctionCopy(this@SirFunctionFromKtPropertySymbol) {
             origin = SirOrigin.Trampoline(this@SirFunctionFromKtPropertySymbol)

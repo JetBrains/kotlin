@@ -78,7 +78,7 @@ public var foo: any KotlinRuntimeSupport._KotlinBridgeable {
         return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___foo_get())
     }
     set {
-        return { __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef()); return () }()
+        return { __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__((newValue).__retainedToKotlinPointer()!); return () }()
     }
 }
 public var lateinit_foo: any KotlinRuntimeSupport._KotlinBridgeable {
@@ -86,7 +86,7 @@ public var lateinit_foo: any KotlinRuntimeSupport._KotlinBridgeable {
         return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___lateinit_foo_get())
     }
     set {
-        return { __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef()); return () }()
+        return { __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__((newValue).__retainedToKotlinPointer()!); return () }()
     }
 }
 extension ExportedKotlinPackages.inline {

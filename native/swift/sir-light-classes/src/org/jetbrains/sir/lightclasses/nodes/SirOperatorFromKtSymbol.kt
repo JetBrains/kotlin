@@ -17,10 +17,14 @@ import org.jetbrains.kotlin.sir.SirModality
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
+import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
+import org.jetbrains.kotlin.sir.SirSelfType
 import org.jetbrains.kotlin.sir.SirSetter
 import org.jetbrains.kotlin.sir.SirSubscript
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypeConstraint
+import org.jetbrains.kotlin.sir.SirTypeParameter
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildSetter
@@ -29,6 +33,7 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.allParameters
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.name
+import org.jetbrains.sir.lightclasses.utils.parameterizedSelfNominalType
 import kotlin.getValue
 
 internal interface SirOperatorAuxiliaryDeclaration
@@ -60,6 +65,8 @@ internal abstract class SirClassOperatorTrampolineFunction(
     override val extensionReceiverParameter: SirParameter? get() = source.extensionReceiverParameter
     override val errorType: SirType get() = source.errorType
     override val isAsync: Boolean get() = source.isAsync
+    override val typeParameters: List<SirTypeParameter> get() = source.typeParameters
+    override val constraints: List<SirTypeConstraint> get() = source.constraints
     override val parameters: List<SirParameter>
         get() = listOf(
             SirParameter(argumentName = "this", type = selfType)
@@ -133,6 +140,8 @@ internal class SirSubscriptTrampoline(
     override val modality: SirModality = SirModality.FINAL
     override val parameters: List<SirParameter> get() = getterFunction.parameters
     override val returnType: SirType get() = getterFunction.returnType
+    override val typeParameters: List<SirTypeParameter> get() = getterFunction.typeParameters
+    override val constraints: List<SirTypeConstraint> get() = getterFunction.constraints
 
     override val getter: SirGetter by lazy {
         buildGetter {
@@ -165,6 +174,7 @@ private val SirParameter.forward: String? get() = this.name?.let { name -> this.
 
 private val SirFunction.selfType: SirType get() {
         return this.extensionReceiverParameter?.type
-            ?: (this.parent as? SirScopeDefiningDeclaration)?.let { SirNominalType(it) }
+            ?: (this.parent as? SirProtocol)?.let { SirSelfType() }
+            ?: (this.parent as? SirScopeDefiningDeclaration)?.parameterizedSelfNominalType()
             ?: error("No receiver type available for ${this.name}")
 }

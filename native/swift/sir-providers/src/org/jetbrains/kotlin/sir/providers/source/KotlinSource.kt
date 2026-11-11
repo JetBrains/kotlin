@@ -36,6 +36,8 @@ public class KotlinMarkerProtocol(symbol: KaNamedClassSymbol) : KotlinSource(sym
 
 public class KotlinImplementationMarkerProtocol(symbol: KaNamedClassSymbol) : KotlinSource(symbol)
 
+public class KotlinPatWrapperClass(symbol: KaNamedClassSymbol) : KotlinSource(symbol)
+
 public sealed class KotlinParameterOrigin : SirParameter.Origin {
     public class ValueParameter(public val parameter: KaValueParameterSymbol) : KotlinParameterOrigin()
     public class ReceiverParameter(public val parameter: KaReceiverParameterSymbol) : KotlinParameterOrigin()

@@ -24,6 +24,8 @@ class SirClassBuilder {
     val declarations: MutableList<SirDeclaration> = []
     var superClass: SirNominalType? = null
     val protocols: MutableList<SirProtocol> = []
+    val typeParameters: MutableList<SirTypeParameter> = []
+    val constraints: MutableList<SirTypeConstraint> = []
     val bridges: MutableList<SirBridge> = []
     var modality: SirModality = SirModality.UNSPECIFIED
 
@@ -37,6 +39,8 @@ class SirClassBuilder {
             declarations,
             superClass,
             protocols,
+            typeParameters,
+            constraints,
             bridges,
             modality,
         )
