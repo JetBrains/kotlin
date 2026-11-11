@@ -97,6 +97,7 @@ dependencies {
     testFixturesApi(project(":native:kotlin-native-utils"))
     testFixturesApi(testFixtures(project(":native:native.tests:klib-ir-inliner")))
     testFixturesApi(project(":kotlin-util-klib-abi"))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-compiler-tests")))
     testFixturesApi(commonDependency("org.jetbrains.teamcity:serviceMessages"))
 
     // todo: remove unnecessary dependencies
