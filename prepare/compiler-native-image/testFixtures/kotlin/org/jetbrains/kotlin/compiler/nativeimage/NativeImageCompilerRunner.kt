@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.compiler.nativeimage
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 
-class NativeImageCompilerRunner(javaHome: String = System.getProperty("java.home")) : CompilerRunner(javaHome) {
+class NativeImageCompilerRunner(javaHome: String = System.getProperty("java.home")) : SubprocessCompilerRunner(javaHome) {
     override val executable: String by lazy {
         val launcher = if (isWindows) "kotlinc-native-image.bat" else "kotlinc-native-image.sh"
         ForTestCompileRuntime.kotlinNativeImageDistForTests().resolve("bin").resolve(launcher).absolutePath

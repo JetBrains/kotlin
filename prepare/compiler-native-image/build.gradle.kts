@@ -64,6 +64,8 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(project(":kotlin-daemon-client"))
+    testFixturesApi(project(":daemon-common"))
 
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
@@ -85,6 +87,9 @@ val pgoInstrument = kotlinBuildProperties
     .get()
 val dynamicPluginsEnabled = kotlinBuildProperties
     .booleanProperty("kotlin.build.native-image.dynamic-plugins", false)
+    .get()
+val kotlinDaemonNativeImageEnabled = kotlinBuildProperties
+    .booleanProperty("kotlin.build.native-image.kotlin-daemon", false)
     .get()
 
 val graalLauncher = getNativeImageToolchainLauncherFor(
@@ -119,6 +124,15 @@ projectTests {
         withDist()
     }
 
+    nativeImageTestTask("generateReachabilityMetadataDaemonSmoke") {
+        description = "Quick reachability metadata regen: runs the JVM kotlin daemon with the " +
+                "reachability metadata collector agent on the smoke test."
+        include("**/ReachabilityMetadataDaemonSmokeTest.class")
+        useReachabilityMetadataResources()
+        @OptIn(KotlinCompilerDistUsage::class)
+        withDist()
+    }
+
     nativeImageTestTask("nativeImageBoxTest") {
         description = "Runs native-image kotlinc against default kotlinc on box tests"
         include("**/NativeImageBoxTestGenerated.class")
@@ -135,16 +149,34 @@ projectTests {
         withJunit5ParallelExecution(4)
     }
 
+    nativeImageTestTask("nativeImageDaemonBoxTest") {
+        enabled = kotlinDaemonNativeImageEnabled
+        description = "Runs box tests using the native-image compiler daemon"
+        include("**/NativeImageDaemonBoxTestGenerated.class")
+        include("**/NativeImageDaemonPluginBoxTestGenerated.class")
+        include("**/NativeImageDaemonLegacyPluginBoxTestGenerated.class")
+        if (dynamicPluginsEnabled) {
+            include("**/NativeImageDaemonDynamicPluginBoxTestGenerated.class")
+            include("**/NativeImageDaemonDynamicLegacyPluginBoxTestGenerated.class")
+        }
+        useNativeImageDist()
+        usePlugins()
+    }
+
     nativeImageTestTask("generateReachabilityMetadataBox") {
         description = "Runs JVM kotlinc with reachability metadata collector agent on box tests"
         include("**/ReachabilityMetadataBoxTestGenerated.class")
         include("**/ReachabilityMetadataPluginBoxTestGenerated.class")
         include("**/ReachabilityMetadataLegacyPluginBoxTestGenerated.class")
-        // We can't run in parallel because of the tracing agent
-        systemProperty(
-            "junit.jupiter.execution.parallel.enabled",
-            "false",
-        )
+        useReachabilityMetadataResources()
+        usePlugins()
+    }
+
+    nativeImageTestTask("generateReachabilityMetadataDaemonBox") {
+        description = "Runs box tests on the JVM kotlin daemon with the reachability metadata collector agent"
+        include("**/ReachabilityMetadataDaemonBoxTestGenerated.class")
+        include("**/ReachabilityMetadataDaemonPluginBoxTestGenerated.class")
+        include("**/ReachabilityMetadataDaemonLegacyPluginBoxTestGenerated.class")
         useReachabilityMetadataResources()
         usePlugins()
     }
@@ -161,8 +193,13 @@ tasks.test {
 
 val currentOs = OperatingSystem.current()
 
-val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
-    description = "Build a native image of the kotlin-compiler-embeddable"
+fun registerNativeImageTask(
+    name: String,
+    taskDescription: String,
+    mainClass: String,
+    outputFileName: String,
+): TaskProvider<Exec> = tasks.register<Exec>(name) {
+    description = taskDescription
 
     val launcher = graalLauncher
     val resources = layout.projectDirectory.dir("resources")
@@ -215,12 +252,11 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     inputs.property("os", currentOs.name)
 
     val isWindows = currentOs.isWindows
-    val mainClass = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
-    val outputFile = layout.buildDirectory.file("bin/kotlinc-native-image")
+    val outputFile = layout.buildDirectory.file("bin/$outputFileName")
     // Graal will automatically append .exe extension to the `outputFile`, but we need
     // to explicitly specify it as an output of the task
     val executableExtension = if (isWindows) ".exe" else ""
-    val executableFile = layout.buildDirectory.file("bin/kotlinc-native-image$executableExtension")
+    val executableFile = layout.buildDirectory.file("bin/$outputFileName$executableExtension")
     outputs.file(executableFile)
 
     doFirst {
@@ -236,13 +272,33 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     }
 }
 
+val kotlincNativeImageTask = registerNativeImageTask(
+    name = "kotlincNativeImage",
+    taskDescription = "Build a native image of the kotlin-compiler-embeddable",
+    mainClass = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler",
+    outputFileName = "kotlinc-native-image",
+)
+
+val kotlinDaemonNativeImageTask = registerNativeImageTask(
+    name = "kotlinDaemonNativeImage",
+    taskDescription = "Build a native image of the kotlin-compiler-daemon",
+    mainClass = "org.jetbrains.kotlin.daemon.KotlinCompileDaemon",
+    outputFileName = "kotlin-daemon-native-image",
+).also {
+    it.configure {
+        enabled = kotlinDaemonNativeImageEnabled
+        // force sequential build
+        mustRunAfter(kotlincNativeImageTask)
+    }
+}
+
 val nativeImageDistSbomTask = configureSbom(
     target = "NativeImageDist",
     documentName = "Kotlin Compiler Native Image Distribution",
     gradleConfigurations = setOf(nativeImageClasspath.name),
 )
 
-val kotlincNativeImageDist = tasks.register<Copy>("kotlincNativeImageDist") {
+val kotlincNativeImageDist = tasks.register<Sync>("kotlincNativeImageDist") {
     description = "Build the kotlin-compiler-embeddable native distribution"
     duplicatesStrategy = DuplicatesStrategy.FAIL
     rename(quote("-${version}"), "")
@@ -251,6 +307,9 @@ val kotlincNativeImageDist = tasks.register<Copy>("kotlincNativeImageDist") {
     val wrapperScriptFiles = files("bin/kotlinc-native-image.sh", "bin/kotlinc-native-image.bat")
     into("bin") {
         from(kotlincNativeImageTask)
+        if (kotlinDaemonNativeImageEnabled) {
+            from(kotlinDaemonNativeImageTask)
+        }
         from(wrapperScriptFiles) {
             filePermissions {
                 unix("rwxr-xr-x")
@@ -356,6 +415,8 @@ fun Test.usePlugins() {
 }
 
 fun Test.useReachabilityMetadataResources() {
+    // The tracing agent requires sequential execution.
+    systemProperty("junit.jupiter.execution.parallel.enabled", "false")
     addClasspathProperty(
         nativeImageClasspath,
         KOTLIN_COMPILER_EMBEDDABLE_CLASSPATH,
