@@ -1,0 +1,4 @@
+compiler/tests-integration/testData/javaModules/jarOnClasspathAndModulePath/main/usage.kt:6:5: error: symbol is declared in module 'lib' which does not export package 'bar'.
+    Bar()
+    ^^^
+COMPILATION_ERROR
