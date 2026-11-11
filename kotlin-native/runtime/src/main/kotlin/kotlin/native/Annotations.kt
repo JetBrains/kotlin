@@ -8,6 +8,7 @@ package kotlin.native
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.experimental.ExperimentalObjCEnum
 import kotlin.experimental.ExperimentalObjCName
+import kotlin.experimental.ExperimentalObjCExportIgnoreNameCollision
 import kotlin.experimental.ExperimentalObjCRefinement
 
 /**
@@ -163,6 +164,25 @@ public actual annotation class ObjCEnum(actual val name: String = "", actual val
     @Retention(AnnotationRetention.BINARY)
     public actual annotation class EntryName(actual val name: String, actual val swiftName: String = "")
 }
+
+/**
+ * Instructs the Kotlin compiler to suppress name collision errors when generating Objective-C headers
+ * with the `-Xbinary=objcExportErrorOnNameCollisions=true` compiler option.
+ *
+ * This annotation is intended for standard library classes that have inherent overloaded methods
+ * (e.g., Appendable, StringBuilder) where name mangling is unavoidable but should not prevent users
+ * from using these types in their public APIs.
+ */
+@Target(
+        AnnotationTarget.CLASS,
+        AnnotationTarget.PROPERTY,
+        AnnotationTarget.FUNCTION
+)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@ExperimentalObjCExportIgnoreNameCollision
+@SinceKotlin("2.1")
+public actual annotation class ObjCExportIgnoreNameCollision
 
 /**
  * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.

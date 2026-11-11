@@ -5,11 +5,16 @@
 
 package kotlin.text
 
+import kotlin.experimental.ExperimentalObjCExportIgnoreNameCollision
+import kotlin.native.ObjCExportIgnoreNameCollision
+
 /**
  * A mutable sequence of characters.
  *
  * String builder can be used to efficiently perform multiple string manipulation operations.
  */
+@OptIn(ExperimentalObjCExportIgnoreNameCollision::class)
+@ObjCExportIgnoreNameCollision
 public actual class StringBuilder
 private constructor (private var array: CharArray) : CharSequence, Appendable {
 

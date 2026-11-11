@@ -14,3 +14,13 @@ package kotlin.experimental
 @MustBeDocumented
 @SinceKotlin("1.8")
 public annotation class ExperimentalObjCName
+
+/**
+ * This annotation marks the experimental [ObjCExportIgnoreNameCollision][kotlin.native.ObjCExportIgnoreNameCollision] annotation.
+ */
+@RequiresOptIn
+@Target(AnnotationTarget.ANNOTATION_CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@SinceKotlin("2.1")
+public annotation class ExperimentalObjCExportIgnoreNameCollision
