@@ -4018,12 +4018,6 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
-    @TestMetadata("localTypeAliasToUnionForwardReference.kt")
-    public void testLocalTypeAliasToUnionForwardReference() {
-      run("localTypeAliasToUnionForwardReference.kt");
-    }
-
-    @Test
     @TestMetadata("typeAliasAsSupertypeConstructor.kt")
     public void testTypeAliasAsSupertypeConstructor() {
       run("typeAliasAsSupertypeConstructor.kt");

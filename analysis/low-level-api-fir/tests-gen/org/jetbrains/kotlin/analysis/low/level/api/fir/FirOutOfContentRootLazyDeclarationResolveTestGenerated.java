@@ -2992,12 +2992,6 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
-    @TestMetadata("localTypeAliasToUnionForwardReference.kt")
-    public void testLocalTypeAliasToUnionForwardReference() {
-      run("localTypeAliasToUnionForwardReference.kt");
-    }
-
-    @Test
     @TestMetadata("typeAliasAsSupertypeConstructor.kt")
     public void testTypeAliasAsSupertypeConstructor() {
       run("typeAliasAsSupertypeConstructor.kt");
