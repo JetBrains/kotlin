@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -43,3 +44,6 @@ open class B2: A()
 <!INCONSISTENT_INHERITABLE_SERIALINFO!>@I("b")<!>
 <!INCONSISTENT_INHERITABLE_SERIALINFO!>@I2(E.A, E::class)<!>
 open class C: B()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, enumDeclaration, enumEntry, nestedClass,
+primaryConstructor, propertyDeclaration, sealed, starProjection, stringLiteral */

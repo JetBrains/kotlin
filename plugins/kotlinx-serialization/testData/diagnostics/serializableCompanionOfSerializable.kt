@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 // WITH_STDLIB
 
@@ -41,3 +42,6 @@ sealed class F4 {
     @Serializable(Other::class)
     companion object {}
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, companionObject,
+functionDeclaration, objectDeclaration, override, propertyDeclaration, sealed, stringLiteral */

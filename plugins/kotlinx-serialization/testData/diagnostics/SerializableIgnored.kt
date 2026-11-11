@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: test.kt
 import kotlinx.serialization.*
@@ -7,3 +8,5 @@ interface INonSerializable
 
 @Serializable
 sealed interface SealedSerializable
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, sealed */

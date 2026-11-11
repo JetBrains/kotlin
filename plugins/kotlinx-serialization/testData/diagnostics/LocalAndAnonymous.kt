@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -32,7 +33,7 @@ fun container() {
 
     <!LOCAL_SERIALIZER_USAGE, SERIALIZER_TYPE_INCOMPATIBLE!>@Serializable(with = LocalSerializer::class)<!>
     data class WithLocalSerializer(val i: Int)
-    
+
     class Owner {
         <!INNER_CLASSES_NOT_SUPPORTED!>@Serializable(with = LocalSerializer::class)<!>
         inner class Inner(val j: Int)
@@ -51,3 +52,7 @@ val topLevelAnon = <!ANONYMOUS_OBJECTS_NOT_SUPPORTED!>@Serializable<!> object {}
 
     @Serializable object F {} // regular named object, OK
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, classReference, data, functionDeclaration, inner,
+localClass, localProperty, nestedClass, nullableType, objectDeclaration, override, primaryConstructor,
+propertyDeclaration, stringLiteral */

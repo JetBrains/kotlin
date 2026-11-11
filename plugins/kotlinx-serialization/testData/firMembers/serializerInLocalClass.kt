@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
@@ -18,3 +19,6 @@ fun box(): String {
     }
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression, localClass,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

@@ -8,16 +8,18 @@ package org.jetbrains.kotlinx.serialization.runners
 import org.jetbrains.kotlin.js.test.runners.AbstractLightTreeJsDiagnosticWithBackendTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 
 
-abstract class AbstractSerializationFirLightTreeDiagnosticTest : AbstractFirLightTreeDiagnosticsTest() {
+abstract class AbstractSerializationFirLightTreeDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureSerializationFirPsiDiagnosticTest()
+        builder.defaultDirectives { +WITH_STDLIB }
     }
 }
 

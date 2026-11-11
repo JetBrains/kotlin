@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: test.kt
 import kotlinx.serialization.*
@@ -35,3 +36,5 @@ class NonSerializableFoo {
     <!COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS!>@Serializer(Bar::class)<!>
     companion object
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, objectDeclaration */

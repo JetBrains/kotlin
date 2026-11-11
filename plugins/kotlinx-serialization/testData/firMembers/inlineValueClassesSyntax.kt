@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -16,3 +17,6 @@ fun box(): String {
     if (s != """{"f":42}""") return s
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, multilineStringLiteral, primaryConstructor, propertyDeclaration, stringLiteral, value */

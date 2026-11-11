@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -178,3 +179,7 @@ fun box(): String {
     testObject()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, enumDeclaration, enumEntry,
+functionDeclaration, integerLiteral, localProperty, multilineStringLiteral, nestedClass, objectDeclaration,
+outProjection, override, primaryConstructor, propertyDeclaration, sealed, starProjection, stringLiteral */

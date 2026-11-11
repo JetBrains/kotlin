@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -54,3 +55,6 @@ fun box(): String {
 
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, objectDeclaration, override, primaryConstructor, propertyDeclaration, stringLiteral */

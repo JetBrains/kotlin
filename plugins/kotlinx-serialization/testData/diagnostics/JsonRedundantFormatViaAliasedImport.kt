@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 @file:Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
 
 import kotlinx.serialization.*
@@ -77,3 +78,6 @@ class SomeContainerClass {
         //now its empty builder
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, anonymousFunction, assignment, callableReference, classDeclaration,
+functionDeclaration, lambdaLiteral, localProperty, objectDeclaration, propertyDeclaration, stringLiteral, thisExpression */
