@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.compiler.nativeimage
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.junit.jupiter.api.extension.RegisterExtension
 import java.io.File
 
 abstract class AbstractNativeImagePluginBoxTest : AbstractCompilerPluginBoxTest(NativeImageCompilerRunner(), PluginLoadingMode.MODERN)
@@ -22,6 +23,26 @@ abstract class AbstractReachabilityMetadataPluginBoxTest :
 
 abstract class AbstractReachabilityMetadataLegacyPluginBoxTest :
     AbstractCompilerPluginBoxTest(TracingAgentCompilerRunner(), PluginLoadingMode.LEGACY)
+
+abstract class AbstractNativeImageDaemonPluginBoxTest(
+    @JvmField @RegisterExtension val daemon: DaemonSessionExtension = DaemonSessionExtension(NativeImageDaemonSession::class.java),
+) : AbstractCompilerPluginBoxTest(daemon.compilerRunner, PluginLoadingMode.MODERN)
+
+abstract class AbstractNativeImageDaemonLegacyPluginBoxTest(
+    @JvmField @RegisterExtension val daemon: DaemonSessionExtension = DaemonSessionExtension(NativeImageDaemonSession::class.java),
+) : AbstractCompilerPluginBoxTest(daemon.compilerRunner, PluginLoadingMode.LEGACY)
+
+abstract class AbstractReachabilityMetadataDaemonPluginBoxTest(
+    @JvmField @RegisterExtension val daemon: DaemonSessionExtension = DaemonSessionExtension(TracingAgentDaemonSession::class.java),
+) : AbstractCompilerPluginBoxTest(daemon.compilerRunner, PluginLoadingMode.MODERN)
+
+abstract class AbstractReachabilityMetadataDaemonLegacyPluginBoxTest(
+    @JvmField @RegisterExtension val daemon: DaemonSessionExtension = DaemonSessionExtension(TracingAgentDaemonSession::class.java),
+) : AbstractCompilerPluginBoxTest(daemon.compilerRunner, PluginLoadingMode.LEGACY)
+
+abstract class AbstractNativeImageDaemonDynamicPluginBoxTest : AbstractNativeImageDaemonPluginBoxTest()
+
+abstract class AbstractNativeImageDaemonDynamicLegacyPluginBoxTest : AbstractNativeImageDaemonLegacyPluginBoxTest()
 
 abstract class AbstractCompilerPluginBoxTest(
     runner: CompilerRunner,
