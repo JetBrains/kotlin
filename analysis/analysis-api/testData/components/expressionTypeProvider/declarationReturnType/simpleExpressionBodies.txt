@@ -30,8 +30,8 @@ unresolvedIsCheck@(18,1) : kotlin.Boolean
   a@(18,23) : kotlin.Any
 incompleteComparison@(19,1) : kotlin.Boolean
   a@(19,26) : kotlin.Int
-whileLoop@(20,1) : kotlin.Unit (symbol: ERROR)
-doWhileLoop@(21,1) : kotlin.Unit (symbol: ERROR)
+whileLoop@(20,1) : ERROR
+doWhileLoop@(21,1) : ERROR
 forLoop@(22,1) : kotlin.Unit
   i@(22,22) : kotlin.Int
 returning@(23,1) : kotlin.Nothing

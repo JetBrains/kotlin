@@ -3,7 +3,7 @@ initializerAndGetter@(1,1) : kotlin.Int
 initializerAndConstantGetter@(5,1) : kotlin.Int
   KtPropertyAccessor@(6,5) : kotlin.Int
 mismatchedInitializerAndGetter@(8,1) : kotlin.String
-  KtPropertyAccessor@(9,5) : kotlin.Int (symbol: kotlin.String)
+  KtPropertyAccessor@(9,5) : kotlin.String
 initializerAndAccessors@(11,1) : kotlin.Int
   KtPropertyAccessor@(12,5) : kotlin.Int
   KtPropertyAccessor@(13,5) : kotlin.Unit
