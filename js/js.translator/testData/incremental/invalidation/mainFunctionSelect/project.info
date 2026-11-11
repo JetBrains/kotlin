@@ -5,19 +5,24 @@ STEP 0:
     libs: second, main
     dirty js modules: main, second
     dirty js files: second/root, main/b/b, main/m.export, second/value/okValue, main, main/m
+    dirty js per-class files: second/root, main/b/b, main/m.export, second/value/okValue, main, main/m
 STEP 1:
     libs: second, main
     dirty js modules: main
     dirty js files: main/b/b, main/a/a, main
+    dirty js per-class files: main/b/b, main/a/a, main
 STEP 2:
     libs: second, main
     dirty js modules: main
     dirty js files: main/c/c
+    dirty js per-class files: main/c/c
 STEP 3:
     libs: second, main
     dirty js modules: main, second
     dirty js files: main/b/b, second/value/okValue, main
+    dirty js per-class files: main/b/b, second/value/okValue, main
 STEP 4:
     libs: second, main
     dirty js modules: main, second
     dirty js files: second/value/okValue, main, main/c/c
+    dirty js per-class files: second/value/okValue, main, main/c/c
