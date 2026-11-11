@@ -90,6 +90,7 @@ val platforms = listOf(
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
             attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
             attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "wasi")
+            attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, "klib")
         },
         "kotlin.build-tools-api.test.wasmWasiStdlibClasspath",
     ),
@@ -433,6 +434,7 @@ fun Project.checkCompatibilityCoverage(
 
 tasks.register("resolveDependencies") {
     description = "Resolves dependencies (for dependency verification or populating caches) in detached configurations."
+    notCompatibleWithConfigurationCache("Uses project during task execution")
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
     doLast {
         platforms.flatMap { platform -> platform.configurationsCache.values }.forEach { it.resolve() }

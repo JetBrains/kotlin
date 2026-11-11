@@ -65,6 +65,7 @@ val wasmWasiStdlibImplResolvable = configurations.resolvable("wasmWasiStdlibImpl
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
         attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
         attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "wasi")
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, "klib")
     }
 }
 
