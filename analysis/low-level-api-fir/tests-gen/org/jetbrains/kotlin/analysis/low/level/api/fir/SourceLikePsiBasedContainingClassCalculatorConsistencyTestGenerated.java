@@ -106,6 +106,12 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("delegatedPropertyInCompanionBlock.kt")
+  public void testDelegatedPropertyInCompanionBlock() {
+    run("delegatedPropertyInCompanionBlock.kt");
+  }
+
+  @Test
   @TestMetadata("delegatedPropertyInSuper.kt")
   public void testDelegatedPropertyInSuper() {
     run("delegatedPropertyInSuper.kt");
