@@ -154,12 +154,32 @@ class Strings {
     }
 
     @Sample
+    fun filterTo() {
+        val text = "a1b2c3"
+        val destination = StringBuilder()
+
+        text.filterTo(destination) { it.isDigit() }
+
+        assertPrints(destination, "123")
+    }
+
+    @Sample
     fun filterNot() {
         val text = "a1b2c3d4e5"
 
         val textWithoutDigits = text.filterNot { it.isDigit() }
 
         assertPrints(textWithoutDigits, "abcde")
+    }
+
+    @Sample
+    fun filterNotTo() {
+        val text = "a1b2c3"
+        val destination = StringBuilder()
+
+        text.filterNotTo(destination) { it.isDigit() }
+
+        assertPrints(destination, "abc")
     }
 
     @Sample
