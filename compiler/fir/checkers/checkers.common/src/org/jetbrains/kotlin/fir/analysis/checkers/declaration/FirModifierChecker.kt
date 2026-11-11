@@ -107,22 +107,23 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         parent: FirBasedSymbol<*>?,
     ): Boolean {
         val modifierToken = modifier.token
+        val modifierId = modifierToken.tokenId
 
         fun checkModifier(factory: KtDiagnosticFactory2<String, String>): Boolean {
             val checkResult = when (factory) {
                 FirErrors.WRONG_MODIFIER_TARGET -> actualTargets.none {
-                    possibleTargetPredicateMap[modifierToken]?.isAllowed(
+                    possibleTargetPredicateMap[modifierId]?.isAllowed(
                         it,
                         context.session.languageVersionSettings
                     ) == true
                 }
                 FirErrors.DEPRECATED_MODIFIER_FOR_TARGET -> actualTargets.any {
-                    deprecatedTargetPredicateMap[modifierToken]?.isAllowed(
+                    deprecatedTargetPredicateMap[modifierId]?.isAllowed(
                         it,
                         context.session.languageVersionSettings
                     ) == true
                 }
-                else -> actualTargets.any { it in (redundantTargetMap[modifierToken] ?: emptySet()) }
+                else -> actualTargets.any { it in (redundantTargetMap[modifierId] ?: emptySet()) }
             }
             if (checkResult) {
                 reporter.reportOn(
@@ -192,7 +193,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return true
         }
 
-        val deprecatedParents = deprecatedParentTargetMap[modifierToken]
+        val deprecatedParents = deprecatedParentTargetMap[modifierToken.tokenId]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
             reporter.reportOn(
                 modifierSource,
@@ -211,7 +212,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 "final expect class"
             )
         }
-        val possibleParentPredicate = possibleParentTargetPredicateMap[modifierToken] ?: return true
+        val possibleParentPredicate = possibleParentTargetPredicateMap[modifierToken.tokenId] ?: return true
         if (actualParents.any { possibleParentPredicate.isAllowed(it, context.session.languageVersionSettings) }) return true
 
         if (modifierToken == KtTokens.INNER_KEYWORD && parent is FirScriptSymbol) {

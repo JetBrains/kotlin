@@ -88,7 +88,7 @@ object ModifierCheckerCore {
     ) {
         val firstModifier = firstNode.elementType as KtModifierKeywordToken
         val secondModifier = secondNode.elementType as KtModifierKeywordToken
-        when (val compatibility = compatibility(firstModifier, secondModifier)) {
+        when (val compatibility = compatibility(firstModifier.tokenId, secondModifier.tokenId)) {
             Compatibility.COMPATIBLE -> {
             }
             Compatibility.REPEATED -> if (incorrectNodes.add(secondNode)) {
@@ -120,12 +120,12 @@ object ModifierCheckerCore {
     private fun checkTarget(trace: BindingTrace, node: ASTNode, actualTargets: List<KotlinTarget>): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
 
-        val possibleTargets = possibleTargetPredicateMap[modifier]
+        val possibleTargets = possibleTargetPredicateMap[modifier.tokenId]
         if (actualTargets.none { possibleTargets?.isAllowed(it, LanguageVersionSettingsImpl.DEFAULT) == true }) {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
-        val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
+        val redundantTargets = redundantTargetMap[modifier.tokenId] ?: emptySet()
         when {
             actualTargets.any { it in redundantTargets } ->
                 trace.report(
@@ -160,7 +160,7 @@ object ModifierCheckerCore {
             is FunctionDescriptor -> KotlinTarget.FUNCTION_LIST
             else -> KotlinTarget.FILE_LIST
         }
-        val deprecatedParents = deprecatedParentTargetMap[modifier]
+        val deprecatedParents = deprecatedParentTargetMap[modifier.tokenId]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
             trace.report(
                 Errors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION.on(
@@ -180,7 +180,7 @@ object ModifierCheckerCore {
                 )
             )
         }
-        val possibleParentPredicate = possibleParentTargetPredicateMap[modifier] ?: return true
+        val possibleParentPredicate = possibleParentTargetPredicateMap[modifier.tokenId] ?: return true
         if (actualParents.any { possibleParentPredicate.isAllowed(it, languageVersionSettings) }) return true
         trace.report(
             Errors.WRONG_MODIFIER_CONTAINING_DECLARATION.on(
@@ -200,7 +200,7 @@ object ModifierCheckerCore {
     ): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
 
-        val dependencies = featureDependencies[modifier] ?: return true
+        val dependencies = featureDependencies[modifier.tokenId] ?: return true
         for (dependency in dependencies) {
             val restrictedTargets = featureDependenciesTargets[dependency]
             if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {

@@ -26,9 +26,7 @@ internal fun checkCompatibilityType(
     reportedNodes: MutableSet<FirModifier<*>>,
     owner: FirElement?
 ) {
-    val firstModifierToken = firstModifier.token
-    val secondModifierToken = secondModifier.token
-    when (val compatibilityType = compatibility(firstModifierToken, secondModifierToken)) {
+    when (val compatibilityType = compatibility(firstModifier.token.tokenId, secondModifier.token.tokenId)) {
         Compatibility.COMPATIBLE -> {
         }
         Compatibility.REPEATED ->
