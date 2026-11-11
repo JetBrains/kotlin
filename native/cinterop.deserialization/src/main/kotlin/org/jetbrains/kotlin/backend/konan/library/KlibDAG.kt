@@ -393,10 +393,14 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
                         val maybeDependencyNodes = contributedPackageToNode[importedSignature.packageFqName()]
                         if (!maybeDependencyNodes.isNullOrEmpty()) {
                             inner@ for (maybeDependencyNode in maybeDependencyNodes) {
-                                if (populateSignatureIndicesForLibrary(maybeDependencyNode.library)) {
-                                    // If we are here, then the indices just have been populated, and it makes sense to check them.
-                                    declaredSignatureToNode[importedSignature]?.let { dependencyNodeV2 ->
-                                        node.recordDependency(dependencyNodeV2)
+                                if (!nodeToImportedSignatures.containsKey(maybeDependencyNode)) {
+                                    // The indices were not populated earlier. Populate them now.
+                                    val extractedSignatures = maybeDependencyNode.library.extractTopLevelSignatures()
+                                    populateSignatureIndicesForLibrary(maybeDependencyNode, extractedSignatures)
+
+                                    // And check if the searched signature is among signatures declared in this node.
+                                    if (importedSignature in extractedSignatures.declaredSignatures) {
+                                        node.recordDependency(maybeDependencyNode)
                                         break@inner
                                     }
                                 }
@@ -456,17 +460,10 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
 
     /**
      * Populates [declaredSignatureToNode] and [nodeToImportedSignatures] indices.
-     *
-     * @return `true` if the indices have been populated as a result of this [populateSignatureIndicesForLibrary] call.
-     *         `false` if the indices have been already populated earlier.
      */
-    private fun populateSignatureIndicesForLibrary(library: KotlinLibrary): Boolean {
+    private fun populateSignatureIndicesForLibrary(library: KotlinLibrary) {
         val node = dagUnderConstruction.getValue(library)
-        if (nodeToImportedSignatures.containsKey(node)) return false // The indices were populated earlier.
-
         populateSignatureIndicesForLibrary(node, library.extractTopLevelSignatures())
-
-        return true // The indices were populated now.
     }
 
     /**
