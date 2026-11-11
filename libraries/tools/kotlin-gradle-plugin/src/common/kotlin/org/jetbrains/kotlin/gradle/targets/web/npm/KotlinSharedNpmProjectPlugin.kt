@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.web.npm.shared.setupSharedNpmProject
 
 /**
  * Creates one shared npm project per platform, JS and WasmJS independently, from the
- * package.json files of the projects declared on the `kotlinNpmSharedDependencies` and
+ * package.json files of the projects declared on the `kotlinJsNpmSharedDependencies` and
  * `kotlinWasmNpmSharedDependencies` configurations. Must be applied to the root project.
  */
 @ExperimentalKotlinGradlePluginApi

@@ -2821,7 +2821,7 @@ internal object KotlinToolingDiagnostics {
                     "These files could not be parsed or have a compilation without a name, so their npm dependencies would be missing from the shared npm project:\n" +
                             files.joinToString("\n") { "  - $it" }
                 }
-                .solution { "Rebuild the projects that produced them, declared on the 'kotlinNpmSharedDependencies' / 'kotlinWasmNpmSharedDependencies' configurations." }
+                .solution { "Rebuild the projects that produced them, declared on the 'kotlinJsNpmSharedDependencies' /'kotlinWasmNpmSharedDependencies' configurations." }
         }
     }
 

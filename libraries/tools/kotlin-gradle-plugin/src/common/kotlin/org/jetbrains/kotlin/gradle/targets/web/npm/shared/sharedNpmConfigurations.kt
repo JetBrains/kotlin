@@ -43,7 +43,7 @@ internal val HasPlatformDisambiguator.npmDependenciesReportConfigurationName: St
     get() = lowerCamelCaseName("kotlin", "npmDependenciesReport", platformName)
 
 internal val HasPlatformDisambiguator.npmSharedDependenciesConfigurationName: String
-    get() = extensionName("npmSharedDependencies")
+    get() = lowerCamelCaseName("kotlin", platformName, "npmSharedDependencies")
 
 internal val HasPlatformDisambiguator.npmDependenciesReportResolverConfigurationName: String
     get() = lowerCamelCaseName("kotlin", "npmDependenciesReport", platformName, "resolver")

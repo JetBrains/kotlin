@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 internal val HasPlatformDisambiguator.setupSharedNpmProjectTaskName: String
-    get() = extensionName("setupSharedNpmProject")
+    get() = lowerCamelCaseName("kotlin", platformName, "setupSharedNpmProject")
 
 /**
  * Sets up the consumer side of the shared-npm-project flow on the root project for one
