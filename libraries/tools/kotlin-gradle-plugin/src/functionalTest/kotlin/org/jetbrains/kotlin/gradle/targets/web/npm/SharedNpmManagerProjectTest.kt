@@ -34,7 +34,7 @@ class SharedNpmManagerProjectTest {
 
     private fun subproject(name: String, configure: KotlinMultiplatformExtension.() -> Unit): ProjectInternal {
         val project = buildProjectWithMPP(projectBuilder = { withParent(root).withName(name) }) { kotlin(configure) }
-        root.dependencies.add("kotlinNpmSharedDependencies", root.dependencies.project(mapOf("path" to project.path)))
+        root.dependencies.add("kotlinJsNpmSharedDependencies", root.dependencies.project(mapOf("path" to project.path)))
         root.dependencies.add("kotlinWasmNpmSharedDependencies", root.dependencies.project(mapOf("path" to project.path)))
         project.evaluate()
         return project
@@ -50,7 +50,7 @@ class SharedNpmManagerProjectTest {
         root.configurations.getByName(configurationName).incoming.artifactView { it.lenient(true) }.files.files.sorted()
 
     private fun assembleJsSharedNpmProject(): File {
-        (root.tasks.getByName("kotlinSetupSharedNpmProject") as KotlinSetupSharedNpmProjectTask).assemble()
+        (root.tasks.getByName("kotlinJsSetupSharedNpmProject") as KotlinSetupSharedNpmProjectTask).assemble()
         return root.layout.buildDirectory.dir("js/shared-npm-project").get().asFile
     }
 

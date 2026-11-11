@@ -11,7 +11,6 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
-import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -60,9 +58,9 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             }
             buildScriptInjection {
                 project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
-                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
-                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-web")))
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-web")))
                 project.dependencies.add("kotlinWasmNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
             }
 
@@ -116,7 +114,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             val libBWasmDependencies = mapOf("cowsay" to "9.9.9")
             val libWebDependencies = libBJsDependencies
 
-            build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
+            build("kotlinJsSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertTasksExecuted(
                     ":lib-a:jsNpmDependenciesReport",
                     ":lib-a:jsTestNpmDependenciesReport",
@@ -194,7 +192,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                 )
             }
 
-            build("kotlinSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
+            build("kotlinJsSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
                 assertConfigurationCacheReused()
                 assertTasksUpToDate(
                     ":lib-a:jsNpmDependenciesReport",
@@ -205,7 +203,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     ":lib-b:wasmJsTestNpmDependenciesReport",
                     ":lib-web:jsNpmDependenciesReport",
                     ":lib-web:jsTestNpmDependenciesReport",
-                    ":kotlinSetupSharedNpmProject",
+                    ":kotlinJsSetupSharedNpmProject",
                     ":kotlinWasmSetupSharedNpmProject",
                 )
             }
@@ -221,8 +219,8 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             }
             buildScriptInjection {
                 project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
-                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
             }
 
             includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
@@ -281,8 +279,8 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             }
             buildScriptInjection {
                 project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":core")))
-                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":test-utils")))
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":core")))
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":test-utils")))
             }
 
             includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "core") {
@@ -317,7 +315,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             val testUtilsDependencies = mapOf("left-pad" to "1.3.0") + coreDependencies
 
             // core:jsTest needs test-utils main, which needs core main: a separate task, so no cycle.
-            build("kotlinSetupSharedNpmProject") {
+            build("kotlinJsSetupSharedNpmProject") {
                 assertTasksExecuted(
                     ":core:jsNpmDependenciesReport",
                     ":core:jsTestNpmDependenciesReport",
@@ -429,8 +427,8 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             }
             buildScriptInjection {
                 project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
-                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
+                project.dependencies.add("kotlinJsNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
             }
 
             includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
@@ -479,7 +477,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             val firstDependencies = mapOf("is-even" to "1.0.0")
             val secondDependencies = mapOf("is-odd" to "3.0.1")
 
-            build("kotlinSetupSharedNpmProject") {
+            build("kotlinJsSetupSharedNpmProject") {
                 assertTasksExecuted(
                     ":lib-a:firstNpmDependenciesReport",
                     ":lib-a:secondNpmDependenciesReport",
