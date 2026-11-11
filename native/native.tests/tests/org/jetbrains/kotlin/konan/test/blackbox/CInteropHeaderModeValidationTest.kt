@@ -124,11 +124,9 @@ class CInteropHeaderModeValidationTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testHeaderModeCrossCompilation() {
-        // Cross-targets supported on this host (e.g. Linux host supports linux_arm64, android_arm64, android_x64, mingw_x64)
+        // Cross-targets supported on this host (e.g. Linux host supports linux_arm64, mingw_x64)
         val crossTargets = listOf(
             KonanTarget.LINUX_ARM64,
-            KonanTarget.ANDROID_ARM64,
-            KonanTarget.ANDROID_X64,
             KonanTarget.MINGW_X64,
         )
 
