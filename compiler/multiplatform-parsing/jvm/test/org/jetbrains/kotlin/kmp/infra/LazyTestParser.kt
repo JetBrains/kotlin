@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KotlinParser
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
+import org.jetbrains.kotlin.tooling.core.withClosure
 
 /**
  * Builds [KmpSyntaxNode] trees with lazily parseable blocks and lambdas.
@@ -158,17 +159,28 @@ private fun TestSyntaxElement<SyntaxNode>.substitute(
 private fun TestSyntaxElement<SyntaxNode>.shift(delta: Int): TestParseNode<SyntaxNode> =
     TestParseNode(name, start + delta, end + delta, syntaxElement, children.map { it.shift(delta) })
 
+/**
+ * The tree is traversed iteratively because a recursive traversal overflows the stack on deeply nested code (KTI-3876).
+ */
 fun SyntaxNode.toTestParseNode(shift: Int = 0): TestParseNode<SyntaxNode> {
-    return TestParseNode(
-        type.toString(),
-        startOffset + shift,
-        endOffset + shift,
-        this,
+    val nodes = withClosure { node ->
         // LightTree and PSI builders ignore empty leaf tokens by default (for instance, `DANGLING_NEWLINE`)
-        children().filter { it.startOffset != it.endOffset || it.isMarker() }
-            .map { it.toTestParseNode(shift) }
-            .toList(),
-    )
+        node.children().filter { it.startOffset != it.endOffset || it.isMarker() }.asIterable()
+    }
+
+    // The BFS order of `nodes` guarantees that parents are visited before their children and siblings are visited in order
+    val childrenByNode = HashMap<SyntaxNode, MutableList<TestParseNode<SyntaxNode>>>(nodes.size)
+    lateinit var root: TestParseNode<SyntaxNode>
+    for (node in nodes) {
+        val children = mutableListOf<TestParseNode<SyntaxNode>>().also { childrenByNode[node] = it }
+        val testParseNode = TestParseNode(node.type.toString(), node.startOffset + shift, node.endOffset + shift, node, children)
+        if (node == this) {
+            root = testParseNode
+        } else {
+            childrenByNode.getValue(node.parent()!!).add(testParseNode)
+        }
+    }
+    return root
 }
 
 private fun SyntaxNode.isMarker(): Boolean =
