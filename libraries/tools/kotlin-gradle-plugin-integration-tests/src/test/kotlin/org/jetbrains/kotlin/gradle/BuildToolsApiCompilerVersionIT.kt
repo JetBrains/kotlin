@@ -63,22 +63,6 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("Non-existent compiler version from a resolution rule without a pinned version reports KotlinCompilerVersionNotFound")
-    fun compileWithNonExistentCompilerVersionFromResolutionRuleWithoutPinnedVersion(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            forceNonExistentCompilerVersion()
-            buildAndFail("compileKotlin") {
-                assertHasDiagnostic(
-                    KotlinToolingDiagnostics.KotlinCompilerVersionNotFound,
-                    withSubstring = "A dependency resolution rule replaced version '${TestVersions.Kotlin.CURRENT}', the Kotlin Gradle plugin version.",
-                )
-                // Build fails while the task graph is calculated, before :compileKotlin is scheduled.
-                assertTasksAreNotInTaskGraph(":compileKotlin")
-            }
-        }
-    }
-
-    @GradleTest
     @DisplayName("Switching between non-existent and existing compiler versions reports KotlinCompilerVersionNotFound only for the missing one")
     fun compileAfterSwitchingCompilerVersion(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {

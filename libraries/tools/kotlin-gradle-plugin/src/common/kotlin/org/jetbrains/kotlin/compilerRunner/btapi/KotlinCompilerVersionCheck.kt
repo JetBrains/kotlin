@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 
 internal fun Project.checkKotlinCompilerVersionResolves(pluginVersion: String) {
     val compilerVersion = kotlinExtensionOrNull?.compilerVersion?.get() ?: return
+    if (compilerVersion == pluginVersion) return
     val unresolvedCompiler = configurations.getByName(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
         .incoming.resolutionResult.root.dependencies
         .filterIsInstance<UnresolvedDependencyResult>()
@@ -23,8 +24,6 @@ internal fun Project.checkKotlinCompilerVersionResolves(pluginVersion: String) {
         ?: return
     val attemptedVersion = (unresolvedCompiler.attempted as ModuleComponentSelector).version
     reportDiagnostic(
-        KotlinToolingDiagnostics.KotlinCompilerVersionNotFound(
-            compilerVersion, attemptedVersion, pluginVersion, unresolvedCompiler.failure.message
-        )
+        KotlinToolingDiagnostics.KotlinCompilerVersionNotFound(compilerVersion, attemptedVersion, unresolvedCompiler.failure.message)
     )
 }

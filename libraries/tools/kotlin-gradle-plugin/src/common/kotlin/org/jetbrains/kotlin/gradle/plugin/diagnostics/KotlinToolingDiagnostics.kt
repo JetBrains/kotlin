@@ -2575,23 +2575,12 @@ internal object KotlinToolingDiagnostics {
     }
 
     internal object KotlinCompilerVersionNotFound : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(
-            compilerVersion: String,
-            attemptedVersion: String,
-            pluginVersion: String,
-            resolutionFailure: String?,
-        ) = build {
-            val notFound = "Could not find Kotlin compiler version '$attemptedVersion'"
-            val replaced = "A dependency resolution rule replaced version '$compilerVersion'"
-            val message = when {
-                attemptedVersion == compilerVersion && compilerVersion == pluginVersion ->
-                    "$notFound, the Kotlin Gradle plugin version."
-                attemptedVersion == compilerVersion ->
-                    "$notFound set via 'kotlin.compilerVersion'."
-                compilerVersion == pluginVersion ->
-                    "$notFound. $replaced, the Kotlin Gradle plugin version."
-                else ->
-                    "$notFound. $replaced set via 'kotlin.compilerVersion'."
+        operator fun invoke(compilerVersion: String, attemptedVersion: String, resolutionFailure: String?) = build {
+            val message = if (attemptedVersion == compilerVersion) {
+                "Could not find Kotlin compiler version '$attemptedVersion' set via 'kotlin.compilerVersion'."
+            } else {
+                "Could not find Kotlin compiler version '$attemptedVersion'. " +
+                        "A dependency resolution rule replaced version '$compilerVersion' set via 'kotlin.compilerVersion'."
             }
             title { "Kotlin compiler version not found" }
                 .description { message + resolutionFailure?.let { "\n$it" }.orEmpty() }
