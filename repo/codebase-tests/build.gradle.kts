@@ -110,7 +110,7 @@ projectTests {
 tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
     doNotTrackState("Should always run")
     description = "Updates the 'testLifecycleTask.dump.txt' file"
-    classpath = project.files(sourceSets.main.map { it.runtimeClasspath })
+    classpath = files(sourceSets.main.map { it.runtimeClasspath })
     workingDir = rootDir
     mainClass = "org.jetbrains.kotlin.code.UpdateTestLifecycleTaskDump"
 }
@@ -126,13 +126,14 @@ tasks.register<JavaExec>("updateDomainsDump") {
 tasks.configureEach {
     if (this !is JavaForkOptions) return@configureEach
 
-    /* The dump includes tests from Kotlin/Native, updating it requires those parts of the build to be enabled */
-    val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled
-    val projectPath = project.path
-    doFirst {
-        if (!isKotlinNativeEnabled.get()) error(
-            "Running '$projectPath' requires Kotlin/Native to be enabled (-Pkotlin.native.enabled=true)"
-        )
+    /* The dump includes tests from Kotlin/Native */
+    if (this is Test) {
+        val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled
+        doFirst {
+            if (!isKotlinNativeEnabled.get()) error(
+                "Running '$path' requires Kotlin/Native to be enabled (-Pkotlin.native.enabled=true)"
+            )
+        }
     }
 
     /* Nested/Deep debugging support */
