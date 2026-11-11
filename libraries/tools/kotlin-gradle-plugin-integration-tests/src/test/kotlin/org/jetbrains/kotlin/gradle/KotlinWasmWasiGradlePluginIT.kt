@@ -217,12 +217,17 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         build(":wasmWasiTest") {
             assertTasksExecuted(":kotlinWasm${engineSetup}Setup")
             assertTasksExecuted(":compileKotlinWasmWasi")
+            assertTasksExecuted(":compileTestDevelopmentExecutableKotlinWasmWasiComponentize")
             assertTasksExecuted(":wasmWasi${engine}Test")
         }
 
         build(":wasmWasiTest") {
             assertTasksUpToDate(":kotlinWasm${engineSetup}Setup")
-            assertTasksUpToDate(":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
+            assertTasksUpToDate(
+                ":compileKotlinWasmWasi",
+                ":compileTestDevelopmentExecutableKotlinWasmWasiComponentize",
+                ":wasmWasi${engine}Test",
+            )
         }
 
         projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
