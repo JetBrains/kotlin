@@ -267,42 +267,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
     private fun moveNext(iterator: Iterator<FirDeclaration>, containingDeclaration: FirDeclaration?): FirDeclaration {
         if (!iterator.hasNext()) {
-            val containingClass = containingDeclaration as? FirRegularClass
-            val visitor = VisitorWithReplacement(containingClass)
-            return when (declarationToBuild) {
-                is KtProperty -> {
-                    val ownerSymbol = containingClass?.symbol
-                    visitor.convertProperty(declarationToBuild, ownerSymbol)
-                }
-                is KtConstructor<*> -> {
-                    if (containingClass == null) {
-                        // Constructor outside of class, syntax error, we should not do anything
-                        originalDeclaration
-                    } else {
-                        visitor.convertElement(declarationToBuild, originalDeclaration)
-                    }
-                }
-                is KtClassOrObject -> {
-                    when {
-                        originalDeclaration is FirConstructor -> visitor.processPrimaryConstructor(declarationToBuild, null)
-                        originalDeclaration is FirField -> visitor.processField(declarationToBuild, originalDeclaration)
-                        else -> visitor.convertElement(declarationToBuild, originalDeclaration)
-                    }
-                }
-                is KtDestructuringDeclaration -> visitor.convertDestructuringDeclaration(declarationToBuild, containingDeclaration)
-                is KtDestructuringDeclarationEntry -> visitor.convertDestructuringDeclarationEntry(declarationToBuild)
-                is KtCodeFragment -> {
-                    val firFile = visitor.convertElement(declarationToBuild, originalDeclaration) as FirFile
-                    firFile.codeFragment
-                }
-                is KtAnonymousInitializer -> {
-                    requireWithAttachment(containingDeclaration != null, { "Containing declaration is null" }) {
-                        withPsiEntry("elementToBuild.txt", declarationToBuild)
-                    }
-                    visitor.convertAnonymousInitializer(declarationToBuild, containingDeclaration)
-                }
-                else -> visitor.convertElement(declarationToBuild, originalDeclaration)
-            } as FirDeclaration
+            return buildDeclaration(containingDeclaration)
         }
 
         val parent = iterator.next()
@@ -330,6 +295,45 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 return moveNext(iterator, parent)
             }
         }
+    }
+
+    private fun buildDeclaration(containingDeclaration: FirDeclaration?): FirDeclaration {
+        val containingClass = containingDeclaration as? FirRegularClass
+        val visitor = VisitorWithReplacement(containingClass)
+        return when (declarationToBuild) {
+            is KtProperty -> {
+                val ownerSymbol = containingClass?.symbol
+                visitor.convertProperty(declarationToBuild, ownerSymbol)
+            }
+            is KtConstructor<*> -> {
+                if (containingClass == null) {
+                    // Constructor outside of class, syntax error, we should not do anything
+                    originalDeclaration
+                } else {
+                    visitor.convertElement(declarationToBuild, originalDeclaration)
+                }
+            }
+            is KtClassOrObject -> {
+                when (originalDeclaration) {
+                    is FirConstructor -> visitor.processPrimaryConstructor(declarationToBuild, null)
+                    is FirField -> visitor.processField(declarationToBuild, originalDeclaration)
+                    else -> visitor.convertElement(declarationToBuild, originalDeclaration)
+                }
+            }
+            is KtDestructuringDeclaration -> visitor.convertDestructuringDeclaration(declarationToBuild, containingDeclaration)
+            is KtDestructuringDeclarationEntry -> visitor.convertDestructuringDeclarationEntry(declarationToBuild)
+            is KtCodeFragment -> {
+                val firFile = visitor.convertElement(declarationToBuild, originalDeclaration) as FirFile
+                firFile.codeFragment
+            }
+            is KtAnonymousInitializer -> {
+                requireWithAttachment(containingDeclaration != null, { "Containing declaration is null" }) {
+                    withPsiEntry("elementToBuild.txt", declarationToBuild)
+                }
+                visitor.convertAnonymousInitializer(declarationToBuild, containingDeclaration)
+            }
+            else -> visitor.convertElement(declarationToBuild, originalDeclaration)
+        } as FirDeclaration
     }
 
     private fun PsiElement.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
