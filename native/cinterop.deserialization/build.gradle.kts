@@ -19,7 +19,6 @@ dependencies {
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":kotlinx-metadata-klib"))
     implementation(project(":native:kotlin-native-utils"))
-    compileOnly(project(":kotlin-metadata")) // Only to fix IDE reporting unresolved references (KTI-3323).
     compileOnly(libs.kotlinx.coroutines.core.jvm)
 }
 
