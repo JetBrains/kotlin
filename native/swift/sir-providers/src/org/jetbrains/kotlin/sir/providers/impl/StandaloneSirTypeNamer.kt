@@ -171,6 +171,13 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         else -> false
     }
 
+    // Whether every bound is one that Swift export adds itself: `_KotlinBridgeable`, `Hashable`.
+    private val SirTypeParameter.hasOnlyTrivialBounds: Boolean
+        get() = bounds.all {
+            val declaration = (it as? SirNominalType)?.typeDeclaration
+            declaration == KotlinRuntimeSupportModule.kotlinBridgeable || declaration == SirSwiftModule.hashable
+        }
+
     context(session: KaSession)
     private fun renderTypeArgumentForSymbol(symbol: KaClassLikeSymbol, paramIndex: Int, sirArg: SirType): String {
         val declParam = symbol.typeParameters.getOrNull(paramIndex)
@@ -185,6 +192,12 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
                 ) {
                     return "*"
                 }
+            }
+            if (argKtParam == null && sirArg.parameter.hasOnlyTrivialBounds) {
+                // A type parameter that Swift export made for a star projection in a parameter: `fun f(box: Box<*>)`
+                // is `func f<_T0>(box: Box<_T0>)`. It has no Kotlin type. Naming it `kotlin.Any?` breaks the bound of
+                // the declared parameter (`class Box<T : Any>`, `class Box<T : Animal?>`), and the bridge doesn't compile.
+                return "*"
             }
             if (declParam != null && (declParam.upperBounds.size > 1 || declParam.resolveUpperBound()?.containsKtTypeParameter(declParam) == true)) {
                 return "*"

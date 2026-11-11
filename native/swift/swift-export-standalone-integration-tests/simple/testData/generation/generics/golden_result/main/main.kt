@@ -696,7 +696,7 @@ public fun __root___takeBoxClosure__TypesOfArguments__U2829202D_U20main_Box_Swif
 
 @ExportedBridge("__root___takeBoxStarProjection__TypesOfArguments__main_Box__T0___")
 public fun __root___takeBoxStarProjection__TypesOfArguments__main_Box__T0___(box: kotlin.native.internal.NativePtr): Boolean {
-    val __box = kotlin.native.internal.ref.dereferenceExternalRCRef(box) as Box<kotlin.Any?>
+    val __box = kotlin.native.internal.ref.dereferenceExternalRCRef(box) as Box<*>
     takeBoxStarProjection(__box)
     return true
 }

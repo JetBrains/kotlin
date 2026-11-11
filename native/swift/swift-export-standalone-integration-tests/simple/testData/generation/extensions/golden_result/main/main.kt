@@ -294,7 +294,7 @@ public fun __root___genericConstrainedExtProp_get__TypesOfArgumentsE__main_Gener
 
 @ExportedBridge("__root___genericExtFun__TypesOfArgumentsE__main_GenericClass__T0___")
 public fun __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__T0___(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.Any?>
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<*>
     val _result = __receiver.genericExtFun()
     return _result.objcPtr()
 }
