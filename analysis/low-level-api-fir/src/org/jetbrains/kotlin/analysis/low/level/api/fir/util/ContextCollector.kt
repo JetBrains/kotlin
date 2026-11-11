@@ -920,19 +920,21 @@ private class ContextCollectorVisitor(
      * the call itself is resolved with the implicit receiver of the containing class (required for super calls to inner classes),
      * while its children (e.g., arguments) are resolved without it.
      */
-    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) = withProcessor(delegatedConstructorCall) {
-        val constructor = context.containerIfAny as? FirConstructor
-            ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
-                withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+        withProcessor(delegatedConstructorCall) {
+            val constructor = context.containerIfAny as? FirConstructor
+                ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
+                    withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+                }
+
+            context.forDelegatedConstructorCallResolution {
+                dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
             }
 
-        context.forDelegatedConstructorCallResolution {
-            dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
-        }
-
-        onActive {
-            context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
-                processChildren(delegatedConstructorCall)
+            onActive {
+                context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
+                    processChildren(delegatedConstructorCall)
+                }
             }
         }
     }
