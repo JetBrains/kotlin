@@ -49,6 +49,7 @@ object CompilerModules {
         ":core:error.handling",
         ":core:names",
         ":core:language.model",
+        ":core:language.syntax",
         ":core:language.targets",
         ":core:language.targets.jvm",
         ":core:language.version-settings",
@@ -94,7 +95,6 @@ object CompilerModules {
         ":compiler:fir:fir2ir:jvm-backend",  // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
         ":compiler:fir:fir2ir", // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
         ":compiler:java-direct",
-        ":core:language.syntax",
     )
 
     /**
