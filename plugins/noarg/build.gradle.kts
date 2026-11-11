@@ -21,6 +21,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-compiler-tests")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(project(":compiler:fir:plugin.api"))
