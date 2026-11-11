@@ -71,7 +71,7 @@ internal abstract class PreInstalledWasmToolsToolchainServiceImpl @Inject intern
 
     /**
      * Asks wasm-tools itself about its version. `wasm-tools --version` prints `wasm-tools <version>`,
-     * so the last whitespace-separated token of the output is the version.
+     * possibly followed by build metadata or commit information.
      * The platform is detected from the host, because wasm-tools does not report it.
      */
     private fun detectInstalledWasmTools(command: String): Pair<WasmToolsVersion, WasmToolsBuildPlatform> {
@@ -91,10 +91,10 @@ internal abstract class PreInstalledWasmToolsToolchainServiceImpl @Inject intern
         }
 
         val versionOutput = output.toString(Charsets.UTF_8.name()).trim()
-        val version = versionOutput.split(Regex("\\s+")).lastOrNull()
-        check(!version.isNullOrBlank()) { "Unexpected output of '$command $VERSION_ARGUMENT': $versionOutput" }
+        val version = parseWasmToolsVersion(versionOutput)
+        check(version != null) { "Unexpected output of '$command $VERSION_ARGUMENT': $versionOutput" }
 
-        return WasmToolsVersion(version) to providers.detectWasmToolsPlatform().get()
+        return version to providers.detectWasmToolsPlatform().get()
     }
 
     companion object {
@@ -126,3 +126,15 @@ internal abstract class PreInstalledWasmToolsToolchainServiceImpl @Inject intern
         }
     }
 }
+
+@OptIn(ExperimentalWasmDsl::class)
+internal fun parseWasmToolsVersion(versionOutput: String): WasmToolsVersion? {
+    val version = versionOutput.trim().split(Regex("\\s+")).let {
+        it.takeIf { it.size == 1 }?.single() ?: it.getOrNull(1)
+    }
+    return if (version != null && version.matches(WASM_TOOLS_VERSION_PATTERN)) {
+        WasmToolsVersion(version)
+    } else null
+}
+
+private val WASM_TOOLS_VERSION_PATTERN = Regex("""v?\d+\.\d+\.\d+.*""")

@@ -121,17 +121,40 @@ abstract class WasmToolsExecutable @Inject internal constructor() {
 /**
  * A wasm-tools version, for example `1.0.0`.
  *
- * @param version the version string. Must not be blank.
+ * @property version the version string. Must not be blank.
  */
 @ExperimentalWasmDsl
-class WasmToolsVersion(
+sealed interface WasmToolsVersion : Serializable {
+    /**
+     * Represents the version of the wasm-tools.
+     *
+     * The version is specified as a non-blank string, typically in the format of `MAJOR.MINOR.PATCH`
+     * (e.g., `1.0.0`).
+     */
     @get:Input
-    val version: String,
-) : Serializable {
+    val version: String
+}
+
+@ExperimentalWasmDsl
+private data class WasmToolsVersionImpl(
+    override val version: String
+) : WasmToolsVersion {
     init {
         require(version.isNotBlank()) { "wasm-tools version must not be blank" }
     }
+
+    override fun toString(): String = version
 }
+
+/**
+ * Creates a [WasmToolsVersion] from the given [version] string, for example `1.0.0`.
+ *
+ * @param version the wasm-tools version. Must not be blank.
+ * @throws IllegalArgumentException if [version] is blank.
+ */
+@ExperimentalWasmDsl
+fun WasmToolsVersion(version: String): WasmToolsVersion =
+    WasmToolsVersionImpl(version)
 
 /**
  * An operating system and architecture pair, using the wasm-tools distribution naming,
@@ -141,15 +164,45 @@ class WasmToolsVersion(
  * @property arch the CPU architecture, for example `x64` or `arm64`.
  */
 @ExperimentalWasmDsl
-class WasmToolsBuildPlatform(
-    @get:Input
-    val os: String,
-    @get:Input
-    val arch: String,
-) : Serializable {
+sealed interface WasmToolsBuildPlatform : Serializable {
 
+    /**
+     * Represents the operating system name for a given platform in the wasm-tools distribution naming convention.
+     *
+     * The `os` variable specifies the operating system being targeted or used and is expected
+     * to contain values like `linux`, `darwin`, or `win` depending on the supported platforms.
+     */
+    @get:Input
+    val os: String
+
+    /**
+     * Represents the CPU architecture for a given platform in the wasm-tools distribution naming convention.
+     *
+     * The `arch` variable specifies the target CPU architecture and is expected to contain values like `x64` or `arm64`
+     * for supported architectures.
+     */
+    @get:Input
+    val arch: String
+}
+
+@ExperimentalWasmDsl
+private data class WasmToolsBuildPlatformImpl(
+    override val os: String,
+    override val arch: String,
+) : WasmToolsBuildPlatform {
     /**
      * Returns the platform in the wasm-tools distribution naming format `<os>-<arch>`, for example `linux-x64`.
      */
     override fun toString(): String = "$os-$arch"
 }
+
+/**
+ * Creates a [WasmToolsBuildPlatform] for the given [os] and [arch],
+ * using the wasm-tools distribution naming, for example `linux` and `x64`.
+ *
+ * @param os the operating system name, for example `linux`, `darwin` or `win`.
+ * @param arch the CPU architecture, for example `x64` or `arm64`.
+ */
+@ExperimentalWasmDsl
+fun WasmToolsBuildPlatform(os: String, arch: String): WasmToolsBuildPlatform =
+    WasmToolsBuildPlatformImpl(os, arch)

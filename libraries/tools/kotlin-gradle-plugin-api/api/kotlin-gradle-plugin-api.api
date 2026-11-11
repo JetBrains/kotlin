@@ -926,11 +926,9 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/PreIns
 	public abstract fun getWasmToolsExecutable ()Lorg/gradle/api/provider/Property;
 }
 
-public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform : java/io/Serializable {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public final fun getArch ()Ljava/lang/String;
-	public final fun getOs ()Ljava/lang/String;
-	public fun toString ()Ljava/lang/String;
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform : java/io/Serializable {
+	public abstract fun getArch ()Ljava/lang/String;
+	public abstract fun getOs ()Ljava/lang/String;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsExecutable {
@@ -964,9 +962,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmto
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService$Parameters : org/gradle/api/services/BuildServiceParameters {
 }
 
-public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion : java/io/Serializable {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun getVersion ()Ljava/lang/String;
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainServiceKt {
+	public static final fun WasmToolsBuildPlatform (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform;
+	public static final fun WasmToolsVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion : java/io/Serializable {
+	public abstract fun getVersion ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/CInteropSettings : org/gradle/api/Named {
