@@ -23,6 +23,9 @@ abstract class AbstractJsInvalidationPerModuleTest :
 abstract class AbstractJsES6InvalidationPerFileTest :
     JsAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirES6/perFile")
 
+abstract class AbstractJsES6InvalidationPerClassTest :
+    JsAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_CLASS, "incrementalOut/invalidationFirES6/perClass")
+
 abstract class AbstractJsES6InvalidationPerModuleTest :
     JsAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirES6/perModule")
 

@@ -7,15 +7,19 @@ MODULES: lib1, lib2, main
 STEP 0:
     libs: lib1, lib2, main
     dirty js modules: lib1, lib2, main
+    dirty js per-class files: main, lib1/l1.export, lib1/l1, lib1, lib2/l2, main/m.export, main/m
 STEP 1:
     libs: lib1, lib2, main
     dirty js modules: lib1
+    dirty js per-class files: lib1/l1.export, lib1/l1
 STEP 2:
     libs: lib1, lib2, main
     dirty js modules: lib1
+    dirty js per-class files: lib1/l1.export, lib1/l1
 STEP 3:
     libs: lib1, lib2, main
     dirty js modules: lib1, lib2
+    dirty js per-class files: lib2/l2.export, lib2/l2, lib2
 STEP 4:
     libs: lib1, lib2, main
     dirty js modules: lib2
