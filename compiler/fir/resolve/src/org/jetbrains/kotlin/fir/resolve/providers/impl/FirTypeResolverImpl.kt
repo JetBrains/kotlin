@@ -648,13 +648,15 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
             is FirUnionTypeRef -> {
                 val coneTypes = typeRef.types.mapTo(mutableListOf()) {
-                    if (expandTypeAliases) it.coneType.fullyExpandedType(session) else it.coneType
+                    if (expandTypeAliases) {
+                        it.coneType.fullyExpandedType(session)
+                    } else {
+                        it.coneType.fullyExpandedWith(supertypeSupplier)
+                    }
                 }
 
-                val firstType = coneTypes.first().fullyExpandedWith(supertypeSupplier)
-                val primaryType = if (
-                    firstType.isNonRichError(supertypeSupplier) || firstType is ConeUnionType
-                ) {
+                val firstType = coneTypes.first()
+                val primaryType = if (firstType.isNonRichError(supertypeSupplier)) {
                     coneTypes.removeAt(0)
                     firstType.applyIf(typeRef.isMarkedNullable) {
                         withNullability(true, session.typeContext)
@@ -673,7 +675,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 FirTypeResolutionResult(
                     if (coneTypes.any { it.isNonRichError(supertypeSupplier) }) {
                         ConeErrorType(
-                            ConeSimpleDiagnostic(
+                            (unionType as? ConeErrorType)?.diagnostic ?: ConeSimpleDiagnostic(
                                 "Non-error component must appear first",
                                 NonErrorComponentWrongPositionInUnionType
                             ),
@@ -720,9 +722,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun ConeKotlinType.isNonRichError(supertypeSupplier: SupertypeSupplier): Boolean {
         val expandedType = fullyExpandedWith(supertypeSupplier)
-        // If a component is a nested union type, we treat it as legal in non-first positions,
-        // so that we don't override more specific errors from the nested union type.
-        if (expandedType is ConeUnionType) return false
+        if (expandedType is ConeUnionType) return !expandedType.primaryType.isNothing
         val symbol = expandedType.unwrapToSimpleTypeUsingLowerBound().toSymbol(session) ?: return false
         return !symbol.isBoundedByRichError(supertypeSupplier)
     }

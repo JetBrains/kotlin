@@ -341,9 +341,10 @@ private open class LLFirSupertypeComputationSession(
 
     /**
      * Map from [FirClassLikeDeclaration] to [List<FirResolvedTypeRef>>],
-     * where the list contains at least one [FirErrorTypeRef] for looped references
+     * where the list contains at least one [FirErrorTypeRef] for looped references or updated [FirResolvedTypeRef] in case of
+     * typealiases to union types.
      */
-    private val updatedTypesForDeclarationsWithLoop: MutableMap<FirClassLikeDeclaration, List<FirResolvedTypeRef>> = hashMapOf()
+    private val updatedTypesForDeclarations: MutableMap<FirClassLikeDeclaration, List<FirResolvedTypeRef>> = hashMapOf()
 
     /**
      * @param declaration declaration to be checked for loops
@@ -364,7 +365,7 @@ private open class LLFirSupertypeComputationSession(
 
         visited.clear()
         looped.clear()
-        return updatedTypesForDeclarationsWithLoop[declaration]
+        return updatedTypesForDeclarations[declaration]
     }
 
     /**
@@ -395,7 +396,7 @@ private open class LLFirSupertypeComputationSession(
      * ```
      */
     override fun updateSuperType(classLikeDeclaration: FirClassLikeDeclaration, supertypeRefs: List<FirResolvedTypeRef>) {
-        updatedTypesForDeclarationsWithLoop.merge(classLikeDeclaration, supertypeRefs) { oldRefs, newRefs ->
+        updatedTypesForDeclarations.merge(classLikeDeclaration, supertypeRefs) { oldRefs, newRefs ->
             buildList(oldRefs.size) {
                 for ([old, new] in oldRefs.zip(newRefs)) {
                     if (old is FirErrorTypeRef) {

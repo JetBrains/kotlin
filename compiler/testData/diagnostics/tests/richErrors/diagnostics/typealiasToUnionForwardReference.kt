@@ -27,5 +27,13 @@ typealias X1 = <!NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE!>String | X2<!>
 typealias X3 = Int | E2
 typealias X2 = X3 | E1
 
+typealias Nested1 = List<<!NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE!>String | Nested2<!>>
+typealias Nested2 = Int | E1
+
+interface I<T>
+interface J
+class C : J, I<<!NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE!>E1 | ArgTa<!>>
+typealias ArgTa = String | E2
+
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
 typeAliasDeclaration */

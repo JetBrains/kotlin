@@ -809,7 +809,7 @@ open class SupertypeComputationSession {
             val isSubtypingInvolved = wasSubtypingInvolved || isSubtypingCurrentlyInvolved
             var superTypeNeedsUpdate = false
             val resultSupertypeRefs = mutableListOf<FirResolvedTypeRef>()
-            for (supertypeRef in supertypeRefs) {
+            for ((index, supertypeRef = value) in supertypeRefs.withIndex()) {
                 if (isTypeAlias) {
                     // For case like typealias S = @S SomeAnnotation
                     for (annotation in supertypeRef.annotations) {
@@ -862,14 +862,25 @@ open class SupertypeComputationSession {
                             "Loop in supertypes involving ${classLikeDeclaration.symbol.classId}",
                             if (isTypeAlias) DiagnosticKind.RecursiveTypealiasExpansion else DiagnosticKind.LoopInSupertype
                         )
-                    } else if (isTypeAlias && supertypeRef.coneType is ConeUnionType && classLikeDeclaration.expandedTypeRef !is FirResolvedTypeRef) {
-                        // During the first resolution round, referenced type aliases might not have been resolved yet so
-                        // unions like `A | B` were optimistically resolved as `Nothing | A | B`.
+                    } else if (supertypeRef.coneType.contains { it is ConeUnionType }) {
+                        // During the first resolution round, referenced type aliases might not have been resolved yet,
+                        // so unions like `A | B` were optimistically resolved as `Nothing | A | B`.
                         // Now, `A` is expandable, and we know if it's actually bounded by `RichError` so we can rerun type resolution.
-                        superTypeNeedsUpdate = true
-                        supertypeResolver.useSpecificTypeResolverOn(classLikeDeclaration) { transformer, configuration ->
-                            transformer.transformTypeRef(classLikeDeclaration.expandedTypeRef, configuration)
+                        val originalTypeRef = when (classLikeDeclaration) {
+                            is FirTypeAlias -> classLikeDeclaration.expandedTypeRef
+                            is FirClass -> classLikeDeclaration.superTypeRefs[index]
                         }
+                        if (originalTypeRef !is FirResolvedTypeRef) {
+                            superTypeNeedsUpdate = true
+                            supertypeResolver.useSpecificTypeResolverOn(classLikeDeclaration) { transformer, configuration ->
+                                // Unresolve nested type refs because arguments in `List<String | TA>` are resolved by FirSpecificTypeResolverTransformer.
+                                val unresolvedTypeRef = FirUnresolveTypeRefsTransformer.transformTypeRef(originalTypeRef, null)
+                                transformer.transformTypeRef(unresolvedTypeRef, configuration)
+                            }
+                        } else {
+                            supertypeRef
+                        }
+
                     } else {
                         supertypeRef
                     }
@@ -940,12 +951,8 @@ open class SupertypeComputationSession {
                         source = typeRef.source
                         diagnostic = ConeUnionTypeInSupertype
                     }
-                    // When expandTypeAliasesInTypeResolution is disabled, we can have a valid union type `String | R` before expansion
-                    // which expands to `String | Int | E1`. In that case, we need to apply the expanded type to not lose the error.
-                    expanded is ConeErrorType && typeRef.coneType !is ConeErrorType ||
-                            session.languageVersionSettings.getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution) -> {
+                    session.languageVersionSettings.getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution) ->
                         typeRef.withReplacedConeType(expanded)
-                    }
                     else -> typeRef
                 }
             }
