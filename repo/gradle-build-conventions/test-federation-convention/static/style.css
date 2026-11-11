@@ -188,6 +188,25 @@ img {
 
 .chip[data-annotation]:hover::after, .chip[data-annotation]:hover::before { opacity: 1; }
 
+.chips-folded .chip {
+    display: inline-flex;
+    align-items: center;
+    white-space: pre;
+}
+
+.chips-folded .chip-fold {
+    display: inline-block;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-width 0.2s ease, opacity 0.2s ease;
+}
+
+.chips-folded .chip:hover .chip-fold {
+    max-width: 12em;
+    opacity: 1;
+}
+
 .theme-switcher {
     position: fixed;
     top: 10px;
