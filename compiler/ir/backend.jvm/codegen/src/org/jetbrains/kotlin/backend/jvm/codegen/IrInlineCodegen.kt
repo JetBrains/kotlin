@@ -454,6 +454,9 @@ class IrInlineCodegen(
                 finallyNode.localVariables.forEach {
                     processor.localVarsMetaInfo.addNewInterval(LocalVarNodeWrapper(it))
                 }
+                finallyNode.tryCatchBlocks.forEach {
+                    processor.tryBlocksMetaInfo.addNewInterval(TryCatchBlockNodeInfo(it, true))
+                }
             }
 
             curInstr = curInstr.next
