@@ -1,0 +1,7 @@
+Counter.init
+count: 2
+Counter.init
+count: 0
+count: 2
+PureSwift.init
+PureSwift.hello

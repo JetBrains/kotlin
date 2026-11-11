@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.swiftimport.standalone.session.StandaloneKirSession
 
 /**
- * Translates top-level functions of [this] module to KIR. All other declarations are ignored.
+ * Translates top-level functions and classes of [this] module to KIR. All other declarations are ignored.
  */
 internal fun SirModule.toKirModule(): KirModule {
     val kirSession = StandaloneKirSession(moduleToTranslate = this)

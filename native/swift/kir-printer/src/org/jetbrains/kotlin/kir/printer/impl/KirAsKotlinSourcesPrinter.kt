@@ -25,20 +25,33 @@ internal class KirAsKotlinSourcesPrinter private constructor(
             )
             val bridges = module.functionBridges()
             val declarationsString = with(printer) {
-                printBridgesHeader(bridges)
+                printHeader(bridges, module.allDeclarations().any { it is KirClass })
                 module.printChildren()
                 printBridges(bridges)
                 toString().trimIndent()
             }
             return declarationsString
         }
+
+        private val classPackageDependencies = listOf(
+            "kotlin.native.internal.NativePtr",
+            "kotlinx.cinterop.objcPtr",
+            "platform.darwin.NSObject",
+        )
     }
 
-    private fun printBridgesHeader(bridges: List<KirFunctionBridge>) {
-        if (bridges.isEmpty()) return
-        println("@file:kotlin.Suppress(\"DEPRECATION_ERROR\")")
-        println()
-        bridges.flatMap { it.kotlinFunctionBridge.packageDependencies }.distinct().forEach { println("import $it") }
+    private fun printHeader(bridges: List<KirFunctionBridge>, hasClasses: Boolean) {
+        val imports = buildList {
+            bridges.flatMapTo(this) { it.kotlinFunctionBridge.packageDependencies }
+            // TODO: Replace it with import support as types will be added
+            if (hasClasses) addAll(classPackageDependencies)
+        }.distinct()
+        if (bridges.isEmpty() && imports.isEmpty()) return
+        if (bridges.isNotEmpty()) {
+            println("@file:kotlin.Suppress(\"DEPRECATION_ERROR\")")
+            println()
+        }
+        imports.forEach { println("import $it") }
         println()
     }
 
@@ -53,28 +66,64 @@ internal class KirAsKotlinSourcesPrinter private constructor(
 
     private fun KirDeclaration.print() {
         when (this) {
+            is KirClass -> printDeclaration()
             is KirCallable -> printDeclaration()
         }
     }
 
     private fun KirDeclaration.printVisibility() = print("${this.visibility.value} ")
 
-    private fun KirCallable.printDeclaration() {
-        printVisibility()
-        printName()
-        print("()")
-        println(" {")
+    private fun KirClass.printDeclaration() {
+        printModifiers()
+        print("class ")
+        print(name)
+        // TODO: Replace hardcoded primary constructor with a normal implementation in KirClass as KirType will appear
+        println("(private val __obj: NSObject) {")
         withIndent {
-            body.print()
+            println("internal fun __ptr(): NativePtr = __obj.objcPtr()")
+            printChildren()
         }
         println("}")
     }
 
-    private fun KirCallable.printName() = print(
-        when (this) {
-            is KirFunction -> "fun $name"
+    private fun KirClass.printModifiers() {
+        printVisibility()
+        when (modality) {
+            KirModality.OPEN -> print("open ")
+            KirModality.FINAL -> print("final ")
+            KirModality.OVERRIDE -> throw IllegalStateException("OVERRIDE modality is not supported for classes")
+            KirModality.SEALED -> print("sealed ")
+            KirModality.ABSTRACT -> print("abstract ")
+            KirModality.UNSPECIFIED -> {}
         }
-    )
+    }
+
+    private fun KirCallable.printDeclaration() {
+        printVisibility()
+        printName()
+        printArguments()
+        if ((body ?: emptyBodyStub).statements.isNotEmpty()) {
+            println(" {")
+            withIndent {
+                body.print()
+            }
+            println("}")
+        }
+    }
+
+    private fun KirCallable.printName() {
+        when (this) {
+            is KirConstructor -> print("constructor")
+            is KirFunction -> print("fun $name")
+        }
+    }
+
+    private fun KirCallable.printArguments() {
+        when (this) {
+            is KirConstructor -> print("() : this(${delegationCallArguments.statements.joinToString(", ")})")
+            is KirFunction -> print("()")
+        }
+    }
 
     private fun KirFunctionBody?.print() = (this ?: emptyBodyStub)
         .statements

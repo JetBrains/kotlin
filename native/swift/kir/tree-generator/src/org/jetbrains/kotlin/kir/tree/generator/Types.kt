@@ -13,6 +13,7 @@ val pureAbstractElementType = type(BASE_PACKAGE, "KirElementBase", TypeKind.Clas
 val kotlinVisibilityType = type(BASE_PACKAGE, "KirVisibility", TypeKind.Class)
 val originType = type(BASE_PACKAGE, "KirOrigin", TypeKind.Class)
 val bridgeType = type(BASE_PACKAGE, "KirBridge", TypeKind.Class)
+val modalityKind = type(BASE_PACKAGE, "KirModality", TypeKind.Class)
 val functionBodyType = type(BASE_PACKAGE, "KirFunctionBody", TypeKind.Class)
 
 val kirImplementationDetailAnnotation = type(BASE_PACKAGE, "KirImplementationDetail", TypeKind.Class).toAnnotation()

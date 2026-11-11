@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.swiftimport.standalone.test.simple
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.provider
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.swiftimport.standalone.test.AbstractSwiftImportExecutionTest
 import org.jetbrains.kotlin.swiftimport.standalone.test.AbstractSwiftImportWithResultValidationTest
@@ -31,6 +34,12 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "SwiftImportExecutionTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
+                    // Imported Swift classes are wrapped into `platform.darwin.NSObject`.
+                    annotation(
+                        EnforcedProperty::class.java,
+                        "property" to ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS,
+                        "propertyValue" to "true",
+                    ),
                 ),
             ) {
                 model("", extension = null, recursive = false)
