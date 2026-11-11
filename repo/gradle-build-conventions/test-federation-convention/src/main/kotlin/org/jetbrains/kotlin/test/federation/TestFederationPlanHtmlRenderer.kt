@@ -16,6 +16,7 @@ internal class TestFederationPlanHtmlRenderer(
     companion object {
         private const val STYLE_CSS_FILE = ".test-federation.style.css"
         private const val THEME_SWITCHER_JS_FILE = ".test-federation.theme-switcher.js"
+        private const val CHIP_FOLDING_JS_FILE = ".test-federation.chip-folding.js"
         private const val FILTERING_SVG_FILE = ".test-federation.filtering-hierarchy.svg"
     }
 
@@ -27,6 +28,7 @@ internal class TestFederationPlanHtmlRenderer(
                 title("Test Federation")
                 link(rel = "stylesheet", href = STYLE_CSS_FILE)
                 script(src = THEME_SWITCHER_JS_FILE) {}
+                script(src = CHIP_FOLDING_JS_FILE) {}
             }
             body {
                 renderThemeSwitcher()
@@ -55,6 +57,7 @@ internal class TestFederationPlanHtmlRenderer(
 
     private fun BODY.renderPlan() {
         h2 { +"Execution plan" }
+        p { +"(hover test subset to see the reason behind it)" }
         table {
             tr {
                 th { +"Domain" }
@@ -90,20 +93,22 @@ internal class TestFederationPlanHtmlRenderer(
         when (subset) {
             AllTests -> {
                 span(classes = "chip chip-all-tests") {
-                    +"$ALL_TESTS_EMOJI all tests"
+                    +ALL_TESTS_EMOJI
+                    span("chip-fold") { +" all tests" }
                 }
             }
             SmokeTests -> {
                 span(classes = "chip chip-smoke-tests") {
-                    dataAnnotation = "@MustRunAlways"
-                    +"$SMOKE_TESTS_EMOJI smoke tests"
+                    +SMOKE_TESTS_EMOJI
+                    span("chip-fold") { +" smoke tests" }
                 }
             }
             else -> {
                 val domain = Domain.entries.first { contractTestsSubsetOf(it) == subset }
                 span(classes = "chip chip-contract-tests") {
-                    dataAnnotation = "@MustRunOnChangesIn${domain.name}"
-                    +"$CONTRACT_TESTS_EMOJI contracts for ${domain.name}"
+                    +CONTRACT_TESTS_EMOJI
+                    span("chip-fold") { +" contracts for" }
+                    +" ${domain.name}"
                 }
             }
         }
