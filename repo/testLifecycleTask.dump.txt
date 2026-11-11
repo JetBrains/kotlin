@@ -816,6 +816,7 @@ Not connected to any 'lifecycleTestTask':
   - :kotlin-compiler-native-image:generateReachabilityMetadataSmoke [Unknown]
   - :kotlin-compiler-native-image:test [Unknown]
   - :kotlin-daemon-client:test [BuildToolsApi]
+  - :kotlin-gradle-plugin-integration-tests:archTest [Gradle]
   - :kotlin-gradle-plugin-integration-tests:kgpAndroidTests [Gradle]
   - :kotlin-gradle-plugin-integration-tests:kgpDaemonTests [Gradle]
   - :kotlin-gradle-plugin-integration-tests:kgpJsBrowserTests [Gradle]
