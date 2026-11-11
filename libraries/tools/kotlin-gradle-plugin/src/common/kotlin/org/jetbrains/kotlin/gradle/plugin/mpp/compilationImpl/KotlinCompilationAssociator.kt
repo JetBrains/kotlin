@@ -52,17 +52,35 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
             project.filesProvider { main.defaultSourceSet.kotlin.classesDirectory.orNull?.asFile }
         )
 
-        // Adding declared dependencies
-        fun extend(aux: String, main: String) {
-            project.configurations.matching { it.name == aux }.configureEach { configuration ->
-                configuration.extendsFrom(project.configurations.getByName(main))
-            }
-        }
-        extend(auxiliary.legacyApiConfigurationName, main.legacyApiConfigurationName)
-        extend(auxiliary.legacyImplementationConfigurationName, main.legacyImplementationConfigurationName)
-        extend(auxiliary.legacyCompileOnlyConfigurationName, main.legacyCompileOnlyConfigurationName)
-        extend(auxiliary.legacyRuntimeOnlyConfigurationName, main.legacyRuntimeOnlyConfigurationName)
+        extendDeclaredDependencies(project, auxiliary, main)
     }
+}
+
+/**
+ * Puts 'main' output in the dependency files of 'auxiliary', not in its configurations.
+ */
+internal object KotlinJsCompilationAssociator : KotlinCompilationAssociator {
+    override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
+        val project = target.project
+
+        auxiliary as KotlinCompilationImpl
+        auxiliary.compileDependencyFiles = project.files(main.output.classesDirs, auxiliary.compileDependencyFiles)
+        auxiliary.runtimeDependencyFiles = project.files(main.output.allOutputs, auxiliary.runtimeDependencyFiles)
+
+        extendDeclaredDependencies(project, auxiliary, main)
+    }
+}
+
+private fun extendDeclaredDependencies(project: Project, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
+    fun extend(aux: String, main: String) {
+        project.configurations.matching { it.name == aux }.configureEach { configuration ->
+            configuration.extendsFrom(project.configurations.getByName(main))
+        }
+    }
+    extend(auxiliary.legacyApiConfigurationName, main.legacyApiConfigurationName)
+    extend(auxiliary.legacyImplementationConfigurationName, main.legacyImplementationConfigurationName)
+    extend(auxiliary.legacyCompileOnlyConfigurationName, main.legacyCompileOnlyConfigurationName)
+    extend(auxiliary.legacyRuntimeOnlyConfigurationName, main.legacyRuntimeOnlyConfigurationName)
 }
 
 internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator {
