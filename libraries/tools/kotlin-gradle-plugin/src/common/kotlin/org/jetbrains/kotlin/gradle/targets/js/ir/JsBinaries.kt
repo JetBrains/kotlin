@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -390,6 +391,9 @@ internal class ExecutableWasmWasi(
                     project.requestDefaultWasiAdapter(flavor = WasiAdapterFlavor.REACTOR)
                 }
             )
+            if (compilation.isTest()) {
+                syntheticWitProjects.put("kotlin-test", TEST_WIT_WORLD)
+            }
         }
 
     override val mainWasmFile: Provider<RegularFile> = componentTask.flatMap {
@@ -398,6 +402,19 @@ internal class ExecutableWasmWasi(
 
     private fun componentTaskName(): String =
         "${linkTaskName}Componentize"
+
+    private companion object {
+        /**
+         * WIT world exporting the function which runs unit tests of the test compilation.
+         */
+        private val TEST_WIT_WORLD = """
+            package kotlin:test;
+
+            world test-world {
+                export startunittests: func();
+            }
+        """.trimIndent()
+    }
 }
 
 open class Library(
