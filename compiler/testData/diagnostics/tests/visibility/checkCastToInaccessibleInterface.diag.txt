@@ -1,0 +1,65 @@
+/source.kt:42:1: warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/source.kt:43:5: warning: Expression is unused.
+
+/source.kt:54:16: warning: Type argument for type parameter 'T' (of 'fun <T> f2') used as type of vararg parameter 'x' is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:55:13: warning: Type argument for type parameter 'T' (of 'fun <T> f2') used as type of vararg parameter 'x' is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:57:16: warning: Type argument for reified type parameter 'T' (of 'fun <T> f3') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:58:13: warning: Type argument for reified type parameter 'T' (of 'fun <T> f3') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:59:13: warning: Type argument for reified type parameter 'T' (of 'fun <T> f4') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:60:16: warning: Type argument for reified type parameter 'T' (of 'fun <T> f4') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:61:13: warning: Type argument for reified type parameter 'T' (of 'fun <T> f5') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:62:16: warning: Type argument for reified type parameter 'T' (of 'fun <T> f5') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:63:13: warning: Type argument for reified type parameter 'T' (of 'fun <T> f6') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:64:16: warning: Type argument for reified type parameter 'T' (of 'fun <T> f6') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:65:16: warning: Type argument for reified type parameter 'T' (of 'fun <T> arrayOf') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:66:19: warning: Type argument for reified type parameter 'T' (of 'fun <T> arrayOf') is inferred as invisible in this scope type 'PrivateInFileInterface'.
+
+/source.kt:67:16: warning: Inferred return type 'PrivateInFileInterface' for 'f8' is not visible in this scope.
+
+/source.kt:68:16: warning: Inferred return type 'PrivateInFileInterface' for 'f8' is not visible in this scope.
+
+/source.kt:69:16: warning: Inferred return type 'List<PrivateInFileInterface>' for 'f9' is not visible in this scope.
+
+/source.kt:70:16: warning: Inferred return type 'List<PrivateInFileInterface>' for 'f9' is not visible in this scope.
+
+/source.kt:71:8: error: Unresolved reference 'Unresolved'.
+
+/source.kt:72:5: warning: Inferred return type 'List<PrivateInFileInterface>' for 'f8' is not visible in this scope.
+
+/source.kt:73:22: warning: Inferred type 'PrivateInFileInterface' for if expression is not visible in this scope.
+
+/source.kt:74:5: warning: Inferred type 'PrivateInFileInterface' for if expression is not visible in this scope.
+
+/source.kt:74:27: warning: Expression is unused.
+
+/source.kt:74:40: warning: Expression is unused.
+
+/source.kt:75:27: warning: Expression is unused.
+
+/source.kt:76:22: warning: Inferred type 'List<PrivateInFileInterface>' for if expression is not visible in this scope.
+
+/source.kt:77:5: warning: Inferred type 'List<PrivateInFileInterface>' for if expression is not visible in this scope.
+
+/source.kt:79:5: warning: Inferred type 'List<PrivateInFileInterface>' for when expression is not visible in this scope.
+
+/source.kt:83:22: warning: Inferred type 'List<PrivateInFileInterface>' for when expression is not visible in this scope.
+
+/source.kt:91:5: warning: Inferred type 'List<PrivateInFileInterface>' for when expression is not visible in this scope.
+
+/source.kt:95:22: warning: Inferred type 'List<PrivateInFileInterface>' for when expression is not visible in this scope.
+
+/source.kt:104:22: error: Cannot access 'interface PrivateInFileInterface : Any': it is private in file.
+
+/source.kt:105:22: error: Cannot access 'interface PrivateInFileInterface : Any': it is private in file.
