@@ -9,8 +9,9 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
@@ -21,8 +22,10 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
+import org.jetbrains.kotlin.gradle.targets.native.internal.unzipTo
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
@@ -31,7 +34,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
-import java.nio.file.DirectoryNotEmptyException
+import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -76,6 +79,75 @@ class NativeCompilerDownloader(
             project: Project,
             konanDataDir: File,
         ): File = konanDataDir.resolve(getDependencyNameWithOsAndVersion(project))
+
+        /**
+         * Installs the Kotlin/Native distribution into [compilerDirectory], unless a complete one is already there.
+         *
+         * Projects configured in parallel (for example, with Isolated Projects) all ask for the same distribution
+         * at the same time. Only one of them unpacks it; the rest wait for the lock and then find it installed.
+         *
+         * @param unpackTo unpacks the distribution archive into the given directory. The archive is expected to
+         * contain a single directory named like [compilerDirectory].
+         */
+        internal fun installDistribution(
+            compilerDirectory: File,
+            logger: Logger,
+            unpackTo: (directory: File) -> Unit,
+        ) {
+            val konanDir = compilerDirectory.parentFile
+            // One lock per distribution, kept next to it. It can't live inside like the toolchain's lock does:
+            // taking the lock creates its directory, and the rename below needs the target to be absent or empty.
+            val lock = KotlinInterprocessDirectoryLock(konanDir.resolve(".${compilerDirectory.name}.lock")) { message ->
+                logger.info("Kotlin/Native compiler: $message")
+            }
+            lock.withLock {
+                if (NativeVersionValueSource.isProvisioned(compilerDirectory)) {
+                    logger.debug("Kotlin/Native compiler is already installed in $compilerDirectory")
+                    return@withLock
+                }
+
+                val tmpDir = Files.createTempDirectory(konanDir.toPath(), "compiler-").toFile()
+                try {
+                    logger.debug("Unpacking Kotlin/Native compiler to tmp directory $tmpDir")
+                    unpackTo(tmpDir)
+                    val compilerTmp = tmpDir.resolve(compilerDirectory.name)
+                    // The toolchain unpacks over any distribution that has no marker (KT-86251). Marking the tmp
+                    // tree means the marker shows up together with the distribution, never after it.
+                    NativeVersionValueSource.markAsProvisioned(compilerTmp)
+
+                    if (publishExtractedDistribution(compilerTmp, compilerDirectory)) {
+                        logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
+                    } else {
+                        logger.debug("Kotlin/Native compiler is already installed in $compilerDirectory")
+                    }
+                } finally {
+                    tmpDir.deleteRecursively()
+                }
+            }
+        }
+
+        /**
+         * Moves the unpacked Kotlin/Native distribution from [source] to [destination].
+         *
+         * @return true if this call installed the distribution, false if a complete one was already in place
+         */
+        internal fun publishExtractedDistribution(source: File, destination: File): Boolean {
+            return try {
+                // 'source' sits next to 'destination', so this is a rename and the whole distribution appears
+                // in one step. REPLACE_EXISTING only ever removes an empty leftover directory.
+                Files.move(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                true
+            } catch (e: FileSystemException) {
+                // An installer that doesn't take our lock can still get here first. The JDK reports that in
+                // several ways: DirectoryNotEmptyException if 'destination' was there before the move, a plain
+                // FileSystemException if it appeared halfway through, AccessDeniedException on Windows (KTI-3755).
+                // The same exceptions also mean "nothing got installed", and the directory may exist with only
+                // the toolchain's lock file in it, so the marker is the only proof that a distribution is there.
+                if (!NativeVersionValueSource.isProvisioned(destination)) throw e
+                // Leave it alone: another build may be reading it right now (KT-86251).
+                false
+            }
+        }
 
         internal fun getDependencyNameWithOsAndVersion(project: Project): String {
             return "${getDependencyName(project)}-$simpleOsName-${getCompilerVersion(project)}"
@@ -124,13 +196,6 @@ class NativeCompilerDownloader(
 
     private val dependencyFileName: String
         get() = "$dependencyNameWithOsAndVersion.$archiveExtension"
-
-    private fun archiveFileTree(archive: File): FileTree =
-        if (useZip) {
-            project.zipTree(archive)
-        } else {
-            project.tarTree(archive)
-        }
 
     private fun setupRepo(repoUrl: String): ArtifactRepository {
         return project.repositories.ivy { repo ->
@@ -196,34 +261,13 @@ class NativeCompilerDownloader(
 
         logger.lifecycle("Unpack Kotlin/Native compiler to $compilerDirectory")
         logger.lifecycleWithDuration("Unpack Kotlin/Native compiler to $compilerDirectory finished,") {
-            val kotlinNativeDir = compilerDirectory.parentFile.also { it.mkdirs() }
-            val tmpDir = Files.createTempDirectory(kotlinNativeDir.toPath(), "compiler-").toFile()
-            try {
-                logger.debug("Unpacking Kotlin/Native compiler to tmp directory $tmpDir")
-                project.copy {
-                    it.from(archiveFileTree(archive))
-                    it.into(tmpDir)
-                }
-                val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
-                // the toolchain unpacks the archive over any distribution without this marker (KT-86251), so mark
-                // the tmp tree and let the move below publish the marker together with the distribution
-                NativeVersionValueSource.markAsProvisioned(compilerTmp)
-
-                try {
-                    // 'tmpDir' sits next to 'compilerDirectory', so this is a rename: the whole distribution, marker
-                    // included, appears in one step. REPLACE_EXISTING only ever clears an empty leftover directory.
-                    Files.move(compilerTmp.toPath(), compilerDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                    logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
-                } catch (e: DirectoryNotEmptyException) {
-                    // the same exception also reports 'the move needed copying', which installs nothing, so only
-                    // read it as 'another build got here first' when there really is a distribution in place
-                    if (!compilerDirectory.exists()) throw e
-                    // writing on top of that one would corrupt what the other build is reading (KT-86251)
-                    logger.debug("Kotlin/Native compiler is already installed in $compilerDirectory")
-                }
-            } finally {
-                tmpDir.deleteRecursively()
-            }
+            // Runs as a value source because it looks at the 'provisioned.ok' marker. Checked directly, the
+            // marker would become a configuration cache input and invalidate the cache on the build right after
+            // the installation. NativeVersionValueSource does the same.
+            project.providers.of(NativeCompilerDownloaderExtractor::class.java) {
+                it.parameters.archivePath.set(archive.absolutePath)
+                it.parameters.compilerDirectory.set(compilerDirectory.absolutePath)
+            }.get()
         }
     }
 
@@ -254,6 +298,28 @@ class NativeCompilerDownloader(
         override fun obtain(): Boolean {
             NEED_TO_DOWNLOAD_FLAG = parameters.classPath.files.none { it.exists() }
             return true
+        }
+    }
+
+    /**
+     * Unpacks the Kotlin/Native distribution archive into the compiler directory, see [installDistribution].
+     */
+    internal abstract class NativeCompilerDownloaderExtractor :
+        ValueSource<Boolean, NativeCompilerDownloaderExtractor.Params> {
+
+        interface Params : ValueSourceParameters {
+            val archivePath: Property<String>
+            val compilerDirectory: Property<String>
+        }
+
+        override fun obtain(): Boolean {
+            val archive = File(parameters.archivePath.get())
+            installDistribution(File(parameters.compilerDirectory.get()), logger) { unzipTo(archive, it) }
+            return true
+        }
+
+        private companion object {
+            val logger: Logger = Logging.getLogger(NativeCompilerDownloader::class.java)
         }
     }
 }
