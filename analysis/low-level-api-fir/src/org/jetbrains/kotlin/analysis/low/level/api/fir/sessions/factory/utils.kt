@@ -119,7 +119,7 @@ private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensi
 
 @SessionConfiguration
 internal fun LLFirSession.registerCompilerPluginServices(project: Project, resolutionScope: Lazy<GlobalSearchScope>) {
-    // The annotation resolver is created on first use, as it requires the resolution scope (see `LLFirSessionFactory.lazyResolutionScope`).
+    // The annotations resolver is lazy because it requires the resolution scope, which is computed lazily. See `LLFirSessionFactory`.
     val annotationsResolver = lazy(LazyThreadSafetyMode.PUBLICATION) { project.createAnnotationResolver(resolutionScope.value) }
 
     // We need FirRegisteredPluginAnnotations and FirPredicateBasedProvider during extensions' registration process

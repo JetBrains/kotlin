@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.FqName
 
+/**
+ * @property scope The scope is lazy because it's usually the session's resolution scope, which is computed lazily. See
+ *  [LLFirSessionFactory][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirSessionFactory].
+ */
 internal class LLFirJavaAnnotationProvider(
     private val project: Project,
     private val scope: Lazy<GlobalSearchScope>,

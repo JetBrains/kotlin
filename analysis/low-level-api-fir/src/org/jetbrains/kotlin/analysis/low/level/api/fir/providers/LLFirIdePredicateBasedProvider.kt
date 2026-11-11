@@ -40,6 +40,9 @@ import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 
 /**
  * PSI index based implementation of [FirPredicateBasedProvider].
+ *
+ * @property annotationsResolver The annotations resolver is lazy because it requires the session's resolution scope, which is computed
+ *  lazily. See [LLFirSessionFactory][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirSessionFactory].
  */
 internal class LLFirIdePredicateBasedProvider(
     private val session: LLFirSession,

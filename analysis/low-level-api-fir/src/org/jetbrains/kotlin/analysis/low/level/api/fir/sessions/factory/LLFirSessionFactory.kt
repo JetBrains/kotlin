@@ -99,21 +99,6 @@ internal class LLFirSessionFactory(
         KaResolutionScopeProvider.getInstance(project)
     }
 
-    /**
-     * Returns the resolution scope of [module], to be computed when a session component first needs it.
-     *
-     * Computing a resolution scope requires the module's dependencies and the union of their content scopes, which is expensive for
-     * modules with many dependencies. But the resolution scopes of most sessions are never needed. For example, an analysis session
-     * creates the sessions of all dependency modules, but their resolution scopes are only used for compiler plugin and Java annotation
-     * lookups in the dependency modules themselves (KT-88724).
-     *
-     * The resolution scope is a part of the session's project structure. Session components should therefore resolve the lazy value
-     * *before* they use the scope, e.g. for an index query, and not pass the lazy value on. This keeps the resolution scope computation out
-     * of index accesses, since the project structure computation might access indices itself.
-     */
-    private fun lazyResolutionScope(module: KaModule): Lazy<GlobalSearchScope> =
-        lazy(LazyThreadSafetyMode.PUBLICATION) { resolutionScopeProvider.getResolutionScope(module) }
-
     @KaCachedService
     private val platformSettings: KotlinPlatformSettings by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KotlinPlatformSettings.getInstance(project)
@@ -785,6 +770,16 @@ internal class LLFirSessionFactory(
             registerAdditionalComponents(registration)
         }
     }
+
+    /**
+     * Returns the resolution scope of [module] as a lazy value.
+     *
+     * The resolution scope is lazy because computing it can be expensive, and the resolution scopes of dependency sessions are often not
+     * needed. The scope is still fully computed by the time it's used for an index query, as session components resolve the lazy value
+     * before they use the scope.
+     */
+    private fun lazyResolutionScope(module: KaModule): Lazy<GlobalSearchScope> =
+        lazy(LazyThreadSafetyMode.PUBLICATION) { resolutionScopeProvider.getResolutionScope(module) }
 
     /**
      * Merges dependency symbol providers of the same kind, and adds the result to the receiver [MutableList].
