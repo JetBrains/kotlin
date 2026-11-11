@@ -452,7 +452,6 @@ internal constructor(
         is KotlinCompilationInfo.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
     }
 
-
     private fun createSharedCompilationDataOrNull(): SharedCompilationData? {
         if (!isMetadataCompilation) return null
 

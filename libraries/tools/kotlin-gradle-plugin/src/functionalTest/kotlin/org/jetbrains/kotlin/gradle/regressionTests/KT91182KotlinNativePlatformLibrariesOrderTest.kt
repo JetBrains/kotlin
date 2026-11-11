@@ -9,7 +9,13 @@ import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesForTargetWithKonanDistribution
 import org.jetbrains.kotlin.gradle.targets.native.internal.listLibraryFiles
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -35,6 +41,24 @@ class KT91182KotlinNativePlatformLibrariesOrderTest {
         )
 
         assertEquals(names, libraries.files.map { it.name })
+    }
+
+    // KT-91182
+    @Test
+    fun `leaf native compile task has stdlib but no platform libraries in file inputs and fingerprints the version`() {
+        val project = buildProjectWithMPP()
+        project.repositories.kotlinBuildDeps()
+        project.repositories.mavenCentralCacheRedirector()
+        project.multiplatformExtension.linuxX64()
+        project.evaluate()
+
+        val compileTask = project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
+        val inputFileNames = compileTask.libraries.files.map { it.name }
+        assertEquals(listOf("stdlib"), inputFileNames)
+        assertEquals(
+            project.nativeProperties.kotlinNativeVersion.get(),
+            compileTask.kotlinNativeVersion,
+        )
     }
 
     // KT-91182

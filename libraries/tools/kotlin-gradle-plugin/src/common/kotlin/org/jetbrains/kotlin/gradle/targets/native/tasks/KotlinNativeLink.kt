@@ -106,7 +106,6 @@ constructor(
     private val objects = project.objects
     private val simpleKotlinNativeVersion = project.nativeProperties.kotlinNativeVersion
 
-
     @get:Classpath
     @get:NormalizeLineEndings
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
