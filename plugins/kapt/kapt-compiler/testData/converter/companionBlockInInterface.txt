@@ -28,11 +28,11 @@
 @kotlin.Metadata()
 public abstract interface I {
 
-    public static final int getProp() {
+    public static int getProp() {
         return 0;
     }
 
-    public static final void setProp(int p0) {
+    public static void setProp(int p0) {
     }
 
     public static int getPropWithAccessors() {

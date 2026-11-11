@@ -222,7 +222,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                     Modality.FINAL -> when {
                         origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
                         origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> 0
-                        parentIfClassOrNull.isNotNullAndInterface && body != null -> 0
+                        parentIfClassOrNull.isNotNullAndInterface -> 0
                         else -> Opcodes.ACC_FINAL
                     }
                     Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
