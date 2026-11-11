@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
-public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerTest {
+public class AtomicfuDiagnosticTestGenerated extends AbstractAtomicfuDiagnosticTest {
   private void run(String fileName) {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/" + fileName);
   }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CompanionBlocks
 
 import kotlinx.atomicfu.*
@@ -34,3 +35,5 @@ private class PrivateComanionHolder {
 fun box(): String {
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration, stringLiteral */

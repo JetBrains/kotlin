@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 import kotlinx.atomicfu.*
@@ -27,3 +28,6 @@ fun test() {
     println(i.hashCode(13))
     println(r.toString("atomic"))
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, inline, integerLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

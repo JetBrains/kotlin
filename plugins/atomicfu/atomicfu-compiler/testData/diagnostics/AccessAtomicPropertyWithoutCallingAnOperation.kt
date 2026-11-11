@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 import kotlinx.atomicfu.*
@@ -71,3 +72,6 @@ class C {
         aia[0].value = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, functionDeclaration, integerLiteral, intersectionType,
+localProperty, nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral */

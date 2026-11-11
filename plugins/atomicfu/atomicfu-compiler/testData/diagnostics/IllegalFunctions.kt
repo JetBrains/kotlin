@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 @file:Suppress("NOTHING_TO_INLINE")
@@ -23,3 +24,6 @@ public class X private constructor(private val <!ATOMIC_VALUE_PARAMETERS_ARE_FOR
 
 context(<!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicRef<Any>)
 private fun loadValue(): Any = a.value
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, inline, primaryConstructor, propertyDeclaration, stringLiteral */
