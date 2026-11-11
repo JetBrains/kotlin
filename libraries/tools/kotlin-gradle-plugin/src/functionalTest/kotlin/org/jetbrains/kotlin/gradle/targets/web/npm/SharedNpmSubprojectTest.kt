@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.encodedVersionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencies
@@ -87,6 +88,28 @@ class SharedNpmSubprojectTest {
     }
 
     @Test
+    fun `npm dependency reports carry the platform as separate attributes`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                js { browser() }
+                wasmJs { browser() }
+            }
+        }
+        project.evaluate()
+
+        val expected = listOf(
+            Triple("kotlinNpmDependenciesReportJs", KotlinPlatformType.js, null),
+            Triple("kotlinNpmDependenciesReportWasm", KotlinPlatformType.wasm, KotlinWasmTargetAttribute.js),
+        )
+        for ((configurationName, platformType, wasmTarget) in expected) {
+            val attributes = project.configurations.getByName(configurationName).attributes
+            assertEquals("kotlinNpmDependenciesReport", attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name, configurationName)
+            assertEquals(platformType, attributes.getAttribute(KotlinPlatformType.attribute), configurationName)
+            assertEquals(wasmTarget, attributes.getAttribute(KotlinWasmTargetAttribute.wasmTargetAttribute), configurationName)
+        }
+    }
+
+    @Test
     fun `WasmWASI target registers no npm dependency report task`() {
         val project = buildProjectWithMPP {
             kotlin {
@@ -119,12 +142,12 @@ class SharedNpmSubprojectTest {
         project.evaluate()
 
         val expected = listOf(
-            Triple(project.jsTarget(), "kotlinNpmRuntimeDependenciesJs", "kotlinNpmRuntimeDependenciesJs"),
-            Triple(project.wasmJsTarget(), "kotlinNpmRuntimeDependenciesWasmJs", "kotlinNpmRuntimeDependenciesWasm"),
+            project.jsTarget() to "kotlinNpmRuntimeDependenciesJs",
+            project.wasmJsTarget() to "kotlinNpmRuntimeDependenciesWasmJs",
         )
-        for ((target, variantName, usageName) in expected) {
+        for ((target, variantName) in expected) {
             val variant = project.configurations.getByName(target.runtimeElementsConfigurationName).outgoing.variants.getByName(variantName)
-            assertEquals(usageName, variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name)
+            assertEquals("kotlinNpmRuntimeDependencies", variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name)
             assertEquals(
                 listOf(target.compilations.getByName("main").npmDependenciesReportFile()),
                 variant.artifacts.files.files.toList(),
