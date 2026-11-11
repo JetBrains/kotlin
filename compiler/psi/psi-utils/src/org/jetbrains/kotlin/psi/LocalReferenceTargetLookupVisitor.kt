@@ -424,11 +424,11 @@ private class TypeLocalReferenceTargetLookupVisitor(
     override fun visitClass(klass: KtClass, data: VisitorContext) {
         super.visitClass(klass, data)
 
-        foundIfNameMatches(klass) // visit class itself only in type context
-
         data.parentOnly {
             klass.typeParameters.processMany(::processTypeParameter)
         }
+
+        foundIfNameMatches(klass)
     }
 
     override fun visitObjectDeclaration(declaration: KtObjectDeclaration, data: VisitorContext) {

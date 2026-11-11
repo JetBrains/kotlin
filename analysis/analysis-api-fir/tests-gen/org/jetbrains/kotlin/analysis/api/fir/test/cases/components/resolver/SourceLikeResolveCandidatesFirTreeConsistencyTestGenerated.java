@@ -281,6 +281,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("classWithTypeParameterSameName.kt")
+  public void testClassWithTypeParameterSameName() {
+    run("classWithTypeParameterSameName.kt");
+  }
+
+  @Test
   @TestMetadata("CollectionStream.kt")
   public void testCollectionStream() {
     run("CollectionStream.kt");
