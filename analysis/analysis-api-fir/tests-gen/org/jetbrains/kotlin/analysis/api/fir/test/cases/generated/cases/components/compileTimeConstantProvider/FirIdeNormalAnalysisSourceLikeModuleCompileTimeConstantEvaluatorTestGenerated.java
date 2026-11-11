@@ -75,6 +75,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompileTimeConstantEvaluatorTes
   }
 
   @Test
+  @TestMetadata("byteMinValue_justLiteral.kt")
+  public void testByteMinValue_justLiteral() {
+    run("byteMinValue_justLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("callableReferenceName.kt")
   public void testCallableReferenceName() {
     run("callableReferenceName.kt");
@@ -237,6 +243,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompileTimeConstantEvaluatorTes
   }
 
   @Test
+  @TestMetadata("integerLiteral_minusMinusOne_inner.kt")
+  public void testIntegerLiteral_minusMinusOne_inner() {
+    run("integerLiteral_minusMinusOne_inner.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_minusMinusOne_justOne.kt")
+  public void testIntegerLiteral_minusMinusOne_justOne() {
+    run("integerLiteral_minusMinusOne_justOne.kt");
+  }
+
+  @Test
   @TestMetadata("integerLiteral_minusOne_entire.kt")
   public void testIntegerLiteral_minusOne_entire() {
     run("integerLiteral_minusOne_entire.kt");
@@ -246,6 +264,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompileTimeConstantEvaluatorTes
   @TestMetadata("integerLiteral_minusOne_justOne.kt")
   public void testIntegerLiteral_minusOne_justOne() {
     run("integerLiteral_minusOne_justOne.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_plusMinusOne_justOne.kt")
+  public void testIntegerLiteral_plusMinusOne_justOne() {
+    run("integerLiteral_plusMinusOne_justOne.kt");
   }
 
   @Test
@@ -306,6 +330,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompileTimeConstantEvaluatorTes
   @TestMetadata("logicExpressionWithVariableAndParentheses.kt")
   public void testLogicExpressionWithVariableAndParentheses() {
     run("logicExpressionWithVariableAndParentheses.kt");
+  }
+
+  @Test
+  @TestMetadata("longExpectedType_minusTwo_justLiteral.kt")
+  public void testLongExpectedType_minusTwo_justLiteral() {
+    run("longExpectedType_minusTwo_justLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("longLiteralWithoutSuffix_minus_entire.kt")
+  public void testLongLiteralWithoutSuffix_minus_entire() {
+    run("longLiteralWithoutSuffix_minus_entire.kt");
+  }
+
+  @Test
+  @TestMetadata("longLiteralWithoutSuffix_minus_justLiteral.kt")
+  public void testLongLiteralWithoutSuffix_minus_justLiteral() {
+    run("longLiteralWithoutSuffix_minus_justLiteral.kt");
   }
 
   @Test
@@ -462,6 +504,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompileTimeConstantEvaluatorTes
   @TestMetadata("recursivePropertyReference.kt")
   public void testRecursivePropertyReference() {
     run("recursivePropertyReference.kt");
+  }
+
+  @Test
+  @TestMetadata("shortExpectedType_minusOne_justLiteral.kt")
+  public void testShortExpectedType_minusOne_justLiteral() {
+    run("shortExpectedType_minusOne_justLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("shortMinValue_justLiteral.kt")
+  public void testShortMinValue_justLiteral() {
+    run("shortMinValue_justLiteral.kt");
   }
 
   @Test

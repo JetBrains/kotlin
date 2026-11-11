@@ -134,3 +134,207 @@ KtStringTemplateExpression(82,85): '"6"'
 
 KtLiteralStringTemplateEntry(83,84): '6'
   null
+
+KtNamedFunction(89,179): 'fun withExpectedType() {'
+  null
+
+KtParameterList(109,111): '()'
+  null
+
+KtBlockExpression(112,179): '{'
+  null
+
+KtProperty(118,134): 'val b: Byte = -1'
+  null
+
+KtTypeReference(125,129): 'Byte'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Byte
+    ]
+
+KtUserType(125,129): 'Byte'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Byte
+    ]
+
+KtNameReferenceExpression(125,129): 'Byte'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Byte
+    ]
+
+KtPrefixExpression(132,134): '-1'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(132,133): '-'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(133,134): '1'
+  null
+
+KtProperty(139,156): 'val s: Short = -1'
+  null
+
+KtTypeReference(146,151): 'Short'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Short
+    ]
+
+KtUserType(146,151): 'Short'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Short
+    ]
+
+KtNameReferenceExpression(146,151): 'Short'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Short
+    ]
+
+KtPrefixExpression(154,156): '-1'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(154,155): '-'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(155,156): '1'
+  null
+
+KtProperty(161,177): 'val l: Long = -1'
+  null
+
+KtTypeReference(168,172): 'Long'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
+
+KtUserType(168,172): 'Long'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
+
+KtNameReferenceExpression(168,172): 'Long'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
+
+KtPrefixExpression(175,177): '-1'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(175,176): '-'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(176,177): '1'
+  null
+
+KtNamedFunction(181,239): 'fun minValues() {'
+  null
+
+KtParameterList(194,196): '()'
+  null
+
+KtBlockExpression(197,239): '{'
+  null
+
+KtPrefixExpression(203,214): '-2147483648'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(203,204): '-'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(204,214): '2147483648'
+  null
+
+KtProperty(219,237): 'val b: Byte = -128'
+  null
+
+KtTypeReference(226,230): 'Byte'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Byte
+    ]
+
+KtUserType(226,230): 'Byte'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Byte
+    ]
+
+KtNameReferenceExpression(226,230): 'Byte'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Byte
+    ]
+
+KtPrefixExpression(233,237): '-128'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(233,234): '-'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(234,237): '128'
+  null

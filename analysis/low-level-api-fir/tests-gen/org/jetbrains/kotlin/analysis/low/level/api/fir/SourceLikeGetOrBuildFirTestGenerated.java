@@ -1390,6 +1390,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("unaryMinusIntLiteral_minValue.kt")
+    public void testUnaryMinusIntLiteral_minValue() {
+      run("unaryMinusIntLiteral_minValue.kt");
+    }
+
+    @Test
     @TestMetadata("unaryMinusIntLiteral_rhs.kt")
     public void testUnaryMinusIntLiteral_rhs() {
       run("unaryMinusIntLiteral_rhs.kt");
@@ -2129,6 +2135,18 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("intLiteralScript.kts")
     public void testIntLiteralScript() {
       run("intLiteralScript.kts");
+    }
+
+    @Test
+    @TestMetadata("intLiteral_minValue_justLiteral.kt")
+    public void testIntLiteral_minValue_justLiteral() {
+      run("intLiteral_minValue_justLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("intLiteral_minusMinusOne_justOne.kt")
+    public void testIntLiteral_minusMinusOne_justOne() {
+      run("intLiteral_minusMinusOne_justOne.kt");
     }
 
     @Test
