@@ -143,7 +143,7 @@ private object IncrementalTestsGeneratorUtil {
     }
 }
 
-private object ExcludePattern {
+object ExcludePattern {
     private const val MEMBER_ALIAS = "(^removeMemberTypeAlias)|(^addMemberTypeAlias)"
 
     private const val ALL_EXPECT = "(^.*Expect.*)"

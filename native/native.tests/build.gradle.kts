@@ -19,6 +19,8 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+    testFixturesApi(project(":kotlin-native:utilities:cli-runner"))
     testFixturesApi(project(":native:kotlin-native-utils"))
     testFixturesApi(project(":native:executors"))
     testFixturesApi(project(":native:binary-options"))
@@ -54,6 +56,7 @@ projectTests {
     testData(isolated, "testData")
     testData(project(":compiler").isolated, "testData")
     testData(project(":kotlin-test").isolated, "common/src/test/kotlin")
+    testData(project(":jps").isolated, "jps-plugin/testData")
 
     // From StdlibTest
     val stdlibPath = project(":kotlin-stdlib").isolated.projectDirectory

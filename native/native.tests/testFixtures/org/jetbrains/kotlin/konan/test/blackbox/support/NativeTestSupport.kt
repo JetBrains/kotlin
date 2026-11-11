@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
+import org.jetbrains.kotlin.konan.test.klib.ic.AbstractIncrementalNativeKlibCompilerRunnerTest
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProv
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
+import org.jetbrains.kotlin.konan.test.klib.ic.AbstractIncrementalNativeKlibMultiModuleCompilerRunnerTest
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -70,6 +72,28 @@ class NativeSimpleTestSupport : BeforeEachCallback {
         with(settings.get<NativeTestInstances<AbstractNativeSimpleTest>>().enclosingTestInstance) {
             testRunSettings = settings
             testRunProvider = getOrCreateSimpleTestRunProvider()
+        }
+    }
+}
+
+class NativeKlibICTestSupport : BeforeEachCallback {
+    override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
+        val settings = createSimpleTestRunSettings()
+
+        // Inject the required properties to test instance.
+        with(settings.get<NativeTestInstances<AbstractIncrementalNativeKlibCompilerRunnerTest>>().enclosingTestInstance) {
+            testRunSettings = settings
+        }
+    }
+}
+
+class NativeMutliModuleKlibICTestSupport : BeforeEachCallback {
+    override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
+        val settings = createSimpleTestRunSettings()
+
+        // Inject the required properties to test instance.
+        with(settings.get<NativeTestInstances<AbstractIncrementalNativeKlibMultiModuleCompilerRunnerTest>>().enclosingTestInstance) {
+            testRunSettings = settings
         }
     }
 }
