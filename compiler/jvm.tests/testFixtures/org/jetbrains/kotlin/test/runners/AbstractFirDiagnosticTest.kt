@@ -31,9 +31,7 @@ abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKo
     }
 }
 
-abstract class AbstractFirLightTreeDiagnosticsTest : AbstractFirDiagnosticTestBase(FirParser.LightTree)
-
-abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest : AbstractFirLightTreeDiagnosticsTest() {
+abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest : AbstractFirDiagnosticTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForTestWithLatestLanguageVersion()
