@@ -1652,6 +1652,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("intLiteral_minValue_justLiteral.kt")
+    public void testIntLiteral_minValue_justLiteral() {
+      run("intLiteral_minValue_justLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("intLiteral_minusMinusOne_justOne.kt")
+    public void testIntLiteral_minusMinusOne_justOne() {
+      run("intLiteral_minusMinusOne_justOne.kt");
+    }
+
+    @Test
     @TestMetadata("intLiteral_minusOne_entire.kt")
     public void testIntLiteral_minusOne_entire() {
       run("intLiteral_minusOne_entire.kt");
