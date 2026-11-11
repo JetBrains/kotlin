@@ -1,4 +1,3 @@
-// IGNORE_BODY_CALCULATOR: KT-91441
 // LANGUAGE: +CompanionBlocks
 import kotlin.reflect.KProperty
 

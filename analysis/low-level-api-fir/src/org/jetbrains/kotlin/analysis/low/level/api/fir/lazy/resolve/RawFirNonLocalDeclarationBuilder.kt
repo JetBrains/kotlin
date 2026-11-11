@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.buildDestructuringVariable
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirMultiDelegatedConstructorCall
@@ -34,6 +35,19 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
+/**
+ * Builds the raw FIR of a single non-local declaration, including its body, converting as little of the rest of the file as possible.
+ *
+ * In a file built with [BodyBuildingMode.LAZY_BODIES], bodies, initializers and similar parts are lazy placeholders. To calculate them
+ * for a declaration, [FirLazyBodiesCalculator] converts the declaration again with this builder and moves these parts from the copy to
+ * the original declaration. Because they end up in the original declaration, the builder binds them to it rather than to the copy:
+ * they use the symbol of the original declaration as their container, `return` expressions target the original function or
+ * accessors, and local classes capture the original type parameters.
+ *
+ * Instead of converting the containing declarations, the builder restores the context that the declaration needs from them: the
+ * class names and type parameters come from the path of the [FirDesignation], and the companion block around the declaration from
+ * the original declaration.
+ */
 internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
@@ -132,7 +146,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             requireIsInstance<FirProperty>(originalDeclaration)
 
             val container = originalDeclaration.destructuringDeclarationContainerVariable?.fir
-            requireWithAttachment(container != null, { "Container is not found"}) {
+            requireWithAttachment(container != null, { "Container is not found" }) {
                 withFirEntry("originalDeclaration", originalDeclaration)
                 withPsiEntry("element", element)
             }
@@ -265,9 +279,19 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
     }
 
+    /**
+     * Restores the context of the containing declarations from the rest of the designation path, and then builds [declarationToBuild].
+     *
+     * A companion block isn't a declaration, so the path doesn't have it. If [originalDeclaration] is a member of a companion block,
+     * the builder enters the block right before building [declarationToBuild], as [PsiRawFirBuilder] does when it builds the file.
+     */
     private fun moveNext(iterator: Iterator<FirDeclaration>, containingDeclaration: FirDeclaration?): FirDeclaration {
         if (!iterator.hasNext()) {
-            return buildDeclaration(containingDeclaration)
+            return if ((originalDeclaration as? FirCallableDeclaration)?.isCompanionBlockMember == true) {
+                context.withCompanionBlock { buildDeclaration(containingDeclaration) }
+            } else {
+                buildDeclaration(containingDeclaration)
+            }
         }
 
         val parent = iterator.next()
@@ -346,4 +370,3 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         val allSuperTypeCallEntries: List<KtSuperTypeCallEntry>,
     )
 }
-
