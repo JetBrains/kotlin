@@ -15,4 +15,5 @@ kotlin {
 
 kotlinxBenchmark {
     applicationName = "Ring"
+    compilerOpts.add("-Xbinary=gcSchedulerType=manual")
 }
