@@ -1894,6 +1894,25 @@ class IrValidatorTest {
         }
         subclass.declarations.add(publicFunctionOverride)
 
+        val publicFunction2 = IrFactoryImpl.buildFun {
+            name = Name.identifier("baz")
+            returnType = TestIrBuiltins.unitType
+            visibility = DescriptorVisibilities.PUBLIC
+        }.apply {
+            parent = klass
+        }
+        klass.declarations.add(publicFunction2)
+
+        val publicFunctionOverrideByPrivate = IrFactoryImpl.buildFun {
+            name = Name.identifier("baz")
+            returnType = TestIrBuiltins.unitType
+            visibility = DescriptorVisibilities.PRIVATE
+        }.apply {
+            parent = subclass
+            overriddenSymbols = listOf(publicFunction2.symbol)
+        }
+        subclass.declarations.add(publicFunctionOverrideByPrivate)
+
         val privateProperty = IrFactoryImpl.buildProperty {
             name = Name.identifier("p1")
             visibility = DescriptorVisibilities.PRIVATE
@@ -1937,6 +1956,16 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Overrides private declaration FUN name:foo visibility:private modality:FINAL <> () returnType:kotlin.Unit [companion]
                     FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit [companion]
+                      inside CLASS CLASS name:MySubclass modality:FINAL visibility:public superTypes:[org.sample.MyClass]
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Private declaration has non-empty overriddenSymbols
+                    FUN name:baz visibility:private modality:FINAL <> () returnType:kotlin.Unit [companion]
                       inside CLASS CLASS name:MySubclass modality:FINAL visibility:public superTypes:[org.sample.MyClass]
                         inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
