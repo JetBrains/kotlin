@@ -909,11 +909,6 @@ afterEvaluate {
     checkExpectedGradlePropertyValues()
 }
 
-// workaround for KT-68482
-tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
-    notCompatibleWithConfigurationCache("KotlinNpmInstallTask is not compatible with Configuration Cache")
-}
-
 plugins.withType<YarnPlugin> {
     extensions.configure<YarnRootEnvSpec> {
         version = libs.versions.yarn
