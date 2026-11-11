@@ -1469,6 +1469,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("superDelegateConstructorParameter.kt")
+  public void testSuperDelegateConstructorParameter() {
+    run("superDelegateConstructorParameter.kt");
+  }
+
+  @Test
   @TestMetadata("SuperTypePrimaryConstructor.kt")
   public void testSuperTypePrimaryConstructor() {
     run("SuperTypePrimaryConstructor.kt");

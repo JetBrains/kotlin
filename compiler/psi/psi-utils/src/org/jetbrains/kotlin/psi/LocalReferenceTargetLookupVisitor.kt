@@ -172,6 +172,16 @@ private class ValueLocalReferenceTargetLookupVisitor(
         constructorParametersAllowed = true
     }
 
+    override fun visitDelegatedSuperTypeEntry(specifier: KtDelegatedSuperTypeEntry, data: VisitorContext) {
+        super.visitDelegatedSuperTypeEntry(specifier, data)
+
+        // interface I
+        // class A : I
+        // class B(i: I) : I by i
+        //                      ^
+        constructorParametersAllowed = true
+    }
+
     override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: VisitorContext) {
         super.visitAnonymousInitializer(initializer, data)
 
