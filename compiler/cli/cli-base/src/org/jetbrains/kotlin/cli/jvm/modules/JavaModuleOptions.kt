@@ -21,10 +21,6 @@ private val ADD_READS_VALUE = Regex("([^=]+)=(,*[^,].*)")
 private val ADD_EXPORTS_VALUE = Regex("([^/]+)/([^=]+)=(,*[^,].*)")
 private val TARGET_SEPARATORS = Regex("[ ,]+")
 
-/**
- * Parses a value of `-Xadd-reads` or `-Xadd-exports` the way javac parses `--add-reads` and `--add-exports`, or returns `null` if the
- * value is malformed.
- */
 fun parseJavaModuleAccessOption(value: String, isExports: Boolean): JavaModuleAccessOption? {
     val groups = (if (isExports) ADD_EXPORTS_VALUE else ADD_READS_VALUE).matchEntire(value)?.groupValues?.drop(1) ?: return null
     val sourceParts = groups.dropLast(1)
