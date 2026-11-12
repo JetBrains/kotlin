@@ -108,7 +108,7 @@ internal class CompositeMetadataArtifactImpl(
             }.toSet()
 
             cinteropLibraryNames.map { cinteropLibraryName ->
-                CInteropMetadataBinaryImpl(this, cinteropLibraryName, artifactFile)
+                CInteropMetadataBinaryImpl(this, cinteropLibraryName, artifactFile, computeChecksum = computeChecksum)
             }
         }
 
@@ -164,6 +164,7 @@ internal class CompositeMetadataArtifactImpl(
         override val containingSourceSetContent: CompositeMetadataArtifactContent.SourceSetContent,
         override val cinteropLibraryName: String,
         private val artifactFile: ArtifactFile,
+        private val computeChecksum: Boolean,
     ) : CompositeMetadataArtifactContent.CInteropMetadataBinary {
         init {
             ensurePathComponentSafeString(cinteropLibraryName)
@@ -173,7 +174,7 @@ internal class CompositeMetadataArtifactImpl(
             get() = SourceSetMetadataLayout.KLIB.archiveExtension
 
         override val checksum: String
-            get() = artifactFile.checksum
+            get() = if (computeChecksum) artifactFile.checksum else ""
 
         /**
          * Example:

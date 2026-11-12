@@ -7,13 +7,23 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.isStrictSourceSetWithoutAssociatedSourceSets
+import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 
 fun getSourceSetsFromAssociatedCompilations(fromCompilation: KotlinCompilation<*>): Map<KotlinCompilation<*>, Set<KotlinSourceSet>> =
     fromCompilation.allAssociatedCompilations.associate { it to it.allKotlinSourceSets }
 
 fun getVisibleSourceSetsFromAssociateCompilations(
     sourceSet: KotlinSourceSet
-): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(sourceSet.internal.compilations)
+): List<KotlinSourceSet> {
+    val visibleSourceSets = getVisibleSourceSetsFromAssociateCompilations(sourceSet.internal.compilations)
+    return if (sourceSet.isStrictSourceSetWithoutAssociatedSourceSets()) {
+        val excludeSet = GranularMetadataTransformation.defaultTargetHierarchyExcludedSourceSetVisibilityBySourceSet[sourceSet.name] ?: emptySet()
+        visibleSourceSets.filter {
+            it.name !in excludeSet
+        }
+    } else visibleSourceSets
+}
 
 internal fun getVisibleSourceSetsFromAssociateCompilations(
     participatesInCompilations: Set<KotlinCompilation<*>>
