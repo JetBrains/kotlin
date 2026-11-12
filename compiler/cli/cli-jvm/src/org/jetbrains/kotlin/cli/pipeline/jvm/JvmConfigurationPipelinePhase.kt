@@ -214,13 +214,13 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
     fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: File? = null) {
         val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         for (module in chunk) {
-            val commonSources = getBuildFilePaths(buildFile, module.getCommonSourceFiles()).toSet()
+            val commonSources = getBuildFiles(buildFile, module.getCommonSourceFiles()).toSet()
 
-            for (path in getBuildFilePaths(buildFile, module.getSourceFiles())) {
+            for (file in getBuildFiles(buildFile, module.getSourceFiles())) {
                 addKotlinSourceRoot(
-                    path,
-                    isCommon = hmppCliModuleStructure?.isFromCommonModule(path) ?: (path in commonSources),
-                    hmppCliModuleStructure?.getModuleNameForSource(path)
+                    file.path,
+                    isCommon = hmppCliModuleStructure?.isFromCommonModule(file) ?: (file in commonSources),
+                    hmppCliModuleStructure?.getModuleNameForSource(file)
                 )
             }
         }
@@ -262,10 +262,9 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         addAll(JVMConfigurationKeys.MODULES, chunk)
     }
 
-    fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<String> {
-        return if (buildFile == null) sourceFilePaths
-        else sourceFilePaths.map { path ->
-            (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
+    fun getBuildFiles(buildFile: File?, sourceFilePaths: List<String>): List<File> {
+        return sourceFilePaths.map { path ->
+            (File(path).takeIf { it.isAbsolute || buildFile == null } ?: buildFile!!.resolveSibling(path))
         }
     }
 

@@ -105,11 +105,10 @@ open class IncrementalFirJvmCompilerRunner(
                 // and generally not used in the new pipeline
                 val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
                 val kotlinContentRoots = sourcesToCompile.map {
-                    val kotlinSourceFilePath = it.path
                     KotlinSourceRoot(
-                        path = kotlinSourceFilePath,
-                        isCommon = hmppCliModuleStructure?.isFromCommonModule(kotlinSourceFilePath) ?: false,
-                        hmppModuleName = hmppCliModuleStructure?.getModuleNameForSource(kotlinSourceFilePath)
+                        path = it.path,
+                        isCommon = hmppCliModuleStructure?.isFromCommonModule(it) ?: false,
+                        hmppModuleName = hmppCliModuleStructure?.getModuleNameForSource(it)
                     )
                 }
                 put(CLIConfigurationKeys.CONTENT_ROOTS, baseContentRootsWithoutKotlin + kotlinContentRoots)

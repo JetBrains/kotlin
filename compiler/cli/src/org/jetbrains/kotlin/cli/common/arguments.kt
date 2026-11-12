@@ -345,7 +345,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     }
 
 
-    val sourcesByFragmentName: Map<String, Set<String>> = rawFragments.associateWith { mutableSetOf<String>() }.apply {
+    val sourcesByFragmentName: Map<String, Set<File>> = rawFragments.associateWith { mutableSetOf<File>() }.apply {
         rawFragmentSources.forEach { rawFragmentSourceArg ->
             val split = rawFragmentSourceArg.split(":", limit = 2)
             if (split.size < 2) {
@@ -364,7 +364,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
                             "but fragment `$fragmentName` of source file $fragmentSource is not specified in $FRAGMENTS_ARG_NAME"
                 )
                 return@forEach
-            }.add(fragmentSource)
+            }.add(File(fragmentSource))
         }
     }
 
@@ -398,7 +398,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     for (source in arguments.freeArgs) {
         if (source.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) continue
-        if (modules.none { source in it.sources }) {
+        if (modules.none { File(source) in it.sources }) {
             reportError("Source '$source' does not belong to any module")
             wasError = true
         }
