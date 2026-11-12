@@ -70,7 +70,12 @@ internal fun CommonizerTarget.retrievePlatformDependenciesWithNativeDistribution
 }
 
 private fun AbstractKotlinNativeCompilation.configureStdlib(stdlib: FileCollection) {
-    compileDependencyFiles = project.files().from(stdlib, compileDependencyFiles)
+    // Platform libraries are not passed explicitly, but the compiler reads them from the distribution,
+    // so the distribution must be downloaded before the compilation/linking
+    val distributionDownload = project.files().apply {
+        if (!project.kotlinPropertiesProvider.isFunctionalTestMode) builtBy(project.downloadKotlinNativeDistributionTask)
+    }
+    compileDependencyFiles = project.files().from(stdlib, compileDependencyFiles, distributionDownload)
 }
 
 private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDependencies(
