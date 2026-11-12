@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.handlers.writeTo
 import java.io.File
+import java.util.Collections
+import java.util.IdentityHashMap
+import java.util.concurrent.CancellationException
 
 private val outputDir: File
     get() = File(System.getProperty("kotlin.wasm.test.root.out.dir") ?: testInfraError("Please set output dir path"))
@@ -72,9 +75,47 @@ internal enum class PrecompileSetup(
         stdlibOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledStdlibOutputName"),
         kotlinTestOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledKotlinTestOutputName")
     ),
+    ;
+
+    private var precompiled = false
+    private var failure: Throwable? = null
+
+    @Synchronized
+    internal fun precompileOnce() {
+        if (precompiled) return
+        // A fresh exception per call, since the cached one is shared by all the tests which run into it.
+        failure?.let { throw IllegalStateException("The precompilation of the $name setup has failed", it) }
+        try {
+            precompileWasmModulesNow(this)
+            precompiled = true
+        } catch (e: Throwable) {
+            // An interruption or a cancellation of the calling test, or a shortage of the JVM like an `OutOfMemoryError`
+            // while other batches compile, says nothing of the precompilation itself, so it is retried, also when the
+            // compiler wraps it into another exception. A `StackOverflowError` is not: it recurs on every attempt.
+            val isTransient = e.hasTransientCause() || Thread.currentThread().isInterrupted
+            if (!isTransient) failure = e
+            throw e
+        }
+    }
 }
 
-internal fun precompileWasmModules(setup: PrecompileSetup) {
+/** Whether this or one of its causes is an interruption, a cancellation or an [OutOfMemoryError]. */
+private fun Throwable.hasTransientCause(): Boolean {
+    // The identity set stops the walk at a cycle of causes.
+    val seen = Collections.newSetFromMap(IdentityHashMap<Throwable, Boolean>())
+    return generateSequence(this) { it.cause }.takeWhile(seen::add).any {
+        it is InterruptedException || it is CancellationException || it is OutOfMemoryError
+    }
+}
+
+/**
+ * Precompiles the stdlib and kotlin-test of [setup] once per JVM. A failure is rethrown on every later call instead of
+ * being retried, so that a broken precompilation fails each test fast rather than repeating the whole work per module;
+ * only a failure caused by an interruption, a cancellation or an [OutOfMemoryError] is retried.
+ */
+internal fun precompileWasmModules(setup: PrecompileSetup): Unit = setup.precompileOnce()
+
+private fun precompileWasmModulesNow(setup: PrecompileSetup) {
     val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
     val languageSettings = KotlinWasmCompilerArguments().toLanguageVersionSettings(

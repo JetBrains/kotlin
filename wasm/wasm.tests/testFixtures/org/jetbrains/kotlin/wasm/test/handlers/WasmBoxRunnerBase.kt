@@ -53,6 +53,8 @@ abstract class WasmBoxRunnerBase(
         useUnitTestRunnerOnly: Boolean = false,
         outputCollector: MutableList<WasmVMOutput>? = null,
         callGroupedTestsDriver: Boolean = false,
+        // The base name of the entry module's `.mjs` wrapper, which `test.mjs` imports.
+        entryModuleBaseFileName: String = WASM_BASE_FILE_NAME,
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
@@ -66,7 +68,7 @@ abstract class WasmBoxRunnerBase(
 
         val testJs = if (useUnitTestRunnerOnly) """
                     ${if (isNoJsTag) "import './tag.mjs'" else ""}
-                    import * as jsModule from './$WASM_BASE_FILE_NAME.mjs'
+                    import * as jsModule from './$entryModuleBaseFileName.mjs'
                     if (globalThis.console == null) {
                         globalThis.console = {};
                     }
@@ -94,7 +96,7 @@ abstract class WasmBoxRunnerBase(
                 """.trimIndent()
         else """
                     ${if (isNoJsTag) "import './tag.mjs'" else ""}
-                    import * as jsModule from './$WASM_BASE_FILE_NAME.mjs'
+                    import * as jsModule from './$entryModuleBaseFileName.mjs'
                     if (globalThis.console == null) {
                         globalThis.console = {};
                     }
