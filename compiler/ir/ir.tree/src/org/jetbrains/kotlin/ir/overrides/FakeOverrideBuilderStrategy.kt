@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -60,11 +61,45 @@ abstract class FakeOverrideBuilderStrategy {
     open val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean = false
 
     /**
+     * Overridability respects visibility, it requires the overridee to "see" the overridden and vice versa. When a candidate for
+     * overridability happens to be private, it can not actually override anything. This property controls what should happen in that case:
+     * - true - Since a proper candidate for overriding is not found (due to visibility), create a fake override as usual.
+     *   However, the F/O is likely to have the same signature as the private member, so the clash should be handled somehow.
+     * - false - The private member "shadows" the base member. It does not override it, but also prevents anything else from overriding it,
+     *   including an F/O.
+     *
+     * There are at least two reasons for the `true` option, i.e. to create an F/O:
+     * - In Klib backends we have to ensure that every abstract member has an override, either real or fake, in every subclass.
+     *   That way the PL engine is able to report all non-abstract classes where an actual override is missing and create a stub
+     *   implementation.
+     * - Even though the private member cannot override the base one, there may be another applicable member further down the class
+     *   hierarchy. In that case the F/O allows to link a visible grand child member to a visible grand base member, disregarding the
+     *   invisible intermediate member. Example:
+     *  ```kotlin
+     * open class A {
+     *     open fun foo() = "A"
+     * }
+     * open class B : A() {
+     *     private fun foo() = "B" // shadowing member
+     *     //<FO> public open override fun foo()
+     * }
+     * open class C : B() {
+     *     override fun foo() = "C" // override A.foo via <FO> B.foo
+     * }
+     * ```
+     */
+    open val createFakeOverridesForInvisibleMembers: Boolean get() = false
+
+    /**
      * Creates a fake override for [member] from [superType] to be added to the class [clazz] or returns null,
      * if no fake override should be created for this member
      */
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
-        return runIf(isVisibleForOverrideInClass(member, clazz)) {
+        val createFakeOverride = when {
+            createFakeOverridesForInvisibleMembers && member.modality == Modality.ABSTRACT -> true
+            else -> isVisibleForOverrideInClass(member, clazz)
+        }
+        return runIf(createFakeOverride) {
             buildFakeOverrideMember(superType, member, clazz)
         }
     }
