@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(org.jetbrains.kotlin.analysis.api.KaExperimentalApi::class)
 
 package org.jetbrains.kotlin.documentation.analyzer.ids
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
@@ -28,11 +28,17 @@ import java.util.Base64
 /**
  * Generates an opaque identifier, or null for unsupported or local symbols.
  *
- * Packages use their escaped FQ name, with the root package, whose name is empty, identified by the
- * `/` separator alone. Classifiers use their escaped class ID. Callables use `kind:owner#name#signature`.
+ * The format depends on the symbol kind:
+ * - Package: `[escaped FQ name]`, e.g. `kotlin.text`; the root package is `/` alone.
+ * - Classifier: `[escaped ClassId]`, e.g. `kotlin.collections/List`.
+ * - Callable: `[kind]:[containing ClassId or package for top-level]#[escaped name]#[signature hash]`,
+ *   e.g. `function:kotlin.text#repeat#<hash>` or `constructor:kotlin.collections/ArrayList#%3Cinit%3E#<hash>`.
+ *
  * By default, [hashSignature] replaces the readable signature with an unpadded URL-safe Base64 encoding
  * of the first [SIGNATURE_HASH_BYTES] bytes of its SHA-256 digest.
- * Set it to false to inspect the signature used to calculate the digest. Package and classifier IDs are unaffected.
+ * Set it to false to inspect the signature used to calculate the digest, e.g.
+ * `function:kotlin.text#repeat#typeParameters=[]; context=[]; receiver=kotlin/String; parameters=[kotlin/Int];`
+ * for `fun String.repeat(n: Int): String`. Package and classifier IDs are unaffected.
  * Return types, ordinary parameter names, annotations, and expect/actual modifiers do not participate
  * in the signature. The exception is callables imported from ObjC — those annotated with
  * `kotlinx.cinterop.ObjCMethod`/`ObjCConstructor`/`ObjCFactory`, or overriding one that is — whose
@@ -51,13 +57,12 @@ internal fun generateDeclarationId(
     typeAliasClassId: ClassId? = null,
     hashSignature: Boolean = true,
 ): String? = when (symbol) {
-    is KaPackageSymbol -> symbol.fqName.encodePackageId()
-    is KaNamedClassSymbol -> symbol.classId?.takeUnless { it.isLocalClassId }?.encode()
-    is KaTypeAliasSymbol -> symbol.classId?.takeUnless { it.isLocalClassId }?.encode()
+    is KaPackageSymbol -> symbol.fqName.escapePackageId()
+    is KaNamedClassSymbol -> symbol.takeUnless { it.isLocal }?.classId?.escape()
+    is KaTypeAliasSymbol -> symbol.takeUnless { it.isLocal }?.classId?.escape()
     is KaCallableSymbol -> generateCallableId(symbol, typeAliasClassId, hashSignature)
     else -> throw IllegalArgumentException("Unknown symbol kind: $symbol")
 }
-
 context(session: KaSession)
 private fun generateCallableId(
     symbol: KaCallableSymbol,
@@ -96,9 +101,9 @@ private fun callableIdPrefix(declaration: KaCallableSymbol, kind: String, typeAl
     val callableId = declaration.callableId
     if (classId?.isLocalClassId == true || (classId == null && callableId == null)) return null
 
-    val owner = (typeAliasClassId ?: classId)?.encode() ?: callableId!!.packageName.encode()
+    val owner = (typeAliasClassId ?: classId)?.escape() ?: callableId!!.packageName.escape()
     val name = if (declaration is KaConstructorSymbol) CONSTRUCTOR_NAME else callableId!!.callableName.asString()
-    return "$kind:$owner#${name.encodeName()}"
+    return "$kind:$owner#${name.escapeName()}"
 }
 
 /** Narrows the opt-in for [ClassId.isLocal] (see its KDoc) to this single accessor. */
@@ -106,45 +111,43 @@ private fun callableIdPrefix(declaration: KaCallableSymbol, kind: String, typeAl
 private val ClassId.isLocalClassId: Boolean
     get() = isLocal
 
-context(session: KaSession)
-private fun typeParameterNames(declaration: KaCallableSymbol): Map<KaTypeParameterSymbol, String> {
-    val names = mutableMapOf<KaTypeParameterSymbol, String>()
-    var current: KaDeclarationSymbol? = declaration
-    var depth = 0
-    while (current != null) {
-        val parameters = when (current) {
-            is KaCallableSymbol -> current.typeParameters
-            is KaNamedClassSymbol -> current.typeParameters
-            else -> emptyList()
-        }
-        parameters.forEachIndexed { index, parameter -> names.putIfAbsent(parameter, "T${depth}_$index") }
-        current = current.containingDeclaration
-        depth++
-    }
-    return names
-}
-
 /**
- * Uses labeled fields and balanced type syntax so signatures can be inspected without decoding lengths.
- * Names inside types and ObjC selector names are escaped, so they cannot introduce field separators.
+ * A synthetic, stable name for a type parameter, e.g. `T1_0`: the number of declarations enclosing
+ * its owner (excluding the file), and the parameter's index among the owner's type parameters.
+ * Names are ignored, so renames do not change the ID.
  */
 context(session: KaSession)
+private fun typeParameterIdName(symbol: KaTypeParameterSymbol): String {
+    val owner = symbol.containingSymbol
+    val index = (owner as? KaDeclarationSymbol)?.typeParameters?.indexOf(symbol)
+        ?: error("Type parameter $symbol has no owning declaration")
+    var depth = 0
+    var current: KaSymbol? = owner.containingSymbol
+    while (current != null && current !is KaFileSymbol) {
+        depth++
+        current = current.containingSymbol
+    }
+    return "<T${depth}_$index>"
+}
+
+context(session: KaSession)
 private fun callableSignature(declaration: KaCallableSymbol): String {
-    val typeParameterNames = typeParameterNames(declaration)
-    val renderer = idTypeRenderer(typeParameterNames)
-    fun render(type: KaType): String = type.render(renderer, Variance.INVARIANT)
+
+    fun render(type: KaType): String =
+        @OptIn(KaExperimentalApi::class) type.render(idTypeRenderer, Variance.INVARIANT)
 
     return buildString {
         append("typeParameters=")
         append(declaration.typeParameters.joinToString(prefix = "[", postfix = "]") { parameter ->
             val bounds = parameter.upperBounds.map { render(it) }.sorted().joinToString(" & ")
-            "${typeParameterNames.getValue(parameter)}: $bounds"
+            "${typeParameterIdName(parameter)}: $bounds"
         })
 
         append("; context=")
         append(declaration.contextParameters.joinToString(prefix = "[", postfix = "]") { render(it.returnType) })
 
-        append("; receiver=").append(declaration.receiverType?.let { render(it) } ?: "none")
+        declaration.receiverType?.let { append("; receiver=").append(render(it)) }
+
         val parameters = (declaration as? KaFunctionSymbol)?.valueParameters.orEmpty()
 
         append("; parameters=")
@@ -153,13 +156,14 @@ private fun callableSignature(declaration: KaCallableSymbol): String {
         })
         append(";")
         if ((declaration as? KaNamedFunctionSymbol)?.isSuspend == true) append(" suspend;")
+        @OptIn(KaExperimentalApi::class)
         if (declaration.isCompanion) append(" companion;")
 
         // ObjC overload resolution is selector-based, so two overloads can differ only in parameter
         // names (unlike ordinary Kotlin overloads, where names never affect binary compatibility).
         if (declaration is KaFunctionSymbol && hasObjCSelectorNames(declaration)) {
             append("objcParameterNames=")
-            append(parameters.joinToString(prefix = "[", postfix = "]") { it.name.asString().encodeName() })
+            append(parameters.joinToString(prefix = "[", postfix = "]") { it.name.asString().escapeName() })
         }
     }
 }
@@ -200,21 +204,22 @@ context(session: KaSession)
 private fun hasObjCSelectorNames(symbol: KaFunctionSymbol): Boolean =
     symbol.isObjCImported() || symbol.allOverriddenSymbols.any { it.isObjCImported() }
 
-private fun ClassId.encode(): String = packageFqName.encode() + "/" + relativeClassName.encode()
+private fun ClassId.escape(): String = packageFqName.escape() + "/" + relativeClassName.escape()
 
-private fun FqName.encode(): String = pathSegments().joinToString(".") { it.asString().encodeName() }
+private fun FqName.escape(): String = pathSegments().joinToString(".") { it.asString().escapeName() }
 
 /** The root package's name is empty, so it is identified by the `/` separator alone. */
-private fun FqName.encodePackageId(): String = if (isRoot) "/" else encode()
+private fun FqName.escapePackageId(): String = if (isRoot) "/" else escape()
 
 /** Normalize form encoding to preserve percent-encoded spaces and escaped structural separators. */
-private fun String.encodeName(): String =
+private fun String.escapeName(): String =
     URLEncoder.encode(this, Charsets.UTF_8.name())
         .replace("+", "%20")
         .replace(".", "%2E")
         .replace("*", "%2A")
 
-private fun idTypeRenderer(parameters: Map<KaTypeParameterSymbol, String>): KaTypeRenderer =
+@OptIn(KaExperimentalApi::class)
+private val idTypeRenderer: KaTypeRenderer =
     KaTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
         expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE
         typeApproximator = KaRendererTypeApproximator.NO_APPROXIMATION
@@ -229,15 +234,21 @@ private fun idTypeRenderer(parameters: Map<KaTypeParameterSymbol, String>): KaTy
                 typeRenderer: KaTypeRenderer,
                 printer: PrettyPrinter,
             ) {
-                printer.append("<")
-                printer.append(parameters.getValue(type.symbol)) // e.g. renders as <T_0_0>
-                printer.append(">")
+                printer.append(with(analysisSession) { typeParameterIdName(type.symbol) }) // e.g. renders as <T0_0>
                 with(analysisSession) {
                     if (type.isMarkedNullable) printer.append('?')
                 }
             }
         }
-        /** [KaClassTypeQualifierRenderer.WITH_QUALIFIED_NAMES] without [encode] and uses `.` instead of `/` */
+        /**
+         * Like [KaClassTypeQualifierRenderer.WITH_QUALIFIED_NAMES], but tailored to the ID format:
+         * the package is percent-encoded and separated from class qualifiers by `/`, nested
+         * qualifiers keep `.` as separator, and every name is [encoded][escapeName].
+         *
+         * For `kotlin.collections.List<T>`, the stock `WITH_QUALIFIED_NAMES` renders
+         * `kotlin.collections.List<T>`. This renderer produces
+         * `kotlin.collections/List<T>`, which is unambiguous.
+         */
         classIdRenderer = object : KaClassTypeQualifierRenderer {
             override fun renderClassTypeQualifier(
                 analysisSession: KaSession,
@@ -246,10 +257,11 @@ private fun idTypeRenderer(parameters: Map<KaTypeParameterSymbol, String>): KaTy
                 typeRenderer: KaTypeRenderer,
                 printer: PrettyPrinter,
             ) {
-                val classType = type as KaClassType
-                printer.append(classType.classId.packageFqName.encode()).append('/')
+                // TODO KT-90413 KDM: Handling of unresolved references
+                val classType = type as? KaClassType ?: return
+                printer.append(classType.classId.packageFqName.escape()).append('/')
                 printer.printCollection(qualifiers, separator = ".") { qualifier ->
-                    append(qualifier.name.asString().encodeName())
+                    append(qualifier.name.asString().escapeName())
                     printCollectionIfNotEmpty(qualifier.typeArguments, prefix = "<", postfix = ">") {
                         typeRenderer.typeProjectionRenderer.renderTypeProjection(analysisSession, it, typeRenderer, this)
                     }
