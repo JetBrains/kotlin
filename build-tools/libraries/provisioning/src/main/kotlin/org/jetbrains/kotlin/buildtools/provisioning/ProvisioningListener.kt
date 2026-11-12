@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.provisioning
 
+import java.io.IOException
+import java.net.URI
 import java.nio.file.Path
 
 /**
@@ -22,6 +24,21 @@ public interface ProvisioningListener {
 
     /** [id] has been installed into [installation] by this caller. */
     public fun installed(id: String, installation: Path) {}
+
+    /**
+     * A download from [url] starts receiving bytes. [totalBytes] is the size of the whole file when the server announced it.
+     * Called once per attempt.
+     */
+    public fun downloadStarted(url: URI, totalBytes: Long?) {}
+
+    /** The file from [url] has [bytes] bytes on disk so far, counting those of an earlier attempt it continues. */
+    public fun downloadProgress(url: URI, bytes: Long, totalBytes: Long?) {}
+
+    /** The file from [url] is complete and verified: [bytes] bytes, of which this attempt took [durationMillis]. */
+    public fun downloadFinished(url: URI, bytes: Long, durationMillis: Long) {}
+
+    /** Attempt number [attempt] to download from [url] failed with [cause], and the downloader will try again. */
+    public fun downloadRetried(url: URI, attempt: Int, cause: IOException) {}
 
     public companion object {
         /** A listener that ignores every event. */
