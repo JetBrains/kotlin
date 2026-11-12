@@ -9,13 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.json
@@ -55,6 +49,10 @@ internal abstract class GenerateSwcConfig : DefaultTask() {
 
     @get:OutputFile
     abstract val configFile: RegularFileProperty
+
+    /** Only used to check the task is aligned with its link task, see [org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.JsTaskCompilerOptionMismatchChecker] */
+    @get:Internal
+    internal abstract val linkTaskName: Property<String>
 
     @TaskAction
     fun writeConfig() {

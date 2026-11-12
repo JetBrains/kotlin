@@ -10,6 +10,8 @@ import com.google.gson.JsonObject
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertAll
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.assertEquals
@@ -210,6 +213,92 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     }
 
     @TestMetadata("simple-js-executable")
+    @MustRunOnChangesInJs
+    @DisplayName("KT-91228: package.json, Node.js run and webpack work when ES modules are set via free compiler args")
+    @GradleTestVersions(
+        // This test tests KGP & compiler interop. Gradle version is irrelevant.
+        minVersion = TestVersions.Gradle.MAX_SUPPORTED
+    )
+    @GradleTest
+    fun jsToolsWorkWithEsModuleKindFromFreeCompilerArgs(gradleVersion: GradleVersion) {
+        project("simple-js-executable", gradleVersion) {
+            kotlinSourcesDir("jsMain").resolve("Exported.kt").writeText(
+                """
+                |@JsExport
+                |fun exported(): String = "exported"
+                """.trimMargin()
+            )
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    browser()
+                    generateTypeScriptDefinitions()
+                    compilerOptions.freeCompilerArgs.addAll("-module-kind", "es")
+                }
+            }
+
+            val packageDir = projectPath.resolve("build/js/packages/js-executable/")
+
+            build("assemble", "jsNodeProductionRun", "jsBrowserProductionWebpack") {
+                val packageJson = assertNotNull(fromSrcPackageJson(packageDir.resolve(NpmProject.PACKAGE_JSON).toFile()))
+                assertAll(
+                    // The compiler generated the JS file for ES modules
+                    { assertFileExists(packageDir.resolve("kotlin/js-executable.mjs")) },
+                    // The compiler generated the TypeScript declarations for ES modules
+                    { assertFileExists(packageDir.resolve("kotlin/js-executable.d.mts")) },
+                    // package.json points to the generated JS file
+                    { assertEquals("kotlin/js-executable.mjs", packageJson.main, "package.json main") },
+                    // package.json points to the generated TypeScript declarations
+                    { assertEquals("kotlin/js-executable.d.mts", packageJson.types, "package.json types") },
+                    // Node.js runs the generated JS file
+                    { assertOutputContains("Hello, Yarn") },
+                    // webpack bundles the generated JS file
+                    { assertFileInProjectExists("build/kotlin-webpack/js/productionExecutable/js-executable.js") },
+                    // The module kind is configured consistently, so there's nothing to warn about
+                    { assertNoDiagnostic(KotlinToolingDiagnostics.JsTaskCompilerOptionMismatch) },
+                )
+            }
+        }
+    }
+
+    @MustRunOnChangesInJs
+    @DisplayName("KT-91228: module kind set on the link tasks differently from their compilation is reported but works with webpack")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    @GradleTest
+    fun linkTaskModuleKindDifferentFromCompilation(gradleVersion: GradleVersion) {
+        project("simple-js-executable", gradleVersion) {
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    browser()
+                }
+                project.tasks.withType(KotlinJsIrLink::class.java).configureEach { task ->
+                    task.compilerOptions.moduleKind.set(JsModuleKind.MODULE_ES)
+                }
+            }
+
+            val packageDir = projectPath.resolve("build/js/packages/js-executable/")
+
+            build("assemble", "jsBrowserProductionWebpack") {
+                val packageJson = assertNotNull(fromSrcPackageJson(packageDir.resolve(NpmProject.PACKAGE_JSON).toFile()))
+                assertAll(
+                    // The binary's main file follows the link task
+                    { assertFileExists(packageDir.resolve("kotlin/js-executable.mjs")) },
+                    // webpack still follows the link task
+                    { assertTasksExecuted(":jsBrowserProductionWebpack") },
+                    { assertFileInProjectExists("build/kotlin-webpack/js/productionExecutable/js-executable.js") },
+                    // package.json follows the compilation, so it doesn't point to the generated JS file, as the diagnostic says
+                    { assertEquals("kotlin/js-executable.js", packageJson.main, "package.json main") },
+                    {
+                        assertHasDiagnostic(
+                            KotlinToolingDiagnostics.JsTaskCompilerOptionMismatch,
+                            withSubstring = "Compilation 'main' of target 'js' uses `moduleKind=umd`, " +
+                                    "but tasks `[:compileDevelopmentExecutableKotlinJs, :compileProductionExecutableKotlinJs]` use `moduleKind=es`.",
+                        )
+                    },
+                )
+            }
+        }
+    }
+
     @MustRunOnChangesInJs
     @DisplayName("es2020 target produces ES modules and compiles Long as bigint by default")
     @GradleTest

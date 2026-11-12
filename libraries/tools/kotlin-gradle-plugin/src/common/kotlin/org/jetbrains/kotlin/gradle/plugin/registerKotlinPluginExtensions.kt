@@ -198,6 +198,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, WasmSourceSetsNotFoundChecker)
         register(project, DuplicateSourceSetChecker)
         register(project, CInteropInputChecker)
+        register(project, JsTaskCompilerOptionMismatchChecker)
         register(project, IncorrectCompileOnlyDependenciesChecker)
         register(project, GradleDeprecatedPropertyChecker)
         register(project, OverriddenKotlinNativeHomeChecker)
