@@ -252,3 +252,7 @@ fun ConeRigidType.getConstructor(): ConeTypeConstructorMarker {
         is ConeUnionType -> this
     }
 }
+
+fun ConeKotlinType.primaryTypeIfUnion(): ConeKotlinType {
+    return if (this is ConeUnionType) this.primaryType else this
+}
