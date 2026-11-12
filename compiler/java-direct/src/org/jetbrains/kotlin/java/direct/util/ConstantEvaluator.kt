@@ -217,10 +217,9 @@ class ConstantEvaluator private constructor(
             return JavaLiteralParser.evaluateNumericBinaryOp(lhs, operator, rhs)
         }
 
+        // Binary numeric promotion (JLS 5.6): a `char` operand is promoted to `int`, so `'a' + 1` is `int` 98.
         if (lhs is Char && rhs is Number) {
-            return JavaLiteralParser.evaluateNumericBinaryOp(lhs.code, operator, rhs)?.let { result ->
-                if (result is Int && operator == JavaSyntaxTokenType.PLUS) result.toChar() else result
-            }
+            return JavaLiteralParser.evaluateNumericBinaryOp(lhs.code, operator, rhs)
         }
         if (lhs is Number && rhs is Char) {
             return JavaLiteralParser.evaluateNumericBinaryOp(lhs, operator, rhs.code)
@@ -239,20 +238,25 @@ class ConstantEvaluator private constructor(
         val operator = tree.getType(children[0])
         val operand = evaluate(children[1]) ?: return null
 
+        // Unary numeric promotion (JLS 5.6): `byte`, `short` and `char` operands are promoted to `int`.
+        val promoted = when (operand) {
+            is Byte -> operand.toInt()
+            is Short -> operand.toInt()
+            is Char -> operand.code
+            else -> operand
+        }
         return when (operator) {
-            JavaSyntaxTokenType.MINUS -> when (operand) {
-                is Int -> -operand
-                is Long -> -operand
-                is Float -> -operand
-                is Double -> -operand
+            JavaSyntaxTokenType.MINUS -> when (promoted) {
+                is Int -> -promoted
+                is Long -> -promoted
+                is Float -> -promoted
+                is Double -> -promoted
                 else -> null
             }
-            JavaSyntaxTokenType.PLUS -> operand
-            JavaSyntaxTokenType.TILDE -> when (operand) {
-                is Int -> operand.inv()
-                is Long -> operand.inv()
-                is Short -> operand.inv()
-                is Byte -> operand.inv()
+            JavaSyntaxTokenType.PLUS -> if (promoted is Number) promoted else null
+            JavaSyntaxTokenType.TILDE -> when (promoted) {
+                is Int -> promoted.inv()
+                is Long -> promoted.inv()
                 else -> null
             }
             JavaSyntaxTokenType.EXCL -> (operand as? Boolean)?.let { !it }

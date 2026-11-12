@@ -67,18 +67,34 @@ fun JavaClass.hasMetadataAnnotation(): Boolean =
     }
 
 internal fun Any?.createConstantOrError(session: FirSession, expectedConeType: ConeKotlinType? = null): FirExpression {
-    val value = if (this is Int && expectedConeType != null) {
-        // special case for Java literals in annotation default values:
-        // literal value is always integer, but an expected parameter type can be any other number type
-        when {
-            expectedConeType.isByte -> this.toByte()
-            expectedConeType.isShort -> this.toShort()
-            expectedConeType.isLong -> this.toLong()
-            else -> this
-        }
-    } else this
+    val value = if (expectedConeType != null) convertToJavaAnnotationElementType(expectedConeType) else this
     return value.createConstantIfAny(session) ?: buildErrorExpression {
         diagnostic = ConeSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this", DiagnosticKind.Java)
+    }
+}
+
+/**
+ * Applies the assignment conversion (JLS 5.2) of a constant Java annotation value to the element type (JLS 9.7.1):
+ * a widening primitive conversion, or a narrowing of an `int`-or-smaller constant to `byte`, `short` or `char`.
+ * The value of a Java literal or constant expression has the type of the expression after numeric promotion
+ * (e.g. `int` for `1` or `'a' + 1`), not the type of the element. Other values are returned as is.
+ */
+private fun Any?.convertToJavaAnnotationElementType(expectedConeType: ConeKotlinType): Any? {
+    val isIntOrSmaller = this is Int || this is Short || this is Byte || this is Char
+    val number: Number = when (this) {
+        is Char -> code
+        is Number -> this
+        else -> return this
+    }
+    return when {
+        expectedConeType.isByte -> if (isIntOrSmaller) number.toByte() else this
+        expectedConeType.isShort -> if (isIntOrSmaller) number.toShort() else this
+        expectedConeType.isChar -> if (isIntOrSmaller) number.toInt().toChar() else this
+        expectedConeType.isInt -> if (isIntOrSmaller) number.toInt() else this
+        expectedConeType.isLong -> if (isIntOrSmaller || this is Long) number.toLong() else this
+        expectedConeType.isFloat -> if (this !is Double) number.toFloat() else this
+        expectedConeType.isDouble -> number.toDouble()
+        else -> this
     }
 }
 
