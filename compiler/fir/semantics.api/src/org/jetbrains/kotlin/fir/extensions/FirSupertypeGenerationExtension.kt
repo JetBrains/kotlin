@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import kotlin.reflect.KClass
 
-@Suppress("DEPRECATION") // TODO(KT-?) drop TypeResolveService and computeAdditionalSupertypesForGeneratedNestedClass().
+@Suppress("DEPRECATION") // TODO(KT-68133) drop TypeResolveService and computeAdditionalSupertypesForGeneratedNestedClass().
 abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
         val NAME: FirExtensionPointName = FirExtensionPointName("SupertypeGenerator")
