@@ -1,0 +1,32 @@
+KaUsualClassType:
+  abbreviation: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: intermediate/IntermediateAlias
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: IntermediateAlias
+        symbol: KaTypeAliasSymbol(intermediate/IntermediateAlias)
+        typeArguments: []
+    ]
+    symbol: KaTypeAliasSymbol(intermediate/IntermediateAlias)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  annotations: []
+  classId: kotlin/Int
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Int
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Int)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+intermediate.IntermediateAlias

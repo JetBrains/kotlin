@@ -74,6 +74,18 @@ public class FirStandaloneNormalAnalysisLibraryBinaryModuleAbbreviatedTypeTestGe
   }
 
   @Test
+  @TestMetadata("IntAliasFromDecompiledLibrary.kt")
+  public void testIntAliasFromDecompiledLibrary() {
+    run("IntAliasFromDecompiledLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("IntAliasInDecompiledLibraryUseSite.kt")
+  public void testIntAliasInDecompiledLibraryUseSite() {
+    run("IntAliasInDecompiledLibraryUseSite.kt");
+  }
+
+  @Test
   @TestMetadata("ListAlias.kt")
   public void testListAlias() {
     run("ListAlias.kt");
