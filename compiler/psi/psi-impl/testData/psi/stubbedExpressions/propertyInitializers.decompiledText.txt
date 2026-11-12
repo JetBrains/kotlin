@@ -18,7 +18,7 @@ PropertyInitializersKt.class:
 
   package test
 
-  public const val boolean: kotlin.Boolean = 1
+  public const val boolean: kotlin.Boolean = true
 
   public const val byte: kotlin.Byte = 1
 
@@ -32,7 +32,7 @@ PropertyInitializersKt.class:
 
   public const val double: kotlin.Double = 6.6
 
-  public const val char: kotlin.Char = 99
+  public const val char: kotlin.Char = 'c'
 
   public const val string: kotlin.String = "s"
 
