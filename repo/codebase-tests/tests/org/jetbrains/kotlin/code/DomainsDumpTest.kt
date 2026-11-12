@@ -66,7 +66,7 @@ class DomainsDumpTest {
                 if (!globMatchesAnyNode(include)) {
                     unmatchedRules.add(UnmatchedRule(domain, include, isInclude = true))
                 }
-           e }
+            }
 
             domain.exclude.forEach forEachRule@{ exclude ->
                 if (!globMatchesAnyNode(exclude)) {
