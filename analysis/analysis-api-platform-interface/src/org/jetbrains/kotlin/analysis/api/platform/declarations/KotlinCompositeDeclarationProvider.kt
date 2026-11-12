@@ -51,6 +51,14 @@ public class KotlinCompositeDeclarationProvider private constructor(
         return providers.flatMapTo(mutableListOf()) { it.getTopLevelCallableFiles(callableId) }
     }
 
+    override fun getTopLevelFunctionFiles(callableId: CallableId): Collection<KtFile> {
+        return providers.flatMapTo(mutableListOf()) { it.getTopLevelFunctionFiles(callableId) }
+    }
+
+    override fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> {
+        return providers.flatMapTo(mutableListOf()) { it.getTopLevelPropertyFiles(callableId) }
+    }
+
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
         return providers.flatMapTo(mutableSetOf()) { it.getTopLevelCallableNamesInPackage(packageFqName) }
     }

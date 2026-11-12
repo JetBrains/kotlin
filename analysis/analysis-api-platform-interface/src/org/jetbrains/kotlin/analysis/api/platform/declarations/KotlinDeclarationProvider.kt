@@ -54,7 +54,26 @@ public interface KotlinDeclarationProvider : KotlinComposableProvider {
     public fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty>
     public fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction>
 
+    /**
+     * Returns the files which may contain top-level functions or properties with the given [callableId].
+     */
     public fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile>
+
+    /**
+     * Returns the files which may contain top-level functions with the given [callableId].
+     *
+     * The result may be a superset of the files which contain such functions. The default implementation returns
+     * [getTopLevelCallableFiles], which also includes the files with top-level properties.
+     */
+    public fun getTopLevelFunctionFiles(callableId: CallableId): Collection<KtFile> = getTopLevelCallableFiles(callableId)
+
+    /**
+     * Returns the files which may contain top-level properties with the given [callableId].
+     *
+     * The result may be a superset of the files which contain such properties. The default implementation returns
+     * [getTopLevelCallableFiles], which also includes the files with top-level functions.
+     */
+    public fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> = getTopLevelCallableFiles(callableId)
 
     public fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>
 
