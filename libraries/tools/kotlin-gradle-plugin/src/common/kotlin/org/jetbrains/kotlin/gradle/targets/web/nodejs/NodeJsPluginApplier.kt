@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
-import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -88,15 +87,12 @@ internal class NodeJsPluginApplier(
     }
 
     private fun addPlatform(project: Project, extension: BaseNodeJsEnvSpec) {
-        val uname = project.providers
-            .unameExecResult
-
         extension.platform.value(
             project.providers.currentHostOs()
                 .zip(
                     project.providers.systemProperty("os.arch")
                 ) { osType, arch ->
-                    parsePlatform(osType, arch, uname)
+                    parsePlatform(osType, arch)
                 }
         ).disallowChanges()
     }
