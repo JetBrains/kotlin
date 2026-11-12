@@ -77,3 +77,17 @@ public class ChecksumMismatchException internal constructor(
     "The file downloaded from $url has the SHA-256 checksum $actual, but $expected was expected. Either the file on the " +
             "server or the expected checksum is wrong."
 )
+
+/**
+ * An archive entry would be written outside the directory the archive is unpacked into. Nothing outside it is written.
+ *
+ * @property archive the archive.
+ * @property entryName the entry, as it is named in the archive.
+ */
+public class UnsafeArchiveException internal constructor(
+    public val archive: Path,
+    public val entryName: String,
+) : ProvisioningException(
+    "The archive '$archive' has an entry '$entryName' that would be written outside the directory it is unpacked into. " +
+            "The archive may have been tampered with."
+)

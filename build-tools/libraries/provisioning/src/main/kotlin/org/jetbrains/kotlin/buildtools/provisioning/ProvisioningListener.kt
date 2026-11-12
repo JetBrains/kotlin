@@ -40,6 +40,9 @@ public interface ProvisioningListener {
     /** Attempt number [attempt] to download from [url] failed with [cause], and the downloader will try again. */
     public fun downloadRetried(url: URI, attempt: Int, cause: IOException) {}
 
+    /** [archive] is being unpacked into [destination]. */
+    public fun extractionStarted(archive: Path, destination: Path) {}
+
     public companion object {
         /** A listener that ignores every event. */
         public val None: ProvisioningListener = object : ProvisioningListener {}
