@@ -88,18 +88,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 
-tasks.withType(AbstractKotlinCompile::class.java).configureEach {
-    friendPaths.from(
-        configurations.testCompileClasspath.map { configuration ->
-            configuration.incoming.artifacts.artifacts.filter { artifact ->
-                (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":kotlin-gradle-plugin" ||
-                        (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":gradle:kotlin-gradle-ecosystem-plugin"
-            }.also { assert(it.isNotEmpty()) }.map { artifact ->
-                artifact.file
-            }
-        }
-    )
-}
 
 val configurationToBeConsumedInTests: MutableMap<String, Configuration> = mutableMapOf()
 
@@ -741,6 +729,22 @@ fun Test.applyIntegrationTestConfiguration() {
 testing {
     suites {
         named<JvmTestSuite>("test") {
+            // Only the default suite's compilation: other suites (e.g. archTest) don't have KGP on their classpath, and
+            // friendPaths is an @Input filtered by file existence, so applying it there makes the build cache key unstable.
+            val suiteSourceSet = sources
+            project.tasks.named(suiteSourceSet.getCompileTaskName("kotlin"), AbstractKotlinCompile::class.java).configure {
+                friendPaths.from(
+                    project.configurations.named(suiteSourceSet.compileClasspathConfigurationName).map { configuration ->
+                        configuration.incoming.artifacts.artifacts.filter { artifact ->
+                            (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":kotlin-gradle-plugin" ||
+                                    (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":gradle:kotlin-gradle-ecosystem-plugin"
+                        }.also { assert(it.isNotEmpty()) }.map { artifact ->
+                            artifact.file
+                        }
+                    }
+                )
+            }
+
             targets.configureEach {
                 testTask.configure {
                     applyIntegrationTestConfiguration()
