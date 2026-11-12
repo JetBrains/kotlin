@@ -98,7 +98,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
             configuration.addKotlinSourceRoot(
                 path = arg,
                 isCommon = arg in commonSources,
-                hmppModuleName = hmppCliModuleStructure?.getModuleNameForSource(arg)
+                hmppModuleName = hmppCliModuleStructure?.getModuleNameForSource(File(arg))
             )
         }
 

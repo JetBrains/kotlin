@@ -270,7 +270,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         val commonSources = commonSourcesArray.toSet()
         val hmppCliModuleStructure = configuration.hmppModuleStructure
         for (arg in arguments.freeArgs) {
-            configuration.addKotlinSourceRoot(arg, commonSources.contains(arg), hmppCliModuleStructure?.getModuleNameForSource(arg))
+            configuration.addKotlinSourceRoot(arg, commonSources.contains(arg), hmppCliModuleStructure?.getModuleNameForSource(File(arg)))
         }
         val moduleName = arguments.irModuleName ?: arguments.moduleName ?: run {
             val message = "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"

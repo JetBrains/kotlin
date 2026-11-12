@@ -89,11 +89,11 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             module.isLeafModuleInMppGraph(testServices)
         ) {
             val hmppModules = module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
-                .associateWith {
+                .associateWith { testModule ->
                     HmppCliModule(
-                        name = it.name,
-                        sources = it.kotlinFiles
-                            .map { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it).canonicalPath }
+                        name = testModule.name,
+                        sources = testModule.kotlinFiles
+                            .map { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
                             .toSet()
                     )
                 }

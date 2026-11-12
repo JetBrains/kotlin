@@ -87,8 +87,8 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         val commonSources = arguments.commonSources.toSet().map { File(it).absoluteFile.normalize() }
         val hmppModuleStructure = this[CommonConfigurationKeys.HMPP_MODULE_STRUCTURE]
         arguments.freeArgs.forEach { path ->
-            val normalizedPath = File(path).absoluteFile.normalize()
-            addKotlinSourceRoot(path, normalizedPath in commonSources, hmppModuleStructure?.getModuleNameForSource(path))
+            val normalizedFile = File(path).absoluteFile.normalize()
+            addKotlinSourceRoot(path, normalizedFile in commonSources, hmppModuleStructure?.getModuleNameForSource(normalizedFile))
         }
     }
 
