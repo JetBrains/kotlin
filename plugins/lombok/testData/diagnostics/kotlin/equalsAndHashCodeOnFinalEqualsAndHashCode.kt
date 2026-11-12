@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-88511
 
 // FILE: JavaFinalEquals.java
@@ -87,3 +88,6 @@ class ChildOfFinalHashCodeWithOwnHashCode : FinalHashCode() {
     <!OVERRIDING_FINAL_MEMBER!>override<!> fun hashCode(): Int = 1
     val a = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, javaType, nullableType,
+operator, override, propertyDeclaration, thisExpression */

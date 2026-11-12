@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83121
 
 // FILE: DataWithStatic.java
@@ -52,3 +53,5 @@ fun main() {
     <!INVISIBLE_REFERENCE!>NoArgsWithStatic<!>()
     NoArgsWithStatic.of()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

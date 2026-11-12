@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-90590
 // WITH_STDLIB
 import lombok.Builder
@@ -88,3 +89,7 @@ class Entity : Base() {
         const val COMPANION_CONST = 3
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, anonymousObjectExpression, callableReference,
+classDeclaration, companionObject, const, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+objectDeclaration, override, propertyDeclaration, superExpression, thisExpression */

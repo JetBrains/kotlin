@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: usage.kt
 
 fun usage(): User = User.builder().name("Alice").build()
@@ -18,3 +19,5 @@ class User {
         override fun foo() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, override, propertyDeclaration, stringLiteral */

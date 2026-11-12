@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Lombok skips the members `@Data` implies silently when the class already declares them
 // (`whineIfExists = false` in `HandleData`), so neither class annotated with `@Data` below should get a warning.
 
@@ -27,3 +28,6 @@ class EqualsAndHashCodeWithExistingEqualsAndHashCode(val x: Int) {
     override fun equals(other: Any?): Boolean = other is EqualsAndHashCodeWithExistingEqualsAndHashCode
     override fun hashCode(): Int = 0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nullableType, operator,
+override, primaryConstructor, propertyDeclaration, stringLiteral */

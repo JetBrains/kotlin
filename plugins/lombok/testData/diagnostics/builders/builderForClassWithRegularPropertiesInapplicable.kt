@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-90879
 // WITH_STDLIB
 // RENDER_DIAGNOSTICS_FULL_TEXT
@@ -65,3 +66,6 @@ class WithConstructor(var constructorProperty: Int) {
         correct.<!UNRESOLVED_REFERENCE!>singularVal<!>("6")
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, localProperty,
+primaryConstructor, propertyDeclaration, setter, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 import lombok.*
 
@@ -11,3 +12,5 @@ object DataObjectWithStatic
 @Data(staticConstructor = "of")
 <!NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED!>@NoArgsConstructor<!>
 class DataWithNoArgsConstructor(val name: String)
+
+/* GENERATED_FIR_TAGS: classDeclaration, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

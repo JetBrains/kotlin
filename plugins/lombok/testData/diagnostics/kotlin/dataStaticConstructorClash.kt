@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // FIR_DUMP
 // WITH_STDLIB
 
@@ -67,3 +68,6 @@ fun test() {
     DataObject.of()
     WithDataCompanion.of()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+objectDeclaration, outProjection, primaryConstructor, propertyDeclaration, stringLiteral, vararg */

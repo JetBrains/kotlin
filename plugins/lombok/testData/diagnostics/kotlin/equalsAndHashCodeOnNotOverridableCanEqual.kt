@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // ISSUE: KT-89189
 
@@ -84,3 +85,6 @@ class ChildOfFinalUnrelatedCanEqual(val a: Int) : FinalUnrelatedCanEqual()
 class ChildOfFinalCanEqualWithOwnCanEqual(val a: Int) : FinalCanEqual() {
     <!OVERRIDING_FINAL_MEMBER!>override<!> fun canEqual(other: Any?): Boolean = other is ChildOfFinalCanEqualWithOwnCanEqual
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression, javaType,
+nullableType, override, primaryConstructor, propertyDeclaration, typeParameter */

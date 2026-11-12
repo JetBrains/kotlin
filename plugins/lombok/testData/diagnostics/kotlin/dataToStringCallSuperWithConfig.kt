@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // FULL_JDK
 
@@ -20,3 +21,5 @@ class C(code: Int, val extra: String) : A(code)
 
 lombok.toString.callSuper=warn
 lombok.equalsAndHashCode.callSuper=skip
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

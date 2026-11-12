@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-91174
 // WITH_STDLIB
 // FILE: test/Owner.kt
@@ -18,3 +19,6 @@ package test
 
 fun asBuilder(child: Child): Owner.OwnerBuilder<*> = child
 fun buildOwner(child: Child): Owner<*> = child.build()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType, nullableType, primaryConstructor,
+propertyDeclaration, starProjection, typeParameter */

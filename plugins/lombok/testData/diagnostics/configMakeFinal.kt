@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-90271
 // FILE: MakeFinalExample.java
 
@@ -26,3 +27,6 @@ fun foo() {
 
 // FILE: lombok.config
 lombok.fieldDefaults.defaultFinal = true
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, javaFunction, javaProperty, javaType,
+localProperty, propertyDeclaration */

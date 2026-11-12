@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-90508
 // WITH_STDLIB
 // RENDER_DIAGNOSTICS_FULL_TEXT
@@ -40,3 +41,6 @@ class WithConstructor(val name: String) {
     val <!BUILDER_PROPERTY_NOT_INCLUDED!>id<!> = 42
     var <!BUILDER_PROPERTY_NOT_INCLUDED!>counter<!> = 0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,
+stringLiteral */

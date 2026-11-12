@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-90432
 // FILE: Main.kt
 
@@ -40,3 +41,6 @@ public class PersonWithHashCode {
         return 0;
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, flexibleType, functionDeclaration, javaFunction, javaProperty,
+javaType, localProperty, propertyDeclaration, stringLiteral */

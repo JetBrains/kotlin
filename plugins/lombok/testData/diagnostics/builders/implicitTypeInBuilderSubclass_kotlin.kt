@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FILE: CustomBuilders.kt
 
@@ -32,3 +33,6 @@ class Mixed {
     var owner: User = User()
     var <!BUILDER_PROPERTY_NOT_INCLUDED_ERROR!>initialized<!> = false
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, propertyDeclaration,
+stringLiteral, superExpression */

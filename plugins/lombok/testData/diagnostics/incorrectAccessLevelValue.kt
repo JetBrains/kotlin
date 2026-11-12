@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: CODEGEN
+// DISABLE_JAVA_FACADE
 // ISSUE: KT-85472
 
 // FILE: Java.java
@@ -16,3 +18,4 @@ fun test() {
     Java().getField()
 }
 
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

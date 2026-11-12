@@ -1,6 +1,7 @@
 // LL_FIR_DIVERGENCE
 // The Analysis API still uses the PSI Java facade, which cannot resolve the plugin-generated builder types in `baz` (KT-90074)
 // LL_FIR_DIVERGENCE
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-83329
 // USE_PSI_JAVA_FACADE: false
 // FIR_DUMP
@@ -115,3 +116,6 @@ fun baz() {
     val qualifiedBuilder = Other.<!MISSING_DEPENDENCY_CLASS!>qualifiedBuilder<!>(1)
     val fullyQualifiedBuilder = Other.<!MISSING_DEPENDENCY_CLASS!>fullyQualifiedBuilder<!>(1)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // FULL_JDK
 // WITH_ADVANCED_LOGGERS
@@ -81,3 +82,5 @@ lombok.superBuilder.flagUsage=warning
 lombok.noArgsConstructor.flagUsage=warning
 lombok.allArgsConstructor.flagUsage=warning
 lombok.requiredArgsConstructor.flagUsage=warning
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

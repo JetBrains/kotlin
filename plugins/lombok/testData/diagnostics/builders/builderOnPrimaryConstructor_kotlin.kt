@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FILE: usage.kt
 
@@ -38,3 +39,6 @@ class Empty @Builder constructor() {
 
 @Builder
 class BothAnnotations @Builder constructor(val id: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration, stringLiteral */

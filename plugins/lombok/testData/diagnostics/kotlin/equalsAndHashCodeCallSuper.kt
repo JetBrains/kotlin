@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-88653
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
@@ -38,3 +39,6 @@ enum class EnumImplicit { ENTRY }
 
 <!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode(callSuper = true)<!>
 object ObjectCallSuperTrue
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, integerLiteral, objectDeclaration,
+primaryConstructor, propertyDeclaration */
