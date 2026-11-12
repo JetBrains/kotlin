@@ -42,7 +42,7 @@ public final class Subject {
 
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target(value = {})
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
 @kotlin.Metadata()
 public abstract @interface TypeAnnotation {
 }

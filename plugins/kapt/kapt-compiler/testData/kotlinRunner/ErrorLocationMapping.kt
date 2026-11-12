@@ -1,4 +1,5 @@
 // EMIT_JVM_TYPE_ANNOTATIONS
+// FULL_JDK
 
 class Subject {
 
