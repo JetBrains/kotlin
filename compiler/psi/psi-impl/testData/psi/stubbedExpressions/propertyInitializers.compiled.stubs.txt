@@ -148,6 +148,32 @@ PropertyInitializersKt.class:
             isClassRef: true
       STRING_TEMPLATE
         LITERAL_STRING_TEMPLATE_ENTRY[text=s]
+    PROPERTY[fqName=test.uByte, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uByte]
+      constantInitializer: -1
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UByte]
+            isClassRef: true
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+    PROPERTY[fqName=test.uShort, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uShort]
+      constantInitializer: -1
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UShort]
+            isClassRef: true
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     PROPERTY[fqName=test.negative, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
       constantInitializer: -7
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)

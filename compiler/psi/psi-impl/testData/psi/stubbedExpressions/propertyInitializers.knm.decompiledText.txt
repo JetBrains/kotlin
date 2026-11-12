@@ -21,6 +21,10 @@ public const val char: kotlin.Char = 'c'
 
 public const val string: kotlin.String = "s"
 
+public const val uByte: kotlin.UByte = 255u
+
+public const val uShort: kotlin.UShort = 65535u
+
 public const val negative: kotlin.Int = -7
 
 public const val sum: kotlin.Int = 3

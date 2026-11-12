@@ -182,6 +182,52 @@ KtFile: propertyInitializers.kt
       LITERAL_STRING_TEMPLATE_ENTRY
         PsiElement(REGULAR_STRING_PART)('s')
       PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('uByte')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('UByte')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('UByte')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('MAX_VALUE')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('uShort')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('UShort')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('UShort')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('MAX_VALUE')
   PsiWhiteSpace('\n\n')
   PROPERTY
     MODIFIER_LIST

@@ -36,6 +36,10 @@ PropertyInitializersKt.class:
 
   public const val string: kotlin.String = "s"
 
+  public const val uByte: kotlin.UByte = -1
+
+  public const val uShort: kotlin.UShort = -1
+
   public const val negative: kotlin.Int = -7
 
   public const val sum: kotlin.Int = 3

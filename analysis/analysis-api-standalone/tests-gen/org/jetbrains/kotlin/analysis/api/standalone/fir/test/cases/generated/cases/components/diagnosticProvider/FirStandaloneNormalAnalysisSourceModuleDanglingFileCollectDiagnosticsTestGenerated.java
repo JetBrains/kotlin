@@ -99,6 +99,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("constFromLibrary.kt")
+  public void testConstFromLibrary() {
+    run("constFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("contextParameters.kt")
   public void testContextParameters() {
     run("contextParameters.kt");

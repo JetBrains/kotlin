@@ -1,0 +1,39 @@
+KT element: KtObjectDeclaration
+KT element text:
+public object Consts {
+    public const val boolean: kotlin.Boolean = 1
+
+    public const val char: kotlin.Char = 99
+
+    public const val byte: kotlin.Byte = -1
+
+    public const val short: kotlin.Short = 2
+
+    public const val uByte: kotlin.UByte = -1
+
+    public const val uShort: kotlin.UShort = -1
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] object Consts : R|kotlin/Any| {
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val boolean: R|kotlin/Boolean| = Int(1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Boolean|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val byte: R|kotlin/Byte| = Int(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Byte|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val char: R|kotlin/Char| = Int(99)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Char|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val short: R|kotlin/Short| = Int(2)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Short|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val uByte: R|kotlin/UByte| = UByte(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/UByte|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val uShort: R|kotlin/UShort| = UShort(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/UShort|
+
+}
