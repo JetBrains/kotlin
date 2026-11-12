@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.typeConstructorParameters
+import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -108,7 +108,7 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
              * The type of a local class (both a receiver type and a declared supertype, e.g. `L1<T, R>` in `class L2<T> : L1<T>`)
              * may carry more arguments than the class has type constructor parameters: in addition to its own type parameters,
              * the frontend also captures the type parameters of the enclosing declarations, including those outside an enclosing
-             * anonymous object (where `typeConstructorParameters` stops). Such extra arguments always come last and are just
+             * anonymous object (where `extractTypeParameters()` stops). Such extra arguments always come last and are just
              * the captured type parameters themselves, which are in scope at the call site, so they don't need substitution.
              * That's why the generic [org.jetbrains.kotlin.ir.types.AbstractIrTypeSubstitutor.forSuperClass], which requires
              * an exact match of type parameters and arguments, can't be used here.
@@ -116,8 +116,8 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
             private fun IrSimpleType.substitutedSupertype(superClass: IrClassSymbol): IrSimpleType? {
                 val clazz = classOrNull ?: return null
                 if (clazz == superClass) return this
-                val typeParameters = clazz.owner.typeConstructorParameters.map { it.symbol }
-                val substitutor = IrTypeSubstitutor(typeParameters.zip(arguments.asSequence()).toMap(), allowEmptySubstitution = true)
+                val typeParameters = extractTypeParameters(clazz.owner).map { it.symbol }
+                val substitutor = IrTypeSubstitutor((typeParameters zip arguments).toMap(), allowEmptySubstitution = true)
                 return clazz.owner.superTypes.firstNotNullOfOrNull { superType ->
                     (substitutor.substitute(superType) as? IrSimpleType)?.substitutedSupertype(superClass)
                 }
