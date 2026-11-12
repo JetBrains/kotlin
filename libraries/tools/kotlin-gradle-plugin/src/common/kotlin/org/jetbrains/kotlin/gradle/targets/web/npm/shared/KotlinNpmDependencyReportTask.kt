@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -13,6 +15,8 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.encodedVersionSpec
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import java.io.File
 import java.util.*
 
 /**
@@ -45,8 +49,20 @@ abstract class KotlinNpmDependencyReportTask internal constructor() : DefaultTas
             addAll(compilation.directUserDependencies.get().map { it.toEntry() })
             addAll(compilation.npmToolingDependencies.get().map { it.toEntry() })
             addAll(compilation.dependencyReports.files.flatMap { readNpmDependencyReport(it).npmDependencies() })
+            addAll(compilation.dependenciesWithoutReport.files.flatMap { readPackageJsonNpmDependencies(it) })
         }
     }
+
+    private fun readPackageJsonNpmDependencies(file: File): List<NpmDependencyEntry> =
+        file.readPackageJsonDependencies()?.let { packageJson ->
+            NpmDependencyReport(
+                target = target.get(),
+                compilation = file.nameWithoutExtension,
+                dependencies = packageJson.dependencies,
+                peerDependencies = packageJson.peerDependencies,
+                optionalDependencies = packageJson.optionalDependencies,
+            ).npmDependencies()
+        }.orEmpty()
 
     /** `devDependencies` are not inherited. */
     private fun NpmDependencyReport.npmDependencies(): List<NpmDependencyEntry> {
@@ -84,11 +100,28 @@ internal abstract class CompilationNpmDependencies {
     @get:Nested
     abstract val npmToolingDependencies: SetProperty<KotlinNpmDependency>
 
-    /** Reports of runtime dependencies, built from klibs where a dependency has none. */
+    /** Reports of runtime dependencies that offer one, see [npmDependencyReportFiles]. */
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val dependencyReports: ConfigurableFileCollection
+
+    /** Klibs, unpacked klibs and `package.json` files of the other runtime dependencies. */
+    // KT-89806 Remove once klibs no longer contain package.json.
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val dependenciesWithoutReport: ConfigurableFileCollection
 }
+
+/**
+ * Files of the [artifacts] with the [KotlinUsages.KOTLIN_NPM_RUNTIME_DEPENDENCIES] usage if [reports], or the others if not.
+ *
+ * Returns files, as the configuration cache of Gradle 8 cannot store [ResolvedArtifactResult]s.
+ */
+internal fun npmDependencyReportFiles(artifacts: Set<ResolvedArtifactResult>, reports: Boolean = true): Set<File> =
+    artifacts
+        .filter { (it.variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name == KotlinUsages.KOTLIN_NPM_RUNTIME_DEPENDENCIES) == reports }
+        .map { it.file }
+        .toSet()
 
 /** Versions of one package are joined into one npm range, so npm validates them: KT-87942. */
 internal fun createNpmDependencyReport(

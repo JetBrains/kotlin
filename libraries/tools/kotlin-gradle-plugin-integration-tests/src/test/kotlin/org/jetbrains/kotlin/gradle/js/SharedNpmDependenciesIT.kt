@@ -3,7 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalKotlinGradlePluginApi::class, DelicateKotlinGradlePluginApi::class)
+@file:OptIn(
+    ExperimentalKotlinGradlePluginApi::class,
+    DelicateKotlinGradlePluginApi::class,
+    ExperimentalWasmDsl::class,
+)
 
 package org.jetbrains.kotlin.gradle.js
 
@@ -30,10 +34,10 @@ import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
-import kotlin.io.path.createDirectories
-import kotlin.io.path.writeText
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -361,6 +365,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
 
     @DisplayName("npm dependencies of klibs, unpacked klibs and package.json files without a report reach the npm dependency report")
     @GradleTest
+    // KT-89806 Remove once klibs no longer contain package.json.
     fun testNpmDependenciesOfKlibsWithoutReport(gradleVersion: GradleVersion) {
         val published = project("empty", gradleVersion) {
             settingsBuildScriptInjection {
@@ -426,7 +431,7 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
 
     @DisplayName("npm dependencies of klibs and package.json files without a report reach only the report of their platform")
     @GradleTest
-    @OptIn(ExperimentalWasmDsl::class)
+    // KT-89806 Remove once klibs no longer contain package.json.
     fun testNpmDependenciesOfKlibsWithoutReportPerPlatform(gradleVersion: GradleVersion) {
         val published = project("empty", gradleVersion) {
             settingsBuildScriptInjection {

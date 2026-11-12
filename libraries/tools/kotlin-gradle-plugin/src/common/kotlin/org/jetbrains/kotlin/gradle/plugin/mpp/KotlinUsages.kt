@@ -65,6 +65,17 @@ object KotlinUsages {
     const val KOTLIN_RESOURCES = "kotlin-multiplatformresources"
     const val KOTLIN_RESOURCES_JS = "kotlin-multiplatformresourcesjs"
 
+    /**
+     * npm dependency report of a JS or WasmJS project, offered to the projects that depend on it.
+     *
+     * NOTE: This usage is compatible with [KOTLIN_RUNTIME], so that dependencies without a report,
+     * such as published libraries, resolve to their klib, which contains a `package.json`.
+     *
+     * It is also compatible with [JAVA_RUNTIME], like the JS runtime classpath: a Java library declared in a source set shared with JS,
+     * such as `commonMain`, must not trigger resolution failures.
+     */
+    internal const val KOTLIN_NPM_RUNTIME_DEPENDENCIES = "kotlin-npm-runtime-dependencies"
+
     // Following two constants were removed in Gradle 8.0 from 'Usages' class
     private const val JAVA_RUNTIME_CLASSES = "java-runtime-classes"
     private const val JAVA_RUNTIME_RESOURCES = "java-runtime-resources"
@@ -158,6 +169,27 @@ object KotlinUsages {
         }
     }
 
+    private val npmRuntimeDependenciesFallbacks = listOf(KOTLIN_RUNTIME, JAVA_RUNTIME)
+
+    private class KotlinNpmRuntimeDependenciesCompatibility : AttributeCompatibilityRule<Usage> {
+        override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
+            if (consumerValue?.name == KOTLIN_NPM_RUNTIME_DEPENDENCIES && producerValue?.name in npmRuntimeDependenciesFallbacks) {
+                compatible()
+            }
+        }
+    }
+
+    private class KotlinNpmRuntimeDependenciesDisambiguation : AttributeDisambiguationRule<Usage> {
+        override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
+            if (consumerValue?.name == KOTLIN_NPM_RUNTIME_DEPENDENCIES) {
+                val candidateNames = getCandidateNames()
+                (listOf(KOTLIN_NPM_RUNTIME_DEPENDENCIES) + npmRuntimeDependenciesFallbacks)
+                    .firstOrNull { it in candidateNames }
+                    ?.let { chooseCandidateByName(it) }
+            }
+        }
+    }
+
     private class KotlinCinteropDisambiguation : AttributeDisambiguationRule<Usage> {
         override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
             if (consumerValue?.name == KOTLIN_CINTEROP) {
@@ -226,6 +258,9 @@ object KotlinUsages {
 
             strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
+
+            strategy.compatibilityRules.add(KotlinNpmRuntimeDependenciesCompatibility::class.java)
+            strategy.disambiguationRules.add(KotlinNpmRuntimeDependenciesDisambiguation::class.java)
         }
     }
 }

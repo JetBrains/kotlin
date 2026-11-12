@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.web.npm.shared
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.type.ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE
-import org.gradle.api.artifacts.type.ArtifactTypeDefinition.DIRECTORY_TYPE
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -24,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigura
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
-import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.web.KotlinWebPlatformType
@@ -39,15 +35,13 @@ internal val KotlinWebPlatformType.npmSharedDependenciesConfigurationName: Strin
 internal val KotlinWebPlatformType.npmDependenciesReportResolverConfigurationName: String
     get() = lowerCamelCaseName(npmDependenciesReportConfigurationName, "resolver")
 
-internal val KotlinJsIrTarget.npmRuntimeDependenciesVariantName: String
+internal val KotlinJsIrTarget.npmRuntimeDependenciesConfigurationName: String
     get() = lowerCamelCaseName("kotlin", "npmRuntimeDependencies", disambiguationClassifier)
 
 internal val KotlinJsIrCompilation.npmRuntimeDependenciesResolverConfigurationName: String
     get() = disambiguateName("npmRuntimeDependenciesResolver")
 
 private const val NPM_DEPENDENCIES_REPORT_USAGE = "kotlinNpmDependenciesReport"
-
-private const val NPM_RUNTIME_DEPENDENCIES_USAGE = "kotlinNpmRuntimeDependencies"
 
 /** Sets the attributes that tell the JS and the WasmJS npm dependency reports apart. */
 private fun AttributeContainer.platformAttributes(platform: KotlinWebPlatformType) {
@@ -88,74 +82,39 @@ internal fun Project.createNpmDependenciesReportResolver(platform: KotlinWebPlat
     }
 }
 
-internal const val NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE = "kotlin-npm-dependency-report"
-
-private const val JSON_TYPE = "json"
-
-private const val FILE_DEPENDENCY_USAGE = "kotlinNpmFileDependency"
-
-/** Offers the main compilation's report to projects that depend on this one, next to its klib. */
-internal fun Project.createNpmRuntimeDependenciesVariant(
+/**
+ * Offers [report] as the npm dependency report of [target] to projects that depend on this one.
+ *
+ * Not a variant of `runtimeElements`: it would inherit the klib's attributes, and consumers selecting `runtimeElements`
+ * by name could not tell the report from the klib.
+ */
+internal fun Project.createNpmRuntimeDependenciesElements(
     target: KotlinJsIrTarget,
     report: Provider<RegularFile>,
 ) {
-    val runtimeElements = configurations.getByName(target.runtimeElementsConfigurationName)
-    runtimeElements.outgoing.variants.create(target.npmRuntimeDependenciesVariantName) { variant ->
-        variant.attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(NPM_RUNTIME_DEPENDENCIES_USAGE))
-        variant.registerArtifact(report, type = NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE)
+    configurations.createConsumable(target.npmRuntimeDependenciesConfigurationName) {
+        setInvisibleIfSupported()
+        description = "npm dependency report of $target, for the projects that depend on it."
+        usesPlatformOf(target)
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(KotlinUsages.KOTLIN_NPM_RUNTIME_DEPENDENCIES))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
+        outgoing.artifact(report)
     }
 }
 
-internal fun Project.registerOncePackageJsonToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: KotlinWebPlatformType) {
-    val registeredKey = "PackageJsonToNpmDependencyReportTransform.${platform.platformName}"
-    if (!extensions.extraProperties.has(registeredKey)) {
-        registerPackageJsonToNpmDependencyReportTransform(target, platform)
-        extensions.extraProperties[registeredKey] = true
-    }
-}
-
-/** Covers Maven klibs and `files(...)` klibs, unpacked klibs and `package.json` files, which come without a report. */
-private fun Project.registerPackageJsonToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: KotlinWebPlatformType) {
-    val fileDependencyUsage = usageByName(FILE_DEPENDENCY_USAGE)
-    // KMP root variants have no artifactType, so they would match all three transforms.
-    // Fake usage keeps them off the file transforms: `files(...)` deps have no usage, so still match.
-    val sources = listOf(
-        KLIB_TYPE to KotlinUsages.consumerRuntimeUsage(target),
-        DIRECTORY_TYPE to fileDependencyUsage,
-        JSON_TYPE to fileDependencyUsage,
-    )
-    sources.forEach { (fromArtifactType, fromUsage) ->
-        dependencies.registerTransform(PackageJsonToNpmDependencyReportTransform::class.java) { transform ->
-            transform.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, fromArtifactType)
-            transform.from.attribute(Usage.USAGE_ATTRIBUTE, fromUsage)
-            transform.from.platformAttributes(platform)
-
-            transform.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE)
-            transform.to.attribute(Usage.USAGE_ATTRIBUTE, usageByName(NPM_RUNTIME_DEPENDENCIES_USAGE))
-            transform.to.platformAttributes(platform)
-            transform.parameters.target.set(platform.platformName)
-        }
-    }
-}
-
+/**
+ * Resolves the npm dependency report of project dependencies,
+ * and falls back to the klib of other dependencies, see [KotlinUsages.KOTLIN_NPM_RUNTIME_DEPENDENCIES].
+ */
 internal fun Project.createNpmRuntimeDependenciesResolver(compilation: KotlinJsIrCompilation): Configuration =
     configurations.createResolvable(compilation.npmRuntimeDependenciesResolverConfigurationName) {
         setInvisibleIfSupported()
         description = "Resolves the runtime dependencies of $compilation to collect their npm dependencies."
         usesPlatformOf(compilation.target)
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(compilation.target))
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(KotlinUsages.KOTLIN_NPM_RUNTIME_DEPENDENCIES))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
         listOf(API_SCOPE, IMPLEMENTATION_SCOPE, RUNTIME_ONLY_SCOPE).forEach { scope ->
             // TODO(KT-91337): for associated compilations, this holds main output and triggers main compile.
             extendsFrom(compilationDependencyConfigurationByScope(compilation, scope))
         }
     }
-
-/** Projects offer their report; other dependencies are turned into one by [PackageJsonToNpmDependencyReportTransform]. */
-internal fun Project.npmRuntimeDependenciesReports(resolver: Configuration): FileCollection =
-    resolver.incoming.artifactView { view ->
-        view.attributes { attributes ->
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(NPM_RUNTIME_DEPENDENCIES_USAGE))
-            attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, NPM_DEPENDENCY_REPORT_ARTIFACT_TYPE)
-        }
-    }.files

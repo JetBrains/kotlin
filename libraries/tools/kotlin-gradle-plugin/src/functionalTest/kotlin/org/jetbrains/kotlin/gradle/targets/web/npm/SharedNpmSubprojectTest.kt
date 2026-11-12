@@ -20,9 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.CompilationNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinNpmDependencyReportTask
-import org.jetbrains.kotlin.gradle.util.buildProject
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.npmDependencyReportFiles
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -126,9 +125,7 @@ class SharedNpmSubprojectTest {
             listOf("kotlinNpmDependenciesReportJs"),
             project.configurations.names.filter { it.startsWith("kotlinNpmDependenciesReport") },
         )
-        val wasmWasiRuntimeElements =
-            project.configurations.getByName(project.multiplatformExtension.wasmWasi().runtimeElementsConfigurationName)
-        assertNull(wasmWasiRuntimeElements.outgoing.variants.findByName("kotlinNpmRuntimeDependenciesWasmWasi"))
+        assertNull(project.configurations.findByName("kotlinNpmRuntimeDependenciesWasmWasi"))
     }
 
     @Test
@@ -141,16 +138,16 @@ class SharedNpmSubprojectTest {
         }
         project.evaluate()
 
-        val expected = listOf(
+        listOf(
             project.jsTarget() to "kotlinNpmRuntimeDependenciesJs",
             project.wasmJsTarget() to "kotlinNpmRuntimeDependenciesWasmJs",
-        )
-        for ((target, variantName) in expected) {
-            val variant = project.configurations.getByName(target.runtimeElementsConfigurationName).outgoing.variants.getByName(variantName)
-            assertEquals("kotlinNpmRuntimeDependencies", variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name)
+        ).forEach { (target, configurationName) ->
+            val configuration = project.configurations.getByName(configurationName)
+            assertEquals("kotlin-npm-runtime-dependencies", configuration.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name)
+            assertEquals(target.platformType, configuration.attributes.getAttribute(KotlinPlatformType.attribute))
             assertEquals(
                 listOf(target.compilations.getByName("main").npmDependenciesReportFile()),
-                variant.artifacts.files.files.toList(),
+                configuration.artifacts.files.files.toList(),
             )
         }
     }
@@ -289,7 +286,7 @@ class SharedNpmSubprojectTest {
         project.evaluate()
 
         val mainCompileTask = project.jsTarget().compilations.getByName("main").compileKotlinTaskName
-        val reportBuildDependencies = project.npmDependencies("jsTestNpmDependenciesReport").dependencyReports
+        val reportBuildDependencies = project.npmDependencies("jsTestNpmDependenciesReport").dependenciesWithoutReport
             .buildDependencies.getDependencies(null).map { it.name }
         assertTrue(
             mainCompileTask !in reportBuildDependencies,
@@ -319,6 +316,73 @@ class SharedNpmSubprojectTest {
             transitive.buildDependencies.getDependencies(null).any { it.name == "jsNpmDependenciesReport" && it.project == lib },
             "app's npm dependency report must be built after lib's",
         )
+    }
+
+    @Test
+    fun `a project dependency declared in commonMain resolves to its npm dependency report, not its klib`() {
+        val root = buildProject(projectBuilder = { withName("root") })
+        val lib = buildProjectWithMPP(
+            projectBuilder = { withParent(root).withName("lib") },
+            preApplyCode = { disableDefaultDependencies() },
+        ) {
+            kotlin { js { nodejs() } }
+        }
+        val app = buildProjectWithMPP(
+            projectBuilder = { withParent(root).withName("app") },
+            preApplyCode = { disableDefaultDependencies() },
+        ) {
+            kotlin {
+                js { nodejs() }
+                sourceSets.getByName("commonMain").dependencies {
+                    implementation(project(":lib"))
+                }
+            }
+        }
+        lib.evaluate()
+        app.evaluate()
+
+        val libReport = lib.jsTarget().compilations.getByName("main").npmDependenciesReportFile()
+        val artifacts = app.configurations.getByName("jsNpmRuntimeDependenciesResolver").incoming.artifacts.artifacts
+        assertEquals(setOf(libReport), npmDependencyReportFiles(artifacts, reports = true))
+        assertEquals(emptySet(), npmDependencyReportFiles(artifacts, reports = false))
+    }
+
+    @Test
+    fun `a Java project declared in commonMain resolves like it does for the JS runtime classpath`() {
+        val root = buildProject(projectBuilder = { withName("root") })
+        val javaLib = buildProject(projectBuilder = { withParent(root).withName("java-lib") }) {
+            plugins.apply("java-library")
+        }
+        val app = buildProjectWithMPP(
+            projectBuilder = { withParent(root).withName("app") },
+            preApplyCode = { disableDefaultDependencies() },
+        ) {
+            kotlin {
+                jvm()
+                js { nodejs() }
+                sourceSets.getByName("commonMain").dependencies {
+                    implementation(project(":java-lib"))
+                }
+            }
+        }
+        javaLib.evaluate()
+        app.evaluate()
+
+        assertEquals(
+            listOf(javaLib.tasks.getByName("jar").outputs.files.singleFile),
+            app.configurations.getByName("jsRuntimeClasspath").files.toList(),
+        )
+        val artifacts = app.configurations.getByName("jsNpmRuntimeDependenciesResolver").incoming.artifacts.artifacts
+        assertEquals(
+            setOf(javaLib.tasks.getByName("jar").outputs.files.singleFile),
+            npmDependencyReportFiles(artifacts, reports = false),
+        )
+    }
+
+    /** No repositories are declared, so the default dependencies can't be resolved. */
+    private fun Project.disableDefaultDependencies() {
+        enableDefaultStdlibDependency(false)
+        enableDefaultJsDomApiDependency(false)
     }
 
     companion object {
