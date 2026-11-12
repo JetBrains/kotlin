@@ -112,6 +112,13 @@ fun NamedDomainObjectContainer<KotlinJvmCompilation>.stdlibJvmMultiReleaseCompil
             mainCompilationOptions()
         }
     }
+    compileJavaTaskProvider?.configure {
+        targetCompatibility = target.target
+        sourceCompatibility = target.target
+        javaCompiler.set(javaToolchains.compilerFor {
+            languageVersion.set(JavaLanguageVersion.of(target.target))
+        })
+    }
 }
 
 val jvmMultiReleaseTargets = listOf(JvmTarget.JVM_9)
