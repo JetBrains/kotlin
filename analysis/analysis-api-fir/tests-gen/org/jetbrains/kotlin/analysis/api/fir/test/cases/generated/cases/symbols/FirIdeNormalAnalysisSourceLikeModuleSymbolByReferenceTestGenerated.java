@@ -573,6 +573,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   }
 
   @Test
+  @TestMetadata("localSamConstructor.kt")
+  public void testLocalSamConstructor() {
+    run("localSamConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("localSamConstructorNestedInClass.kt")
+  public void testLocalSamConstructorNestedInClass() {
+    run("localSamConstructorNestedInClass.kt");
+  }
+
+  @Test
   @TestMetadata("nestedAnnotation.kt")
   public void testNestedAnnotation() {
     run("nestedAnnotation.kt");
@@ -630,6 +642,48 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   @TestMetadata("samConstructor.kt")
   public void testSamConstructor() {
     run("samConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorAliasForDeepNestedInterface.kt")
+  public void testSamConstructorAliasForDeepNestedInterface() {
+    run("samConstructorAliasForDeepNestedInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorForDeepNestedInterface.kt")
+  public void testSamConstructorForDeepNestedInterface() {
+    run("samConstructorForDeepNestedInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorForNestedInterface.kt")
+  public void testSamConstructorForNestedInterface() {
+    run("samConstructorForNestedInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorForNestedInterfaceFromLibrary.kt")
+  public void testSamConstructorForNestedInterfaceFromLibrary() {
+    run("samConstructorForNestedInterfaceFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorForNestedInterfaceWithTopLevelDuplicate.kt")
+  public void testSamConstructorForNestedInterfaceWithTopLevelDuplicate() {
+    run("samConstructorForNestedInterfaceWithTopLevelDuplicate.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorForNestedJavaInterface.kt")
+  public void testSamConstructorForNestedJavaInterface() {
+    run("samConstructorForNestedJavaInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorForNestedTypeAlias.kt")
+  public void testSamConstructorForNestedTypeAlias() {
+    run("samConstructorForNestedTypeAlias.kt");
   }
 
   @Test
