@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.appendText
 
 @MustRunOnChangesInGradle
-@MustRunOnChangesInCompilerInfrastructure
 @MustRunOnChangesInBuildToolsApi
 abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
 
