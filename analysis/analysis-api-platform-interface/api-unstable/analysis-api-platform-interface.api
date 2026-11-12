@@ -164,9 +164,11 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public fun getProviders ()Ljava/util/List;
 	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
 	public fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelPropertyFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinCompositeDeclarationProvider$Companion {
@@ -191,9 +193,11 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/platform/decla
 	public fun getMayHaveTopLevelKotlinClassLikeDeclaration ()Lkotlin/jvm/functions/Function1;
 	public abstract fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public abstract fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public abstract fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public abstract fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
 	public abstract fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelPropertyFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
@@ -251,11 +255,15 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public synthetic fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
 	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public synthetic fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
 	public synthetic fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
 	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
 	public synthetic fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
+	public synthetic fun getTopLevelPropertyFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelPropertyFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinFileBasedDeclarationProvider : org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider {
@@ -273,9 +281,11 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public final fun getKotlinFile ()Lorg/jetbrains/kotlin/psi/KtFile;
 	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
 	public fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelPropertyFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinForeignValueProviderService : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
