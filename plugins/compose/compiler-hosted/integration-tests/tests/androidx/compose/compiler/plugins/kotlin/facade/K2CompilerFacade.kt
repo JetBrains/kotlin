@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
+import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.Name
 
@@ -87,6 +88,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val outputs = sessionsWithSources.map { (val session, val files) ->
             buildResolveAndCheckFirViaLightTree(session, files, reporter, countFilesAndLines = null)
         }
+        outputs.runPlatformCheckers(reporter)
 
         return FirAnalysisResult(AllModulesFrontendOutput(outputs), reporter)
     }

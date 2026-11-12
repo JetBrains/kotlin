@@ -99,7 +99,7 @@ class StabilityPropagationTransformTests : AbstractIrTransformTest() {
     @Test
     fun testCastStabilityPropagation(): Unit = stabilityPropagation(
         """
-            class Parent
+            open class Parent
 
             class Child : Parent()
 
@@ -121,7 +121,7 @@ class StabilityPropagationTransformTests : AbstractIrTransformTest() {
     @Test
     fun testSmartCastStabilityPropagation(): Unit = stabilityPropagation(
         """
-            class Parent
+            open class Parent
 
             class Child : Parent()
 
