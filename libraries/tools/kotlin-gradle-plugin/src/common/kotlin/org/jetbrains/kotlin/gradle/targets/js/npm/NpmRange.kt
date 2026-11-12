@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
 
 /**
  * [startVersion] or [endVersion] equaling null means Infinite on appropriate edge.
  * In this case appropriate [startInclusive] or [endInclusive] does not matter.
  */
+@ObsoleteNpmDependencyModel
 data class NpmRange(
     val startVersion: SemVer? = null,
     val startInclusive: Boolean = false,
@@ -65,6 +67,7 @@ data class NpmRange(
     }
 }
 
+@ObsoleteNpmDependencyModel
 infix fun NpmRange.union(other: NpmRange): Set<NpmRange> {
     if (!hasIntersection(other)) return setOf(this, other)
 
@@ -80,6 +83,7 @@ infix fun NpmRange.union(other: NpmRange): Set<NpmRange> {
     ).toSetOrEmpty()
 }
 
+@ObsoleteNpmDependencyModel
 fun NpmRange.invert(): Set<NpmRange> {
     if (startVersion == null && endVersion == null) return emptySet()
 
@@ -105,12 +109,14 @@ fun NpmRange.invert(): Set<NpmRange> {
     return result
 }
 
+@ObsoleteNpmDependencyModel
 infix fun Set<NpmRange>.intersect(others: Set<NpmRange>): Set<NpmRange> = flatMapTo(mutableSetOf()) { current ->
     others.mapNotNull { other ->
         current intersect other
     }
 }
 
+@ObsoleteNpmDependencyModel
 infix fun NpmRange.intersect(other: NpmRange): NpmRange? {
     if (!hasIntersection(other)) return null
 
@@ -126,6 +132,7 @@ infix fun NpmRange.intersect(other: NpmRange): NpmRange? {
     )
 }
 
+@ObsoleteNpmDependencyModel
 infix fun NpmRange.hasIntersection(other: NpmRange): Boolean {
     val maxStart = maxStart(this, other)
     val minEnd = minEnd(this, other)
@@ -138,6 +145,7 @@ infix fun NpmRange.hasIntersection(other: NpmRange): Boolean {
             }
 }
 
+@ObsoleteNpmDependencyModel
 fun maxStart(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.startVersion == null -> b.startVersion
@@ -145,18 +153,21 @@ fun maxStart(a: NpmRange, b: NpmRange): SemVer? =
         else -> maxOf(a.startVersion, b.startVersion)
     }
 
+@ObsoleteNpmDependencyModel
 fun minStart(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.startVersion == null || b.startVersion == null -> null
         else -> minOf(a.startVersion, b.startVersion)
     }
 
+@ObsoleteNpmDependencyModel
 fun maxEnd(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.endVersion == null || b.endVersion == null -> null
         else -> maxOf(a.endVersion, b.endVersion)
     }
 
+@ObsoleteNpmDependencyModel
 fun minEnd(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.endVersion == null -> b.endVersion

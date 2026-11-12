@@ -9,8 +9,10 @@ import com.github.gundy.hidden.antlr.v4.runtime.tree.TerminalNode
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionBaseVisitor
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import com.github.gundy.semver4j.model.Version
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
 
+@ObsoleteNpmDependencyModel
 class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<Set<NpmRange>>() {
     override fun visitEmptyRange(ctx: NodeSemverExpressionParser.EmptyRangeContext): Set<NpmRange> =
         setOf(NpmRange())
@@ -165,6 +167,7 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<Set<NpmRange>>() {
             endInclusive = true
         )
 
+    @ObsoleteNpmDependencyModel
     companion object {
 
         @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""=""""))

@@ -6,8 +6,18 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.github.gundy.semver4j.model.Version
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.math.BigInteger
 
+/**
+ * Utility for handling npm dependency versions.
+ *
+ * Not intended for general use.
+ *
+ * Made obsolete by the Isolated Projects re-write.
+ * Instead, use [com.github.gundy.semver4j.model.Version] directly.
+ */
+@ObsoleteNpmDependencyModel
 data class SemVer(
     val major: BigInteger,
     val minor: BigInteger,
@@ -34,7 +44,6 @@ data class SemVer(
         return 0
     }
 
-
     override fun toString() = "$major.$minor.$patch" +
             (if (preRelease != null) "-$preRelease" else "") +
             (if (build != null) "+$build" else "")
@@ -43,6 +52,7 @@ data class SemVer(
         return "SemVer(major=$major, minor=$minor, patch=$patch, preRelease=$preRelease, build=$build)"
     }
 
+    @ObsoleteNpmDependencyModel
     companion object {
         fun from(string: String, loose: Boolean = false): SemVer {
             val fixed = if (loose) fixSemver(string) else string
@@ -174,6 +184,7 @@ data class SemVer(
     }
 }
 
+@ObsoleteNpmDependencyModel
 internal fun fixSemver(version: String): String {
     var i = 0
     var number = 0
@@ -243,6 +254,7 @@ internal fun fixSemver(version: String): String {
             (if (build != null) "+$build" else "")
 }
 
+@ObsoleteNpmDependencyModel
 private fun String.foldDelimiters(): String {
     val result = StringBuilder(length)
     var endsWithDelimiter = false
@@ -261,6 +273,7 @@ private fun String.foldDelimiters(): String {
     return result.toString()
 }
 
+@ObsoleteNpmDependencyModel
 fun Version.toSemVer(): SemVer =
     SemVer(
         major.toBigInteger(),
@@ -270,6 +283,7 @@ fun Version.toSemVer(): SemVer =
         build = buildIdentifiers.joinToString(".").let { if (it.isNotEmpty()) it else null }
     )
 
+@ObsoleteNpmDependencyModel
 fun SemVer.toVersion(): Version =
     Version.builder()
         .major(major.toInt())
