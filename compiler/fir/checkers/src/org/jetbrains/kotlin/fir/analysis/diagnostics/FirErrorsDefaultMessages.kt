@@ -1953,7 +1953,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION,
-            "Callable reference to ''{0}'' is unsupported because it has context parameters.",
+            "The feature 'callable reference to declarations with context parameters' is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcallable-references-to-contextual', but note that no stability guarantees are provided..",
             SYMBOL,
         )
         map.put(
