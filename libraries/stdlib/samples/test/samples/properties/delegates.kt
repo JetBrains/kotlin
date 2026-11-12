@@ -76,4 +76,23 @@ class Delegates {
         assertPrints(max, "10")
         assertTrue(observed)
     }
+
+    @Sample
+    fun distinctObservableDelegate() {
+        var observed = false
+        var max: Int by Delegates.distinctObservable(0) { property, oldValue, newValue ->
+            observed = true
+        }
+
+        assertPrints(max, "0")
+        assertFalse(observed)
+
+        max = 0
+        assertPrints(max, "0")
+        assertFalse(observed)
+
+        max = 10
+        assertPrints(max, "10")
+        assertTrue(observed)
+    }
 }
