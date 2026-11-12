@@ -222,6 +222,7 @@ projectTests {
     testData(project(":js:js.translator").isolated, "testData/js-name-resolution")
     testData(project(":js:js.translator").isolated, "testData/multiModuleOrder")
     testData(project(":js:js.translator").isolated, "testData/sourcemap")
+    testData(project(":js:js.translator").isolated, "testData/twoStageCodegenBoxSanity")
     testData(project(":js:js.translator").isolated, "testData/typescript-export/js/")
     testData(project(":compiler").isolated, "testData/debug/stepping")
     testData(project(":compiler").isolated, "testData/debug/localVariables")

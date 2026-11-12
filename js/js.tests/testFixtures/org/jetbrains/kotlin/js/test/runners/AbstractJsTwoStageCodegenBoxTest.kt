@@ -144,8 +144,9 @@ private class NonIncrementalFirstStageStateReleaser(testServices: TestServices) 
 
 abstract class AbstractJsCodegenBoxTest(
     testGroupOutputDirPrefix: String = "codegen/box/",
+    pathToTestDir: String = "compiler/testData/codegen/box",
 ) : AbstractJsTwoStageCodegenBoxTestBase(
-    pathToTestDir = "compiler/testData/codegen/box",
+    pathToTestDir = pathToTestDir,
     testGroupOutputDirPrefix = testGroupOutputDirPrefix,
 ) {
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
