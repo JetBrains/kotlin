@@ -7,6 +7,20 @@ import kotlinx.atomicfu.atomic
 class CompanionObjectMint {
     companion object {
         private val coinsAtomic = atomic(0)
+
+        fun mint() {
+            class First {
+                val <!ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER!>outer<!> by coinsAtomic
+                val internal = atomic(0)
+            }
+
+            class Second {
+                val previous = First()
+                val <!ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER!>seen<!> by previous.internal
+            }
+
+            coinsAtomic.incrementAndGet()
+        }
     }
 
     class Inspector {

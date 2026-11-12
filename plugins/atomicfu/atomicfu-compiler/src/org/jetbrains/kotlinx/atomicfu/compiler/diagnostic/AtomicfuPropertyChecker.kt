@@ -99,13 +99,13 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDelegatedPropertyContainer(declaration: FirProperty) {
-        if (declaration.isLocal) return
+        if (declaration.symbol is FirLocalPropertySymbol) return
 
         val delegate = declaration.delegate
         val delegateExpression = if (delegate is FirWrappedDelegateExpression) delegate.expression else delegate
         val delegatePropertyAccess = delegateExpression as? FirPropertyAccessExpression ?: return
         val delegateProperty = delegatePropertyAccess.calleeReference.toResolvedPropertySymbol() ?: return
-        if (delegateProperty.isLocal) return
+        if (delegateProperty is FirLocalPropertySymbol) return
         if (delegateProperty.resolvedReturnType.classId?.isAtomicType() != true) return
 
         if (declaration.symbol.isInDifferentContainerThan(delegateProperty)) {
