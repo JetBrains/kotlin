@@ -8,6 +8,17 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 
+/**
+ * Allows compiler plugins to resolve types in yet to be resolved code.
+ * For example, this can be used to resolve annotation arguments or type parameter bounds
+ * to aid in generating declarations with the appropriate types.
+ *
+ * @see typeFromQualifierParts
+ */
 interface PluginTypeResolver {
+    /**
+     * Resolves a [user type][FirUserTypeRef].
+     * The resolved type may be an [error][org.jetbrains.kotlin.fir.types.FirErrorTypeRef].
+     */
     fun resolveUserType(type: FirUserTypeRef): FirResolvedTypeRef
 }
