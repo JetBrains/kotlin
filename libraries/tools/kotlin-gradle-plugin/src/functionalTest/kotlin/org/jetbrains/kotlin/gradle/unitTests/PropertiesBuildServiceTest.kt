@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.internal.properties.propertiesService
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.registerMinimalVariantImplementationFactoriesForTests
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class PropertiesBuildServiceTest {
 
@@ -239,5 +241,24 @@ class PropertiesBuildServiceTest {
             10,
             PropertiesBuildService.IntGradleProperty("some.prop", 10)
         )
+    }
+
+    /**
+     * Only checks that the Gradle property is wired up; the resolution rules themselves are covered by
+     * `NativeDependenciesUrlTest`.
+     *
+     * Uses a project per case because property values are memoized on the first read, see
+     * [testExtraPropertyMemoizationOnFirstRead].
+     */
+    @Test
+    fun testNativeDependenciesUrlIsReadFromGradleProperty() {
+        val withoutProperty = buildProject()
+        withoutProperty.gradle.registerMinimalVariantImplementationFactoriesForTests()
+        assertNull(withoutProperty.nativeProperties.dependenciesUrl.orNull)
+
+        val withProperty = buildProject()
+        withProperty.gradle.registerMinimalVariantImplementationFactoriesForTests()
+        withProperty.extraProperties.set("kotlin.native.dependenciesUrl", "https://example.com/konan")
+        assertEquals("https://example.com/konan", withProperty.nativeProperties.dependenciesUrl.orNull)
     }
 }
