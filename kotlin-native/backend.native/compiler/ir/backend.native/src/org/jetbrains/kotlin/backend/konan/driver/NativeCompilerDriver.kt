@@ -29,9 +29,15 @@ import kotlin.io.path.readLines
 /**
  * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
  */
-internal class NativeCompilerDriver(private val performanceManager: PerformanceManager?) {
+internal class NativeCompilerDriver(
+        private val performanceManager: PerformanceManager?,
+        private val compilerExecutor: CompilerExecutor,
+) {
 
-    fun run(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
+    fun run(
+            config: NativeSecondStageCompilationConfig,
+            environment: KotlinCoreEnvironment,
+    ) {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks(config.configuration.konanHome) {
                 PhaseEngine.startTopLevel(config) { engine ->
@@ -179,6 +185,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             linkKlibsOutput.irLinker,
             linkKlibsOutput.symbols,
             linkKlibsOutput.symbolTable,
+            compilerExecutor,
     ).also {
         additionalDataSetter(it)
     }

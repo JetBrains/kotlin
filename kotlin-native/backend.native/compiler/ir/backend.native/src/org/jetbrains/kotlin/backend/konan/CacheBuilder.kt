@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerp
 import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
@@ -29,6 +33,7 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.newCompanionInitializationEnabled
 import org.jetbrains.kotlin.library.uniqueName
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import org.jetbrains.kotlin.io.canonicalPathString
@@ -51,7 +56,8 @@ internal val CACHE_BATCH = CompilerConfigurationKey.create<Map<String, Fingerpri
 // TODO: deleteRecursively might throw an exception!
 class CacheBuilder(
         val config: NativeSecondStageCompilationConfig,
-        val compilationSpawner: CompilationSpawner
+        val compilationSpawner: CompilationSpawner,
+        private val compilerExecutor: CompilerExecutor,
 ) {
     private val configuration = config.configuration
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!.map { Path(Path(it).canonicalPathString()) }
@@ -68,7 +74,10 @@ class CacheBuilder(
     private val uniqueNameToLibrary by lazy { config.klibDag.librariesReverseTopoSorted.associateBy { it.uniqueName } }
 
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
-    private val cacheRootDirectories = mutableMapOf<KotlinLibrary, String>()
+
+    // The monolithic cache builds spawned in parallel (see [buildMonolithicCaches]) record their results
+    // from multiple threads, so the two maps below are concurrent.
+    private val cacheRootDirectories = ConcurrentHashMap<KotlinLibrary, String>()
 
     /**
      * What part of a library cache has been built during this compilation. See `wasRebuiltInThisRun`.
@@ -83,7 +92,7 @@ class CacheBuilder(
         }
     }
 
-    private val rebuiltCaches = mutableMapOf<KotlinLibrary, RebuiltCache>()
+    private val rebuiltCaches = ConcurrentHashMap<KotlinLibrary, RebuiltCache>()
 
     /**
      * Whether the cache of the given file of [library] (or of the whole [library], if [fileId] is `null`) has been
@@ -200,13 +209,16 @@ class CacheBuilder(
         // The batched build also relies on it to tell which dependencies are already up to date at the moment of batching.
         val rebuiltLibraries = mutableSetOf<KotlinLibrary>()
 
-        externalLibrariesToCache.forEach { library ->
-            val builtCachePaths = buildLibraryCache(library, true, emptyList())
-            if (builtCachePaths.isNotEmpty()) {
-                rebuiltLibraries += library
-                lastRebuiltArchives.addAll(builtCachePaths)
+        fun registerRebuiltMonolithicCaches(builtCaches: Map<KotlinLibrary, List<Path>>) {
+            builtCaches.forEach { [library, builtCachePaths] ->
+                if (builtCachePaths.isNotEmpty()) {
+                    rebuiltLibraries += library
+                    lastRebuiltArchives.addAll(builtCachePaths)
+                }
             }
         }
+
+        registerRebuiltMonolithicCaches(buildMonolithicCaches(externalLibrariesToCache, isExternal = true))
 
         if (!icEnabled) {
             dumpLastRebuiltArchivesToDisk(lastRebuiltArchives)
@@ -247,15 +259,10 @@ class CacheBuilder(
         }
 
         // Build all the monolithic (cinterop) caches right away: the dependent cache builds spawned below,
-        // including the batched one, read them at their fixed name-keyed locations.
-        for (library in icedLibraries) {
-            if (library.isCachedPerFile || caches[library] != null) continue
-            val builtCachePaths = buildLibraryCache(library, false, emptyList())
-            if (builtCachePaths.isNotEmpty()) {
-                rebuiltLibraries += library
-                lastRebuiltArchives.addAll(builtCachePaths)
-            }
-        }
+        // including the batched one, read them at their fixed name-keyed locations. The libraries that
+        // already have an up-to-date cache are skipped, as are the per-file cached ones (built below).
+        val monolithicLibrariesToCache = icedLibraries.filter { !it.isCachedPerFile && caches[it] == null }
+        registerRebuiltMonolithicCaches(buildMonolithicCaches(monolithicLibrariesToCache, isExternal = false))
 
         // Every library dependable on one of the changed external libraries needs its cache to be fully rebuilt.
         val needFullRebuild = findAllDependable(externalLibrariesToCache) + stalePerFileCaches.map { it.first }
@@ -437,7 +444,7 @@ class CacheBuilder(
         val batch = candidates.filter { candidate ->
             config.klibDag.getAllDependencies(candidate).all { dependency ->
                 dependency in candidatesSet || dependency in rebuiltLibraries
-                        || (dependency in cacheRootDirectories && dependency !in dirtyLibraries && dependency !in needFullRebuild)
+                        || (cacheRootDirectories.containsKey(dependency) && dependency !in dirtyLibraries && dependency !in needFullRebuild)
             }
         }
         val batchSet = batch.toSet()
@@ -603,17 +610,93 @@ class CacheBuilder(
         return listOf(cacheRoot.resolve("bin").resolve(libraryFilename))
     }
 
+    /**
+     * The message collector shared by this compilation and the spawned cache-building compilations
+     * (see `K2Native`). `MessageCollector` has no thread-safety contract, but the monolithic cache
+     * builds may report from multiple threads — both directly and via the spawned compilations
+     * (see [buildMonolithicCaches]) — so all the reporting from the cache-building code is
+     * serialized on the collector instance.
+     */
+    @OptIn(MessageCollectorAccess::class) // read-only access
+    private val messageCollector: MessageCollector = configuration.messageCollector
+
+    /**
+     * Builds the monolithic caches of [libraries], in parallel (see KT-89645).
+     *
+     * A library can only be built (see [buildLibraryCache]) once the caches of all its dependencies are known
+     * to exist, because the spawned compilation consumes them. The libraries are therefore built in
+     * dependency-ordered waves: no two libraries of the same wave depend on each other, so their spawned
+     * compilations don't interfere and may run at the same time. The parallelism is bounded by the compiler
+     * executor in the same way as for the codegen.
+     *
+     * A library whose dependencies cannot be cached at all never joins a wave; such libraries are built
+     * sequentially in the end, in the [libraries] (reverse topo) order, preserving the behavior of the former
+     * sequential implementation: they are just skipped, see [buildLibraryCache].
+     *
+     * Note: each spawned compilation uses the whole thread pool for its own codegen (see `setupCommonOptionsForCaches`),
+     * so the peak number of threads is the size of the wave multiplied by `-Xbackend-threads`; the same applies
+     * to the peak memory consumption of the spawned compilations. When this actually happens (a wave with more
+     * than one library runs in parallel), a warning about the increased memory usage is reported once, see
+     * [reportParallelCachesMemoryUsageWarning].
+     *
+     * Returns the built binary archive paths mapped from the processed libraries, in their given order.
+     */
+    private fun buildMonolithicCaches(libraries: List<KotlinLibrary>, isExternal: Boolean): Map<KotlinLibrary, List<Path>> {
+        val pendingLibraries = libraries.toMutableList()
+        val builtCaches = LinkedHashMap<KotlinLibrary, List<Path>>()
+        var parallelCachesMemoryWarningReported = false
+        while (pendingLibraries.isNotEmpty()) {
+            val wave = pendingLibraries.filter { library ->
+                config.klibDag.getAllDependencies(library).all { cacheRootDirectories.containsKey(it) }
+            }
+            if (wave.isEmpty()) break
+            if (!parallelCachesMemoryWarningReported && wave.size > 1 && compilerExecutor.availableWorkers > 1) {
+                parallelCachesMemoryWarningReported = true
+                reportParallelCachesMemoryUsageWarning(wave.size)
+            }
+            val tasks = wave.map { library ->
+                { buildLibraryCache(library, isExternal, emptyList()) }
+            }
+            val builtInWave = compilerExecutor.runAll(tasks)
+            wave.zip(builtInWave).forEach { [library, builtCachePaths] ->
+                builtCaches[library] = builtCachePaths
+            }
+            pendingLibraries.removeAll(wave)
+        }
+        // The rest of the libraries depend on a library that cannot be cached at all.
+        pendingLibraries.forEach { library ->
+            builtCaches[library] = buildLibraryCache(library, isExternal, emptyList())
+        }
+        return builtCaches
+    }
+
+    private fun reportParallelCachesMemoryUsageWarning(waveSize: Int) {
+        synchronized(messageCollector) {
+            messageCollector.report(
+                    CompilerMessageSeverity.WARNING,
+                    "Building $waveSize library caches in parallel may require a lot of memory " +
+                            "(each build is a separate compilation with ${config.threadsCount} codegen threads). " +
+                            "To reduce memory usage, lower the '-Xbackend-threads' value " +
+                            "or increase the JVM heap size of the compiler process."
+            )
+        }
+    }
+
     private fun buildLibraryCache(library: KotlinLibrary, isExternal: Boolean, filesToCache: List<String>): List<Path> {
         val dependencies = config.klibDag.getAllDependencies(library).toList()
         val dependencyCaches = dependencies.map {
             cacheRootDirectories[it] ?: run {
-                configuration.reportLog("SKIPPING ${library.path} as some of the dependencies aren't cached")
+                synchronized(messageCollector) {
+                    configuration.reportLog("SKIPPING ${library.path} as some of the dependencies aren't cached")
+                }
                 return emptyList()
             }
         }
 
-        configuration.reportLog("CACHING ${library.path}")
-        filesToCache.forEach { configuration.reportLog("    $it") }
+        synchronized(messageCollector) {
+            configuration.reportLog("CACHING ${library.path}")
+            filesToCache.forEach { configuration.reportLog("    $it") }
+        }
 
         // Produce monolithic caches for external libraries for now, except debug stdlib:
         // its cache is per-file by default (see [NativeSecondStageCompilationConfig.perFileCacheForStdlib]),
@@ -637,17 +720,22 @@ class CacheBuilder(
         libraryCacheDirectory.createDirectories()
 
         /*
-         * Use lock file to not allow caches building in parallel. Actually, this is OK (there are some synchronization
-         * mechanisms in the compiler) but may take up a lot of memory (especially when building stdlib cache). In particular,
-         * this happens during some tests which specify certain binary options which won't allow to use the precompiled caches.
+         * Guard the cache build with a file lock. Building the same cache more than once is OK (there are some
+         * synchronization mechanisms in the compiler) but takes up a lot of memory, especially when building
+         * the stdlib cache. In particular, this happens during some tests which specify certain binary options
+         * which won't allow to use the precompiled caches.
+         *
+         * The lock only guards against concurrent *processes*: within a single process a library cache is built
+         * at most once, while the caches of different libraries may be built in parallel (see [buildMonolithicCaches]).
          */
         val lockFileName = "${libraryCache.absolutePathString()}.lock"
         val lockFile = if (isExternal) {
-            // External (system/auto) caches are shared between processes and may be built
-            // in parallel so guard their construction with a file lock.
+            // External (system/auto) caches are shared between processes, which may build them
+            // at the same time, so guard their construction with a file lock.
             Path(lockFileName)
         } else {
-            // Incremental caches live in a per-project directory and are never built in parallel.
+            // Incremental caches live in a per-project directory and are not shared with other
+            // processes; they may only be built in parallel within this process (see [buildMonolithicCaches]).
             null
         }
 
@@ -675,8 +763,10 @@ class CacheBuilder(
      * and if not, runs [buildAction] under the lock.
      *
      * Note: it is not absolutely necessary to always achieve mutual exclusion: the [buildAction] is
-     * thread-safe and idempotent. The goal of the synchronization is to avoid memory pressure
-     * caused by simultaneous build of the cache for a large library like stdlib.
+     * thread-safe and idempotent. The goal of the synchronization is to avoid memory pressure caused
+     * by several compiler processes simultaneously building the cache for a large library like stdlib;
+     * within a single process the caches of different libraries may still be built in parallel,
+     * see [buildMonolithicCaches].
      */
     private fun buildUnderFileLock(
             lockFile: Path?,
@@ -692,7 +782,6 @@ class CacheBuilder(
         }
     }
 
-    @OptIn(ExperimentalPathApi::class)
     private fun tryBuildingLibraryCache(
             library: KotlinLibrary,
             dependencies: List<KotlinLibrary>,
@@ -702,15 +791,16 @@ class CacheBuilder(
             filesToCache: List<String>,
             libraryCache: Path,
     ) {
-        configuration.reportLog(
-                "-p static_cache -Xadd-cache=${library.path} \\\n" +
-                        dependencies.joinToString("\n") { "-library ${it.canonicalPath.pathString} \\" } + "\n" +
-                        dependencies.zip(dependencyCaches).joinToString("\n") { [dependency, dependencyCache] ->
-                            "-Xcached-library=${dependency.canonicalPath.pathString},$dependencyCache \\"
-                        } + "\n" +
-                        "-Xcache-directory=${libraryCacheDirectory.absolutePathString()}\n"
-        )
-        // TODO: Run monolithic cache builds in parallel.
+        synchronized(messageCollector) {
+            configuration.reportLog(
+                    "-p static_cache -Xadd-cache=${library.path} \\\n" +
+                            dependencies.joinToString("\n") { "-library ${it.canonicalPath.pathString} \\" } + "\n" +
+                            dependencies.zip(dependencyCaches).joinToString("\n") { [dependency, dependencyCache] ->
+                                "-Xcached-library=${dependency.canonicalPath.pathString},$dependencyCache \\"
+                            } + "\n" +
+                            "-Xcache-directory=${libraryCacheDirectory.absolutePathString()}\n"
+            )
+        }
         trySpawningCacheBuild(
                 listOf(library),
                 dependencies,
@@ -805,13 +895,18 @@ class CacheBuilder(
                                     """.trimIndent()
                         "$extraUserInfo\n\n${t.message}\n\n${t.stackTraceToString()}"
                     }
-            configuration.reportCompilationErrorAndThrow(message)
+            synchronized(messageCollector) {
+                configuration.reportCompilationErrorAndThrow(message)
+            }
         }
     }
 
     private fun recordRebuiltCacheFiles(library: KotlinLibrary, makePerFileCache: Boolean, filesToCache: List<String>): Unit = when {
         makePerFileCache && filesToCache.isNotEmpty() -> {
-            val rebuiltFiles = when (val rebuiltCache = rebuiltCaches.getOrPut(library) { RebuiltCache.Files() }) {
+            // [rebuiltCaches] may be written from parallel cache-building threads (see [buildMonolithicCaches])
+            val newRebuiltCache = RebuiltCache.Files()
+            val rebuiltCache: RebuiltCache = rebuiltCaches.putIfAbsent(library, newRebuiltCache) ?: newRebuiltCache
+            val rebuiltFiles = when (rebuiltCache) {
                 RebuiltCache.WholeLibrary -> return // Already covers every file of the library.
                 is RebuiltCache.Files -> rebuiltCache.fileIds
             }
