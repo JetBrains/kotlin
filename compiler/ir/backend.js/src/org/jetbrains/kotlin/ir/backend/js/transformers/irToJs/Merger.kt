@@ -374,13 +374,21 @@ fun List<JsIrModule>.merge(): JsIrModule {
     } else {
         val fragments = mutableListOf<JsIrProgramFragment>()
         var reexportedInModuleWithName: String? = null
+        var importedWithEffectInModuleWithName: String? = null
 
         for (module in this) {
             fragments.addAll(module.fragments)
             module.reexportedInModuleWithName?.let { reexportedInModuleWithName = it }
+            module.importedWithEffectInModuleWithName?.let { importedWithEffectInModuleWithName = it }
         }
 
-        JsIrModule(firstModule.moduleName, firstModule.externalModuleName, fragments, reexportedInModuleWithName)
+        JsIrModule(
+            firstModule.moduleName,
+            firstModule.externalModuleName,
+            fragments,
+            reexportedInModuleWithName,
+            importedWithEffectInModuleWithName
+        )
     }
 }
 
