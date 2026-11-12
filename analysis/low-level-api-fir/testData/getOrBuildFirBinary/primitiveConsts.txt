@@ -1,9 +1,9 @@
 KT element: KtObjectDeclaration
 KT element text:
 public object Consts {
-    public const val boolean: kotlin.Boolean = 1
+    public const val boolean: kotlin.Boolean = true
 
-    public const val char: kotlin.Char = 99
+    public const val char: kotlin.Char = 'c'
 
     public const val byte: kotlin.Byte = -1
 
@@ -18,16 +18,16 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] object Consts : R|kotlin/Any| {
-    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val boolean: R|kotlin/Boolean| = Int(1)
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val boolean: R|kotlin/Boolean| = Boolean(true)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Boolean|
 
-    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val byte: R|kotlin/Byte| = Int(-1)
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val byte: R|kotlin/Byte| = Byte(-1)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Byte|
 
-    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val char: R|kotlin/Char| = Int(99)
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val char: R|kotlin/Char| = Char(c)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Char|
 
-    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val short: R|kotlin/Short| = Int(2)
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val short: R|kotlin/Short| = Short(2)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Short|
 
     public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val uByte: R|kotlin/UByte| = UByte(-1)

@@ -49,7 +49,7 @@ PropertyInitializersKt.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     PROPERTY[fqName=test.boolean, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=boolean]
-      constantInitializer: 1
+      constantInitializer: true
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -58,9 +58,9 @@ PropertyInitializersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Boolean]
             isClassRef: true
-      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
     PROPERTY[fqName=test.byte, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=byte]
-      constantInitializer: 1
+      constantInitializer: 1.toByte()
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -71,7 +71,7 @@ PropertyInitializersKt.class:
             isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     PROPERTY[fqName=test.short, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=short]
-      constantInitializer: 2
+      constantInitializer: 2.toShort()
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -126,7 +126,7 @@ PropertyInitializersKt.class:
             isClassRef: true
       FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=6.6]
     PROPERTY[fqName=test.char, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=char]
-      constantInitializer: 99
+      constantInitializer: \u0063 ('c')
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -135,7 +135,7 @@ PropertyInitializersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Char]
             isClassRef: true
-      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=99]
+      CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='c']
     PROPERTY[fqName=test.string, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=string]
       constantInitializer: "s"
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
@@ -149,7 +149,7 @@ PropertyInitializersKt.class:
       STRING_TEMPLATE
         LITERAL_STRING_TEMPLATE_ENTRY[text=s]
     PROPERTY[fqName=test.uByte, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uByte]
-      constantInitializer: -1
+      constantInitializer: -1.toByte()
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -162,7 +162,7 @@ PropertyInitializersKt.class:
         OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     PROPERTY[fqName=test.uShort, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uShort]
-      constantInitializer: -1
+      constantInitializer: -1.toShort()
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE

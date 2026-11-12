@@ -295,7 +295,7 @@ private class JvmClsAnnotationLoader(
                 ProgressManager.checkCanceled()
 
                 if (initializer != null) {
-                    fieldInitializers[name] = createConstantValue(initializer)
+                    fieldInitializers[name] = createConstantValue(normalizeFieldInitializer(desc, initializer))
                 }
 
                 val signature = MemberSignature.fromFieldNameAndDesc(name.asString(), desc)
@@ -360,5 +360,20 @@ private class JvmClsAnnotationLoader(
             fieldInitializers,
             annotationDefaults,
         )
+    }
+}
+
+/**
+ * Returns [initializer] converted to the type of the field with the [desc] descriptor,
+ * as a class file stores the `ConstantValue` of a `boolean`, `char`, `byte` or `short` field as an `int`.
+ */
+private fun normalizeFieldInitializer(desc: String, initializer: Any): Any {
+    val intValue = initializer as? Int ?: return initializer
+    return when (desc) {
+        "Z" -> intValue != 0
+        "C" -> intValue.toChar()
+        "B" -> intValue.toByte()
+        "S" -> intValue.toShort()
+        else -> initializer
     }
 }
