@@ -46,8 +46,8 @@ class SharedNpmManagerProjectTest {
         }
 
         for (project in listOf(jsBrowser, jsNodejs, wasmJsBrowser)) {
-            root.addSharedNpmDependency("kotlinJsNpmSharedDependencies", project)
-            root.addSharedNpmDependency("kotlinWasmNpmSharedDependencies", project)
+            root.addSharedNpmDependency("kotlinNpmSharedDependenciesJs", project)
+            root.addSharedNpmDependency("kotlinNpmSharedDependenciesWasmJs", project)
             project.evaluate()
         }
 
@@ -57,7 +57,7 @@ class SharedNpmManagerProjectTest {
         )
         assertEquals(
             reportFiles(wasmJsBrowser),
-            root.resolvedReports("kotlinNpmDependenciesReportWasmResolver"),
+            root.resolvedReports("kotlinNpmDependenciesReportWasmJsResolver"),
         )
     }
 
@@ -82,7 +82,7 @@ class SharedNpmManagerProjectTest {
                 nodejs()
             }
         }
-        manager.addSharedNpmDependency("kotlinJsNpmSharedDependencies", lib)
+        manager.addSharedNpmDependency("kotlinNpmSharedDependenciesJs", lib)
         lib.evaluate()
 
         assertEquals(

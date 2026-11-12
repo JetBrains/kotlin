@@ -20,26 +20,24 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.toKotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.KotlinWebPlatformType
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.withType
 
 internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { target ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetSideEffect
-    if (target.wasmTargetType == KotlinWasmTargetType.WASI) return@KotlinTargetSideEffect
+    val platform = when (target.wasmTargetType) {
+        null -> KotlinWebPlatformType.JS
+        KotlinWasmTargetType.JS -> KotlinWebPlatformType.WasmJS
+        KotlinWasmTargetType.WASI -> return@KotlinTargetSideEffect
+    }
 
     val project = target.project
-    val platform = target.webTargetVariant(
-        jsVariant = JsPlatformDisambiguator,
-        wasmVariant = WasmPlatformDisambiguator,
-    )
-    val platformDirectoryName = platform.platformDisambiguator ?: JsPlatformDisambiguator.jsPlatform
+    val platformDirectoryName = platform.platformName
 
     project.registerOncePackageJsonToNpmDependencyReportTransform(target, platform)
     val npmDependenciesReport = project.maybeCreateNpmDependenciesReport(platform)

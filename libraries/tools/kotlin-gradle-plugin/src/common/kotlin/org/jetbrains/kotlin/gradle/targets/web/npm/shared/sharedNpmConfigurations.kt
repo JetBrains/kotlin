@@ -27,22 +27,17 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.KotlinWebPlatformType
 import org.jetbrains.kotlin.gradle.utils.*
 
-internal val HasPlatformDisambiguator.platformName: String
-    get() = platformDisambiguator ?: JsPlatformDisambiguator.jsPlatform
-
-internal val HasPlatformDisambiguator.npmDependenciesReportConfigurationName: String
+internal val KotlinWebPlatformType.npmDependenciesReportConfigurationName: String
     get() = lowerCamelCaseName("kotlin", "npmDependenciesReport", platformName)
 
-internal val HasPlatformDisambiguator.npmSharedDependenciesConfigurationName: String
-    get() = lowerCamelCaseName("kotlin", platformName, "npmSharedDependencies")
+internal val KotlinWebPlatformType.npmSharedDependenciesConfigurationName: String
+    get() = lowerCamelCaseName("kotlin", "npmSharedDependencies", platformName)
 
-internal val HasPlatformDisambiguator.npmDependenciesReportResolverConfigurationName: String
-    get() = lowerCamelCaseName("kotlin", "npmDependenciesReport", platformName, "resolver")
+internal val KotlinWebPlatformType.npmDependenciesReportResolverConfigurationName: String
+    get() = lowerCamelCaseName(npmDependenciesReportConfigurationName, "resolver")
 
 internal val KotlinJsIrTarget.npmRuntimeDependenciesVariantName: String
     get() = lowerCamelCaseName("kotlin", "npmRuntimeDependencies", disambiguationClassifier)
@@ -55,31 +50,30 @@ private const val NPM_DEPENDENCIES_REPORT_USAGE = "kotlinNpmDependenciesReport"
 private const val NPM_RUNTIME_DEPENDENCIES_USAGE = "kotlinNpmRuntimeDependencies"
 
 /** Sets the attributes that tell the JS and the WasmJS npm dependency reports apart. */
-private fun AttributeContainer.platformAttributes(disambiguator: HasPlatformDisambiguator) {
-    when (disambiguator) {
-        JsPlatformDisambiguator -> attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-        WasmPlatformDisambiguator -> {
+private fun AttributeContainer.platformAttributes(platform: KotlinWebPlatformType) {
+    when (platform) {
+        KotlinWebPlatformType.JS -> attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        KotlinWebPlatformType.WasmJS -> {
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
             attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, KotlinWasmTargetAttribute.js)
         }
-        else -> error("Unexpected platform '${disambiguator.platformName}' for the shared npm project")
     }
 }
 
-private fun Project.npmDependenciesReportAttributes(attributes: AttributeContainer, platform: HasPlatformDisambiguator) {
+private fun Project.npmDependenciesReportAttributes(attributes: AttributeContainer, platform: KotlinWebPlatformType) {
     attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(NPM_DEPENDENCIES_REPORT_USAGE))
     attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
     attributes.platformAttributes(platform)
 }
 
-internal fun Project.maybeCreateNpmDependenciesReport(platform: HasPlatformDisambiguator): Configuration =
+internal fun Project.maybeCreateNpmDependenciesReport(platform: KotlinWebPlatformType): Configuration =
     configurations.maybeCreateConsumable(platform.npmDependenciesReportConfigurationName) {
         setInvisibleIfSupported()
         description = "npm dependency reports of this project for the shared-npm-project."
         npmDependenciesReportAttributes(attributes, platform)
     }
 
-internal fun Project.createNpmDependenciesReportResolver(platform: HasPlatformDisambiguator): Configuration {
+internal fun Project.createNpmDependenciesReportResolver(platform: KotlinWebPlatformType): Configuration {
     val sharedDependencies = configurations.createDependencyScope(platform.npmSharedDependenciesConfigurationName) {
         setInvisibleIfSupported()
         description = "Projects contributing to the shared-npm-project."
@@ -112,7 +106,7 @@ internal fun Project.createNpmRuntimeDependenciesVariant(
     }
 }
 
-internal fun Project.registerOncePackageJsonToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: HasPlatformDisambiguator) {
+internal fun Project.registerOncePackageJsonToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: KotlinWebPlatformType) {
     val registeredKey = "PackageJsonToNpmDependencyReportTransform.${platform.platformName}"
     if (!extensions.extraProperties.has(registeredKey)) {
         registerPackageJsonToNpmDependencyReportTransform(target, platform)
@@ -121,7 +115,7 @@ internal fun Project.registerOncePackageJsonToNpmDependencyReportTransform(targe
 }
 
 /** Covers Maven klibs and `files(...)` klibs, unpacked klibs and `package.json` files, which come without a report. */
-private fun Project.registerPackageJsonToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: HasPlatformDisambiguator) {
+private fun Project.registerPackageJsonToNpmDependencyReportTransform(target: KotlinJsIrTarget, platform: KotlinWebPlatformType) {
     val fileDependencyUsage = usageByName(FILE_DEPENDENCY_USAGE)
     // KMP root variants have no artifactType, so they would match all three transforms.
     // Fake usage keeps them off the file transforms: `files(...)` deps have no usage, so still match.

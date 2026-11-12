@@ -124,7 +124,7 @@ class ProjectIsolationIT : KGPBaseTest() {
             buildScriptInjection {
                 @OptIn(DelicateKotlinGradlePluginApi::class)
                 project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                for (configuration in listOf("kotlinJsNpmSharedDependencies", "kotlinWasmNpmSharedDependencies")) {
+                for (configuration in listOf("kotlinNpmSharedDependenciesJs", "kotlinNpmSharedDependenciesWasmJs")) {
                     project.dependencies.add(configuration, project.dependencies.project(mapOf("path" to ":lib-a")))
                     project.dependencies.add(configuration, project.dependencies.project(mapOf("path" to ":lib-b")))
                 }
@@ -156,7 +156,7 @@ class ProjectIsolationIT : KGPBaseTest() {
                 }
             }
 
-            build("kotlinJsSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
+            build("kotlinJsSetupSharedNpmProject", "kotlinWasmJsSetupSharedNpmProject") {
                 assertTasksExecuted(
                     ":lib-a:jsNpmDependenciesReport",
                     ":lib-a:jsTestNpmDependenciesReport",
@@ -167,13 +167,13 @@ class ProjectIsolationIT : KGPBaseTest() {
                     ":lib-b:wasmJsNpmDependenciesReport",
                     ":lib-b:wasmJsTestNpmDependenciesReport",
                 )
-                for (platform in listOf("js", "wasm")) {
+                for (platform in listOf("js", "wasmJs")) {
                     val libB = projectPath.resolve("build/$platform/shared-npm-project/packages/emptyKts-lib-b/package.json").toFile()
                     assertEquals("1.0.0", fromSrcPackageJson(libB)?.dependencies?.get("is-even"), "is-even from :lib-a in $libB")
                 }
             }
 
-            build("kotlinJsSetupSharedNpmProject", "kotlinWasmSetupSharedNpmProject") {
+            build("kotlinJsSetupSharedNpmProject", "kotlinWasmJsSetupSharedNpmProject") {
                 assertConfigurationCacheReused()
             }
         }
