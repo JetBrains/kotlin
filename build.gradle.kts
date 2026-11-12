@@ -510,11 +510,13 @@ tasks {
     testLifecycleTask("klibIrTest", QualityGate.Master) {
         dependsOn(":tools:binary-compatibility-validator:check")
         dependsOn(":native:native.tests:klib-ir-inliner:check")
+        dependsOn(":native:native.tests:klib-ir-inliner:withPlatformLibs:check")
     }
 
     // TODO(KTI-3725): Promote to QualityGate.Master once the Windows Klib/IR TeamCity configuration uses it instead of `klibIrTest`
     testLifecycleTask("commonBackendTestOnWindows", QualityGate.Undefined) {
         dependsOn(":native:native.tests:klib-ir-inliner:commonBackendTestOnWindows")
+        dependsOn(":native:native.tests:klib-ir-inliner:withPlatformLibs:commonBackendTestOnWindows")
     }
 
     testLifecycleTask("compilerFrontendTest", QualityGate.Master) {
