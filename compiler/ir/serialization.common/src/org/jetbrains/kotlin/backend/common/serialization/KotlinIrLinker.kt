@@ -337,7 +337,7 @@ abstract class KotlinIrLinker(
     ): IrModuleDeserializer {
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
         moduleFragment.kotlinLibrary = kotlinLibrary
-        moduleFragment.friendLibraries = friendModules[kotlinLibrary].orEmpty()
+        moduleFragment.friendLibraries = friendModules[kotlinLibrary]?.toSet().orEmpty()
         moduleFragment.moduleVisibilityProvider = IrLinkerModuleVisibilityProvider
 
         val deserializer = maybeWrapWithBuiltIn(
@@ -510,7 +510,7 @@ var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault 
  * It is present only when [IrModuleFragment.kotlinLibrary] is present, i.e. in module fragments deserialized with IR linker.
  * In practice, it's present at the 2-nd stage of compilation. Friend dependencies on the 1-st stage are tracked by frontend structures.
  */
-internal var IrModuleFragment.friendLibraries: Collection<KotlinLibrary>? by irAttribute(copyByDefault = true)
+internal var IrModuleFragment.friendLibraries: Set<KotlinLibrary>? by irAttribute(copyByDefault = true)
 
 private object IrLinkerModuleVisibilityProvider : ModuleVisibilityProvider {
     override fun canSeeInternals(thisModule: IrModuleFragment, otherModule: IrModuleFragment): Boolean {
