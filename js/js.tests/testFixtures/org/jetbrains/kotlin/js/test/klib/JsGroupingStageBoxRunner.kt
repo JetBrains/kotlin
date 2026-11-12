@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
  *   with. They are of no use for a grouped batch, which has no executable of a single test to look at, so a test
  *   that relies on one of them to check something has to be isolated.
  */
-class JsGroupingStageBoxRunner(
+open class JsGroupingStageBoxRunner(
     testServices: TestServices,
     private val isolatedTestHandlers: List<Constructor<JsBinaryArtifactHandler>>,
     private val artifactsAreDumped: Boolean = false,
@@ -91,36 +91,13 @@ class JsGroupingStageBoxRunner(
         val inputsById = inputs.associateBy { computeJsGroupedTestId(it.testInfo) }
         checkTestInfrastructure(inputsById.size == inputs.size) { "Tests of a grouped batch have clashing ids" }
 
-        val executions = mutableListOf<GroupedTestsResultProtocol.ExecutionOutput>()
-        val completedExecutionNames = mutableSetOf<String>()
-        val vmFailures = mutableListOf<VmFailure>()
         val launcherServices = inputs.first().testServices
-        for ([mode, outputs] in artifact.delegate.compilerResult.entries) {
-            // A batch is linked in the whole-program modes only (see `JsInProcessSecondStageFacade.Grouping`): the files of
-            // a per-module mode would have to be loaded in the dependency order of the modules of all the tests of the batch.
-            checkTestInfrastructure(mode.granularity == JsGenerationGranularity.WHOLE_PROGRAM) {
-                "A grouped batch is linked in the whole-program translation modes only, but it was linked in $mode"
-            }
-            val outputFile = getModeOutputFilePath(launcherServices, artifact.launcherModule, mode)
-            val jsFiles = outputs.dependencies.map { outputFile.augmentWithModuleName(it.artifactConfiguration.moduleName) } + outputFile
-            val output = try {
-                V8JsTestChecker.run(jsFiles) {
-                    runTestFunction(
-                        testModuleName = artifact.launcherModule.name,
-                        testPackageName = FqName.ROOT,
-                        testFunctionName = RUN_GROUPED_TESTS_FUNCTION_NAME,
-                        withModuleSystem = false,
-                    )
-                }.also { completedExecutionNames += mode.name }
-            } catch (e: ScriptExecutionException) {
-                vmFailures += VmFailure(mode.name, e)
-                // What was printed before the failure still carries the results of the tests that had finished.
-                e.stdout
-            }
-            executions += GroupedTestsResultProtocol.ExecutionOutput(executionName = mode.name, output = output)
-        }
+        val executions = executeGroupedBatch(artifact, inputs)
+        val vmFailures = executions.mapNotNull { execution -> execution.vmFailure?.let { VmFailure(execution.executionName, it) } }
 
-        val parsedBatchResult = GroupedTestsResultProtocol.parseMergedWithExecutionNames(executions)
+        val parsedBatchResult = GroupedTestsResultProtocol.parseMergedWithExecutionNames(
+            executions.map { GroupedTestsResultProtocol.ExecutionOutput(it.executionName, it.output) }
+        )
         if (parsedBatchResult.malformedLines.isNotEmpty()) {
             val reason = "The grouped batch printed malformed result line(s), so its results cannot be trusted:\n" +
                     parsedBatchResult.malformedLines.joinToString("\n") { it.bounded(MAX_MALFORMED_LINE_LENGTH) }
@@ -128,13 +105,7 @@ class JsGroupingStageBoxRunner(
             return
         }
 
-        // Every translation mode runs the whole batch, so each of the modes the VM completed must report a result for
-        // every test. A mode the VM broke down in is not held to that: the results it printed before still count, and
-        // the test that was running is reported as crashed, but the tests it never reached are not failed for it.
-        val analysis = parsedBatchResult.analyze(
-            inputsById.keys,
-            parsedBatchResult.executions.filter { it.executionName in completedExecutionNames },
-        )
+        val analysis = parsedBatchResult.analyze(inputsById.keys, parsedBatchResult.executions)
         checkTestInfrastructure(analysis.excessiveIds.isEmpty()) {
             "The grouped batch reported results of tests that are not a part of it: ${analysis.excessiveIds}. Expected: ${inputsById.keys}"
         }
@@ -181,6 +152,38 @@ class JsGroupingStageBoxRunner(
             }
             if (reasons.isNotEmpty()) {
                 input.failWith(reasons.joinToString("\n"), relevantVmFailures, launcherServices)
+            }
+        }
+    }
+
+    protected class GroupedBatchExecution(val executionName: String, val output: String, val vmFailure: ScriptExecutionException?)
+
+    protected open fun executeGroupedBatch(
+        artifact: JsGroupedBatchArtifact,
+        inputs: List<NonGroupingStageOutput>,
+    ): List<GroupedBatchExecution> {
+        val launcherServices = inputs.first().testServices
+        return artifact.delegate.compilerResult.entries.map { [mode, outputs] ->
+            // A batch is linked in the whole-program modes only (see `JsInProcessSecondStageFacade.Grouping`): the files of
+            // a per-module mode would have to be loaded in the dependency order of the modules of all the tests of the batch.
+            checkTestInfrastructure(mode.granularity == JsGenerationGranularity.WHOLE_PROGRAM) {
+                "A grouped batch is linked in the whole-program translation modes only, but it was linked in $mode"
+            }
+            val outputFile = getModeOutputFilePath(launcherServices, artifact.launcherModule, mode)
+            val jsFiles = outputs.dependencies.map { outputFile.augmentWithModuleName(it.artifactConfiguration.moduleName) } + outputFile
+            try {
+                val output = V8JsTestChecker.run(jsFiles) {
+                    runTestFunction(
+                        testModuleName = artifact.launcherModule.name,
+                        testPackageName = FqName.ROOT,
+                        testFunctionName = RUN_GROUPED_TESTS_FUNCTION_NAME,
+                        withModuleSystem = false,
+                    )
+                }
+                GroupedBatchExecution(mode.name, output, vmFailure = null)
+            } catch (e: ScriptExecutionException) {
+                // What was printed before the failure still carries the results of the tests that had finished.
+                GroupedBatchExecution(mode.name, e.stdout, vmFailure = e)
             }
         }
     }
