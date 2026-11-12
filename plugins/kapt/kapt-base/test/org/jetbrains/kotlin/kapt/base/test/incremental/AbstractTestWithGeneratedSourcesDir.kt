@@ -13,5 +13,5 @@ abstract class AbstractTestWithGeneratedSourcesDir {
     private var _generatedSources: File? = null
 
     protected val generatedSources: File
-        get() = _generatedSources!!
+        get() = _generatedSources!!.canonicalFile
 }

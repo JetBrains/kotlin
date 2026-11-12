@@ -29,7 +29,7 @@ class IncrementalKaptTest {
         @TempDir projectBaseDirSecondRun: File,
         @TempDir classesOutput: File
     ) {
-        val sourcesDir = baseSourcesDir.resolve("test").also { base ->
+        val sourcesDir = baseSourcesDir.canonicalFile.resolve("test").also { base ->
             base.mkdir()
             for (file in listOf("User.java", "Address.java", "Observable.java")) {
                 TEST_DATA_DIR.resolve(file).copyTo(base.resolve(file))
@@ -106,7 +106,7 @@ class IncrementalKaptTest {
         @TempDir projectBaseDirSecondRun: File,
         @TempDir classesOutput: File
     ) {
-        val sourcesDir = baseSourcesDir.resolve("test").also { base ->
+        val sourcesDir = baseSourcesDir.canonicalFile.resolve("test").also { base ->
             base.mkdir()
             for (file in listOf("User.java", "Address.java", "Observable.java")) {
                 TEST_DATA_DIR.resolve(file).copyTo(base.resolve(file))
