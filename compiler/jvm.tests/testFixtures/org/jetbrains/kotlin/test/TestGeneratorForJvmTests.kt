@@ -169,6 +169,11 @@ fun main(args: Array<String>) {
                 model("boxJvm")
             }
 
+            testClass<AbstractFirPsiBlackBoxCodegenTest> {
+                model("box")
+                model("boxJvm")
+            }
+
             testClass<AbstractJvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest> {
                 model("box/multiplatform/k2")
                 model("boxJvm/multiplatform/k2")

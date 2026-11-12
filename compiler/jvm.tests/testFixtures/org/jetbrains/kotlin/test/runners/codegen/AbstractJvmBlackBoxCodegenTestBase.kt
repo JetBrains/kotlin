@@ -67,3 +67,6 @@ abstract class AbstractJvmBlackBoxCodegenTestBase(val parser: FirParser) : Abstr
 }
 
 open class AbstractFirLightTreeBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.LightTree)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.Psi)
