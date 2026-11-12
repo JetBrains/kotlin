@@ -40,14 +40,15 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
     @TestMetadata(TEST_CASE_NAME)
     fun testListingCompiledFromSources() {
         // KT-91210: with incremental compilation, the test binary registers tests from KLIB dependencies
-        Assumptions.assumingThat(!testRunSettings.get<CacheMode>().useIncrementalCompilation) {
-            doTest(TEST_CASE_PATH, fromSources = true)
-        }
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useIncrementalCompilation)
+        doTest(TEST_CASE_PATH, fromSources = true)
     }
 
     @Test
     @TestMetadata(TEST_CASE_NAME)
     fun testListingCompiledFromIncludedLibrary() {
+        // KT-91210: with incremental compilation, the test binary registers tests from KLIB dependencies
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useIncrementalCompilation)
         doTest(TEST_CASE_PATH, fromSources = false)
     }
 

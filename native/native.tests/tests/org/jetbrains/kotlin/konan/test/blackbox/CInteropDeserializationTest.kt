@@ -9,6 +9,7 @@ import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.KlibModuleMetadata.MetadataLibraryProvider
 import org.jetbrains.kotlin.ir.backend.js.moduleName
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCInteropArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCo
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExistingDependency
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -30,6 +33,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -129,6 +133,12 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
 
     @Test
     fun `Same C enum in two C-interop libraries (KT-89825)`() {
+        // KT-81760: inconsistent handling of clashing declarations on Linux
+        val target = testRunSettings.get<KotlinNativeTargets>().testTarget.family
+        Assumptions.assumeFalse(target == Family.LINUX &&
+                    testRunSettings.get<CacheMode>().useIncrementalCompilation
+        )
+
         val firstKlibDir = compileToCInteropLibrary("first", ["-pkg", "cinterop"]) {
             """
                 language = C
