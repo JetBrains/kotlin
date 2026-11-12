@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.testOld.runTestFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
+import org.jetbrains.kotlin.test.NonGroupingTestRunner.Companion.shouldRun
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.checkTestInfrastructure
@@ -71,18 +72,19 @@ class JsGroupingStageBoxRunner(
     private fun runIsolated(artifact: BinaryArtifacts.Js, input: NonGroupingStageOutput) {
         val services = input.testServices
         val mainModule = JsEnvironmentConfigurator.getMainModule(services)
+        val handlers = isolatedTestHandlers.map { it(services) }
         var someAssertionWasFailed = false
-        // As in a handlers step of the one-stage pipeline: every handler gets its chance, and knows about the earlier failures.
-        for (handler in isolatedTestHandlers.map { it(services) }) {
-            for (action in listOf({ handler.processModule(mainModule, artifact) }, { handler.processAfterAllModules(someAssertionWasFailed) })) {
-                try {
-                    action()
-                } catch (e: Throwable) {
-                    someAssertionWasFailed = true
-                    input.executeWithFailureCatching { throw e }
-                }
+        fun JsBinaryArtifactHandler.runUnlessSkipped(action: JsBinaryArtifactHandler.() -> Unit) {
+            if (!shouldRun(thereWasAnException = someAssertionWasFailed)) return
+            try {
+                action()
+            } catch (e: Throwable) {
+                someAssertionWasFailed = true
+                input.executeWithFailureCatching { throw e }
             }
         }
+        for (handler in handlers) handler.runUnlessSkipped { processModule(mainModule, artifact) }
+        for (handler in handlers) handler.runUnlessSkipped { processAfterAllModules(someAssertionWasFailed) }
     }
 
     private fun runGroupedBatch(artifact: JsGroupedBatchArtifact, inputs: List<NonGroupingStageOutput>) {
