@@ -202,6 +202,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   }
 
   @Test
+  @TestMetadata("stubsFromFirJvmExposeBoxed")
+  public void testStubsFromFirJvmExposeBoxed() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/stubsFromFirJvmExposeBoxed/");
+  }
+
+  @Test
   @TestMetadata("withoutService")
   public void testWithoutService() {
     runTest("plugins/kapt/kapt-cli/testData/integration/withoutService/");
