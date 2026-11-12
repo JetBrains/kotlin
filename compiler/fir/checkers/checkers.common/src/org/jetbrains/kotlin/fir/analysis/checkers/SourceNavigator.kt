@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -40,8 +39,6 @@ interface SourceNavigator {
     fun KtSourceElement.getRawIdentifier(): CharSequence?
 
     fun FirDeclaration.getRawName(): String?
-
-    fun FirValueParameterSymbol.isCatchElementParameter(): Boolean
 
     fun FirTypeRef.isRedundantNullable(): Boolean
 
@@ -116,10 +113,6 @@ private open class LightTreeSourceNavigator : SourceNavigator {
         return source?.let { it.treeStructure.nameIdentifier(it.lighterASTNode)?.toString() }
     }
 
-    override fun FirValueParameterSymbol.isCatchElementParameter(): Boolean {
-        return source?.getParentOfParent()?.tokenType == KtNodeTypes.CATCH
-    }
-
     override fun FirTypeRef.isRedundantNullable(): Boolean {
         val source = source ?: return false
         val ref = Ref<Array<LighterASTNode?>>()
@@ -131,13 +124,6 @@ private open class LightTreeSourceNavigator : SourceNavigator {
         source.treeStructure.getChildren(node, ref)
         val firstChild = ref.get().firstOrNull() ?: return null
         return if (firstChild.tokenType != KtNodeTypes.NULLABLE_TYPE) null else firstChild
-    }
-
-    private fun KtSourceElement?.getParentOfParent(): LighterASTNode? {
-        val source = this ?: return null
-        var parent = source.treeStructure.getParent(source.lighterASTNode)
-        parent?.let { parent = source.treeStructure.getParent(it) }
-        return parent
     }
 
     override fun FirEnumEntry.hasBody(): Boolean? {
@@ -182,10 +168,6 @@ private object PsiSourceNavigator : SourceNavigator {
 
     override fun FirDeclaration.getRawName(): String? {
         return (this.psi() as? PsiNameIdentifierOwner)?.nameIdentifier?.text
-    }
-
-    override fun FirValueParameterSymbol.isCatchElementParameter(): Boolean {
-        return source?.psi<PsiElement>()?.parent?.parent is KtCatchClause
     }
 
     override fun FirTypeRef.isRedundantNullable(): Boolean {
