@@ -1,16 +1,16 @@
 /TopLevel.kt:13:21: error: Delegated properties must be declared in the same companion object as the corresponding atomic properties.
 
-/TopLevel.kt:19:21: error: Delegated properties must be declared in the same class as the corresponding atomic properties.
+/TopLevel.kt:18:21: error: Delegated properties must be declared in the same class as the corresponding atomic properties.
 
-/TopLevel.kt:28:17: error: Delegated properties must be declared in the same companion object as the corresponding atomic properties.
+/TopLevel.kt:27:17: error: Delegated properties must be declared in the same companion object as the corresponding atomic properties.
 
-/TopLevel.kt:38:9: error: Delegated properties must be declared in the same class as the corresponding atomic properties.
+/TopLevel.kt:37:9: error: Delegated properties must be declared in the same class as the corresponding atomic properties.
 
-/TopLevel.kt:46:9: error: Delegated properties must be declared in the same object as the corresponding atomic properties.
+/TopLevel.kt:45:9: error: Delegated properties must be declared in the same object as the corresponding atomic properties.
 
-/TopLevel.kt:56:17: error: Delegated properties must be declared in the same companion block as the corresponding atomic properties.
+/TopLevel.kt:55:17: error: Delegated properties must be declared in the same companion block as the corresponding atomic properties.
 
-/TopLevel.kt:68:9: error: Delegated properties must be declared in the same enum class as the corresponding atomic properties.
+/TopLevel.kt:67:9: error: Delegated properties must be declared in the same enum class as the corresponding atomic properties.
 
-/TopLevel.kt:95:9: error: Delegated properties must be declared at the top level of the same file as the corresponding atomic properties.
-/OtherFile.kt:99:5: error: Delegated properties must be declared at the top level of the same file as the corresponding atomic properties.
+/TopLevel.kt:94:9: error: Delegated properties must be declared at the top level of the same file as the corresponding atomic properties.
+/OtherFile.kt:98:5: error: Delegated properties must be declared at the top level of the same file as the corresponding atomic properties.

@@ -10,13 +10,12 @@ class CompanionObjectMint {
 
         fun mint() {
             class First {
-                val <!ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER!>outer<!> by coinsAtomic
+                val <!ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER!>outerSeen<!> by coinsAtomic
                 val internal = atomic(0)
             }
 
             class Second {
-                val previous = First()
-                val <!ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER!>seen<!> by previous.internal
+                val <!ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER!>firstSeen<!> by First().internal
             }
 
             coinsAtomic.incrementAndGet()
