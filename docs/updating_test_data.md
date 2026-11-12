@@ -18,8 +18,8 @@ It was tested on updating IR dump files (`*.ir.txt` and `*.kt.txt`), it may not 
 ./gradlew :js:js.tests:test --tests "org.jetbrains.kotlin.js.test.runners.LightTreeJsIrTextTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :native:native.tests:test --tests "org.jetbrains.kotlin.konan.test.irtext.ClassicNativeIrTextTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :native:native.tests:test --tests "org.jetbrains.kotlin.konan.test.irtext.FirLightTreeNativeIrTextTestGenerated" --continue -Pkotlin.test.update.test.data=true
-./gradlew :native:native.tests:klibTest --tests "org.jetbrains.kotlin.konan.test.klib.FirKlibCrossCompilationIdentityTestGenerated" --continue -Pkotlin.test.update.test.data=true
-./gradlew :native:native.tests:klib-ir-inliner:test --tests "org.jetbrains.kotlin.konan.test.dump.FirNativeKlibDumpIrTestGenerated" --continue -Pkotlin.test.update.test.data=true
+./gradlew :native:native.tests:klib-ir-inliner:withPlatformLibs:test --tests "org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationIdentityTestGenerated" --continue -Pkotlin.test.update.test.data=true
+./gradlew :native:native.tests:klib-ir-inliner:test --tests "org.jetbrains.kotlin.konan.test.dump.NativeKlibDumpIrTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :compiler:test --tests "org.jetbrains.kotlin.codegen.ScriptCodegenTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :compiler:fir:fir2ir:test --tests "org.jetbrains.kotlin.test.runners.codegen.FirScriptCodegenTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :analysis:analysis-api-fir:test --tests "org.jetbrains.kotlin.analysis.api.fir.test.cases.generated.cases.components.compilerFacility.*" --continue -Pkotlin.test.update.test.data=true

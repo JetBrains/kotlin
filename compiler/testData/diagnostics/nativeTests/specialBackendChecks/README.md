@@ -1,11 +1,13 @@
-This testsuit fir specialBackendChecks on Mac hosts relies on platform libs are installed.
-To run testsuit locally, make sure the above is executed first:
-- `./gradlew :kotlin-native:platformLibs:macos_arm64Install` and 
-- `./gradlew :kotlin-native:platformLibs:linux_x64Install`
+This testsuit for specialBackendChecks on Mac hosts relies on platform libs.
 
 This testsuit can be run:
-- manually: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh`,
-- automatically: `LightTreeNativeKlibDiagnosticsTestGenerated` and `PsiNativeKlibDiagnosticsTestGenerated`.
+- automatically: `LightTreeNativeKlibDiagnosticsTestGenerated` and `PsiNativeKlibDiagnosticsTestGenerated`, e.g.
+  `./gradlew :native:native.tests:klib-ir-inliner:withPlatformLibs:test --tests "org.jetbrains.kotlin.konan.test.diagnostics.LightTreeNativeKlibDiagnosticsTestGenerated"`.
+  Platform libs for the host are built as a dependency of this task.
+- manually: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh`.
+  Make sure platform libs for both targets are installed first:
+  - `./gradlew :kotlin-native:platformLibs:macos_arm64Install` and
+  - `./gradlew :kotlin-native:platformLibs:linux_x64Install`
 
 Reference output for the manual run is provided below. Should source lines be not displayed,
 it indicates the diagnostic is emitted by `SpecialBackendChecksTraversal`, and requires migration to FIR checks. 
