@@ -1,0 +1,36 @@
+# copy
+../simple/ap
+ap
+
+# copy
+../simple/Test.kt
+Test.kt
+
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/sources
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# kapt
+-Xsuppress-version-warnings
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-mode=stubs
+-Kapt-stub-generation-scheme=jtree
+-Kapt-stubs-from-fir=true
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt
+
+# after
+Return code: 1
+
+error: [kapt] Generating stubs from FIR requires the 'direct' stub generation scheme, but 'jtree' is used.

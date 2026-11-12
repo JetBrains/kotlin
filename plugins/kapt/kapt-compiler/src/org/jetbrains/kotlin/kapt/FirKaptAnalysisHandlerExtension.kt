@@ -364,6 +364,14 @@ open class FirKaptAnalysisHandlerExtension(
             return true
         }
 
+        if (KaptFlag.STUBS_FROM_FIR in flags && mode.generateStubs && stubGenerationScheme != StubGenerationScheme.DIRECT) {
+            logger.error(
+                "Generating stubs from FIR requires the '${StubGenerationScheme.DIRECT.stringValue}' stub generation scheme, " +
+                        "but '${stubGenerationScheme.stringValue}' is used."
+            )
+            return false
+        }
+
         if (KaptFlag.INCREMENTAL_APT in flags) {
             if (incrementalCache == null) {
                 logger.warn(

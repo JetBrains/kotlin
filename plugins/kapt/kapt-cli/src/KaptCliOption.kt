@@ -234,6 +234,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-header-mode", FLAG)
     ),
 
+    STUBS_FROM_FIR_OPTION(
+        "stubsFromFir",
+        "true | false",
+        "Generate stubs straight from FIR, without Fir2Ir and the JVM backend (experimental)",
+        cliToolOption = CliToolOption("-Kapt-stubs-from-fir", FLAG)
+    ),
+
     STUB_GENERATION_SCHEME_OPTION(
         "stubGenerationScheme",
         "<direct|jtree>",

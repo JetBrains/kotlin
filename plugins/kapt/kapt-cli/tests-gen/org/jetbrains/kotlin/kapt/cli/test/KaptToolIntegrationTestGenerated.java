@@ -118,6 +118,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   }
 
   @Test
+  @TestMetadata("incrementalDataFromFir")
+  public void testIncrementalDataFromFir() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/incrementalDataFromFir/");
+  }
+
+  @Test
   @TestMetadata("infoAsWarnings")
   public void testInfoAsWarnings() {
     runTest("plugins/kapt/kapt-cli/testData/integration/infoAsWarnings/");
@@ -187,6 +193,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   @TestMetadata("stubWriterThreadsJtree")
   public void testStubWriterThreadsJtree() {
     runTest("plugins/kapt/kapt-cli/testData/integration/stubWriterThreadsJtree/");
+  }
+
+  @Test
+  @TestMetadata("stubsFromFirJtree")
+  public void testStubsFromFirJtree() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/stubsFromFirJtree/");
   }
 
   @Test
