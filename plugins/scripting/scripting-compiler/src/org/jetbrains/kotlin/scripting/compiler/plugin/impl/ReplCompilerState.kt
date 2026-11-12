@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
@@ -30,6 +31,7 @@ class ReplCompilerState internal constructor(
     ignoredOptionsReportingState: IgnoredOptionsReportingState,
     messageCollector: ScriptDiagnosticsMessageCollector,
     hostConfiguration: ScriptingHostConfiguration,
+    internal val rootDisposable: Disposable,
 ) : AbstractScriptingCompilerState<ReplModuleDataProvider>(
     baseScriptCompilationConfiguration,
     compilerConfiguration,
@@ -41,6 +43,8 @@ class ReplCompilerState internal constructor(
     { ReplModuleDataProvider(it.map(File::toPath)) },
 ) {
     var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
+
+    internal var pluginCompilerConfiguration: CompilerConfiguration? = null
 
     /**
      * Failed snippets consume their numbers too, matching the hosts that count snippets themselves (e.g. JSR-223).

@@ -16,11 +16,7 @@ import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ScriptNames
-import org.jetbrains.kotlin.scripting.compiler.plugin.KOTLIN_SCRIPTING_PLUGIN_ID
-import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptTemplateWithClasspath
-import org.jetbrains.kotlin.scripting.compiler.plugin.scriptTemplateWithClasspath
-import org.jetbrains.kotlin.scripting.compiler.plugin.withRefinedFromSnippetClass
+import org.jetbrains.kotlin.scripting.compiler.plugin.*
 import java.io.File
 import java.io.Serializable
 import java.nio.file.Files
@@ -109,6 +105,7 @@ class DaemonReplCompiler(
 
     private val priorOutputDirs = mutableListOf<File>()
     private val priorClassIds = mutableListOf<ClassId>()
+    private var plugins = StatelessReplCompilerPlugins.EMPTY
 
     private var scriptTemplateCache: Pair<Any, ScriptTemplateWithClasspath?>? = null
 
@@ -172,34 +169,66 @@ class DaemonReplCompiler(
         }
 
         val batchIndex = snippetCounter++
-        val outputDir = File(workRoot, "snippet-batch-$batchIndex-out").also { it.mkdirs() }
+        var finalOutputDir = File(workRoot, "snippet-batch-$batchIndex-out").also { it.mkdirs() }
         val configurationFile = File(workRoot, "snippet-batch-$batchIndex-configuration.bin").also {
             ReplSnippetConfigurationCodec.writeTo(batchConfiguration, it)
         }
         val sourceDir = Files.createTempDirectory("jsr223-daemon-repl-snippet-src-").toFile()
         try {
             val scriptFiles = refinedSnippets.map { File(sourceDir, it.name).also { file -> file.writeText(it.snippet.text) } }
-            val arguments = buildBatchCompilerArguments(
-                scriptFiles, priorOutputDirs, priorClassIds, outputDir, configurationFile, batchConfiguration
-            )
 
-            messageCollector.clear()
-            val exitCode = runDaemonCompile(arguments)
+            fun compile(outputDir: File, pluginSet: StatelessReplCompilerPlugins): Int {
+                messageCollector.clear()
+                val arguments = buildBatchCompilerArguments(
+                    scriptFiles,
+                    priorOutputDirs,
+                    priorClassIds,
+                    outputDir,
+                    configurationFile,
+                    batchConfiguration,
+                    pluginSet,
+                )
+                return runDaemonCompile(arguments)
+            }
+
+            var candidatePlugins = plugins
+            var exitCode = compile(finalOutputDir, candidatePlugins)
+            // The compiler reports compiler plugins requested by the snippets, but not loaded yet, in a dedicated diagnostic.
+            val requestedPlugins = try {
+                messageCollector.messages.mapNotNull(StatelessReplPluginRequestsCodec::extractMissingPluginRequests)
+                    .takeIf { it.isNotEmpty() }?.flatten()
+            } catch (exception: Exception) {
+                return ResultWithDiagnostics.Failure(
+                    "DaemonReplCompiler: unable to decode compiler plugin requests: ${exception.message}".asErrorDiagnostics()
+                )
+            }
+            if (requestedPlugins != null) {
+                candidatePlugins = plugins.merge(requestedPlugins).valueOr { return it }
+
+                finalOutputDir = File(workRoot, "snippet-batch-$batchIndex-retry-out").also { it.mkdirs() }
+                exitCode = compile(finalOutputDir, candidatePlugins)
+                if (messageCollector.messages.any { StatelessReplPluginRequestsCodec.extractMissingPluginRequests(it) != null }) {
+                    return ResultWithDiagnostics.Failure(
+                        "DaemonReplCompiler: compiler requested plugins after its single retry".asErrorDiagnostics()
+                    )
+                }
+            }
+
             if (exitCode != ExitCode.OK.code) {
                 return ResultWithDiagnostics.Failure(
                     messageCollector.messages.map { it.asErrorDiagnostics(path = refinedSnippets.last().snippet.locationId) }
                 )
             }
 
-            priorOutputDirs += outputDir
+            priorOutputDirs += finalOutputDir
             for ([refinedSnippet, scriptFile] in refinedSnippets.zip(scriptFiles)) {
                 val classId = snippetClassId(scriptFile)
                 // Brings in compiler-side refinement results, e.g. `@DependsOn`-resolved jars.
                 val compilationConfiguration = refinedSnippet.configuration.withRefinedFromSnippetClass(
-                    File(outputDir, "${classId.shortClassName.asString()}.class")
+                    File(finalOutputDir, "${classId.shortClassName.asString()}.class")
                 )
                 val compiledSnippet = compiledSnippetFromClassPath(
-                    classPath = listOf(outputDir),
+                    classPath = listOf(finalOutputDir),
                     snippetClassFQName = classId.asSingleFqName().asString(),
                     snippet = refinedSnippet.snippet,
                     compilationConfiguration = compilationConfiguration,
@@ -207,6 +236,7 @@ class DaemonReplCompiler(
                 priorClassIds += classId
                 lastCompiledSnippetInternal = lastCompiledSnippetInternal.add(compiledSnippet)
             }
+            plugins = candidatePlugins
             reports += messageCollector.messages.map {
                 ScriptDiagnostic(
                     ScriptDiagnostic.unspecifiedInfo, it, ScriptDiagnostic.Severity.WARNING,
@@ -226,6 +256,7 @@ class DaemonReplCompiler(
         outputDir: File,
         configurationFile: File,
         batchConfiguration: ScriptCompilationConfiguration,
+        plugins: StatelessReplCompilerPlugins,
     ): List<String> {
         fun pluginOption(name: String, value: String) = "plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:$name=$value"
         return buildList {
@@ -247,6 +278,10 @@ class DaemonReplCompiler(
             }
             add("-P")
             add(pluginOption("repl-snippet-configuration", configurationFile.absolutePath))
+            plugins.loadedKeyOptions().forEach { loadedPlugin ->
+                add("-P")
+                add(pluginOption("repl-snippet-loaded-plugin", loadedPlugin))
+            }
             // Refinement handlers are transient and cannot travel in the configuration file, so the compiler
             // loads the definition from its template and overrides it with the configuration from the file.
             scriptTemplateWithClasspathOf(batchConfiguration)?.let { template ->
@@ -255,6 +290,7 @@ class DaemonReplCompiler(
                 add("-P")
                 add(pluginOption("script-definitions-classpath", template.classpath.joinToString(File.pathSeparator) { it.path }))
             }
+            addAll(plugins.cliArguments())
             add("-d")
             add(outputDir.absolutePath)
             add("-Xsuppress-version-warnings")

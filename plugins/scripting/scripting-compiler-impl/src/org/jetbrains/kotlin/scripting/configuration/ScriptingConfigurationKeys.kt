@@ -64,4 +64,8 @@ object ScriptingConfigurationKeys {
     // File with a serialized `ScriptCompilationConfiguration` for the snippets compilation
     val REPL_SNIPPET_CONFIGURATION_FILE: CompilerConfigurationKey<File> =
         CompilerConfigurationKey.create("REPL_SNIPPET_CONFIGURATION_FILE")
+
+    // Encoded compiler plugin requests already loaded by the stateless REPL host.
+    val REPL_SNIPPET_LOADED_PLUGINS: CompilerConfigurationKey<List<String>> =
+        CompilerConfigurationKey.create("REPL_SNIPPET_LOADED_PLUGINS")
 }

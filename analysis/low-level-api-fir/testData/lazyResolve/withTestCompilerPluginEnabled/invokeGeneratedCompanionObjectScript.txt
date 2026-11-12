@@ -1,0 +1,43 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] invokeGeneratedCompanionObjectScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-invokeGeneratedCompanionObjectScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|org/jetbrains/kotlin/plugin/sandbox/CompanionWithFoo|[Types]() public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol pack.<script-invokeGeneratedCompanionObjectScript.kts>, ScriptTopLevelDeclaration=true] interface Foo : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] val bar: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
+
+        }
+
+        public final operator [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun [ResolvedTo(STATUS)] R|pack/Foo.Companion|.invoke([ResolvedTo(STATUS)] action: R|pack/Foo.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun main(): R|kotlin/Unit| {
+            Q|pack/Foo|.R|pack/invoke|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=pack/Foo.() -> kotlin/Unit] Foo@fun [ResolvedTo(BODY_RESOLVE)] R|pack/Foo|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|pack/Foo.bar|
+            }
+            )
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] invokeGeneratedCompanionObjectScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-invokeGeneratedCompanionObjectScript.kts>
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|org/jetbrains/kotlin/plugin/sandbox/CompanionWithFoo|[Types]() public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol pack.<script-invokeGeneratedCompanionObjectScript.kts>, ScriptTopLevelDeclaration=true] interface Foo : R|kotlin/Any| {
+            public abstract [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/String|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String|
+
+        }
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun [ResolvedTo(BODY_RESOLVE)] R|pack/Foo.Companion|.invoke([ResolvedTo(BODY_RESOLVE)] action: R|pack/Foo.() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun main(): R|kotlin/Unit| {
+            Q|pack/Foo|.R|pack/invoke|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=pack/Foo.() -> kotlin/Unit] Foo@fun [ResolvedTo(BODY_RESOLVE)] R|pack/Foo|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|pack/Foo.bar|
+            }
+            )
+        }

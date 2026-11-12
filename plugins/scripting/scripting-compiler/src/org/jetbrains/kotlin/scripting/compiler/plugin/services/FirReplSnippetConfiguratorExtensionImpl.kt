@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -38,7 +40,9 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.StatelessReplPluginRequestReporter
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentSnippetNo
+import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.script.experimental.api.*
@@ -58,6 +62,7 @@ val ReplScriptingHostConfigurationKeys.isReplSnippetSource by PropertiesCollecti
 class FirReplSnippetConfiguratorExtensionImpl(
     session: FirSession,
     private val hostConfiguration: ScriptingHostConfiguration,
+    private val pluginRequestReporter: StatelessReplPluginRequestReporter? = null,
 ) : FirReplSnippetConfiguratorExtension(session) {
 
     override fun isReplSnippetsSource(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean =
@@ -71,6 +76,8 @@ class FirReplSnippetConfiguratorExtensionImpl(
             // TODO: add error or log, if necessary (see implementation for scripts) (KT-74742)
             return
         }
+
+        pluginRequestReporter?.report(sourceFile.toSourceCode(), configuration)
 
         configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEachIndexed { index, implicitReceiver ->
             receivers.add(
@@ -261,6 +268,13 @@ class FirReplSnippetConfiguratorExtensionImpl(
     companion object {
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
             return Factory { session -> FirReplSnippetConfiguratorExtensionImpl(session, hostConfiguration) }
+        }
+
+        fun getFactory(
+            hostConfiguration: ScriptingHostConfiguration,
+            pluginRequestReporter: StatelessReplPluginRequestReporter,
+        ): Factory {
+            return Factory { session -> FirReplSnippetConfiguratorExtensionImpl(session, hostConfiguration, pluginRequestReporter) }
         }
     }
 }

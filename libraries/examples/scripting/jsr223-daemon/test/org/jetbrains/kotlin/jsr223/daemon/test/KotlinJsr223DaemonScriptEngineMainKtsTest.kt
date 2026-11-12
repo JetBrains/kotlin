@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.jsr223.daemon.test
 
-import org.jetbrains.kotlin.jsr223.daemon.KotlinJsr223DaemonScriptEngineFactory
-import org.jetbrains.kotlin.jsr223.daemon.KotlinJsr223DaemonScriptEngineImpl
 import org.jetbrains.kotlin.daemon.common.DaemonLogOptions
 import org.jetbrains.kotlin.daemon.common.DaemonOptions
+import org.jetbrains.kotlin.jsr223.daemon.KotlinJsr223DaemonScriptEngineFactory
+import org.jetbrains.kotlin.jsr223.daemon.KotlinJsr223DaemonScriptEngineImpl
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,8 +20,16 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
+import javax.script.ScriptException
 import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.script.experimental.api.valueOrThrow
+import kotlin.script.experimental.dependencies.CompoundDependenciesResolver
+import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
+import kotlin.test.assertContains
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 /**
  * Ports a few jsr223-specific main-kts tests (see `MainKtsJsr223Test` in `kotlin-main-kts-test`) to
@@ -41,11 +49,18 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
 
     private val dirsToDeleteAfterEngines = mutableListOf<Path>()
 
-    private fun newEngine(withMainKtsOnCompileClasspath: Boolean = false): KotlinJsr223DaemonScriptEngineImpl {
+    private fun newEngine(
+        withMainKtsOnCompileClasspath: Boolean = false,
+        withSerializationRuntime: Boolean = false,
+    ): KotlinJsr223DaemonScriptEngineImpl {
+        val additionalClasspath = buildList {
+            addAll(listOf(stdlibPath, scriptRuntimePath))
+            if (withSerializationRuntime) addAll(serializationRuntimeClasspath())
+            if (withMainKtsOnCompileClasspath) addAll(mainKtsPaths)
+        }
         val factory = KotlinJsr223DaemonScriptEngineFactory(
             compilerClasspath = compilerClasspath,
-            additionalClasspath = listOf(stdlibPath, scriptRuntimePath) +
-                    if (withMainKtsOnCompileClasspath) mainKtsPaths else emptyList(),
+            additionalClasspath = additionalClasspath,
             daemonOptions = DaemonOptions(
                 runFilesPath = daemonRunDir.resolve("run").toString(),
                 shutdownDelayMilliseconds = 0,
@@ -135,6 +150,142 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
     }
 
     @Test
+    fun testSerializationCompilerPluginPersistsAcrossSnippets() {
+        val engine = newEngine(withMainKtsOnCompileClasspath = true, withSerializationRuntime = true)
+        assertEquals(
+            null,
+            engine.eval(
+                """
+                    ${serializationPluginAnnotation()}
+                    import kotlinx.serialization.Serializable
+
+                    @Serializable
+                    data class User(val name: String)
+                """.trimIndent()
+            )
+        )
+        assertEquals(
+            null,
+            engine.eval(
+                """
+                    ${serializationPluginAnnotation()}
+                    import kotlinx.serialization.Serializable
+
+                    @Serializable
+                    data class Project(val name: String)
+                """.trimIndent()
+            )
+        )
+
+        val descriptorNames = engine.eval(
+            "User.serializer().descriptor.serialName + \"|\" + Project.serializer().descriptor.serialName"
+        ).toString().split('|')
+        assertEquals(2, descriptorNames.size)
+        assertTrue(descriptorNames[0].endsWith(".User"))
+        assertTrue(descriptorNames[1].endsWith(".Project"))
+    }
+
+    @Test
+    fun testSeveralCompilerPluginsRequestedBySingleSnippetPersistAcrossSnippets() {
+        val engine = newEngine(withMainKtsOnCompileClasspath = true, withSerializationRuntime = true)
+        assertEquals(
+            null,
+            engine.eval(
+                """
+                    ${serializationPluginAnnotation()}
+                    ${allOpenPluginAnnotation()}
+                    import kotlinx.serialization.Serializable
+
+                    @Serializable
+                    class User(val name: String)
+                """.trimIndent()
+            )
+        )
+        // The all-open plugin makes serializable classes open, so they can be subclassed.
+        assertEquals(
+            null,
+            engine.eval(
+                """
+                    import kotlinx.serialization.Serializable
+
+                    class Admin(name: String) : User(name)
+
+                    @Serializable
+                    class Project(val name: String)
+
+                    class InternalProject(name: String) : Project(name)
+                """.trimIndent()
+            )
+        )
+
+        val descriptorNames = engine.eval(
+            "User.serializer().descriptor.serialName + \"|\" + Project.serializer().descriptor.serialName"
+        ).toString().split('|')
+        assertEquals(2, descriptorNames.size)
+        assertTrue(descriptorNames[0].endsWith(".User"))
+        assertTrue(descriptorNames[1].endsWith(".Project"))
+        assertEquals("a|b", engine.eval("Admin(\"a\").name + \"|\" + InternalProject(\"b\").name"))
+    }
+
+    @Test
+    fun testSerializationCompilerPluginConflictKeepsOriginalOptions() {
+        val engine = newEngine(withMainKtsOnCompileClasspath = true, withSerializationRuntime = true)
+        engine.eval(
+            """
+                ${serializationPluginAnnotation()}
+                import kotlinx.serialization.Serializable
+
+                @Serializable
+                data class User(val name: String)
+            """.trimIndent()
+        )
+
+        val conflict = assertFailsWith<ScriptException> {
+            engine.eval(
+                """
+                    ${serializationPluginAnnotation("disableIntrinsic=true")}
+                    import kotlinx.serialization.Serializable
+
+                    @Serializable
+                    data class Project(val name: String)
+                """.trimIndent()
+            )
+        }
+        assertContains(conflict.message.orEmpty(), "conflicting options for compiler plugin", ignoreCase = true)
+        assertTrue(engine.eval("User.serializer().descriptor.serialName").toString().endsWith(".User"))
+    }
+
+    @Test
+    fun testSerializationCompilerPluginIsNotCommittedAfterFailedBatch() {
+        val engine = newEngine(withMainKtsOnCompileClasspath = true, withSerializationRuntime = true)
+        assertFailsWith<ScriptException> {
+            engine.eval(
+                """
+                    ${serializationPluginAnnotation()}
+                    import kotlinx.serialization.Serializable
+
+                    @Serializable
+                    data class Broken(val name: String)
+                    unresolvedName
+                """.trimIndent()
+            )
+        }
+
+        val afterRollback = assertFailsWith<ScriptException> {
+            engine.eval(
+                """
+                    import kotlinx.serialization.Serializable
+
+                    @Serializable
+                    data class AfterFailure(val name: String)
+                    AfterFailure.serializer().descriptor.serialName
+                """.trimIndent()
+            )
+        }
+        assertContains(afterRollback.message.orEmpty(), "serializer", ignoreCase = true)
+    }
+
+    @Test
     @Disabled("Same-batch @file:Import snippet chaining is not supported yet (codegen of cross-snippet accesses)")
     fun testWithImport() {
         val engine = newEngine()
@@ -152,6 +303,32 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
 
 // Absolute, since `@file:Import` paths are resolved relative to the (temporary) snippet source file.
 private val TEST_DATA_ROOT = File("libraries/tools/kotlin-main-kts-test/testData").absoluteFile.invariantSeparatorsPath
+
+private fun serializationPluginAnnotation(options: String? = null): String {
+    val optionArgument = options?.let { ", \"$it\"" }.orEmpty()
+    return """@file:CompilerPlugin("${serializationPluginClasspathForScript()}"$optionArgument)"""
+}
+
+private fun allOpenPluginAnnotation(): String {
+    val classpath = System.getProperty("kotlin.script.test.allopen.plugin.classpath")!!
+        .split(File.pathSeparator)
+        .joinToString(File.pathSeparator) { it.replace(File.separatorChar, '/') }
+    return """@file:CompilerPlugin("$classpath", "annotation=kotlinx.serialization.Serializable")"""
+}
+
+private fun serializationPluginClasspathForScript(): String =
+    System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
+        .split(File.pathSeparator)
+        .joinToString(File.pathSeparator) { it.replace(File.separatorChar, '/') }
+
+@Suppress("DEPRECATION_ERROR")
+private fun serializationRuntimeClasspath(): List<Path> =
+    internalScriptingRunSuspend {
+        CompoundDependenciesResolver(MavenDependenciesResolver())
+            .resolve("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1")
+            .valueOrThrow()
+            .map(File::toPath)
+    }
 
 object DependsOnProbe {
     const val VALUE: String = "resolved"

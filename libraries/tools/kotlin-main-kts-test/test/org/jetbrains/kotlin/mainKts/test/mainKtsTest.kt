@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.mainKts.MainKtsDependencyResolver
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.mainKts.impl.Directories
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -19,6 +22,8 @@ import java.io.File
 import java.io.PrintStream
 import java.security.MessageDigest
 import java.util.*
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
 import kotlin.io.path.createTempDirectory
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -388,6 +393,168 @@ class MainKtsTest {
     }
 
     @Test
+    fun testHelloSerializationPluginByPath() {
+        val serializationPluginClasspath = File(
+            System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
+        ).platformIndependentPathString()
+        withTempDir("mainKtsSerializationPluginPath") { tempDir ->
+            val script = File(tempDir, "hello-kotlinx-serialization.main.kts")
+            script.writeText(
+                """@file:CompilerPlugin("$serializationPluginClasspath")
+                    |${File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").readText()}""".trimMargin()
+            )
+            val out = captureOut {
+                val res = evalFile(script)
+                assertSucceeded(res)
+            }.lines()
+            assertEquals(
+                listOf("""{"firstName":"James","lastName":"Bond"}""", "User(firstName=James, lastName=Bond)"),
+                out
+            )
+        }
+    }
+
+    @Test
+    fun testGlobalCompilerPluginWithoutScriptOptions() {
+        val out = captureOut {
+            assertSucceeded(evalSerializationScriptWithGlobalPluginOptions(null))
+        }.lines()
+        assertEquals(
+            listOf("""{"firstName":"James","lastName":"Bond"}""", "User(firstName=James, lastName=Bond)"),
+            out
+        )
+    }
+
+    @Test
+    fun testGlobalCompilerPluginWithOptionsIsRejected() {
+        assertFailed(
+            "is already loaded globally and cannot be configured from a script.",
+            evalSerializationScriptWithGlobalPluginOptions("disableIntrinsic=true")
+        )
+    }
+
+    @Test
+    fun testConflictingCompilerPluginOptionsInMainAndImportedScript() {
+        val serializationPluginClasspath = File(
+            System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
+        ).platformIndependentPathString()
+        withTempDir("mainKtsConflictingCompilerPluginOptions") { tempDir ->
+            File(tempDir, "imported.main.kts").writeText(
+                """@file:CompilerPlugin("$serializationPluginClasspath", "disableIntrinsic=false")
+                    |println("imported")""".trimMargin()
+            )
+            val mainScript = File(tempDir, "main.main.kts").apply {
+                writeText(
+                    """@file:Import("imported.main.kts")
+                        |@file:CompilerPlugin("$serializationPluginClasspath", "disableIntrinsic=true")
+                        |println("main")""".trimMargin()
+                )
+            }
+
+            assertFailed("Conflicting options for compiler plugin", evalFile(mainScript))
+        }
+    }
+
+    @Test
+    fun testRefinedXCompilerPluginOption() {
+        val serializationPluginClasspath = File(
+            System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
+        ).platformIndependentPathString()
+        withTempDir("mainKtsRefinedCompilerPluginOption") { tempDir ->
+            val script = File(tempDir, "hello-kotlinx-serialization.main.kts").apply {
+                writeText(
+                    """@file:CompilerOptions("-Xcompiler-plugin=$serializationPluginClasspath=disableIntrinsic=false")
+                        |${File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").readText()}""".trimMargin()
+                )
+            }
+            val out = captureOut { assertSucceeded(evalFile(script)) }.lines()
+            assertEquals(
+                listOf("""{"firstName":"James","lastName":"Bond"}""", "User(firstName=James, lastName=Bond)"),
+                out,
+            )
+        }
+    }
+
+    @Test
+    fun testCompilerPluginWithoutK2SupportIsRejected() {
+        withTempDir("mainKtsNonK2Plugin") { tempDir ->
+            val pluginJar = createTestPluginJar(tempDir, TestNonK2ScriptPluginRegistrar::class.java.name)
+            val script = File(tempDir, "non-k2-plugin.main.kts").apply {
+                writeText("@file:CompilerPlugin(\"${pluginJar.platformIndependentPathString()}\")\nprintln(\"unreachable\")")
+            }
+
+            assertFailed("does not support K2 and cannot be loaded from a script.", evalFile(script))
+        }
+    }
+
+    @Test
+    fun testCompilerPluginRegisteringProjectExtensionIsRejected() {
+        withTempDir("mainKtsProjectExtensionPlugin") { tempDir ->
+            val pluginJar = createTestPluginJar(tempDir, TestProjectExtensionScriptPluginRegistrar::class.java.name)
+            val script = File(tempDir, "project-extension-plugin.main.kts").apply {
+                writeText("@file:CompilerPlugin(\"${pluginJar.platformIndependentPathString()}\")\nprintln(\"unreachable\")")
+            }
+
+            assertFailed("registers project extension point 'test.script.plugin.extension'", evalFile(script))
+        }
+    }
+
+    private fun evalSerializationScriptWithGlobalPluginOptions(scriptPluginOption: String?): ResultWithDiagnostics<EvaluationResult> {
+        val serializationPluginClasspath = File(
+            System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
+        ).platformIndependentPathString()
+        return withTempDir("mainKtsGlobalSerializationPluginOptions") { tempDir ->
+            val script = File(tempDir, "hello-kotlinx-serialization.main.kts")
+            val pluginAnnotation = scriptPluginOption?.let { "@file:CompilerPlugin(\"$serializationPluginClasspath\", \"$it\")" }
+                ?: "@file:CompilerPlugin(\"$serializationPluginClasspath\")"
+            script.writeText(
+                """$pluginAnnotation
+                    |${File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").readText()}""".trimMargin()
+            )
+            evalFile(
+                script,
+                compilation = {
+                    compilerOptions(
+                        "-Xplugin=$serializationPluginClasspath",
+                        "-P", "plugin:org.jetbrains.kotlinx.serialization:disableIntrinsic=false",
+                    )
+                }
+            )
+        }
+    }
+
+    @OptIn(org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi::class)
+    private fun createTestPluginJar(directory: File, registrarName: String): File {
+        val jarFile = File(directory, "test-plugin.jar")
+        JarOutputStream(jarFile.outputStream()).use { jar ->
+            jar.putNextEntry(JarEntry("META-INF/services/${CompilerPluginRegistrar::class.java.name}"))
+            jar.write(registrarName.toByteArray())
+            jar.closeEntry()
+        }
+        return jarFile
+    }
+
+    @Test
+    fun testUnknownCompilerPluginId() {
+        withTempDir("mainKtsUnknownCompilerPlugin") { tempDir ->
+            val script = File(tempDir, "unknown-plugin.main.kts").apply {
+                writeText("@file:CompilerPlugin(\"no-such-plugin\")\nprintln(\"unreachable\")")
+            }
+            assertFailed("Unknown compiler plugin id 'no-such-plugin'.", evalFile(script))
+        }
+    }
+
+    @Test
+    fun testCompilerPluginShortIdRequiresKotlinPaths() {
+        withTempDir("mainKtsCompilerPluginWithoutKotlinPaths") { tempDir ->
+            val script = File(tempDir, "serialization-plugin.main.kts").apply {
+                writeText("@file:CompilerPlugin(\"serialization\")\nprintln(\"unreachable\")")
+            }
+            assertFailed("cannot be resolved by this host. Use a jar path instead.", evalFile(script))
+        }
+    }
+
+    @Test
     fun testUtf8Bom() {
         val scriptPath = "$TEST_DATA_ROOT/utf8bom.main.kts"
         assertTrue(File(scriptPath).readText().startsWith(UTF8_BOM), "Expect file '$scriptPath' to start with UTF-8 BOM")
@@ -477,6 +644,28 @@ class MainKtsTest {
     private val regexNonWord = "\\W".toRegex()
     private fun String.containsIgnoringPunctuation(it: String): Boolean {
         return this.replace(regexNonWord, "").contains(it.replace(regexNonWord, ""))
+    }
+}
+
+@OptIn(org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi::class)
+class TestNonK2ScriptPluginRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String = "test.non-k2.script.plugin"
+    override val supportsK2: Boolean = false
+
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) = Unit
+}
+
+private val testScriptPluginProjectExtension = object : ProjectExtensionDescriptor<Any>(
+    "test.script.plugin.extension", Any::class.java
+) {}
+
+@OptIn(org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi::class)
+class TestProjectExtensionScriptPluginRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String = "test.project.extension.script.plugin"
+    override val supportsK2: Boolean = true
+
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        testScriptPluginProjectExtension.registerExtension(Any())
     }
 }
 
