@@ -29,47 +29,47 @@ fun testContextualFunctionTypeWithContext() {
 }
 
 fun String.testReceiver() {
-    accept<Any>(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f1<!>)
-    accept<Any>(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f2<!>)
-    accept<Any>(Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f3<!>)
-    accept(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f1<!>)
-    accept(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f2<!>)
-    accept(Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f3<!>)
+    accept<Any>(::<!UNSUPPORTED_FEATURE("The feature \"callable references to contextual\" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcallable-references-to-contextual', but note that no stability guarantees are provided.")!>f1<!>)
+    accept<Any>(::<!UNSUPPORTED_FEATURE!>f2<!>)
+    accept<Any>(Int::<!UNSUPPORTED_FEATURE!>f3<!>)
+    accept(::<!UNSUPPORTED_FEATURE!>f1<!>)
+    accept(::<!UNSUPPORTED_FEATURE!>f2<!>)
+    accept(Int::<!UNSUPPORTED_FEATURE!>f3<!>)
 
-    accept<Any>(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p1<!>)
-    accept<Any>(Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p3<!>)
-    accept(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p1<!>)
-    accept(Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p3<!>)
+    accept<Any>(::<!UNSUPPORTED_FEATURE!>p1<!>)
+    accept<Any>(Int::<!UNSUPPORTED_FEATURE!>p3<!>)
+    accept(::<!UNSUPPORTED_FEATURE!>p1<!>)
+    accept(Int::<!UNSUPPORTED_FEATURE!>p3<!>)
 
-    val x1 = ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f1<!>
-    val x2 = ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f2<!>
-    val x3 = Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f3<!>
-    val x3Bound = 1::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f3<!>
+    val x1 = ::<!UNSUPPORTED_FEATURE!>f1<!>
+    val x2 = ::<!UNSUPPORTED_FEATURE!>f2<!>
+    val x3 = Int::<!UNSUPPORTED_FEATURE!>f3<!>
+    val x3Bound = 1::<!UNSUPPORTED_FEATURE!>f3<!>
 
-    accept<() -> Unit>(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f1<!>)
-    accept<(Int) -> Unit>(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f2<!>)
-    accept<Int.() -> Unit>(Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f3<!>)
-    accept<() -> Unit>(1::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f3<!>)
+    accept<() -> Unit>(::<!UNSUPPORTED_FEATURE!>f1<!>)
+    accept<(Int) -> Unit>(::<!UNSUPPORTED_FEATURE!>f2<!>)
+    accept<Int.() -> Unit>(Int::<!UNSUPPORTED_FEATURE!>f3<!>)
+    accept<() -> Unit>(1::<!UNSUPPORTED_FEATURE!>f3<!>)
 
-    val y1 = ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p1<!>
-    val y3 = Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p3<!>
-    val y3Bound = 1::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p3<!>
+    val y1 = ::<!UNSUPPORTED_FEATURE!>p1<!>
+    val y3 = Int::<!UNSUPPORTED_FEATURE!>p3<!>
+    val y3Bound = 1::<!UNSUPPORTED_FEATURE!>p3<!>
 
-    accept<() -> Unit>(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p1<!>)
-    accept<Int.() -> Unit>(Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p3<!>)
-    accept<() -> Unit>(1::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p3<!>)
+    accept<() -> Unit>(::<!UNSUPPORTED_FEATURE!>p1<!>)
+    accept<Int.() -> Unit>(Int::<!UNSUPPORTED_FEATURE!>p3<!>)
+    accept<() -> Unit>(1::<!UNSUPPORTED_FEATURE!>p3<!>)
 }
 
 context(_: String)
 fun testContextParameter() {
-    accept<() -> Unit>(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f1<!>)
-    accept<(Int) -> Unit>(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f2<!>)
-    accept<Int.() -> Unit>(Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f3<!>)
-    accept<() -> Unit>(1::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>f3<!>)
+    accept<() -> Unit>(::<!UNSUPPORTED_FEATURE!>f1<!>)
+    accept<(Int) -> Unit>(::<!UNSUPPORTED_FEATURE!>f2<!>)
+    accept<Int.() -> Unit>(Int::<!UNSUPPORTED_FEATURE!>f3<!>)
+    accept<() -> Unit>(1::<!UNSUPPORTED_FEATURE!>f3<!>)
 
-    accept<() -> Unit>(::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p1<!>)
-    accept<Int.() -> Unit>(Int::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p3<!>)
-    accept<() -> Unit>(1::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>p3<!>)
+    accept<() -> Unit>(::<!UNSUPPORTED_FEATURE!>p1<!>)
+    accept<Int.() -> Unit>(Int::<!UNSUPPORTED_FEATURE!>p3<!>)
+    accept<() -> Unit>(1::<!UNSUPPORTED_FEATURE!>p3<!>)
 }
 
 fun testMissingContext() {

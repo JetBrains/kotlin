@@ -1049,9 +1049,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val MULTIPLE_CONTEXT_LISTS by error<KtElement>()
         val CONTEXT_PARAMETER_WITHOUT_NAME by error<KtContextReceiver>()
         val CONTEXT_PARAMETERS_WITH_BACKING_FIELD by error<KtElement>(PositioningStrategy.CONTEXT_KEYWORD)
-        val CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION by error<KtElement> {
-            parameter<FirCallableSymbol<*>>("symbol")
-        }
         val NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE by error<KtElement>()
         val CONTEXT_PARAMETER_WITH_DEFAULT by error<KtElement>()
         val UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL by error<KtElement>(PositioningStrategy.NAME_IDENTIFIER)
