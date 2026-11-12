@@ -240,6 +240,7 @@ class JsGroupingTestIsolator(
         private val BATCH_SETTING_DIRECTIVES: List<Directive> = listOf(
             JsEnvironmentConfigurationDirectives.ES6_MODE,
             JsEnvironmentConfigurationDirectives.DISABLE_ES6_ARROWS,
+            JsEnvironmentConfigurationDirectives.USE_CONST_AND_LET_FOR_VARIABLES,
             JsEnvironmentConfigurationDirectives.ONLY_IR_DCE,
             JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION,
             JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS,
