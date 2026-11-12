@@ -307,4 +307,34 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
             }
         }
     }
+
+    @MavenTest
+    @DisplayName("KT-84086: Same Kotlin version with different plugin dependencies configures smart defaults once per module")
+    fun testSmartDefaultsLoggedOncePerModule(mavenVersion: TestVersions.Maven) {
+        // All-open creates a second realm for the same Kotlin version.
+        testProject("test-smart-defaults-logging", mavenVersion) {
+            build("validate") {
+                assertBuildLogLineCount(
+                    "Kotlin smart defaults are enabled for first-module",
+                    expectedCount = 1,
+                )
+                assertBuildLogLineCount(
+                    "Kotlin smart defaults are enabled for second-module",
+                    expectedCount = 1,
+                )
+                assertBuildLogLineCount(
+                    "Kotlin smart defaults are enabled",
+                    expectedCount = 2,
+                )
+            }
+            build("compile", "-T", "2") {
+                assertBuildLogLineCount("Kotlin smart defaults are enabled", expectedCount = 2)
+                assertClassFilesMajorVersion(
+                    61,
+                    "first-module/target/classes/sample/First.class",
+                    "second-module/target/classes/sample/Second.class",
+                )
+            }
+        }
+    }
 }
