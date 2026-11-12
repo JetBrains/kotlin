@@ -1025,19 +1025,27 @@ class CallAndReferenceGenerator(
      *   entry removed after a Java binary was compiled (KT-90361, KT-90363).
      *
      * Errors in annotations from Kotlin sources are reported by the frontend and stop the compilation before fir2ir.
+     *
+     * Outside of Kapt mode, a Java or binary annotation that loses the argument of a parameter without a default value is
+     * dropped as a whole: it is replaced with an error expression, which the callers skip, and which is an erroneous
+     * argument of an enclosing annotation. Otherwise, reading such an annotation reflectively at runtime throws
+     * `IncompleteAnnotationException`.
      */
     private fun IrExpression.filterOutErrorArgsInAnnotation(isJavaOrBinaryAnnotation: Boolean): IrExpression {
+        // Returns true if this element is erroneous and has to be removed by the caller.
         fun IrElement?.cleanUp(): Boolean {
             return when (this) {
                 is IrErrorExpression -> true
                 is IrGetClass -> this.argument.type is IrErrorType
                 is IrAnnotation -> {
+                    var lostRequiredArgument = false
                     for ([i, expression] in this.arguments.withIndex()) {
                         if (expression.cleanUp()) {
                             this.arguments[i] = null
+                            if (!hasDefaultValueFor(i)) lostRequiredArgument = true
                         }
                     }
-                    false
+                    lostRequiredArgument && !configuration.skipBodies
                 }
                 is IrVararg -> {
                     this.elements.removeAll { it.cleanUp() }
@@ -1047,8 +1055,24 @@ class CallAndReferenceGenerator(
             }
         }
 
-        if (this is IrAnnotation && (configuration.skipBodies || isJavaOrBinaryAnnotation)) cleanUp()
+        if (this is IrAnnotation && (configuration.skipBodies || isJavaOrBinaryAnnotation) && cleanUp()) {
+            return IrErrorCallExpressionImpl(
+                startOffset, endOffset, type, "Annotation without an argument for a parameter without a default value: ${render()}"
+            )
+        }
         return this
+    }
+
+    /**
+     * Returns false only if the parameter at [index] of the annotation constructor is known to have no default value.
+     * The FIR constructor is looked up the same way as in [toAnnotationCall].
+     */
+    private fun IrAnnotation.hasDefaultValueFor(index: Int): Boolean {
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        val classId = type.classOrNull?.owner?.classId ?: return true
+        val classSymbol = classId.toLookupTag().toRegularClassSymbol(session) ?: return true
+        val constructorSymbol = classSymbol.unsubstitutedScope().getDeclaredConstructors().firstOrNull() ?: return true
+        return constructorSymbol.valueParameterSymbols.getOrNull(index)?.hasDefaultValue ?: true
     }
 
     internal fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
