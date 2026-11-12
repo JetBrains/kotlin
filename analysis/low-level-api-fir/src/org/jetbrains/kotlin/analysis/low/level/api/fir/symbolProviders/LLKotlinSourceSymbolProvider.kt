@@ -259,7 +259,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     private val functionCache: FirCache<CallableId, List<FirNamedFunctionSymbol>, Collection<KtFile>?> =
         session.firCachesFactory.createCache { callableId, context ->
-            computeCallableSymbolsByCallableId<FirNamedFunctionSymbol>(callableId, context)
+            computeCallableSymbolsByCallableId<FirNamedFunctionSymbol>(callableId, context, declarationProvider::getTopLevelFunctionFiles)
         }
 
     private fun getTopLevelFunctionSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirNamedFunctionSymbol> {
@@ -288,7 +288,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     private val propertyCache: FirCache<CallableId, List<FirPropertySymbol>, Collection<KtFile>?> =
         session.firCachesFactory.createCache { callableId, context ->
-            computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context)
+            computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context, declarationProvider::getTopLevelPropertyFiles)
         }
 
     private fun getTopLevelPropertySymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirPropertySymbol> {
@@ -297,7 +297,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     /**
      * Locates all the callable symbols of required [TYPE] with the matching [callableId] within a specific set of files.
-     * Uses the passed [context] files to avoid index access if available; falls back to the [declarationProvider] otherwise.
+     * Uses the passed [context] files to avoid index access if available; falls back to [getFiles] otherwise.
      *
      * To work correctly with the [FirCache], this function has to obey the following contract:
      *
@@ -307,13 +307,14 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     private inline fun <reified TYPE : FirCallableSymbol<*>> computeCallableSymbolsByCallableId(
         callableId: CallableId,
         context: Collection<KtFile>?,
+        getFiles: (CallableId) -> Collection<KtFile>,
     ): List<TYPE> {
         require(context == null || context.all { it.isPhysical })
 
-        // we want to use `getTopLevelCallableFiles` instead of
-        // `getTopLevelFunctions/Properties`, because it is highly optimized
+        // we want to use `getTopLevelFunctionFiles/PropertyFiles` instead of
+        // `getTopLevelFunctions/Properties`, because they are highly optimized
         // to retrieve the files in the IDE mode
-        val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId)
+        val files = context ?: getFiles(callableId)
 
         if (files.isEmpty()) return emptyList()
 

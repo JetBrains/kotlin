@@ -115,6 +115,14 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
         }
     }
 
+    override fun getTopLevelFunctionFiles(callableId: CallableId): Collection<KtFile> {
+        return getTopLevelFunctions(callableId).mapTo(mutableSetOf()) { it.containingKtFile }
+    }
+
+    override fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> {
+        return getTopLevelProperties(callableId).mapTo(mutableSetOf()) { it.containingKtFile }
+    }
+
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
         return getTopLevelDeclarationNames(packageFqName) { it is KtCallableDeclaration }
     }

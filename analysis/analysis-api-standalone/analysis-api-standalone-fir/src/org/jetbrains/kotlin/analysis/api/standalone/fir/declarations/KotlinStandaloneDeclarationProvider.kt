@@ -175,6 +175,12 @@ class KotlinStandaloneDeclarationProvider internal constructor(
         getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
         getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
     }
+
+    override fun getTopLevelFunctionFiles(callableId: CallableId): Collection<KtFile> =
+        getTopLevelFunctions(callableId).mapTo(mutableSetOf()) { it.containingKtFile }
+
+    override fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> =
+        getTopLevelProperties(callableId).mapTo(mutableSetOf()) { it.containingKtFile }
 }
 
 /**

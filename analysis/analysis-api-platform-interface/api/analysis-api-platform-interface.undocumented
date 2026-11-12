@@ -17,7 +17,6 @@ org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvide
 org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.findFilesForScript(FqName)
 org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getAllClassesByClassId(ClassId)
 org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getAllTypeAliasesByClassId(ClassId)
-org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getTopLevelCallableFiles(CallableId)
 org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getTopLevelCallableNamesInPackage(FqName)
 org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getTopLevelFunctions(CallableId)
 org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(FqName)
