@@ -315,7 +315,7 @@ class ClasspathRootsResolver(
         val addAllModulePathToRoots = "ALL-MODULE-PATH" in additionalModules
         // Like javac, ALL-MODULE-PATH is allowed for the sources of an automatic module, which is only possible with -Xpatch-module.
         if (addAllModulePathToRoots && sourceModule != null && sourceModule !is JavaModule.Automatic) {
-            reportError("-Xadd-modules=ALL-MODULE-PATH can only be used when compiling the unnamed module or an automatic module")
+            reportError("'-Xadd-modules=ALL-MODULE-PATH' can only be used when compiling the unnamed module or an automatic module.")
             return
         }
 
