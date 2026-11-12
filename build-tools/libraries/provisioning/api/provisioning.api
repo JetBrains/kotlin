@@ -1,0 +1,41 @@
+public final class org/jetbrains/kotlin/buildtools/provisioning/InstallationStore {
+	public fun <init> (Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/provisioning/LeftoverPolicy;Lorg/jetbrains/kotlin/buildtools/provisioning/ProvisioningListener;)V
+	public synthetic fun <init> (Ljava/nio/file/Path;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/provisioning/LeftoverPolicy;Lorg/jetbrains/kotlin/buildtools/provisioning/ProvisioningListener;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun find (Ljava/lang/String;)Ljava/nio/file/Path;
+	public final fun getDirectory ()Ljava/nio/file/Path;
+	public final fun install (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/nio/file/Path;
+}
+
+public final class org/jetbrains/kotlin/buildtools/provisioning/InvalidDistributionException : org/jetbrains/kotlin/buildtools/provisioning/ProvisioningException {
+}
+
+public final class org/jetbrains/kotlin/buildtools/provisioning/LeftoverInstallationException : org/jetbrains/kotlin/buildtools/provisioning/ProvisioningException {
+	public final fun getInstallation ()Ljava/nio/file/Path;
+}
+
+public final class org/jetbrains/kotlin/buildtools/provisioning/LeftoverPolicy : java/lang/Enum {
+	public static final field FAIL Lorg/jetbrains/kotlin/buildtools/provisioning/LeftoverPolicy;
+	public static final field REPLACE Lorg/jetbrains/kotlin/buildtools/provisioning/LeftoverPolicy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/provisioning/LeftoverPolicy;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/provisioning/LeftoverPolicy;
+}
+
+public abstract class org/jetbrains/kotlin/buildtools/provisioning/ProvisioningException : java/io/IOException {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/provisioning/ProvisioningListener {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/provisioning/ProvisioningListener$Companion;
+	public fun installed (Ljava/lang/String;Ljava/nio/file/Path;)V
+	public fun leftoverRemoved (Ljava/nio/file/Path;)V
+	public fun waitingForLock (Ljava/lang/String;Ljava/nio/file/Path;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/provisioning/ProvisioningListener$Companion {
+	public final fun getNone ()Lorg/jetbrains/kotlin/buildtools/provisioning/ProvisioningListener;
+}
+
+public final class org/jetbrains/kotlin/buildtools/provisioning/StagingArea {
+	public final fun getDirectory ()Ljava/nio/file/Path;
+}
+
