@@ -31,7 +31,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 internal fun KotlinJsIrCompilation.npmDependenciesReportFile(): File {
-    val platform = if (target.platformType == KotlinPlatformType.wasm) "wasm" else "js"
+    val platform = if (target.platformType == KotlinPlatformType.wasm) "wasmJs" else "js"
     return project.layout.buildDirectory.dir("kotlin-npm/$platform/npm-dep-reports").get().asFile
         .resolve(outputModuleName.get())
         .resolve("npm-dep-report.json")
@@ -70,10 +70,10 @@ class SharedNpmSubprojectTest {
         )
         assertEquals(
             project.wasmJsTarget().compilations.map { it.npmDependenciesReportFile() }.sorted(),
-            project.npmDependenciesReportsForRootProject("kotlinNpmDependenciesReportWasm"),
+            project.npmDependenciesReportsForRootProject("kotlinNpmDependenciesReportWasmJs"),
         )
         assertEquals(
-            listOf("kotlinNpmDependenciesReportJs", "kotlinNpmDependenciesReportWasm"),
+            listOf("kotlinNpmDependenciesReportJs", "kotlinNpmDependenciesReportWasmJs"),
             project.configurations.names.filter { it.startsWith("kotlinNpmDependenciesReport") }.sorted(),
         )
         assertEquals(
@@ -99,7 +99,7 @@ class SharedNpmSubprojectTest {
 
         val expected = listOf(
             Triple("kotlinNpmDependenciesReportJs", KotlinPlatformType.js, null),
-            Triple("kotlinNpmDependenciesReportWasm", KotlinPlatformType.wasm, KotlinWasmTargetAttribute.js),
+            Triple("kotlinNpmDependenciesReportWasmJs",KotlinPlatformType.wasm, KotlinWasmTargetAttribute.js),
         )
         for ((configurationName, platformType, wasmTarget) in expected) {
             val attributes = project.configurations.getByName(configurationName).attributes
@@ -277,7 +277,7 @@ class SharedNpmSubprojectTest {
         project.evaluate()
 
         assertEquals("js", project.npmDependenciesReportTask("jsNpmDependenciesReport").target.get())
-        assertEquals("wasm", project.npmDependenciesReportTask("wasmJsNpmDependenciesReport").target.get())
+        assertEquals("wasmJs", project.npmDependenciesReportTask("wasmJsNpmDependenciesReport").target.get())
     }
 
     @Test

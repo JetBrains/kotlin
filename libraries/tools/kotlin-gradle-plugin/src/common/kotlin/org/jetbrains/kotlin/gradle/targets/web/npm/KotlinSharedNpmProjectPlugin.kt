@@ -15,13 +15,10 @@ import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApiKind.REQUIRES_KN
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.KotlinWebPlatformType
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSetupSharedNpmProjectTask
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.createNpmDependenciesReportResolver
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.npmSharedDependenciesConfigurationName
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.platformName
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -43,11 +40,8 @@ internal constructor(
         // base plugin: adds `clean` task for `build/<platform>/shared-npm-project`
         project.plugins.apply(BasePlugin::class.java)
 
-        listOf(
-            JsPlatformDisambiguator,
-            WasmPlatformDisambiguator,
-        ).forEach { disambiguator ->
-            setupSharedNpmProject(project, disambiguator)
+        KotlinWebPlatformType.entries.forEach { platform ->
+            setupSharedNpmProject(project, platform)
         }
     }
 
@@ -56,7 +50,7 @@ internal constructor(
      */
     private fun setupSharedNpmProject(
         project: Project,
-        platform: HasPlatformDisambiguator,
+        platform: KotlinWebPlatformType,
     ) {
         val npmDependenciesReportResolver = project.createNpmDependenciesReportResolver(platform)
 
