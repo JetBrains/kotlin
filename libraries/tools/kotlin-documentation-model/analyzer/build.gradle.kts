@@ -83,12 +83,8 @@ dependencies {
 
     testFixturesImplementation(kotlinStdlib())
     testFixturesImplementation(project(":analysis:analysis-api"))
-    testFixturesImplementation(project(":analysis:analysis-api-standalone"))
     // Brings in the Analysis API test framework (via its testFixtures API) and the standalone-mode configurator.
     testFixturesApi(testFixtures(project(":analysis:analysis-api-standalone")))
-    testFixturesImplementation(project(":compiler:cli-base"))
-    testFixturesImplementation(project(":core:language.targets.jvm"))
-    testFixturesImplementation(intellijCore())
     testFixturesApi(kotlinTest("junit5"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
@@ -121,11 +117,7 @@ projectTests {
 
     // The declaration ID golden tests run on the Analysis API test framework, whose JVM environment
     // configurator builds module classpaths from these stdlib, JDK, and annotations locations.
-    // The Analysis API's own modules wire the same set.
     withJvmStdlibAndReflect()
-    withStdlibCommon()
-    withTestJar()
-    withAnnotations()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
 
