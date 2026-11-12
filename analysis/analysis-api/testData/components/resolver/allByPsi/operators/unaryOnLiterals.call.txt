@@ -263,10 +263,10 @@ KtPrefixExpression(132,134): '-1'
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
-        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        symbol = kotlin/Byte.unaryMinus(<dispatch receiver>: kotlin.Byte): kotlin.Int
         valueParameters = []
         contextParameters = []
-        callableId = kotlin/Int.unaryMinus
+        callableId = kotlin/Byte.unaryMinus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
@@ -283,10 +283,10 @@ KtOperationReferenceExpression(132,133): '-'
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
-        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        symbol = kotlin/Byte.unaryMinus(<dispatch receiver>: kotlin.Byte): kotlin.Int
         valueParameters = []
         contextParameters = []
-        callableId = kotlin/Int.unaryMinus
+        callableId = kotlin/Byte.unaryMinus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
@@ -318,10 +318,10 @@ KtPrefixExpression(154,156): '-1'
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
-        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        symbol = kotlin/Short.unaryMinus(<dispatch receiver>: kotlin.Short): kotlin.Int
         valueParameters = []
         contextParameters = []
-        callableId = kotlin/Int.unaryMinus
+        callableId = kotlin/Short.unaryMinus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
@@ -338,10 +338,10 @@ KtOperationReferenceExpression(154,155): '-'
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
-        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        symbol = kotlin/Short.unaryMinus(<dispatch receiver>: kotlin.Short): kotlin.Int
         valueParameters = []
         contextParameters = []
-        callableId = kotlin/Int.unaryMinus
+        callableId = kotlin/Short.unaryMinus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
@@ -372,11 +372,11 @@ KtPrefixExpression(175,177): '-1'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Int
-        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
         valueParameters = []
         contextParameters = []
-        callableId = kotlin/Int.unaryMinus
+        callableId = kotlin/Long.unaryMinus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
@@ -392,11 +392,11 @@ KtOperationReferenceExpression(175,176): '-'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Int
-        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
         valueParameters = []
         contextParameters = []
-        callableId = kotlin/Int.unaryMinus
+        callableId = kotlin/Long.unaryMinus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
@@ -424,11 +424,11 @@ KtPrefixExpression(203,214): '-2147483648'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Int
-        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
         valueParameters = []
         contextParameters = []
-        callableId = kotlin/Int.unaryMinus
+        callableId = kotlin/Long.unaryMinus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
@@ -444,11 +444,11 @@ KtOperationReferenceExpression(203,204): '-'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Int
-        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
         valueParameters = []
         contextParameters = []
-        callableId = kotlin/Int.unaryMinus
+        callableId = kotlin/Long.unaryMinus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 

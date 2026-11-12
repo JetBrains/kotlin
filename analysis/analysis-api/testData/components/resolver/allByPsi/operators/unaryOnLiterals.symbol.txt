@@ -171,7 +171,7 @@ KtNameReferenceExpression(125,129): 'Byte'
 KtPrefixExpression(132,134): '-1'
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+      kotlin/Byte.unaryMinus(<dispatch receiver>: kotlin.Byte): kotlin.Int
     ]
 
 KtOperationReferenceExpression(132,133): '-'
@@ -180,7 +180,7 @@ KtOperationReferenceExpression(132,133): '-'
   lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+      kotlin/Byte.unaryMinus(<dispatch receiver>: kotlin.Byte): kotlin.Int
     ]
 
 KtConstantExpression(133,134): '1'
@@ -213,7 +213,7 @@ KtNameReferenceExpression(146,151): 'Short'
 KtPrefixExpression(154,156): '-1'
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+      kotlin/Short.unaryMinus(<dispatch receiver>: kotlin.Short): kotlin.Int
     ]
 
 KtOperationReferenceExpression(154,155): '-'
@@ -222,7 +222,7 @@ KtOperationReferenceExpression(154,155): '-'
   lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+      kotlin/Short.unaryMinus(<dispatch receiver>: kotlin.Short): kotlin.Int
     ]
 
 KtConstantExpression(155,156): '1'
@@ -255,7 +255,7 @@ KtNameReferenceExpression(168,172): 'Long'
 KtPrefixExpression(175,177): '-1'
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
     ]
 
 KtOperationReferenceExpression(175,176): '-'
@@ -264,7 +264,7 @@ KtOperationReferenceExpression(175,176): '-'
   lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
     ]
 
 KtConstantExpression(176,177): '1'
@@ -282,7 +282,7 @@ KtBlockExpression(197,239): '{'
 KtPrefixExpression(203,214): '-2147483648'
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
     ]
 
 KtOperationReferenceExpression(203,204): '-'
@@ -291,7 +291,7 @@ KtOperationReferenceExpression(203,204): '-'
   lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
     ]
 
 KtConstantExpression(204,214): '2147483648'

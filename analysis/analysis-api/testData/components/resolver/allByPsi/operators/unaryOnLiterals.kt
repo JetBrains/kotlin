@@ -20,5 +20,3 @@ fun minValues() {
     -2147483648
     val b: Byte = -128
 }
-
-// IGNORE_STABILITY: candidates

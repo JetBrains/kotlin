@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -79,8 +80,12 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
 
     companion object {
         context(session: FirSession)
-        private fun findIntMember(name: Name): FirNamedFunctionSymbol? {
-            return session.builtinTypes.intType.toRegularClassSymbol(session)?.fir?.declarations?.singleOrNull {
+        private fun findUnaryOperator(receiver: FirExpression, name: Name): FirNamedFunctionSymbol? {
+            // A literal in unresolved code keeps the integer literal type, which has no class, so it gets the operator of `Int`
+            val receiverClass = receiver.resolvedType.toRegularClassSymbol(session)
+                ?: session.builtinTypes.intType.toRegularClassSymbol(session)
+
+            return receiverClass?.fir?.declarations?.singleOrNull {
                 it is FirNamedFunction && it.name == name
             }?.symbol as? FirNamedFunctionSymbol
         }
@@ -105,7 +110,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
 
             val baseExpression = expression.baseExpression?.unwrapParenthesesLabelsAndAnnotations() as? KtElement ?: return null
             val firReceiver = firReceiverForUnaryIntLiteral(baseExpression, mapping) ?: return null
-            val operatorSymbol = findIntMember(operatorName) ?: return null
+            val operatorSymbol = findUnaryOperator(firReceiver, operatorName) ?: return null
             return buildFunctionCall {
                 source = expression.toKtPsiSourceElement()
                 origin = FirFunctionCallOrigin.Operator
