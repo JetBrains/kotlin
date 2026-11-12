@@ -476,11 +476,6 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             additionalKotlinArguments = listOf("-Xadd-exports=lib/foo.internal=ALL-UNNAMED"),
             checkKotlinOutput = doesNotExport,
         )
-        module(
-            "main", listOf(lib),
-            additionalKotlinArguments = listOf("-Xuse-fir-lt=false", "-Xadd-exports=lib/foo.internal=ALL-UNNAMED"),
-            checkKotlinOutput = doesNotExport,
-        )
         module("main", listOf(lib), additionalKotlinArguments = listOf("-Xadd-exports=lib/foo.internal=main"))
         module(
             "main", listOf(lib),
