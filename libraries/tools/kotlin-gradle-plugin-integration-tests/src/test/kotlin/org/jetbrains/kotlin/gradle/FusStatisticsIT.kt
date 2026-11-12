@@ -1398,6 +1398,41 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-91219: FUS should not break project configuration for included build with JS browser test runners")
+    @GradleTest
+    @JsGradlePluginTests
+    @OptIn(ExperimentalJsTestDsl::class)
+    fun testProjectConfigurationWithJsBrowserTestRunners(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            val included = project("empty", gradleVersion) {
+                plugins {
+                    kotlin("multiplatform")
+                }
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        js().browser {
+                            test.apply {
+                                chromium()
+                            }
+                        }
+                    }
+                }
+            }
+            includeBuild(included)
+
+            validateFusDirectory(
+                "help",
+                buildAction = BuildActions.build,
+                buildAssertions = { assertConfigurationCacheStored() },
+            )
+        }
+    }
+
     private fun TestProject.applyDokka(version: String) {
         buildGradle.replaceText(
             "plugins {",
