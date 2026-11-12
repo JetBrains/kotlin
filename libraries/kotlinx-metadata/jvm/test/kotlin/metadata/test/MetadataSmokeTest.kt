@@ -7,6 +7,8 @@ package kotlin.metadata.test
 
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
+import org.jetbrains.kotlin.metadata.ProtoBuf.Visibility as ProtoVisibility
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.jupiter.api.Test
@@ -205,6 +207,40 @@ class MetadataSmokeTest {
         val kmClassCopy = metadata.write().readAsKmClass()
         assertTrue(kmClassCopy.isCompiledInCompatibilityMode)
         assertTrue(kmClassCopy.hasMethodBodiesInInterface)
+    }
+
+    @Test
+    fun testSyntheticClassVisibility() {
+        val anonymousObject = Any()::toString
+        val metadata = anonymousObject::class.java.readMetadataAsSyntheticClass()
+        assertEquals(Visibility.LOCAL, metadata.visibility)
+
+        val defaultImpls = Class.forName("kotlin.ranges.ClosedRange\$DefaultImpls")
+            .readMetadataAsSyntheticClass()
+        assertNull(defaultImpls.kmLambda)
+        assertEquals(Visibility.PUBLIC, defaultImpls.visibility)
+    }
+
+    @Test
+    fun testSyntheticVisibilityExtension() {
+        val visibilityFlag = JvmFlags.SYNTHETIC_CLASS_VISIBILITY
+        val otherFlags = JvmFlags.IS_PUBLIC_ABI.toFlags(true) or
+                (1 shl (visibilityFlag.offset + visibilityFlag.bitWidth))
+        for (visibility in Visibility.entries) {
+            val metadata = KotlinClassMetadata.SyntheticClass(
+                kmLambda = null,
+                version = JvmMetadataVersion.LATEST_STABLE_SUPPORTED,
+                flags = otherFlags or visibilityFlag.toFlags(ProtoVisibility.entries[visibility.ordinal]),
+            )
+
+            assertEquals(visibility, metadata.visibility)
+
+            val newVisibility = Visibility.entries[(visibility.ordinal + 1) % Visibility.entries.size]
+            metadata.visibility = newVisibility
+            assertEquals(newVisibility, metadata.visibility)
+            val visibilityMask = ((1 shl visibilityFlag.bitWidth) - 1) shl visibilityFlag.offset
+            assertEquals(otherFlags, metadata.flags and visibilityMask.inv())
+        }
     }
 
     @Test

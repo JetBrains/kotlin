@@ -801,6 +801,7 @@ public final class kotlin/metadata/jvm/JvmAttributes {
 	public static final fun getHasAnnotationsInBytecode (Lkotlin/metadata/KmPropertyAccessorAttributes;)Z
 	public static final fun getHasAnnotationsInBytecode (Lkotlin/metadata/KmValueParameter;)Z
 	public static final fun getHasMethodBodiesInInterface (Lkotlin/metadata/KmClass;)Z
+	public static final fun getVisibility (Lkotlin/metadata/jvm/KotlinClassMetadata$SyntheticClass;)Lkotlin/metadata/Visibility;
 	public static final fun isCompiledInCompatibilityMode (Lkotlin/metadata/KmClass;)Z
 	public static final fun isMovedFromInterfaceCompanion (Lkotlin/metadata/KmProperty;)Z
 	public static final fun setCompiledInCompatibilityMode (Lkotlin/metadata/KmClass;Z)V
@@ -812,6 +813,7 @@ public final class kotlin/metadata/jvm/JvmAttributes {
 	public static final fun setHasAnnotationsInBytecode (Lkotlin/metadata/KmValueParameter;Z)V
 	public static final fun setHasMethodBodiesInInterface (Lkotlin/metadata/KmClass;Z)V
 	public static final fun setMovedFromInterfaceCompanion (Lkotlin/metadata/KmProperty;Z)V
+	public static final fun setVisibility (Lkotlin/metadata/jvm/KotlinClassMetadata$SyntheticClass;Lkotlin/metadata/Visibility;)V
 }
 
 public final class kotlin/metadata/jvm/JvmExtensionsKt {

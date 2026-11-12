@@ -30,5 +30,8 @@ internal fun Class<*>.readMetadataAsKmPackage(): KmPackage {
 internal fun Class<*>.readMetadataAsKmClass(): KmClass = getMetadata().readAsKmClass()
 
 internal fun Class<*>.readMetadataAsClass(): KotlinClassMetadata.Class = getMetadata().readMetadataAsClass()
+internal fun Class<*>.readMetadataAsSyntheticClass(): KotlinClassMetadata.SyntheticClass = getMetadata().readMetadataAsSyntheticClass()
 
 internal fun Metadata.readMetadataAsClass(): KotlinClassMetadata.Class = KotlinClassMetadata.readStrict(this) as KotlinClassMetadata.Class
+
+internal fun Metadata.readMetadataAsSyntheticClass(): KotlinClassMetadata.SyntheticClass = KotlinClassMetadata.readStrict(this) as KotlinClassMetadata.SyntheticClass
