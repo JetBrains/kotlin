@@ -242,7 +242,8 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
                     qualifiedAccessSource ?: source,
                     symbol.resolvedReturnType.valueParameterName(session) ?: symbol.name,
-                    symbol.resolvedReturnType.takeIf { it !is ConeErrorType },
+                    symbol.resolvedReturnType.substituteTypeParameterTypes(candidate, typeContext).takeIf { it !is ConeErrorType }
+                        ?: symbol.resolvedReturnType.takeIf { it !is ConeErrorType },
                     session
                 )
             }
@@ -1043,6 +1044,9 @@ private fun ConeKotlinType.substituteTypeVariableTypes(
 
     return substitutor.substituteOrSelf(this).removeTypeVariableTypes(typeContext, TypeVariableReplacement.ErrorType)
 }
+
+private fun ConeKotlinType.substituteTypeParameterTypes(candidate: AbstractCallCandidate<*>, typeContext: ConeInferenceContext): ConeKotlinType =
+    candidate.substitutor.substituteOrSelf(this).substituteTypeVariableTypes(candidate, typeContext)
 
 private fun inferredIntoEmptyIntersection(
     source: KtSourceElement?,
