@@ -14,10 +14,13 @@ dependencies {
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin.cli")) { isTransitive = false }
 
     testFixturesApi(project(":kotlin-sam-with-receiver-compiler-plugin.cli"))
-    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-compiler-tests")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+
+    testRuntimeOnly(project(":analysis:analysis-api-fir"))
+    testRuntimeOnly(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
 
     testFixturesApi(platform(libs.junit.bom))
-    testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
