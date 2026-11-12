@@ -54,6 +54,57 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
     abstract fun KtSourceElement.getContainingStringTemplateEntriesCount(): Int?
 
     abstract fun KtSourceElement.isTrailingLambdaOnNewLine(): Boolean
+
+    /**
+     * Returns whether this type reference is the callee of a constructor call,
+     * i.e., a supertype is initialized by calling its constructor: `class A : B()`
+     *
+     * Returns `false` for a supertype without a constructor call (`class A : I`) and for an element that isn't a type reference.
+     */
+    abstract fun KtSourceElement.isInConstructorCallee(): Boolean
+
+    /**
+     * Returns whether this type reference is declared in a `where` clause rather than in the type parameter declaration itself.
+     */
+    abstract fun KtSourceElement.isInTypeConstraint(): Boolean
+
+    /**
+     * Returns the identifier of a reference, a type projection, or the selector of a qualified expression as written in the source
+     * (e.g., `_` or `__`), or `null` if it's not applicable to the element.
+     */
+    abstract fun KtSourceElement.getRawIdentifier(): CharSequence?
+
+    /**
+     * Returns the name identifier of this declaration (if applicable) as written in the source.
+     */
+    abstract fun KtSourceElement.getRawName(): String?
+
+    /**
+     * Returns whether this type reference is nullable twice in the source (e.g., `String??`).
+     */
+    abstract fun KtSourceElement.isRedundantNullable(): Boolean
+
+    /**
+     * Returns whether this enum entry has a body in source.
+     *
+     * Returns `false` if entry has a constructor call, but doesn't have a body:
+     *
+     * ```kotlin
+     * enum class E(i: Int) { FOO(42) }
+     * ```
+     *
+     * We have to go down to source level, since this cannot be checked only by FIR element. This is because in FIR all enum entries
+     * with constructor calls have a fake [org.jetbrains.kotlin.fir.declarations.FirEnumEntry.initializer] with an anonymous object,
+     * regardless of whether the entry had body originally.
+     */
+    abstract fun KtSourceElement.hasEnumEntryBody(): Boolean
+
+    /**
+     * Returns whether this enum entry has an initializer (a constructor call) in source.
+     *
+     * Reason of implementing this at source level and not in FIR is same as in [hasEnumEntryBody] method.
+     */
+    abstract fun KtSourceElement.hasEnumEntryInitializer(): Boolean
 }
 
 val FirSession.syntaxComponent: FirSyntaxComponent<*> by FirSession.Companion.sessionComponentAccessor()

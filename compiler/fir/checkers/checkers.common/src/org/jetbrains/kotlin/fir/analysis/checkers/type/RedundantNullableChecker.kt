@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
@@ -39,10 +39,8 @@ object RedundantNullableChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
                 }
             }
         } else {
-            with(SourceNavigator.forElement(typeRef)) {
-                if (typeRef.isRedundantNullable()) {
-                    reporter.reportOn(typeRef.source, FirErrors.REDUNDANT_NULLABLE)
-                }
+            if (withSyntax { typeRef.source?.isRedundantNullable() } == true) {
+                reporter.reportOn(typeRef.source, FirErrors.REDUNDANT_NULLABLE)
             }
         }
     }

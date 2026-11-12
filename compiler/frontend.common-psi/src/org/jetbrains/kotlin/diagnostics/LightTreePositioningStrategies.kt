@@ -1540,9 +1540,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.fieldKeyword(node: Lig
 private fun FlyweightCapableTreeStructure<LighterASTNode>.byKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, BY_KEYWORD)
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
-    findChildByType(node, IDENTIFIER)
-
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
 
@@ -1861,9 +1858,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.findParentOfType(
     }
     return null
 }
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.getAncestors(node: LighterASTNode): Sequence<LighterASTNode> =
-    generateSequence(getParent(node)) { getParent(it) }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.firstChild(node: LighterASTNode): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode>>()

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator.Companion.withNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 // See old FE's [DeclarationsChecker]
@@ -94,10 +94,11 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         return null
     }
 
+    context(context: CheckerContext)
     private fun getClassSuperTypeReferencesWithInitializers(declaration: FirMemberDeclaration): List<FirTypeRef> {
         if (declaration !is FirRegularClass) return emptyList()
-        return declaration.withNavigator {
-            declaration.superTypeRefs.filter { it.isInConstructorCallee() }
+        return withSyntax {
+            declaration.superTypeRefs.filter { it.source?.isInConstructorCallee() == true }
         }
     }
 
@@ -113,11 +114,13 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         return declaration is FirFunction && declaration.hasBody
     }
 
+    context(context: CheckerContext)
     private fun isProhibitedEnumEntryWithBody(declaration: FirMemberDeclaration): Boolean {
-        return declaration is FirEnumEntry && declaration.withNavigator { declaration.hasBody() == true }
+        return declaration is FirEnumEntry && withSyntax { declaration.source?.hasEnumEntryBody() == true }
     }
 
+    context(context: CheckerContext)
     private fun isProhibitedEnumEntryWithInitializer(declaration: FirMemberDeclaration): Boolean {
-        return declaration is FirEnumEntry && declaration.withNavigator { declaration.hasInitializer() == true }
+        return declaration is FirEnumEntry && withSyntax { declaration.source?.hasEnumEntryInitializer() == true }
     }
 }

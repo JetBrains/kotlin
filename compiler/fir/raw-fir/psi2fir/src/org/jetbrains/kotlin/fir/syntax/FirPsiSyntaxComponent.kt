@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.fir.syntax
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -70,5 +74,42 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
 
     override fun KtSourceElement.isTrailingLambdaOnNewLine(): Boolean {
         return (unwrap().psi as? KtLambdaExpression)?.isTrailingLambdaOnNewLine == true
+    }
+
+    override fun KtSourceElement.isInConstructorCallee(): Boolean {
+        return (unwrap().psi as? KtTypeReference)?.parent is KtConstructorCalleeExpression
+    }
+
+    override fun KtSourceElement.isInTypeConstraint(): Boolean {
+        return PsiTreeUtil.getParentOfType(unwrap().psi, KtTypeConstraint::class.java, KtTypeParameter::class.java) is KtTypeConstraint
+    }
+
+    override fun KtSourceElement.getRawIdentifier(): CharSequence? = unwrap().psi.getRawIdentifier()
+
+    private fun PsiElement.getRawIdentifier(): CharSequence? = when (this) {
+        is KtNameReferenceExpression -> getReferencedNameElement().node.chars
+        is KtTypeProjection -> typeReference?.typeElement?.text
+        is LeafPsiElement if elementType == KtTokens.IDENTIFIER -> chars
+        is KtQualifiedExpression -> selectorExpression?.getRawIdentifier()
+        is KtImportAlias -> name
+        else -> null
+    }
+
+    override fun KtSourceElement.getRawName(): String? {
+        return (unwrap().psi as? PsiNameIdentifierOwner)?.nameIdentifier?.text
+    }
+
+    override fun KtSourceElement.isRedundantNullable(): Boolean {
+        val typeReference = unwrap().psi as? KtTypeReference ?: return false
+        val typeElement = typeReference.typeElement as? KtNullableType ?: return false
+        return typeElement.innerType is KtNullableType
+    }
+
+    override fun KtSourceElement.hasEnumEntryBody(): Boolean {
+        return (unwrap().psi as? KtEnumEntry)?.body != null
+    }
+
+    override fun KtSourceElement.hasEnumEntryInitializer(): Boolean {
+        return (unwrap().psi as? KtEnumEntry)?.initializerList != null
     }
 }

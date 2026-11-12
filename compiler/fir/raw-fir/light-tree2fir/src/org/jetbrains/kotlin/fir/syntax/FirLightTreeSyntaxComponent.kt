@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.syntax
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.LighterASTTokenNode
 import com.intellij.lang.PsiBuilder
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.findChildrenByType
+import org.jetbrains.kotlin.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -130,5 +132,64 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
             }
         }
         return false
+    }
+
+    override fun KtSourceElement.isInConstructorCallee(): Boolean {
+        val source = unwrap()
+        return source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.CONSTRUCTOR_CALLEE
+    }
+
+    override fun KtSourceElement.isInTypeConstraint(): Boolean {
+        val source = unwrap()
+        val tree = source.treeStructure
+        return generateSequence(tree.getParent(source.lighterASTNode)) { tree.getParent(it) }
+            .find { it.tokenType == KtNodeTypes.TYPE_CONSTRAINT || it.tokenType == KtNodeTypes.TYPE_PARAMETER }
+            ?.tokenType == KtNodeTypes.TYPE_CONSTRAINT
+    }
+
+    override fun KtSourceElement.getRawIdentifier(): CharSequence? {
+        val source = unwrap()
+        return source.lighterASTNode.getRawIdentifier(source.treeStructure)
+    }
+
+    private fun LighterASTNode.getRawIdentifier(tree: FlyweightCapableTreeStructure<LighterASTNode>): CharSequence? =
+        when (tokenType) {
+            KtNodeTypes.REFERENCE_EXPRESSION, KtTokens.IDENTIFIER -> toString()
+            KtNodeTypes.TYPE_PROJECTION -> getChildren(tree).last().toString()
+            KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtTokens.SAFE_ACCESS, KtTokens.ERROR_SAFE_ACCESS ->
+                getChildren(tree).last().getRawIdentifier(tree)
+            else -> null
+        }
+
+    override fun KtSourceElement.getRawName(): String? {
+        val source = unwrap()
+        return source.treeStructure.nameIdentifier(source.lighterASTNode)?.toString()
+    }
+
+    override fun KtSourceElement.isRedundantNullable(): Boolean {
+        val source = unwrap()
+        val tree = source.treeStructure
+        val ref = Ref<Array<LighterASTNode?>>()
+        val firstChild = source.lighterASTNode.getNullableChild(tree, ref) ?: return false
+        return firstChild.getNullableChild(tree, ref) != null
+    }
+
+    private fun LighterASTNode.getNullableChild(
+        tree: FlyweightCapableTreeStructure<LighterASTNode>,
+        ref: Ref<Array<LighterASTNode?>>,
+    ): LighterASTNode? {
+        tree.getChildren(this, ref)
+        val firstChild = ref.get().firstOrNull() ?: return null
+        return if (firstChild.tokenType != KtNodeTypes.NULLABLE_TYPE) null else firstChild
+    }
+
+    override fun KtSourceElement.hasEnumEntryBody(): Boolean {
+        val source = unwrap()
+        return source.lighterASTNode.getChildren(source.treeStructure).any { it.tokenType == KtNodeTypes.CLASS_BODY }
+    }
+
+    override fun KtSourceElement.hasEnumEntryInitializer(): Boolean {
+        val source = unwrap()
+        return source.lighterASTNode.getChildren(source.treeStructure).any { it.tokenType == KtNodeTypes.INITIALIZER_LIST }
     }
 }

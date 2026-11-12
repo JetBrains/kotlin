@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isCatchParameter
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.name.SpecialNames
 
 object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
@@ -58,14 +59,12 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker(MppC
             declarationSource.kind !is KtFakeSourceElementKind &&
             (declaration as? FirProperty)?.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
         ) {
-            with(SourceNavigator.forElement(declaration)) {
-                val rawName = declaration.getRawName()
-                if (rawName?.isUnderscore == true && !(isSingleUnderscoreAllowed && rawName == "_")) {
-                    reporter.reportOn(
-                        declarationSource,
-                        FirErrors.UNDERSCORE_IS_RESERVED
-                    )
-                }
+            val rawName = withSyntax { declarationSource.getRawName() }
+            if (rawName?.isUnderscore == true && !(isSingleUnderscoreAllowed && rawName == "_")) {
+                reporter.reportOn(
+                    declarationSource,
+                    FirErrors.UNDERSCORE_IS_RESERVED
+                )
             }
         }
 

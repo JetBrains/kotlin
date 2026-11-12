@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.isEnumEntry
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isTypealiasToAny
 import org.jetbrains.kotlin.fir.analysis.checkers.primaryConstructorSuperTypePlatformSupport
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitRichErrorTypeRef
@@ -35,9 +35,9 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         if (declaration.isInterface) {
-            with(SourceNavigator.forElement(declaration)) {
+            withSyntax {
                 for (superTypeRef in declaration.superTypeRefs) {
-                    if (superTypeRef.isInConstructorCallee()) {
+                    if (superTypeRef.source?.isInConstructorCallee() == true) {
                         reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE)
                     }
                 }
@@ -134,9 +134,9 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
     private fun checkSupertypeInitializedWithoutPrimaryConstructor(
         regularClass: FirClass,
     ) {
-        with(SourceNavigator.forElement(regularClass)) {
+        withSyntax {
             for (superTypeRef in regularClass.superTypeRefs) {
-                if (superTypeRef.isInConstructorCallee()) {
+                if (superTypeRef.source?.isInConstructorCallee() == true) {
                     reporter.reportOn(
                         superTypeRef.source ?: regularClass.source,
                         FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR
