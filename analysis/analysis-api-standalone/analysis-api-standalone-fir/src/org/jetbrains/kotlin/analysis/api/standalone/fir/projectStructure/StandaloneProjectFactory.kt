@@ -131,12 +131,14 @@ object StandaloneProjectFactory {
                 return
             }
             application.apply {
-                registerService(KotlinStandaloneIndexCache::class.java, KotlinStandaloneIndexCache::class.java)
                 registerService(ClsKotlinBinaryClassCache::class.java)
                 registerService(
                     BuiltinsVirtualFileProvider::class.java,
                     BuiltinsVirtualFileProviderCliImpl()
                 )
+
+                // The unlocked check above skips the registration once it sees this service, so it must come last
+                registerService(KotlinStandaloneIndexCache::class.java, KotlinStandaloneIndexCache::class.java)
             }
         }
     }
