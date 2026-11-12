@@ -73,8 +73,10 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
         moduleName: String,
         dependencyName: String,
         modulesFromClasspath: Set<String> = access.modulesFromClasspath,
-    ): Boolean = access.additionalReads[moduleName].orEmpty().any {
-        it == dependencyName || it == ALL_UNNAMED || requiresTransitively(it, dependencyName, modulesFromClasspath)
+    ): Boolean {
+        val additionalReads = access.additionalReads[moduleName] ?: return false
+        return dependencyName in additionalReads || ALL_UNNAMED in additionalReads ||
+                additionalReads.any { requiresTransitively(it, dependencyName, modulesFromClasspath) }
     }
 
     /**
