@@ -721,9 +721,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     }
 
     private fun ConeKotlinType.isNonRichError(supertypeSupplier: SupertypeSupplier): Boolean {
-        val expandedType = fullyExpandedWith(supertypeSupplier)
-        if (expandedType is ConeUnionType) return !expandedType.primaryType.isNothing
-        val symbol = expandedType.unwrapToSimpleTypeUsingLowerBound().toSymbol(session) ?: return false
+        if (this is ConeUnionType) return !primaryType.isNothing
+        val symbol = unwrapToSimpleTypeUsingLowerBound().toSymbol(session) ?: return false
         return !symbol.isBoundedByRichError(supertypeSupplier)
     }
 
@@ -748,7 +747,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 // When the bound is unresolved,
                 // we return true so that we don't produce error types (Non-rich error component must appear first).
                 // Otherwise, the topological sort could be incorrect as we'd miss dependencies in error types.
-                val coneType = it.coneTypeOrNull ?: return@any true
+                val coneType = it.coneTypeOrNull?.fullyExpandedWith(supertypeSupplier) ?: return@any true
                 if (coneType is ConeUnionType) {
                     coneType.primaryType.isNothing
                 } else {
