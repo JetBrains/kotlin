@@ -58,7 +58,11 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
                         version = metadataProvider.moduleDependencyVersion,
                         sourceSetName = visibleSourceSet
                     )
-                )
+                ).apply {
+                    /* The classpath is extracted from the metadata artifact, but the module itself can still be asked
+                    for its additional artifacts such as sources */
+                    isResolvedFromExternalModule = true
+                }
             }
         }
     }
