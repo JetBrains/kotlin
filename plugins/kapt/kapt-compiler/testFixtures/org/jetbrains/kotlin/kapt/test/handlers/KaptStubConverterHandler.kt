@@ -9,15 +9,18 @@ import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
+import org.jetbrains.kotlin.config.expectActualTracker
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.javac.KaptJavaLogBase
 import org.jetbrains.kotlin.kapt.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives
+import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.DUMP_EXPECT_ACTUAL_FILES
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.DUMP_LINE_MAPPINGS
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.DUMP_MODULE_MAPPING
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.NON_EXISTENT_CLASS
+import org.jetbrains.kotlin.kapt.test.RecordingExpectActualTracker
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
@@ -52,7 +55,7 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
             .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context, ::renderMetadata) }
 
         val actual = (StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' }) + lineMappings(module, convertedFiles) +
-                moduleMapping(module, kaptContext))
+                moduleMapping(module, kaptContext) + expectActualFiles(module, kaptContext))
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
@@ -101,6 +104,18 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
             }
             parts.sorted().joinToString("\n", prefix = "\n\n// MODULE MAPPING: ${file.relativePath}\n")
         }
+    }
+
+    /**
+     * The expect and actual files reported to incremental compilation, which recompiles them together, as `expect -> actual`, or as
+     * `expect -> <lenient stub>` if the actual is a placeholder generated in lenient mode.
+     */
+    private fun expectActualFiles(module: TestModule, kaptContext: KaptContextForStubGeneration): String {
+        if (DUMP_EXPECT_ACTUAL_FILES !in module.directives) return ""
+        val tracker = kaptContext.configuration.expectActualTracker as RecordingExpectActualTracker
+        val pairs = tracker.expectToActualFiles.map { [expect, actual] -> "${expect.name} -> ${actual.name}" } +
+                tracker.expectFilesOfLenientStubs.map { "${it.name} -> <lenient stub>" }
+        return pairs.sorted().joinToString("\n", prefix = "\n\n// EXPECT/ACTUAL FILES\n")
     }
 
     private fun KaptStubConverterHandler.checkErrors(

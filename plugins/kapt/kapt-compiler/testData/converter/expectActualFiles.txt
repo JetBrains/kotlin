@@ -1,0 +1,122 @@
+package test;
+
+/**
+ * package {
+ *
+ *   public typealias Box<T#0 (* T *)> = test/BoxImpl<T#0> (* = test/BoxImpl<T#0> *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ActualBoxKt {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: platformName()Ljava/lang/String;
+ *   public final fun platformName(): kotlin/String
+ *
+ *   // field: platformVersion:I
+ *   // getter: getPlatformVersion()I
+ *   public final val platformVersion: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ActualTopLevelKt {
+    private static final int platformVersion = 17;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String platformName() {
+        return null;
+    }
+
+    public static final int getPlatformVersion() {
+        return 0;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/BoxImpl<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/Object;)V
+ *   public constructor(value: T#0)
+ *
+ *   // field: value:Ljava/lang/Object;
+ *   // getter: getValue()Ljava/lang/Object;
+ *   public final val value: T#0
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class BoxImpl<T extends java.lang.Object> {
+    private final T value = null;
+
+    public BoxImpl(T value) {
+        super();
+    }
+
+    public final T getValue() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Platform : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: describe()Ljava/lang/String;
+ *   public final fun describe(): kotlin/String
+ *
+ *   // field: name:Ljava/lang/String;
+ *   // getter: getName()Ljava/lang/String;
+ *   public final val name: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Platform {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String name = "JVM";
+
+    public Platform() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getName() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String describe() {
+        return null;
+    }
+}
+
+// EXPECT/ACTUAL FILES
+expect.kt -> actualPlatform.kt
+expect.kt -> actualTopLevel.kt
+expectBox.kt -> actualBox.kt

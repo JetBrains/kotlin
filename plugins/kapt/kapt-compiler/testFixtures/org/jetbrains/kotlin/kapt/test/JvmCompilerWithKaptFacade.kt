@@ -47,8 +47,9 @@ class JvmCompilerWithKaptFacade(private val testServices: TestServices) :
         return KaptContextBinaryArtifact(kaptContext ?: throw CompilationErrorException())
     }
 
+    // The leaf module of a multiplatform test is compiled together with the modules it depends on.
     override fun shouldTransform(module: TestModule): Boolean {
-        return true // TODO
+        return module.isLeafModuleInMppGraph(testServices)
     }
 }
 

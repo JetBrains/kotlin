@@ -26,6 +26,7 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val NON_EXISTENT_CLASS by directive("Generate stub for class error.NonExistentClass")
     val DUMP_LINE_MAPPINGS by directive("Append the Kotlin positions of the stub declarations from .kapt_metadata to the dump")
     val DUMP_MODULE_MAPPING by directive("Append the package parts of the .kotlin_module file in the incremental data to the dump")
+    val DUMP_EXPECT_ACTUAL_FILES by directive("Append the expect/actual file pairs reported to incremental compilation to the dump")
     val EXPECTED_ERROR by stringDirective("The following error is expected in this test", multiLine = true)
     val STUB_GENERATION_SCHEME by stringDirective("Sets stub generation scheme: direct or jtree")
     val MIN_JAVA_VERSION by valueDirective("Skips the test on an older JVM, e.g. one whose javac cannot parse the stubs", parser = String::toIntOrNull)

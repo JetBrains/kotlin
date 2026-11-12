@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.expectActualTracker
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.kapt.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt.base.AptMode
 import org.jetbrains.kotlin.kapt.base.DetectMemoryLeaksMode
@@ -83,9 +85,26 @@ class KaptEnvironmentConfigurator(
         configuration.addJvmClasspathRoot(runtimeLibrary)
 
         configuration.put(JVMConfigurationKeys.SKIP_BODIES, true)
+        if (KaptTestDirectives.DUMP_EXPECT_ACTUAL_FILES in module.directives) {
+            configuration.expectActualTracker = RecordingExpectActualTracker()
+        }
         if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) {
             val moduleBuilder = ModuleBuilder(module.name, "", "test-module")
             configuration.put(JVMConfigurationKeys.MODULES, listOf(moduleBuilder))
         }
+    }
+}
+
+/** Records the expect and actual files that incremental compilation recompiles together. */
+class RecordingExpectActualTracker : ExpectActualTracker {
+    val expectToActualFiles: MutableSet<Pair<File, File>> = mutableSetOf()
+    val expectFilesOfLenientStubs: MutableSet<File> = mutableSetOf()
+
+    override fun report(expectedFile: File, actualFile: File) {
+        expectToActualFiles += expectedFile to actualFile
+    }
+
+    override fun reportExpectOfLenientStub(expectedFile: File) {
+        expectFilesOfLenientStubs += expectedFile
     }
 }

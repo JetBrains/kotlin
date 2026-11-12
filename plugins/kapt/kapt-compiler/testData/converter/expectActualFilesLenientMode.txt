@@ -1,0 +1,70 @@
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: presentFun()I
+ *   public final fun presentFun(): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ActualKt {
+
+    public static final int presentFun() {
+        return 0;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ExpectKt {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/User : kotlin/Any {
+ *
+ *   // signature: <init>(Ltest/Missing;)V
+ *   public constructor(missing: test/Missing)
+ *
+ *   // field: missing:Ltest/Missing;
+ *   // getter: getMissing()Ltest/Missing;
+ *   public final val missing: test/Missing
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class User {
+    @org.jetbrains.annotations.NotNull()
+    private final test.Missing missing = null;
+
+    public User(@org.jetbrains.annotations.NotNull()
+    test.Missing missing) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final test.Missing getMissing() {
+        return null;
+    }
+}
+
+// EXPECT/ACTUAL FILES
+expect.kt -> <lenient stub>
+expect.kt -> actual.kt
