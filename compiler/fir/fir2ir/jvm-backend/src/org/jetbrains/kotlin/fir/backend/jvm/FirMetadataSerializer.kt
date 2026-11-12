@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -78,22 +80,30 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
     parent: MetadataSerializer?,
     targetId: TargetId,
     configuration: CompilerConfiguration,
-    actualizedExpectDeclarations: Set<FirDeclaration>?
+    actualizedExpectDeclarations: Set<FirDeclaration>?,
+    classBuilderMode: ClassBuilderMode,
 ): FirMetadataSerializer {
     val methodSignatures = mutableMapOf<FirFunction, Method>()
     val approximator = TypeApproximatorForMetadataSerializer(session)
 
     val stringTable = object : JvmStringTable(null), FirElementAwareStringTable {
-        override fun getLocalClassLikeDeclarationIdReplacement(declaration: FirClassLikeDeclaration): ClassId =
-            (declaration.containingClassForLocal()?.toRegularClassSymbol(session)?.fir ?: declaration)
-                .symbol.classId
+        override fun getLocalClassLikeDeclarationIdReplacement(declaration: FirClassLikeDeclaration): ClassId {
+            // Same as FirJvmElementAwareStringTable: without bodies, local classes are not generated.
+            if (configuration.skipBodies) {
+                return when (declaration) {
+                    is FirClass -> declaration.superConeTypes.firstOrNull()?.lookupTag?.classId ?: StandardClassIds.Any
+                    is FirTypeAlias -> StandardClassIds.Any
+                }
+            }
+            return (declaration.containingClassForLocal()?.toRegularClassSymbol(session)?.fir ?: declaration).symbol.classId
+        }
     }
 
     val firSerializerExtension = FirJvmSerializerExtension(
         session, methodSignatures, emptyList(), scopeSession,
         configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE),
         targetId.name,
-        ClassBuilderMode.FULL,
+        classBuilderMode,
         configuration.getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS),
         session.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
                 !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS),

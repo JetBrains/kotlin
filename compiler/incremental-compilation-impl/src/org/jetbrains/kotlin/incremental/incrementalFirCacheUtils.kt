@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -50,7 +51,8 @@ internal fun collectNewDirtySources(
                         data.lastOrNull(),
                         targetId,
                         configuration,
-                        actualizedExpectDeclarations = null
+                        actualizedExpectDeclarations = null,
+                        ClassBuilderMode.FULL
                     )
                     data.push(serializer)
                     body(serializer)
