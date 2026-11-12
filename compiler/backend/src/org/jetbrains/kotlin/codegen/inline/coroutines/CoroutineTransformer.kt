@@ -35,7 +35,18 @@ class CoroutineTransformer(
     // filled by CoroutineTransformerMethodVisitor when it generates a state machine for a node being transformed
     private val methodsWithGeneratedStateMachine = hashSetOf<MethodKey>()
 
-    fun shouldSkip(node: MethodNode): Boolean = methods.any { it.name == node.name + FOR_INLINE_SUFFIX && it.desc == node.desc }
+    fun shouldSkip(node: MethodNode): Boolean = hasForInlineCopy(node) || isOutdatedWouldImmediatelyRethrowException(node)
+
+    private fun hasForInlineCopy(node: MethodNode): Boolean =
+        methods.any { it.name == node.name + FOR_INLINE_SUFFIX && it.desc == node.desc }
+
+    // The state machine generation creates this method again from the new suspension points.
+    private fun isOutdatedWouldImmediatelyRethrowException(node: MethodNode): Boolean {
+        if (node.name != WOULD_IMMEDIATELY_RETHROW_EXCEPTION_METHOD_NAME || node.desc != "()Z") return false
+        // The continuation of a named function is regenerated together with the state machine of this function.
+        if (isContinuationNotLambda()) return true
+        return methods.any { !hasForInlineCopy(it) && shouldGenerateStateMachine(it) }
+    }
 
     fun shouldGenerateStateMachine(node: MethodNode): Boolean {
         // Continuations are similar to lambdas from bird's view, but we should never generate state machine for them
@@ -86,6 +97,7 @@ class CoroutineTransformer(
                 createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
                 containingClassInternalName = classBuilder.thisName,
                 obtainClassBuilderForCoroutineState = { classBuilder },
+                superClassName = superClassName,
                 isForNamedFunction = false,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 onStateMachineGenerated = { methodsWithGeneratedStateMachine += it },
@@ -113,10 +125,12 @@ class CoroutineTransformer(
             )
         ) {
             val sourceCompilerForInline = inliningContext.root.sourceCompilerForInline
+            val regeneratedClassContext = inliningContext as RegeneratedClassContext
             val stateMachineBuilder = CoroutineTransformerMethodVisitor(
                 createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
                 containingClassInternalName = classBuilder.thisName,
-                obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
+                obtainClassBuilderForCoroutineState = { regeneratedClassContext.continuationBuilders[continuationClassName]!! },
+                superClassName = regeneratedClassContext.continuationSuperClassNames[continuationClassName]!!,
                 isForNamedFunction = true,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 onStateMachineGenerated = { methodsWithGeneratedStateMachine += it },
@@ -149,6 +163,7 @@ class CoroutineTransformer(
     fun registerClassBuilder(continuationClassName: String) {
         val context = inliningContext.parent?.parent as? RegeneratedClassContext ?: error("incorrect context")
         context.continuationBuilders[continuationClassName] = classBuilder
+        context.continuationSuperClassNames[continuationClassName] = superClassName
     }
 
     private fun unregisterClassBuilder(continuationClassName: String): ClassBuilder? =

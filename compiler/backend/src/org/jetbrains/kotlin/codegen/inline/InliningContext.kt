@@ -35,6 +35,7 @@ class RegeneratedClassContext(
     parent, config, nameGenerator, typeRemapper, lambdaInfo, true, null, parent.typeMapper,
 ) {
     val continuationBuilders: MutableMap<String, ClassBuilder> = hashMapOf()
+    val continuationSuperClassNames: MutableMap<String, String> = hashMapOf()
 }
 
 open class InliningContext(

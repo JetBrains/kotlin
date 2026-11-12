@@ -62,6 +62,7 @@ class CoroutineTransformerMethodVisitor(
     exceptions: Array<out String>?,
     private val containingClassInternalName: String,
     obtainClassBuilderForCoroutineState: () -> ClassBuilder,
+    private val superClassName: String?,
     private val isForNamedFunction: Boolean,
     private val reportSuspensionPointInsideMonitor: (String) -> Unit,
     private val onStateMachineGenerated: (MethodKey) -> Unit = {},
@@ -144,6 +145,11 @@ class CoroutineTransformerMethodVisitor(
         }
 
         shouldHoistThrowOnFailure = !isForNamedFunction && suspensionPoints.none { it.hasEnclosingTryCatch }
+
+        // Only subclasses of BaseContinuationImpl have the method to override.
+        if (config.generateWouldImmediatelyRethrowException && superClassName?.isCoroutineSuperClass() == true) {
+            generateWouldImmediatelyRethrowException(suspensionPoints)
+        }
 
         // Actual max stack might be increased during the previous phases
         methodNode.updateMaxStack()
@@ -1500,6 +1506,70 @@ class CoroutineTransformerMethodVisitor(
 
         load(dataIndex, AsmTypes.OBJECT_TYPE)
         invokestatic("kotlin/ResultKt", "throwOnFailure", "(Ljava/lang/Object;)V", false)
+    }
+
+    /**
+     * Generates the override of `BaseContinuationImpl.wouldImmediatelyRethrowException`.
+     * If it returns `true` for a exceptional resume argument, `BaseContinuationImpl.resumeWith` does not call `invokeSuspend`,
+     * because the state machine only throws the exception, and `resumeWith` catches it again.
+     *
+     * The value for a state is `true` if its resume point is outside of try blocks.
+     *
+     * The method checks only the states with the less frequent value (`otherStates`), and returns `default` for all other labels:
+     * ```
+     * // otherStates is empty
+     * fun wouldImmediatelyRethrowException(): Boolean = default
+     *
+     * // otherStates == [s]
+     * fun wouldImmediatelyRethrowException(): Boolean = if (label != s) default else !default
+     *
+     * // otherStates == [s1, s2, ...]
+     * fun wouldImmediatelyRethrowException(): Boolean = when (label) {
+     *     s1, s2, ... -> !default
+     *     else -> default
+     * }
+     * ```
+     * The method is not generated if all values are `false` (as it is default implementation already provided by base class).
+     */
+    private fun generateWouldImmediatelyRethrowException(suspensionPoints: List<SuspensionPoint>) {
+        // State 0 of a lambda is the entry point, which is outside of try blocks.
+        // State 0 of a named function is never resumed through resumeWith, so its value does not matter, and it is not checked.
+        val rethrowsByState = buildList {
+            if (!isForNamedFunction) add(0 to true)
+            suspensionPoints.forEachIndexed { index, point -> add((index + 1) to !point.hasEnclosingTryCatch) }
+        }
+        if (rethrowsByState.none { it.second }) return
+
+        val mv = classBuilderForCoroutineState.newMethod(
+            null, Opcodes.ACC_PROTECTED or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC,
+            WOULD_IMMEDIATELY_RETHROW_EXCEPTION_METHOD_NAME, "()Z", null, null
+        )
+        mv.visitCode()
+        with(InstructionAdapter(mv)) {
+            // On a tie, the default is false, because it is also correct for an invalid label.
+            val default = rethrowsByState.count { it.second } * 2 > rethrowsByState.size
+            val otherStates = rethrowsByState.filter { it.second != default }.map { it.first }
+            if (otherStates.isNotEmpty()) {
+                val defaultLabel = Label()
+                val otherLabel = Label()
+                load(0, AsmTypes.OBJECT_TYPE)
+                getLabel()
+                if (otherStates.size == 1) {
+                    iconst(otherStates.single())
+                    ificmpne(defaultLabel)
+                } else {
+                    lookupswitch(defaultLabel, otherStates.toIntArray(), Array(otherStates.size) { otherLabel })
+                }
+                mark(otherLabel)
+                iconst(if (default) 0 else 1)
+                areturn(Type.BOOLEAN_TYPE)
+                mark(defaultLabel)
+            }
+            iconst(if (default) 1 else 0)
+            areturn(Type.BOOLEAN_TYPE)
+        }
+        mv.visitMaxs(2, 1)
+        mv.visitEnd()
     }
 
     private data class SpilledVariableAndField(val fieldName: String, val variableName: String)

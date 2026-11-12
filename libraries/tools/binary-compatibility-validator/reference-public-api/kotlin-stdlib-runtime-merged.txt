@@ -3342,6 +3342,7 @@ public abstract class kotlin/coroutines/jvm/internal/BaseContinuationImpl : java
 	protected fun releaseIntercepted ()V
 	public final fun resumeWith (Ljava/lang/Object;)V
 	public fun toString ()Ljava/lang/String;
+	protected fun wouldImmediatelyRethrowException ()Z
 }
 
 public final class kotlin/coroutines/jvm/internal/Boxing {

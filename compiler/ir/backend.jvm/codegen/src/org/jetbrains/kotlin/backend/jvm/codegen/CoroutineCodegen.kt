@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.hasContinuation
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
+import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
@@ -50,6 +51,10 @@ internal fun MethodNode.acceptWithStateMachine(
         methodVisitor, access, name, desc, signature, exceptions.toTypedArray(),
         containingClassInternalName = classCodegen.type.internalName,
         obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
+        // For suspend lambdas, the lambda class itself is the continuation
+        superClassName = (irFunction.continuationClass() ?: classCodegen.irClass).superClass?.let {
+            classCodegen.typeMapper.mapClass(it).internalName
+        },
         isForNamedFunction = irFunction.isSuspend,
         reportSuspensionPointInsideMonitor = {
             classCodegen.context.diagnosticReporter.at(irFunction, classCodegen.irClass)
