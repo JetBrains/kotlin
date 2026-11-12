@@ -1,9 +1,9 @@
 KT element: KtDeclarationModifierList
-FIR element: FirPropertyImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: null
+FIR source kind: null
 
 FIR element rendered:
-@R|Anno|[Types]() [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|X| = R|<local>/x|
+null
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] modifierListInDestructuringDeclaration.kt

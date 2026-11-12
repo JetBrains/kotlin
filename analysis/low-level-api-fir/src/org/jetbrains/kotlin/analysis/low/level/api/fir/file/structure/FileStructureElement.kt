@@ -281,8 +281,6 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 is KtAnnotationEntry,
                     // We replace a source for selector with the whole expression
                 is KtSafeQualifiedExpression,
-                    // Top level destructuring declarations do not have FIR for r-value at the moment, would probably be changed later
-                is KtDestructuringDeclaration,
                     // There is no separate FIR node for this in this@foo expressions, same for super@Foo
                 is KtThisExpression,
                 is KtSuperExpression,
@@ -313,13 +311,9 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                         mapping[current] ?: fakeReferenceToBuiltInSuspendOrNull(element, session)
                     }
                 }
-                is KtParenthesizedExpression -> checkStringLiteralFolderExpression(element, session, mapping)
                 is KtBinaryExpression -> checkStringLiteralFolderExpression(element, session, mapping)
                 // Here there is no separate FIR node for partial operator calls (like for a[i] = 1, there is no separate node for a[i])
                     ?: if (element is KtArrayAccessExpression || element is KtOperationReferenceExpression) mapping[current] else null
-                is KtBlockExpression ->
-                    // For script initializers, we need to return FIR element for script itself
-                    if (element is KtScriptInitializer) mapping[current.parent as KtScript] else null
                 is PsiErrorElement -> {
                     val parent = current.parent
                     if (parent is KtDestructuringDeclaration) mapping[parent] else null
