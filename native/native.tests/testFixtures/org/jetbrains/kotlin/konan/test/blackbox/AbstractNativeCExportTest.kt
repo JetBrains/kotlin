@@ -43,7 +43,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
         testRunSettings.assumeLibraryKindSupported()
     }
 
-    protected open val additionalCompilerArgs: List<String> get() = emptyList()
+    protected open val additionalCompilerArgs: List<String> get() = listOf("-Xbinary=cExportUseIrDiscovery=false")
 
     private val testCompilationFactory = TestCompilationFactory()
 
