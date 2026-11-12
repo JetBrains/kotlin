@@ -15,6 +15,7 @@ import java.nio.file.StandardCopyOption
 private const val DEFAULT_MARKER_FILE_NAME = ".provisioned"
 private const val LOCKS_DIRECTORY = ".locks"
 private const val STAGING_DIRECTORY = ".staging"
+private const val DOWNLOADS_DIRECTORY = ".downloads"
 private const val PUBLISH_ATTEMPTS = 5
 private const val PUBLISH_RETRY_DELAY_MILLIS = 100L
 
@@ -26,8 +27,8 @@ private const val PUBLISH_RETRY_DELAY_MILLIS = 100L
  * Installing is safe when several threads, class loaders or processes ask for the same id at once: one of them does the
  * work and the others wait for it and get its result.
  *
- * The store keeps its own files next to the installations, in `.locks` and `.staging`. Ids never start with a dot, so they
- * cannot clash.
+ * The store keeps its own files next to the installations, in `.locks`, `.staging` and `.downloads`. Ids never start with a
+ * dot, so they cannot clash.
  *
  * @param directory the store directory. It is created on the first installation.
  * @param markerFileName the file that marks an installation as complete. A store that already holds installations made by
@@ -61,6 +62,12 @@ public class InstallationStore internal constructor(
      * Returns the installation for [id] if it is complete, or null. Never waits and never installs.
      */
     public fun find(id: String): Path? = installationPath(id).takeIf(::isComplete)
+
+    /**
+     * Where a download for [id] is kept between attempts, so that the next attempt can continue it. Only to be used while
+     * installing [id], when the store's lock keeps other callers away.
+     */
+    internal fun downloadDirectory(id: String): Path = directory.resolve(DOWNLOADS_DIRECTORY).resolve(installationPath(id).fileName)
 
     /**
      * Returns the complete installation for [id], running [produce] to make it if there is none yet.
