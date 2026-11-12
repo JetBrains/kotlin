@@ -1,11 +1,11 @@
 sample%23
 sample%23/A%23B
-constructor:sample%23/A%23B#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+constructor:sample%23/A%23B#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
 sample%23/A%2523B
-constructor:sample%23/A%2523B#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
-function:sample%23#foo%23bar#typeParameters=[]; context=[]; receiver=none; parameters=[];
+constructor:sample%23/A%2523B#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+function:sample%23#foo%23bar#typeParameters=[]; context=[]; parameters=[];
 sample%23/when
-constructor:sample%23/when#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
-function:sample%23#when#typeParameters=[]; context=[]; receiver=none; parameters=[];
-property:sample%23#with%20spaces#typeParameters=[]; context=[]; receiver=none; parameters=[];
-getter:sample%23#with%20spaces#typeParameters=[]; context=[]; receiver=none; parameters=[];
+constructor:sample%23/when#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+function:sample%23#when#typeParameters=[]; context=[]; parameters=[];
+property:sample%23#with%20spaces#typeParameters=[]; context=[]; parameters=[];
+getter:sample%23#with%20spaces#typeParameters=[]; context=[]; parameters=[];

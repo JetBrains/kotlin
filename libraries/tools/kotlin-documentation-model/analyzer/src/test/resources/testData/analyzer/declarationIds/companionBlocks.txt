@@ -1,0 +1,27 @@
+sample
+sample/Outer
+function:sample/Outer#sameName#typeParameters=[]; context=[]; parameters=[kotlin/Int];
+property:sample/Outer#CONSTANT#typeParameters=[]; context=[]; parameters=[]; companion;
+getter:sample/Outer#CONSTANT#typeParameters=[]; context=[]; parameters=[]; companion;
+property:sample/Outer#mutable#typeParameters=[]; context=[]; parameters=[]; companion;
+getter:sample/Outer#mutable#typeParameters=[]; context=[]; parameters=[]; companion;
+setter:sample/Outer#mutable#typeParameters=[]; context=[]; parameters=[]; companion;
+function:sample/Outer#sameName#typeParameters=[]; context=[]; parameters=[]; companion;
+function:sample/Outer#genericMember#typeParameters=[<T1_0>: ]; context=[]; parameters=[<T1_0>]; companion;
+constructor:sample/Outer#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+sample/Named
+function:sample/Named#namedMember#typeParameters=[]; context=[]; parameters=[]; companion;
+constructor:sample/Named#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+sample/TwoBlocks
+property:sample/TwoBlocks#Zero#typeParameters=[]; context=[]; parameters=[]; companion;
+getter:sample/TwoBlocks#Zero#typeParameters=[]; context=[]; parameters=[]; companion;
+function:sample/TwoBlocks#normalize#typeParameters=[]; context=[]; parameters=[];
+property:sample/TwoBlocks#Dimensions#typeParameters=[]; context=[]; parameters=[]; companion;
+getter:sample/TwoBlocks#Dimensions#typeParameters=[]; context=[]; parameters=[]; companion;
+constructor:sample/TwoBlocks#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+sample/WithCompanion
+function:sample/WithCompanion#interfaceCompanionMember#typeParameters=[]; context=[]; parameters=[]; companion;
+function:sample#topLevelExtension#typeParameters=[]; context=[]; receiver=sample/Outer; parameters=[]; companion;
+property:sample#topLevelExtensionProperty#typeParameters=[]; context=[]; receiver=sample/Outer; parameters=[]; companion;
+getter:sample#topLevelExtensionProperty#typeParameters=[]; context=[]; receiver=sample/Outer; parameters=[]; companion;
+function:sample#extensionOnNamed#typeParameters=[]; context=[]; receiver=sample/Named; parameters=[]; companion;

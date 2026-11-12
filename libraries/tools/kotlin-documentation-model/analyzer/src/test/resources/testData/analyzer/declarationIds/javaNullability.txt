@@ -1,13 +1,13 @@
 sample
 sample/JavaClass
-function:sample/JavaClass#none#typeParameters=[]; context=[]; receiver=none; parameters=[(kotlin/String..kotlin/String?)];
-function:sample/JavaClass#notNull#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String];
-function:sample/JavaClass#nullable#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String?];
-function:sample/JavaClass#staticNone#typeParameters=[]; context=[]; receiver=none; parameters=[(kotlin/String..kotlin/String?)]; companion;
-function:sample/JavaClass#staticNotNull#typeParameters=[]; context=[]; receiver=none; parameters=[kotlin/String]; companion;
-constructor:sample/JavaClass#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+function:sample/JavaClass#none#typeParameters=[]; context=[]; parameters=[(kotlin/String..kotlin/String?)];
+function:sample/JavaClass#notNull#typeParameters=[]; context=[]; parameters=[kotlin/String];
+function:sample/JavaClass#nullable#typeParameters=[]; context=[]; parameters=[kotlin/String?];
+function:sample/JavaClass#staticNone#typeParameters=[]; context=[]; parameters=[(kotlin/String..kotlin/String?)]; companion;
+function:sample/JavaClass#staticNotNull#typeParameters=[]; context=[]; parameters=[kotlin/String]; companion;
+constructor:sample/JavaClass#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
 org.jetbrains.annotations
 org.jetbrains.annotations/NotNull
-constructor:org.jetbrains.annotations/NotNull#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+constructor:org.jetbrains.annotations/NotNull#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
 org.jetbrains.annotations/Nullable
-constructor:org.jetbrains.annotations/Nullable#%3Cinit%3E#typeParameters=[]; context=[]; receiver=none; parameters=[];
+constructor:org.jetbrains.annotations/Nullable#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
