@@ -113,7 +113,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         try {
             withRootDisposable { rootDisposable ->
                 setupCommonArguments(configuration, arguments)
-                configuration.setupFromArguments(arguments, rootDisposable)
+                configuration.setupFromArguments(arguments, services, rootDisposable)
                 if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
                     return ExitCode.COMPILATION_ERROR
                 }
@@ -215,10 +215,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 }
                 adjustConfigurationForSecondStage(configuration, intermediateKlib)
                 val environmentForSecondStage = prepareEnvironment(arguments, configuration, rootDisposable)
-                runKonanDriver(configuration, environmentForSecondStage, rootDisposable)
+                runKonanDriver(configuration, environmentForSecondStage, services, rootDisposable)
             } else {
                 if (arguments.isNativeSecondStage()) {
-                    runKonanDriver(configuration, environment, rootDisposable)
+                    runKonanDriver(configuration, environment, services, rootDisposable)
                 } else {
                     doExecutePhasedKlibCompilation(
                         arguments,
@@ -273,6 +273,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     private fun runKonanDriver(
         configuration: CompilerConfiguration,
         environment: KotlinCoreEnvironment,
+        services: Services,
         rootDisposable: Disposable,
     ) {
         val perfManager = configuration.perfManager
@@ -287,7 +288,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             spawnedConfiguration.messageCollector = configuration.messageCollector
             spawnedConfiguration.perfManager = spawnedPerfManager
             spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
-            spawnedConfiguration.setupFromArguments(spawnedArguments, rootDisposable)
+            spawnedConfiguration.setupFromArguments(spawnedArguments, services, rootDisposable)
             spawnedConfiguration.setupPartialLinkageConfig(configuration.partialLinkageConfig)
             configuration.get(CommonConfigurationKeys.USE_FIR)?.let {
                 spawnedConfiguration.put(CommonConfigurationKeys.USE_FIR, it)
@@ -316,7 +317,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             spawnedConfiguration.setupConfiguration()
 
             try {
-                runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
+                runKonanDriver(spawnedConfiguration, spawnedEnvironment, services, rootDisposable)
             } finally {
                 // The spawned compilation has its own diagnostics collector, which nothing else reports.
                 // Do it here, otherwise the diagnostics of e.g. the partial linkage engine would be lost (KT-78253).

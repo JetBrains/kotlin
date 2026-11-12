@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.konan.config.*
@@ -27,8 +28,8 @@ import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 
-fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments, rootDisposable: Disposable) = with(NativeConfigurationKeys) {
-    NativeKlibConfigurationUpdater.fillConfiguration(arguments, rootDisposable, this@setupFromArguments)
+fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments, services: Services, rootDisposable: Disposable) = with(NativeConfigurationKeys) {
+    NativeKlibConfigurationUpdater.fillConfiguration(arguments, services, rootDisposable, this@setupFromArguments)
 
     // Can be overwritten by explicit arguments below.
     parseBinaryOptions(arguments, this@setupFromArguments).forEach { optionWithValue ->
