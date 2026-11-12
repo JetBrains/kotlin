@@ -515,9 +515,10 @@ internal var IrModuleFragment.friendLibraries: Set<KotlinLibrary>? by irAttribut
 private object IrLinkerModuleVisibilityProvider : ModuleVisibilityProvider {
     override fun canSeeInternals(thisModule: IrModuleFragment, otherModule: IrModuleFragment): Boolean {
         if (otherModule.moduleVisibilityProvider !is IrLinkerModuleVisibilityProvider) return false
+        if (thisModule == otherModule) return true
 
-        val fromModuleKlib = thisModule.kotlinLibrary!!
-        val toModuleKlib = otherModule.kotlinLibrary!!
+        val fromModuleKlib = thisModule.kotlinLibrary ?: return false
+        val toModuleKlib = otherModule.kotlinLibrary ?: return false
         return fromModuleKlib == toModuleKlib || thisModule.friendLibraries?.contains(toModuleKlib) == true
     }
 }
