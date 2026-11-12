@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.provisioning
 
 import org.junit.jupiter.api.io.TempDir
+import java.nio.channels.FileChannel
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -16,6 +17,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -65,6 +67,40 @@ class InstallationStoreProcessesTest {
         }
     }
 
+    /**
+     * On Linux and macOS a process loses its lock on a file when it closes any descriptor of that file. A second caller
+     * in the holder's JVM must therefore never open the lock file, or other processes get in while the holder still works.
+     */
+    @Test
+    fun `callers in the holder's JVM that wait or give up do not let other processes in`() {
+        val producing = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        val executor = Executors.newSingleThreadExecutor()
+        try {
+            val holder = executor.submit<Path> {
+                InstallationStore(storeDir).install("tool-1.0") { staging ->
+                    producing.countDown()
+                    release.await()
+                    Files.write(staging.directory.resolve("tool"), byteArrayOf(1))
+                    staging.directory
+                }
+            }
+            assertTrue(producing.await(TIMEOUT_SECONDS, TimeUnit.SECONDS))
+
+            // waits, reads who holds the lock, and gives up
+            assertFailsWith<InstallationLockTimeoutException> {
+                InstallationStore(storeDir, lockTimeoutMillis = 1).install("tool-1.0") { error("must not produce") }
+            }
+
+            assertEquals(listOf("locked"), startInstall(mode = "probe").finish())
+
+            release.countDown()
+            assertEquals(storeDir.resolve("tool-1.0"), holder.get(TIMEOUT_SECONDS, TimeUnit.SECONDS))
+        } finally {
+            executor.shutdownNow()
+        }
+    }
+
     private fun startInstall(mode: String): Process {
         val java = Paths.get(System.getProperty("java.home"), "bin", if (isWindows) "java.exe" else "java")
         return ProcessBuilder(
@@ -94,12 +130,21 @@ class InstallationStoreProcessesTest {
  * The child JVM of [InstallationStoreProcessesTest].
  *
  * Arguments: store directory, id, mode, log file. In mode `produce` it records that it produced the installation in the log.
- * In mode `hang` it reports that it is producing and then waits until it is killed.
+ * In mode `hang` it reports that it is producing and then waits until it is killed. In mode `probe` it installs nothing
+ * and prints whether the lock of the id is taken.
  */
 internal object InstallingProcess {
     @JvmStatic
     fun main(args: Array<String>) {
         val (storeDir, id, mode, log) = args
+        if (mode == "probe") {
+            // only asks whether another process holds the lock of the id
+            val lockFile = Paths.get(storeDir, ".locks", "$id.lock")
+            FileChannel.open(lockFile, StandardOpenOption.WRITE).use { channel ->
+                println(if (channel.tryLock() == null) "locked" else "free")
+            }
+            return
+        }
         val installation = InstallationStore(Paths.get(storeDir)).install(id) { staging ->
             when (mode) {
                 "produce" -> Files.write(

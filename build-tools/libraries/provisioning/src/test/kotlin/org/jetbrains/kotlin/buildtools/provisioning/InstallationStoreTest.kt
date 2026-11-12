@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.provisioning
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import java.lang.management.ManagementFactory
 import java.nio.file.AccessDeniedException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -36,7 +37,7 @@ class InstallationStoreTest {
     private val events = Collections.synchronizedList(mutableListOf<String>())
 
     private val recordingListener = object : ProvisioningListener {
-        override fun waitingForLock(id: String, lockFile: Path) {
+        override fun waitingForLock(id: String, lockFile: Path, holder: String?) {
             events += "waiting $id"
         }
 
@@ -50,7 +51,7 @@ class InstallationStoreTest {
     }
 
     private fun store(leftoverPolicy: LeftoverPolicy = LeftoverPolicy.REPLACE, markerFileName: String = ".provisioned") =
-        InstallationStore(storeDir, markerFileName, leftoverPolicy, recordingListener)
+        InstallationStore(storeDir, markerFileName, leftoverPolicy, listener = recordingListener)
 
     private fun writeTool(staging: StagingArea, content: String = "tool"): Path {
         Files.write(staging.directory.resolve("tool"), content.toByteArray())
@@ -108,7 +109,7 @@ class InstallationStoreTest {
         val release = CountDownLatch(1)
         val waiting = CountDownLatch(1)
         val store = InstallationStore(storeDir, listener = object : ProvisioningListener {
-            override fun waitingForLock(id: String, lockFile: Path) = waiting.countDown()
+            override fun waitingForLock(id: String, lockFile: Path, holder: String?) = waiting.countDown()
         })
         val executor = Executors.newFixedThreadPool(2)
         try {
@@ -130,6 +131,48 @@ class InstallationStoreTest {
         } finally {
             executor.shutdownNow()
         }
+    }
+
+    @Test
+    fun `a caller gives up when the lock timeout runs out and names the holder`() {
+        val producing = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        val executor = Executors.newSingleThreadExecutor()
+        try {
+            val first = executor.submit<Path> {
+                store().install("tool-1.0") {
+                    producing.countDown()
+                    release.await()
+                    writeTool(it)
+                }
+            }
+            assertTrue(producing.await(TIMEOUT_SECONDS, TimeUnit.SECONDS))
+
+            val exception = assertFailsWith<InstallationLockTimeoutException> {
+                InstallationStore(storeDir, lockTimeoutMillis = 1).install("tool-1.0") { error("must not produce") }
+            }
+
+            val lockFile = storeDir.resolve(".locks/tool-1.0.lock")
+            val thisProcess = ManagementFactory.getRuntimeMXBean().name
+            assertEquals(lockFile, exception.lockFile)
+            assertEquals(thisProcess, exception.holder)
+            assertEquals(
+                "Gave up after 1 ms of waiting for the lock '$lockFile', held by $thisProcess, which is installing the same " +
+                        "distribution. If that process hangs, stop it and run the build again.",
+                exception.message,
+            )
+
+            release.countDown()
+            assertEquals(storeDir.resolve("tool-1.0"), first.await(), "the holder is not disturbed")
+        } finally {
+            executor.shutdownNow()
+        }
+    }
+
+    @Test
+    fun `a lock timeout that is not positive is rejected`() {
+        val exception = assertFailsWith<IllegalArgumentException> { InstallationStore(storeDir, lockTimeoutMillis = 0) }
+        assertEquals("The lock timeout must be positive, got 0", exception.message)
     }
 
     @Test
@@ -360,7 +403,7 @@ class InstallationStoreTest {
         val sleeps = mutableListOf<Long>()
         val denials = AtomicInteger(2)
         val store = InstallationStore(
-            storeDir, ".provisioned", LeftoverPolicy.REPLACE, ProvisioningListener.None,
+            storeDir, ".provisioned", LeftoverPolicy.REPLACE, lockTimeoutMillis = null, listener = ProvisioningListener.None,
             move = { source, target ->
                 if (denials.getAndDecrement() > 0) throw AccessDeniedException(source.toString())
                 Files.move(source, target, StandardCopyOption.ATOMIC_MOVE)
@@ -379,7 +422,7 @@ class InstallationStoreTest {
     fun `publishing gives up when the move stays denied`() {
         val sleeps = mutableListOf<Long>()
         val store = InstallationStore(
-            storeDir, ".provisioned", LeftoverPolicy.REPLACE, ProvisioningListener.None,
+            storeDir, ".provisioned", LeftoverPolicy.REPLACE, lockTimeoutMillis = null, listener = ProvisioningListener.None,
             move = { source, _ -> throw AccessDeniedException(source.toString()) },
             sleep = { sleeps += it },
         )
