@@ -109,6 +109,10 @@ data object ProvideDelegateFixationPosition : ConstraintPosition()
 
 data object ThrowableUpperBoundAllowingToFixIntoIt : ConstraintPosition()
 
+data object SyntheticCstVariableConstraintPosition : ConstraintPosition() {
+    override fun toString(): String = "Synthetic CST variable bound"
+}
+
 // TODO: should be used only in SimpleConstraintSystemImpl, KT-59675
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 

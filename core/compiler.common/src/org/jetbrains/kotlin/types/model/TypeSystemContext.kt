@@ -195,6 +195,23 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
     fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker
 
     fun supportsImprovedVarianceInCst(): Boolean
+
+    /**
+     * Whether [createSyntheticCstTypeVariable] would succeed in this context.
+     */
+    fun supportsSyntheticCstTypeVariables(): Boolean = false
+
+    /**
+     * Registers a fresh synthetic type variable (named like `_CST_N`) as a representation for the common supertype
+     * of one or more not-fixed type variables, adds [lowerBounds] as its lower constraints and returns its type.
+     *
+     * [lowerBounds] may reference not-fixed type variables through subtyping stub types;
+     * the implementation is expected to map them back to the variables.
+     *
+     * Non-trivial implementation is only at `NewConstraintSystemImpl`.
+     */
+    fun createSyntheticCstTypeVariable(lowerBounds: List<KotlinTypeMarker>): RigidTypeMarker =
+        error("Should only be called on contexts where supportsSyntheticCstTypeVariables() is true")
 }
 
 // This interface is only used to declare that implementing class is supposed to be used as a TypeSystemInferenceExtensionContext component
