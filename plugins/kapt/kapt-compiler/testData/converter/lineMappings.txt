@@ -1,0 +1,196 @@
+package test;
+
+/**
+ * public abstract class test/Drawer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: fragmented:Z
+ *   // getter: getFragmented()Z
+ *   public final var fragmented: kotlin/Boolean
+ *     public final get
+ *     private final (* non-default *) set(value: kotlin/Boolean)
+ *
+ *   // field: opened:Z
+ *   // getter: getOpened()Z
+ *   // setter: setOpened(Z)V
+ *   public final var opened: kotlin/Boolean
+ *     public final get
+ *     protected final (* non-default *) set(value: kotlin/Boolean)
+ *
+ *   // field: shown:Z
+ *   // getter: getShown()Z
+ *   // setter: setShown(Z)V
+ *   public final var shown: kotlin/Boolean
+ *     public final get
+ *     protected final (* non-default *) set(value: kotlin/Boolean)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class Drawer {
+    private boolean fragmented = false;
+    private boolean shown = false;
+    private boolean opened = false;
+
+    public Drawer() {
+        super();
+    }
+
+    public final boolean getFragmented() {
+        return false;
+    }
+
+    public final boolean getShown() {
+        return false;
+    }
+
+    protected final void setShown(boolean p0) {
+    }
+
+    public final boolean getOpened() {
+        return false;
+    }
+
+    protected final void setOpened(boolean value) {
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final enum class test/Mode : kotlin/Enum<test/Mode> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   // signature: label()Ljava/lang/String;
+ *   public open fun label(): kotlin/String
+ *
+ *   SINGLE,
+ *
+ *   MULTI_SELECT,
+ *
+ *   CUSTOM,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum Mode {
+    /*public static final*/ SINGLE /* = new Mode() */,
+    /*public static final*/ MULTI_SELECT /* = new Mode() */,
+    /*public static final*/ CUSTOM /* = new Mode() */;
+
+    Mode() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String label() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<test.Mode> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * multi-file class {
+ *   // test/NonFatalKt__NonFatalKt
+ * }
+ */
+@kotlin.Metadata()
+public final class NonFatalKt {
+
+    public static final boolean nonFatal(@org.jetbrains.annotations.NotNull()
+    java.lang.Throwable t) {
+        return false;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final enum class test/SortOrder : kotlin/Enum<test/SortOrder> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;)V
+ *   private constructor(code: kotlin/String)
+ *
+ *   // field: code:Ljava/lang/String;
+ *   // getter: getCode()Ljava/lang/String;
+ *   public final val code: kotlin/String
+ *     public final get
+ *
+ *   ASC,
+ *
+ *   DESC,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum SortOrder {
+    /*public static final*/ ASC /* = new SortOrder(null) */,
+    /*public static final*/ DESC /* = new SortOrder(null) */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String code = null;
+
+    SortOrder(java.lang.String code) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getCode() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<test.SortOrder> getEntries() {
+        return null;
+    }
+}
+
+// LINE MAPPINGS
+test/Drawer#<init>()V: test.kt:194
+test/Drawer#fragmented: test.kt:222
+test/Drawer#getFragmented()Z: test.kt:222
+test/Drawer#getOpened()Z: test.kt:333
+test/Drawer#getShown()Z: test.kt:279
+test/Drawer#opened: test.kt:333
+test/Drawer#setOpened(Z)V: test.kt:369
+test/Drawer#setShown(Z)V: test.kt:314
+test/Drawer#shown: test.kt:279
+test/Drawer: test.kt:194
+test/Mode#<init>(Ljava/lang/String;I)V: test.kt:54
+test/Mode#CUSTOM: test.kt:106
+test/Mode#MULTI_SELECT: test.kt:88
+test/Mode#SINGLE: test.kt:76
+test/Mode#getEntries()Lkotlin/enums/EnumEntries;: test.kt:2147483647
+test/Mode#label()Ljava/lang/String;: test.kt:172
+test/Mode$CUSTOM: test.kt:106
+test/Mode: test.kt:54
+test/NonFatalKt#nonFatal(Ljava/lang/Throwable;)Z: NonFatalKt>:120
+test/NonFatalKt: NonFatalKt>:2147483647
+test/SortOrder#<init>(Ljava/lang/String;ILjava/lang/String;)V: test.kt:431
+test/SortOrder#ASC: test.kt:456
+test/SortOrder#DESC: test.kt:472
+test/SortOrder#code: test.kt:432
+test/SortOrder#getCode()Ljava/lang/String;: test.kt:432
+test/SortOrder#getEntries()Lkotlin/enums/EnumEntries;: test.kt:2147483647
+test/SortOrder$DESC: test.kt:472
+test/SortOrder: test.kt:411

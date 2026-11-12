@@ -23,6 +23,7 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val HEADER_MODE by directive("Enables HEADER_MODE flag")
 
     val NON_EXISTENT_CLASS by directive("Generate stub for class error.NonExistentClass")
+    val DUMP_LINE_MAPPINGS by directive("Append the Kotlin positions of the stub declarations from .kapt_metadata to the dump")
     val EXPECTED_ERROR by stringDirective("The following error is expected in this test", multiLine = true)
     val STUB_GENERATION_SCHEME by stringDirective("Sets stub generation scheme: direct or jtree")
     val MIN_JAVA_VERSION by valueDirective("Skips the test on an older JVM, e.g. one whose javac cannot parse the stubs", parser = String::toIntOrNull)

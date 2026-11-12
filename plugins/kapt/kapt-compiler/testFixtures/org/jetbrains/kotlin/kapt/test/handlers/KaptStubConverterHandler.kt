@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.kapt.test.handlers
 
 import com.intellij.openapi.util.text.StringUtil
+import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.javac.KaptJavaLogBase
+import org.jetbrains.kotlin.kapt.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives
+import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.DUMP_LINE_MAPPINGS
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.NON_EXISTENT_CLASS
 import org.jetbrains.kotlin.kapt.util.prettyPrint
@@ -21,6 +24,9 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.ObjectInputStream
 import java.util.*
 
 class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
@@ -41,13 +47,34 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
             .sortedBy { it.sourceFile.name }
             .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context, ::renderMetadata) }
 
-        val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
+        val actual = (StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' }) + lineMappings(module, convertedFiles))
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
         checkErrors(module, kaptContext, actual)
 
         assertEqualsToDump(extension = "txt", actual)
+    }
+
+    /** The positions written to `.kapt_metadata` next to each stub, as `fqName: file:offset`. */
+    private fun lineMappings(module: TestModule, files: List<JCTree.JCCompilationUnit>): String {
+        if (DUMP_LINE_MAPPINGS !in module.directives) return ""
+        val mappings = files.flatMap { file ->
+            val stub = File(file.sourcefile.toUri())
+            val metadata = File(stub.parentFile, stub.nameWithoutExtension + KaptStubLineInformation.KAPT_METADATA_EXTENSION)
+            if (metadata.isFile) readPositions(metadata.readBytes()) else emptyList()
+        }
+        return mappings.sorted().joinToString("\n", prefix = "\n\n// LINE MAPPINGS\n")
+    }
+
+    private fun readPositions(data: ByteArray): List<String> = ObjectInputStream(ByteArrayInputStream(data)).use { input ->
+        input.readInt()
+        List(input.readInt()) {
+            val fqName = input.readUTF()
+            val path = input.readUTF()
+            input.readBoolean()
+            "$fqName: ${File(path).name}:${input.readInt()}"
+        }
     }
 
     private fun KaptStubConverterHandler.checkErrors(
