@@ -2648,12 +2648,6 @@ internal class ContextParametersWithBackingFieldImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContextParametersWithBackingField
 
-internal class CallableReferenceToContextualDeclarationImpl(
-    override val symbol: KaCallableSymbol,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.CallableReferenceToContextualDeclaration
-
 internal class NamedContextParameterInFunctionTypeImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
