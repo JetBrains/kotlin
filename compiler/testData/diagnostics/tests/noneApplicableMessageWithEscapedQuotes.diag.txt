@@ -1,0 +1,7 @@
+/noneApplicableMessageWithEscapedQuotes.kt:8:5: error: None of the following candidates is applicable for expression 'foo(\'a\')':
+
+fun foo(a: Int): Unit:
+  Argument type mismatch: actual type is 'Char', but 'Int' was expected.
+
+fun foo(a: String): Unit:
+  Argument type mismatch: actual type is 'Char', but 'String' was expected.
