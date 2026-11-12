@@ -75,7 +75,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
-    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-compiler-tests")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
