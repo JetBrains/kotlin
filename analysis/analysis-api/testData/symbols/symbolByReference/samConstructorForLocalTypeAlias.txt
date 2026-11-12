@@ -1,0 +1,80 @@
+KaSamConstructorSymbol:
+  anchorPsi: KtClass
+  annotations: []
+  callableId: null
+  contextParameters: []
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: IntPredicateAlias
+  origin: SAM_CONSTRUCTOR
+  psi: KtClass
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: {<local>/IntPredicateAlias=} <local>/IntPredicate
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: KtClass
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: function
+      origin: SAM_CONSTRUCTOR
+      primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Boolean
+        ]
+        type: (kotlin/Int) -> kotlin/Boolean
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(samConstructorForLocalTypeAlias.kt)
+      getContainingJvmClassName: test.SamConstructorForLocalTypeAliasKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(samConstructorForLocalTypeAlias.kt)
+  getContainingJvmClassName: test.SamConstructorForLocalTypeAliasKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  javaMethodName: null
+  importableFqName: null

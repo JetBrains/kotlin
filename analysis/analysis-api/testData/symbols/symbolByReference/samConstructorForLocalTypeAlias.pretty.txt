@@ -1,0 +1,1 @@
+IntPredicateAlias(function: (kotlin.Int) -> kotlin.Boolean): IntPredicateAlias /* = IntPredicate */
