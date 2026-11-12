@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirSamConstructorSymbol(
@@ -60,8 +60,15 @@ internal class KaFirSamConstructorSymbol(
         get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
 
     override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol> = withValidityAssertion {
-        val callableId = firSymbol.callableId
-        return KaFirSamConstructorSymbolPointer(ClassId(callableId.packageName, callableId.callableName), this)
+        val typeAlias = firSymbol.fir.typeAliasConstructorInfo?.typeAliasSymbol
+        val ownerPointer: KaSymbolPointer<KaClassLikeSymbol> = if (typeAlias != null) {
+            // `functionalInterface` expands typealiased SAM interfaces.
+            // To get the typealias symbol, we need to extract it from the FIR
+            builder.classifierBuilder.buildTypeAliasSymbol(typeAlias).createPointer()
+        } else {
+            context(analysisSession) { functionalInterface.createPointer() }
+        }
+        return KaFirSamConstructorSymbolPointer(ownerPointer, this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
