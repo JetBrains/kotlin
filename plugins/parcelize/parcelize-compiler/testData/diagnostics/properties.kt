@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
+// ISSUE: https://issuetracker.google.com/585078316
 package test
 
 import kotlinx.parcelize.*
