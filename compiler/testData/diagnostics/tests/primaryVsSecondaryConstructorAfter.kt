@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // LANGUAGE: +ImprovedResolutionInSecondaryConstructors
 // ISSUE: KT-77275
 abstract class Super(x: String)

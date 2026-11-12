@@ -115,7 +115,12 @@ class WrongNumberOfTypeArguments(
 
 object UnsuccessfulCallableReferenceArgument : ResolutionDiagnostic(INAPPLICABLE)
 
-object UnsuccessfulContextSensitiveResolutionArgument : ResolutionDiagnostic(INAPPLICABLE)
+/**
+ * TODO: review — Reported for a candidate when CSR of an argument fails, while the argument keeps its own error.
+ * RESOLVED_WITH_ERROR makes such a candidate lose to the successful ones, win over the ones with any other error,
+ * and stop the tower resolver the way a successful one would, as if CSR did not exist.
+ */
+object UnsuccessfulContextSensitiveResolutionArgument : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
 /**
  * Wrapper for [ResolutionDiagnostic]s coming from expansions of nested collection literals.

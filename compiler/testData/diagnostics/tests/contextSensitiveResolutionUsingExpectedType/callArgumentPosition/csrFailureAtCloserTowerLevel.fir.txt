@@ -37,12 +37,12 @@ FILE: csrFailureAtCloserTowerLevel.kt
         local final fun foo(m: R|kotlin/Any|): R|kotlin/Unit| {
         }
 
-        R|/foo|(Q|MyEnum|.R|/MyEnum.X|)
+        R|<local>/foo<Inapplicable(RESOLVED_WITH_ERROR): <local>/foo>#|(<Unresolved name: X>#)
         R|<local>/foo|(Q|MyEnum|.R|/MyEnum.X|)
         R|/bar|(Q|MyEnum|.R|/MyEnum.X|)
         R|/bar|(Q|MyEnum|.R|/MyEnum.X|)
         R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|<local>/a|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/member|(Q|MyEnum|.R|/MyEnum.X|)
+            this@R|special/anonymous|.R|/A.member<Inapplicable(RESOLVED_WITH_ERROR): /A.member>#|(<Unresolved name: X>#)
             this@R|special/anonymous|.R|/A.member|(Q|MyEnum|.R|/MyEnum.X|)
         }
         )

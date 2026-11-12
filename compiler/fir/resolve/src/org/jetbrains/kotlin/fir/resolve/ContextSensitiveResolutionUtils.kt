@@ -84,7 +84,7 @@ private sealed class ContextSensitiveResolutionResult {
 /**
  * Resolves the CSR atom and applies the result to the system of an outer candidate:
  * - on success, the resolved expression replaces the original one in the containing call
- * - otherwise, the original (unresolved) expression remains and [UnsuccessfulContextSensitiveResolutionArgument] is reported
+ * - otherwise, the original expression remains as a fallback, and [UnsuccessfulContextSensitiveResolutionArgument] is reported
  */
 context(context: ResolutionContext, outerCandidateContext: OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver)
 fun runContextSensitiveResolutionForAtom(

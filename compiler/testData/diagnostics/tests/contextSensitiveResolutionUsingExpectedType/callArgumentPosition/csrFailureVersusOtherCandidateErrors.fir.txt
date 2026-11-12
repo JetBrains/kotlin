@@ -53,7 +53,7 @@ FILE: main.kt
         ^unsafeOrCsrFailure R|<local>/c|
     }
     public final fun test(a: R|ppp/A|, s: R|kotlin/String?|): R|kotlin/Unit| {
-        lval x: <ERROR TYPE REF: Ambiguity: invisibleOrCsrFailure, [ppp/invisibleOrCsrFailure, ppp/invisibleOrCsrFailure]> = <Ambiguity: invisibleOrCsrFailure, [ppp/invisibleOrCsrFailure, ppp/invisibleOrCsrFailure]>#(<Unresolved name: Blue>#)
-        lval y: <ERROR TYPE REF: Ambiguity: member, [ppp/A.member, ppp/A.member]> = R|<local>/a|.<Ambiguity: member, [ppp/A.member, ppp/A.member]>#(<Unresolved name: Blue>#)
-        lval z: <ERROR TYPE REF: Ambiguity: unsafeOrCsrFailure, [ppp/unsafeOrCsrFailure, ppp/unsafeOrCsrFailure]> = R|<local>/s|.<Ambiguity: unsafeOrCsrFailure, [ppp/unsafeOrCsrFailure, ppp/unsafeOrCsrFailure]>#(<Unresolved name: Blue>#)
+        lval x: R|ppp/Color| = R|ppp/invisibleOrCsrFailure<Inapplicable(RESOLVED_WITH_ERROR): ppp/invisibleOrCsrFailure>#|(<Unresolved name: Blue>#)
+        lval y: R|ppp/Color| = R|<local>/a|.R|ppp/A.member<Inapplicable(RESOLVED_WITH_ERROR): ppp/A.member>#|(<Unresolved name: Blue>#)
+        lval z: R|ppp/Color| = R|<local>/s|.R|ppp/unsafeOrCsrFailure<Inapplicable(RESOLVED_WITH_ERROR): ppp/unsafeOrCsrFailure>#|(<Unresolved name: Blue>#)
     }

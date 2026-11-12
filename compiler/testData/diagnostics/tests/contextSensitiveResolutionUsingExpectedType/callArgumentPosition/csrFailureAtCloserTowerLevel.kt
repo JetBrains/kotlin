@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-89779
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // FIR_DUMP
@@ -18,14 +18,14 @@ fun member(m: MyEnum) {} // (1)
 fun main(a: A) {
     fun foo(m: Any) {} // (2)
 
-    foo(X)
+    foo(<!UNRESOLVED_REFERENCE!>X<!>)
     foo(MyEnum.X)
 
     bar(X)
     bar(MyEnum.X)
 
     with(a) {
-        member(X)
+        member(<!UNRESOLVED_REFERENCE!>X<!>)
         member(MyEnum.X)
     }
 }
