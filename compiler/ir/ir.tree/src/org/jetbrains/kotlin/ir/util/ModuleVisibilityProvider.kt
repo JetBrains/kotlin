@@ -13,5 +13,5 @@ interface ModuleVisibilityProvider {
 }
 
 fun IrModuleFragment.canSeeInternalsOf(otherModule: IrModuleFragment): Boolean {
-    return otherModule.moduleVisibilityProvider?.canSeeInternals(this, otherModule) == true
+    return moduleVisibilityProvider!!.canSeeInternals(this, otherModule)
 }

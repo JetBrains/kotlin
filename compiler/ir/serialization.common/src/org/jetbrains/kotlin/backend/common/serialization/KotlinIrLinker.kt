@@ -516,8 +516,8 @@ private object IrLinkerModuleVisibilityProvider : ModuleVisibilityProvider {
     override fun canSeeInternals(thisModule: IrModuleFragment, otherModule: IrModuleFragment): Boolean {
         if (otherModule.moduleVisibilityProvider !is IrLinkerModuleVisibilityProvider) return false
 
-        val fromModuleKlib = thisModule.kotlinLibrary
-        val toModuleKlib = otherModule.kotlinLibrary
+        val fromModuleKlib = thisModule.kotlinLibrary!!
+        val toModuleKlib = otherModule.kotlinLibrary!!
         return fromModuleKlib == toModuleKlib || thisModule.friendLibraries?.contains(toModuleKlib) == true
     }
 }
