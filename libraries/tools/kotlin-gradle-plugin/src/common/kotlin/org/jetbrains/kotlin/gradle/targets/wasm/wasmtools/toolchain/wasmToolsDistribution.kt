@@ -15,7 +15,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsBuildPlatform
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsVersion
-import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.OsType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parseOsType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
@@ -66,9 +65,8 @@ internal fun wasmToolsArchiveExtension(platform: WasmToolsBuildPlatform): String
     if (platform.isWindows) "zip" else "tar.gz"
 
 internal fun ProviderFactory.detectWasmToolsPlatform(): Provider<WasmToolsBuildPlatform> {
-    val uname = unameExecResult
     return currentHostPlatform().zip(systemProperty("os.arch")) { osType, osArch ->
-        val platform = parsePlatform(osType, osArch, uname)
+        val platform = parsePlatform(osType, osArch)
         WasmToolsBuildPlatform(platform.name, platform.arch)
     }
 }

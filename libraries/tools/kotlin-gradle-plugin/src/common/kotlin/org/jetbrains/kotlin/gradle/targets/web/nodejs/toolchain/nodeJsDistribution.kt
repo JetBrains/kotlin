@@ -15,7 +15,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.BuildPlatform
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
-import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.OsType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNodeBinDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNpmScriptFile
@@ -55,9 +54,8 @@ internal fun nodeJsArchiveExtension(platform: BuildPlatform): String =
 
 // copy from NodeJsPluginApplier#addPlatform
 internal fun ProviderFactory.detectBuildPlatform(): Provider<BuildPlatform> {
-    val uname = unameExecResult
     return currentHostOs().zip(systemProperty("os.arch")) { osType, osArch ->
-        val platform = parsePlatform(osType, osArch, uname)
+        val platform = parsePlatform(osType, osArch)
         BuildPlatform(platform.name, platform.arch)
     }
 }
