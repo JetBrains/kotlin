@@ -598,6 +598,7 @@ tasks {
         dependsOn(":compiler:multiplatform-parsing:jvmTest")
         dependsOn(":compiler:fir:modularized-tests:test")
         dependsOn(":compiler:util:test")
+        dependsOn(":core:error.handling:check")
         dependsOn(":core:names:check")
         dependsOn(":core:language.model:check")
         dependsOn(":core:language.targets:check")
