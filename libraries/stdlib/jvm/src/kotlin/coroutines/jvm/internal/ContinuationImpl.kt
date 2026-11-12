@@ -30,12 +30,17 @@ internal abstract class BaseContinuationImpl(
             with(current) {
                 val completion = completion!! // fail fast when trying to resume continuation without completion
                 val outcome: Result<Any?> =
-                    try {
-                        val outcome = invokeSuspend(param)
-                        if (outcome === COROUTINE_SUSPENDED) return
-                        Result.success(outcome)
-                    } catch (exception: Throwable) {
-                        Result.failure(exception)
+                    if (param.isFailure && wouldImmediatelyRethrowException()) {
+                        // Same outcome as invokeSuspend would give, but without the cost to throw and catch the exception
+                        param
+                    } else {
+                        try {
+                            val outcome = invokeSuspend(param)
+                            if (outcome === COROUTINE_SUSPENDED) return
+                            Result.success(outcome)
+                        } catch (exception: Throwable) {
+                            Result.failure(exception)
+                        }
                     }
                 releaseIntercepted() // this state machine instance is terminating
                 if (completion is BaseContinuationImpl) {
@@ -52,6 +57,13 @@ internal abstract class BaseContinuationImpl(
     }
 
     protected abstract fun invokeSuspend(result: Result<Any?>): Any?
+
+    /**
+     * Returns `true` if [invokeSuspend] called with a failed result in the current state
+     * throws the exception of this result before any other action.
+     * The compiler overrides it in state machines.
+     */
+    protected open fun wouldImmediatelyRethrowException(): Boolean = false
 
     protected open fun releaseIntercepted() {
         // does nothing here, overridden in ContinuationImpl

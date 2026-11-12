@@ -29,6 +29,7 @@ const val COROUTINE_LABEL_FIELD_NAME = "label"
 const val SUSPEND_FUNCTION_CREATE_METHOD_NAME = "create"
 const val INVOKE_SUSPEND_METHOD_NAME = "invokeSuspend"
 const val CONTINUATION_RESULT_FIELD_NAME = "result"
+const val WOULD_IMMEDIATELY_RETHROW_EXCEPTION_METHOD_NAME = "wouldImmediatelyRethrowException"
 
 private const val GET_CONTEXT_METHOD_NAME = "getContext"
 

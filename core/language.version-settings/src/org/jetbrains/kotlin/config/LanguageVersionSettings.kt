@@ -648,6 +648,7 @@ enum class LanguageFeature(
     CallableReferencesToContextual(sinceVersion = null, issue = "KT-54594", enabledInLatestLVTests = true),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-19318", enabledInLatestLVTests = false),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308", enabledInLatestLVTests = false),
+    JvmOptimizeImmediateRethrowForSuspend(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_6, issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
 
     CompanionBlocks(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5, enabledInLatestLVTests = true),
     CompanionExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_6, enabledInLatestLVTests = true) {
