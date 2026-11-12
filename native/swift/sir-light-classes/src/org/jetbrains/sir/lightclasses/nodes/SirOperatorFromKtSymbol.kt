@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
 import org.jetbrains.kotlin.sir.SirSetter
 import org.jetbrains.kotlin.sir.SirSubscript
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypeParameter
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildSetter
@@ -56,6 +57,7 @@ internal abstract class SirClassOperatorTrampolineFunction(
     override val isInstance: Boolean get() = false
     override val modality: SirModality get() = SirModality.FINAL
     override val attributes: List<SirAttribute> get() = source.attributes
+    override val typeParameters: List<SirTypeParameter> get() = source.typeParameters
     override val contextParameter: SirParameter? get() = source.contextParameter
     override val extensionReceiverParameter: SirParameter? get() = source.extensionReceiverParameter
     override val errorType: SirType get() = source.errorType
@@ -131,6 +133,7 @@ internal class SirSubscriptTrampoline(
     override val isOverride: Boolean get() = getterFunction.isOverride
     override val isInstance: Boolean = true
     override val modality: SirModality get() = getterFunction.modality
+    override val typeParameters: List<SirTypeParameter> get() = getterFunction.typeParameters
     override val parameters: List<SirParameter> get() = getterFunction.parameters
     override val returnType: SirType get() = getterFunction.returnType
 

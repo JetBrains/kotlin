@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
 import org.jetbrains.kotlin.sir.SirTupleType
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypeParameterType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.types.Variance
 
 internal object StandaloneSirTypeNamer : SirTypeNamer {
-    override fun swiftFqName(type: SirType): String = type.swiftName
+    override fun swiftFqName(type: SirType, resolveToUpperBounds: Boolean): String = type.swiftName(resolveToUpperBounds)
 
     context(session: SirSession)
     override fun kotlinFqName(sirType: SirType, nameType: SirTypeNamer.KotlinNameType): String = session.withSessions {
@@ -83,6 +84,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
             is SirNominalType -> kotlinFqName(type)
             is SirExistentialType -> kotlinFqName(type)
             is SirFunctionalType -> "${"kotlin.coroutines.Suspend".takeIf { type.isAsync } ?: ""}Function${type.contextTypes.count() + type.parameterTypes.count()}<${(type.contextTypes + type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
+            is SirTypeParameterType -> kotlinFqName(type.typeParameter.constraint ?: return "kotlin.Any")
             is SirErrorType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype ->
                 error("Type $type can not be named")
         }
@@ -99,7 +101,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         return when (type) {
             is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
             is SirExistentialType -> type.protocols.singleOrNull()?.first?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
-            is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype -> null
+            is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType, is SirTypeParameterType, is SirType.Metatype -> null
         } ?: kotlinFqName(type)
     }
 

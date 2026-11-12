@@ -60,47 +60,53 @@ fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () ->
 }
 
 val SirType.swiftName
-    get(): String = when (this) {
-        is SirExistentialType -> protocols.takeIf {
-            it.isNotEmpty()
-        }?.joinToString(prefix = "any ", separator = " & ") { [protocol, typeArguments] ->
-            val typeArguments = typeArguments.takeIf { it.isNotEmpty() }
-            "${protocol.swiftFqName}${typeArguments?.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftName } ?: ""}"
-        } ?: "Any"
-        is SirNominalType -> listOfNotNull(
-            parent?.swiftName?.let { "$it." },
-            typeDeclaration.swiftFqName,
-            typeArguments.takeIf { it.isNotEmpty() }?.let { it.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftName } }
-        ).joinToString("")
-        is SirErrorType -> "ERROR_TYPE"
-        is SirUnsupportedType -> "Swift.Never"
-        is SirFunctionalType -> {
-            val parameters = buildList {
-                contextType?.let(::add)
-                addAll(parameterTypes)
-            }.joinToString { it.annotatedSwiftName }
-            val async = " async".takeIf { isAsync } ?: ""
-            val throws = when (errorType) {
-                SirType.never -> ""
-                SirType.any -> " throws"
-                else -> " throws(${errorType.swiftName})"
-            }
-            val returnType = returnType.swiftName
-            "($parameters)$async$throws -> $returnType"
-        }
-        is SirTupleType -> "(${types.joinToString { [name, type] -> "${name?.let { "$it: " } ?: ""}${type.swiftName}" }})"
-        is SirType.Metatype -> when (type) {
-            is SirNominalType, is SirType.Metatype -> type.swiftName
-            is SirExistentialType -> type.swiftName.removePrefix("any ").let { if (type.protocols.size == 1) it else "($it)" }
-            else -> "(${type.swiftName})"
-        }.let { "$it.Type" }
-    }
+    get(): String = swiftName(false)
 
-val SirType.annotatedSwiftName
-    get(): String = (this.attributes.map {
+fun SirType.swiftName(resolveToUpperBounds: Boolean): String = when (this) {
+    is SirExistentialType -> protocols.takeIf {
+        it.isNotEmpty()
+    }?.joinToString(prefix = "any ", separator = " & ") { [protocol, typeArguments] ->
+        val typeArguments = typeArguments.takeIf { it.isNotEmpty() }
+        "${protocol.swiftFqName}${typeArguments?.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftName(resolveToUpperBounds) } ?: ""}"
+    } ?: "Any"
+    is SirNominalType -> listOfNotNull(
+        parent?.swiftName(resolveToUpperBounds)?.let { "$it." },
+        typeDeclaration.swiftFqName,
+        typeArguments.takeIf { it.isNotEmpty() }?.let { it.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftName(resolveToUpperBounds) } }
+    ).joinToString("")
+    is SirTypeParameterType -> when (resolveToUpperBounds) {
+        true -> typeParameter.constraint?.swiftName(true) ?: "Any"
+        false -> typeParameter.name.swiftIdentifier
+    }
+    is SirErrorType -> "ERROR_TYPE"
+    is SirUnsupportedType -> "Swift.Never"
+    is SirFunctionalType -> {
+        val parameters = buildList {
+            contextType?.let(::add)
+            addAll(parameterTypes)
+        }.joinToString { it.annotatedSwiftName(resolveToUpperBounds) }
+        val async = " async".takeIf { isAsync } ?: ""
+        val throws = when (errorType) {
+            SirType.never -> ""
+            SirType.any -> " throws"
+            else -> " throws(${errorType.swiftName(resolveToUpperBounds)})"
+        }
+        val returnType = returnType.swiftName(resolveToUpperBounds)
+        "($parameters)$async$throws -> $returnType"
+    }
+    is SirTupleType -> "(${types.joinToString { [name, type] -> "${name?.let { "$it: " } ?: ""}${type.swiftName(resolveToUpperBounds)}" }})"
+    is SirType.Metatype -> when (type) {
+        is SirNominalType, is SirType.Metatype -> type.swiftName(resolveToUpperBounds)
+        is SirExistentialType -> type.swiftName(resolveToUpperBounds).removePrefix("any ").let { if (type.protocols.size == 1) it else "($it)" }
+        else -> "(${type.swiftName(resolveToUpperBounds)})"
+    }.let { "$it.Type" }
+}
+
+fun SirType.annotatedSwiftName(resolveToUpperBounds: Boolean): String =
+    (this.attributes.map {
         assert(it.arguments.isNullOrEmpty()) { "Rendering swift attributes with arguments is not supported" }
         "@${it.identifier.swiftIdentifier}${it.arguments?.let { "()" } ?: ""}"
-    } + this.swiftName).joinToString(" ")
+    } + this.swiftName(resolveToUpperBounds)).joinToString(" ")
 
 fun SirAttribute.renderAsSwiftSourceLine(): String {
     val rendered = arguments?.joinToString(prefix = "(", postfix = ")") { arg ->
@@ -189,6 +195,7 @@ val SirType.unavailableTypes: List<SirType>
         } + protocols.flatMap { [_, types] -> types.flatMap { it.unavailableTypes } }
         is SirTupleType -> types.flatMap { it.second.unavailableTypes }
         is SirFunctionalType -> (contextTypes + parameterTypes + errorType + returnType).flatMap { it.unavailableTypes }
+        is SirTypeParameterType -> typeParameter.constraint?.unavailableTypes ?: emptyList()
         is SirType.Metatype -> type.unavailableTypes
         is SirUnsupportedType -> listOf(this)
         is SirErrorType -> emptyList()
@@ -206,3 +213,19 @@ inline fun MutableList<SirAttribute>.replaceOrAddPropagatedUnavailability(unavai
     removeAll { it is SirAttribute.Available }
     add(SirAttribute.Available(message, unavailable = true))
 }
+
+val SirType.referencesTypeParameters: Boolean
+    get() = when (this) {
+        is SirTypeParameterType -> true
+        is SirNominalType -> typeArguments.any { it.referencesTypeParameters }
+        is SirExistentialType -> protocols.any { [_, typeArguments] -> typeArguments.any { it.referencesTypeParameters } }
+        is SirTupleType -> types.any { [_, type] -> type.referencesTypeParameters }
+        is SirFunctionalType -> buildList {
+            addAll(contextTypes)
+            addAll(parameterTypes)
+            add(errorType)
+            add(returnType)
+        }.any { it.referencesTypeParameters }
+        is SirType.Metatype -> type.referencesTypeParameters
+        is SirUnsupportedType, is SirErrorType -> false
+    }

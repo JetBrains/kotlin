@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirSetterFunction
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypeParameter
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -104,6 +105,8 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
         }
         prefix + variableName.replaceFirstChar { it.titlecase() }
     }
+    override val typeParameters: List<SirTypeParameter>
+        get() = emptyList()
     internal val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
         translateContextParameters()
     }

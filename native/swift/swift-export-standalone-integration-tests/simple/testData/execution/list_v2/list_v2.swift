@@ -4,6 +4,7 @@ import ListExportObjC
 import KotlinStdlib
 import Testing
 import KotlinRuntimeSupport
+import ExportedKotlinPackages
 
 func assertReversed<T: Equatable>(reversed: any KotlinRuntimeSupport.List<T>, original: any KotlinRuntimeSupport.List<T>) throws {
     let expected = original.reversed()
@@ -18,61 +19,61 @@ func assertEquals<T: Equatable>(actual: any KotlinRuntimeSupport.List<T>, expect
     }
 }
 
-// TODO: Create generic listOf() and toList functions KT-88831
+// TODO: Create generic toList functions KT-88831
 let array = [4, 8, 5, 16, 23, 42]
 
 @Test
 func testArrayOfInt() throws {
-    let original = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
-    try assertReversed(reversed: reverseListInt(l: original), original: original)
+    let original = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    try assertReversed(reversed: reverseList(l: original), original: original)
 }
 
 @Test
 func testArrayOfShort() throws {
-    let original = listOf(elements: Int16(4), 8, 5, 16, 23, 42)
-    try assertReversed(reversed: reverseListShort(l: original), original: original)
+    let original = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int16(4), 8, 5, 16, 23, 42)
+    try assertReversed(reversed: reverseList(l: original), original: original)
 }
 
 // TODO: kotlin.ClassCastException: class kotlin.Int cannot be cast to class kotlin.Char KT-90618
 // @Test
 // func testArrayOfChar() throws {
 //     let original = Array("AB0-Ыß☺🙂系".utf16)
-//     let originalKt = listOf(elements:
+//     let originalKt = ExportedKotlinPackages.kotlin.collections.listOf(elements:
 //         original[0], original[1], original[2], original[3], original[4],
 //         original[5], original[6], original[7], original[8], original[9],
 //     )
 //     try #require(originalKt.count == original.count)
-//     try assertReversed(reversed: reverseListChar(l: originalKt), original: originalKt)
+//     try assertReversed(reversed: reverseList(l: originalKt), original: originalKt)
 // }
 
 @Test
 func testArrayOfString() throws {
-    let original = listOf(elements: String(4), String(8), String(5), String(16), String(23), String(42))
-    try assertReversed(reversed: reverseListString(l: original), original: original)
+    let original = ExportedKotlinPackages.kotlin.collections.listOf(elements: String(4), String(8), String(5), String(16), String(23), String(42))
+    try assertReversed(reversed: reverseList(l: original), original: original)
 }
 
 @Test
 func testArrayOfBox() throws {
-    let original = listOf(elements: Box(x: 4), Box(x: 8), Box(x: 5), Box(x: 16), Box(x: 23), Box(x: 42))
-    try assertReversed(reversed: reverseListBox(l: original), original: original)
+    let original = ExportedKotlinPackages.kotlin.collections.listOf(elements: Box(x: 4), Box(x: 8), Box(x: 5), Box(x: 16), Box(x: 23), Box(x: 42))
+    try assertReversed(reversed: reverseList(l: original), original: original)
 }
 
 @Test
 func testArrayOfOptInt() throws {
-    let original = listOf(elements: Int32(4), 8, 5, 16, 23, 42, nil)
-    try assertReversed(reversed: reverseListOptInt(l: original), original: original)
+    let original = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 8, 5, 16, 23, 42, nil)
+    try assertReversed(reversed: reverseList(l: original), original: original)
 }
 
 @Test
 func testArrayOfOptString() throws {
-    let original = listOf(elements: String(4), String(8), String(5), String(16), String(23), String(42), nil)
-    try assertReversed(reversed: reverseListOptString(l: original), original: original)
+    let original = ExportedKotlinPackages.kotlin.collections.listOf(elements: String(4), String(8), String(5), String(16), String(23), String(42), nil)
+    try assertReversed(reversed: reverseList(l: original), original: original)
 }
 
 @Test
 func testArrayOfOptBox() throws {
-    let original = listOf(elements: Box(x: 4), Box(x: 8), Box(x: 5), Box(x: 16), Box(x: 23), Box(x: 42), nil)
-    try assertReversed(reversed: reverseListOptBox(l: original), original: original)
+    let original = ExportedKotlinPackages.kotlin.collections.listOf(elements: Box(x: 4), Box(x: 8), Box(x: 5), Box(x: 16), Box(x: 23), Box(x: 42), nil)
+    try assertReversed(reversed: reverseList(l: original), original: original)
 }
 
 // TODO: any List is not Equatable KT-88831
@@ -107,7 +108,7 @@ func testArrayOfOptBox() throws {
 func testOptArray() throws {
     try #require(reverseOptListInt(l: .none) == nil)
 
-    let originalSome = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let originalSome = ExportedKotlinPackages.kotlin.collections.listOfNotNull(elements: Int32(4), 8, 5, 16, 23, 42)
     try assertReversed(reversed: reverseOptListInt(l: originalSome)!, original: originalSome)
 }
 
@@ -123,22 +124,22 @@ func testOptArray() throws {
 
 @Test
 func testExtArrayOrInt() throws {
-    let original = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let original = ExportedKotlinPackages.kotlin.collections.listOfNotNull(elements: Int32(4), 8, 5, 16, 23, 42)
     try assertReversed(reversed: extReverseListInt(original), original: original)
 }
 
 @Test
 func testExtArrayOrIntProp() throws {
-    let original = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let original = ExportedKotlinPackages.kotlin.collections.listOfNotNull(elements: Int32(4), 8, 5, 16, 23, 42)
     try assertReversed(reversed: getExtReverseListIntProp(original), original: original)
 }
 
 @Test
 func testMutableArrayOfInt() throws {
-    let original = mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let original = ExportedKotlinPackages.kotlin.collections.mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
     original[1] = 64
-    let expected = listOf(elements: Int32(4), 64, 5, 16, 23, 42)
-    try assertReversed(reversed: reverseListInt(l: original), original: expected)
+    let expected = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 64, 5, 16, 23, 42)
+    try assertReversed(reversed: reverseList(l: original), original: expected)
 }
 
 @Test
@@ -223,13 +224,13 @@ func testMyListImpl() throws {
 func testMyMutableListImpl() throws {
     let original = myMutableListImplOf(elements: Int32(4), 8, 5, 16, 23, 42)
     original[1] = 64
-    let expected = listOf(elements: Int32(4), 64, 5, 16, 23, 42)
+    let expected = ExportedKotlinPackages.kotlin.collections.listOfNotNull(elements: Int32(4), 64, 5, 16, 23, 42)
     try assertReversed(reversed: reverseMyListImpl(l: original), original: expected)
 }
 
 @Test
 func testListSubSequenceGet() throws {
-    let list = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let list = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 8, 5, 16, 23, 42)
     let subList = list[1..<4]
     try #require(subList[2] == 5)
     // subList[2] = 6 // error: cannot assign through subscript: 'subList' is a 'let' constant
@@ -237,29 +238,29 @@ func testListSubSequenceGet() throws {
 
 @Test
 func testListSubSequenceSet() throws {
-    let list = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let list = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 8, 5, 16, 23, 42)
     var subList = list[1..<4]
     try #require(subList[2] == 5)
     subList[2] = 6
     try #require(subList[2] == 6)
     // list is immutable so only the subList should have been changed
-    try assertEquals(actual: list, expected: listOf(elements:  Int32(4), 8, 5, 16, 23, 42))
+    try assertEquals(actual: list, expected: ExportedKotlinPackages.kotlin.collections.listOf(elements:  Int32(4), 8, 5, 16, 23, 42))
 }
 
 @Test
 func testMutableListSubSequenceSet() throws {
-    let mutableList = mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let mutableList = ExportedKotlinPackages.kotlin.collections.mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
     var mutableSubList = mutableList[1..<4]
     try #require(mutableSubList[2] == 5)
     mutableSubList[2] = 6
     try #require(mutableSubList[2] == 6)
     // list is mutable and should have been changed
-    try assertEquals(actual: mutableList, expected: listOf(elements: Int32(4), 8, 6, 16, 23, 42))
+    try assertEquals(actual: mutableList, expected: ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 8, 6, 16, 23, 42))
 }
 
 @Test
 func testListSubSequenceSetRange() throws {
-    let list = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let list = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 8, 5, 16, 23, 42)
     var subListA = list[0..<3]
     var subListB = list[3..<6]
     try #require(subListA[0] == 4)
@@ -267,12 +268,12 @@ func testListSubSequenceSetRange() throws {
     subListA[0..<3] = subListB
     try #require(subListA[0] == 16)
     // list is immutable so only the subList should have been changed
-    try assertEquals(actual: list, expected: listOf(elements: Int32(4), 8, 5, 16, 23, 42))
+    try assertEquals(actual: list, expected: ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 8, 5, 16, 23, 42))
 }
 
 @Test
 func testMutableListSubSequenceSetRange() throws {
-    let mutableList = mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let mutableList = ExportedKotlinPackages.kotlin.collections.mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
     var mutableSubListA = mutableList[0..<3]
     var mutableSubListB = mutableList[3..<6]
     try #require(mutableSubListA[0] == 4)
@@ -280,15 +281,15 @@ func testMutableListSubSequenceSetRange() throws {
     mutableSubListA[0..<3] = mutableSubListB
     try #require(mutableSubListA[0] == 16)
     // list is mutable and should have been changed
-    try assertEquals(actual: mutableList, expected: listOf(elements: Int32(16), 23, 42, 16, 23, 42))
+    try assertEquals(actual: mutableList, expected: ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(16), 23, 42, 16, 23, 42))
 }
 
 @Test
 func testMutableListSetSubSequence() throws {
-    let mutableList = mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
-    let list = listOf(elements: Int32(9), 6, 2, 7, 3)
+    let mutableList = ExportedKotlinPackages.kotlin.collections.mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let list = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(9), 6, 2, 7, 3)
     mutableList[2..<5] = list[1..<4]
-    try assertEquals(actual: mutableList, expected: listOf(elements: Int32(4), 8, 6, 2, 7, 42))
+    try assertEquals(actual: mutableList, expected: ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 8, 6, 2, 7, 42))
 }
 
 @Test

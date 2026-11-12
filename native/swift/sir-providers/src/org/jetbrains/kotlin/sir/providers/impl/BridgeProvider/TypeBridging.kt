@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 private val SirFunctionalType.bridgeNameSuffix: String
-    get() = (if (isAsync) "async_" else "") + returnType.swiftName
+    get() = (if (isAsync) "async_" else "") + returnType.swiftName(true)
 
 context(session: SirSession)
 internal fun bridgeType(type: SirType): BidirectionalBridge =
@@ -93,6 +93,11 @@ private fun bridgeTypeForVariadicParameter(type: SirType): Bridge =
 context(session: SirSession)
 internal fun bridgeType(type: SirType, position: SirTypeVariance): Bridge =
     bridgeReifiedType(type, position) ?: when (type) {
+        is SirTypeParameterType -> {
+            val base = bridgeType(type.typeParameter.constraint ?: return AsAnyBridgeable, position)
+            check(base is BidirectionalBridge) { "Type parameter constraint ($type) requires a BidirectionalBridge" }
+            AsTypeParameter(type, base)
+        }
         is SirNominalType -> bridgeNominalType(type, position)
         is SirExistentialType -> bridgeExistential(type, position)
         is SirFunctionalType -> AsInvariantBlock(type)
@@ -133,6 +138,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): BidirectionalBridge = w
     is AsExistential,
     is AsAnyBridgeable,
     is AsTyped,
+    is AsTypeParameter,
     is AsOpaqueObject,
     is SirCustomTypeTranslatorImpl.RangeBridge,
     AsNothing,
@@ -161,6 +167,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
             is AsExistential,
             is AsAnyBridgeable,
             is AsTyped,
+            is AsTypeParameter,
             is AsInvariantBlock,
             is AsError,
             is SirCustomTypeTranslatorImpl.RangeBridge
@@ -971,6 +978,7 @@ internal sealed interface Bridge {
                 require(
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
                             wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsTyped ||
+                            wrappedObject is AsTypeParameter ||
                             wrappedObject is AsInvariantBlock ||
                             wrappedObject is AsError ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
@@ -984,7 +992,7 @@ internal sealed interface Bridge {
                 return when (wrappedObject) {
                     is AsObjCBridged, is AsInvariantBlock ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTyped, is AsError, is SirCustomTypeTranslatorImpl.RangeBridge ->
+                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTyped, is AsTypeParameter, is AsError, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res?: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
@@ -1177,7 +1185,7 @@ internal sealed interface Bridge {
                 val callArgs = (listOfNotNull(contextArgument) + arguments.drop(contextParameters.size)).joinToString()
                 val awaitPrefix = if (swiftType.isAsync) "try await " else ""
                 return "$awaitPrefix(Unmanaged<AnyObject>.fromOpaque($pointerToClosure)" +
-                        ".takeUnretainedValue() as! ${swiftType.swiftName})($callArgs)"
+                        ".takeUnretainedValue() as! ${swiftType.swiftName(true)})($callArgs)"
             }
 
             context(sir: SirSession)
@@ -1338,6 +1346,33 @@ internal sealed interface Bridge {
                 }
             }
     }
+
+    class AsTypeParameter(
+        override val swiftType: SirTypeParameterType,
+        val base: BidirectionalBridge,
+    ) : BidirectionalBridge {
+
+        class ReverseBridgeTypeName(typeNamer: SirTypeNamer) : SirTypeNamer by typeNamer
+
+        override val kotlinType: KotlinType get() = base.kotlinType
+        override val cType: CType get() = base.cType
+
+        override val inKotlinSources: ValueConversion get() = base.inKotlinSources
+
+        override val inSwiftSources = object : ValueConversion {
+
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                base.inSwiftSources.swiftToKotlin(typeNamer, valueExpression)
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val base = base.inSwiftSources.kotlinToSwift(typeNamer, valueExpression)
+                if (typeNamer is ReverseBridgeTypeName) return base
+                return "$base as! ${typeNamer.swiftFqName(swiftType)}"
+            }
+        }
+    }
 }
 
 private fun Bridge.renderNil(): String = if (this is AsObjCBridgedOptional) "NSNull()" else "nil"
@@ -1364,6 +1399,7 @@ private val SirType.allRequiredOptIns: List<ClassId>
             addAll(returnType.allRequiredOptIns)
         }
         is SirTupleType -> types.flatMap { it.second.allRequiredOptIns }
+        is SirTypeParameterType -> typeParameter.constraint?.allRequiredOptIns ?: emptyList()
         is SirType.Metatype -> type.allRequiredOptIns
         is SirErrorType, SirUnsupportedType -> emptyList()
     }

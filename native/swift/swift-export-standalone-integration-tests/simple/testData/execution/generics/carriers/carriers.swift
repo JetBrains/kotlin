@@ -34,7 +34,7 @@ func varargT() throws {
     #expect(describeVararg(xs: Double(10.25)) == "Double:10.25")
     #expect(describeVararg(xs: true) == "Boolean:true")
     #expect(describeVararg(xs: "s") == "String:s")
-    #expect(describeVararg(xs: nil) == "null")
+    #expect(describeVararg(xs: nil as Int32?) == "null")
     #expect(describeVararg(xs: [Int32(1), Int32(2)]) == "List[Int:1,Int:2]")
     #expect(describeVararg(xs: [Int32]()) == "List[]")
     #expect(describeVararg(xs: Foo(id: 5)) == "Foo:5")

@@ -6,7 +6,7 @@ import KotlinRuntime
 func smoke() throws {
     let foo = Foo(i: 5)
     try #require(foo == id(param: foo) as! KotlinBase)
-    try #require(nil == id(param: nil))
+    try #require(nil == id(param: nil as Foo?))
 }
 
 @Test

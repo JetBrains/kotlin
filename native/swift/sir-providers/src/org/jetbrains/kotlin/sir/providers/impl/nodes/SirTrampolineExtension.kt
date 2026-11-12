@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirTupleType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirTypeConstraint
+import org.jetbrains.kotlin.sir.SirTypeParameterType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.optional
+import org.jetbrains.kotlin.sir.util.referencesTypeParameters
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 
@@ -37,6 +39,7 @@ public class SirTrampolineExtension private constructor(
         private val SirFunction.extendedType: SirType?
             get() {
                 val receiverType = extensionReceiverParameter?.type ?: return null
+                if (receiverType.referencesTypeParameters) return null
                 val isOptional = receiverType is SirOptionalType
                 val type = if (isOptional) receiverType.wrappedType else receiverType
                 val extendedType = when (type) {
@@ -44,6 +47,7 @@ public class SirTrampolineExtension private constructor(
                     is SirOptionalType -> null // nested optionals are unsupported
                     is SirTupleType -> null // extending tuples is experimental
                     is SirFunctionalType -> null // functional types cannot be extended
+                    is SirTypeParameterType -> null // we don't support extending type parameters
                     is SirNominalType -> type
                     is SirExistentialType -> type.protocols.singleOrNull()?.let {
                         // single protocol can be extended as nominal type
