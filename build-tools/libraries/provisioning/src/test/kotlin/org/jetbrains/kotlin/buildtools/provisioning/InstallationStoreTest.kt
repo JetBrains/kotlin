@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.provisioning
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import java.io.IOException
 import java.lang.management.ManagementFactory
 import java.nio.file.AccessDeniedException
 import java.nio.file.Files
@@ -268,6 +269,28 @@ class InstallationStoreTest {
         )
         assertEquals(0, produced.get())
         assertTrue(Files.exists(leftover.resolve("stale")), "the leftover is left alone")
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "POSIX permissions")
+    fun `an installation whose marker cannot be read is not deleted as a leftover`() {
+        val installation = store().install("tool-1.0") { writeTool(it) }
+        val noAccess = PosixFilePermissions.fromString("---------")
+        val original = Files.getPosixFilePermissions(installation)
+        Files.setPosixFilePermissions(installation, noAccess)
+        try {
+            val exception = assertFailsWith<IOException> { store().install("tool-1.0") { error("must not produce") } }
+
+            assertEquals(
+                "Cannot tell whether '$installation' is a complete installation: its '.provisioned' file cannot be read. " +
+                        "Check that the directory is accessible.",
+                exception.message,
+            )
+        } finally {
+            Files.setPosixFilePermissions(installation, original)
+        }
+        assertEquals("tool", String(Files.readAllBytes(installation.resolve("tool"))), "the installation is still there")
+        assertEquals(listOf("installed tool-1.0"), events)
     }
 
     @Test

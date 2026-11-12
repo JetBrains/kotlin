@@ -151,6 +151,7 @@ public class InstallationStore internal constructor(
     private fun removeLeftover(installation: Path) {
         // a broken symlink counts as well
         if (!Files.exists(installation, LinkOption.NOFOLLOW_LINKS)) return
+        requireMarkerAbsent(installation)
         when (leftoverPolicy) {
             LeftoverPolicy.FAIL -> throw LeftoverInstallationException(installation, markerFileName)
             LeftoverPolicy.REPLACE -> {
@@ -158,6 +159,21 @@ public class InstallationStore internal constructor(
                 listener.leftoverRemoved(installation)
             }
         }
+    }
+
+    /**
+     * Makes sure that [installation] really has no marker before it is treated as a leftover. [isComplete] also says no
+     * when the marker cannot be looked at, on a network share that hiccups for example, and deleting a good installation
+     * that other builds are running from over that would be far worse than failing this one.
+     */
+    private fun requireMarkerAbsent(installation: Path) {
+        if (Files.notExists(installation.resolve(markerFileName))) return
+        // something that is not a directory has no place for a marker at all
+        if (!Files.isDirectory(installation, LinkOption.NOFOLLOW_LINKS)) return
+        throw IOException(
+            "Cannot tell whether '$installation' is a complete installation: its '$markerFileName' file cannot be read. " +
+                    "Check that the directory is accessible."
+        )
     }
 
     private fun checkProduced(produced: Path, staging: Path, id: String): Path {
