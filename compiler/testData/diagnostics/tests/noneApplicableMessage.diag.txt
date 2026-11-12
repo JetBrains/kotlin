@@ -1,4 +1,4 @@
-/noneApplicableMessage.kt:6:5: error: None of the following candidates is applicable:
+/noneApplicableMessage.kt:6:5: error: None of the following candidates is applicable for expression 'println(::unresolved)':
 
 fun println(message: Any?): Unit
 fun println(message: Int): Unit

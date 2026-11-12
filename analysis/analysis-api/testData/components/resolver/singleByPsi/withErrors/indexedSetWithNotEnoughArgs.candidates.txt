@@ -54,5 +54,5 @@ KtArrayAccessExpression(93,97): 'c[1]'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b' of type 'String'.>
     isInBestCandidates = true

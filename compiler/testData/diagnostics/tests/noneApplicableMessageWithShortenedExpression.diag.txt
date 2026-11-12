@@ -1,0 +1,23 @@
+/noneApplicableMessageWithShortenedExpression.kt:8:5: error: None of the following candidates is applicable for expression 'foo { "A short lambda" }':
+
+fun foo(a: Int): Unit:
+  Argument type mismatch: actual type is '() -> String', but 'Int' was expected.
+
+fun foo(a: String): Unit:
+  Argument type mismatch: actual type is '() -> String', but 'String' was expected.
+
+/noneApplicableMessageWithShortenedExpression.kt:9:5: error: None of the following candidates is applicable:
+
+fun foo(a: Int): Unit:
+  Argument type mismatch: actual type is '() -> String', but 'Int' was expected.
+
+fun foo(a: String): Unit:
+  Argument type mismatch: actual type is '() -> String', but 'String' was expected.
+
+/noneApplicableMessageWithShortenedExpression.kt:10:5: error: None of the following candidates is applicable for expression 'foo { a: Int -> ... }':
+
+fun foo(a: Int): Unit:
+  Argument type mismatch: actual type is '(Int) -> String', but 'Int' was expected.
+
+fun foo(a: String): Unit:
+  Argument type mismatch: actual type is '(Int) -> String', but 'String' was expected.

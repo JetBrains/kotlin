@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.projectionKindAsString
@@ -16,7 +17,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.FirDynamicUnsupportedChec
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.constructors
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.isDeprecationLevelHidden
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -32,9 +39,11 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPo
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.syntax.syntaxComponent
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -242,6 +251,8 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
                     qualifiedAccessSource ?: source,
                     symbol.resolvedReturnType.valueParameterName(session) ?: symbol.name,
+                    symbol.resolvedReturnType.substituteTypeParameterTypes(candidate, typeContext).takeIf { it !is ConeErrorType }
+                        ?: symbol.resolvedReturnType.takeIf { it !is ConeErrorType },
                     session
                 )
             }
@@ -481,6 +492,7 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
                 FirErrors.NONE_APPLICABLE.createOn(
                     source,
                     candidatesWithFilteredDiagnostics,
+                    callOrAssignmentSource,
                     session
                 )
             )
@@ -623,7 +635,12 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
             session,
         )
     }
-    is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>, session)
+    is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(
+        source,
+        a = this.candidateSymbol as FirClassLikeSymbol<*>,
+        b = suggestConstructorForQualifier(candidate, session = session),
+        session
+    )
 
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols, session)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.createOn(source, session)
@@ -723,6 +740,30 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     }
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
+
+context(session: FirSession)
+fun suggestConstructorForQualifier(candidate: AbstractCallCandidate<*>): FirConstructorSymbol? =
+    suggestConstructorForQualifier(candidate.symbol, candidate.callInfo.containingFile, candidate.callInfo.containingDeclarations)
+
+@OptIn(SymbolInternals::class)
+context(session: FirSession)
+fun suggestConstructorForQualifier(
+    symbol: FirBasedSymbol<*>,
+    containingFile: FirFile,
+    containingDeclarations: List<FirDeclaration>,
+): FirConstructorSymbol? = (symbol as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session)
+    ?.takeIf { it.isClass && (it.modality == Modality.FINAL || it.modality == Modality.OPEN) }
+    ?.constructors(session)
+    ?.filter {
+        it.lazyResolveToPhase(FirResolvePhase.STATUS)
+        session.visibilityChecker.isVisible(
+            declaration = it.fir, session = session, useSiteFile = containingFile,
+            containingDeclarations = containingDeclarations,
+            dispatchReceiver = null,
+        )
+    }?.filter { !it.isDeprecationLevelHidden(session) }
+    ?.takeIf { it.isNotEmpty() }
+    ?.minBy { it.valueParameterSymbols.size }
 
 private fun inapplicableNullableReceiver(
     candidate: AbstractCallCandidate<*>,
@@ -1042,6 +1083,9 @@ private fun ConeKotlinType.substituteTypeVariableTypes(
 
     return substitutor.substituteOrSelf(this).removeTypeVariableTypes(typeContext, TypeVariableReplacement.ErrorType)
 }
+
+private fun ConeKotlinType.substituteTypeParameterTypes(candidate: AbstractCallCandidate<*>, typeContext: ConeInferenceContext): ConeKotlinType =
+    candidate.substitutor.substituteOrSelf(this).substituteTypeVariableTypes(candidate, typeContext)
 
 private fun inferredIntoEmptyIntersection(
     source: KtSourceElement?,

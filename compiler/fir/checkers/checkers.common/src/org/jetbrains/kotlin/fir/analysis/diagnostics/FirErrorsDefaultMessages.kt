@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CAND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_FQ_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DEPRECATING_FEATURE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.IN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTIONAL_TYPE_KINDS
@@ -40,6 +41,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.MODU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_CONTAINING_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OF_OPTIONAL_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_CONSTRUCTOR_SUGGESTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_FOR_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_OF_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_SENTENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME_QUOTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_QUOTED
@@ -55,6 +59,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_ALL_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TYPE_PARAMETER_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_CALL_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_CALL_RECEIVER_WITH_HINT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_INVOKE_CALL_RECEIVER_WITH_HINT
@@ -1881,7 +1886,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, so it must be initialized here.")
 
         // Applicability
-        map.put(NONE_APPLICABLE, "None of the following candidates is applicable:\n\n{0}", CANDIDATES_WITH_DIAGNOSTIC_MESSAGES)
+        map.put(
+            NONE_APPLICABLE,
+            "None of the following candidates is applicable{1}:\n\n{0}",
+            CANDIDATES_WITH_DIAGNOSTIC_MESSAGES,
+            OPTIONAL_FOR_EXPRESSION,
+        )
         map.put(INAPPLICABLE_CANDIDATE, "Inapplicable candidate(s): {0}", SYMBOL)
         map.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, "None of the ''hasNext()'' functions is applicable for this expression. Candidates are:{0}", SYMBOLS_ON_NEXT_LINES)
         map.put(NEXT_NONE_APPLICABLE, "None of the ''next()'' functions is applicable for this expression. Candidates are:{0}", SYMBOLS_ON_NEXT_LINES)
@@ -1903,7 +1913,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             STRING,
             SYMBOL,
         )
-        map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''.", NAME)
+        map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''{1}.", NAME, OPTIONAL_OF_TYPE)
         map.put(TOO_MANY_ARGUMENTS, "Too many arguments for ''{0}''.", SYMBOL)
         map.put(NAMED_PARAMETER_NOT_FOUND, "No parameter with name ''{0}'' found.", TO_STRING)
         map.put(NAME_FOR_AMBIGUOUS_PARAMETER, "Named argument is prohibited for parameter with an ambiguous name.")
@@ -2024,10 +2034,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             RETURN_TYPE_MISMATCH,
-            "Return type mismatch: expected ''{0}'', actual ''{1}''.",
+            "Return type mismatch{2}: expected ''{0}'', actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
-            NOT_RENDERED,
+            IN_FUNCTION,
             NOT_RENDERED,
         )
         map.put(
@@ -2479,14 +2489,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING,
-            "Type argument for reified type parameter ''{0}'' is inferred as invisible in this scope type ''{1}''.",
-            SYMBOL,
+            "Type argument for reified type parameter {0} is inferred as invisible in this scope type ''{1}''.",
+            TYPE_PARAMETER_NAME,
             RENDER_TYPE,
         )
         map.put(
             INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING,
-            "Type argument for type parameter ''{0}'' used as type of vararg parameter ''{2}'' is inferred as invisible in this scope type ''{1}''.",
-            SYMBOL,
+            "Type argument for type parameter {0} used as type of vararg parameter ''{2}'' is inferred as invisible in this scope type ''{1}''.",
+            TYPE_PARAMETER_NAME,
             RENDER_TYPE,
             DECLARATION_NAME,
         )
@@ -3101,7 +3111,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg parameters are prohibited.")
         map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Prohibited vararg parameter type ''{0}''.", RENDER_TYPE)
         map.put(VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE, "An explicit type is required on a value parameter.")
-        map.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer type for type parameter ''{0}''. Specify it explicitly.", DECLARATION_NAME)
+        map.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer type for type parameter {0}. Specify it explicitly.", TYPE_PARAMETER_NAME)
         map.put(
             CANNOT_INFER_VALUE_PARAMETER_TYPE,
             "Cannot infer type for value parameter ''{0}''. Specify it explicitly.",
@@ -3695,8 +3705,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NO_COMPANION_OBJECT,
-            "Classifier ''{0}'' does not have a companion object, so it cannot be used as an expression.",
-            SYMBOL
+            "Classifier ''{0}'' does not have a companion object, so it cannot be used as an expression.{1}",
+            SYMBOL,
+            OPTIONAL_CONSTRUCTOR_SUGGESTION,
         )
         map.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but package name found.")
 

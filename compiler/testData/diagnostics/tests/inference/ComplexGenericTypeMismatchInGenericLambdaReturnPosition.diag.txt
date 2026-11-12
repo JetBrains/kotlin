@@ -2,4 +2,4 @@
 
 /ComplexGenericTypeMismatchInGenericLambdaReturnPosition.kt:16:18: error: Candidate 'fun <U> Owner<Pack<U>>.unpack(): U' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Owner<Box<Interface>>'.
 
-/ComplexGenericTypeMismatchInGenericLambdaReturnPosition.kt:16:18: error: Cannot infer type for type parameter 'U'. Specify it explicitly.
+/ComplexGenericTypeMismatchInGenericLambdaReturnPosition.kt:16:18: error: Cannot infer type for type parameter 'U' (of 'fun <U> Owner<Pack<U>>.unpack'). Specify it explicitly.

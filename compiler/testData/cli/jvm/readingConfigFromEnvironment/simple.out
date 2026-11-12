@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following candidates is applicable:
+compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following candidates is applicable for expression '1 + ""':
 
 fun plus(other: Int): Int:
   Argument type mismatch: actual type is 'String', but 'Int' was expected.

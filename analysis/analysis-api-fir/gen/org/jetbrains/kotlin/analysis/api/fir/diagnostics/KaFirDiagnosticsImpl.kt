@@ -2294,6 +2294,7 @@ internal class JvmInlineOnValueObjectImpl(
 
 internal class NoneApplicableImpl(
     override val candidates: List<Pair<KaSymbol, List<String>>>,
+    override val callSite: PsiElement?,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NoneApplicable
@@ -2339,6 +2340,7 @@ internal class MemberProjectedOutImpl(
 
 internal class NoValueForParameterImpl(
     override val violatedParameter: Name,
+    override val violatedParameterType: KaType?,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NoValueForParameter
@@ -5182,6 +5184,7 @@ internal class TypeParameterOnLhsOfDotImpl(
 
 internal class NoCompanionObjectImpl(
     override val klass: KaClassLikeSymbol,
+    override val suggestedConstructor: KaFunctionSymbol?,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.NoCompanionObject

@@ -162,7 +162,7 @@ KtCallExpression(125,131): 'TODO()'
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason' of type 'String'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(125,129): 'TODO'
@@ -206,7 +206,7 @@ KtNameReferenceExpression(125,129): 'TODO'
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason' of type 'String'.>
     isInBestCandidates = false
 
 KtValueArgumentList(129,131): '()'
@@ -298,7 +298,7 @@ KtCallExpression(189,195): 'TODO()'
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason' of type 'String'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(189,193): 'TODO'
@@ -342,7 +342,7 @@ KtNameReferenceExpression(189,193): 'TODO'
         callableId = kotlin/TODO
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason' of type 'String'.>
     isInBestCandidates = false
 
 KtValueArgumentList(193,195): '()'

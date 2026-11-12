@@ -853,6 +853,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
         val NONE_APPLICABLE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<Collection<Pair<Symbol, List<String>>>>("candidates")
+            parameter<KtSourceElement?>("callSite")
         }
 
         val INAPPLICABLE_CANDIDATE by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
@@ -882,6 +883,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val NO_VALUE_FOR_PARAMETER by error<KtElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<Name>("violatedParameter")
+            parameter<ConeKotlinType?>("violatedParameterType")
         }
         val TOO_MANY_ARGUMENTS by error<PsiElement> {
             parameter<FirCallableSymbol<*>>("function")
@@ -2126,6 +2128,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val NO_COMPANION_OBJECT by error<KtExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<FirClassLikeSymbol<*>>("klass")
+            parameter<FirConstructorSymbol?>("suggestedConstructor")
         }
         val EXPRESSION_EXPECTED_PACKAGE_FOUND by error<KtExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
     }

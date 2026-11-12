@@ -45,7 +45,7 @@ KtCallExpression(202,207): 'foo()'
         callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's' of type 'String'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -88,5 +88,5 @@ KtCallExpression(202,207): 'foo()'
         callableId = r/foo
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b' of type 'Boolean'.>
     isInBestCandidates = false

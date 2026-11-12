@@ -13,7 +13,7 @@ fun test() {
     foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
     bar(1, <!TOO_MANY_ARGUMENTS!>2<!>)
-    <!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>bar<!>()
+    <!NONE_APPLICABLE!>bar<!>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

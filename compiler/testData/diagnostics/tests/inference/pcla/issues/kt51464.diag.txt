@@ -1,3 +1,3 @@
-/kt51464.kt:13:15: error: Cannot infer type for type parameter 'R'. Specify it explicitly.
+/kt51464.kt:13:15: error: Cannot infer type for type parameter 'R' (of 'fun <T, R> Flow<T>.transform'). Specify it explicitly.
 
-/kt51464.kt:13:27: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+/kt51464.kt:13:27: error: Cannot infer type for type parameter 'T' (of 'fun <T> doEmit'). Specify it explicitly.

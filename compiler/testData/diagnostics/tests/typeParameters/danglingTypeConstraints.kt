@@ -16,8 +16,8 @@ inline fun <reified A> A.unusedReceiver() where <!NAME_IN_CONSTRAINT_IS_NOT_A_TY
 }
 
 fun issueUsage(t: TestClass) {
-    t.<!CANNOT_INFER_PARAMETER_TYPE("AA")!>unusedReceiver<!>()
-    t.<!CANNOT_INFER_PARAMETER_TYPE("AA")!>unusedReceiver<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; fun <reified A, AA : TestInterface> A.unusedReceiver(): Unit")!><TestClass><!>()
+    t.<!CANNOT_INFER_PARAMETER_TYPE("'AA' (of 'fun <A, AA : TestInterface> A.unusedReceiver')")!>unusedReceiver<!>()
+    t.<!CANNOT_INFER_PARAMETER_TYPE("'AA' (of 'fun <A, AA : TestInterface> A.unusedReceiver')")!>unusedReceiver<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; fun <reified A, AA : TestInterface> A.unusedReceiver(): Unit")!><TestClass><!>()
 }
 
 fun noTypeParameters(a: <!UNRESOLVED_REFERENCE("AA")!>AA<!>): <!UNRESOLVED_REFERENCE("AA")!>AA<!> <!SYNTAX(": Type constraints are not allowed when no type parameters declared")!>where AA : Number<!> {
@@ -56,16 +56,16 @@ class D<T> where <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER("AA; D")!>AA<!> : 
 fun classUsages() {
     C()
     C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("0; constructor(): C")!><Int><!>()
-    <!CANNOT_INFER_PARAMETER_TYPE("AA")!>D<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; constructor<T, AA : Any>(): D<T, AA>")!><Int><!>()
+    <!CANNOT_INFER_PARAMETER_TYPE("'AA' (of 'class D<T, AA : Any>')")!>D<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; constructor<T, AA : Any>(): D<T, AA>")!><Int><!>()
     D<Int, String>()
-    <!CANNOT_INFER_PARAMETER_TYPE("AA")!>D<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; constructor<T, AA : Any>(): D<T, AA>")!><Int><!>().get(1)
+    <!CANNOT_INFER_PARAMETER_TYPE("'AA' (of 'class D<T, AA : Any>')")!>D<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; constructor<T, AA : Any>(): D<T, AA>")!><Int><!>().get(1)
 }
 
 val <T> T.prop: AA where <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER("AA; prop")!>AA<!> : Number get() = null!!
 
 fun propertyUsage() {
-    1.<!CANNOT_INFER_PARAMETER_TYPE("AA")!>prop<!>
-    "".<!CANNOT_INFER_PARAMETER_TYPE("AA")!>prop<!>
+    1.<!CANNOT_INFER_PARAMETER_TYPE("'AA' (of 'val <T, AA : Number> T.prop')")!>prop<!>
+    "".<!CANNOT_INFER_PARAMETER_TYPE("'AA' (of 'val <T, AA : Number> T.prop')")!>prop<!>
 }
 
 interface Base {
@@ -94,7 +94,7 @@ fun <R> localClass(r: R) {
         fun get(a: AA, t: T, r: R): AA = a
     }
     Local<String, Int>().get(1, "", r)
-    <!CANNOT_INFER_PARAMETER_TYPE("AA")!>Local<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; constructor<T, AA : Number>(): Local<T, AA, R>")!><String><!>().get(1, "", r)
+    <!CANNOT_INFER_PARAMETER_TYPE("'AA' (of 'class Local<T, AA : Number, Outer(R)>')")!>Local<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; constructor<T, AA : Number>(): Local<T, AA, R>")!><String><!>().get(1, "", r)
 }
 
 class EmptyTypeParameters<<!SYNTAX(": Type parameter declaration expected")!><!>> where <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER("AA; EmptyTypeParameters")!>AA<!> : Any

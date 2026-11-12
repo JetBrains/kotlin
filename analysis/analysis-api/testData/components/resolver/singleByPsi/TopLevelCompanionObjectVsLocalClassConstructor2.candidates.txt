@@ -59,5 +59,5 @@ KtNameReferenceExpression(141,149): 'Conflict'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i' of type 'Int'.>
     isInBestCandidates = false

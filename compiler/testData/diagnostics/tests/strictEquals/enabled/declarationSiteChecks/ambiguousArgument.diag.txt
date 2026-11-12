@@ -1,4 +1,4 @@
-/test.kt:25:40: error: None of the following candidates is applicable:
+/test.kt:25:40: error: None of the following candidates is applicable for expression 'A':
 
 interface A : Any:
   Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
@@ -6,7 +6,7 @@ interface A : Any:
 interface A : Any:
   Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.
 
-/test.kt:29:40: error: None of the following candidates is applicable:
+/test.kt:29:40: error: None of the following candidates is applicable for expression 'A':
 
 interface A : Any:
   Classifier 'interface A : Any' does not have a companion object, so it cannot be used as an expression.

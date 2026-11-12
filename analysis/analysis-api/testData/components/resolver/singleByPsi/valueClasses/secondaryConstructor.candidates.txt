@@ -70,5 +70,5 @@ KtCallExpression(145,153): 'Point(1)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'y'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'y' of type 'Int'.>
     isInBestCandidates = false

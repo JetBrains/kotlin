@@ -4,19 +4,19 @@
 
 /fallbackIsImpossibleMessages.kt:13:16: error: Expected type 'String' for collection literal does not define operator 'of' and is not a supertype of 'List'.
 
-/fallbackIsImpossibleMessages.kt:14:5: error: Cannot infer type for type parameter 'D'. Specify it explicitly.
+/fallbackIsImpossibleMessages.kt:14:5: error: Cannot infer type for type parameter 'D' (of 'fun <D> expectGeneric'). Specify it explicitly.
 
 /fallbackIsImpossibleMessages.kt:14:19: error: Expected type 'Generic<uninferred D (of fun <D> expectGeneric)>' for collection literal does not define operator 'of' and is not a supertype of 'List'.
 
-/fallbackIsImpossibleMessages.kt:15:5: error: Cannot infer type for type parameter 'D'. Specify it explicitly.
+/fallbackIsImpossibleMessages.kt:15:5: error: Cannot infer type for type parameter 'D' (of 'fun <D> expectGeneric'). Specify it explicitly.
 
-/fallbackIsImpossibleMessages.kt:15:19: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+/fallbackIsImpossibleMessages.kt:15:19: error: Cannot infer type for type parameter 'T' (of 'fun <T> id'). Specify it explicitly.
 
 /fallbackIsImpossibleMessages.kt:15:22: error: Expected type 'Generic<uninferred D (of fun <D> expectGeneric)>' for collection literal does not define operator 'of' and is not a supertype of 'List'.
 
-/fallbackIsImpossibleMessages.kt:16:5: error: Cannot infer type for type parameter 'D'. Specify it explicitly.
+/fallbackIsImpossibleMessages.kt:16:5: error: Cannot infer type for type parameter 'D' (of 'fun <D> expectGeneric'). Specify it explicitly.
 
-/fallbackIsImpossibleMessages.kt:16:19: error: Cannot infer type for type parameter 'R'. Specify it explicitly.
+/fallbackIsImpossibleMessages.kt:16:19: error: Cannot infer type for type parameter 'R' (of 'fun <R> run'). Specify it explicitly.
 
 /fallbackIsImpossibleMessages.kt:17:9: error: Expected type 'Generic<uninferred D (of fun <D> expectGeneric)>' for collection literal does not define operator 'of' and is not a supertype of 'List'.
 

@@ -375,7 +375,7 @@ class ClasspathMetadataIncrementalJvmIT : ClasspathMetadataIncrementalITBase(
             buildAndFail(taskToExecute) {
                 assertTasksFailed(taskToExecute)
                 assertEquals(
-                    listOf("RETURN_TYPE_MISMATCH" to "Return type mismatch: expected 'String', actual 'Int'."),
+                    listOf("RETURN_TYPE_MISMATCH" to "Return type mismatch in function 'foo': expected 'String', actual 'Int'."),
                     extractProblemsReportDiagnostics(gradleVersion),
                 )
             }

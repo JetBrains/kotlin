@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -15,9 +16,13 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirAdaptiveTypeRenderingKey.renderTypeParameterOrigin
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -229,6 +234,32 @@ object FirDiagnosticRenderers {
         }
     }
 
+    val IN_FUNCTION = Renderer { declaration: FirFunction ->
+        when (declaration) {
+            is FirAnonymousFunction -> when {
+                declaration.isLambda -> " in lambda"
+                else -> " in anonymous function"
+            }
+            is FirPropertyAccessor -> (if (declaration.isGetter) " in the getter" else " in the setter") +
+                    " of property '" + DECLARATION_NAME.render(declaration.propertySymbol) + "'"
+            else -> " in function '" + DECLARATION_NAME.render(declaration.symbol) + "'"
+        }
+    }
+
+    val OPTIONAL_CONSTRUCTOR_SUGGESTION = Renderer { symbol: FirConstructorSymbol? ->
+        if (symbol == null) return@Renderer ""
+
+        buildString {
+            append(" Did you intend to call the constructor '")
+            append(symbol.name.asString())
+            append("(")
+            if (symbol.valueParameterSymbols.isNotEmpty()) {
+                append("...")
+            }
+            append(")'?")
+        }
+    }
+
     val DECLARATION_FQ_NAME = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirCallableSymbol<*> -> symbol.name.asString()
@@ -245,6 +276,15 @@ object FirDiagnosticRenderers {
             else -> "Class"
         }
         "$classOrObject '$name'"
+    }
+
+    val TYPE_PARAMETER_NAME = Renderer { symbol: FirTypeParameterSymbol ->
+        buildString {
+            append("'")
+            append(symbol.name.asString())
+            append("'")
+            renderTypeParameterOrigin(symbol)
+        }
     }
 
     val RENDER_ENUM_ENTRY_QUOTED = Renderer { enumEntry: FirEnumEntrySymbol ->
@@ -304,6 +344,33 @@ object FirDiagnosticRenderers {
         // TODO, KT-59811: need a way to tune granuality, e.g., without parameter names in functional types.
         ctx[FirAdaptiveTypeRenderingKey].getValue(t)
     }
+
+    val OPTIONAL_OF_TYPE = ContextDependentRenderer { t: ConeKotlinType?, ctx ->
+        when (t) {
+            null -> ""
+            else -> " of type '" + RENDER_TYPE.render(t, ctx) + "'"
+        }
+    }
+
+    fun renderOptionalSource(s: KtSourceElement?): String? {
+        val text = s?.text?.toString() ?: return null
+        val lines = text.lines()
+        val summary = when {
+            lines.size == 1 -> text
+            else -> lines.first() + " ... " + lines.last().replace(INDENT_WHITESPACE, "")
+        }
+        return when {
+            summary.length < EXPRESSION_RENDERING_LIMIT -> "'${summary.replace("'", "\\'")}'"
+            else -> null
+        }
+    }
+
+    val OPTIONAL_FOR_EXPRESSION = Renderer { s: KtSourceElement? ->
+        renderOptionalSource(s)?.let { " for expression $it" } ?: ""
+    }
+
+    private val INDENT_WHITESPACE = """^\s+""".toRegex()
+    private const val EXPRESSION_RENDERING_LIMIT = 50
 
     val RENDER_FQ_NAME_WITH_PREFIX = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {

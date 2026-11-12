@@ -10,7 +10,7 @@ KtNameReferenceExpression(131,132): 'x'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     fun foo(vararg x: Int, y: String): Unit:
-      No value passed for parameter 'y'.
+      No value passed for parameter 'y' of type 'String'.
 
     fun foo(vararg x: Int, z: String): Unit:
-      No value passed for parameter 'z'.>
+      No value passed for parameter 'z' of type 'String'.>
