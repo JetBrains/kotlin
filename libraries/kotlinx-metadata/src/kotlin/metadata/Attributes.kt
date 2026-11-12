@@ -13,6 +13,7 @@ import kotlin.metadata.internal.EnumFlagDelegate
 import kotlin.metadata.internal.classBooleanFlag
 import kotlin.metadata.internal.constructorBooleanFlag
 import kotlin.contracts.ExperimentalContracts
+import kotlin.experimental.ExperimentalRichErrors
 import kotlin.metadata.internal.FlagImpl
 import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
 
@@ -175,6 +176,12 @@ public var KmClass.isFunInterface: Boolean by classBooleanFlag(FlagImpl(ProtoFla
  * Enum classes always have enum entries property starting from Kotlin 1.9.0.
  */
 public var KmClass.hasEnumEntries: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.HAS_ENUM_ENTRIES))
+
+/**
+ * Indicates that the corresponding class is an `error class`.
+ */
+@ExperimentalRichErrors
+public var KmClass.isRichError: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.IS_RICH_ERROR))
 
 // --- CONSTRUCTOR ---
 

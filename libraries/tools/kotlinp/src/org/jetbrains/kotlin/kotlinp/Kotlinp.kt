@@ -87,6 +87,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
+    @OptIn(ExperimentalRichErrors::class)
     fun renderClass(clazz: KmClass, printer: Printer): Unit = with(printer) {
         appendOrigin(clazz)
         appendVersionRequirements(clazz.versionRequirements)
@@ -104,6 +105,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             clazz.isExpect to "expect",
             clazz.isValue to "value",
             clazz.isFunInterface to "fun",
+            clazz.isRichError to "error",
         )
         append(CLASS_KIND_MAP[clazz.kind])
         appendName(clazz)

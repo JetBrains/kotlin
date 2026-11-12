@@ -1,6 +1,6 @@
 // Error1.class
 // ------------------------------------------
-public final class Error1 : kotlin/RichError {
+public final error class Error1 : kotlin/RichError {
 
   // signature: <init>()V
   public constructor()
@@ -21,7 +21,7 @@ public final class Error1 : kotlin/RichError {
 }
 // Error2.class
 // ------------------------------------------
-public final class Error2 : kotlin/RichError {
+public final error class Error2 : kotlin/RichError {
 
   // signature: <init>()V
   public constructor()

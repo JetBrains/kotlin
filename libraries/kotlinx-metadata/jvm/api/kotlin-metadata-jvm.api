@@ -54,6 +54,7 @@ public final class kotlin/metadata/Attributes {
 	public static final fun isNullable (Lkotlin/metadata/KmType;)Z
 	public static final fun isOperator (Lkotlin/metadata/KmFunction;)Z
 	public static final fun isReified (Lkotlin/metadata/KmTypeParameter;)Z
+	public static final fun isRichError (Lkotlin/metadata/KmClass;)Z
 	public static final fun isSecondary (Lkotlin/metadata/KmConstructor;)Z
 	public static final fun isStatic (Lkotlin/metadata/KmFunction;)Z
 	public static final fun isStatic (Lkotlin/metadata/KmProperty;)Z
@@ -111,6 +112,7 @@ public final class kotlin/metadata/Attributes {
 	public static final fun setReturnValueStatus (Lkotlin/metadata/KmConstructor;Lkotlin/metadata/ReturnValueStatus;)V
 	public static final fun setReturnValueStatus (Lkotlin/metadata/KmFunction;Lkotlin/metadata/ReturnValueStatus;)V
 	public static final fun setReturnValueStatus (Lkotlin/metadata/KmProperty;Lkotlin/metadata/ReturnValueStatus;)V
+	public static final fun setRichError (Lkotlin/metadata/KmClass;Z)V
 	public static final fun setSecondary (Lkotlin/metadata/KmConstructor;Z)V
 	public static final fun setStatic (Lkotlin/metadata/KmFunction;Z)V
 	public static final fun setStatic (Lkotlin/metadata/KmProperty;Z)V
