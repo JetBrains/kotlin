@@ -26,7 +26,8 @@ class DomainsDumpTest {
         domainsDumpFile.checkDump(tree.generateDomainsDump()) { expectText, actualText ->
             if (expectText != actualText) {
                 throw AssertionFailedError(
-                    "${domainsDumpFile.name} mismatch: ${domainsDumpFile.name}",
+                    "${domainsDumpFile.name} mismatch: ${domainsDumpFile.name}. You can update this file by invoking the Tools -> " +
+                            "Update domains.dump.txt run configuration in the IDE.",
                     FileInfo(domainsDumpFile.absolutePath, expectText.encodeToByteArray()),
                     actualText,
                 )

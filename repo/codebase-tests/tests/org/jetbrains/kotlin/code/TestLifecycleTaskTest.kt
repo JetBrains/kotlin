@@ -49,7 +49,8 @@ class TestLifecycleTaskTest {
             }
 
             throw AssertionFailedError(
-                "${expectFile.name} is out-of-date",
+                "${expectFile.name} is out-of-date. You can update this file by invoking the Tools -> Update testLifecycleTask.dump.txt " +
+                        "run configuration in the IDE.",
                 FileInfo(expectFile.absolutePathString(), expectText.encodeToByteArray()),
                 actualText,
             )
