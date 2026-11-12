@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Action
+import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -108,19 +110,15 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("KT-55620: Node.js toolchain with FAIL_ON_PROJECT_REPOS")
     @GradleTest
-    @TestMetadata("nodejs-setup-default-repositories-mode")
     @OptIn(ExperimentalNodeJsToolchainDsl::class)
     fun testNodeToolchainWithFailOnProjectRepos(gradleVersion: GradleVersion) {
-        project("nodejs-setup-default-repositories-mode", gradleVersion) {
+        project("empty", gradleVersion) {
             addEcosystemPluginToBuildScriptCompilationClasspath()
-            settingsGradleKts.appendText(
-                """
-                |
-                |dependencyResolutionManagement {
-                |    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-                |}
-                """.trimMargin()
-            )
+            settingsBuildScriptInjection {
+                settings.dependencyResolutionManagement {
+                    it.repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+                }
+            }
             settingsBuildScriptInjection {
                 settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
                 settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
@@ -131,6 +129,16 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
                     }
                 }
             }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser()
+                        nodejs()
+                    }
+                }
+            }
+
             // The old setup must not add a project repository when a toolchain service provisions Node.js
             build(":kotlinNodeJsSetup") {
                 assertTasksSkipped(":kotlinNodeJsSetup")
