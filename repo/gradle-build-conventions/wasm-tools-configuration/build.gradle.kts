@@ -22,6 +22,8 @@ kotlin {
 
 dependencies {
     implementation(project(":utilities"))
+
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 }
 
 listOf(
