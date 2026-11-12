@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.service
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 /**
@@ -62,7 +63,7 @@ class JsInProcessSecondStageFacade {
             return JsUnifiedIrDeserializerAndLoweringFacade(services).transform(mainModule, klib)
         }
 
-        override fun linkGroupedBatch(batch: GroupedBatch): BinaryArtifacts.Js? {
+        override fun linkGroupedBatch(batch: GroupedBatch): BinaryArtifacts.Js {
             val services = batch.services
             val launcherModule = batch.launcherModule
             val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(launcherModule, services)
@@ -99,12 +100,9 @@ class JsInProcessSecondStageFacade {
                 // Warnings are recorded as well (see `ErrorRecordingMessageCollector`), so the recorded messages are rarely
                 // empty, and they may include warnings unrelated to the failure.
                 if (errorRecorder.messages.isEmpty()) throw e
-                throw IllegalStateException(
-                    "Linking of the grouped batch has failed: ${e.message}\n" +
-                            errorRecorder.messages.joinToString("\n").take(MAX_COMPILER_MESSAGES_LENGTH),
-                    e,
-                )
-            } ?: return null
+                throw IllegalStateException("Linking of the grouped batch has failed: ${e.message}\n${errorRecorder.describeMessages()}", e)
+            }
+                ?: testInfraError("Linking of the grouped batch has produced no executable\n${errorRecorder.describeMessages()}")
             checkTestInfrastructure(artifact is JsIrArtifact) { "Unexpected artifact of a grouped batch: ${artifact::class}" }
             return JsGroupedBatchArtifact(artifact, launcherModule)
         }
@@ -137,6 +135,8 @@ class JsInProcessSecondStageFacade {
                 if (severity.isError || severity.isWarning) messages += listOfNotNull(location?.path, message).joinToString(": ")
                 delegate.report(severity, message, location)
             }
+
+            fun describeMessages(): String = messages.joinToString("\n").take(MAX_COMPILER_MESSAGES_LENGTH)
         }
 
         private companion object {

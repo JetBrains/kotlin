@@ -74,7 +74,7 @@ abstract class AbstractJsSecondStageGroupingFacade(
 
     protected abstract fun linkIsolated(output: NonGroupingStageOutput): BinaryArtifacts.Js?
 
-    protected abstract fun linkGroupedBatch(batch: GroupedBatch): BinaryArtifacts.Js?
+    protected abstract fun linkGroupedBatch(batch: GroupedBatch): BinaryArtifacts.Js
 
     final override fun transform(inputArtifact: GroupingStageInputArtifact): BinaryArtifacts.Js? {
         val outputs = inputArtifact.nonGroupingStageOutputs
