@@ -202,6 +202,15 @@ class Strings {
     }
 
     @Sample
+    fun flatMap() {
+        val text = "ab"
+
+        val fragments = text.flatMap { char -> listOf("$char", "$char$char") }
+
+        assertPrints(fragments, "[a, aa, b, bb]")
+    }
+
+    @Sample
     fun zip() {
         val stringA = "abcd"
         val stringB = "zyx"
