@@ -30,7 +30,10 @@ every Kotlin Build Tools library are in [../AGENTS.md](../AGENTS.md); this file 
 - **A lock held by another process**, from a single thread: lock the file through a separate `FileChannel`, as
   `InstallationLockTest.withFileLockedElsewhere` does, and release it from the fake `sleep`.
 - **Anything about other processes** goes in `InstallationStoreProcessesTest`, which runs `InstallingProcess` in child JVMs.
-  Its `probe` mode asks from outside whether a lock is taken.
+  Its `probe` mode asks from outside whether a lock is taken. When processes must overlap, hold the first one until the
+  others print `waiting`, as `produce-when-told` does; JVMs left alone may start far enough apart to run one after another.
+- **A second copy of the library**, as with KGP loaded twice in one daemon: `OtherCopyOfTheLibrary` loads it in a class
+  loader of its own and drives it through reflection.
 - **HTTP:** `DownloaderTest` scripts responses through a `DownloadTransport`; `HttpTransportTest` runs the JDK HTTP server on
   the loopback interface.
 - Symlink and POSIX permission tests are `@DisabledOnOs(OS.WINDOWS)`.
