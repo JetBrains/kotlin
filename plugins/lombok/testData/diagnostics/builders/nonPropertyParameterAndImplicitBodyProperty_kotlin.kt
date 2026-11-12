@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-90508
 // WITH_STDLIB
 // FILE: usage.kt
@@ -30,3 +31,5 @@ class SameName(greeting: String) {
 class WithToBuilder(<!TO_BUILDER_CANNOT_OBTAIN!>name: String<!>) {
     var <!BUILDER_PROPERTY_NOT_INCLUDED!>greeting<!> = "Hello, $name"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

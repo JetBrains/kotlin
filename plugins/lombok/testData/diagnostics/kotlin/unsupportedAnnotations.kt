@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 
 // FILE: KotlinClass.kt
 
@@ -15,3 +16,6 @@ class KotlinClass {
 <!ANNOTATION_IS_NOT_SUPPORTED!>@AllArgsConstructor<!>
 <!ANNOTATION_IS_NOT_SUPPORTED!>@RequiredArgsConstructor<!>
 class ConstructorExample<A, B>(val a: A, val b: B, val C: String)
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nullableType, objectDeclaration, primaryConstructor,
+propertyDeclaration, typeParameter */

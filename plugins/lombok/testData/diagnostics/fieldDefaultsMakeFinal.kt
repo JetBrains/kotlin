@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-89742, KT-90271
 // FILE: MakeFinalExample.java
 
@@ -25,3 +26,6 @@ fun foo() {
     // finalField: @NonFinal cannot change explicit modifier, error should be here
     example.<!VAL_REASSIGNMENT!>finalField<!> = 30
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, javaFunction, javaProperty, javaType,
+localProperty, propertyDeclaration */

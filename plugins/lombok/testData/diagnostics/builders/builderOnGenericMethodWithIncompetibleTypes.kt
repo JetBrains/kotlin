@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: BuilderOnMethod.java
@@ -29,3 +30,5 @@ public class TestBuilders {
 fun test() {
     BuilderOnMethod.builder<String>().name(<!ARGUMENT_TYPE_MISMATCH!>1<!>).build()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction */

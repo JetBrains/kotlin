@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-89739
 
 import lombok.Builder;
@@ -12,3 +13,5 @@ class Mutable {
             .build()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: CODEGEN
+// DISABLE_JAVA_FACADE
 // FILE: VarargsConstructor.java
 
 import lombok.AllArgsConstructor;
@@ -16,3 +18,5 @@ public class VarargsConstructor {
 fun test() {
     VarargsConstructor("vararg1", "vararg2") // Make sure the error about constructors ambiguty doesn't crash the compiler
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

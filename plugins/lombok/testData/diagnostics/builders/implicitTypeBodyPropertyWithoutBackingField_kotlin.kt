@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-90508
 // WITH_STDLIB
 import lombok.Builder
@@ -28,3 +29,6 @@ fun usage() {
         .implicitAccessors(4)
         .build()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, nullableType, propertyDeclaration,
+propertyDelegate, setter */

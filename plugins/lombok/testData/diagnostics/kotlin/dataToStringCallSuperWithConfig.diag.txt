@@ -1,1 +1,1 @@
-/test.kt:12:1: warning: Generating 'toString' implementation but without a call to superclass, even though this class does not extend 'Any'. If this is intentional, add '@ToString(callSuper=false)' to your type.
+/test.kt:13:1: warning: Generating 'toString' implementation but without a call to superclass, even though this class does not extend 'Any'. If this is intentional, add '@ToString(callSuper=false)' to your type.

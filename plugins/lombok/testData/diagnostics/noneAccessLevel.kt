@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-85693
 
 // FILE: NoneAccessLevel.java
@@ -14,3 +15,5 @@ public class NoneAccessLevel {
 fun usage() {
     NoneAccessLevel(<!TOO_MANY_ARGUMENTS!>1<!>);
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType */

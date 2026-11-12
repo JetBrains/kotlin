@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-91272
 // FIR_DUMP
 
@@ -42,3 +43,7 @@ fun foo() {
         val s: String
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, enumDeclaration, enumEntry,
+functionDeclaration, integerLiteral, interfaceDeclaration, localClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

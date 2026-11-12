@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.lombok
 
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.preprocessors.ConfigCommentTransformerPreprocessor
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsTest
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 
 // ---------------------------- box ----------------------------
@@ -32,14 +31,7 @@ open class AbstractFirLightTreeBlackBoxCodegenTestForLombok : AbstractFirLightTr
 
 // ---------------------------- diagnostics ----------------------------
 
-open class AbstractFirPsiDiagnosticTestForLombok : AbstractFirPsiDiagnosticTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.enableLombok()
-    }
-}
-
-open class AbstractFirLightTreeDiagnosticTestForLombok : AbstractFirLightTreeDiagnosticsTest() {
+open class AbstractFirLightTreeDiagnosticTestForLombok : AbstractPhasedJvmDiagnosticLightTreeTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableLombok()
@@ -53,7 +45,7 @@ open class AbstractFirLightTreeDiagnosticTestForLombok : AbstractFirLightTreeDia
  *
  * This is the `KtFile.diagnostics(...)` path that the IDE uses for highlighting.
  * It resolves lazily, so it sees a declaration that a Lombok generator left below `BODY_RESOLVE`.
- * The compiler-based [AbstractFirPsiDiagnosticTestForLombok] resolves eagerly and cannot see that.
+ * The compiler-based [AbstractFirLightTreeDiagnosticTestForLombok] resolves eagerly and cannot see that.
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
  */

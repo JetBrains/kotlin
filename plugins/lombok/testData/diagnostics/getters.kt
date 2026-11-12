@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: GetterTest.java
 
 import lombok.AccessLevel;
@@ -50,3 +51,5 @@ class OverridenGetterTest : GetterTest() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+localProperty, propertyDeclaration */

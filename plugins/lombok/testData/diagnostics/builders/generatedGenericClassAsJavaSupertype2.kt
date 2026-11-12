@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: CODEGEN
+// DISABLE_JAVA_FACADE
 // ISSUE: KT-91174
 // DISABLE_WITH_PARSER: Psi
 // WITH_STDLIB
@@ -21,3 +23,5 @@ package test
 
 fun asBuilder(child: Child): Owner.OwnerBuilder<String> = child
 fun buildOwner(child: Child): Owner<String> = child.build()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType */

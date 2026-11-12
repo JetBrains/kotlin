@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Anno.java
 
 import java.lang.*;
@@ -27,3 +28,5 @@ fun box(): String {
     val obj = Foo()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration, stringLiteral */

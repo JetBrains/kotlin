@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // FILE: JavaEntity.java
 
@@ -19,3 +20,5 @@ fun test(): JavaEntity {
 
 // FILE: lombok.config
 lombok.log.fieldIsStatic=false
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, nullableType */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 import lombok.AccessLevel
@@ -303,3 +304,8 @@ fun useIncomplete() {
     IncompleteProperty.builder().build()
     IncompletePrefixedProperty.builder().build()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, classDeclaration, enumDeclaration,
+enumEntry, functionDeclaration, inner, integerLiteral, interfaceDeclaration, javaProperty, localClass,
+multiplicativeExpression, nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, sealed,
+secondaryConstructor, stringLiteral, thisExpression */

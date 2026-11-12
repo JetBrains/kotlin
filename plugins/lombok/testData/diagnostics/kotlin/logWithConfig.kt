@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_PHASE_SUGGESTION
 // FULL_JDK
 
 // FILE: test.kt
@@ -34,3 +36,6 @@ class LogOnCompanion {
 // FILE: lombok.config
 
 lombok.log.fieldIsStatic=false
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, getter, integerLiteral, objectDeclaration, propertyDeclaration,
+propertyDeclarationWithContext, propertyWithExtensionReceiver, stringLiteral */

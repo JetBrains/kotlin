@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 // WITH_STDLIB
 
@@ -25,3 +26,6 @@ fun test(a: DataValue, b: EqualsAndHashCodeValue, c: ToStringValue) {
     b.hashCode()
     c.toString()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration, value */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-81622
 // FULL_JDK
 // WITH_STDLIB
@@ -20,3 +21,5 @@ import lombok.extern.slf4j.XSlf4j
 <!LOG_PROPERTY_ALREADY_EXISTS!>@Log4j2<!>
 <!LOG_PROPERTY_ALREADY_EXISTS!>@XSlf4j<!>
 class MultipleLogAnnotations
+
+/* GENERATED_FIR_TAGS: classDeclaration */

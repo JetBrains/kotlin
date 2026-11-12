@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83085
 
 // FILE: TestJavaClass.java
@@ -11,7 +12,7 @@ public class TestJavaClass {
     private static int age;
 }
 
-// FILE: TestJavaUsage.java 
+// FILE: TestJavaUsage.java
 
 public class TestJavaUsage {
     public static void main(String[] args) {
@@ -30,3 +31,5 @@ fun foo(a: TestJavaClass) {
     a.<!UNRESOLVED_REFERENCE!>setAge<!>(1)
     a.<!UNRESOLVED_REFERENCE!>age<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaType */

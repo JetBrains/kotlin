@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FULL_JDK
 // ISSUE: KT-89084
@@ -26,3 +27,6 @@ object Factory {
 
 // FILE: lombok.config
 lombok.singular.useGuava=true
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, objectDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral */

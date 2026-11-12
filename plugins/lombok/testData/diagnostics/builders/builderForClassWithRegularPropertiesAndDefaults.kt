@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-90590
 // FIR_DUMP
 // FILE: test.kt
@@ -20,3 +21,6 @@ class RefBodyVar {
 }
 
 const val y = 20
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, const, integerLiteral, objectDeclaration,
+propertyDeclaration */

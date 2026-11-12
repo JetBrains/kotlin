@@ -1,59 +1,59 @@
-/equalsAndHashCode.kt:3:1: strong_warning: This annotation has no effect on target 'file'. Relevant targets: class, local class.
+/equalsAndHashCode.kt:4:1: strong_warning: This annotation has no effect on target 'file'. Relevant targets: class, local class.
 
-/equalsAndHashCode.kt:7:1: strong_warning: This annotation has no effect on target 'interface'. Relevant targets: class, local class.
+/equalsAndHashCode.kt:8:1: strong_warning: This annotation has no effect on target 'interface'. Relevant targets: class, local class.
 
-/equalsAndHashCode.kt:10:1: strong_warning: This annotation has no effect on target 'annotation class'. Relevant targets: class, local class.
+/equalsAndHashCode.kt:11:1: strong_warning: This annotation has no effect on target 'annotation class'. Relevant targets: class, local class.
 
-/equalsAndHashCode.kt:13:1: error: This annotation is not applicable to target 'top level function'. Applicable targets: class, file, expression
+/equalsAndHashCode.kt:14:1: error: This annotation is not applicable to target 'top level function'. Applicable targets: class, file, expression
 
-/equalsAndHashCode.kt:16:1: error: This annotation is not applicable to target 'typealias'. Applicable targets: class, file, expression
+/equalsAndHashCode.kt:17:1: error: This annotation is not applicable to target 'typealias'. Applicable targets: class, file, expression
 
-/equalsAndHashCode.kt:19:19: strong_warning: This annotation has no effect on target 'object literal'. Relevant targets: class, local class.
+/equalsAndHashCode.kt:20:19: strong_warning: This annotation has no effect on target 'object literal'. Relevant targets: class, local class.
 
-/equalsAndHashCode.kt:22:1: strong_warning: This annotation has no effect on target 'enum class'. Relevant targets: class, local class.
+/equalsAndHashCode.kt:23:1: strong_warning: This annotation has no effect on target 'enum class'. Relevant targets: class, local class.
 
-/equalsAndHashCode.kt:28:1: strong_warning: This annotation has no effect on target 'standalone object'. Relevant targets: class, local class.
+/equalsAndHashCode.kt:29:1: strong_warning: This annotation has no effect on target 'standalone object'. Relevant targets: class, local class.
 
-/equalsAndHashCode.kt:34:5: strong_warning: This annotation has no effect on target 'companion object'. Relevant targets: class, local class.
+/equalsAndHashCode.kt:35:5: strong_warning: This annotation has no effect on target 'companion object'. Relevant targets: class, local class.
 
-/equalsAndHashCode.kt:41:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+/equalsAndHashCode.kt:42:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
 
-/equalsAndHashCode.kt:48:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+/equalsAndHashCode.kt:49:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
 
-/equalsAndHashCode.kt:54:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+/equalsAndHashCode.kt:55:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
 
-/equalsAndHashCode.kt:60:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+/equalsAndHashCode.kt:61:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
 
-/equalsAndHashCode.kt:73:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
+/equalsAndHashCode.kt:74:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
 
-/equalsAndHashCode.kt:90:5: warning: '@EqualsAndHashCode.Exclude' is not needed: a property whose name starts with '$' is not included anyway.
+/equalsAndHashCode.kt:91:5: warning: '@EqualsAndHashCode.Exclude' is not needed: a property whose name starts with '$' is not included anyway.
 
-/equalsAndHashCode.kt:96:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
+/equalsAndHashCode.kt:97:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
 
-/equalsAndHashCode.kt:97:5: warning: '@EqualsAndHashCode.Exclude' is not needed: a property whose name starts with '$' is not included anyway.
+/equalsAndHashCode.kt:98:5: warning: '@EqualsAndHashCode.Exclude' is not needed: a property whose name starts with '$' is not included anyway.
 
-/equalsAndHashCode.kt:109:5: warning: '@EqualsAndHashCode.Exclude' is not needed: 'onlyExplicitlyIncluded' is set, so this property is not included anyway.
+/equalsAndHashCode.kt:110:5: warning: '@EqualsAndHashCode.Exclude' is not needed: 'onlyExplicitlyIncluded' is set, so this property is not included anyway.
 
-/equalsAndHashCode.kt:117:5: warning: '@EqualsAndHashCode.Exclude' is not needed: 'onlyExplicitlyIncluded' is set, so this property is not included anyway.
+/equalsAndHashCode.kt:118:5: warning: '@EqualsAndHashCode.Exclude' is not needed: 'onlyExplicitlyIncluded' is set, so this property is not included anyway.
 
-/equalsAndHashCode.kt:123:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
+/equalsAndHashCode.kt:124:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
 
-/equalsAndHashCode.kt:124:5: warning: '@EqualsAndHashCode.Exclude' is not needed: 'onlyExplicitlyIncluded' is set, so this property is not included anyway.
+/equalsAndHashCode.kt:125:5: warning: '@EqualsAndHashCode.Exclude' is not needed: 'onlyExplicitlyIncluded' is set, so this property is not included anyway.
 
-/equalsAndHashCode.kt:137:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+/equalsAndHashCode.kt:138:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
 
-/equalsAndHashCode.kt:140:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+/equalsAndHashCode.kt:141:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
 
-/equalsAndHashCode.kt:171:15: strong_warning: Lombok annotation argument 'exclude' is not supported in Kotlin.
+/equalsAndHashCode.kt:172:15: strong_warning: Lombok annotation argument 'exclude' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:172:10: strong_warning: Lombok annotation argument 'of' is not supported in Kotlin.
+/equalsAndHashCode.kt:173:10: strong_warning: Lombok annotation argument 'of' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:173:23: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+/equalsAndHashCode.kt:174:23: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
 
-/equalsAndHashCode.kt:174:21: strong_warning: Lombok annotation argument 'cacheStrategy' is not supported in Kotlin.
+/equalsAndHashCode.kt:175:21: strong_warning: Lombok annotation argument 'cacheStrategy' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:175:15: strong_warning: Lombok annotation argument 'onParam' is not supported in Kotlin.
+/equalsAndHashCode.kt:176:15: strong_warning: Lombok annotation argument 'onParam' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:179:20: strong_warning: Lombok annotation argument 'replaces' is not supported in Kotlin.
+/equalsAndHashCode.kt:180:20: strong_warning: Lombok annotation argument 'replaces' is not supported in Kotlin.
 
-/equalsAndHashCode.kt:180:16: strong_warning: Lombok annotation argument 'rank' is not supported in Kotlin.
+/equalsAndHashCode.kt:181:16: strong_warning: Lombok annotation argument 'rank' is not supported in Kotlin.

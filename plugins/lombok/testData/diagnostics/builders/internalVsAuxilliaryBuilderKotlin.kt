@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-83329
 // FIR_DUMP
 // FILE: Owner.kt
@@ -16,3 +17,6 @@ fun foo() {
     val internalBuilder = Owner.internalBuilder()
     val builder = Owner.builder(1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, localProperty,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

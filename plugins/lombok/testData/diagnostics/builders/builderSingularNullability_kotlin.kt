@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FULL_JDK
 
@@ -97,3 +98,6 @@ fun test_bounded() {
         .item("a")
         .item(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

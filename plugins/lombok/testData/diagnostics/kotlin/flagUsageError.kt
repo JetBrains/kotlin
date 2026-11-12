@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FULL_JDK
 // WITH_ADVANCED_LOGGERS
@@ -89,3 +90,5 @@ lombok.builder.flagUsage=error
 lombok.superBuilder.flagUsage=error
 lombok.anyConstructor.flagUsage=error
 lombok.noArgsConstructor.flagUsage=warning
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // FULL_JDK
 
@@ -16,3 +17,5 @@ class B(code: Int, val extra: String) : A(code)
 // FILE: lombok.config
 
 lombok.toString.callSuper=warn
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

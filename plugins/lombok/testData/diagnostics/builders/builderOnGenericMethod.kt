@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-84058
 // LANGUAGE: +ForbidUselessTypeArgumentsIn26
@@ -35,3 +36,6 @@ fun box(): String {
     val test3 = BuilderOnMethod<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.builder<String>().name("").build()
     return test1.name
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+propertyDeclaration, stringLiteral */

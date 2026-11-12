@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73102
 
 // FILE: JavaBaseClass.java
@@ -13,3 +14,5 @@ public class JavaBaseClass {
 fun test() {
     val javaBaseClass = <!TYPE_MISMATCH!>JavaBaseClass.builder()<!>.<!UNRESOLVED_REFERENCE!>x<!>("base").build()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, localProperty, propertyDeclaration, stringLiteral */

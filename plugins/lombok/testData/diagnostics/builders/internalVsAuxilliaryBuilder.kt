@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-83329
 // USE_PSI_JAVA_FACADE: false
 // FIR_DUMP
@@ -112,3 +113,6 @@ fun baz() {
     val qualifiedBuilder = Other.qualifiedBuilder(1)
     val fullyQualifiedBuilder = Other.fullyQualifiedBuilder(1)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+propertyDeclaration */

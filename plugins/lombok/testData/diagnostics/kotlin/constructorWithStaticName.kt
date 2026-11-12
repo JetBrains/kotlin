@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-91183
 // FIR_DUMP
 // WITH_STDLIB
@@ -56,3 +57,6 @@ fun test(outer: Outer, genericOuter: GenericOuter<String>) {
     outer.InnerData(<!TOO_MANY_ARGUMENTS!>1<!>)
     genericOuter.InnerData(<!TOO_MANY_ARGUMENTS!>"name"<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeParameter */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-90359
 // FILE: Usages.kt
 
@@ -13,3 +14,6 @@ import lombok.Builder
 
 @Builder(toBuilder = true)
 class User(val name: String, val age: Int, val email: String?)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral */

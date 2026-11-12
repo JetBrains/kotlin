@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-89742
 // FILE: test/LevelExample.java
 
@@ -79,3 +80,6 @@ fun foo() {
     // different package, protected access, should not be allowed
     LevelExample.NestedExample().<!INVISIBLE_REFERENCE!>defaultField<!> = 60
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, integerLiteral, javaFunction,
+javaProperty, javaType, localProperty, propertyDeclaration */

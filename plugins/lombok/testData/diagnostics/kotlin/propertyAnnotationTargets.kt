@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-89040
 
@@ -39,3 +40,6 @@ fun locals() {
     val localInclude: Int = 1
     localInclude.toString()
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetField, enumDeclaration, enumEntry, functionDeclaration, getter,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, propertyDelegate */

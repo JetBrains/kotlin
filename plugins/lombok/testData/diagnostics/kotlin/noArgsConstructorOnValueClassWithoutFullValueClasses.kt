@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -FullValueClasses +ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // WITH_STDLIB
 // ISSUE: KT-89640
@@ -22,3 +23,5 @@ fun test() {
     <!NO_VALUE_FOR_PARAMETER!>OnInlineClass<!>()
     <!NO_VALUE_FOR_PARAMETER!>OnDeprecatedInlineClass<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, value */

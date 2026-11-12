@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-90590
 // WITH_STDLIB
 import lombok.Builder
@@ -22,3 +23,6 @@ fun box(): String {
     assertEquals(7, entity.lambda())
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-91173
 
 // FILE: test/Owner.java
@@ -19,3 +20,5 @@ public class Child extends Owner.OwnerBuilder {}
 package test
 
 fun asBuilder(child: Child): Owner.OwnerBuilder = child
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType */

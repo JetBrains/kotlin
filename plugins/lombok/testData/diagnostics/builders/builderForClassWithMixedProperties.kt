@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-89739
 
 import lombok.Builder;
@@ -14,3 +15,6 @@ class BuilderExample2(val y: kotlin.String?) {
             .build()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral */

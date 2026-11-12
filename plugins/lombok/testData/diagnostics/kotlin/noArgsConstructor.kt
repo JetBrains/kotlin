@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 import lombok.AccessLevel
@@ -247,3 +248,8 @@ fun testLocal() {
 class WithNestedCompanionClass(var x: Int) {
     class <!COMPANION_OBJECT_IS_NOT_GENERATED!>Companion<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, collectionLiteral, companionObject, const,
+funWithExtensionReceiver, functionDeclaration, getter, inner, integerLiteral, interfaceDeclaration, javaProperty,
+localClass, localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, value */
