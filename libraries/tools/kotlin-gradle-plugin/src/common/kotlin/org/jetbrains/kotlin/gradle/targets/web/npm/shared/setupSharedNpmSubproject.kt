@@ -39,7 +39,6 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
     val project = target.project
     val platformDirectoryName = platform.platformName
 
-    project.registerOncePackageJsonToNpmDependencyReportTransform(target, platform)
     val npmDependenciesReport = project.maybeCreateNpmDependenciesReport(platform)
 
     target.compilations.all { compilation ->
@@ -58,7 +57,7 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
         val reportFile = reportTask.flatMap { it.outputFile }
         npmDependenciesReport.outgoing.artifact(reportFile)
         if (compilation.isMain()) {
-            project.createNpmRuntimeDependenciesVariant(target, reportFile)
+            project.createNpmRuntimeDependenciesElements(target, reportFile)
         }
     }
 }
@@ -80,7 +79,9 @@ private fun CompilationNpmDependencies.configure(
         )
     })
     npmToolingDependencies.convention(project.provider { project.collectDevNpmDependencies(compilation) })
-    dependencyReports.from(project.npmRuntimeDependenciesReports(npmRuntimeDependenciesResolver))
+    val runtimeDependencies = npmRuntimeDependenciesResolver.incoming.artifacts.resolvedArtifacts
+    dependencyReports.from(runtimeDependencies.map { npmDependencyReportFiles(it, reports = true) })
+    dependenciesWithoutReport.from(runtimeDependencies.map { npmDependencyReportFiles(it, reports = false) })
 }
 
 private fun collectDirectDeclaredNpmDependencies(

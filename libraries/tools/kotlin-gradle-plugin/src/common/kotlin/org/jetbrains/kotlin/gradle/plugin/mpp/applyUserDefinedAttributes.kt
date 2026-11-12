@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvalu
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.npmRuntimeDependenciesConfigurationName
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.npmRuntimeDependenciesResolverConfigurationName
 import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 import org.jetbrains.kotlin.gradle.utils.forAllTargets
@@ -79,11 +80,12 @@ private val KotlinCompilation<*>.allOwnedConfigurationsNames
                     )
                 } ?: emptyList()
             }
-            is KotlinJsIrCompilation -> listOfNotNull(
-                npmAggregatedConfigurationName,
-                publicPackageJsonConfigurationName,
-                npmRuntimeDependenciesResolverConfigurationName,
-            )
+            is KotlinJsIrCompilation -> buildList {
+                add(npmAggregatedConfigurationName)
+                add(publicPackageJsonConfigurationName)
+                add(npmRuntimeDependenciesResolverConfigurationName)
+                if (isMain()) add(target.npmRuntimeDependenciesConfigurationName)
+            }
             else -> emptyList()
         }
 
