@@ -93,6 +93,26 @@ FILE[kind=File[packageFqName=test]]
           isClassRef: true
     STRING_TEMPLATE
       LITERAL_STRING_TEMPLATE_ENTRY[text=s]
+  PROPERTY[fqName=test.uByte, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uByte]
+    constantInitializer: -1.toUByte()
+    MODIFIER_LIST[public const]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=UByte]
+          isClassRef: true
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=255u]
+  PROPERTY[fqName=test.uShort, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uShort]
+    constantInitializer: -1.toUShort()
+    MODIFIER_LIST[public const]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=UShort]
+          isClassRef: true
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=65535u]
   PROPERTY[fqName=test.negative, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
     constantInitializer: -7
     MODIFIER_LIST[public const]

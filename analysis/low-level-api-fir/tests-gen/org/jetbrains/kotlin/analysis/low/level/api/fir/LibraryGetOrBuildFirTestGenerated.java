@@ -323,6 +323,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("primitiveConsts.kt")
+  public void testPrimitiveConsts() {
+    run("primitiveConsts.kt");
+  }
+
+  @Test
   @TestMetadata("properties.kt")
   public void testProperties() {
     run("properties.kt");

@@ -59,6 +59,22 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.PropertyInitializersKt]]
         REFERENCE_EXPRESSION[referencedName=String]
     STRING_TEMPLATE
       LITERAL_STRING_TEMPLATE_ENTRY[text=s]
+  PROPERTY[fqName=test.uByte, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uByte]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=UByte]
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=UByte]
+      REFERENCE_EXPRESSION[referencedName=MAX_VALUE]
+  PROPERTY[fqName=test.uShort, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uShort]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=UShort]
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=UShort]
+      REFERENCE_EXPRESSION[referencedName=MAX_VALUE]
   PROPERTY[fqName=test.negative, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
     MODIFIER_LIST[const]
     TYPE_REFERENCE

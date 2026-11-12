@@ -10,6 +10,8 @@ const val float: Float = 5.0F
 const val double: Double = 6.6
 const val char: Char = 'c'
 const val string: String = "s"
+const val uByte: UByte = UByte.MAX_VALUE
+const val uShort: UShort = UShort.MAX_VALUE
 
 const val negative: Int = -7
 const val sum: Int = 1 + 2
