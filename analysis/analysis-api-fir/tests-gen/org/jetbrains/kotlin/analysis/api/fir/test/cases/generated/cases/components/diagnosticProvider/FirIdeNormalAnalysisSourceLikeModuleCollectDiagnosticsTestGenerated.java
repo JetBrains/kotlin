@@ -309,6 +309,66 @@ public class FirIdeNormalAnalysisSourceLikeModuleCollectDiagnosticsTestGenerated
   }
 
   @Test
+  @TestMetadata("javaModuleAccessWithinSourceModule.kt")
+  public void testJavaModuleAccessWithinSourceModule() {
+    run("javaModuleAccessWithinSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleAccessWithinSourceModuleNonContextualDangling.kt")
+  public void testJavaModuleAccessWithinSourceModuleNonContextualDangling() {
+    run("javaModuleAccessWithinSourceModuleNonContextualDangling.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleAnnotations.kt")
+  public void testJavaModuleAnnotations() {
+    run("javaModuleAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleDoesNotReadBinaryLibrary.kt")
+  public void testJavaModuleDoesNotReadBinaryLibrary() {
+    run("javaModuleDoesNotReadBinaryLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleDoesNotReadSourceModule.kt")
+  public void testJavaModuleDoesNotReadSourceModule() {
+    run("javaModuleDoesNotReadSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleDoesNotReadUnnamedSourceModule.kt")
+  public void testJavaModuleDoesNotReadUnnamedSourceModule() {
+    run("javaModuleDoesNotReadUnnamedSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleReadsBinaryLibrary.kt")
+  public void testJavaModuleReadsBinaryLibrary() {
+    run("javaModuleReadsBinaryLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleReadsMockJdk.kt")
+  public void testJavaModuleReadsMockJdk() {
+    run("javaModuleReadsMockJdk.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleReadsSourceModule.kt")
+  public void testJavaModuleReadsSourceModule() {
+    run("javaModuleReadsSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleReadsStdlib.kt")
+  public void testJavaModuleReadsStdlib() {
+    run("javaModuleReadsStdlib.kt");
+  }
+
+  @Test
   @TestMetadata("javaNestedClass.kt")
   public void testJavaNestedClass() {
     run("javaNestedClass.kt");

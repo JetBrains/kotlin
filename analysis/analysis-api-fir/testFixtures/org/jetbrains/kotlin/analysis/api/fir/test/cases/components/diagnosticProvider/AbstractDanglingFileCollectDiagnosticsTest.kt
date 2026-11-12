@@ -28,6 +28,7 @@ abstract class AbstractDanglingFileCollectDiagnosticsTest : AbstractCollectDiagn
         val IGNORE_DANGLING_FILES by stringDirective("Ignore dangling file diagnostic tests.")
         val IGNORE_SELF_MODE by stringDirective("Whether to use ${KaDanglingFileResolutionMode.IGNORE_SELF} mode.")
         val COPY_OF_DANGLING_FILE by stringDirective("Whether to analyze a copy of the dangling file instead of the dangling file itself.")
+        val NON_CONTEXTUAL_DANGLING_FILE by stringDirective("Create the dangling file without an analysis context.")
     }
 
     override fun doTest(testServices: TestServices) {
@@ -42,9 +43,12 @@ abstract class AbstractDanglingFileCollectDiagnosticsTest : AbstractCollectDiagn
 
     override fun prepareKtFile(ktFile: KtFile, testServices: TestServices): PreparedFile {
         val contextModule = KotlinProjectStructureProvider.getModule(ktFile.project, ktFile, useSiteModule = null)
-        val ktPsiFactory = KtPsiFactory.contextual(ktFile, markGenerated = true, eventSystemEnabled = false)
-
         val directives = testServices.moduleStructure.allDirectives
+        val ktPsiFactory = if (Directives.NON_CONTEXTUAL_DANGLING_FILE in directives) {
+            KtPsiFactory(ktFile.project, markGenerated = true)
+        } else {
+            KtPsiFactory.contextual(ktFile, markGenerated = true, eventSystemEnabled = false)
+        }
 
         // The text of a script is not a valid regular file, so the copy has to stay a script
         val fakeFileName = if (ktFile.isScript()) "fake.kts" else "fake.kt"
