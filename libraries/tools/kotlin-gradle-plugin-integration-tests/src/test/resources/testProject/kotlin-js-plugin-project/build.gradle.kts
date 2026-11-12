@@ -36,7 +36,7 @@ kotlin {
     sourceSets {
         jsMain {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.5")
+                api("org.jetbrains.kotlinx:kotlinx-html-js:0.12.0")
                 implementation(kotlin("stdlib-js"))
             }
         }
