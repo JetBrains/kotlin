@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -189,6 +190,7 @@ class BuildCacheIT : KGPBaseTest() {
     @TestMetadata("incrementalMultiproject")
     @DisplayName("Restore from build cache should not break incremental compilation")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testIncrementalCompilationAfterCacheHit(gradleVersion: GradleVersion) {
         project(
             "incrementalMultiproject",
@@ -217,6 +219,7 @@ class BuildCacheIT : KGPBaseTest() {
     @TestMetadata("incrementalMultiproject")
     @DisplayName("Restore from build cache and consequent compilation error should not break incremental compilation")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
         project(
             "incrementalMultiproject",
@@ -257,6 +260,7 @@ class BuildCacheIT : KGPBaseTest() {
     @TestMetadata("kapt/kaptAvoidance")
     @DisplayName("A compilation error doesn't break kapt incremental compilation after restoring from build cache")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testKaptIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
         project(
             "kapt/kaptAvoidance",
@@ -310,6 +314,7 @@ class BuildCacheIT : KGPBaseTest() {
     @TestMetadata("kapt/kaptAvoidance")
     @DisplayName("A compilation error doesn't break kapt incremental compilation in test sources after restoring from build cache")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testKaptIncrementalCompilationInTestSourcesAfterCacheHit(gradleVersion: GradleVersion) {
         project("kapt/kaptAvoidance", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
