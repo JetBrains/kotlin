@@ -2574,6 +2574,22 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KotlinCompilerVersionNotFound : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(compilerVersion: String, attemptedVersion: String, resolutionFailure: String?) = build {
+            val message = if (attemptedVersion == compilerVersion) {
+                "Could not find Kotlin compiler version '$attemptedVersion' set via 'kotlin.compilerVersion'."
+            } else {
+                "Could not find Kotlin compiler version '$attemptedVersion'. " +
+                        "A dependency resolution rule replaced version '$compilerVersion' set via 'kotlin.compilerVersion'."
+            }
+            title { "Kotlin compiler version not found" }
+                .description { message + resolutionFailure?.let { "\n$it" }.orEmpty() }
+                .solution {
+                    "Check that Kotlin compiler version '$attemptedVersion' exists and that a repository hosting it is configured."
+                }
+        }
+    }
+
     internal object DuplicateJsBrowserTestFrameworkConfiguration : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
