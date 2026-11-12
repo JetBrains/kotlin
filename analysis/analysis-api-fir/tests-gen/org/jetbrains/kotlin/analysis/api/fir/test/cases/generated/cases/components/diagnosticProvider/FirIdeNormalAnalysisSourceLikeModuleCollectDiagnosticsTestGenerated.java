@@ -291,6 +291,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleCollectDiagnosticsTestGenerated
   }
 
   @Test
+  @TestMetadata("javaModuleAccessWithinSourceModule.kt")
+  public void testJavaModuleAccessWithinSourceModule() {
+    run("javaModuleAccessWithinSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleDoesNotReadSourceModule.kt")
+  public void testJavaModuleDoesNotReadSourceModule() {
+    run("javaModuleDoesNotReadSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleReadsSourceModule.kt")
+  public void testJavaModuleReadsSourceModule() {
+    run("javaModuleReadsSourceModule.kt");
+  }
+
+  @Test
   @TestMetadata("javaNestedClass.kt")
   public void testJavaNestedClass() {
     run("javaNestedClass.kt");
