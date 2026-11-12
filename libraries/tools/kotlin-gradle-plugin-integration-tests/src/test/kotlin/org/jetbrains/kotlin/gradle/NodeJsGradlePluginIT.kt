@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Action
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -101,6 +103,38 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
     fun testSetupWithoutDownloadBaseUrl(gradleVersion: GradleVersion) {
         project("nodejs-setup-with-user-repositories", gradleVersion) {
             build(":kotlinNodeJsSetup")
+        }
+    }
+
+    @DisplayName("KT-55620: Node.js toolchain with FAIL_ON_PROJECT_REPOS")
+    @GradleTest
+    @TestMetadata("nodejs-setup-default-repositories-mode")
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    fun testNodeToolchainWithFailOnProjectRepos(gradleVersion: GradleVersion) {
+        project("nodejs-setup-default-repositories-mode", gradleVersion) {
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsGradleKts.appendText(
+                """
+                |
+                |dependencyResolutionManagement {
+                |    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+                |}
+                """.trimMargin()
+            )
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    nodeJs {
+                        toolchainService(PreInstalledNodeJsToolchainService::class) {
+                            nodeJsExecutable.set("node")
+                        }
+                    }
+                }
+            }
+            // The old setup must not add a project repository when a toolchain service provisions Node.js
+            build(":kotlinNodeJsSetup") {
+                assertTasksSkipped(":kotlinNodeJsSetup")
+            }
         }
     }
 }
