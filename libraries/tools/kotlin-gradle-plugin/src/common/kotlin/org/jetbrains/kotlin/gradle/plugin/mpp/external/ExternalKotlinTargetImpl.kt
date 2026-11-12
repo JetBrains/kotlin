@@ -102,8 +102,10 @@ internal class ExternalKotlinTargetImpl internal constructor(
     }
 
     @InternalKotlinGradlePluginApi
-    override fun onPublicationCreated(publication: MavenPublication) {
-        mavenPublicationActions.all { action -> action.execute(publication) }
+    override fun onPublicationRegistered(publications: DomainObjectCollection<MavenPublication>) {
+        mavenPublicationActions.all { action ->
+            publications.configureEach(action)
+        }
     }
 
     private val attributeContainer = HierarchyAttributeContainer(parent = null, project.objects)
