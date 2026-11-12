@@ -14,6 +14,8 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.maven.statistics.MavenBuildStats;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -44,12 +46,18 @@ public class KotlinLifecycleParticipant extends AbstractMavenLifecycleParticipan
 
     @Override
     public void afterProjectsRead(MavenSession session) {
+        MavenBuildStats.startSession(session);
         for (MavenProject project : session.getProjects()) {
             Plugin kotlinMavenPlugin = getKotlinMavenPlugin(project);
             if (kotlinMavenPlugin != null && isExtensionsEnabled(kotlinMavenPlugin) && isSmartDefaultsEnabled(project)) {
                 configureSmartDefaults(project, kotlinMavenPlugin);
             }
         }
+    }
+
+    @Override
+    public void afterSessionEnd(@NotNull MavenSession session) {
+        MavenBuildStats.finishSession(session);
     }
 
     private boolean isSmartDefaultsEnabled(MavenProject project) {

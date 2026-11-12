@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.com.intellij.util.ArrayUtil;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.config.Services;
 
+import org.jetbrains.kotlin.maven.statistics.MavenBuildStats;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -178,6 +180,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             return;
         }
 
+        MavenBuildStats.reportCompilationStarted(session, project, mojoExecution);
         A arguments = createCompilerArguments();
         CLICompiler<A> compiler = createCompiler();
 
