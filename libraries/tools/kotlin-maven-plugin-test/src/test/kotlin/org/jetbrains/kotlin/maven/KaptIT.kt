@@ -137,6 +137,35 @@ class KaptIT : KotlinMavenTestBase() {
     }
 
     @MavenTest
+    @DisplayName("KAPT generates stubs straight from FIR")
+    fun testKaptStubsFromFir(mavenVersion: TestVersions.Maven) {
+        // TODO: Cleanup classloaders after the execution in Maven as well. KT-90859
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
+            modifyPomXml("app/pom.xml") {
+                val kaptConfiguration = findKotlinPlugin().findExecution("kapt").getOrCreateChild("configuration")
+                kaptConfiguration.getOrCreateChild("stubGenerationScheme").textContent = "direct"
+                kaptConfiguration.getOrCreateChild("stubsFromFir").textContent = "true"
+            }
+
+            build(
+                "package", "-X",
+                expectedToFail = false
+            ) {
+                assertBuildLogContains(
+                    "[INFO] [kapt] Kapt is enabled.",
+                    "Generate stubs straight from FIR, without Fir2Ir and the JVM backend: true",
+                    "[INFO] [kapt] Annotation processors: example.ExampleAnnotationProcessor"
+                )
+                assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")
+                assertFileExists(
+                    "app/target/generated-sources/kaptKotlin/compile/MyClass.kt"
+                ) { "KAPT-generated Kotlin extension file was not found" }
+            }
+        }
+    }
+
+    @MavenTest
     @DisplayName("KAPT processes Dagger annotations on JDK 17")
     fun testDaggerAnnotationProcessing(mavenVersion: TestVersions.Maven) {
         testProject("java8/test-dagger-maven-example", mavenVersion) {

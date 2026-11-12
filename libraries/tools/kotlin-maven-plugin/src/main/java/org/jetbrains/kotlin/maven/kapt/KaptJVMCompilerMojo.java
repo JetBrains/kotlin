@@ -97,6 +97,13 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Parameter(property = "kapt.header.mode", defaultValue = "false")
     private boolean headerMode;
 
+    /**
+     * Generate stubs straight from FIR, without Fir2Ir and the JVM backend (experimental, requires the direct stub generation
+     * scheme): {@code <stubsFromFir>true</stubsFromFir>} or {@code -Dkapt.stubs.from.fir=true}.
+     */
+    @Parameter(property = "kapt.stubs.from.fir", defaultValue = "false")
+    private boolean stubsFromFir;
+
     @Parameter
     private List<String> annotationProcessorArgs;
 
@@ -162,6 +169,10 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
         if (headerMode) {
             options.add(new KaptOption("headerMode", true));
+        }
+
+        if (stubsFromFir) {
+            options.add(new KaptOption("stubsFromFir", true));
         }
 
         if (includeCompileClasspath != null) {
