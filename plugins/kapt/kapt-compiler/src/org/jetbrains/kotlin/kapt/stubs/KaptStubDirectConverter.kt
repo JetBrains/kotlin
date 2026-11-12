@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.kapt.stubs
 import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.util.Context
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.util.appendList
 import org.jetbrains.kotlin.kapt.util.appendListIfNonEmpty
@@ -99,9 +96,9 @@ class KaptStubDirectConverter(
 
     private fun StringBuilder.appendKDocCommentIfNecessary(node: Any) {
         val origin = kaptContext.origins[node] ?: return
-        val source = kaptContext.firSourceOf(origin.declaration) ?: return
+        val source = origin.firSource ?: return
 
-        if (origin.declaration is IrConstructor && source.elementType in CLASS_LIKE_ELEMENT_TYPES) {
+        if (origin.isConstructor && source.elementType in CLASS_LIKE_ELEMENT_TYPES) {
             // Do not copy class KDoc to an implicit constructor.
             return
         }
@@ -130,14 +127,14 @@ class KaptStubDirectConverter(
     )
 
     override fun makeStubForTopLevelClass(
-        declaration: IrDeclaration,
+        declaration: KaptClassOrigin,
         lineMappings: KaptLineMappingCollector,
         packageName: String,
         clazz: ClassNode,
     ): KaptStub? {
         val [simpleName, classText] = convertClass(clazz, lineMappings, packageName) ?: return null
 
-        val firFile = findFirFile(declaration)
+        val firFile = declaration.firFile
         val imports: List<String> = convertImports(firFile, simpleName)
 
         val text = buildString {
@@ -326,7 +323,7 @@ class KaptStubDirectConverter(
 
     override fun makeMethod(
         method: MethodNode,
-        irClass: IrClass,
+        classOrigin: KaptClassOrigin,
         modifiers: String,
         genericSignature: SignatureParser.MethodGenericSignature<String, String>,
         parameters: List<String>,
@@ -341,7 +338,7 @@ class KaptStubDirectConverter(
             append(modifiers)
 
             if (isConstructor) {
-                append(irClass.name)
+                append(classOrigin.simpleName)
             } else {
                 appendListIfNonEmpty(genericSignature.typeParameters, "<", ">")
                 append(genericSignature.returnType!!)

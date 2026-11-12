@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.kapt.base.KaptFlag
 import org.jetbrains.kotlin.kapt.base.KaptOptions
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
+import org.jetbrains.kotlin.kapt.stubs.KaptIrOrigins
 import org.jetbrains.kotlin.kapt.stubs.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.util.PhaseType
 
@@ -50,7 +51,7 @@ internal fun compileForStubGeneration(
         irGenerationExtensions = emptyList(),
     ) ?: return null
 
-    val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
+    val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3, KaptIrOrigins(fir2IrOutput.result.irBuiltIns))
     val backendInput = fir2IrOutput.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
     backendInput.configuration.put(JvmLoweringsPipelinePhase.customClassBuilderFactory, builderFactory)
 
@@ -61,7 +62,6 @@ internal fun compileForStubGeneration(
         backendInput.configuration,
         generationState.factory,
         frontendOutput.frontendOutput.outputs.flatMap { it.fir },
-        fir2IrOutput.result.irBuiltIns,
     )
 }
 

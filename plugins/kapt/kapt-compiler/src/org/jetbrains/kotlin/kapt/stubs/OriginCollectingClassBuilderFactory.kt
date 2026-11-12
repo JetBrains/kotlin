@@ -22,9 +22,12 @@ import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-internal class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderMode) : ClassBuilderFactory {
+internal class OriginCollectingClassBuilderFactory(
+    private val builderMode: ClassBuilderMode,
+    private val originFactory: KaptIrOrigins,
+) : ClassBuilderFactory {
     val compiledClasses = mutableListOf<ClassNode>()
-    val origins = mutableMapOf<Any, KaptIrOrigin>()
+    val origins = mutableMapOf<Any, KaptStubOrigin>()
 
     override fun getClassBuilderMode(): ClassBuilderMode = builderMode
 
@@ -71,7 +74,7 @@ internal class OriginCollectingClassBuilderFactory(private val builderMode: Clas
 
     private fun saveOrigin(node: Any, origin: IrDeclaration?) {
         if (origin != null) {
-            origins[node] = KaptIrOrigin(origin)
+            origins[node] = originFactory.create(origin)
         }
     }
 

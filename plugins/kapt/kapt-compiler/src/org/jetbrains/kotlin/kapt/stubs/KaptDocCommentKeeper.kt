@@ -10,7 +10,6 @@ import com.sun.tools.javac.tree.DCTree
 import com.sun.tools.javac.tree.DocCommentTable
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.kapt.util.kdocBody
@@ -22,9 +21,9 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
 
     fun saveKDocComment(tree: JCTree, node: Any) {
         val origin = kaptContext.origins[node] ?: return
-        val source = kaptContext.firSourceOf(origin.declaration) ?: return
+        val source = origin.firSource ?: return
 
-        if (origin.declaration is IrConstructor && source.elementType in CLASS_LIKE_ELEMENT_TYPES) {
+        if (origin.isConstructor && source.elementType in CLASS_LIKE_ELEMENT_TYPES) {
             // Do not copy class KDoc to an implicit constructor.
             return
         }

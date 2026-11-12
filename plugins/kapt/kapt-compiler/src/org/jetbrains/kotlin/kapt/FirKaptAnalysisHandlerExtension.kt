@@ -199,7 +199,7 @@ open class FirKaptAnalysisHandlerExtension(
         stubs: List<KaptStub>,
     ) {
         val reportOutputFiles = kaptContext.configuration.reportOutputFiles
-        val outputFiles = if (reportOutputFiles) kaptContext.classFileFactory.asList().associateBy {
+        val outputFiles = if (reportOutputFiles) kaptContext.outputFiles.asList().associateBy {
             it.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")
         } else null
 
@@ -332,7 +332,7 @@ open class FirKaptAnalysisHandlerExtension(
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
         val reportOutputFiles = kaptContext.configuration.reportOutputFiles
-        kaptContext.classFileFactory.writeAll(incrementalDataOutputDir) { outputInfo, output ->
+        kaptContext.outputFiles.writeAll(incrementalDataOutputDir) { outputInfo, output ->
             kaptContext.configuration.fileMappingTracker?.let {
                 when (outputInfo.generatedForCompilerPlugin) {
                     false -> it.recordSourceFilesToOutputFileMapping(

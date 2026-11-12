@@ -32,8 +32,6 @@ import com.sun.tools.javac.tree.JCTree.JCVariableDecl
 import com.sun.tools.javac.tree.JCTree.Tag
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.kapt.base.mapJList
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.name.FqName
@@ -126,14 +124,14 @@ class KaptStubJTreeConverter(
     }
 
     override fun makeStubForTopLevelClass(
-        declaration: IrDeclaration,
+        declaration: KaptClassOrigin,
         lineMappings: KaptLineMappingCollector,
         packageName: String,
         clazz: ClassNode,
     ): KaptStub? {
         val classDeclaration = convertClass(clazz, lineMappings, packageName)?.second ?: return null
 
-        val firFile = findFirFile(declaration)
+        val firFile = declaration.firFile
         val imports = convertImports(firFile, classDeclaration.simpleName.toString())
 
         val classes = JavacList.of<JCTree>(classDeclaration)
@@ -369,7 +367,7 @@ class KaptStubJTreeConverter(
 
     override fun makeMethod(
         method: MethodNode,
-        irClass: IrClass,
+        classOrigin: KaptClassOrigin,
         modifiers: JCModifiers,
         genericSignature: SignatureParser.MethodGenericSignature<JCExpression, JCTypeParameter>,
         parameters: List<JCVariableDecl>,

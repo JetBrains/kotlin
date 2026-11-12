@@ -21,24 +21,17 @@ import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
 import kotlinx.kapt.KaptIgnored
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.isBuiltin
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
-import org.jetbrains.kotlin.fir.backend.FirAnnotationSourceElement
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
@@ -53,7 +46,6 @@ import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
@@ -64,13 +56,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.convertTo
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.javac.kaptError
@@ -207,8 +193,6 @@ abstract class ParameterizedKaptStubConverter<
 
     private val firJvmTypeMapper: FirJvmTypeMapper? = kaptContext.firSession?.let(::FirJvmTypeMapper)
 
-    private val irTypeSystem = IrTypeSystemContextImpl(kaptContext.irBuiltIns)
-
     private val legacyFunctionTypeKindProjector: LegacyFunctionTypeKindProjector? =
         kaptContext.firSession?.let(::LegacyFunctionTypeKindProjector)
 
@@ -267,26 +251,16 @@ abstract class ParameterizedKaptStubConverter<
     }
 
     private fun convertTopLevelClass(clazz: ClassNode): KaptStub? {
-        val declaration = kaptContext.origins[clazz]?.declaration ?: return null
+        val declaration = kaptContext.origins[clazz] as? KaptClassOrigin ?: return null
 
         // Nested classes will be processed during the outer classes conversion
-        if (declaration is IrClass && declaration.parent is IrClass) return null
+        if (declaration.isNested) return null
 
         val lineMappings = KaptLineMappingCollector(kaptContext)
 
-        val packageName = declaration.fileParent.packageFqName.asString()
+        val packageName = declaration.packageFqName.asString()
 
         return makeStubForTopLevelClass(declaration, lineMappings, packageName, clazz)
-    }
-
-    protected fun findFirFile(irClass: IrDeclaration): FirFile? {
-        val fromMetadata = when (val metadata = (irClass as? IrClass)?.metadata) {
-            is FirMetadataSource.Class -> kaptContext.firSession?.firProvider?.getFirClassifierContainerFileIfAny(metadata.fir.symbol)
-            is FirMetadataSource.File -> metadata.fir
-            else -> null
-        }
-
-        return fromMetadata ?: (irClass.fileParent.metadata as? FirMetadataSource.File)?.fir
     }
 
     protected fun convertImports(firFile: FirFile?, classSimpleName: String): List<Element> {
@@ -354,7 +328,7 @@ abstract class ParameterizedKaptStubConverter<
         if (isSynthetic(clazz.access)) return null
         if (!checkIfValidTypeName(clazz, Type.getObjectType(clazz.name))) return null
 
-        val declaration = kaptContext.origins[clazz]?.declaration as? IrClass ?: return null
+        val declaration = kaptContext.origins[clazz] as? KaptClassOrigin ?: return null
 
         val flags = getClassAccessFlags(clazz, declaration)
 
@@ -365,10 +339,10 @@ abstract class ParameterizedKaptStubConverter<
             clazz,
             flags.toLong(),
             if (isEnum) ElementKind.ENUM else ElementKind.CLASS,
-            packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations, declaration.annotations
+            packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations, declaration.sourceAnnotations
         )
 
-        val simpleName = declaration.name.asString()
+        val simpleName = declaration.simpleName
         if (!isValidIdentifier(simpleName)) return null
 
         val recordInfo = if (supportsRecords && clazz.isRecord()) convertRecord(clazz, flags, lineMappings, packageFqName) else null
@@ -562,7 +536,7 @@ abstract class ParameterizedKaptStubConverter<
     private class SuperTypeCalculationFailure : RuntimeException()
 
     private fun calculateSuperTypes(
-        clazz: ClassNode, genericType: ClassGenericSignature<Expression, TypeParameter>, declaration: IrDeclaration,
+        clazz: ClassNode, genericType: ClassGenericSignature<Expression, TypeParameter>, declaration: KaptClassOrigin,
     ): ClassSupertypes<Expression> {
         val hasSuperClass = clazz.superName != "java/lang/Object" && !clazz.isEnum()
 
@@ -575,7 +549,7 @@ abstract class ParameterizedKaptStubConverter<
             return defaultSuperTypes
         }
 
-        val firClass = ((declaration as? IrClass)?.metadata as? FirMetadataSource.Class)?.fir ?: return defaultSuperTypes
+        val firClass = declaration.firClass ?: return defaultSuperTypes
         val classSymbol = (firClass as? FirRegularClass)?.symbol ?: return defaultSuperTypes
         if (classSymbol.isLocal) return defaultSuperTypes
         if (JvmClassName.internalNameByClassId(classSymbol.classId) != clazz.name) return defaultSuperTypes
@@ -588,7 +562,7 @@ abstract class ParameterizedKaptStubConverter<
             return defaultSuperTypes
         }
 
-        val firFile = findFirFile(declaration)
+        val firFile = declaration.firFile
 
         fun nonErrorType(ref: () -> FirTypeRef?): Expression {
             assert(correctErrorTypes)
@@ -723,19 +697,19 @@ abstract class ParameterizedKaptStubConverter<
         return doesInnerClassNameConflictWithOuter(clazz, containingClassForOuterClass)
     }
 
-    private fun getClassAccessFlags(clazz: ClassNode, irClass: IrClass): Int {
+    private fun getClassAccessFlags(clazz: ClassNode, origin: KaptClassOrigin): Int {
         var access = clazz.access
-        if (irClass.isEnumClass) {
+        if (origin.isEnumClass) {
             // Enums are final in the bytecode, but "final enum" is not allowed in Java.
             access = access and Opcodes.ACC_FINAL.inv()
         }
-        if ((irClass.parent as? IrClass)?.kind == ClassKind.INTERFACE) {
+        if (origin.isNestedInInterface) {
             // Classes inside interfaces should always be public and static.
             // See com.sun.tools.javac.comp.Enter.visitClassDef for more information.
             return (access or Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC) and
                     Opcodes.ACC_PRIVATE.inv() and Opcodes.ACC_PROTECTED.inv() // Remove private and protected modifiers
         }
-        if (irClass.parent is IrClass && !irClass.isInner) {
+        if (origin.isNested && !origin.isInner) {
             access = access or Opcodes.ACC_STATIC
         }
         return access
@@ -751,7 +725,7 @@ abstract class ParameterizedKaptStubConverter<
         isVarargRecordComponent: Boolean = false,
     ): VariableDecl? {
         if (isSynthetic(field.access) || isIgnored(field.invisibleAnnotations)) return null
-        val declaration = kaptContext.origins[field]?.declaration
+        val declaration = kaptContext.origins[field] as? KaptFieldOrigin
 
         val modifiers = convertModifiers(
             containingClass,
@@ -759,7 +733,7 @@ abstract class ParameterizedKaptStubConverter<
             if (asRecordComponent) field.access.toLong() and FIELD_MODIFIERS.inv() else field.access.toLong(),
             ElementKind.FIELD, packageFqName,
             field.visibleAnnotations, field.invisibleAnnotations,
-            declaration?.annotations.orEmpty()
+            declaration?.sourceAnnotations.orEmpty()
         )
 
         val isEnumField = isEnum(field.access)
@@ -790,25 +764,12 @@ abstract class ParameterizedKaptStubConverter<
     }
 
     private fun convertFieldType(field: FieldNode, containingClass: ClassNode): Expression {
-        val irField = kaptContext.origins[field]?.declaration as? IrField
-
-        val fieldTypeReference =
-            when (val metadata = kaptContext.origins[field]?.let { kaptContext.firMetadataOf(it.declaration) }) {
-                is FirMetadataSource.Property -> metadata.fir.returnTypeRef
-                is FirMetadataSource.Field -> metadata.fir.returnTypeRef
-                else -> null
-            }
-
-        val fieldTypeMappingMode = irField?.let {
-            if (it.correspondingPropertySymbol?.owner?.isVar == true) {
-                MethodSignatureMapper.getTypeMappingModeForParameter(irTypeSystem, it, it.type)
-            } else {
-                MethodSignatureMapper.getTypeMappingModeForReturnType(irTypeSystem, it, it.type)
-            }
-        }
+        val typeSource = (kaptContext.origins[field] as? KaptFieldOrigin)?.typeSource
+        val fieldTypeReference = typeSource?.typeRef
+        val fieldTypeMappingMode = typeSource?.typeMappingMode
 
         return getNonErrorType(
-            irField?.type?.containsErrorTypes() == true,
+            typeSource?.containsErrorTypes == true,
             RETURN_TYPE,
             getFileForClass(containingClass),
             typeRefProvider = { fieldTypeReference },
@@ -822,22 +783,18 @@ abstract class ParameterizedKaptStubConverter<
     private fun convertPropertyInitializer(containingClass: ClassNode, field: FieldNode): Expression? {
         val value = field.value
 
-        val irField = kaptContext.origins[field]?.declaration as? IrField
-        val firInitializer = when (val metadata = irField?.metadata) {
-            is FirMetadataSource.Field -> metadata.fir.initializer
-            is FirMetadataSource.Property -> metadata.fir.initializer
-            else -> null
-        }
+        val origin = kaptContext.origins[field] as? KaptFieldOrigin
+        val firInitializer = origin?.firInitializer
         if (value != null && firInitializer != null)
             return convertConstantValueArgumentsFir(containingClass, value, listOf(firInitializer))
 
         // Work-around for enum classes in companions.
         // In expressions "Foo.Companion.EnumClass", Java prefers static field over a type name, making the reference invalid.
-        if (irField?.type?.classOrNull?.owner?.let { it.isEnumClass && it.isInsideCompanionObject() } == true) {
+        if (origin?.isTypeEnumInCompanion == true) {
             return null
         }
 
-        val firProperty = (irField?.metadata as? FirMetadataSource.Property)?.fir
+        val firProperty = origin?.firProperty
         if (firProperty != null) {
             convertNonConstPropertyInitializerFir(firProperty, containingClass)?.let { return it }
         }
@@ -900,37 +857,23 @@ abstract class ParameterizedKaptStubConverter<
         }
     }
 
-    @Suppress("RedundantIf")
-    private fun IrElement.isInsideCompanionObject(): Boolean {
-        val parent = (this as? IrDeclaration)?.parent ?: return false
-        if (parent is IrClass && parent.isCompanion) return true
-        return parent.isInsideCompanionObject()
-    }
-
-    // @JvmExposeBoxed generates an exposed function, which is not an override.
-    private fun IrSimpleFunction.isJvmOverride(): Boolean = when {
-        overriddenSymbols.isEmpty() -> false
-        !hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) -> true
-        else -> overriddenSymbols.any { it.owner.name == name }
-    }
-
     private fun convertMethod(
         method: MethodNode,
         containingClass: ClassNode,
         lineMappings: KaptLineMappingCollector,
         packageFqName: String,
-        irClass: IrClass,
+        classOrigin: KaptClassOrigin,
         recordInfo: RecordInfo?,
     ): MethodDecl? {
         if (isIgnored(method.invisibleAnnotations)) return null
-        val declaration = kaptContext.origins[method]?.declaration as? IrFunction ?: return null
+        val declaration = kaptContext.origins[method] as? KaptMethodOrigin ?: return null
 
         val isAnnotationHolderForProperty =
             isSynthetic(method.access) && isStatic(method.access) && method.name.endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)
 
         if (isSynthetic(method.access) && !isAnnotationHolderForProperty) return null
 
-        val isOverridden = declaration is IrSimpleFunction && declaration.isJvmOverride()
+        val isOverridden = declaration.isJvmOverride
         val visibleAnnotations = if (isOverridden) {
             (method.visibleAnnotations ?: emptyList()) + AnnotationNode(Type.getType(Override::class.java).descriptor)
         } else {
@@ -949,13 +892,13 @@ abstract class ParameterizedKaptStubConverter<
                 (method.access.toLong() and VISIBILITY_MODIFIERS.inv())
             else
                 method.access.toLong(),
-            ElementKind.METHOD, packageFqName, visibleAnnotations, method.invisibleAnnotations, declaration.annotations
+            ElementKind.METHOD, packageFqName, visibleAnnotations, method.invisibleAnnotations, declaration.sourceAnnotations
         )
 
         val asmReturnType = Type.getReturnType(method.desc)
         val returnType = if (isConstructor) null else makeType(asmReturnType)
 
-        val parametersInfo = method.getParametersInfo(containingClass, irClass.isInner, declaration)
+        val parametersInfo = method.getParametersInfo(containingClass, classOrigin.isInner, declaration.parameterNames)
 
         if (!checkIfValidTypeName(containingClass, asmReturnType)
             || parametersInfo.any { !checkIfValidTypeName(containingClass, it.type) }
@@ -1021,18 +964,9 @@ abstract class ParameterizedKaptStubConverter<
         } else if (isConstructor && recordInfo != null) {
             makeBlock(listOf(makeSimpleCallStatement("this", recordInfo.delegationArguments)))
         } else if (isConstructor) {
-            val superClass = declaration.parentAsClass.getNonErrorSuperClassNotAny()
-            val superClassConstructor =
-                superClass.constructors.find {
-                    (it.visibility == DescriptorVisibilities.PUBLIC || it.visibility == DescriptorVisibilities.PROTECTED) &&
-                            it.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR
-                }
-
-            val superClassConstructorCall: List<Statement> = if (superClassConstructor != null) {
-                val args = superClassConstructor.parameters.map { param ->
-                    val defaultValue = IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, param.type)
-                    convertLiteral(containingClass, defaultValue.value)
-                }
+            val superClassConstructorArguments = declaration.superConstructorArgumentValues
+            val superClassConstructorCall: List<Statement> = if (superClassConstructorArguments != null) {
+                val args = superClassConstructorArguments.map { convertLiteral(containingClass, it) }
                 listOf(makeSimpleCallStatement("super", args))
             } else {
                 emptyList()
@@ -1058,18 +992,7 @@ abstract class ParameterizedKaptStubConverter<
         }
         lineMappings.registerSignature(signature, method)
 
-        return makeMethod(method, irClass, modifiers, genericSignature, parameters, exceptionTypes, body, defaultValue)
-    }
-
-    private fun IrClass.getNonErrorSuperClassNotAny(): IrClass {
-        // FIR keeps error supertypes
-        for (supertype in superTypes) {
-            if (supertype !is IrErrorType && !supertype.isAny()) {
-                val superclass = supertype.classOrNull?.owner ?: continue
-                if (superclass.isClass || superclass.isEnumClass) return superclass
-            }
-        }
-        return kaptContext.irBuiltIns.anyClass.owner
+        return makeMethod(method, classOrigin, modifiers, genericSignature, parameters, exceptionTypes, body, defaultValue)
     }
 
     private fun isIgnored(annotations: List<AnnotationNode>?): Boolean {
@@ -1077,136 +1000,40 @@ abstract class ParameterizedKaptStubConverter<
         return annotations?.any { Type.getType(it.desc).className == kaptIgnoredAnnotationFqName } ?: false
     }
 
-    @OptIn(SymbolInternals::class)
     private fun extractMethodSignatureTypes(
-        declaration: IrFunction,
+        declaration: KaptMethodOrigin,
         rawExceptionTypes: List<Expression>,
         returnType: Expression?,
         method: MethodNode,
         parameterTypes: List<Expression>,
     ): SignatureParser.MethodGenericSignature<Expression, TypeParameter> {
-        val irValueParameters = declaration.parameters.filter { it.kind == IrParameterKind.Regular }
-        val contextParameters = declaration.parameters.filter { it.kind == IrParameterKind.Context }
-        val extensionReceiver = declaration.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }
-        val firCallable =
-            when (val metadata = kaptContext.origins[method]?.let { kaptContext.firMetadataOf(it.declaration) }) {
-                is FirMetadataSource.Function -> metadata.fir
-                is FirMetadataSource.Property -> metadata.fir
-                is FirMetadataSource.Field -> metadata.fir
-                else -> null
-            }
-
-        val firProperty =
-            when (firCallable) {
-                is FirPropertyAccessor -> firCallable.propertySymbol.fir
-                is FirProperty -> firCallable
-                else -> null
-            }
-
-        val firFile = findFirFile(declaration)
-
-        val returnTypeReference = when (firCallable) {
-            is FirPropertyAccessor if declaration.isGetter -> firCallable.returnTypeRef
-            is FirProperty if declaration.isGetter -> firCallable.returnTypeRef
-            is FirFunction -> firCallable.returnTypeRef
-            else -> null
-        }
-        val returnTypeMappingMode = MethodSignatureMapper.getTypeMappingModeForReturnType(irTypeSystem, declaration, declaration.returnType)
+        val firFile = declaration.firFile
 
         fun nonErrorParameterTypeProvider(index: Int, lazyType: () -> Expression): Expression {
-            fun getNonErrorMethodParameterType(type: IrType, typeRefProvider: () -> FirTypeRef?): Expression {
-                val typeReference = typeRefProvider()
-                val typeMappingMode = MethodSignatureMapper.getTypeMappingModeForParameter(irTypeSystem, declaration, type)
-                return getNonErrorType(
-                    type.containsErrorTypes(),
+            val typeSource = declaration.parameterTypeSource(index, parameterTypes.size) ?: return lazyType()
+            val typeReference = typeSource.typeRef
+            val typeMappingMode = typeSource.typeMappingMode
+            if (typeSource.isContinuation) {
+                val argument = getNonErrorType(
+                    typeSource.containsErrorTypes,
                     METHOD_PARAMETER_TYPE,
                     firFile,
                     typeRefProvider = { typeReference },
-                    ifNonError = { projectLegacyFunctionTypeKindsIfNeeded(typeReference, typeMappingMode) ?: lazyType() }
+                    ifNonError = { typeMappingMode?.let { projectLegacyFunctionTypeKindsIfNeeded(typeReference, it) } },
                 )
-            }
-
-            return when {
-                declaration.isGetter -> {
-                    when {
-                        index < contextParameters.size -> {
-                            getNonErrorMethodParameterType(contextParameters[index].type) {
-                                firProperty?.contextParameters?.getOrNull(index)?.returnTypeRef
-                            }
-                        }
-                        irValueParameters.isEmpty() && index == contextParameters.size -> {
-                            getNonErrorMethodParameterType(extensionReceiver?.type ?: declaration.returnType) {
-                                firProperty?.receiverParameter?.typeRef
-                            }
-                        }
-                        else -> {
-                            lazyType()
-                        }
-                    }
-                }
-                declaration.isSetter -> {
-                    when {
-                        index < contextParameters.size -> {
-                            getNonErrorMethodParameterType(contextParameters[index].type) {
-                                firProperty?.contextParameters?.getOrNull(index)?.returnTypeRef
-                            }
-                        }
-                        index == contextParameters.size && extensionReceiver != null ->
-                            getNonErrorMethodParameterType(extensionReceiver.type) {
-                                firProperty?.receiverParameter?.typeRef
-                            }
-                        irValueParameters.size != 1 -> lazyType()
-                        index == (if (extensionReceiver == null) 0 else 1) + contextParameters.size -> {
-                            getNonErrorMethodParameterType(irValueParameters[0].type) {
-                                firProperty?.returnTypeRef
-                            }
-                        }
-                        else -> lazyType()
-                    }
-                }
-                else -> {
-                    val offset = (if (extensionReceiver == null) 0 else 1) + contextParameters.size
-                    when {
-                        index < contextParameters.size -> {
-                            getNonErrorMethodParameterType(contextParameters[index].type) {
-                                firCallable?.contextParameters?.getOrNull(index)?.returnTypeRef
-                            }
-                        }
-                        extensionReceiver != null && index == contextParameters.size -> {
-                            getNonErrorMethodParameterType(extensionReceiver.type) {
-                                firCallable?.receiverParameter?.typeRef
-                            }
-                        }
-                        irValueParameters.size + offset == parameterTypes.size -> {
-                            val valueParameterIndex = index - offset
-                            val irParameter = irValueParameters[valueParameterIndex]
-                            val sourceFunction = firCallable as? FirFunction
-                            val sourceReturnType = sourceFunction?.returnTypeRef
-                            if (sourceFunction != null && sourceReturnType != null && isContinuationParameter(irParameter)) {
-                                val typeMappingMode =
-                                    MethodSignatureMapper.getTypeMappingModeForParameter(irTypeSystem, declaration, irParameter.type)
-                                val argument = getNonErrorType(
-                                    irParameter.type.containsErrorTypes(),
-                                    METHOD_PARAMETER_TYPE,
-                                    firFile,
-                                    typeRefProvider = { sourceReturnType },
-                                    ifNonError = { projectLegacyFunctionTypeKindsIfNeeded(sourceReturnType, typeMappingMode) },
-                                )
-                                if (argument == null) {
-                                    lazyType()
-                                } else {
-                                    makeTypeApply(makeQualifiedName(StandardNames.CONTINUATION_INTERFACE_FQ_NAME), listOf(argument))
-                                }
-                            } else getNonErrorMethodParameterType(irParameter.type) {
-                                sourceFunction?.valueParameters?.getOrNull(valueParameterIndex)?.returnTypeRef
-                            }
-                        }
-                        else -> {
-                            lazyType()
-                        }
-                    }
+                return if (argument == null) {
+                    lazyType()
+                } else {
+                    makeTypeApply(makeQualifiedName(StandardNames.CONTINUATION_INTERFACE_FQ_NAME), listOf(argument))
                 }
             }
+            return getNonErrorType(
+                typeSource.containsErrorTypes,
+                METHOD_PARAMETER_TYPE,
+                firFile,
+                typeRefProvider = { typeReference },
+                ifNonError = { typeMappingMode?.let { projectLegacyFunctionTypeKindsIfNeeded(typeReference, it) } ?: lazyType() }
+            )
         }
 
         val genericSignature = if (method.signature == null) {
@@ -1221,21 +1048,20 @@ abstract class ParameterizedKaptStubConverter<
             )
         }
 
+        val returnTypeSource = declaration.returnTypeSource
+        val returnTypeReference = returnTypeSource.typeRef
         val refinedReturnType = getNonErrorType(
-            declaration.returnType.containsErrorTypes(), RETURN_TYPE,
+            returnTypeSource.containsErrorTypes, RETURN_TYPE,
             firFile,
             typeRefProvider = { returnTypeReference },
             ifNonError = {
-                projectLegacyFunctionTypeKindsIfNeeded(returnTypeReference, returnTypeMappingMode) ?: genericSignature.returnType
+                returnTypeSource.typeMappingMode?.let { projectLegacyFunctionTypeKindsIfNeeded(returnTypeReference, it) }
+                    ?: genericSignature.returnType
             }
         )
 
         return genericSignature.withRefinedReturnType(refinedReturnType)
     }
-
-    private fun isContinuationParameter(parameter: IrValueParameter): Boolean =
-        parameter.name.asString() == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME &&
-                parameter.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
 
     private fun <T : Expression?> getNonErrorType(
         containsErrorTypes: Boolean,
@@ -1265,8 +1091,8 @@ abstract class ParameterizedKaptStubConverter<
         return nonErrorType
     }
 
-    private fun FirAnnotation.convertNonErrorAnnotationType(type: IrType): Expression? =
-        if (correctErrorTypes && type.containsErrorTypes())
+    private fun FirAnnotation.convertNonErrorAnnotationType(typeContainsErrors: Boolean): Expression? =
+        if (correctErrorTypes && typeContainsErrors)
             convertFirType(resolvedType)
         else null
 
@@ -1296,23 +1122,23 @@ abstract class ParameterizedKaptStubConverter<
         packageFqName: String,
         visibleAnnotations: List<AnnotationNode>?,
         invisibleAnnotations: List<AnnotationNode>?,
-        irAnnotations: List<IrAnnotation>,
+        sourceAnnotations: List<KaptSourceAnnotation>,
     ): Modifiers {
         val convertedAnnotations = mutableListOf<Annotation>()
         var seenOverride = false
-        val seenAnnotations = mutableSetOf<IrAnnotation>()
+        val seenAnnotations = mutableSetOf<KaptSourceAnnotation>()
         fun convertAndAdd(annotation: AnnotationNode) {
             if (annotation.desc == "Ljava/lang/Override;") {
                 if (seenOverride) return  // KT-34569: skip duplicate @Override annotations
                 seenOverride = true
             }
             // Missing annotation classes can match against multiple annotation descriptors
-            val irAnnotation = irAnnotations.firstOrNull {
-                it !in seenAnnotations && checkIfAnnotationValueMatches(annotation, it.toConstantValue())
+            val sourceAnnotation = sourceAnnotations.firstOrNull {
+                it !in seenAnnotations && checkIfAnnotationValueMatches(annotation, it.constantValue)
             }?.also {
                 seenAnnotations += it
             }
-            filterAndConvertAnnotation(containingClass, annotation, packageFqName, irAnnotation)?.let { convertedAnnotations.add(it) }
+            filterAndConvertAnnotation(containingClass, annotation, packageFqName, sourceAnnotation)?.let { convertedAnnotations.add(it) }
         }
 
         visibleAnnotations?.forEach { convertAndAdd(it) }
@@ -1341,7 +1167,7 @@ abstract class ParameterizedKaptStubConverter<
         containingClass: ClassNode,
         annotation: AnnotationNode,
         packageFqName: String? = "",
-        irAnnotation: IrAnnotation? = null
+        sourceAnnotation: KaptSourceAnnotation? = null
     ): Annotation? {
         val annotationType = Type.getType(annotation.desc)
         val fqName = treeMaker.getQualifiedName(annotationType)
@@ -1351,14 +1177,14 @@ abstract class ParameterizedKaptStubConverter<
             reportIfIllegalTypeUsage(containingClass, annotationType)
             return null
         }
-        return convertAnnotation(containingClass, annotation, packageFqName, irAnnotation)
+        return convertAnnotation(containingClass, annotation, packageFqName, sourceAnnotation)
     }
 
     private fun convertAnnotation(
         containingClass: ClassNode,
         annotation: AnnotationNode,
         packageFqName: String? = "",
-        irAnnotation: IrAnnotation? = null
+        sourceAnnotation: KaptSourceAnnotation? = null
     ): Annotation {
         val annotationType = Type.getType(annotation.desc)
         val fqName = treeMaker.getQualifiedName(annotationType)
@@ -1371,11 +1197,10 @@ abstract class ParameterizedKaptStubConverter<
             fqName
         }
 
-        val firSource = irAnnotation?.source as? FirAnnotationSourceElement
-        val firAnnotation = firSource?.fir
+        val firAnnotation = sourceAnnotation?.firAnnotation
         val convertedAnnotationType: Expression =
-            firAnnotation?.convertNonErrorAnnotationType(irAnnotation.type) ?: getNonErrorType(
-                irAnnotation?.type?.containsErrorTypes() == true,
+            firAnnotation?.convertNonErrorAnnotationType(sourceAnnotation.typeContainsErrors) ?: getNonErrorType(
+                sourceAnnotation?.typeContainsErrors == true,
                 ANNOTATION,
                 getFileForClass(containingClass),
                 { null },
@@ -1662,7 +1487,7 @@ abstract class ParameterizedKaptStubConverter<
         else -> null
     }
 
-    private fun getFileForClass(c: ClassNode): FirFile? = kaptContext.origins[c]?.declaration?.let(::findFirFile)
+    private fun getFileForClass(c: ClassNode): FirFile? = kaptContext.origins[c]?.firFile
 
     private fun reportIfIllegalTypeUsage(containingClass: ClassNode, type: Type) {
         val file = getFileForClass(containingClass)
@@ -1757,7 +1582,7 @@ abstract class ParameterizedKaptStubConverter<
     protected abstract fun makeNullLiteral(): Expression
 
     protected abstract fun makeStubForTopLevelClass(
-        declaration: IrDeclaration,
+        declaration: KaptClassOrigin,
         lineMappings: KaptLineMappingCollector,
         packageName: String,
         clazz: ClassNode,
@@ -1777,7 +1602,7 @@ abstract class ParameterizedKaptStubConverter<
 
     protected abstract fun makeMethod(
         method: MethodNode,
-        irClass: IrClass,
+        classOrigin: KaptClassOrigin,
         modifiers: Modifiers,
         genericSignature: SignatureParser.MethodGenericSignature<Expression, TypeParameter>,
         parameters: List<VariableDecl>,
