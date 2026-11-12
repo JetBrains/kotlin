@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.getAncestors
@@ -31,6 +32,9 @@ interface SourceNavigator {
 
     fun FirTypeRef.isInConstructorCallee(): Boolean
 
+    /**
+     * Returns whether this type reference is declared in a `where` clause rather than in the type parameter declaration itself.
+     */
     fun FirTypeRef.isInTypeConstraint(): Boolean
 
     fun KtSourceElement.getRawIdentifier(): CharSequence?
@@ -149,8 +153,7 @@ private open class LightTreeSourceNavigator : SourceNavigator {
     }
 }
 
-//by default psi tree can reuse light tree manipulations
-private object PsiSourceNavigator : LightTreeSourceNavigator() {
+private object PsiSourceNavigator : SourceNavigator {
 
     //Swallows incorrect casts!!!
     private inline fun <reified P : PsiElement> FirElement.psi(): P? = source?.psi()
@@ -161,6 +164,10 @@ private object PsiSourceNavigator : LightTreeSourceNavigator() {
     }
 
     override fun FirTypeRef.isInConstructorCallee(): Boolean = psi<KtTypeReference>()?.parent is KtConstructorCalleeExpression
+
+    override fun FirTypeRef.isInTypeConstraint(): Boolean {
+        return PsiTreeUtil.getParentOfType(psi(), KtTypeConstraint::class.java, KtTypeParameter::class.java) is KtTypeConstraint
+    }
 
     override fun KtSourceElement.getRawIdentifier(): CharSequence? = psi<PsiElement>()?.getRawIdentifier()
 
