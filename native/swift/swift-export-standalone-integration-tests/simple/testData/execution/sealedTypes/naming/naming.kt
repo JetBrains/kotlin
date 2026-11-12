@@ -25,9 +25,24 @@ class MyClassB {
     }
 }
 
+// KT-88806: `Foo_Bar` and `FooBar` both convert to the camelCase case name `fooBar`.
+sealed interface SeparatorSealed
+
+class Foo_Bar : SeparatorSealed {
+    override fun toString(): String = "Foo_Bar"
+}
+
+class FooBar : SeparatorSealed {
+    override fun toString(): String = "FooBar"
+}
+
 // FILE: factories.kt
 package org.kotlin.foo
 
 fun createMyClassALeaf(): MySealedClass = MyClassA.Inner.Leaf()
 
 fun createMyClassBLeaf(): MySealedClass = MyClassB.Inner.Leaf()
+
+fun createFooUnderscoreBar(): SeparatorSealed = Foo_Bar()
+
+fun createFooBar(): SeparatorSealed = FooBar()
