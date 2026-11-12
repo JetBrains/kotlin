@@ -9,7 +9,6 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.AbstractCliTest.getNormalizedCompilerOutput
-import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.additionalJavaModuleReads
 import org.jetbrains.kotlin.config.jdkHome
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.test.JavaCompilationError
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -588,10 +586,8 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         environment.updateClasspath(listOf(JvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTests())))
 
-        val warnings = configuration.diagnosticsCollector.diagnostics
-            .filter { it.factory == CliDiagnostics.CLASSPATH_RESOLUTION_WARNING }
-            .map { (it as KtDiagnosticWithoutSource).message }
-        assertEquals(emptyList<String>(), warnings)
+        val diagnostics = configuration.diagnosticsCollector.diagnostics
+        assertTrue(diagnostics.isEmpty(), diagnostics.toString())
     }
 
     private fun patchModule(moduleName: String, vararg paths: String): String =
