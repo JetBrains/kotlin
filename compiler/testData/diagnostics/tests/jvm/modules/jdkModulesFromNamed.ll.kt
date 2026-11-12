@@ -1,6 +1,6 @@
 // LL_FIR_DIVERGENCE
-// The LL test platform doesn't build the Java module graph from source `module-info.java` files: all default JDK
-// modules stay visible, so `javax.swing` from `java.desktop`, which is not required, is resolved.
+// LL FIR resolves JDK classes from unread modules and reports `JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE`.
+// The compiler excludes unread JDK modules during symbol resolution and reports `UNRESOLVED_REFERENCE` instead.
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // JDK_KIND: FULL_JDK_11
@@ -24,7 +24,7 @@ fun main() {
     println(j)
 
     // Module java.desktop (this module doesn't depend on it)
-    val s: javax.swing.JFrame? = null
+    val s: <!JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE!>javax.swing.JFrame?<!> = null
     println(s)
 }
 
