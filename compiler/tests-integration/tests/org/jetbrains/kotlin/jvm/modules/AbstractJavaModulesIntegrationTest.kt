@@ -348,10 +348,6 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         // This is a test on the JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE diagnostic.
         val lib = module("lib")
         module("main", listOf(lib), listOf("lib"))
-        module(
-            "main", listOf(lib), listOf("lib"), listOf("-Xuse-fir-lt=false"),
-            checkKotlinOutput = assertCompilationError("which the current module does not depend on"),
-        )
     }
 
     @Test
@@ -368,10 +364,6 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         // In this test we're checking the diagnostic about using symbols from unnamed modules, so we need to compile 'lib' to a directory.
         val lib = module("lib", destination = File(tmpdir, testInfo.testMethod.get().name))
         module("main", additionalKotlinArguments = listOf("-classpath", lib.path))
-        module(
-            "main", additionalKotlinArguments = listOf("-classpath", lib.path, "-Xuse-fir-lt=false"),
-            checkKotlinOutput = assertCompilationError("which is not read by the current module"),
-        )
     }
 
     @Test
@@ -405,10 +397,6 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         // The same sources as in testNoDependencyOnUnnamed, where 'lib' is compiled to a directory for the same reason.
         val lib = module("lib", destination = File(tmpdir, "lib"))
         module("main", additionalKotlinArguments = listOf("-classpath", lib.path, "-Xadd-reads=main=ALL-UNNAMED"))
-        module(
-            "main", additionalKotlinArguments = listOf("-classpath", lib.path, "-Xadd-reads=main=ALL-UNNAMED", "-Xuse-fir-lt=false"),
-            checkKotlinOutput = assertNoErrors,
-        )
     }
 
     @Test
@@ -477,11 +465,6 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             checkKotlinOutput = doesNotExport,
         )
         module("main", listOf(lib), additionalKotlinArguments = listOf("-Xadd-exports=lib/foo.internal=main"))
-        module(
-            "main", listOf(lib),
-            additionalKotlinArguments = listOf("-Xuse-fir-lt=false", "-Xadd-exports=lib/foo.internal=main"),
-            checkKotlinOutput = assertNoErrors,
-        )
         // Like javac, targets are applied split on spaces too, even though 'other main' is reported as a bad name.
         module(
             "main", listOf(lib),
@@ -494,11 +477,6 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     fun testAddExportsUnnamed() {
         val lib = module("lib")
         module("main", listOf(lib), listOf("lib"), additionalKotlinArguments = listOf("-Xadd-exports=lib/foo.internal=ALL-UNNAMED"))
-        module(
-            "main", listOf(lib), listOf("lib"),
-            additionalKotlinArguments = listOf("-Xuse-fir-lt=false", "-Xadd-exports=lib/foo.internal=ALL-UNNAMED"),
-            checkKotlinOutput = assertNoErrors,
-        )
     }
 
     @Test
@@ -587,9 +565,6 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     private fun patchModule(moduleName: String, vararg paths: String): String =
         "-Xpatch-module=$moduleName=" + paths.joinToString(File.pathSeparator) { File(testDataDirectory, it).path }
-
-    // Output with -Xuse-fir-lt=false also contains its deprecation warning, so it cannot be compared with the expected output files.
-    private val assertNoErrors: (String) -> Unit = { output -> assertTrue(output.trimEnd().endsWith("\nOK"), output) }
 
     private fun assertCompilationError(vararg expected: String): (String) -> Unit = { output ->
         assertTrue(expected.all(output::contains) && output.trimEnd().endsWith("COMPILATION_ERROR"), output)
