@@ -34,12 +34,16 @@ private const val PUBLISH_RETRY_DELAY_MILLIS = 100L
  * @param markerFileName the file that marks an installation as complete. A store that already holds installations made by
  * other code passes the name that code uses, so that those installations count as complete.
  * @param leftoverPolicy what to do with a directory that has an installation's name but no marker file.
+ * @param lockTimeoutMillis how long a caller waits for another one that is installing the same id before it gives up with
+ * [InstallationLockTimeoutException]. Null, the default, waits without limit: an installation takes as long as the download
+ * and the unpacking take. A limit turns a holder that hangs into a failure that names it.
  * @param listener receives events, for example when a caller has to wait for another installation.
  */
 public class InstallationStore internal constructor(
     directory: Path,
     private val markerFileName: String,
     private val leftoverPolicy: LeftoverPolicy,
+    private val lockTimeoutMillis: Long?,
     private val listener: ProvisioningListener,
     private val move: (source: Path, target: Path) -> Unit,
     private val sleep: (millis: Long) -> Unit,
@@ -48,14 +52,16 @@ public class InstallationStore internal constructor(
         directory: Path,
         markerFileName: String = DEFAULT_MARKER_FILE_NAME,
         leftoverPolicy: LeftoverPolicy = LeftoverPolicy.REPLACE,
+        lockTimeoutMillis: Long? = null,
         listener: ProvisioningListener = ProvisioningListener.None,
-    ) : this(directory, markerFileName, leftoverPolicy, listener, ::atomicMove, Thread::sleep)
+    ) : this(directory, markerFileName, leftoverPolicy, lockTimeoutMillis, listener, ::atomicMove, Thread::sleep)
 
     /** The store directory, as an absolute path. */
     public val directory: Path = directory.toAbsolutePath().normalize()
 
     init {
         require(isSingleFileName(markerFileName)) { "The marker file name must be a single file name, got '$markerFileName'" }
+        require(lockTimeoutMillis == null || lockTimeoutMillis > 0) { "The lock timeout must be positive, got $lockTimeoutMillis" }
     }
 
     /**
@@ -85,6 +91,7 @@ public class InstallationStore internal constructor(
      *
      * @throws InvalidDistributionException if [produce] returns something other than a directory inside the staging directory.
      * @throws LeftoverInstallationException if an incomplete directory is in the way and the policy is [LeftoverPolicy.FAIL].
+     * @throws InstallationLockTimeoutException if another caller is still installing [id] when the lock timeout runs out.
      */
     public fun install(id: String, produce: (staging: StagingArea) -> Path): Path {
         val installation = installationPath(id)
@@ -92,7 +99,12 @@ public class InstallationStore internal constructor(
 
         val lockFile = directory.resolve(LOCKS_DIRECTORY).resolve("$id.lock")
         Files.createDirectories(lockFile.parent)
-        val lock = InstallationLock(lockFile, onWait = { listener.waitingForLock(id, lockFile) }, sleep = sleep)
+        val lock = InstallationLock(
+            lockFile,
+            onWait = { holder -> listener.waitingForLock(id, lockFile, holder) },
+            sleep = sleep,
+            timeoutMillis = lockTimeoutMillis,
+        )
         return lock.withLock {
             // whoever held the lock before may have installed it
             if (isComplete(installation)) return@withLock installation

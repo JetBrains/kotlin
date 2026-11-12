@@ -16,8 +16,11 @@ import java.nio.file.Path
  * Methods are called from the thread doing the work and must not throw.
  */
 public interface ProvisioningListener {
-    /** Another thread or process is installing [id], and this caller waits for [lockFile]. */
-    public fun waitingForLock(id: String, lockFile: Path) {}
+    /**
+     * Another thread or process is installing [id], and this caller waits for [lockFile]. [holder] is the process that
+     * holds the lock, as `pid@host`, if the lock file names one.
+     */
+    public fun waitingForLock(id: String, lockFile: Path, holder: String?) {}
 
     /** A directory without a marker file was deleted to make room for an installation. */
     public fun leftoverRemoved(installation: Path) {}

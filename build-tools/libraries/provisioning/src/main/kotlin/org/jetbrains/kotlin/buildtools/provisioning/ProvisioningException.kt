@@ -20,6 +20,21 @@ public abstract class ProvisioningException internal constructor(message: String
 public class InvalidDistributionException internal constructor(message: String) : ProvisioningException(message)
 
 /**
+ * Another thread or process was still installing the same distribution when the store's lock timeout ran out.
+ *
+ * @property lockFile the lock that stayed taken.
+ * @property holder the process that holds it, as `pid@host`, if the lock file names one.
+ */
+public class InstallationLockTimeoutException internal constructor(
+    public val lockFile: Path,
+    public val holder: String?,
+    timeoutMillis: Long,
+) : ProvisioningException(
+    "Gave up after $timeoutMillis ms of waiting for the lock '$lockFile', held by ${holder ?: "an unknown process"}, " +
+            "which is installing the same distribution. If that process hangs, stop it and run the build again."
+)
+
+/**
  * A directory with an installation's name but without the marker file is in the way, and the store is set to
  * [LeftoverPolicy.FAIL].
  *
