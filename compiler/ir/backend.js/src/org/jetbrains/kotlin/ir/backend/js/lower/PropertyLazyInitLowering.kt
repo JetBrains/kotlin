@@ -121,7 +121,10 @@ abstract class PropertyLazyInitLowering(
     }
 }
 
-@PhasePrerequisites(JsDefaultArgumentStubGenerator::class)
+@PhasePrerequisites(
+    JsDefaultArgumentStubGenerator::class,
+    WebLateinitIsInitializedLowering::class
+)
 class JsPropertyLazyInitLowering(context: JsIrBackendContext) : PropertyLazyInitLowering(context) {
     override val initializationGenerator = JsLazyGlobalInitializationGenerator(context)
 }
