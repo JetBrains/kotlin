@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
@@ -22,12 +24,21 @@ fun List<OutputFile>.filterClassFiles(): List<OutputFile> {
 }
 
 fun Iterable<PackageParts>.addCompiledPartsAndSort(state: GenerationState): List<PackageParts> =
-    addCompiledParts(state).sortedBy { it.packageFqName }
+    addCompiledPartsAndSort(state.incrementalCacheForThisTarget, state.config.languageVersionSettings)
 
-private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): List<PackageParts> {
-    val mapping = state.loadCompiledModule() ?: return this.toList()
+fun Iterable<PackageParts>.addCompiledPartsAndSort(
+    incrementalCache: IncrementalCache?,
+    languageVersionSettings: LanguageVersionSettings,
+): List<PackageParts> =
+    addCompiledParts(incrementalCache, languageVersionSettings).sortedBy { it.packageFqName }
 
-    state.incrementalCacheForThisTarget?.getObsoletePackageParts()?.forEach { internalName ->
+private fun Iterable<PackageParts>.addCompiledParts(
+    incrementalCache: IncrementalCache?,
+    languageVersionSettings: LanguageVersionSettings,
+): List<PackageParts> {
+    val mapping = loadCompiledModule(incrementalCache, languageVersionSettings) ?: return this.toList()
+
+    incrementalCache?.getObsoletePackageParts()?.forEach { internalName ->
         val qualifier = JvmClassName.byInternalName(internalName).packageFqName.asString()
         mapping.findPackageParts(qualifier)?.removePart(internalName)
     }
@@ -41,9 +52,12 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
         }
 }
 
-fun GenerationState.loadCompiledModule(): ModuleMapping? {
-    val moduleMappingData = incrementalCacheForThisTarget?.getModuleMappingData() ?: return null
-    val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.languageVersionSettings)
+fun GenerationState.loadCompiledModule(): ModuleMapping? =
+    loadCompiledModule(incrementalCacheForThisTarget, config.languageVersionSettings)
+
+private fun loadCompiledModule(incrementalCache: IncrementalCache?, languageVersionSettings: LanguageVersionSettings): ModuleMapping? {
+    val moduleMappingData = incrementalCache?.getModuleMappingData() ?: return null
+    val deserializationConfiguration = CommonCompilerDeserializationConfiguration(languageVersionSettings)
     return ModuleMapping.loadModuleMapping(moduleMappingData, "<incremental>", deserializationConfiguration) { version ->
         throw IllegalStateException("Version of the generated module cannot be incompatible: $version")
     }

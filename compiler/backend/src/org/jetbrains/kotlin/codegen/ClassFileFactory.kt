@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtensio
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmAnalysisFlags.strictMetadataVersionSemantics
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -75,11 +76,9 @@ class ClassFileFactory(
             ModuleNameUtil.getMappingFileName(generationState.moduleName),
             object : OutAndSourceFileList(sourceFiles.toList()) {
                 override fun asBytes(factory: ClassBuilderFactory): ByteArray {
-                    var flags = 0
-                    if (generationState.config.languageVersionSettings.getFlag(strictMetadataVersionSemantics)) {
-                        flags = flags or ModuleMapping.STRICT_METADATA_VERSION_SEMANTICS_FLAG
-                    }
-                    return moduleProto.serializeToByteArray(metadataVersionToUseForModuleMapping, flags)
+                    return moduleProto.serializeModuleMapping(
+                        generationState.config.metadataVersion, generationState.config.languageVersionSettings
+                    )
                 }
 
                 override fun asText(factory: ClassBuilderFactory): String {
@@ -87,32 +86,6 @@ class ClassFileFactory(
                 }
             })
     }
-
-    private val metadataVersionToUseForModuleMapping: BinaryVersion
-        get() {
-            val version = generationState.config.metadataVersion
-            if (version.major == LanguageVersion.KOTLIN_2_0.major &&
-                version.minor == LanguageVersion.KOTLIN_2_0.minor
-            ) {
-                // If language version is >= 2.0, we're using metadata version 1.9.*. This is needed because before Kotlin 1.8.20-RC, there was
-                // a bug in determining whether module metadata is written in the pre-1.4 format, or in the 1.4+ format with an extra integer
-                // for module-wide flags (see https://github.com/jetbrains/kotlin/commit/25c600c556a5).
-                //
-                // Normally it should not be possible to suffer from it because we have only one version forward compatibility on JVM. However,
-                // with `-Xskip-metadata-version-check`, which is used in Gradle, pre-1.8.20-RC Kotlin compilers were trying to read the 2.0
-                // module metadata in the wrong format and failed with an exception: KT-62531.
-                //
-                // Since module metadata is not supposed to have any changes in 2.0, we're using the metadata version 1.9 as a workaround. This
-                // way, it's still written in the 1.4+ format, and old compilers will correctly understand that it's written in the 1.4+ format.
-                //
-                // Patch version does not affect anything, so we can use any number, for example 9999 to make it more recognizable that it's
-                // not a real Kotlin version, and rather a substitute for the 2.0 metadata version.
-                //
-                // This workaround can be removed once we no longer support language version 2.0.
-                return MetadataVersion(1, 9, 9999)
-            }
-            return version
-        }
 
     override fun asList(): List<OutputFile> {
         done()
@@ -247,4 +220,42 @@ class ClassFileFactory(
             generators.remove("$classInternalName.class")
         }
     }
+}
+
+/**
+ * Serializes the module mapping (`META-INF/<module>.kotlin_module`) with the metadata version and flags the JVM backend writes it with.
+ */
+fun JvmModuleProtoBuf.Module.serializeModuleMapping(
+    metadataVersion: BinaryVersion,
+    languageVersionSettings: LanguageVersionSettings,
+): ByteArray {
+    var flags = 0
+    if (languageVersionSettings.getFlag(strictMetadataVersionSemantics)) {
+        flags = flags or ModuleMapping.STRICT_METADATA_VERSION_SEMANTICS_FLAG
+    }
+    return serializeToByteArray(metadataVersionToUseForModuleMapping(metadataVersion), flags)
+}
+
+private fun metadataVersionToUseForModuleMapping(version: BinaryVersion): BinaryVersion {
+    if (version.major == LanguageVersion.KOTLIN_2_0.major &&
+        version.minor == LanguageVersion.KOTLIN_2_0.minor
+    ) {
+        // If language version is >= 2.0, we're using metadata version 1.9.*. This is needed because before Kotlin 1.8.20-RC, there was
+        // a bug in determining whether module metadata is written in the pre-1.4 format, or in the 1.4+ format with an extra integer
+        // for module-wide flags (see https://github.com/jetbrains/kotlin/commit/25c600c556a5).
+        //
+        // Normally it should not be possible to suffer from it because we have only one version forward compatibility on JVM. However,
+        // with `-Xskip-metadata-version-check`, which is used in Gradle, pre-1.8.20-RC Kotlin compilers were trying to read the 2.0
+        // module metadata in the wrong format and failed with an exception: KT-62531.
+        //
+        // Since module metadata is not supposed to have any changes in 2.0, we're using the metadata version 1.9 as a workaround. This
+        // way, it's still written in the 1.4+ format, and old compilers will correctly understand that it's written in the 1.4+ format.
+        //
+        // Patch version does not affect anything, so we can use any number, for example 9999 to make it more recognizable that it's
+        // not a real Kotlin version, and rather a substitute for the 2.0 metadata version.
+        //
+        // This workaround can be removed once we no longer support language version 2.0.
+        return MetadataVersion(1, 9, 9999)
+    }
+    return version
 }
