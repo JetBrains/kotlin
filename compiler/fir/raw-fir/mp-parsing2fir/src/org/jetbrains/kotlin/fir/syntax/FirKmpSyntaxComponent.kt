@@ -54,5 +54,33 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
         notYetImplemented()
     }
 
+    override fun KtSourceElement.isInConstructorCallee(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.isInTypeConstraint(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.getRawIdentifier(): CharSequence? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.getRawName(): String? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.isRedundantNullable(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.hasEnumEntryBody(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.hasEnumEntryInitializer(): Boolean {
+        notYetImplemented()
+    }
+
     private fun notYetImplemented(): Nothing = TODO("Not yet implemented: KT-91322")
 }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
@@ -127,8 +128,8 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
             // report the diagnostic on that bound
 
             //take TypeConstraint bounds only to report on the same point as old FE
-            val constraintBounds = with(SourceNavigator.forElement(declaration)) {
-                bounds.filter { it.isInTypeConstraint() }.toSet()
+            val constraintBounds = withSyntax {
+                bounds.filter { it.source?.isInTypeConstraint() == true }.toSet()
             }
             val reportOn =
                 if (bounds.size == 2) {

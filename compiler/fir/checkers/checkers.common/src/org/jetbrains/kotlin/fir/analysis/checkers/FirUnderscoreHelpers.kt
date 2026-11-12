@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.*
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -23,14 +24,12 @@ internal fun checkUnderscoreDiagnostics(
     val sourceKind = source?.kind ?: return
 
     if (sourceKind is KtRealSourceElementKind || sourceKind is KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess) {
-        with(SourceNavigator.forSource(source)) {
-            if (source.getRawIdentifier()?.isUnderscore == true) {
-                reporter.reportOn(
-                    source,
-                    if (isExpression) FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS else FirErrors.UNDERSCORE_IS_RESERVED,
-                    SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
-                )
-            }
+        if (withSyntax { source.getRawIdentifier() }?.isUnderscore == true) {
+            reporter.reportOn(
+                source,
+                if (isExpression) FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS else FirErrors.UNDERSCORE_IS_RESERVED,
+                SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
+            )
         }
     }
 }

@@ -53,3 +53,9 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findLastChildByType(node: Ligh
  */
 fun FlyweightCapableTreeStructure<LighterASTNode>.valOrVarKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.VAL_VAR)
+
+/**
+ * Returns the name identifier among the direct children of [node], or `null` if there is none.
+ */
+fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.IDENTIFIER)
