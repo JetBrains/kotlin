@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedClassLikeType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -20,7 +20,7 @@ private fun ConeKotlinType.classId(session: FirSession): ClassId? {
         returnsNotNull() implies (this@classId is ConeClassLikeType)
     }
     if (this !is ConeClassLikeType) return null
-    return fullyExpandedType(session).classId
+    return fullyExpandedClassLikeType(session)?.classId
 }
 
 fun ConeKotlinType.isKProperty(session: FirSession): Boolean {
