@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.provisioning
 
 import java.io.IOException
+import java.net.URI
 import java.nio.file.Path
 
 /** A failure reported by this library. Failures of code the caller passes in reach the caller unchanged. */
@@ -30,4 +31,49 @@ public class LeftoverInstallationException internal constructor(
 ) : ProvisioningException(
     "'$installation' is not a complete installation: it has no '$markerFileName' file. It may be left over from an " +
             "interrupted installation or written by another installer. Delete it and run the build again."
+)
+
+/**
+ * A file has to be downloaded, but the [Downloader] is offline.
+ *
+ * @property urls where the file would have come from.
+ */
+public class OfflineException internal constructor(
+    public val urls: List<URI>,
+    target: Path,
+) : ProvisioningException(
+    "Cannot download '${target.fileName}' from ${urls.first()}: downloading is disabled in offline mode. " +
+            "Run the build once without offline mode."
+)
+
+/**
+ * Every attempt to download a file failed.
+ *
+ * @property urls the URLs that were tried.
+ */
+public class DownloadFailedException internal constructor(
+    public val urls: List<URI>,
+    target: Path,
+    cause: IOException,
+) : ProvisioningException(
+    "Cannot download '${target.fileName}' from ${urls.joinToString()}: ${cause.message}. Check the network connection, " +
+            "proxy settings and the URL.",
+    cause,
+)
+
+/**
+ * The downloaded file does not have the expected SHA-256. The file on the server and the checksum the caller expects
+ * disagree, so trying again does not help.
+ *
+ * @property url where the file came from.
+ * @property expected the checksum the caller expected.
+ * @property actual the checksum of the downloaded bytes.
+ */
+public class ChecksumMismatchException internal constructor(
+    public val url: URI,
+    public val expected: String,
+    public val actual: String,
+) : ProvisioningException(
+    "The file downloaded from $url has the SHA-256 checksum $actual, but $expected was expected. Either the file on the " +
+            "server or the expected checksum is wrong."
 )
