@@ -16,6 +16,7 @@ dependencies {
     compileOnly(project(":compiler:frontend.common-psi"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
+    compileOnly(project(":compiler:serialization.common"))
     compileOnly(project(":kotlin-annotation-processing-cli"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))

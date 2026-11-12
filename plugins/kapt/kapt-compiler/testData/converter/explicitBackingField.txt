@@ -1,0 +1,133 @@
+package test;
+
+/**
+ * public final class test/A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // getter: getA()Ljava/lang/Object;
+ *   public final val a: kotlin/Any
+ *     public final get
+ *
+ *   // field: delegated$delegate:Lkotlin/Lazy;
+ *   // getter: getDelegated()Ljava/lang/Object;
+ *   public final (* delegated *) val delegated: kotlin/Any
+ *     public final (* non-default *) get
+ *
+ *   // field: list:Ljava/util/List;
+ *   // getter: getList()Ljava/util/List;
+ *   public final val list: kotlin/collections/List<kotlin/String>
+ *     public final get
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class A {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.String> list = null;
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.Lazy delegated$delegate = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.StringBuilder c = null;
+    @org.jetbrains.annotations.NotNull()
+    public static final test.A.Companion Companion = null;
+
+    public A() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Object getA() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.String> getList() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Object getDelegated() {
+        return null;
+    }
+
+    /**
+     * public final companion object test/A.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: c:Ljava/lang/StringBuilder;
+     *   // getter: getC()Ljava/lang/CharSequence;
+     *   public final val c: kotlin/CharSequence
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.CharSequence getC() {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // field: topLevel:Ljava/lang/String;
+ *   // getter: getTopLevel()Ljava/lang/Object;
+ *   public final val topLevel: kotlin/Any
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ExplicitBackingFieldKt {
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String topLevel = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.Object getTopLevel() {
+        return null;
+    }
+}
+
+// LINE MAPPINGS
+test/A#<init>()V: explicitBackingField.kt:77
+test/A#Companion: explicitBackingField.kt:2147483647
+test/A#a: explicitBackingField.kt:102
+test/A#c: explicitBackingField.kt:276
+test/A#delegated$delegate: explicitBackingField.kt:210
+test/A#getA()Ljava/lang/Object;: explicitBackingField.kt:91
+test/A#getDelegated()Ljava/lang/Object;: explicitBackingField.kt:188
+test/A#getList()Ljava/util/List;: explicitBackingField.kt:128
+test/A#list: explicitBackingField.kt:151
+test/A$Companion#<init>()V: explicitBackingField.kt:229
+test/A$Companion#getC()Ljava/lang/CharSequence;: explicitBackingField.kt:256
+test/A$Companion: explicitBackingField.kt:229
+test/A: explicitBackingField.kt:77
+test/ExplicitBackingFieldKt#getTopLevel()Ljava/lang/Object;: explicitBackingField.kt:37
+test/ExplicitBackingFieldKt#topLevel: explicitBackingField.kt:55
+test/ExplicitBackingFieldKt: explicitBackingField.kt:0

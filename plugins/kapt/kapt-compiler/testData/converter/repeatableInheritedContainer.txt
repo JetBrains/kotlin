@@ -1,0 +1,112 @@
+@kotlin.annotation.Repeatable()
+@java.lang.annotation.Inherited()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Repeatable(value = A.Container.class)
+/**
+ * @kotlin/annotation/Repeatable
+ * @java/lang/annotation/Inherited
+ * public final annotation class A : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface A {
+
+    public abstract java.lang.String value();
+
+    @java.lang.annotation.Inherited()
+    @kotlin.jvm.internal.RepeatableContainer()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static abstract @interface Container {
+
+        public abstract A[] value();
+    }
+}
+
+////////////////////
+
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION})
+@java.lang.annotation.Inherited()
+@kotlin.annotation.Repeatable()
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.CLASS)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD})
+@java.lang.annotation.Repeatable(value = B.Container.class)
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FUNCTION])
+ * @java/lang/annotation/Inherited
+ * @kotlin/annotation/Repeatable
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+ * public final annotation class B : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface B {
+
+    public abstract java.lang.String value();
+
+    @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION})
+    @java.lang.annotation.Inherited()
+    @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+    @kotlin.jvm.internal.RepeatableContainer()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.CLASS)
+    @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE, java.lang.annotation.ElementType.METHOD})
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static abstract @interface Container {
+
+        public abstract B[] value();
+    }
+}
+
+////////////////////
+
+
+@A(value = "a1")
+@A(value = "a2")
+/**
+ * @A(value = "a1")
+ * @A(value = "a2")
+ * @B(value = "b1")
+ * @B(value = "b2")
+ * public open class Base : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@B(value = "b1")
+@B(value = "b2")
+public class Base {
+
+    public Base() {
+        super();
+    }
+}

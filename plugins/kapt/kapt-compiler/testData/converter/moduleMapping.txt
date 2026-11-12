@@ -1,0 +1,106 @@
+/**
+ * package {
+ *
+ *   // signature: root()V
+ *   public final fun root(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class RootKt {
+
+    public static final void root() {
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: facade()Ljava/lang/String;
+ *   public final fun facade(): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class FacadeKt {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String facade() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * multi-file class {
+ *   // test/Multi__AKt
+ *   // test/Multi__BKt
+ * }
+ */
+@kotlin.Metadata()
+public final class Multi {
+
+    public static final void a() {
+    }
+
+    public static final int getB() {
+        return 0;
+    }
+}
+
+////////////////////
+
+package test.other;
+
+/**
+ * package {
+ *
+ *   // field: c:I
+ *   public final const val c: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmName(name = "Renamed")
+public final class Renamed {
+    public static final int c = 1;
+}
+
+// MODULE MAPPING: META-INF/main.kotlin_module
+<root>: RootKt
+test.other: test/other/Renamed
+test: test/FacadeKt
+test: test/Multi__AKt (test/Multi)
+test: test/Multi__BKt (test/Multi)

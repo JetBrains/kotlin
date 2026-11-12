@@ -15,9 +15,13 @@ import org.jetbrains.kotlin.kapt.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.DUMP_LINE_MAPPINGS
+import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.DUMP_MODULE_MAPPING
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.NON_EXISTENT_CLASS
 import org.jetbrains.kotlin.kapt.util.prettyPrint
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -47,7 +51,8 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
             .sortedBy { it.sourceFile.name }
             .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context, ::renderMetadata) }
 
-        val actual = (StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' }) + lineMappings(module, convertedFiles))
+        val actual = (StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' }) + lineMappings(module, convertedFiles) +
+                moduleMapping(module, kaptContext))
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
@@ -74,6 +79,27 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
             val path = input.readUTF()
             input.readBoolean()
             "$fqName: ${File(path).name}:${input.readInt()}"
+        }
+    }
+
+    /**
+     * The package parts of the module mapping written to the incremental data, which incremental compilation reads, as
+     * `package: part` or `package: part (facade)` for multifile class parts.
+     */
+    private fun moduleMapping(module: TestModule, kaptContext: KaptContextForStubGeneration): String {
+        if (DUMP_MODULE_MAPPING !in module.directives) return ""
+        val files = kaptContext.outputFiles.asList().filter { File(it.relativePath).extension == ModuleMapping.MAPPING_FILE_EXT }
+        return files.joinToString("") { file ->
+            val mapping = ModuleMapping.loadModuleMapping(file.asByteArray(), file.relativePath, DeserializationConfiguration.Default) {
+                assertions.fail { "Incompatible metadata version of ${file.relativePath}: $it" }
+            }
+            val parts = mapping.packageFqName2Parts.values.flatMap { packageParts ->
+                packageParts.parts.map { part ->
+                    val facade = packageParts.getMultifileFacadeName(part)?.let { " ($it)" }.orEmpty()
+                    "${packageParts.packageFqName.ifEmpty { "<root>" }}: $part$facade"
+                }
+            }
+            parts.sorted().joinToString("\n", prefix = "\n\n// MODULE MAPPING: ${file.relativePath}\n")
         }
     }
 

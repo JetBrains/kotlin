@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.kapt.base.stubs.KotlinPosition
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 
-/** Source declaration an ASM node of a stub was generated from, as the stub converter sees it; see [KaptIrOrigins]. */
+/**
+ * Source declaration an ASM node of a stub was generated from: an IR declaration when the JVM backend generated the node
+ * ([KaptIrOrigins]), or a FIR declaration in the FIR stub generation mode.
+ */
 abstract class KaptStubOrigin {
     abstract val firFile: FirFile?
 
