@@ -22,11 +22,16 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+/**
+ * Records the FIR element for each PSI element of the visited FIR tree (see [recordElementsFrom]), which [KtToFirMapping] then reads.
+ *
+ * A FIR element is recorded for its [anchorPsi]. A PSI element without a FIR element of its own, such as the integer literal inside a
+ * literal folded with unary signs, is mapped to a related or a synthetic FIR element instead.
+ */
 internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement, FirElement>>() {
 
     /**
@@ -91,32 +96,40 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
 
         when (val psi = literalExpression.anchorPsi as? KtElement) {
             null -> {}
-            is KtPrefixExpression -> {
-                val constantLiteralExpression = psi.constantExpression ?: return
-                val sourceElement = constantLiteralExpression.toKtPsiSourceElement()
-                val adjustedFirLiteral = when (psi.operationToken) {
-                    KtTokens.MINUS -> {
-                        // KtPrefixExpression(-, KtConstExpression(n)) is represented as FirLiteralExpression(-n) with converted constant value.
-                        // If one queries FIR for KtConstExpression, we still return FirLiteralExpression(-n) even though its source is KtPrefixExpression.
-                        // Here, we cache FirLiteralExpression(n) for KtConstExpression(n) to make everything natural and intuitive!
-                        literalExpression.kind.reverseConverted(
-                            original = literalExpression,
-                            sourceElement = sourceElement,
-                        )
-                    }
-
-                    // Even `+` has to be converted to drop redundant noise from the constant expression.
-                    // E.g., +(@Anno() (1))
-                    KtTokens.PLUS -> literalExpression.copy(newValue = literalExpression.value, newSource = sourceElement)
-                    else -> literalExpression
-                } ?: return
-
-                // Cache only on the constant expression, not on `KtPrefixExpression`
-                cache(constantLiteralExpression, adjustedFirLiteral, data)
-            }
-
+            is KtPrefixExpression -> cacheFoldedLiteral(psi, literalExpression, data)
             else -> cache(psi, literalExpression, data)
         }
+    }
+
+    /**
+     * Caches the integer literal inside [foldedLiteral], into which raw FIR folds it together with the unary minuses and pluses around
+     * it, such as `-(+1)` with [prefixExpression] as its source.
+     *
+     * The integer literal is mapped to a copy of [foldedLiteral] with its own value, and [KtToFirMapping] represents the prefix
+     * expressions of the chain as fake operator calls on that copy (KT-70774).
+     */
+    private fun cacheFoldedLiteral(
+        prefixExpression: KtPrefixExpression,
+        foldedLiteral: FirLiteralExpression,
+        data: MutableMap<KtElement, FirElement>,
+    ) {
+        val prefixExpressions = mutableListOf<KtPrefixExpression>()
+        var current: PsiElement? = prefixExpression
+        while (current is KtPrefixExpression) {
+            prefixExpressions += current
+            current = current.baseExpression.unwrapParenthesesLabelsAndAnnotations()
+        }
+
+        val constantExpression = current as? KtConstantExpression ?: return
+        val isNegated = prefixExpressions.count { it.operationToken == KtTokens.MINUS } % 2 == 1
+        val sourceElement = constantExpression.toKtPsiSourceElement()
+        val literalWithoutSigns = if (isNegated) {
+            foldedLiteral.kind.reverseConverted(original = foldedLiteral, sourceElement = sourceElement)
+        } else {
+            foldedLiteral.copy(newValue = foldedLiteral.value, newSource = sourceElement)
+        } ?: return
+
+        cache(constantExpression, literalWithoutSigns, data)
     }
 
     //@formatter:off
@@ -148,28 +161,6 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         val psi = element.anchorPsi as? KtElement ?: return
         cache(psi, element, cache)
     }
-
-    /**
-     * Just [findDescendantOfType] cannot be used since [KtConstantExpression] could be somewhere inside an annotation argument
-     */
-    private val KtPrefixExpression.constantExpression: KtConstantExpression?
-        get() {
-            var current: PsiElement? = this
-            do {
-                val new = when (current) {
-                    is KtPrefixExpression -> current.baseExpression
-                    else -> current.unwrapParenthesesLabelsAndAnnotations()
-                }
-
-                if (current == new) {
-                    break
-                }
-
-                current = new
-            } while (true)
-
-            return current as? KtConstantExpression
-        }
 
     private fun ConstantValueKind.reverseConverted(original: FirLiteralExpression, sourceElement: KtSourceElement?): FirLiteralExpression? {
         val value = original.value as? Number ?: return null
