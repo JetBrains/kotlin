@@ -1,0 +1,133 @@
+/**
+ * Auto-increment column type.
+ *
+ * @property delegate the wrapped config
+ */
+/**
+ * public final class AutoInc : Config {
+ *
+ *   // signature: <init>(LConfig;)V
+ *   public constructor(delegate: Config)
+ *
+ *   // signature: timeout()I
+ *   public open (* delegation *) fun timeout(): kotlin/Int
+ *
+ *   // field: delegate:LConfig;
+ *   private final val delegate: Config
+ *     private final get
+ *
+ *   // getter: getFetchSize()Ljava/lang/Integer;
+ *   public open (* delegation *) val fetchSize: kotlin/Int?
+ *     public open get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class AutoInc implements Config {
+    @org.jetbrains.annotations.NotNull()
+    private final Config delegate = null;
+
+    public AutoInc(@org.jetbrains.annotations.NotNull()
+    Config delegate) {
+        super();
+    }
+
+    /**
+     * Auto-increment column type.
+     *
+     * @property delegate the wrapped config
+     */
+    @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
+    public java.lang.Integer getFetchSize() {
+        return null;
+    }
+
+    /**
+     * Auto-increment column type.
+     *
+     * @property delegate the wrapped config
+     */
+    @java.lang.Override()
+    public int timeout() {
+        return 0;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface Config : kotlin/Any {
+ *
+ *   // signature: timeout()I
+ *   public abstract fun timeout(): kotlin/Int
+ *
+ *   // getter: getFetchSize()Ljava/lang/Integer;
+ *   public abstract val fetchSize: kotlin/Int?
+ *     public abstract get
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Config {
+
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.Integer getFetchSize();
+
+    public abstract int timeout();
+}
+
+////////////////////
+
+
+/**
+ * @suppress
+ */
+/**
+ * public final class ConfigImpl : Config {
+ *
+ *   // signature: <init>(LConfig;)V
+ *   public constructor(delegate: Config)
+ *
+ *   // signature: timeout()I
+ *   public open (* delegation *) fun timeout(): kotlin/Int
+ *
+ *   // getter: getFetchSize()Ljava/lang/Integer;
+ *   public open (* delegation *) val fetchSize: kotlin/Int?
+ *     public open get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ConfigImpl implements Config {
+
+    public ConfigImpl(@org.jetbrains.annotations.NotNull()
+    Config delegate) {
+        super();
+    }
+
+    /**
+     * @suppress
+     */
+    @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
+    public java.lang.Integer getFetchSize() {
+        return null;
+    }
+
+    /**
+     * @suppress
+     */
+    @java.lang.Override()
+    public int timeout() {
+        return 0;
+    }
+}

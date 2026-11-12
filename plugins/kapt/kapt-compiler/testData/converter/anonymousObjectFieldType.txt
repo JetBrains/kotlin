@@ -1,0 +1,54 @@
+/**
+ * public final class Deserializer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: publicRef:LTypeReference;
+ *   // getter: getPublicRef()LTypeReference;
+ *   public final val publicRef: TypeReference<kotlin/collections/List<kotlin/String>>
+ *     public final get
+ *
+ *   // field: reference:LTypeReference;
+ *   private final val reference: TypeReference
+ *     private final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Deserializer {
+    @org.jetbrains.annotations.NotNull()
+    private final TypeReference<java.util.Map<java.lang.String, java.util.List<java.lang.CharSequence>>> reference = null;
+    @org.jetbrains.annotations.NotNull()
+    private final TypeReference<java.util.List<java.lang.String>> publicRef = null;
+
+    public Deserializer() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final TypeReference<java.util.List<java.lang.String>> getPublicRef() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract class TypeReference<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class TypeReference<T extends java.lang.Object> {
+
+    public TypeReference() {
+        super();
+    }
+}

@@ -1,0 +1,98 @@
+package groovy;
+
+public class Closure<V> {
+}
+
+////////////////////
+
+package lib;
+
+import java.util.List;
+import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+
+public interface Conn {
+
+    void setTypeMap(Map<String, Class<?>> map);
+
+    Map<String, ?> getProperties();
+
+    void afterEvaluate(groovy.Closure closure);
+
+    @NotNull()
+    List<String> findElements(@NotNull()
+    String by);
+
+    @Deprecated()
+    void download(long timeout);
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract class test/ConnectionSpy : lib/Conn {
+ *
+ *   // signature: <init>(Llib/Conn;)V
+ *   public constructor(connection: lib/Conn)
+ *
+ *   // signature: afterEvaluate(Lgroovy/Closure;)V
+ *   public open (* delegation *) fun afterEvaluate(closure: (* raw *) groovy/Closure<kotlin/Any!>..(* raw *) groovy/Closure<*>?): kotlin/Unit
+ *
+ *   // signature: download(J)V
+ *   @kotlin/Deprecated(message = "Deprecated in Java")
+ *   public open (* delegation *) fun download(timeout: kotlin/Long): kotlin/Unit
+ *
+ *   // signature: findElements(Ljava/lang/String;)Ljava/util/List;
+ *   @org/jetbrains/annotations/NotNull
+ *   public open (* delegation *) fun findElements(@org/jetbrains/annotations/NotNull by: @kotlin/jvm/internal/EnhancedNullability kotlin/String): @kotlin/jvm/internal/EnhancedNullability kotlin/collections/MutableList<kotlin/String!>..@kotlin/jvm/internal/EnhancedNullability kotlin/collections/List<kotlin/String!>
+ *
+ *   // signature: getProperties()Ljava/util/Map;
+ *   public open (* delegation *) fun getProperties(): kotlin/collections/MutableMap<kotlin/String!, *>..kotlin/collections/Map<kotlin/String!, *>?
+ *
+ *   // signature: setTypeMap(Ljava/util/Map;)V
+ *   public open (* delegation *) fun setTypeMap(map: kotlin/collections/MutableMap<kotlin/String!, java/lang/Class<*>!>..kotlin/collections/Map<kotlin/String!, java/lang/Class<*>!>?): kotlin/Unit
+ *
+ *   // field: connection:Llib/Conn;
+ *   private final val connection: lib/Conn
+ *     private final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class ConnectionSpy implements lib.Conn {
+    @org.jetbrains.annotations.NotNull()
+    private final lib.Conn connection = null;
+
+    public ConnectionSpy(@org.jetbrains.annotations.NotNull()
+    lib.Conn connection) {
+        super();
+    }
+
+    @java.lang.Override()
+    public void afterEvaluate(groovy.Closure closure) {
+    }
+
+    @java.lang.Override()
+    @java.lang.Deprecated()
+    public void download(long timeout) {
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.List<java.lang.String> findElements(@org.jetbrains.annotations.NotNull()
+    java.lang.String by) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public java.util.Map<java.lang.String, ?> getProperties() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public void setTypeMap(java.util.Map<java.lang.String, java.lang.Class<?>> map) {
+    }
+}

@@ -1,0 +1,1715 @@
+/**
+ * public final class CompilerDiagnostics : kotlin/collections/List<ErrorDescriptor> {
+ *
+ *   // signature: <init>(Ljava/util/List;)V
+ *   public constructor(list: kotlin/collections/List<ErrorDescriptor>)
+ *
+ *   // signature: contains(LErrorDescriptor;)Z
+ *   // must-use return value
+ *   public open (* delegation *) operator fun contains(element: ErrorDescriptor): kotlin/Boolean
+ *
+ *   // signature: containsAll(Ljava/util/Collection;)Z
+ *   // must-use return value
+ *   public open (* delegation *) fun containsAll(elements: kotlin/collections/Collection<ErrorDescriptor>): kotlin/Boolean
+ *
+ *   // signature: get(I)LErrorDescriptor;
+ *   // must-use return value
+ *   public open (* delegation *) operator fun get(index: kotlin/Int): ErrorDescriptor
+ *
+ *   // signature: indexOf(LErrorDescriptor;)I
+ *   // must-use return value
+ *   public open (* delegation *) fun indexOf(element: ErrorDescriptor): kotlin/Int
+ *
+ *   // signature: isEmpty()Z
+ *   // must-use return value
+ *   public open (* delegation *) fun isEmpty(): kotlin/Boolean
+ *
+ *   // signature: iterator()Ljava/util/Iterator;
+ *   // must-use return value
+ *   public open (* delegation *) operator fun iterator(): kotlin/collections/Iterator<ErrorDescriptor>
+ *
+ *   // signature: lastIndexOf(LErrorDescriptor;)I
+ *   // must-use return value
+ *   public open (* delegation *) fun lastIndexOf(element: ErrorDescriptor): kotlin/Int
+ *
+ *   // signature: listIterator()Ljava/util/ListIterator;
+ *   // must-use return value
+ *   public open (* delegation *) fun listIterator(): kotlin/collections/ListIterator<ErrorDescriptor>
+ *
+ *   // signature: listIterator(I)Ljava/util/ListIterator;
+ *   // must-use return value
+ *   public open (* delegation *) fun listIterator(index: kotlin/Int): kotlin/collections/ListIterator<ErrorDescriptor>
+ *
+ *   // signature: subList(II)Ljava/util/List;
+ *   // must-use return value
+ *   public open (* delegation *) fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/List<ErrorDescriptor>
+ *
+ *   // getter: getSize()I
+ *   // must-use return value
+ *   public open (* delegation *) val size: kotlin/Int
+ *     public open get
+ *
+ *   // field: list:Ljava/util/List;
+ *   private final val list: kotlin/collections/List<ErrorDescriptor>
+ *     private final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class CompilerDiagnostics implements java.util.List<ErrorDescriptor>, kotlin.jvm.internal.markers.KMappedMarker {
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<ErrorDescriptor> list = null;
+
+    @java.lang.Override()
+    public final boolean contains(java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public final int indexOf(java.lang.Object element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final int lastIndexOf(java.lang.Object element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    public CompilerDiagnostics(@org.jetbrains.annotations.NotNull()
+    java.util.List<ErrorDescriptor> list) {
+        super();
+    }
+
+    @java.lang.Override()
+    public void add(int index, ErrorDescriptor element) {
+    }
+
+    @java.lang.Override()
+    public boolean add(ErrorDescriptor element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean addAll(int index, java.util.Collection<? extends ErrorDescriptor> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean addAll(java.util.Collection<? extends ErrorDescriptor> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public void clear() {
+    }
+
+    @java.lang.Override()
+    public boolean contains(@org.jetbrains.annotations.NotNull()
+    ErrorDescriptor element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean containsAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public ErrorDescriptor get(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public int indexOf(@org.jetbrains.annotations.NotNull()
+    ErrorDescriptor element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Iterator<ErrorDescriptor> iterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int lastIndexOf(@org.jetbrains.annotations.NotNull()
+    ErrorDescriptor element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.ListIterator<ErrorDescriptor> listIterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.ListIterator<ErrorDescriptor> listIterator(int index) {
+        return null;
+    }
+
+    public ErrorDescriptor remove(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean remove(java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean removeAll(java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public void replaceAll(java.util.function.UnaryOperator<ErrorDescriptor> p0) {
+    }
+
+    @java.lang.Override()
+    public boolean retainAll(java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public ErrorDescriptor set(int index, ErrorDescriptor element) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public void sort(java.util.Comparator<? super ErrorDescriptor> p0) {
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.List<ErrorDescriptor> subList(int fromIndex, int toIndex) {
+        return null;
+    }
+
+    public java.lang.Object[] toArray() {
+        return null;
+    }
+
+    public <T extends java.lang.Object>T[] toArray(T[] array) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class Dependencies : kotlin/collections/MutableList<kotlin/String> {
+ *
+ *   // signature: <init>(Ljava/util/List;)V
+ *   public constructor(value: kotlin/collections/List<kotlin/String>)
+ *
+ *   // signature: add(ILjava/lang/String;)V
+ *   // must-use return value
+ *   public open (* delegation *) fun add(index: kotlin/Int, element: kotlin/String): kotlin/Unit
+ *
+ *   // signature: add(Ljava/lang/String;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun add(element: kotlin/String): kotlin/Boolean
+ *
+ *   // signature: addAll(ILjava/util/Collection;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun addAll(index: kotlin/Int, elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+ *
+ *   // signature: addAll(Ljava/util/Collection;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun addAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+ *
+ *   // signature: clear()V
+ *   // must-use return value
+ *   public open (* delegation *) fun clear(): kotlin/Unit
+ *
+ *   // signature: contains(Ljava/lang/String;)Z
+ *   // must-use return value
+ *   public open (* delegation *) operator fun contains(element: kotlin/String): kotlin/Boolean
+ *
+ *   // signature: containsAll(Ljava/util/Collection;)Z
+ *   // must-use return value
+ *   public open (* delegation *) fun containsAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+ *
+ *   // signature: get(I)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* delegation *) operator fun get(index: kotlin/Int): kotlin/String
+ *
+ *   // signature: indexOf(Ljava/lang/String;)I
+ *   // must-use return value
+ *   public open (* delegation *) fun indexOf(element: kotlin/String): kotlin/Int
+ *
+ *   // signature: isEmpty()Z
+ *   // must-use return value
+ *   public open (* delegation *) fun isEmpty(): kotlin/Boolean
+ *
+ *   // signature: iterator()Ljava/util/Iterator;
+ *   // must-use return value
+ *   public open (* delegation *) operator fun iterator(): kotlin/collections/MutableIterator<kotlin/String>
+ *
+ *   // signature: lastIndexOf(Ljava/lang/String;)I
+ *   // must-use return value
+ *   public open (* delegation *) fun lastIndexOf(element: kotlin/String): kotlin/Int
+ *
+ *   // signature: listIterator()Ljava/util/ListIterator;
+ *   // must-use return value
+ *   public open (* delegation *) fun listIterator(): kotlin/collections/MutableListIterator<kotlin/String>
+ *
+ *   // signature: listIterator(I)Ljava/util/ListIterator;
+ *   // must-use return value
+ *   public open (* delegation *) fun listIterator(index: kotlin/Int): kotlin/collections/MutableListIterator<kotlin/String>
+ *
+ *   // signature: remove(Ljava/lang/String;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun remove(element: kotlin/String): kotlin/Boolean
+ *
+ *   // signature: removeAll(Ljava/util/Collection;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun removeAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+ *
+ *   // signature: removeAt(I)Ljava/lang/String;
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun removeAt(index: kotlin/Int): kotlin/String
+ *
+ *   // signature: retainAll(Ljava/util/Collection;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun retainAll(elements: kotlin/collections/Collection<kotlin/String>): kotlin/Boolean
+ *
+ *   // signature: set(ILjava/lang/String;)Ljava/lang/String;
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) operator fun set(index: kotlin/Int, element: kotlin/String): kotlin/String
+ *
+ *   // signature: subList(II)Ljava/util/List;
+ *   // must-use return value
+ *   public open (* delegation *) fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/MutableList<kotlin/String>
+ *
+ *   // getter: getSize()I
+ *   // must-use return value
+ *   public open (* delegation *) val size: kotlin/Int
+ *     public open get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Dependencies implements java.util.List<java.lang.String>, kotlin.jvm.internal.markers.KMutableList {
+
+    @java.lang.Override()
+    public final boolean contains(java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public final int indexOf(java.lang.Object element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final int lastIndexOf(java.lang.Object element) {
+        return 0;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    public final java.lang.String remove(int index) {
+        return null;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public final boolean remove(java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    public Dependencies(@org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> value) {
+        super();
+    }
+
+    @java.lang.Override()
+    public void add(int index, @org.jetbrains.annotations.NotNull()
+    java.lang.String element) {
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean add(@org.jetbrains.annotations.NotNull()
+    java.lang.String element) {
+        return false;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean addAll(int index, @org.jetbrains.annotations.NotNull()
+    java.util.Collection<? extends java.lang.String> elements) {
+        return false;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean addAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<? extends java.lang.String> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public void clear() {
+    }
+
+    @java.lang.Override()
+    public boolean contains(@org.jetbrains.annotations.NotNull()
+    java.lang.String element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean containsAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String get(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public int indexOf(@org.jetbrains.annotations.NotNull()
+    java.lang.String element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Iterator<java.lang.String> iterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int lastIndexOf(@org.jetbrains.annotations.NotNull()
+    java.lang.String element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.ListIterator<java.lang.String> listIterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.ListIterator<java.lang.String> listIterator(int index) {
+        return null;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean remove(@org.jetbrains.annotations.NotNull()
+    java.lang.String element) {
+        return false;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean removeAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String removeAt(int index) {
+        return null;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean retainAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String set(int index, @org.jetbrains.annotations.NotNull()
+    java.lang.String element) {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.List<java.lang.String> subList(int fromIndex, int toIndex) {
+        return null;
+    }
+
+    public java.lang.Object[] toArray() {
+        return null;
+    }
+
+    public <T extends java.lang.Object>T[] toArray(T[] array) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class ErrorDescriptor : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(message: kotlin/String)
+ *
+ *   // field: message:Ljava/lang/String;
+ *   // getter: getMessage()Ljava/lang/String;
+ *   public final val message: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrorDescriptor {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String message = null;
+
+    public ErrorDescriptor(@org.jetbrains.annotations.NotNull()
+    java.lang.String message) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getMessage() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * Files of files.
+ */
+/**
+ * public final class FileToFilesMap : java/util/HashMap<java/io/File, kotlin/collections/List<java/io/File>> (* = kotlin/collections/HashMap^<java/io/File, kotlin/collections/List<java/io/File>> *) {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class FileToFilesMap extends java.util.HashMap<java.io.File, java.util.List<? extends java.io.File>> {
+
+    public FileToFilesMap() {
+        super(0, 0.0F);
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public boolean containsKey(java.io.File p0) {
+        return false;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final boolean containsKey(java.lang.Object key) {
+        return false;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final boolean containsValue(java.lang.Object value) {
+        return false;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public boolean containsValue(java.util.List<? extends java.io.File> p0) {
+        return false;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final java.util.Set<java.util.Map.Entry<java.io.File, java.util.List<java.io.File>>> entrySet() {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public java.util.List<java.io.File> get(java.io.File p0) {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final java.util.List<java.io.File> get(java.lang.Object key) {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public java.util.Set<java.util.Map.Entry<java.io.File, java.util.List<java.io.File>>> getEntries() {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public java.util.Set<java.io.File> getKeys() {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public java.util.List<java.io.File> getOrDefault(java.io.File p0, java.util.List<? extends java.io.File> p1) {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final java.util.List<java.io.File> getOrDefault(java.lang.Object key, java.util.List<? extends java.io.File> defaultValue) {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public java.util.Collection<java.util.List<java.io.File>> getValues() {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final java.util.Set<java.io.File> keySet() {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public java.util.List<java.io.File> remove(java.io.File p0) {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public boolean remove(java.io.File p0, java.util.List<? extends java.io.File> p1) {
+        return false;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final java.util.List<java.io.File> remove(java.lang.Object key) {
+        return null;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final boolean remove(java.lang.Object key, java.lang.Object value) {
+        return false;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    /**
+     * Files of files.
+     */
+    @java.lang.Override()
+    public final java.util.Collection<java.util.List<java.io.File>> values() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class IdentitySet<T#0 (* T *)> : kotlin/collections/MutableSet<T#0> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: add(Ljava/lang/Object;)Z
+ *   // ignorable return value
+ *   public open fun add(element: T#0): kotlin/Boolean
+ *
+ *   // signature: addAll(Ljava/util/Collection;)Z
+ *   // ignorable return value
+ *   public open fun addAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+ *
+ *   // signature: clear()V
+ *   // must-use return value
+ *   public open fun clear(): kotlin/Unit
+ *
+ *   // signature: contains(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open operator fun contains(element: T#0): kotlin/Boolean
+ *
+ *   // signature: containsAll(Ljava/util/Collection;)Z
+ *   // must-use return value
+ *   public open fun containsAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+ *
+ *   // signature: isEmpty()Z
+ *   // must-use return value
+ *   public open fun isEmpty(): kotlin/Boolean
+ *
+ *   // signature: iterator()Ljava/util/Iterator;
+ *   // must-use return value
+ *   public open operator fun iterator(): kotlin/collections/MutableIterator<T#0>
+ *
+ *   // signature: remove(Ljava/lang/Object;)Z
+ *   // ignorable return value
+ *   public open fun remove(element: T#0): kotlin/Boolean
+ *
+ *   // signature: removeAll(Ljava/util/Collection;)Z
+ *   // ignorable return value
+ *   public open fun removeAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+ *
+ *   // signature: retainAll(Ljava/util/Collection;)Z
+ *   // ignorable return value
+ *   public open fun retainAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+ *
+ *   // getter: getSize()I
+ *   // must-use return value
+ *   public open val size: kotlin/Int
+ *     public open (* non-default *) get
+ *
+ *   // field: set:Ljava/util/LinkedHashSet;
+ *   private final val set: java/util/LinkedHashSet<T#0> (* = kotlin/collections/LinkedHashSet^<T#0> *)
+ *     private final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class IdentitySet<T extends java.lang.Object> implements java.util.Set<T>, kotlin.jvm.internal.markers.KMutableSet {
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.LinkedHashSet<T> set = null;
+
+    public IdentitySet() {
+        super();
+    }
+
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public boolean add(T element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean addAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<? extends T> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public void clear() {
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Iterator<T> iterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean remove(java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean removeAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean retainAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean contains(java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean containsAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean isEmpty() {
+        return false;
+    }
+
+    public java.lang.Object[] toArray() {
+        return null;
+    }
+
+    public <T extends java.lang.Object>T[] toArray(T[] array) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * A map with a limit.
+ */
+/**
+ * public final class LimitedHashMap<T#0 (* K *), T#1 (* V *)> : java/util/LinkedHashMap<T#0, T#1> (* = kotlin/collections/LinkedHashMap^<T#0, T#1> *) {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class LimitedHashMap<K extends java.lang.Object, V extends java.lang.Object> extends java.util.LinkedHashMap<K, V> {
+
+    public LimitedHashMap() {
+        super(0, 0.0F);
+    }
+
+    /**
+     * A map with a limit.
+     */
+    @java.lang.Override()
+    public final java.util.Set<java.util.Map.Entry<K, V>> entrySet() {
+        return null;
+    }
+
+    /**
+     * A map with a limit.
+     */
+    @java.lang.Override()
+    public java.util.Set<java.util.Map.Entry<java.lang.Object, java.lang.Object>> getEntries() {
+        return null;
+    }
+
+    /**
+     * A map with a limit.
+     */
+    @java.lang.Override()
+    public java.util.Set<java.lang.Object> getKeys() {
+        return null;
+    }
+
+    /**
+     * A map with a limit.
+     */
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    /**
+     * A map with a limit.
+     */
+    @java.lang.Override()
+    public java.util.Collection<java.lang.Object> getValues() {
+        return null;
+    }
+
+    /**
+     * A map with a limit.
+     */
+    @java.lang.Override()
+    public final java.util.Set<K> keySet() {
+        return null;
+    }
+
+    /**
+     * A map with a limit.
+     */
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    /**
+     * A map with a limit.
+     */
+    @java.lang.Override()
+    public final java.util.Collection<V> values() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract class NonNullKeys<T#0 (* K *) : kotlin/Any, T#1 (* V *)> : kotlin/collections/MutableMap<T#0, T#1> {
+ *
+ *   // signature: <init>(Ljava/util/Map;)V
+ *   public constructor(m: kotlin/collections/MutableMap<T#0, T#1>)
+ *
+ *   // signature: clear()V
+ *   // must-use return value
+ *   public open (* delegation *) fun clear(): kotlin/Unit
+ *
+ *   // signature: containsKey(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* delegation *) fun containsKey(key: T#0): kotlin/Boolean
+ *
+ *   // signature: containsValue(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* delegation *) fun containsValue(value: T#1): kotlin/Boolean
+ *
+ *   // signature: get(Ljava/lang/Object;)Ljava/lang/Object;
+ *   // must-use return value
+ *   public open (* delegation *) operator fun get(key: T#0): T#1?
+ *
+ *   // signature: isEmpty()Z
+ *   // must-use return value
+ *   public open (* delegation *) fun isEmpty(): kotlin/Boolean
+ *
+ *   // signature: put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun put(key: T#0, value: T#1): T#1?
+ *
+ *   // signature: putAll(Ljava/util/Map;)V
+ *   // must-use return value
+ *   public open (* delegation *) fun putAll(from: kotlin/collections/Map<out T#0, T#1>): kotlin/Unit
+ *
+ *   // signature: remove(Ljava/lang/Object;)Ljava/lang/Object;
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun remove(key: T#0): T#1?
+ *
+ *   // getter: getEntries()Ljava/util/Set;
+ *   // must-use return value
+ *   public open (* delegation *) val entries: kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<T#0, T#1>>
+ *     public open get
+ *
+ *   // getter: getKeys()Ljava/util/Set;
+ *   // must-use return value
+ *   public open (* delegation *) val keys: kotlin/collections/MutableSet<T#0>
+ *     public open get
+ *
+ *   // getter: getSize()I
+ *   // must-use return value
+ *   public open (* delegation *) val size: kotlin/Int
+ *     public open get
+ *
+ *   // getter: getValues()Ljava/util/Collection;
+ *   // must-use return value
+ *   public open (* delegation *) val values: kotlin/collections/MutableCollection<T#1>
+ *     public open get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class NonNullKeys<K extends java.lang.Object, V extends java.lang.Object> implements java.util.Map<K, V>, kotlin.jvm.internal.markers.KMutableMap {
+
+    @java.lang.Override()
+    public final java.util.Set<java.util.Map.Entry<K, V>> entrySet() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public final java.util.Set<K> keySet() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final java.util.Collection<V> values() {
+        return null;
+    }
+
+    public NonNullKeys(@org.jetbrains.annotations.NotNull()
+    java.util.Map<K, V> m) {
+        super();
+    }
+
+    @java.lang.Override()
+    public void clear() {
+    }
+
+    @java.lang.Override()
+    public boolean containsKey(@org.jetbrains.annotations.Nullable()
+    java.lang.Object key) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean containsValue(java.lang.Object value) {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
+    public V get(@org.jetbrains.annotations.Nullable()
+    java.lang.Object key) {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Set<java.util.Map.Entry<K, V>> getEntries() {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Set<K> getKeys() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Collection<V> getValues() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
+    public V put(@org.jetbrains.annotations.NotNull()
+    K key, V value) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public void putAll(@org.jetbrains.annotations.NotNull()
+    java.util.Map<? extends K, ? extends V> from) {
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
+    public V remove(@org.jetbrains.annotations.Nullable()
+    java.lang.Object key) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract class NullableKeys<T#0 (* K *), T#1 (* V *)> : kotlin/collections/MutableMap<T#0, T#1> {
+ *
+ *   // signature: <init>(Ljava/util/Map;)V
+ *   public constructor(m: kotlin/collections/MutableMap<T#0, T#1>)
+ *
+ *   // signature: clear()V
+ *   // must-use return value
+ *   public open (* delegation *) fun clear(): kotlin/Unit
+ *
+ *   // signature: containsKey(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* delegation *) fun containsKey(key: T#0): kotlin/Boolean
+ *
+ *   // signature: containsValue(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* delegation *) fun containsValue(value: T#1): kotlin/Boolean
+ *
+ *   // signature: get(Ljava/lang/Object;)Ljava/lang/Object;
+ *   // must-use return value
+ *   public open (* delegation *) operator fun get(key: T#0): T#1?
+ *
+ *   // signature: isEmpty()Z
+ *   // must-use return value
+ *   public open (* delegation *) fun isEmpty(): kotlin/Boolean
+ *
+ *   // signature: put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun put(key: T#0, value: T#1): T#1?
+ *
+ *   // signature: putAll(Ljava/util/Map;)V
+ *   // must-use return value
+ *   public open (* delegation *) fun putAll(from: kotlin/collections/Map<out T#0, T#1>): kotlin/Unit
+ *
+ *   // signature: remove(Ljava/lang/Object;)Ljava/lang/Object;
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun remove(key: T#0): T#1?
+ *
+ *   // getter: getEntries()Ljava/util/Set;
+ *   // must-use return value
+ *   public open (* delegation *) val entries: kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<T#0, T#1>>
+ *     public open get
+ *
+ *   // getter: getKeys()Ljava/util/Set;
+ *   // must-use return value
+ *   public open (* delegation *) val keys: kotlin/collections/MutableSet<T#0>
+ *     public open get
+ *
+ *   // getter: getSize()I
+ *   // must-use return value
+ *   public open (* delegation *) val size: kotlin/Int
+ *     public open get
+ *
+ *   // getter: getValues()Ljava/util/Collection;
+ *   // must-use return value
+ *   public open (* delegation *) val values: kotlin/collections/MutableCollection<T#1>
+ *     public open get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class NullableKeys<K extends java.lang.Object, V extends java.lang.Object> implements java.util.Map<K, V>, kotlin.jvm.internal.markers.KMutableMap {
+
+    @java.lang.Override()
+    public final java.util.Set<java.util.Map.Entry<K, V>> entrySet() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public final java.util.Set<K> keySet() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final java.util.Collection<V> values() {
+        return null;
+    }
+
+    public NullableKeys(@org.jetbrains.annotations.NotNull()
+    java.util.Map<K, V> m) {
+        super();
+    }
+
+    @java.lang.Override()
+    public void clear() {
+    }
+
+    @java.lang.Override()
+    public boolean containsKey(java.lang.Object key) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean containsValue(java.lang.Object value) {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
+    public V get(java.lang.Object key) {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Set<java.util.Map.Entry<K, V>> getEntries() {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Set<K> getKeys() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Collection<V> getValues() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
+    public V put(K key, V value) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public void putAll(@org.jetbrains.annotations.NotNull()
+    java.util.Map<? extends K, ? extends V> from) {
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
+    public V remove(java.lang.Object key) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract class PersistentMap<T#0 (* K *), T#1 (* V *)> : kotlin/collections/MutableMap<T#0, T#1> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class PersistentMap<K extends java.lang.Object, V extends java.lang.Object> implements java.util.Map<K, V>, kotlin.jvm.internal.markers.KMutableMap {
+
+    @java.lang.Override()
+    public abstract java.util.Set<java.util.Map.Entry<K, V>> getEntries();
+
+    @java.lang.Override()
+    public abstract java.util.Set<K> getKeys();
+
+    @java.lang.Override()
+    public abstract int getSize();
+
+    @java.lang.Override()
+    public abstract java.util.Collection<V> getValues();
+
+    public PersistentMap() {
+        super();
+    }
+
+    @java.lang.Override()
+    public final java.util.Set<java.util.Map.Entry<K, V>> entrySet() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public final java.util.Set<K> keySet() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final java.util.Collection<V> values() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * public final value class RowId : kotlin/Any {
+ *
+ *   // signature: constructor-impl(J)J
+ *   public constructor(id: kotlin/Long)
+ *
+ *   // signature: equals-impl(JLjava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(J)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(J)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: id:J
+ *   // getter: getId()J
+ *   public final val id: kotlin/Long
+ *     public final get
+ *
+ *   // underlying property: id
+ *
+ *   // underlying type: kotlin/Long
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class RowId {
+    private final long id = 0L;
+
+    public final long getId() {
+        return 0L;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class Rows : kotlin/collections/MutableList<RowId> {
+ *
+ *   // signature: <init>(Ljava/util/List;)V
+ *   public constructor(list: kotlin/collections/MutableList<RowId>)
+ *
+ *   // signature: add-RfMgquI(IJ)V
+ *   // must-use return value
+ *   public open (* delegation *) fun add(index: kotlin/Int, element: RowId): kotlin/Unit
+ *
+ *   // signature: add-n1WvlWE(J)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun add(element: RowId): kotlin/Boolean
+ *
+ *   // signature: addAll(ILjava/util/Collection;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun addAll(index: kotlin/Int, elements: kotlin/collections/Collection<RowId>): kotlin/Boolean
+ *
+ *   // signature: addAll(Ljava/util/Collection;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun addAll(elements: kotlin/collections/Collection<RowId>): kotlin/Boolean
+ *
+ *   // signature: clear()V
+ *   // must-use return value
+ *   public open (* delegation *) fun clear(): kotlin/Unit
+ *
+ *   // signature: contains-n1WvlWE(J)Z
+ *   // must-use return value
+ *   public open (* delegation *) operator fun contains(element: RowId): kotlin/Boolean
+ *
+ *   // signature: containsAll(Ljava/util/Collection;)Z
+ *   // must-use return value
+ *   public open (* delegation *) fun containsAll(elements: kotlin/collections/Collection<RowId>): kotlin/Boolean
+ *
+ *   // signature: get-RwRVceg(I)J
+ *   // must-use return value
+ *   public open (* delegation *) operator fun get(index: kotlin/Int): RowId
+ *
+ *   // signature: indexOf-n1WvlWE(J)I
+ *   // must-use return value
+ *   public open (* delegation *) fun indexOf(element: RowId): kotlin/Int
+ *
+ *   // signature: isEmpty()Z
+ *   // must-use return value
+ *   public open (* delegation *) fun isEmpty(): kotlin/Boolean
+ *
+ *   // signature: iterator()Ljava/util/Iterator;
+ *   // must-use return value
+ *   public open (* delegation *) operator fun iterator(): kotlin/collections/MutableIterator<RowId>
+ *
+ *   // signature: lastIndexOf-n1WvlWE(J)I
+ *   // must-use return value
+ *   public open (* delegation *) fun lastIndexOf(element: RowId): kotlin/Int
+ *
+ *   // signature: listIterator()Ljava/util/ListIterator;
+ *   // must-use return value
+ *   public open (* delegation *) fun listIterator(): kotlin/collections/MutableListIterator<RowId>
+ *
+ *   // signature: listIterator(I)Ljava/util/ListIterator;
+ *   // must-use return value
+ *   public open (* delegation *) fun listIterator(index: kotlin/Int): kotlin/collections/MutableListIterator<RowId>
+ *
+ *   // signature: remove-n1WvlWE(J)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun remove(element: RowId): kotlin/Boolean
+ *
+ *   // signature: removeAll(Ljava/util/Collection;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun removeAll(elements: kotlin/collections/Collection<RowId>): kotlin/Boolean
+ *
+ *   // signature: removeAt-RwRVceg(I)J
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun removeAt(index: kotlin/Int): RowId
+ *
+ *   // signature: retainAll(Ljava/util/Collection;)Z
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) fun retainAll(elements: kotlin/collections/Collection<RowId>): kotlin/Boolean
+ *
+ *   // signature: set-7dKzBvE(IJ)J
+ *   // ignorable return value
+ *   @kotlin/IgnorableReturnValue
+ *   public open (* delegation *) operator fun set(index: kotlin/Int, element: RowId): RowId
+ *
+ *   // signature: subList(II)Ljava/util/List;
+ *   // must-use return value
+ *   public open (* delegation *) fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/MutableList<RowId>
+ *
+ *   // getter: getSize()I
+ *   // must-use return value
+ *   public open (* delegation *) val size: kotlin/Int
+ *     public open get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Rows implements java.util.List<RowId>, kotlin.jvm.internal.markers.KMutableList {
+
+    @java.lang.Override()
+    public final boolean contains(java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public final int indexOf(java.lang.Object element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final int lastIndexOf(java.lang.Object element) {
+        return 0;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    public final long remove(int index) {
+        return 0L;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public final boolean remove(java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    public Rows(@org.jetbrains.annotations.NotNull()
+    java.util.List<RowId> list) {
+        super();
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean addAll(int index, @org.jetbrains.annotations.NotNull()
+    java.util.Collection<? extends RowId> elements) {
+        return false;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean addAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<? extends RowId> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public void clear() {
+    }
+
+    @java.lang.Override()
+    public boolean containsAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Iterator<RowId> iterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.ListIterator<RowId> listIterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.ListIterator<RowId> listIterator(int index) {
+        return null;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean removeAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @kotlin.IgnorableReturnValue()
+    @java.lang.Override()
+    public boolean retainAll(@org.jetbrains.annotations.NotNull()
+    java.util.Collection<?> elements) {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.List<RowId> subList(int fromIndex, int toIndex) {
+        return null;
+    }
+
+    public java.lang.Object[] toArray() {
+        return null;
+    }
+
+    public <T extends java.lang.Object>T[] toArray(T[] array) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class StatementIterator<T#0 (* T *)> : kotlin/collections/Iterator<T#0> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: hasNext()Z
+ *   // must-use return value
+ *   public open operator fun hasNext(): kotlin/Boolean
+ *
+ *   // signature: next()Ljava/lang/Object;
+ *   // must-use return value
+ *   public open operator fun next(): T#0
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class StatementIterator<T extends java.lang.Object> implements java.util.Iterator<T>, kotlin.jvm.internal.markers.KMappedMarker {
+
+    public StatementIterator() {
+        super();
+    }
+
+    @java.lang.Override()
+    public boolean hasNext() {
+        return false;
+    }
+
+    @java.lang.Override()
+    public T next() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public void remove() {
+    }
+}
+
+////////////////////
+
+
+/**
+ * A unique list.
+ */
+/**
+ * public final class UniqueList<T#0 (* E *)> : java/util/AbstractList<T#0>, kotlin/collections/MutableList<T#0> {
+ *
+ *   // signature: <init>(Ljava/util/ArrayList;)V
+ *   public constructor(list: java/util/ArrayList<T#0> (* = kotlin/collections/ArrayList^<T#0> *))
+ *
+ *   // signature: get(I)Ljava/lang/Object;
+ *   // must-use return value
+ *   public open operator fun get(index: kotlin/Int): T#0
+ *
+ *   // getter: getSize()I
+ *   // must-use return value
+ *   public open val size: kotlin/Int
+ *     public open (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class UniqueList<E extends java.lang.Object> extends java.util.AbstractList<E> implements java.util.List<E>, kotlin.jvm.internal.markers.KMutableList {
+
+    /**
+     * A unique list.
+     */
+    public final E remove(int index) {
+        return null;
+    }
+
+    /**
+     * A unique list.
+     */
+    @java.lang.Override()
+    public java.lang.Object removeAt(int index) {
+        return null;
+    }
+
+    /**
+     * A unique list.
+     */
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+
+    public UniqueList(@org.jetbrains.annotations.NotNull()
+    java.util.ArrayList<E> list) {
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public E get(int index) {
+        return null;
+    }
+}

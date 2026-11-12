@@ -1,0 +1,114 @@
+/**
+ * public final class RegistryImpl : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class RegistryImpl {
+    @org.jetbrains.annotations.NotNull()
+    private static final kotlin.Lazy<java.util.List<java.lang.String>> delegated$delegate = null;
+    @org.jetbrains.annotations.NotNull()
+    public static final RegistryImpl.Companion Companion = null;
+
+    public RegistryImpl() {
+        super();
+    }
+
+    /**
+     * public final companion object RegistryImpl.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: delegated$delegate:Lkotlin/Lazy;
+     *   // getter: getDelegated()Ljava/util/List;
+     *   public final (* delegated *) val delegated: kotlin/collections/List<kotlin/String>
+     *     public final (* non-default *) get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.util.List<java.lang.String> getDelegated() {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface RegistryTypeMapping : kotlin/Any {
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface RegistryTypeMapping {
+    @org.jetbrains.annotations.NotNull()
+    public static final RegistryTypeMapping.Companion Companion = null;
+
+    /**
+     * public final companion object RegistryTypeMapping.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: delegated$delegate:Lkotlin/Lazy;
+     *   // getter: getDelegated()Ljava/util/List;
+     *   public final (* delegated *) val delegated: kotlin/collections/List<kotlin/String>
+     *     public final (* non-default *) get
+     *
+     *   // field: javaTyped$delegate:Lkotlin/Lazy;
+     *   // getter: getJavaTyped()Ljava/util/List;
+     *   private final (* delegated *) val javaTyped: kotlin/collections/MutableList<kotlin/String!>..kotlin/collections/List<kotlin/String!>?
+     *     private final (* non-default *) get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+        @org.jetbrains.annotations.NotNull()
+        private static final kotlin.Lazy<java.util.List<java.lang.String>> javaTyped$delegate = null;
+        @org.jetbrains.annotations.NotNull()
+        private static final kotlin.Lazy<java.util.List<java.lang.String>> delegated$delegate = null;
+
+        private Companion() {
+            super();
+        }
+
+        private final java.util.List<java.lang.String> getJavaTyped() {
+            return null;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.util.List<java.lang.String> getDelegated() {
+            return null;
+        }
+    }
+}

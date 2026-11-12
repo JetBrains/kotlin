@@ -1,0 +1,121 @@
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * public final value class CardOrNoteId : kotlin/Any {
+ *
+ *   // signature: constructor-impl(J)J
+ *   public constructor(id: kotlin/Long)
+ *
+ *   // signature: describe-impl(JLjava/lang/String;)Ljava/lang/String;
+ *   public final fun describe(prefix: kotlin/String): kotlin/String
+ *
+ *   // signature: equals-impl(JLjava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(J)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(J)Ljava/lang/String;
+ *   // must-use return value
+ *   public open fun toString(): kotlin/String
+ *
+ *   // field: id:J
+ *   // getter: getId()J
+ *   public final val id: kotlin/Long
+ *     public final get
+ *
+ *   // underlying property: id
+ *
+ *   // underlying type: kotlin/Long
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class CardOrNoteId {
+    private final long id = 0L;
+
+    public final long getId() {
+        return 0L;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * public final value class PostRequestUri : kotlin/Any {
+ *
+ *   // signature: constructor-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   public constructor(uri: kotlin/String)
+ *
+ *   // signature: equals-impl(Ljava/lang/String;Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(Ljava/lang/String;)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   // must-use return value
+ *   public open fun toString(): kotlin/String
+ *
+ *   // field: uri:Ljava/lang/String;
+ *   // getter: getUri()Ljava/lang/String;
+ *   public final val uri: kotlin/String
+ *     public final get
+ *
+ *   // underlying property: uri
+ *
+ *   // underlying type: kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class PostRequestUri {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String uri = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getUri() {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+}

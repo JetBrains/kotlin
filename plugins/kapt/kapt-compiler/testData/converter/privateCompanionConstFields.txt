@@ -1,0 +1,169 @@
+/**
+ * public final class Holder : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Holder {
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public static final java.lang.String PUBLIC_CONST = "a";
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String PRIVATE_CONST = "b";
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String plain = "c";
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public static final java.lang.String jvmField = "d";
+    @org.jetbrains.annotations.NotNull()
+    private static final Holder.Companion Companion = null;
+
+    public Holder() {
+        super();
+    }
+
+    /**
+     * private final companion object Holder.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: PRIVATE_CONST:Ljava/lang/String;
+     *   private final const val PRIVATE_CONST: kotlin/String (* = ... *)
+     *     private final get
+     *
+     *   // field: PUBLIC_CONST:Ljava/lang/String;
+     *   public final const val PUBLIC_CONST: kotlin/String (* = ... *)
+     *     public final get
+     *
+     *   // field: plain:Ljava/lang/String;
+     *   // getter: getPlain()Ljava/lang/String;
+     *   public final val plain: kotlin/String
+     *     public final get
+     *
+     *   // field: jvmField:Ljava/lang/String;
+     *   @field:kotlin/jvm/JvmField
+     *   public final val jvmField: kotlin/String
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getPlain() {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class PublicCompanion : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class PublicCompanion {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String CONST = "e";
+    @org.jetbrains.annotations.NotNull()
+    public static final PublicCompanion.Companion Companion = null;
+
+    public PublicCompanion() {
+        super();
+    }
+
+    /**
+     * public final companion object PublicCompanion.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: CONST:Ljava/lang/String;
+     *   public final const val CONST: kotlin/String (* = ... *)
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface WithPrivateCompanion : kotlin/Any {
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface WithPrivateCompanion {
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public static final java.lang.String IN_INTERFACE = "f";
+
+    /**
+     * private final companion object WithPrivateCompanion.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: IN_INTERFACE:Ljava/lang/String;
+     *   public final const val IN_INTERFACE: kotlin/String (* = ... *)
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+        @org.jetbrains.annotations.NotNull()
+        public static final java.lang.String IN_INTERFACE = "f";
+
+        private Companion() {
+            super();
+        }
+    }
+}

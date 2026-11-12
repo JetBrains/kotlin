@@ -1,0 +1,41 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class NotInLibAnki : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface NotInLibAnki {
+}
+
+////////////////////
+
+
+/**
+ * package {
+ *
+ *   public typealias Plain = kotlin/String (* = kotlin/String *)
+ *
+ *   @NotInLibAnki
+ *   public typealias UndoStepCounter = kotlin/Int (* = kotlin/Int *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class TypealiasAnnotationsKt {
+
+    @NotInLibAnki()
+    @java.lang.Deprecated()
+    public static void UndoStepCounter$annotations() {
+    }
+}
+
+// LINE MAPPINGS
+NotInLibAnki: typealiasAnnotations.kt:23
+TypealiasAnnotationsKt#UndoStepCounter$annotations()V: typealiasAnnotations.kt:2147483647
+TypealiasAnnotationsKt: typealiasAnnotations.kt:0

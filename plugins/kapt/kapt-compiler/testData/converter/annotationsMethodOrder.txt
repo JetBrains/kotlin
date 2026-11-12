@@ -1,0 +1,113 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Ann : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Ann {
+}
+
+////////////////////
+
+
+/**
+ * public final class Editor : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Editor {
+    private static final int REQUEST_PREVIEWER = 0;
+    private static final int REQUEST_CARD_BROWSER_APPEARANCE = 1;
+    private static final int zeta = 2;
+    private static final int alpha = 3;
+    @org.jetbrains.annotations.NotNull()
+    public static final Editor.Companion Companion = null;
+
+    public Editor() {
+        super();
+    }
+
+    /**
+     * public final companion object Editor.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: REQUEST_CARD_BROWSER_APPEARANCE:I
+     *   // synthetic method for annotations: getREQUEST_CARD_BROWSER_APPEARANCE$annotations()V
+     *   private final const val REQUEST_CARD_BROWSER_APPEARANCE: kotlin/Int (* = ... *)
+     *     private final get
+     *
+     *   // field: REQUEST_PREVIEWER:I
+     *   // synthetic method for annotations: getREQUEST_PREVIEWER$annotations()V
+     *   @Ann
+     *   private final const val REQUEST_PREVIEWER: kotlin/Int (* = ... *)
+     *     private final get
+     *
+     *   // field: alpha:I
+     *   // getter: getAlpha()I
+     *   // synthetic method for annotations: getAlpha$annotations()V
+     *   @Ann
+     *   public final val alpha: kotlin/Int
+     *     public final get
+     *
+     *   // field: zeta:I
+     *   // getter: getZeta()I
+     *   // synthetic method for annotations: getZeta$annotations()V
+     *   @Ann
+     *   public final val zeta: kotlin/Int
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        public final int getZeta() {
+            return 0;
+        }
+
+        @Ann()
+        @java.lang.Deprecated()
+        public static void getZeta$annotations() {
+        }
+
+        public final int getAlpha() {
+            return 0;
+        }
+
+        @Ann()
+        @java.lang.Deprecated()
+        public static void getAlpha$annotations() {
+        }
+
+        @kotlin.Suppress(names = {"unused"})
+        @java.lang.Deprecated()
+        private static void getREQUEST_CARD_BROWSER_APPEARANCE$annotations() {
+        }
+
+        @Ann()
+        @java.lang.Deprecated()
+        private static void getREQUEST_PREVIEWER$annotations() {
+        }
+    }
+}

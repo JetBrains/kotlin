@@ -1,0 +1,85 @@
+/**
+ * public final class Box<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Box<T extends java.lang.Object> {
+
+    public Box() {
+        super();
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface Builder : kotlin/Any {
+ *
+ *   // signature: mod(LBox;Ljava/lang/Number;)I
+ *   public open infix fun <T#0 (* T *) : kotlin/Number?, T#1 (* S *) : T#0> Box<T#0>.mod(t: T#1): kotlin/Int
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Builder {
+
+    public default <T extends java.lang.Number, S extends T>int mod(@org.jetbrains.annotations.NotNull()
+    Box<T> $this$mod, S t) {
+        return 0;
+    }
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        @java.lang.Deprecated()
+        public static <T extends java.lang.Number, S extends T>int mod(@org.jetbrains.annotations.NotNull()
+        Builder $this, @org.jetbrains.annotations.NotNull()
+        Box<T> $receiver, S t) {
+            return 0;
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * package {
+ *
+ *   // signature: mod(LBox;Ljava/lang/Number;)I
+ *   public final infix fun <T#0 (* T *) : kotlin/Number?, T#1 (* S *) : T#0> Box<T#0>.mod(t: T#1): kotlin/Int
+ *
+ *   // signature: rem(LBox;Ljava/lang/Number;)I
+ *   public final infix fun <T#0 (* T *) : kotlin/Number, T#1 (* S *) : T#0> Box<T#0>.rem(t: T#1): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class TypeParameterBoundNullabilityKt {
+
+    public static final <T extends java.lang.Number, S extends T>int mod(@org.jetbrains.annotations.NotNull()
+    Box<T> $this$mod, S t) {
+        return 0;
+    }
+
+    public static final <T extends java.lang.Number, S extends T>int rem(@org.jetbrains.annotations.NotNull()
+    Box<T> $this$rem, @org.jetbrains.annotations.NotNull()
+    S t) {
+        return 0;
+    }
+}

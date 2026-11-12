@@ -1,0 +1,100 @@
+/**
+ * public final class Client : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Builder
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Client {
+    @org.jetbrains.annotations.NotNull()
+    public static final Client.Companion Companion = null;
+
+    public Client() {
+        super();
+    }
+
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    public static Client.Builder builder() {
+        return null;
+    }
+
+    /**
+     * public final class Client.Builder : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Builder {
+
+        public Builder() {
+            super();
+        }
+    }
+
+    /**
+     * public final companion object Client.Companion : ClientFactory<Client.Builder> {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // signature: builder()LClient$Builder;
+     *   @kotlin/jvm/JvmStatic
+     *   public open fun builder(): Client.Builder
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion extends ClientFactory<Client.Builder> {
+
+        private Companion() {
+            super();
+        }
+
+        @kotlin.jvm.JvmStatic()
+        @java.lang.Override()
+        @org.jetbrains.annotations.NotNull()
+        public Client.Builder builder() {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract class ClientFactory<T#0 (* B *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: builder()Ljava/lang/Object;
+ *   public abstract fun builder(): T#0
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class ClientFactory<B extends java.lang.Object> {
+
+    public ClientFactory() {
+        super();
+    }
+
+    public abstract B builder();
+}

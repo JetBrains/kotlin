@@ -1,0 +1,75 @@
+/**
+ * Global interceptor.
+ */
+/**
+ * public abstract interface GlobalStatementInterceptor : StatementInterceptor {
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface GlobalStatementInterceptor extends StatementInterceptor {
+
+    /**
+     * Global interceptor.
+     */
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        @java.lang.Deprecated()
+        public static void afterCommit(@org.jetbrains.annotations.NotNull()
+        GlobalStatementInterceptor $this, @org.jetbrains.annotations.NotNull()
+        java.lang.String transaction) {
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface StatementInterceptor : kotlin/Any {
+ *
+ *   // signature: afterCommit(Ljava/lang/String;)V
+ *   public open fun afterCommit(transaction: kotlin/String): kotlin/Unit
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface StatementInterceptor {
+
+    /**
+     * Performs steps after commit.
+     */
+    public default void afterCommit(@org.jetbrains.annotations.NotNull()
+    java.lang.String transaction) {
+    }
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        /**
+         * Performs steps after commit.
+         */
+        @java.lang.Deprecated()
+        public static void afterCommit(@org.jetbrains.annotations.NotNull()
+        StatementInterceptor $this, @org.jetbrains.annotations.NotNull()
+        java.lang.String transaction) {
+        }
+    }
+}

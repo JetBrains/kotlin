@@ -1,0 +1,63 @@
+/**
+ * package {
+ *
+ *   // signature: closeLogging(LTx;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   internal final inline suspend fun Tx.closeLogging(log: kotlin/Function1<java/lang/Exception (* = kotlin/Exception^ *), kotlin/Unit>): kotlin/Unit
+ *
+ *   // signature: closePublic(LTx;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   public final inline suspend fun Tx.closePublic(log: kotlin/Function1<java/lang/Exception (* = kotlin/Exception^ *), kotlin/Unit>): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class SuspendInlineForInlineKt {
+
+    @org.jetbrains.annotations.Nullable()
+    public static final java.lang.Object closeLogging(@org.jetbrains.annotations.NotNull()
+    Tx $this$closeLogging, @org.jetbrains.annotations.NotNull()
+    kotlin.jvm.functions.Function1<? super java.lang.Exception, kotlin.Unit> log, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super kotlin.Unit> $completion) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public static final java.lang.Object closePublic(@org.jetbrains.annotations.NotNull()
+    Tx $this$closePublic, @org.jetbrains.annotations.NotNull()
+    kotlin.jvm.functions.Function1<? super java.lang.Exception, kotlin.Unit> log, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super kotlin.Unit> $completion) {
+        return null;
+    }
+
+    private static final java.lang.Object closeLogging$$forInline(Tx $this$closeLogging, kotlin.jvm.functions.Function1<? super java.lang.Exception, kotlin.Unit> log, kotlin.coroutines.Continuation<? super kotlin.Unit> $completion) {
+        return null;
+    }
+
+    private static final java.lang.Object closePublic$$forInline(Tx $this$closePublic, kotlin.jvm.functions.Function1<? super java.lang.Exception, kotlin.Unit> log, kotlin.coroutines.Continuation<? super kotlin.Unit> $completion) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface Tx : kotlin/Any {
+ *
+ *   // signature: close(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   public abstract suspend fun close(): kotlin/Unit
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Tx {
+
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.Object close(@org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super kotlin.Unit> $completion);
+}

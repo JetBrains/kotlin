@@ -1,0 +1,64 @@
+/**
+ * package {
+ *
+ *   // signature: mergeFiles([Ljava/util/Map;)Ljava/util/Map;
+ *   internal final fun mergeFiles(vararg maps: kotlin/collections/Map<kotlin/Int, kotlin/collections/Map<kotlin/String, kotlin/Long> (* = SectionMap^ *)> (* = TypedSectionMap^ *) (* kotlin/Array<out kotlin/collections/Map<kotlin/Int, kotlin/collections/Map<kotlin/String, kotlin/Long> (* = SectionMap^ *)> (* = TypedSectionMap^ *)> *)): kotlin/collections/Map<kotlin/Int, kotlin/collections/Map<kotlin/String, kotlin/Long> (* = SectionMap^ *)> (* = TypedSectionMap^ *)
+ *
+ *   // signature: sectionsOf(LSharedConfig;)Ljava/util/List;
+ *   internal final fun sectionsOf(config: SharedConfig): kotlin/collections/List<kotlin/collections/Map<kotlin/String, kotlin/Long> (* = SectionMap^ *)>
+ *
+ *   internal typealias SectionMap = kotlin/collections/Map<kotlin/String, kotlin/Long> (* = kotlin/collections/Map<kotlin/String, kotlin/Long> *)
+ *
+ *   internal typealias TypedSectionMap = kotlin/collections/Map<kotlin/Int, SectionMap^> (* = kotlin/collections/Map<kotlin/Int, kotlin/collections/Map<kotlin/String, kotlin/Long> (* = SectionMap^ *)> *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class NestedTypealiasArgumentsKt {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.Map<java.lang.Integer, java.util.Map<java.lang.String, java.lang.Long>> mergeFiles(@org.jetbrains.annotations.NotNull()
+    java.util.Map<java.lang.Integer, ? extends java.util.Map<java.lang.String, java.lang.Long>>... maps) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.List<java.util.Map<java.lang.String, java.lang.Long>> sectionsOf(@org.jetbrains.annotations.NotNull()
+    SharedConfig config) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class SharedConfig : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/util/Map;)V
+ *   internal constructor(sections: kotlin/collections/Map<kotlin/Int, kotlin/collections/Map<kotlin/String, kotlin/Long> (* = SectionMap^ *)> (* = TypedSectionMap^ *))
+ *
+ *   // field: sections:Ljava/util/Map;
+ *   // getter: getSections$main()Ljava/util/Map;
+ *   internal final val sections: kotlin/collections/Map<kotlin/Int, kotlin/collections/Map<kotlin/String, kotlin/Long> (* = SectionMap^ *)> (* = TypedSectionMap^ *)
+ *     internal final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class SharedConfig {
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.Map<java.lang.Integer, java.util.Map<java.lang.String, java.lang.Long>> sections = null;
+
+    public SharedConfig(@org.jetbrains.annotations.NotNull()
+    java.util.Map<java.lang.Integer, ? extends java.util.Map<java.lang.String, java.lang.Long>> sections) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.Map<java.lang.Integer, java.util.Map<java.lang.String, java.lang.Long>> getSections$main() {
+        return null;
+    }
+}

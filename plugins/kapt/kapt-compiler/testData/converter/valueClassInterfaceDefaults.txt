@@ -1,0 +1,338 @@
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * public final value class CardTemplates : JsonContainer<kotlin/String> {
+ *
+ *   // signature: constructor-impl(I)I
+ *   public constructor(size: kotlin/Int)
+ *
+ *   // signature: constructor-impl(II)Ljava/lang/String;
+ *   public open fun constructor(index: kotlin/Int): kotlin/String
+ *
+ *   // signature: equals-impl(ILjava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(I)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(I)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: size:I
+ *   // getter: getSize()I
+ *   public open val size: kotlin/Int
+ *     public open get
+ *
+ *   // underlying property: size
+ *
+ *   // underlying type: kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class CardTemplates implements JsonContainer<java.lang.String> {
+    private final int size = 0;
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String constructor(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String get(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Iterator<java.lang.String> iterator() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int length() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public void set(int index, @org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface JsonContainer<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: constructor(I)Ljava/lang/Object;
+ *   public abstract fun constructor(index: kotlin/Int): T#0
+ *
+ *   // signature: get(I)Ljava/lang/Object;
+ *   public open operator fun get(index: kotlin/Int): T#0
+ *
+ *   // signature: iterator()Ljava/util/Iterator;
+ *   public open operator fun iterator(): kotlin/collections/Iterator<T#0>
+ *
+ *   // signature: length()I
+ *   public open fun length(): kotlin/Int
+ *
+ *   // signature: set(ILjava/lang/Object;)V
+ *   public open operator fun set(index: kotlin/Int, value: T#0): kotlin/Unit
+ *
+ *   // getter: getSize()I
+ *   public abstract val size: kotlin/Int
+ *     public abstract get
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface JsonContainer<T extends java.lang.Object> {
+
+    public abstract int getSize();
+
+    public abstract T constructor(int index);
+
+    public default T get(int index) {
+        return null;
+    }
+
+    public default int length() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public default java.util.Iterator<T> iterator() {
+        return null;
+    }
+
+    public default void set(int index, T value) {
+    }
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        @java.lang.Deprecated()
+        public static <T extends java.lang.Object>T get(@org.jetbrains.annotations.NotNull()
+        JsonContainer<T> $this, int index) {
+            return null;
+        }
+
+        @java.lang.Deprecated()
+        public static <T extends java.lang.Object>int length(@org.jetbrains.annotations.NotNull()
+        JsonContainer<T> $this) {
+            return 0;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        @java.lang.Deprecated()
+        public static <T extends java.lang.Object>java.util.Iterator<T> iterator(@org.jetbrains.annotations.NotNull()
+        JsonContainer<T> $this) {
+            return null;
+        }
+
+        @java.lang.Deprecated()
+        public static <T extends java.lang.Object>void set(@org.jetbrains.annotations.NotNull()
+        JsonContainer<T> $this, int index, T value) {
+        }
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * public final value class NameHolder : Named {
+ *
+ *   // signature: constructor-impl(LNamed;)LNamed;
+ *   public constructor(named: Named)
+ *
+ *   // signature: equals-impl(LNamed;Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(LNamed;)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: name-impl(LNamed;)Ljava/lang/String;
+ *   public open (* delegation *) fun name(): kotlin/String
+ *
+ *   // signature: toString-impl(LNamed;)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: named:LNamed;
+ *   // getter: getNamed()LNamed;
+ *   public final val named: Named
+ *     public final get
+ *
+ *   // getter: getTitle-impl(LNamed;)Ljava/lang/String;
+ *   public open (* delegation *) val title: kotlin/String
+ *     public open (* non-default *) get
+ *
+ *   // underlying property: named
+ *
+ *   // underlying type: Named
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class NameHolder implements Named {
+    @org.jetbrains.annotations.NotNull()
+    private final Named named = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final Named getNamed() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String getTitle() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String name() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface Named : kotlin/Any {
+ *
+ *   // signature: name()Ljava/lang/String;
+ *   public abstract fun name(): kotlin/String
+ *
+ *   // getter: getTitle()Ljava/lang/String;
+ *   public open val title: kotlin/String
+ *     public open (* non-default *) get
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Named {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String name();
+
+    @org.jetbrains.annotations.NotNull()
+    public default java.lang.String getTitle() {
+        return null;
+    }
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        @org.jetbrains.annotations.NotNull()
+        @java.lang.Deprecated()
+        public static java.lang.String getTitle(@org.jetbrains.annotations.NotNull()
+        Named $this) {
+            return null;
+        }
+    }
+}
+
+// LINE MAPPINGS
+CardTemplates#constructor(I)Ljava/lang/String;: valueClassInterfaceDefaults.kt:422
+CardTemplates#equals(Ljava/lang/Object;)Z: valueClassInterfaceDefaults.kt:2147483647
+CardTemplates#get(I)Ljava/lang/String;: valueClassInterfaceDefaults.kt:2147483647
+CardTemplates#getSize()I: valueClassInterfaceDefaults.kt:368
+CardTemplates#hashCode()I: valueClassInterfaceDefaults.kt:2147483647
+CardTemplates#iterator()Ljava/util/Iterator;: valueClassInterfaceDefaults.kt:2147483647
+CardTemplates#length()I: valueClassInterfaceDefaults.kt:2147483647
+CardTemplates#set(ILjava/lang/String;)V: valueClassInterfaceDefaults.kt:2147483647
+CardTemplates#size: valueClassInterfaceDefaults.kt:368
+CardTemplates#toString()Ljava/lang/String;: valueClassInterfaceDefaults.kt:2147483647
+CardTemplates: valueClassInterfaceDefaults.kt:322
+JsonContainer#constructor(I)Ljava/lang/Object;: valueClassInterfaceDefaults.kt:75
+JsonContainer#get(I)Ljava/lang/Object;: valueClassInterfaceDefaults.kt:120
+JsonContainer#getSize()I: valueClassInterfaceDefaults.kt:56
+JsonContainer#iterator()Ljava/util/Iterator;: valueClassInterfaceDefaults.kt:208
+JsonContainer#length()I: valueClassInterfaceDefaults.kt:169
+JsonContainer#set(ILjava/lang/Object;)V: valueClassInterfaceDefaults.kt:286
+JsonContainer$DefaultImpls#get(LJsonContainer;I)Ljava/lang/Object;: valueClassInterfaceDefaults.kt:120
+JsonContainer$DefaultImpls#iterator(LJsonContainer;)Ljava/util/Iterator;: valueClassInterfaceDefaults.kt:208
+JsonContainer$DefaultImpls#length(LJsonContainer;)I: valueClassInterfaceDefaults.kt:169
+JsonContainer$DefaultImpls#set(LJsonContainer;ILjava/lang/Object;)V: valueClassInterfaceDefaults.kt:286
+JsonContainer$DefaultImpls: valueClassInterfaceDefaults.kt:23
+JsonContainer: valueClassInterfaceDefaults.kt:23
+NameHolder#equals(Ljava/lang/Object;)Z: valueClassInterfaceDefaults.kt:2147483647
+NameHolder#getNamed()LNamed;: valueClassInterfaceDefaults.kt:596
+NameHolder#getTitle()Ljava/lang/String;: valueClassInterfaceDefaults.kt:2147483647
+NameHolder#hashCode()I: valueClassInterfaceDefaults.kt:2147483647
+NameHolder#name()Ljava/lang/String;: valueClassInterfaceDefaults.kt:2147483647
+NameHolder#named: valueClassInterfaceDefaults.kt:596
+NameHolder#toString()Ljava/lang/String;: valueClassInterfaceDefaults.kt:2147483647
+NameHolder: valueClassInterfaceDefaults.kt:562
+Named#getTitle()Ljava/lang/String;: valueClassInterfaceDefaults.kt:544
+Named#name()Ljava/lang/String;: valueClassInterfaceDefaults.kt:502
+Named$DefaultImpls#getTitle(LNamed;)Ljava/lang/String;: valueClassInterfaceDefaults.kt:544
+Named$DefaultImpls: valueClassInterfaceDefaults.kt:480
+Named: valueClassInterfaceDefaults.kt:480

@@ -1,0 +1,155 @@
+/**
+ * public final class C : I {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C implements I {
+
+    public C() {
+        super();
+    }
+
+    @java.lang.Override()
+    @java.lang.Deprecated()
+    public int deprecatedError() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @java.lang.Deprecated()
+    public int deprecatedWarning() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.IllegalArgumentException.class})
+    public void throwing() throws java.lang.IllegalArgumentException {
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class D : I {
+ *
+ *   // signature: <init>(LI;)V
+ *   public constructor(i: I)
+ *
+ *   // signature: deprecatedError()I
+ *   @kotlin/Deprecated(message = "error", level = kotlin/DeprecationLevel.ERROR)
+ *   public open (* delegation *) fun deprecatedError(): kotlin/Int
+ *
+ *   // signature: deprecatedWarning()I
+ *   @kotlin/Deprecated(message = "warning")
+ *   public open (* delegation *) fun deprecatedWarning(): kotlin/Int
+ *
+ *   // signature: throwing()V
+ *   public open (* delegation *) fun throwing(): kotlin/Unit
+ *
+ *   // field: i:LI;
+ *   private final val i: I
+ *     private final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class D implements I {
+    @org.jetbrains.annotations.NotNull()
+    private final I i = null;
+
+    public D(@org.jetbrains.annotations.NotNull()
+    I i) {
+        super();
+    }
+
+    @java.lang.Override()
+    @java.lang.Deprecated()
+    public int deprecatedError() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @java.lang.Deprecated()
+    public int deprecatedWarning() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.IllegalArgumentException.class})
+    public void throwing() {
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // signature: deprecatedError()I
+ *   @kotlin/Deprecated(message = "error", level = kotlin/DeprecationLevel.ERROR)
+ *   public open fun deprecatedError(): kotlin/Int
+ *
+ *   // signature: deprecatedWarning()I
+ *   @kotlin/Deprecated(message = "warning")
+ *   public open fun deprecatedWarning(): kotlin/Int
+ *
+ *   // signature: throwing()V
+ *   public open fun throwing(): kotlin/Unit
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I {
+
+    @java.lang.Deprecated()
+    public default int deprecatedError() {
+        return 0;
+    }
+
+    @java.lang.Deprecated()
+    public default int deprecatedWarning() {
+        return 0;
+    }
+
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.IllegalArgumentException.class})
+    public default void throwing() throws java.lang.IllegalArgumentException {
+    }
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        @java.lang.Deprecated()
+        public static int deprecatedError(@org.jetbrains.annotations.NotNull()
+        I $this) {
+            return 0;
+        }
+
+        @java.lang.Deprecated()
+        public static int deprecatedWarning(@org.jetbrains.annotations.NotNull()
+        I $this) {
+            return 0;
+        }
+
+        @kotlin.jvm.Throws(exceptionClasses = {java.lang.IllegalArgumentException.class})
+        @java.lang.Deprecated()
+        public static void throwing(@org.jetbrains.annotations.NotNull()
+        I $this) throws java.lang.IllegalArgumentException {
+        }
+    }
+}

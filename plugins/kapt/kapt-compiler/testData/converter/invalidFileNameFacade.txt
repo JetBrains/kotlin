@@ -1,0 +1,74 @@
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: platform()Ljava/lang/String;
+ *   public final fun platform(): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class App_androidKt {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String platform() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: name()Ljava/lang/String;
+ *   public final fun name(): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmName(name = "GeneratedNames")
+public final class GeneratedNames {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String name() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: download(Ljava/lang/String;)I
+ *   public final fun download(url: kotlin/String): kotlin/Int
+ *
+ *   // field: retries:I
+ *   // getter: getRetries()I
+ *   public final val retries: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Ok_downloaderKt {
+    private static final int retries = 3;
+
+    public static final int download(@org.jetbrains.annotations.NotNull()
+    java.lang.String url) {
+        return 0;
+    }
+
+    public static final int getRetries() {
+        return 0;
+    }
+}

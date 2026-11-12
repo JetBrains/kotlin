@@ -1,0 +1,54 @@
+/**
+ * public abstract interface TransactionContextHolder : kotlin/coroutines/CoroutineContext.Element {
+ *
+ *   // getter: getTransaction()Ljava/lang/String;
+ *   public abstract val transaction: kotlin/String?
+ *     public abstract get
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface TransactionContextHolder extends kotlin.coroutines.CoroutineContext.Element {
+
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.String getTransaction();
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        public static <R extends java.lang.Object>R fold(@org.jetbrains.annotations.NotNull()
+        TransactionContextHolder $this, R initial, @org.jetbrains.annotations.NotNull()
+        kotlin.jvm.functions.Function2<? super R, ? super kotlin.coroutines.CoroutineContext.Element, ? extends R> operation) {
+            return null;
+        }
+
+        @org.jetbrains.annotations.Nullable()
+        public static <E extends kotlin.coroutines.CoroutineContext.Element>E get(@org.jetbrains.annotations.NotNull()
+        TransactionContextHolder $this, @org.jetbrains.annotations.NotNull()
+        kotlin.coroutines.CoroutineContext.Key<E> key) {
+            return null;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public static kotlin.coroutines.CoroutineContext minusKey(@org.jetbrains.annotations.NotNull()
+        TransactionContextHolder $this, @org.jetbrains.annotations.NotNull()
+        kotlin.coroutines.CoroutineContext.Key<?> key) {
+            return null;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public static kotlin.coroutines.CoroutineContext plus(@org.jetbrains.annotations.NotNull()
+        TransactionContextHolder $this, @org.jetbrains.annotations.NotNull()
+        kotlin.coroutines.CoroutineContext context) {
+            return null;
+        }
+    }
+}

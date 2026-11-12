@@ -1,0 +1,49 @@
+/**
+ * public final class Entity : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: db:Ljava/lang/String;
+ *   // getter: getDb()Ljava/lang/String;
+ *   // setter: setDb$main(Ljava/lang/String;)V
+ *   public final var db: kotlin/String
+ *     public final get
+ *     internal final (* non-default *) set(value: kotlin/String)
+ *
+ *   // field: klass:I
+ *   // getter: getKlass()I
+ *   // setter: setKlass$main(I)V
+ *   public final var klass: kotlin/Int
+ *     public final get
+ *     internal final (* non-default *) set(value: kotlin/Int)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Entity {
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.String db = "";
+    private int klass = 0;
+
+    public Entity() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getDb() {
+        return null;
+    }
+
+    public final void setDb$main(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+
+    public final int getKlass() {
+        return 0;
+    }
+
+    public final void setKlass$main(int value) {
+    }
+}

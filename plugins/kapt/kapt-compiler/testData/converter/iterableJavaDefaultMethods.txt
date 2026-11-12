@@ -1,0 +1,96 @@
+/**
+ * public abstract class EmptySized : SizedIterable<kotlin/Nothing> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: count()J
+ *   public open fun count(): kotlin/Long
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class EmptySized implements SizedIterable {
+
+    public EmptySized() {
+        super();
+    }
+
+    @java.lang.Override()
+    public long count() {
+        return 0L;
+    }
+
+    @java.lang.Override()
+    public java.util.Iterator iterator() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface SizedIterable<out T#0 (* T *)> : kotlin/collections/Iterable<T#0> {
+ *
+ *   // signature: count()J
+ *   public abstract fun count(): kotlin/Long
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface SizedIterable<T extends java.lang.Object> extends java.lang.Iterable<T>, kotlin.jvm.internal.markers.KMappedMarker {
+
+    public abstract long count();
+}
+
+////////////////////
+
+
+/**
+ * public final class View<T#0 (* T *)> : SizedIterable<T#0> {
+ *
+ *   // signature: <init>(LSizedIterable;)V
+ *   public constructor(delegate: SizedIterable<T#0>)
+ *
+ *   // signature: count()J
+ *   public open (* delegation *) fun count(): kotlin/Long
+ *
+ *   // signature: iterator()Ljava/util/Iterator;
+ *   // must-use return value
+ *   public open (* delegation *) operator fun iterator(): kotlin/collections/Iterator<T#0>
+ *
+ *   // field: delegate:LSizedIterable;
+ *   private final val delegate: SizedIterable<T#0>
+ *     private final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class View<T extends java.lang.Object> implements SizedIterable<T> {
+    @org.jetbrains.annotations.NotNull()
+    private final SizedIterable<T> delegate = null;
+
+    public View(@org.jetbrains.annotations.NotNull()
+    SizedIterable<? extends T> delegate) {
+        super();
+    }
+
+    @java.lang.Override()
+    public long count() {
+        return 0L;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.Iterator<T> iterator() {
+        return null;
+    }
+}

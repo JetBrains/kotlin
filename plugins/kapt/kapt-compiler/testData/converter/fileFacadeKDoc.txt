@@ -1,0 +1,46 @@
+package test;
+
+/**
+ * KDoc of the first declaration.
+ */
+/**
+ * package {
+ *
+ *   // signature: plain()I
+ *   public final fun plain(): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class PlainKt {
+
+    public static final int plain() {
+        return 0;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * NOTE: everything here is inline.
+ */
+/**
+ * package {
+ *
+ *   // signature: twice(I)I
+ *   public final inline fun twice(x: kotlin/Int): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"NOTHING_TO_INLINE"})
+public final class UtilsKt {
+
+    public static final int twice(int x) {
+        return 0;
+    }
+}
