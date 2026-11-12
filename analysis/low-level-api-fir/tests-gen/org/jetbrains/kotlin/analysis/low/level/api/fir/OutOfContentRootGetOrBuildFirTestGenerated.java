@@ -1504,6 +1504,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     public void testFullValueClassDestructuring() {
       run("fullValueClassDestructuring.kt");
     }
+
+    @Test
+    @TestMetadata("modifierListInDestructuringDeclaration.kt")
+    public void testModifierListInDestructuringDeclaration() {
+      run("modifierListInDestructuringDeclaration.kt");
+    }
   }
 
   @Nested
