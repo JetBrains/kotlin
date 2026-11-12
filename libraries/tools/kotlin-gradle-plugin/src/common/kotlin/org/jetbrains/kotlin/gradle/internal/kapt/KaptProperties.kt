@@ -28,6 +28,7 @@ internal object KaptProperties {
     private val CLASSLOADERS_CACHE_SIZE = IntGradleProperty("kapt.classloaders.cache.size", 0)
     private val KAPT_STUB_WRITER_THREADS = IntGradleProperty("kapt.stub.writer.threads", 1)
     private val KAPT_HEADER_MODE = BooleanGradleProperty("kapt.header.mode", false)
+    private val KAPT_STUBS_FROM_FIR = BooleanGradleProperty("kapt.stubs.from.fir", false)
     private val KAPT_ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH = BooleanGradleProperty(
         "kapt.isolate.processors.from.build.classpath",
         false
@@ -71,5 +72,9 @@ internal object KaptProperties {
 
     fun isHeaderMode(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
         it.typedProperty(KAPT_HEADER_MODE, project)
+    }
+
+    fun isStubsFromFir(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
+        it.typedProperty(KAPT_STUBS_FROM_FIR, project)
     }
 }

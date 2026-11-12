@@ -233,6 +233,30 @@ class KaptApiTest {
     }
 
     @Test
+    fun testGenerateStubsFromFirIsOffByDefault() {
+        assertNull(generateStubsKaptOption("stubsFromFir"))
+    }
+
+    @Test
+    fun testGenerateStubsFromFir() {
+        plugin.kaptExtension.stubsFromFir.set(true)
+        assertEquals("true", generateStubsKaptOption("stubsFromFir"))
+    }
+
+    @Test
+    fun testGenerateStubsFromFirFromGradleProperty() {
+        project.propertiesExtension.set("kapt.stubs.from.fir", "true")
+        assertEquals("true", generateStubsKaptOption("stubsFromFir"))
+    }
+
+    @Test
+    fun testGenerateStubsFromFirDslOverridesGradleProperty() {
+        project.propertiesExtension.set("kapt.stubs.from.fir", "true")
+        plugin.kaptExtension.stubsFromFir.set(false)
+        assertNull(generateStubsKaptOption("stubsFromFir"))
+    }
+
+    @Test
     fun testKaptPluginHeaderModeIsOffByDefault() {
         assertNull(kaptPluginGenerateStubsOption("headerMode"))
     }
@@ -250,6 +274,28 @@ class KaptApiTest {
         val option = kaptPluginGenerateStubsOption("headerMode") {
             propertiesExtension.set("kapt.header.mode", "true")
             extensions.getByType(KaptExtension::class.java).headerMode.set(false)
+        }
+        assertNull(option)
+    }
+
+    @Test
+    fun testKaptPluginStubsFromFirIsOffByDefault() {
+        assertNull(kaptPluginGenerateStubsOption("stubsFromFir"))
+    }
+
+    @Test
+    fun testKaptPluginStubsFromFirFromGradleProperty() {
+        val option = kaptPluginGenerateStubsOption("stubsFromFir") {
+            propertiesExtension.set("kapt.stubs.from.fir", "true")
+        }
+        assertEquals("true", option)
+    }
+
+    @Test
+    fun testKaptPluginStubsFromFirDslOverridesGradleProperty() {
+        val option = kaptPluginGenerateStubsOption("stubsFromFir") {
+            propertiesExtension.set("kapt.stubs.from.fir", "true")
+            extensions.getByType(KaptExtension::class.java).stubsFromFir.set(false)
         }
         assertNull(option)
     }

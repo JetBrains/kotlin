@@ -496,6 +496,7 @@ public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/ko
 	public fun getStrictMode ()Z
 	public fun getStripMetadata ()Z
 	public fun getStubGenerationScheme ()Lorg/gradle/api/provider/Property;
+	public fun getStubsFromFir ()Lorg/gradle/api/provider/Property;
 	public fun getUseBuildCache ()Z
 	public fun getUseLightAnalysis ()Z
 	public fun javacOptions (Lkotlin/jvm/functions/Function1;)V

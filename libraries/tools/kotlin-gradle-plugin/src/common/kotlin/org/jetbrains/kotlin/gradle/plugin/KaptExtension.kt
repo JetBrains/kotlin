@@ -46,6 +46,8 @@ open class KaptExtension @Inject constructor(objectFactory: ObjectFactory) : Kap
 
     override val headerMode: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
+    override val stubsFromFir: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
     override var showProcessorStats: Boolean = false
 
     override var detectMemoryLeaks: String = "standard"

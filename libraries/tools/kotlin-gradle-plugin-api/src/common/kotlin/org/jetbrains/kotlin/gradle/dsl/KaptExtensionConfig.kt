@@ -90,6 +90,14 @@ interface KaptExtensionConfig {
     val headerMode: Property<Boolean>
 
     /**
+     * Generates stubs straight from FIR, without Fir2Ir and the JVM backend. Experimental.
+     * Requires [KaptStubGenerationScheme.DIRECT] as [stubGenerationScheme].
+     *
+     * Default: the `kapt.stubs.from.fir` Gradle property, `false` if it is not set
+     */
+    val stubsFromFir: Property<Boolean>
+
+    /**
      * Shows annotation processor statistics in the verbose kapt log output.
      *
      * Default: `false`

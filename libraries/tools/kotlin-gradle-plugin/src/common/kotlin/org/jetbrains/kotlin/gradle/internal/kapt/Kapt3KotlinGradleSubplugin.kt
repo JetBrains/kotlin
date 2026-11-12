@@ -473,11 +473,16 @@ internal fun buildKaptSubpluginOptions(
         pluginOptions += SubpluginOption("headerMode", "true")
     }
 
+    if (kaptExtension.stubsFromFir.get()) {
+        pluginOptions += SubpluginOption("stubsFromFir", "true")
+    }
+
     return pluginOptions
 }
 
 internal fun KaptExtension.applyPropertyConventions(project: Project): KaptExtension = apply {
     headerMode.convention(KaptProperties.isHeaderMode(project))
+    stubsFromFir.convention(KaptProperties.isStubsFromFir(project))
 }
 
 internal val KaptStubGenerationScheme.optionValue: String
