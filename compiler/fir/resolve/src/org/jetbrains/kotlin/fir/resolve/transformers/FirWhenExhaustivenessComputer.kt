@@ -193,7 +193,7 @@ object FirWhenExhaustivenessComputer {
         return processExhaustivenessCheck(whenExpression).also {
             c.session.enumWhenTracker?.reportEnumUsageInWhen(
                 useSiteFile.sourceFile?.path,
-                getSubjectType(whenExpression)?.minimumBoundIfFlexible()?.let { (it as? ConeUnionType)?.primaryType ?: it }
+                getSubjectType(whenExpression)?.minimumBoundIfFlexible()?.primaryTypeIfUnion()
             )
         }
     }
