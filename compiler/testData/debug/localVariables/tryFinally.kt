@@ -31,16 +31,16 @@ fun box() {
 
 // EXPECTATIONS JS_IR
 // test.kt:7 box:
-// test.kt:8 box: result="":kotlin.String
-// test.kt:8 box: result="":kotlin.String
-// test.kt:8 box: result="":kotlin.String
-// test.kt:8 box: result="":kotlin.String
-// test.kt:10 box: result="":kotlin.String, x="A":kotlin.String
-// test.kt:11 box: result="":kotlin.String, x="A":kotlin.String, y="y":kotlin.String
-// test.kt:12 box: result="y":kotlin.String, x="A":kotlin.String, y="y":kotlin.String
-// test.kt:15 box: result="y":kotlin.String, x="A":kotlin.String, y="y":kotlin.String
-// test.kt:16 box: result="y":kotlin.String, x="A":kotlin.String, y="y":kotlin.String, z="z":kotlin.String
-// test.kt:19 box: result="yz":kotlin.String, x="A":kotlin.String, y="y":kotlin.String, z="z":kotlin.String
+// test.kt:8 box: result:kotlin.String="":kotlin.String
+// test.kt:8 box: result:kotlin.String="":kotlin.String
+// test.kt:8 box: result:kotlin.String="":kotlin.String, _iterator__ex2g4s=null
+// test.kt:8 box: result:kotlin.String="":kotlin.String, _iterator__ex2g4s=null
+// test.kt:10 box: result:kotlin.String="":kotlin.String, _iterator__ex2g4s=null, x:kotlin.String="A":kotlin.String
+// test.kt:11 box: result:kotlin.String="":kotlin.String, _iterator__ex2g4s=null, x:kotlin.String="A":kotlin.String, y:kotlin.String="y":kotlin.String
+// test.kt:12 box: result:kotlin.String="y":kotlin.String, _iterator__ex2g4s=null, x:kotlin.String="A":kotlin.String, y:kotlin.String="y":kotlin.String
+// test.kt:15 box: result:kotlin.String="y":kotlin.String, _iterator__ex2g4s=null, x:kotlin.String="A":kotlin.String, y:kotlin.String="y":kotlin.String
+// test.kt:16 box: result:kotlin.String="y":kotlin.String, _iterator__ex2g4s=null, x:kotlin.String="A":kotlin.String, y:kotlin.String="y":kotlin.String, z:kotlin.String="z":kotlin.String
+// test.kt:19 box: result:kotlin.String="yz":kotlin.String, _iterator__ex2g4s=null, x:kotlin.String="A":kotlin.String, y:kotlin.String="y":kotlin.String, z:kotlin.String="z":kotlin.String
 
 // EXPECTATIONS WASM
 // test.kt:7 $box: $result:(ref null $kotlin.String)=null, $x:(ref null $kotlin.String)=null, $y:(ref null $kotlin.String)=null, $z:(ref null $kotlin.String)=null (17, 17, 17, 17)

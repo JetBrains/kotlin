@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.js.test.handlers.JsLineNumberHandler
 import org.jetbrains.kotlin.js.test.handlers.JsSizeHandler
 import org.jetbrains.kotlin.js.test.handlers.JsWrongModuleHandler
 import org.jetbrains.kotlin.js.test.utils.configureLineNumberTests
+import org.jetbrains.kotlin.js.test.utils.configureLocalVariablesTests
 import org.jetbrains.kotlin.js.test.utils.configureSteppingTests
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.FirParser
@@ -298,6 +299,19 @@ abstract class AbstractJsSteppingSplitTest : AbstractJsSteppingTest(
             )
             useMetaTestConfigurators(::SplittingTestConfigurator)
         }
+    }
+}
+
+abstract class AbstractJsLocalVariableTest : AbstractJsTest(
+    pathToTestDir = "compiler/testData/debug/localVariables/",
+    testGroupOutputDirPrefix = "debug/localVariables/"
+) {
+    override val enableBoxHandlers: Boolean
+        get() = false
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureLocalVariablesTests()
     }
 }
 

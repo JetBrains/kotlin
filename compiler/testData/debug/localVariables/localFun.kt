@@ -25,10 +25,10 @@ fun box() {
 // EXPECTATIONS JS_IR
 // test.kt:13 box:
 // test.kt:5 foo:
-// test.kt:9 foo: x=1:number
-// test.kt:7 foo$bar: x=1:number
-// test.kt:8 foo$bar: x=1:number, y=1:number
-// test.kt:10 foo: x=1:number
+// test.kt:9 foo: x:number=1:number
+// test.kt:7 foo$bar: x:number=1:number
+// test.kt:8 foo$bar: x:number=1:number, y:number=1:number
+// test.kt:10 foo: x:number=1:number
 // test.kt:14 box:
 
 // EXPECTATIONS WASM
