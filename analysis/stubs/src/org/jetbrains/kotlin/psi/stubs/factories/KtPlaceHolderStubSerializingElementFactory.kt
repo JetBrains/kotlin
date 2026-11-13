@@ -9,14 +9,14 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.psi.KtElementImplStub
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 
 /**
  * A factory for elements whose stub carries no data beyond its own presence.
  */
-internal open class KtPlaceHolderStubSerializingElementFactory<Psi : KtElementImplStub<out StubElement<*>>>(
+internal open class KtPlaceHolderStubSerializingElementFactory<Psi : KtElement>(
     type: IElementType,
     private val psiFactory: (KotlinPlaceHolderStub<Psi>) -> Psi,
 ) : KtStubSerializingElementFactory<KotlinPlaceHolderStubImpl<Psi>, Psi>(type) {
