@@ -3,13 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.resolve.deprecation
+package org.jetbrains.kotlin.backend.konan.objcexport.deprecation
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -23,6 +22,9 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.deprecation.DEPRECATED_FUNCTION_KEY
+import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo
+import org.jetbrains.kotlin.resolve.deprecation.isFulfilled
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
@@ -32,12 +34,12 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.SmartList
 
 @K1Deprecation
-open class DeprecationResolverBase(
+internal class DeprecationResolver(
     storageManager: StorageManager,
-    protected val languageVersionSettings: LanguageVersionSettings,
-    protected val deprecationSettings: DeprecationSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val deprecationSettings: DeprecationSettings
 ) {
-    protected data class DeprecationInfo(
+    private data class DeprecationInfo(
         val deprecations: List<DescriptorBasedDeprecationInfo>,
         val hasInheritedDeprecations: Boolean,
         val hiddenInheritedDeprecations: List<DescriptorBasedDeprecationInfo> = emptyList()
@@ -47,7 +49,7 @@ open class DeprecationResolverBase(
         }
     }
 
-    protected val deprecations: MemoizedFunctionToNotNull<DeclarationDescriptor, DeprecationInfo> =
+    private val deprecations: MemoizedFunctionToNotNull<DeclarationDescriptor, DeprecationInfo> =
         storageManager.createMemoizedFunction { descriptor ->
             computeDeprecation(descriptor)
         }
@@ -97,7 +99,7 @@ open class DeprecationResolverBase(
                 }
                 val inheritedDeprecations = listOfNotNull(deprecationByOverridden(descriptor))
                 when (inheritedDeprecations.isNotEmpty()) {
-                    true -> when (languageVersionSettings.supportsFeature(LanguageFeature.StopPropagatingDeprecationThroughOverrides)) {
+                    true -> when (languageVersionSettings.supportsFeature(StopPropagatingDeprecationThroughOverrides)) {
                         true -> DeprecationInfo(
                             inheritedDeprecations.filter { it.forcePropagationToOverrides },
                             hasInheritedDeprecations = true,

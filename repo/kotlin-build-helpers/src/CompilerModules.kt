@@ -112,7 +112,6 @@ object CompilerModules {
         ":compiler",
         ":core:descriptors.runtime",
         ":core:descriptors.jvm",
-        ":compiler:k1",
         ":core:deserialization",
         ":native:frontend.native",
         ":wasm:wasm.frontend",

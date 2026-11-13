@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.resolve.deprecation
+package org.jetbrains.kotlin.backend.konan.objcexport.deprecation
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
@@ -16,10 +17,12 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
+import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-sealed class DeprecatedByAnnotation(
+internal sealed class DeprecatedByAnnotation(
     val annotation: AnnotationDescriptor,
     override val target: DeclarationDescriptor,
     final override val propagatesToOverrides: Boolean,
@@ -102,6 +105,7 @@ sealed class DeprecatedByAnnotation(
     }
 
     companion object {
+        @OptIn(K1Deprecation::class)
         fun create(
             deprecatedAnnotation: AnnotationDescriptor,
             deprecatedSinceKotlinAnnotation: AnnotationDescriptor?,
@@ -125,7 +129,7 @@ sealed class DeprecatedByAnnotation(
     }
 }
 
-data class DeprecatedByOverridden(private val deprecations: Collection<DescriptorBasedDeprecationInfo>) : DescriptorBasedDeprecationInfo() {
+internal data class DeprecatedByOverridden(private val deprecations: Collection<DescriptorBasedDeprecationInfo>) : DescriptorBasedDeprecationInfo() {
     init {
         assert(deprecations.isNotEmpty())
         assert(deprecations.none { it is DeprecatedByOverridden })
@@ -148,7 +152,7 @@ data class DeprecatedByOverridden(private val deprecations: Collection<Descripto
         "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
 }
 
-data class DeprecatedByVersionRequirement(
+internal data class DeprecatedByVersionRequirement(
     val versionRequirement: VersionRequirement,
     override val target: DeclarationDescriptor
 ) : DescriptorBasedDeprecationInfo() {
@@ -178,7 +182,7 @@ data class DeprecatedByVersionRequirement(
         }
 }
 
-data class DeprecatedTypealiasByAnnotation(
+internal data class DeprecatedTypealiasByAnnotation(
     val typeAliasTarget: TypeAliasDescriptor,
     val nested: DeprecatedByAnnotation
 ) : DescriptorBasedDeprecationInfo() {

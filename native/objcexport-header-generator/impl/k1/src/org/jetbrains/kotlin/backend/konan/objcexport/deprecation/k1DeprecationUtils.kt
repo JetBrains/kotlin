@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.resolve.deprecation
+package org.jetbrains.kotlin.backend.konan.objcexport.deprecation
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.ApiVersion
@@ -11,15 +11,16 @@ import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 // The function extracts value of warningSince/errorSince/hiddenSince from DeprecatedSinceKotlin annotation
 @K1Deprecation
-fun AnnotationDescriptor.getSinceVersion(name: String): ApiVersion? =
+internal fun AnnotationDescriptor.getSinceVersion(name: String): ApiVersion? =
     (argumentValue(name) as? StringValue)?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
 
 
 @K1Deprecation
-fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
+internal fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
     val hiddenSince = annotation.getSinceVersion("hiddenSince")
     if (hiddenSince != null && apiVersion >= hiddenSince) return HIDDEN
 
@@ -34,7 +35,7 @@ fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVe
 
 @DefaultImplementation(DeprecationSettings.Default::class)
 @K1Deprecation
-interface DeprecationSettings {
+internal interface DeprecationSettings {
     fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor): Boolean
 
     object Default : DeprecationSettings {

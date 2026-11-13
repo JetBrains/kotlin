@@ -119,8 +119,6 @@ fun Project.checkNoApiDependenciesOnK1Modules() {
             .filterIsInstance<ProjectDependency>()
             .map { it.path }
             .filter { it in k1Modules }
-            // This hack would be removed in a few commits
-            .filterNot { it == ":compiler:k1" && this.path == ":compiler:frontend" }
             .sorted()
 
         if (violations.isNotEmpty()) {

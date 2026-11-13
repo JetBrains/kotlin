@@ -27,7 +27,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 
-    implementation(project(":compiler:k1"))
     api(project(":compiler:frontend.common"))
     api(project(":compiler:psi:psi-api"))
     api(project(":core:compiler.common"))
