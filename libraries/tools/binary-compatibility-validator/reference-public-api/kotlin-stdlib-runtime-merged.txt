@@ -3411,6 +3411,8 @@ public abstract interface class kotlin/enums/EnumEntries : java/util/List, kotli
 public final class kotlin/enums/EnumEntriesKt {
 	public static final fun enumEntries (Lkotlin/jvm/functions/Function0;)Lkotlin/enums/EnumEntries;
 	public static final fun enumEntries ([Ljava/lang/Enum;)Lkotlin/enums/EnumEntries;
+	public static final fun valueOf (Lkotlin/enums/EnumEntries;Ljava/lang/String;)Ljava/lang/Enum;
+	public static final fun valueOfOrNull (Lkotlin/enums/EnumEntries;Ljava/lang/String;)Ljava/lang/Enum;
 }
 
 public abstract interface annotation class kotlin/experimental/ExpectRefinement : java/lang/annotation/Annotation {

@@ -28,6 +28,58 @@ import kotlin.internal.throwReadObjectNotSupported
 public sealed interface EnumEntries<E : Enum<E>> : List<E>
 
 /**
+ * Returns the enum entry of the enum type [E] with the specified [name].
+ *
+ * The [name] must exactly match an existing enum constant of type [E] (case-sensitive).
+ *
+ * ```kotlin
+ * enum class Direction { NORTH, SOUTH, EAST, WEST }
+ *
+ * val east: Direction = Direction.entries.valueOf("EAST")
+ * println(east.ordinal) // 2
+ *
+ * // The lookup fails if a string does not correspond to any of the enum entries
+ * Direction.entries.valueOf("UP") // fails with NoSuchElementException
+ * Direction.entries.valueOf("") // fails with NoSuchElementException
+ *
+ * // The lookup is case-sensitive and fails if the name doesn't match any constant
+ * Direction.entries.valueOf("east") // fails with NoSuchElementException
+ * ```
+ *
+ * @throws NoSuchElementException if no enum constant with the specified [name] exists in [E].
+ */
+// @sample samples.misc.Enums.enumEntriesValueOfSample - not runnable due to enum declarations
+@SinceKotlin("2.5")
+@ExperimentalStdlibApi
+public fun <E : Enum<E>> EnumEntries<E>.valueOf(name: String): E =
+    first { it.name == name }
+
+/**
+ * Returns the enum entry of the enum type [E] with the specified [name] or null if no such entry exists.
+ *
+ * The [name] must exactly match an existing enum constant of type [E] (case-sensitive).
+ *
+ * ```kotlin
+ * enum class Direction { NORTH, SOUTH, EAST, WEST }
+ *
+ * val east: Direction? = Direction.entries.valueOfOrNull("EAST")
+ * println(east!!.ordinal) // 2
+ *
+ * // The lookup returns null if a string does not correspond to any of the enum entries
+ * println(Direction.entries.valueOfOrNull("UP")) // null
+ * println(Direction.entries.valueOfOrNull("")) // null
+ *
+ * // The lookup is case-sensitive and returns null if the name doesn't match any entry name exactly
+ * println(Direction.entries.valueOfOrNull("east")) // null
+ * ```
+ */
+// @sample samples.misc.Enums.enumEntriesValueOfOrNullSample - not runnable due to enum declarations
+@SinceKotlin("2.5")
+@ExperimentalStdlibApi
+public fun <E : Enum<E>> EnumEntries<E>.valueOfOrNull(name: String): E? =
+    firstOrNull { it.name == name }
+
+/**
  * Returns [EnumEntries] list containing all enum entries for the given enum type [T].
  *
  * The returned list is immutable, so this function can avoid instantiating a new instance of entries list every time
