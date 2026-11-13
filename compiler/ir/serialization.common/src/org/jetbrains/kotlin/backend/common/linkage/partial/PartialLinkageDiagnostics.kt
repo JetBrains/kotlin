@@ -12,6 +12,7 @@ object PartialLinkageDiagnostics : KtDiagnosticsContainer() {
     val MINOR_PARTIAL_LINKAGE_ISSUE: KtSourcelessDiagnosticFactory by infoWithoutSource()
     val MAJOR_PARTIAL_LINKAGE_ISSUE: KtSourcelessDiagnosticFactory by warningWithoutSource()
 
+    val IR_LINKER_WARNING: KtSourcelessDiagnosticFactory by warningWithoutSource()
     val IR_LINKER_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDefaultPartialLinkageErrorMessages
@@ -35,6 +36,7 @@ private object KtDefaultPartialLinkageErrorMessages : BaseDiagnosticRendererFact
     override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(PartialLinkageDiagnostics.MINOR_PARTIAL_LINKAGE_ISSUE, "{0}")
         map.put(PartialLinkageDiagnostics.MAJOR_PARTIAL_LINKAGE_ISSUE, "{0}")
+        map.put(PartialLinkageDiagnostics.IR_LINKER_WARNING, "{0}")
         map.put(PartialLinkageDiagnostics.IR_LINKER_ERROR, "{0}")
     }
 }

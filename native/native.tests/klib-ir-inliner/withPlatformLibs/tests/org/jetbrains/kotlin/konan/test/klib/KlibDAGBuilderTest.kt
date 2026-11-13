@@ -848,6 +848,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         isRoot: (KotlinLibrary) -> Boolean = { true },
     ) = KlibDAGBuilder.Parameters(
         libraries = libraries,
+        onWarning = ::fail,
         onError = KlibDAGCyclicDependencyException::createAndThrow,
         isRoot = isRoot,
     ).apply {
