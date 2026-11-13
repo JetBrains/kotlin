@@ -281,7 +281,7 @@ tasks {
         }
     }
 
-    testLifecycleTask("gradlePluginIntegrationSmokeTest", QualityGate.None) {
+    testLifecycleTask("gradlePluginIntegrationSmokeTest", QualityGate.Master) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAllParallelTests")
     }
 
