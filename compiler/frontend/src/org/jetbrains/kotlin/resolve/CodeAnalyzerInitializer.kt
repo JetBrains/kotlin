@@ -24,12 +24,7 @@ interface CodeAnalyzerInitializer {
     fun createTrace(): BindingTrace
 
     companion object {
-        fun getInstance(project: Project): CodeAnalyzerInitializer =
-            project.getService(CodeAnalyzerInitializer::class.java)!!
+        fun getInstance(project: Project): CodeAnalyzerInitializer = TODO()
     }
 }
 
-@K1Deprecation
-class DummyCodeAnalyzerInitializer(val project: Project) : CodeAnalyzerInitializer {
-    override fun createTrace(): BindingTrace = BindingTraceContext(/* allowSliceRewrite = */ true, project)
-}

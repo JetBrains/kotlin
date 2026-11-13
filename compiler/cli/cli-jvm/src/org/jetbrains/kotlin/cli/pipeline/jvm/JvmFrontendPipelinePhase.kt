@@ -614,7 +614,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val projectEnvironment = KotlinCoreEnvironment.ProjectEnvironment(parentDisposable, appEnv, configuration)
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        projectEnvironment.configureProjectEnvironment(configuration, configFiles)
+        projectEnvironment.configureProjectEnvironment(configuration)
 
         val project = projectEnvironment.project
         val localFileSystem = projectEnvironment.environment.localFileSystem
