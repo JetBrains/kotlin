@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.fir.lightTree.isScript
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.parsing.KotlinLightParser
@@ -23,7 +24,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         text: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping
     ) {
         if (onlyLightTree) {
-            val lightTree = KotlinLightParser.buildLightTree(text, sourceFile, errorListener = null)
+            val lightTree = KotlinLightParser.buildLightTree(text, sourceFile.isScript(), errorListener = null)
             DebugUtil.lightTreeToString(lightTree, false)
         } else {
             val firFile = converter.buildFirFile(text, sourceFile, linesMapping)
