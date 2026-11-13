@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.readArgumentsFromArgFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import java.io.File
@@ -20,6 +21,9 @@ import kotlin.jvm.optionals.getOrNull
 abstract class AbstractKaptToolIntegrationTest {
     private lateinit var tmpdir: File
     private lateinit var testInfo: TestInfo
+
+    // The JDK of the processes, if not the default one: JDK 8 for `javac` and `java`, and `JAVA_HOME` of the test for `kotlinc` and `kapt`
+    private var jdkHome: File? = null
 
     @BeforeEach
     @OptIn(ExperimentalStdlibApi::class)
@@ -45,6 +49,12 @@ abstract class AbstractKaptToolIntegrationTest {
     private fun doTestInTempDirectory(originalTestFile: File, testFile: File) {
         val sections = Section.parse(testFile)
 
+        // Value classes (JEP 401) need a JDK with them, and preview class files can only be read by the JDK of the same feature version
+        if (sections.any { it.name == VALHALLA_SECTION }) {
+            Assumptions.assumeTrue(KtTestUtil.isJdkValhallaAvailable(), "The Valhalla JDK is not provided via JDK_VALHALLA")
+            jdkHome = KtTestUtil.getJdkValhallaHome()
+        }
+
         for (section in sections) {
             try {
                 when (section.name) {
@@ -61,7 +71,7 @@ abstract class AbstractKaptToolIntegrationTest {
                             "Output\"$output\" is different from the expected string \"$expected\""
                         }
                     }
-                    "after" -> {}
+                    "after", VALHALLA_SECTION -> {}
                     "check-file-is-absent" -> checkFileIsAbsent(section.args)
                     else -> error("Unknown section name ${section.name}")
                 }
@@ -95,7 +105,7 @@ abstract class AbstractKaptToolIntegrationTest {
 
     private fun runJavac(args: List<String>) {
         val executableName = if (SystemInfo.isWindows) "javac.exe" else "javac"
-        val executablePath = File(KtTestUtil.getJdk8Home(), "bin/$executableName").absolutePath
+        val executablePath = File(jdkHome ?: KtTestUtil.getJdk8Home(), "bin/$executableName").absolutePath
         runProcess(executablePath, args)
     }
 
@@ -103,7 +113,7 @@ abstract class AbstractKaptToolIntegrationTest {
         val outputFile = File(tmpdir, "javaOutput.txt")
 
         val executableName = if (SystemInfo.isWindows) "java.exe" else "java"
-        val executablePath = File(KtTestUtil.getJdk8Home(), "bin/$executableName").absolutePath
+        val executablePath = File(jdkHome ?: KtTestUtil.getJdk8Home(), "bin/$executableName").absolutePath
         runProcess(executablePath, args, outputFile)
 
         throw GotResult(outputFile.takeIf { it.isFile }?.readText() ?: "")
@@ -116,6 +126,7 @@ abstract class AbstractKaptToolIntegrationTest {
 
         val transformedArgs = transformArguments(args).toTypedArray()
         val process = ProcessBuilder(executablePath, *transformedArgs).directory(tmpdir)
+            .apply { jdkHome?.let { environment()["JAVA_HOME"] = it.absolutePath } }
             .inheritIO()
             .redirectError(ProcessBuilder.Redirect.to(outputFile))
             .redirectOutput(ProcessBuilder.Redirect.to(outputFile))
@@ -143,6 +154,11 @@ abstract class AbstractKaptToolIntegrationTest {
         }
     }
 }
+
+/**
+ * Runs all the processes of a test on the Valhalla JDK (`JDK_VALHALLA`), and skips the test if it's not provided.
+ */
+private const val VALHALLA_SECTION = "valhalla"
 
 private val Section.args get() = readArgumentsFromArgFile(preprocessPathSeparators(content))
 
