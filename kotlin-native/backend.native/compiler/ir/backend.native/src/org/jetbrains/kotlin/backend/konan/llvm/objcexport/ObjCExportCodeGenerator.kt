@@ -165,7 +165,8 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
     // So, no exception handler in "outlined" => no redundant jump => the optimized return works properly.
 
     val functionIsPassedAsLastParameter = !function.isConstant
-    // The discriminator of a signed function pointer is computed here, so it is passed too.
+    // The outlined function can't compute the discriminator of a signed function pointer, so it also takes the
+    // discriminator as an argument.
     val ptrAuth = function.ptrAuth?.takeIf { functionIsPassedAsLastParameter }
 
     val valuesToPass = args + listOfNotNull(
