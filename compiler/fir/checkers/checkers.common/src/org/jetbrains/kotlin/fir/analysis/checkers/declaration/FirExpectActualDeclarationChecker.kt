@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.MemberIncompatibility
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -56,7 +56,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         // - backing fields (fields can't be declared in expect declaration)
         // - property accessors (they will be checked as part of the properties checking)
         // - functions and setters parameters (they will be checked as part of the properties/functions checking)
-        // This if is added because hasModifier(KtTokens.ACTUAL_KEYWORD) mistakenly returns `true` for these declarations (KT-63751)
+        // This if is added because hasModifier(KotlinSyntaxTokenIds.ACTUAL_MODIFIER) mistakenly returns `true` for these declarations (KT-63751)
         if (declaration is FirBackingField || declaration is FirPropertyAccessor || declaration is FirValueParameter) return
 
         if (declaration.isExpect) {
@@ -70,9 +70,10 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         }
     }
 
+    context(context: CheckerContext)
     private fun containsExpectOrActualModifier(declaration: FirMemberDeclaration): Boolean {
         return declaration.source.getModifierList()?.let { modifiers ->
-            KtTokens.EXPECT_KEYWORD in modifiers || KtTokens.ACTUAL_KEYWORD in modifiers
+            KotlinSyntaxTokenIds.EXPECT_MODIFIER in modifiers || KotlinSyntaxTokenIds.ACTUAL_MODIFIER in modifiers
         } ?: false
     }
 
@@ -408,13 +409,14 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     }
 
     // Ideally, this function shouldn't exist KT-63751
+    context(context: CheckerContext)
     private fun FirElement.hasActualModifier(): Boolean {
         return when (source?.kind) {
             null -> false
             is KtFakeSourceElementKind.DataClassGeneratedMembers -> false
             is KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
             KtFakeSourceElementKind.ImplicitConstructor -> false
-            else -> hasModifier(KtTokens.ACTUAL_KEYWORD)
+            else -> hasModifier(KotlinSyntaxTokenIds.ACTUAL_MODIFIER)
         }
     }
 

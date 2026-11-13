@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -24,8 +22,10 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeArgumentsForOuterClass
 import org.jetbrains.kotlin.fir.syntax.withSyntax
-import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsExplicitReceiver
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.SyntaxIdSet
+import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
 
 object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -73,7 +73,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
          */
         context(context: CheckerContext, reporter: DiagnosticReporter)
         private fun checkNestedPackagesParenthesized(source: KtSourceElement) {
-            val sourceOfParenthesized = source.getChild(UNWRAPPABLE_TOKEN_TYPES)
+            val sourceOfParenthesized = withSyntax { source.getChild(KotlinSyntaxIdSets.UNWRAPPABLE_TOKEN_TYPES) }
             if (sourceOfParenthesized != null) {
                 reportParenthesizedPackageQualifier(sourceOfParenthesized)
             }
@@ -86,7 +86,8 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
          * report deprecation warnings for type arguments. This property allows us to find parenthesized expression or type arguments
          * via single check.
          */
-        private val UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST: Set<IElementType> = UNWRAPPABLE_TOKEN_TYPES + KtNodeTypes.TYPE_ARGUMENT_LIST
+        private val UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST: SyntaxIdSet =
+            KotlinSyntaxIdSets.UNWRAPPABLE_TOKEN_TYPES + KotlinSyntaxNodeTypeIds.TYPE_ARGUMENT_LIST
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
         fun check(
@@ -126,8 +127,8 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
          */
         context(context: CheckerContext, reporter: DiagnosticReporter)
         private fun checkNestedPackages(source: KtSourceElement) {
-            val parenthesizedOrTypeArgumentList = source.getChild(UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST) ?: return
-            if (parenthesizedOrTypeArgumentList.elementType == KtNodeTypes.TYPE_ARGUMENT_LIST) {
+            val parenthesizedOrTypeArgumentList = withSyntax { source.getChild(UNWRAPPABLE_OR_TYPE_ARGUMENT_LIST) } ?: return
+            if (parenthesizedOrTypeArgumentList.syntaxId == KotlinSyntaxNodeTypeIds.TYPE_ARGUMENT_LIST) {
                 reporter.reportOn(
                     parenthesizedOrTypeArgumentList,
                     FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING

@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.fir.syntax.withSyntax
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -18,9 +19,11 @@ import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUnresolvedTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
+import org.jetbrains.kotlin.syntax.syntaxIdSetOf
 
 object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    private val suspendTokenElementSet = setOf(KtTokens.SUSPEND_KEYWORD)
+    private val suspendTokenElementSet = syntaxIdSetOf(KotlinSyntaxTokenIds.SUSPEND_MODIFIER)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirTypeRef) {
@@ -28,8 +31,10 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
         if (typeRef !is FirUnresolvedTypeRef) return
 
         val suspendModifierSources = mutableListOf<KtSourceElement>()
-        typeRef.source.getChild(KtNodeTypes.MODIFIER_LIST, depth = 1)?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
-            suspendModifierSources += it
+        withSyntax {
+            typeRef.source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
+                    suspendModifierSources += it
+                }
         }
         if (suspendModifierSources.isEmpty()) return
 
@@ -49,14 +54,14 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 suspendModifierSources.first(),
                 FirErrors.WRONG_MODIFIER_TARGET,
-                KtTokens.SUSPEND_KEYWORD,
+                KtTokens.SUSPEND_KEYWORD.toString(),
                 "non-functional type"
             )
         } else if (suspendModifierSources.size > 1) {
             reporter.reportOn(
                 suspendModifierSources.first(),
                 FirErrors.REPEATED_MODIFIER,
-                KtTokens.SUSPEND_KEYWORD
+                KtTokens.SUSPEND_KEYWORD.toString()
             )
         }
     }

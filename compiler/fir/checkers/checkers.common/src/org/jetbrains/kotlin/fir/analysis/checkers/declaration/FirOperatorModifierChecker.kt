@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.OperatorFunctionChecks
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 
 object FirOperatorModifierChecker : FirFunctionChecker(MppCheckerKind.Common) {
@@ -28,7 +28,7 @@ object FirOperatorModifierChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFunction) {
         if (!declaration.isOperator) return
         //we are not interested in implicit operators from override
-        val operatorModifier = declaration.getModifier(KtTokens.OPERATOR_KEYWORD) ?: return
+        val operatorModifier = declaration.getModifier(KotlinSyntaxTokenIds.OPERATOR_MODIFIER) ?: return
 
         when (val checkResult = OperatorFunctionChecks.isOperator(declaration, context.session, context.scopeSession)) {
             CheckResult.SuccessCheck -> {}

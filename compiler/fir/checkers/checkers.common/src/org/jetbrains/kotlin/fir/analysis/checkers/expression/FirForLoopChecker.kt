@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.InapplicableUnsafeReceiver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -85,8 +86,8 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         )
 
         val loopParameterSource = loopParameter.source
-        loopParameterSource.valOrVarKeyword?.let {
-            reporter.reportOn(loopParameterSource, FirErrors.VAL_OR_VAR_ON_LOOP_PARAMETER, it)
+        withSyntax { loopParameterSource.valOrVarKeyword }?.let {
+            reporter.reportOn(loopParameterSource, FirErrors.VAL_OR_VAR_ON_LOOP_PARAMETER, it.keyword)
         }
     }
 

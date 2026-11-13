@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.fir.syntax.withSyntax
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -19,9 +20,11 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.text
+import org.jetbrains.kotlin.syntax.syntaxIdSetOf
 
 object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
+    private val REFERENCE_EXPRESSION_SET = syntaxIdSetOf(KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION)
+
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 
@@ -31,14 +34,16 @@ object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
         if (declaration.packageFqName.isRoot) return
         if (LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping.isEnabled()) return
 
-        declaration.packageDirective.source?.forEachChildOfType(setOf(KtNodeTypes.REFERENCE_EXPRESSION), depth = -1) {
-            val name = KtPsiUtil.unquoteIdentifier(it.text.toString())
-            if (sanitizeName(name) != name) {
-                reporter.reportOn(
-                    it,
-                    FirErrors.INVALID_CHARACTERS,
-                    "$name contains illegal characters"
-                )
+        withSyntax {
+            declaration.packageDirective.source?.forEachChildOfType(REFERENCE_EXPRESSION_SET, depth = -1) {
+                val name = KtPsiUtil.unquoteIdentifier(it.text.toString())
+                if (sanitizeName(name) != name) {
+                    reporter.reportOn(
+                        it,
+                        FirErrors.INVALID_CHARACTERS,
+                        "$name contains illegal characters"
+                    )
+                }
             }
         }
     }

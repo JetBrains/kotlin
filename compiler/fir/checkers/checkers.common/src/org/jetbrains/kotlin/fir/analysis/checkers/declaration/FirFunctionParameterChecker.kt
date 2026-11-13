@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
@@ -143,11 +144,11 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
     ) {
         val source = valueParameter.source
         if (source?.kind is KtFakeSourceElementKind) return
-        source.valOrVarKeyword?.let {
+        withSyntax { source.valOrVarKeyword }?.let {
             if (valueParameter.containingDeclarationSymbol is FirConstructorSymbol) {
-                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it)
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it.keyword)
             } else {
-                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it)
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it.keyword)
             }
         }
     }

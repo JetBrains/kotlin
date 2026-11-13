@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.*
 
 object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common) {
@@ -27,8 +28,8 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                 reporter.reportOn(source, FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE)
             }
 
-            source.valOrVarKeyword?.let {
-                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER, it)
+            withSyntax { source.valOrVarKeyword }?.let {
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER, it.keyword)
             }
 
             val coneType = catchParameter.returnTypeRef.coneType

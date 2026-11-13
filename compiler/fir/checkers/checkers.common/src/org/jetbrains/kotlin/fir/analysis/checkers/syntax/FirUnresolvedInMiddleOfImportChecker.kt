@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -75,7 +76,7 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
                 // Finds the right segment from the last that causes resolution to fail. Note that FirImportResolveTransformer always create
                 // an error import with resolvable package segments. That is, the segment corresponding to the outermost class name is where
                 // resolution failed.
-                val unresolvedSource = import.getSourceForImportSegment(errorSegmentIndexFromLast) ?: return
+                val unresolvedSource = withSyntax { import.getSourceForImportSegment(errorSegmentIndexFromLast) } ?: return
 
                 reporter.reportOn(
                     unresolvedSource,

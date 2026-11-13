@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.utils.exceptions.withSourceEntry
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 /**
@@ -38,6 +41,53 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
             withEntry("sourceKind", actualSourceElement.kind::class.simpleName)
         }
     }
+
+    /**
+     * Iterates recursively over the descendants of the element in pre-order, up to the given [depth] or indefinitely if [depth] is -1.
+     * The element itself is not visited. With [reverse], the children of each node are visited from last to first.
+     *
+     * [processChild] is invoked for each descendant whose type satisfies [isTargetType].
+     * It returns `true` to continue the iteration or `false` to stop it.
+     */
+    abstract fun KtSourceElement.forEachChildMatching(
+        depth: Int,
+        reverse: Boolean,
+        isTargetType: (SyntaxId) -> Boolean,
+        processChild: (KtSourceElement) -> Boolean,
+    )
+
+    /**
+     * The tree-independent part of [forEachChildMatching].
+     */
+    protected inline fun <N> forEachChildMatching(
+        root: N,
+        depth: Int,
+        reverse: Boolean,
+        isTargetType: (SyntaxId) -> Boolean,
+        getSyntaxId: (N) -> SyntaxId,
+        getChildren: (N) -> List<N>,
+        processChild: (N) -> Boolean,
+    ) {
+        val stack = mutableListOf(root to 0)
+
+        while (stack.isNotEmpty()) {
+            val [element, currentDepth] = stack.popLast()
+
+            if (currentDepth != 0 && isTargetType(getSyntaxId(element)) && !processChild(element)) {
+                return
+            }
+
+            if (currentDepth == depth) {
+                continue
+            }
+
+            getChildren(element).butIf(!reverse) { it.asReversed() }.forEach { child ->
+                stack += child to (currentDepth + 1)
+            }
+        }
+    }
+
+    abstract fun KtSourceElement.findModifierList(): FirModifierList?
 
     abstract fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement>
 

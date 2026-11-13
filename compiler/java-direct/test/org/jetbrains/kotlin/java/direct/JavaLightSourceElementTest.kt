@@ -12,6 +12,7 @@ import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.syntax.NO_ID
 import org.jetbrains.kotlin.java.direct.parse.JAVA_DIRECT_PLACEHOLDER_TYPE
 import org.jetbrains.kotlin.java.direct.parse.JavaLightAstNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTreeStructure
@@ -89,7 +90,8 @@ class JavaLightSourceElementTest {
         val element = tree.sourceElement(classNode)
 
         // Element type is the shared placeholder (type fidelity intentionally not required).
-        assertSame(JAVA_DIRECT_PLACEHOLDER_TYPE, element.elementType)
+        assertSame(JAVA_DIRECT_PLACEHOLDER_TYPE, element.lighterASTNode.tokenType)
+        assertEquals(NO_ID, element.syntaxId)
 
         // The treeStructure can navigate from the wrapped node.
         val treeStructure = element.treeStructure

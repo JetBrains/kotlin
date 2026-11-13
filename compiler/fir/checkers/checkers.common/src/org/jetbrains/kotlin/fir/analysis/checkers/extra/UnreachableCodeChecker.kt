@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extra
 
-import com.intellij.psi.TokenType
+import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
@@ -53,7 +53,7 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
         return this !is MustBeReachableNodeMarker &&
                 (this is AlwaysReachableNodeMarker ||
                         sourceKindsToSkip.contains(this.fir.source?.kind) ||
-                        this.fir.source?.elementType == TokenType.ERROR_ELEMENT)
+                        this.fir.source?.syntaxId == BasicSyntaxElementTypeIds.ERROR_ELEMENT)
     }
 
 

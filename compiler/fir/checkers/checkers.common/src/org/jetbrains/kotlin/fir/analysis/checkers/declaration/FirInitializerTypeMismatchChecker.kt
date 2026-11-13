@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -31,7 +31,7 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker(MppCheckerKind.Com
     private fun checkInitializerOf(variable: FirVariable) {
         val initializer = variable.initializer?.takeIf { it !is FirErrorExpression } ?: return
         val source = variable.source ?: return
-        if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) return
+        if (source.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION) return
         if (initializer is FirComponentCall) return
         val propertyType = variable.returnTypeRef.coneType
 

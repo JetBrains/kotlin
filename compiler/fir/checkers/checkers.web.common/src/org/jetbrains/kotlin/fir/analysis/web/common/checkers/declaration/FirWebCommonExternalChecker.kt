@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedOrFlexiblyNullable
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 abstract class FirWebCommonExternalChecker(
     private val allowCompanionInInterface: Boolean
@@ -232,11 +232,12 @@ abstract class FirWebCommonExternalChecker(
         reporter.reportOn(source, FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER)
     }
 
+    context(context: CheckerContext)
     private fun FirDeclaration.isDirectlyExternal(session: FirSession): Boolean {
         // source kind is checked, otherwise this function
         // may return true for a primary constructor of an external class
         if (this is FirDefaultPropertyAccessor || this.source?.kind !is KtRealSourceElementKind) return false
-        return hasModifier(KtTokens.EXTERNAL_KEYWORD) || hasExternalLikeAnnotations(this, session)
+        return hasModifier(KotlinSyntaxTokenIds.EXTERNAL_MODIFIER) || hasExternalLikeAnnotations(this, session)
     }
 
     private fun FirDeclaration.isPrivateMemberOfExternalClass(session: FirSession): Boolean {

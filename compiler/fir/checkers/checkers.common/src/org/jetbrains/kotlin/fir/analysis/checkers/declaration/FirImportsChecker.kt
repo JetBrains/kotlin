@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -92,7 +93,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
             reporter.reportOn(import.source, FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, classSymbol.classId.shortClassName)
         }
         if (!classLike.isVisible()) {
-            val source = import.getLastImportedFqNameSegmentSource() ?: error("`${import.source}` does not contain `$fqName`")
+            val source = withSyntax { import.getLastImportedFqNameSegmentSource() } ?: error("`${import.source}` does not contain `$fqName`")
             reporter.report(classLike.toInvisibleReferenceDiagnostic(source, context.session), context)
         }
     }
@@ -112,7 +113,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
 
             fun reportInvisibleParentClasses(classSymbol: FirClassLikeSymbol<*>, depth: Int) {
                 if (!classSymbol.isVisible()) {
-                    val source = import.getSourceForImportSegment(indexFromLast = depth)
+                    val source = withSyntax { import.getSourceForImportSegment(indexFromLast = depth) }
                     reporter.report(classSymbol.toInvisibleReferenceDiagnostic(source, context.session), context)
                 }
             }
@@ -142,7 +143,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
                     }
                 }
                 is ImportStatus.Invisible -> {
-                    val source = import.getSourceForImportSegment(0)
+                    val source = withSyntax { import.getSourceForImportSegment(0) }
                     reporter.report(status.symbol.toInvisibleReferenceDiagnostic(source, context.session), context)
                 }
                 else -> {
@@ -183,7 +184,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         }
 
         resolvedDeclaration?.let {
-            val source = import.getSourceForImportSegment(0) ?: import.source
+            val source = withSyntax { import.getSourceForImportSegment(0) } ?: import.source
             reporter.report(it.toInvisibleReferenceDiagnostic(source, context.session), context)
             return
         }

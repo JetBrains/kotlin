@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.syntax.withSyntax
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirWhenSubjectChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -22,13 +23,13 @@ object FirWhenSubjectChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
         val subjectVariable = expression.subjectVariable
         val source = (subjectVariable ?: subject)?.source ?: return
         when {
-            subject?.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION -> {
+            subject?.source?.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "destructuring declaration")
             }
-            subjectVariable?.source?.getChild(KtTokens.VAR_KEYWORD) != null -> {
+            withSyntax { subjectVariable?.source?.getChild(KotlinSyntaxTokenIds.VAR_KEYWORD) } != null -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "var")
             }
-            subjectVariable?.source?.getChild(KtNodeTypes.PROPERTY_DELEGATE) != null -> {
+            withSyntax { subjectVariable?.source?.getChild(KotlinSyntaxNodeTypeIds.PROPERTY_DELEGATE) } != null -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "delegated property")
             }
             subjectVariable != null && subjectVariable.initializer == null -> {

@@ -107,16 +107,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DIVISION_BY_ZERO by warning<KtExpression>()
         val TRIM_MARGIN_BLANK_PREFIX by warning<KtExpression>()
         val VAL_OR_VAR_ON_LOOP_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
-            parameter<KtKeywordToken>("valOrVar")
+            parameter<String>("valOrVar")
         }
         val VAL_OR_VAR_ON_FUN_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
-            parameter<KtKeywordToken>("valOrVar")
+            parameter<String>("valOrVar")
         }
         val VAL_OR_VAR_ON_CATCH_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
-            parameter<KtKeywordToken>("valOrVar")
+            parameter<String>("valOrVar")
         }
         val VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
-            parameter<KtKeywordToken>("valOrVar")
+            parameter<String>("valOrVar")
         }
         val INNER_ON_TOP_LEVEL_SCRIPT_CLASS by deprecationError<PsiElement>(LanguageFeature.ProhibitScriptTopLevelInnerClasses)
         val ERROR_SUPPRESSION by warning<PsiElement> {
@@ -654,46 +654,46 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val MODIFIERS by object : DiagnosticGroup("Modifiers") {
         val REPEATED_MODIFIER by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier")
+            parameter<String>("modifier")
         }
 
         val WRONG_MODIFIER_TARGET by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier")
+            parameter<String>("modifier")
             parameter<String>("target")
         }
         val WRONG_MODIFIER_CONTAINING_DECLARATION by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier")
+            parameter<String>("modifier")
             parameter<String>("target")
         }
 
         val DEPRECATED_MODIFIER by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("deprecatedModifier")
-            parameter<KtModifierKeywordToken>("actualModifier")
+            parameter<String>("deprecatedModifier")
+            parameter<String>("actualModifier")
         }
         val DEPRECATED_MODIFIER_FOR_TARGET by warning<PsiElement> {
-            parameter<KtModifierKeywordToken>("deprecatedModifier")
+            parameter<String>("deprecatedModifier")
             parameter<String>("target")
         }
         val DEPRECATED_MODIFIER_CONTAINING_DECLARATION by warning<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier")
+            parameter<String>("modifier")
             parameter<String>("target")
         }
 
         val INCOMPATIBLE_MODIFIERS by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier1")
-            parameter<KtModifierKeywordToken>("modifier2")
+            parameter<String>("modifier1")
+            parameter<String>("modifier2")
         }
         val DEPRECATED_MODIFIER_PAIR by warning<PsiElement> {
-            parameter<KtModifierKeywordToken>("deprecatedModifier")
-            parameter<KtModifierKeywordToken>("conflictingModifier")
+            parameter<String>("deprecatedModifier")
+            parameter<String>("conflictingModifier")
         }
 
         val REDUNDANT_MODIFIER by warning<PsiElement> {
-            parameter<KtModifierKeywordToken>("redundantModifier")
-            parameter<KtModifierKeywordToken>("conflictingModifier")
+            parameter<String>("redundantModifier")
+            parameter<String>("conflictingModifier")
         }
         val REDUNDANT_MODIFIER_FOR_TARGET by warning<PsiElement> {
-            parameter<KtModifierKeywordToken>("redundantModifier")
+            parameter<String>("redundantModifier")
             parameter<String>("target")
         }
 

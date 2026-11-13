@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirOpenMemberChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -32,7 +32,7 @@ object FirOpenMemberChecker : FirClassChecker(MppCheckerKind.Common) {
             ) return@processAllDeclaredCallables
             val source = memberDeclaration.source ?: return@processAllDeclaredCallables
             if (memberDeclaration.isOpen && !memberDeclaration.isOverride && declaration.classKind == ClassKind.ANNOTATION_CLASS ||
-                memberDeclaration.hasModifier(KtTokens.OPEN_KEYWORD) && source.shouldReportOpenFromSource
+                memberDeclaration.hasModifier(KotlinSyntaxTokenIds.OPEN_MODIFIER) && source.shouldReportOpenFromSource
             ) {
                 if (declaration.classKind == ClassKind.OBJECT) {
                     reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_OBJECT)
