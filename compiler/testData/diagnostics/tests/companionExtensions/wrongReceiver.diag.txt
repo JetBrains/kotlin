@@ -1,17 +1,17 @@
-/wrongReceiver.kt:9:30: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Bar'.
+/wrongReceiver.kt:9:30: error: Companion extension 'companion fun Foo.pip(): String' cannot be called on receiver class 'Bar'.
 
-/wrongReceiver.kt:11:33: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Bar'.
+/wrongReceiver.kt:11:33: error: Companion extension 'companion fun Foo.pip(): String' cannot be called on receiver class 'Bar'.
 
-/wrongReceiver.kt:14:39: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Bar'.
+/wrongReceiver.kt:14:39: error: Companion extension 'companion fun Foo.pip(): String' cannot be called on receiver class 'Bar'.
 
-/wrongReceiver.kt:15:41: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Other'.
+/wrongReceiver.kt:15:41: error: Companion extension 'companion fun Foo.pip(): String' cannot be called on receiver class 'Other'.
 
 /wrongReceiver.kt:16:26: error: Unresolved reference 'pip'.
 
 /wrongReceiver.kt:17:36: error: Unresolved reference 'pip' on receiver of type 'Foo'.
 
-/wrongReceiver.kt:18:50: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Other'.
+/wrongReceiver.kt:18:50: error: Companion extension 'companion fun Foo.pip(): String' cannot be called on receiver class 'Other'.
 
-/wrongReceiver.kt:26:11: error: Candidate 'companion fun HasCompanion.pop(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Other'.
+/wrongReceiver.kt:26:11: error: Companion extension 'companion fun HasCompanion.pop(): String' cannot be called on receiver class 'Other'.
 
-/wrongReceiver.kt:27:18: error: Candidate 'companion fun Foo.pip(): String' is inapplicable because of a receiver type mismatch. Actual receiver type is 'HasCompanion'.
+/wrongReceiver.kt:27:18: error: Companion extension 'companion fun Foo.pip(): String' cannot be called on receiver class 'HasCompanion'.

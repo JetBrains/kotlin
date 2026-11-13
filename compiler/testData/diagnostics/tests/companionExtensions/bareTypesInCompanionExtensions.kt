@@ -58,7 +58,7 @@ fun test() {
     TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.correct2()
     TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.correct2()
 
-    Array<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>correct4<!>()
+    Array<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.<!UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER!>correct4<!>()
 }
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType,
 typeAliasDeclaration, typeParameter */
