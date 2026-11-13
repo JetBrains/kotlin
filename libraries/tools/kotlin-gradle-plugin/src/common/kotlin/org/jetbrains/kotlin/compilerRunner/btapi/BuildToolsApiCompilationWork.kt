@@ -165,10 +165,16 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     override fun execute() {
         metrics.addTimeMetric(START_WORKER_EXECUTION)
         metrics.startMeasure(RUN_COMPILATION_IN_WORKER)
+        val buildSession = obtainBuildSession()
         val exceptionReportingKotlinLogger = ExceptionReportingKotlinLogger()
         val printingLogger =
             CapturingDelegatingKotlinLogger(
-                getTaskLogger(taskPath, null, BuildToolsApiCompilationWork::class.java.simpleName, true),
+                getTaskLogger(
+                    taskPath,
+                    null,
+                    BuildToolsApiCompilationWork::class.java.simpleName,
+                    addLevelAsPrefix = !buildSession.kotlinToolchains.has(CompilerVersionTrait.COMPILER_RENDERS_LEVEL_PREFIX),
+                ),
                 workArguments.reportingSettings.buildReportMode,
             )
         val log: KotlinLogger = CompositeKotlinLogger(
@@ -180,7 +186,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val compilerMessageRenderer = ProblemsApiCompilerMessageRenderer(
             suppressLogForProblemsApi = parameters.warningModeIsAll.getOrElse(false),
         )
-        val buildSession = obtainBuildSession()
         val runner = createRunner(
             workArguments.btaToolchain ?: error("btaToolchain is not set for task ${workArguments.taskPath}"),
             workArguments,
@@ -224,7 +229,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             // 2.4.20+ logs bad flags past the renderer (KT-85504).
             if (compilationResult == CompilationResult.COMPILATION_ERROR &&
                 !compilerMessageRenderer.hasRenderedErrors() &&
-                compilerLogsArgumentErrors(buildSession)
+                buildSession.kotlinToolchains.has(CompilerVersionTrait.COMPILER_LOGS_ARGUMENT_ERRORS)
             ) {
                 reportArgumentsRejected(buildSession, rejection = null)
             }
@@ -281,11 +286,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             parameters,
             KotlinToolingDiagnostics.KotlinCompilerArgumentsRejected(rejection, compilerVersion, pluginVersion),
         )
-    }
-
-    private fun compilerLogsArgumentErrors(buildSession: KotlinToolchains.BuildSession): Boolean {
-        val compiler = buildSession.kotlinToolchains.getCompilerVersion().toToolingVersionOrNull() ?: return false
-        return compiler >= KotlinToolingVersion(2, 4, 20, "snapshot") // Below all 2.4.20
     }
 
     private fun String.toToolingVersionOrNull(): KotlinToolingVersion? = runCatching { KotlinToolingVersion(this) }.getOrNull()
@@ -391,6 +391,3 @@ internal object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider 
 
     override fun equals(other: Any?) = other is SharedApiClassesClassLoaderProvider
 }
-
-private fun KotlinToolchains.compilerReleaseVersion(): KotlinReleaseVersion =
-    KotlinToolingVersion(getCompilerVersion()).let { KotlinReleaseVersion(it.major, it.minor, it.patch) }

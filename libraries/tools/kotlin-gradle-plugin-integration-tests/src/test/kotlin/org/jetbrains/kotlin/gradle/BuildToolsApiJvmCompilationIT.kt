@@ -124,18 +124,10 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     }
 
     @TestMetadata("simpleProject")
-    @GradleTest
-    @DisplayName("KT-80932: Compiler older than 2.2.0 produces warnings with a duplicated w: prefix")
-    fun compileWarningWithOlderCompilerHasDuplicatedPrefix(gradleVersion: GradleVersion) =
-        testWarningPrefix(gradleVersion, compilerVersion = "2.1.0", expectedPrefix = "w: w: ")
-
-    @TestMetadata("simpleProject")
-    @GradleTest
-    @DisplayName("KT-80932: Compiler 2.2.0 produces warnings with a single w: prefix")
-    fun compileWarningWithCompiler220HasSinglePrefix(gradleVersion: GradleVersion) =
-        testWarningPrefix(gradleVersion, compilerVersion = "2.2.0", expectedPrefix = "w: ")
-
-    private fun testWarningPrefix(gradleVersion: GradleVersion, compilerVersion: String, expectedPrefix: String) {
+    @GradleWithCompilerVersionTest
+    @CompilerVersions(versions = ["2.2.0", "2.1.0"])
+    @DisplayName("KT-80932: Compiler warnings have a single w: prefix")
+    fun compileWarningHasSinglePrefix(gradleVersion: GradleVersion, compilerVersion: String) {
         project("simpleProject", gradleVersion, compilerVersion = compilerVersion) {
             kotlinSourcesDir().resolve("src.kt").writeText(
                 """
@@ -152,7 +144,7 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             build("compileKotlin") {
                 val srcKtUri = kotlinSourcesDir().resolve("src.kt").toRealPath().toUri()
                 assertOutputContainsExactlyTimes(
-                    "\n$expectedPrefix$srcKtUri:7:5 'fun foo(): Unit' is deprecated. Use bar() instead."
+                    "\nw: $srcKtUri:7:5 'fun foo(): Unit' is deprecated. Use bar() instead."
                 )
             }
         }
