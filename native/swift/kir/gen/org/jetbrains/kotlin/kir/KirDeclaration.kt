@@ -11,9 +11,9 @@ package org.jetbrains.kotlin.kir
 /**
  * Generated from: [org.jetbrains.kotlin.kir.tree.generator.KirTree.declaration]
  */
-sealed class KirDeclaration : KirElementBase(), KirElement {
-    abstract val origin: KirOrigin
-    abstract val visibility: KirVisibility
-    abstract val documentation: String?
-    abstract var parent: KirDeclarationParent
+sealed interface KirDeclaration : KirElement {
+    val origin: KirOrigin
+    val visibility: KirVisibility
+    val documentation: String?
+    var parent: KirDeclarationParent
 }

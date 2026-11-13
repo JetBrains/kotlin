@@ -10,8 +10,12 @@ import org.jetbrains.kotlin.kir.tree.generator.config.AbstractKirTreeBuilderConf
 class BuilderConfigurator(model: Model) : AbstractKirTreeBuilderConfigurator(model) {
 
     override fun configureBuilders() = with(KirTree) {
-        builder(function) {
-            withCopy()
+        val elementsWithBuildCopyFunctions = listOf(constructor, function)
+
+        elementsWithBuildCopyFunctions.forEach {
+            builder(it) {
+                withCopy()
+            }
         }
 
         configureFieldInAllLeafBuilders("origin") {
@@ -20,6 +24,18 @@ class BuilderConfigurator(model: Model) : AbstractKirTreeBuilderConfigurator(mod
 
         configureFieldInAllLeafBuilders("visibility") {
             default(it, "KirVisibility.PUBLIC")
+        }
+
+        configureFieldInAllLeafBuilders("isOverride") {
+            default(it, "false")
+        }
+
+        configureFieldInAllLeafBuilders("isInstance") {
+            default(it, "true")
+        }
+
+        configureFieldInAllLeafBuilders("modality") {
+            default(it, "KirModality.UNSPECIFIED")
         }
     }
 }

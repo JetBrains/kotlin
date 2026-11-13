@@ -178,7 +178,7 @@ public interface BridgeFunctionProxy {
 
     context(sir: SirSession)
     public fun createReverseInvocationBridges(
-        swiftDynamicCall: (paramExprs: List<String>) -> String,
+        swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
     ): List<SirBridge>
 }
 
@@ -348,11 +348,11 @@ private class BridgeFunctionDescriptor(
 
     context(sir: SirSession)
     override fun createReverseInvocationBridges(
-        swiftDynamicCall: (paramExprs: List<String>) -> String,
+        swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
     ): List<SirBridge> = createReverseBridges(
         targetClassFqName = null,
         targetMethodName = null,
-        swiftDynamicCall = { _, paramExprs -> swiftDynamicCall(paramExprs) },
+        swiftDynamicCall = swiftDynamicCall,
         swiftDeprecation = null,
     )
 
