@@ -1,9 +1,0 @@
-FILE: importsWithGeneratedDeclarations_importAlias.ll.kt
-    package test
-
-    @R|org/jetbrains/kotlin/plugin/sandbox/NestedClassAndMaterializeMember|() public final class MyClassWithNested : R|kotlin/Any| {
-        public constructor(): R|test/MyClassWithNested| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
