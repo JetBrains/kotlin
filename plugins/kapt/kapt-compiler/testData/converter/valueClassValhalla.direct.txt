@@ -30,7 +30,7 @@
  * }
  */
 @kotlin.Metadata()
-public final class Money {
+public final value class Money {
     private final long cents = 0L;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String currency = null;

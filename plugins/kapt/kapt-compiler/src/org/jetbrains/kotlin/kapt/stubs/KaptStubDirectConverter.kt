@@ -87,6 +87,9 @@ class KaptStubDirectConverter(
         appendModifierIfPresent(Opcodes.ACC_STATIC, "static")
         appendModifierIfPresent(Opcodes.ACC_ABSTRACT, "abstract")
         appendModifierIfPresent(Opcodes.ACC_FINAL, "final")
+        if (kind == ElementKind.CLASS) {
+            appendModifierIfPresent(valueClassFlag, "value")
+        }
         appendModifierIfPresent(Opcodes.ACC_NATIVE, "native")
         appendModifierIfPresent(Opcodes.ACC_SYNCHRONIZED, "synchronized")
         if (kind == ElementKind.FIELD) {
