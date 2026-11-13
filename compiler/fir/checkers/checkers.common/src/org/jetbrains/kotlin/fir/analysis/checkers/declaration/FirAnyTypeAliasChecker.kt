@@ -65,6 +65,8 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
                     reporter.reportOn(expandedTypeRef.source, FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS, fullyExpandedType)
                 }
             }
+
+            declaration.checkUnusedTypeParameters(fullyExpandedType)
         }
 
         checkTypeRefForUnderscore(expandedTypeRef)
@@ -76,6 +78,20 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
                 FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS,
                 fullyExpandedType
             )
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirTypeAlias.checkUnusedTypeParameters(fullyExpandedType: ConeKotlinType) {
+        val usedTypeParameters = mutableSetOf<FirTypeParameterSymbol>()
+        fullyExpandedType.forEachType(prepareType = { it.fullyExpandedType() }) {
+            it.toTypeParameterSymbol()?.let(usedTypeParameters::add)
+        }
+
+        for (typeParameter in typeParameters) {
+            if (typeParameter.symbol !in usedTypeParameters) {
+                reporter.reportOn(typeParameter.source, FirErrors.UNUSED_TYPEALIAS_PARAMETER, typeParameter.symbol, fullyExpandedType)
+            }
         }
     }
 

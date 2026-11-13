@@ -1,3 +1,5 @@
+/bareTypesInCompanionExtensions.kt:12:15: warning: Type alias parameter 'T' is not used in the expanded type 'O' and does not affect type checking.
+
 /bareTypesInCompanionExtensions.kt:20:15: error: Companion extension receiver type 'C<String>' cannot have type arguments.
 
 /bareTypesInCompanionExtensions.kt:21:19: error: Companion extension receiver type 'C<T (of fun <T> C<T>.incorrect2)>' cannot have type arguments.

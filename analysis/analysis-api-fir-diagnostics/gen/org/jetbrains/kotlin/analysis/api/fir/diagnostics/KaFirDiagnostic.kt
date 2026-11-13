@@ -7660,6 +7660,16 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface UnusedTypealiasParameter : KaFirDiagnostic<KtTypeParameter> {
+        override val diagnosticClass: KClass<UnusedTypealiasParameter>
+            get() = UnusedTypealiasParameter::class
+
+        public val typeParameter: KaTypeParameterSymbol
+        public val expandedType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface RedundantVisibilityModifier : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass: KClass<RedundantVisibilityModifier>
             get() = RedundantVisibilityModifier::class
