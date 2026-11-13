@@ -587,13 +587,17 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 
     /**
-     * Marks the module as code for the arm64e ABI of user space, version 0, as Clang does. Without it, its object file
-     * has no pointer authentication ABI version, and libtool leaves such objects out of static libraries, e.g. caches.
+     * Marks the module with pointer authentication ABI version 0 for user space, as Clang does. Without the mark, the
+     * module's object file has no ABI version, and libtool leaves it out of static libraries, including caches.
      */
     fun addPtrAuthAbiVersion() {
         val versions = node(llvmContext, node(llvmContext, int32(0), int1(false))!!)!!
-        val flag = node(llvmContext, int32(6 /* Module::AppendUnique */), "ptrauth.abi-version".mdString(llvmContext), versions)
-        LLVMAddNamedMetadataOperand(module, "llvm.module.flags", flag)
+        val key = "ptrauth.abi-version"
+        // Use AppendUnique, as Clang does. The runtime bitcode comes from Clang, and the IR linker rejects a flag whose
+        // behavior differs between modules. Modules with the same version end up with a single entry.
+        LLVMAddModuleFlag(
+                module, LLVMModuleFlagBehavior.LLVMModuleFlagBehaviorAppendUnique, key, key.length.toLong(), LLVMValueAsMetadata(versions)
+        )
     }
 
     /**

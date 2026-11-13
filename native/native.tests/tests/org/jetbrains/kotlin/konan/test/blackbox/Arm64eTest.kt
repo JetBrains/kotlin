@@ -115,8 +115,8 @@ class Arm64eTest : AbstractNativeSimpleTest() {
             it.resolveSibling(targets.testTarget.family.staticPrefix + it.name)
         }
 
-        // The static library contains the caches, which libtool leaves without objects if they have no pointer authentication
-        // ABI version.
+        // The static library contains the caches. libtool would leave out cache objects without a pointer
+        // authentication ABI version.
         assertArm64eObjects(staticLibrary)
         val symbols = runProcess(llvmTool("llvm-nm"), "--defined-only", "--just-symbol-name", staticLibrary.absolutePath).stdout.lines()
         assertTrue("_kfun:library#value(library.Base){}kotlin.Int" in symbols) { "No code of the cached library in ${staticLibrary.absolutePath}" }
