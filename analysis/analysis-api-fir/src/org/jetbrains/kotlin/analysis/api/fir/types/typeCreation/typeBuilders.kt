@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.types.KaIntersectionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -43,17 +44,9 @@ internal abstract class KaFirTypeBuilderWithAnnotations : KaTypeBuilderWithAnnot
     }
 }
 
-internal class KaFirClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+internal class KaFirTypeArgumentsBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeArgumentsBuilder,
     KaTypeCreator by typeCreatorDelegate {
     private val backingTypeArguments = mutableListOf<KaTypeProjection>()
-
-    override var isMarkedNullable: Boolean = false
-        get() = withValidityAssertion { field }
-        set(value) {
-            withValidityAssertion {
-                field = value
-            }
-        }
 
     override val typeArguments: List<KaTypeProjection>
         get() = withValidityAssertion { backingTypeArguments }
@@ -77,6 +70,44 @@ internal class KaFirClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCla
     }
 
     override fun typeArgument(argument: () -> KaTypeProjection) = typeArgument(argument())
+}
+
+/**
+ * @param outerClassSymbolsProvider Provides the symbols of all outer qualifiers of the built class type, ordered from the outermost
+ * one inwards. It is only invoked on the first [outerClasses] call, as computing the qualifiers is unnecessary otherwise.
+ */
+internal class KaFirClassTypeBuilder(
+    typeCreatorDelegate: KaTypeCreator,
+    outerClassSymbolsProvider: () -> List<KaClassLikeSymbol>,
+) : KaClassTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+    KaTypeArgumentsBuilder by KaFirTypeArgumentsBuilder(typeCreatorDelegate) {
+    private val outerQualifierBuilders = lazy(LazyThreadSafetyMode.NONE) {
+        outerClassSymbolsProvider().map { symbol -> symbol to KaFirTypeArgumentsBuilder(typeCreatorDelegate) }
+    }
+
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    /**
+     * Type arguments registered via [outerClasses] for each of the outer qualifiers, ordered from the outermost one inwards.
+     *
+     * `null` if [outerClasses] has never been called.
+     */
+    val outerTypeArgumentsIfInitialized: List<List<KaTypeProjection>>?
+        get() = withValidityAssertion {
+            if (outerQualifierBuilders.isInitialized()) outerQualifierBuilders.value.map { [_, builder] -> builder.typeArguments } else null
+        }
+
+    override fun outerClasses(init: KaTypeArgumentsBuilder.(index: Int, symbol: KaClassLikeSymbol) -> Unit) = withValidityAssertion {
+        outerQualifierBuilders.value.forEachIndexed { index, [symbol, builder] ->
+            builder.init(index, symbol)
+        }
+    }
 }
 
 internal class KaFirTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder, KaFirTypeBuilderWithAnnotations(),

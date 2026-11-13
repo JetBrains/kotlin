@@ -1,7 +1,10 @@
 KaType
 KaClassErrorType:
   abbreviation: null
-  annotations: []
+  annotations: [
+    Anno()
+      psi: null
+  ]
   candidateSymbols: []
   errorMessage: Symbol not found for /MyClass
   presentableText: MyClass
@@ -10,9 +13,9 @@ KaClassErrorType:
       name: MyClass
       typeArguments: []
   ]
-  isMarkedNullable: false
+  isMarkedNullable: true
   isNullable: true
-  hasFlexibleNullability: true
+  hasFlexibleNullability: false
 
 Rendered type:
-MyClass
+@Anno MyClass

@@ -1,7 +1,10 @@
 KaType
 KaClassErrorType:
   abbreviation: null
-  annotations: []
+  annotations: [
+    main/Anno()
+      psi: null
+  ]
   candidateSymbols: []
   errorMessage: Symbol not found for base/Foo
   presentableText: base.Foo
@@ -13,9 +16,9 @@ KaClassErrorType:
       name: Foo
       typeArguments: []
   ]
-  isMarkedNullable: false
-  isNullable: false
+  isMarkedNullable: true
+  isNullable: true
   hasFlexibleNullability: false
 
 Rendered type:
-base.Foo
+@main.Anno base.Foo

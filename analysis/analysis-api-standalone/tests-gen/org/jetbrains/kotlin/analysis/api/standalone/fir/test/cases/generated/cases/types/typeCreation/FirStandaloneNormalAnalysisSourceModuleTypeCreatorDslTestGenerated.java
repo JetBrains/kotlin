@@ -248,9 +248,27 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     }
 
     @Test
+    @TestMetadata("anonymousObjectFromGenericFunction.kt")
+    public void testAnonymousObjectFromGenericFunction() {
+      run("anonymousObjectFromGenericFunction.kt");
+    }
+
+    @Test
     @TestMetadata("boxedArrayWithStringTypeArgument.kt")
     public void testBoxedArrayWithStringTypeArgument() {
       run("boxedArrayWithStringTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("companionOfGenericClass.kt")
+    public void testCompanionOfGenericClass() {
+      run("companionOfGenericClass.kt");
+    }
+
+    @Test
+    @TestMetadata("companionOfGenericClassNoArgs.kt")
+    public void testCompanionOfGenericClassNoArgs() {
+      run("companionOfGenericClassNoArgs.kt");
     }
 
     @Test
@@ -275,6 +293,30 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     @TestMetadata("genericTypeAliasWithNoArguments.kt")
     public void testGenericTypeAliasWithNoArguments() {
       run("genericTypeAliasWithNoArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("innerClassOfGenericClass.kt")
+    public void testInnerClassOfGenericClass() {
+      run("innerClassOfGenericClass.kt");
+    }
+
+    @Test
+    @TestMetadata("innerClassOfLocalClass.kt")
+    public void testInnerClassOfLocalClass() {
+      run("innerClassOfLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("innerClassOfLocalClassInGenericMember.kt")
+    public void testInnerClassOfLocalClassInGenericMember() {
+      run("innerClassOfLocalClassInGenericMember.kt");
+    }
+
+    @Test
+    @TestMetadata("innerClassOfLocalClassNoArgs.kt")
+    public void testInnerClassOfLocalClassNoArgs() {
+      run("innerClassOfLocalClassNoArgs.kt");
     }
 
     @Test
@@ -314,9 +356,27 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     }
 
     @Test
+    @TestMetadata("missingDependencyCandidateSymbolWithClashingUseSiteClass.kt")
+    public void testMissingDependencyCandidateSymbolWithClashingUseSiteClass() {
+      run("missingDependencyCandidateSymbolWithClashingUseSiteClass.kt");
+    }
+
+    @Test
+    @TestMetadata("mixedInnerAndNestedClasses.kt")
+    public void testMixedInnerAndNestedClasses() {
+      run("mixedInnerAndNestedClasses.kt");
+    }
+
+    @Test
     @TestMetadata("moreTypeArgumentsThanExpected.kt")
     public void testMoreTypeArgumentsThanExpected() {
       run("moreTypeArgumentsThanExpected.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassOfGenericClass.kt")
+    public void testNestedClassOfGenericClass() {
+      run("nestedClassOfGenericClass.kt");
     }
 
     @Test

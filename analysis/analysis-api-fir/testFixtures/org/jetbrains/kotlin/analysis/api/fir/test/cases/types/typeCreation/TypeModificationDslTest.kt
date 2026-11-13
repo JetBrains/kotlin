@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.types.typeCreation
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.scopes.scope
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.copy
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExec
 import org.jetbrains.kotlin.analysis.test.framework.base.AnalysisApiExecutionTestEnvironment
 import org.jetbrains.kotlin.analysis.test.framework.base.AnalysisApiTestEnvironmentStorage
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.assertions
@@ -133,12 +135,60 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
         }
     }
 
+    /**
+     * The argument of the type parameter captured by the anonymous object is not rendered, as it is not a part of the qualifiers.
+     * So the type of the member `v` is rendered instead, which is the captured argument after the substitution.
+     */
+    @Test
+    @TestMetadata("classType/anonymousObjectFromGenericFunction.kt")
+    fun `classType anonymousObjectFromGenericFunction +markNullableMemberType`() = test<KaUsualClassType> { type ->
+        fun KaType.memberType(): KaType {
+            val memberScope = scope ?: error("No scope for `$this`")
+            return memberScope.getCallableSignatures(Name.identifier("v")).single().returnType
+        }
+
+        val sourceMemberType = type.memberType()
+        check((sourceMemberType as? KaClassType)?.classId == StandardClassIds.String) {
+            "Unexpected type of `v` in the source type: `$sourceMemberType`"
+        }
+
+        type.markNullableCheckingRoundTrip().memberType()
+    }
+
     @Test
     @TestMetadata("classType/innerClassWithOuterTypeArguments.kt")
     fun `classType innerClassWithOuterTypeArguments +markNullable`() = test<KaUsualClassType> { type ->
-        type.copy {
-            isMarkedNullable = true
-        }
+        type.markNullableCheckingRoundTrip()
+    }
+
+    @Test
+    @TestMetadata("classType/mixedInnerAndNestedClasses.kt")
+    fun `classType mixedInnerAndNestedClasses +markNullable`() = test<KaUsualClassType> { type ->
+        type.markNullableCheckingRoundTrip()
+    }
+
+    @Test
+    @TestMetadata("classType/innerClassOfLocalClass.kt")
+    fun `classType innerClassOfLocalClass +markNullable`() = test<KaUsualClassType> { type ->
+        type.markNullableCheckingRoundTrip()
+    }
+
+    @Test
+    @TestMetadata("classType/innerClassOfLocalClassInGenericMember.kt")
+    fun `classType innerClassOfLocalClassInGenericMember +markNullable`() = test<KaUsualClassType> { type ->
+        type.markNullableCheckingRoundTrip()
+    }
+
+    @Test
+    @TestMetadata("classType/nestedClassOfGenericClass.kt")
+    fun `classType nestedClassOfGenericClass +markNullable`() = test<KaUsualClassType> { type ->
+        type.markNullableCheckingRoundTrip()
+    }
+
+    @Test
+    @TestMetadata("classType/companionOfGenericClass.kt")
+    fun `classType companionOfGenericClass +markNullable`() = test<KaUsualClassType> { type ->
+        type.markNullableCheckingRoundTrip()
     }
 
     // endregion
@@ -303,6 +353,18 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     }
 
     // endregion
+}
+
+/**
+ * Marks [this] type as nullable and checks that marking the result as not-null gives back exactly [this] type,
+ * including the type arguments that the [qualifiers][KaClassType.qualifiers] do not show.
+ */
+context(_: KaSession)
+private fun KaUsualClassType.markNullableCheckingRoundTrip(): KaUsualClassType {
+    val nullableType = copy { isMarkedNullable = true }
+    val roundTripType = nullableType.copy { isMarkedNullable = false }
+    check(roundTripType == this) { "Copying `$this` changed it to `$roundTripType`" }
+    return nullableType
 }
 
 /**

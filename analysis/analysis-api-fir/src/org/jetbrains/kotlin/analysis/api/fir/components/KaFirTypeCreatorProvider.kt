@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.typeCreation.KaFirTypeCreator
+import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreatorProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaFunctionTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeCreator
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeBuilder
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 
 internal class KaFirTypeCreatorProvider(
     override val analysisSessionProvider: () -> KaFirSession
@@ -35,14 +37,20 @@ internal class KaFirTypeCreatorProvider(
             val sourceSymbol = type.symbol
             val sourceIsMarkedNullable = type.isMarkedNullable
             val sourceAnnotationClassIds = type.annotations.classIds.toList()
+            val sourceQualifiers = type.qualifiers
+            val ownTypeArguments = sourceQualifiers.last().typeArguments
+            val outerQualifiers = sourceQualifiers.dropLast(1)
 
-            // `typeArguments` only contains the arguments of the last qualifier, while the builder expects the arguments of all
-            // qualifiers, ordered from the innermost class outwards
-            val sourceTypeArguments = type.qualifiers.asReversed().flatMap { it.typeArguments }
+            // The arguments of the type parameters captured by a local class follow the arguments shown in the qualifiers
+            val sourceCapturedTypeArguments = (type.coneType as? ConeClassLikeType)?.typeArguments.orEmpty()
+                .drop(sourceQualifiers.sumOf { it.typeArguments.size })
 
-            typeCreator.classType(sourceSymbol) {
+            backingTypeCreator.classType(sourceSymbol, sourceCapturedTypeArguments) {
                 isMarkedNullable = sourceIsMarkedNullable
-                typeArguments { sourceTypeArguments }
+                typeArguments { ownTypeArguments }
+                outerClasses { index, _ ->
+                    typeArguments { outerQualifiers.getOrNull(index)?.typeArguments.orEmpty() }
+                }
                 annotations(sourceAnnotationClassIds)
                 init()
             } as KaClassType
