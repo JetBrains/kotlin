@@ -117,6 +117,7 @@ internal object DataFlowIR {
         val RETURNS_NOTHING = 8
         val EXPLICITLY_EXPORTED = 16
         val IS_EAGER_STATIC_INITIALIZER = 32
+        val IS_BRIDGE = 64
     }
 
     class FunctionParameter(val type: Type)
@@ -143,11 +144,15 @@ internal object DataFlowIR {
         lateinit var parameters: Array<FunctionParameter>
         lateinit var returnParameter: FunctionParameter
 
+        // The type of the class this function is declared in, if any.
+        var declaringType: Type? = null
+
         val isStaticFieldInitializer = attributes.and(FunctionAttributes.IS_STATIC_FIELD_INITIALIZER) != 0
         val returnsUnit = attributes.and(FunctionAttributes.RETURNS_UNIT) != 0
         val returnsNothing = attributes.and(FunctionAttributes.RETURNS_NOTHING) != 0
         val explicitlyExported = attributes.and(FunctionAttributes.EXPLICITLY_EXPORTED) != 0
         val isEagerStaticInitializer = attributes.and(FunctionAttributes.IS_EAGER_STATIC_INITIALIZER) != 0
+        val isBridge = attributes.and(FunctionAttributes.IS_BRIDGE) != 0
 
         val irFunction: IrSimpleFunction? get() = irDeclaration as? IrSimpleFunction
         val irFile: IrFile? get() = irDeclaration?.fileOrNull
@@ -742,6 +747,9 @@ internal object DataFlowIR {
             if (function.isEagerStaticInitializer) {
                 attributes = attributes or FunctionAttributes.IS_EAGER_STATIC_INITIALIZER
             }
+            if (it.bridgeTarget != null) {
+                attributes = attributes or FunctionAttributes.IS_BRIDGE
+            }
             val symbol = when {
                 it.isExternal || it.isBuiltInOperator -> FunctionSymbol.External(
                         localHash(name.toByteArray()),
@@ -773,6 +781,7 @@ internal object DataFlowIR {
                     .map { FunctionParameter(mapType(it)) }
                     .toTypedArray()
             symbol.returnParameter = FunctionParameter(mapType(function.returnType))
+            symbol.declaringType = (it.parent as? IrClass)?.let { irClass -> mapClassReferenceType(irClass) }
 
             return symbol
         }
