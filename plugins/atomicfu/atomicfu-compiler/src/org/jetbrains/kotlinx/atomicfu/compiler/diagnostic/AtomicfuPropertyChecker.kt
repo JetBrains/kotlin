@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicfuStandardClassIds
+import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.DeclarationInSame
 
 private fun FirProperty.isKotlinxAtomicfu(): Boolean = returnTypeRef.coneType.classId?.packageFqName == AtomicfuStandardClassIds.BASE_ATOMICFU_PACKAGE
 
@@ -123,19 +124,19 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 declaration.source,
                 AtomicfuErrors.ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER,
-                delegateProperty.declarationLocation()
+                delegateProperty.inSameContainerMessage(),
             )
         }
     }
 
     context(context: CheckerContext)
-    private fun FirPropertySymbol.declarationLocation(): String {
-        if (isCompanionBlockMember) return "in the same companion block"
+    private fun FirPropertySymbol.inSameContainerMessage(): String {
+        if (isCompanionBlockMember) return DeclarationInSame.COMPANION_BLOCK
 
         val containingClass = context.session.firProvider.getContainingClass(this) as? FirClassSymbol<*>
-            ?: return "at the top level of the same file"
-        if (containingClass.isCompanion && containingClass.classKind == ClassKind.OBJECT) return "in the same companion object"
-        return "in the same ${containingClass.classKind.codeRepresentation ?: "enum entry"}"
+            ?: return DeclarationInSame.FILE
+        if (containingClass.isCompanion && containingClass.classKind == ClassKind.OBJECT) return DeclarationInSame.COMPANION_OBJECT
+        return DeclarationInSame.type(containingClass.classKind)
     }
 
     context(context: CheckerContext)

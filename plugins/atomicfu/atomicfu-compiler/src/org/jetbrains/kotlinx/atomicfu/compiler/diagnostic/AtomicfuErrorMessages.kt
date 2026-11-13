@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.diagnostic
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -157,4 +158,11 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
     }
 
+    internal object DeclarationInSame {
+        const val FILE = "at the top level of the same file"
+        const val COMPANION_BLOCK = "in the same companion block"
+        const val COMPANION_OBJECT = "in the same companion object"
+
+        fun type(kind: ClassKind) = "in the same ${kind.codeRepresentation ?: "enum entry"}"
+    }
 }
