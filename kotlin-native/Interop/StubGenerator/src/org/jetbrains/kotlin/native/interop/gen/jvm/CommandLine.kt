@@ -180,7 +180,7 @@ open class CInteropArguments(argParser: ArgParser =
     val arm64eBitcode by argParser.option(
             ArgType.Choice<Arm64eBitcodeMode>(),
             "Xarm64e-bitcode",
-            description = "For iosArm64, also store bitcode compiled for arm64e, " +
+            description = "For iosArm64 and macosArm64, also store bitcode compiled for arm64e, " +
                     "which is linked into binaries built with '-Xbinary=arm64e=true'. " +
                     "Enabled by default. To skip it, use 'disabled'. If the arm64e compilation fails, cinterop fails too."
     )

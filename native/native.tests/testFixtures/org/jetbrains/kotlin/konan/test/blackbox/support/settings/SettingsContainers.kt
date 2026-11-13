@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.arm64ePropertyOverrides
 import org.jetbrains.kotlin.konan.test.blackbox.support.ProcessLevelProperty
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -88,6 +89,12 @@ val Settings.configurables: Configurables
                 }
                 put("targetTriple.${target.name}", "$arch-apple-ios-macabi")
                 put("targetSysRoot.${target.name}", "\$targetSysRoot.macos_arm64")
+            }
+
+            // Native code that tests link into arm64e binaries has to be compiled for arm64e too, so use the arm64e
+            // properties, as the compiler does.
+            if (get<ExplicitBinaryOptions>().getOrNull(BinaryOptions.arm64e) == true) {
+                putAll(arm64ePropertyOverrides(get<KotlinNativeTargets>().testTarget.name))
             }
         }
         val distribution = Distribution(

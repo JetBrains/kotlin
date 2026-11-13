@@ -93,7 +93,7 @@ class NativeSecondStageCompilationConfig(
     }
 
     /**
-     * Determine if we compile for arm64e, the iOS ABI with pointer authentication.
+     * Determine if we compile for arm64e, the ABI with pointer authentication.
      */
     val arm64e: Boolean
 
@@ -112,7 +112,7 @@ class NativeSecondStageCompilationConfig(
         if (arm64e && (target == null || !distribution.hasArm64eVariant(target))) {
             configuration.report(
                     CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
-                    "Binary option 'arm64e' is supported only for the iosArm64 target and is ignored."
+                    "Binary option 'arm64e' is supported only for the iosArm64 and macosArm64 targets and is ignored."
             )
             this.arm64e = false
             this.distribution = createDistribution(arm64eTarget = null)

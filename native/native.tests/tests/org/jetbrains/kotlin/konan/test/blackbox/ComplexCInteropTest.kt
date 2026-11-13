@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
@@ -555,6 +556,8 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         Assumptions.assumeTrue(targets.testTarget.architecture == Architecture.ARM64)
         Assumptions.assumeTrue(targets.testTarget != KonanTarget.WATCHOS_ARM64) // Not real ARM64.
+        // The bitcode has no target triple, so arm64e binaries reject it.
+        Assumptions.assumeFalse(testRunSettings.get<ExplicitBinaryOptions>().getOrNull(BinaryOptions.arm64e) == true)
         val root = interopObjCDir.resolve("arc_contract")
         val bcFile = buildDir.resolve("arc_contract.bc")
         runProcess(

@@ -621,7 +621,9 @@ private fun compileArm64eBitcode(
     when {
         mode == Arm64eBitcodeMode.DISABLED -> return emptyList()
         !tool.hasArm64eVariant -> {
-            if (mode == Arm64eBitcodeMode.ENABLED) warn("'-Xarm64e-bitcode' is supported only for the iosArm64 target and is ignored.")
+            if (mode == Arm64eBitcodeMode.ENABLED) {
+                warn("'-Xarm64e-bitcode' is supported only for the iosArm64 and macosArm64 targets and is ignored.")
+            }
             return emptyList()
         }
         // Only libraries of the native flavor store bitcode.

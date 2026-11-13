@@ -45,8 +45,9 @@ import java.util.Properties
 import kotlin.time.Duration
 
 /**
- * Tests `-Xbinary=arm64e=true`. arm64e binaries cannot run on simulators or macOS hosts,
- * so these tests check the generated LLVM IR.
+ * Covers what cannot be checked by running code compiled with `-Xbinary=arm64e=true`: the target, the parts of the
+ * generated LLVM IR that nothing authenticates at run time, libraries, caches and diagnostics. To check that the code
+ * works with pointer authentication, run the other tests with `-Pkn.binaryOptions=arm64e=true` on an Apple silicon Mac.
  *
  * Caches would move code out of the IR, so only the cache tests use them.
  */
@@ -130,26 +131,7 @@ class Arm64eTest : AbstractNativeSimpleTest() {
         compileFrameworkAndCheckIr(testSuiteDir.resolve("function_attributes_without_arm64e.kt"), "Codegen", arm64e = false)
 
     @Test
-    fun testCFunctionPointers() = compileFrameworkAndCheckIr(
-        testSuiteDir.resolve("c_function_pointers.kt"), "Codegen", listOf("-Xbinary=sourceInfoType=libbacktrace")
-    )
-
-    @Test
-    fun testObjCMessenger() =
-        compileFrameworkAndCheckIr(testSuiteDir.resolve("objc/messenger.kt"), "Codegen", givenDependencies = setOf(objcLibrary()))
-
-    @Test
-    fun testVirtualCalls() = compileFrameworkAndCheckIr(testSuiteDir.resolve("virtual_calls.kt"), "Codegen")
-
-    @Test
     fun testObjCClassData() = compileFrameworkAndCheckIr(testSuiteDir.resolve("objc_class_data.kt"), "Codegen")
-
-    @Test
-    fun testKotlinSubclassOfObjCClass() =
-        compileFrameworkAndCheckIr(testSuiteDir.resolve("objc/subclass.kt"), "Codegen", givenDependencies = setOf(objcLibrary()))
-
-    @Test
-    fun testBlocks() = compileFrameworkAndCheckIr(testSuiteDir.resolve("blocks.kt"), "Codegen")
 
     @Test
     fun testMissingArm64eBitcode() {
@@ -252,9 +234,6 @@ class Arm64eTest : AbstractNativeSimpleTest() {
         assertEquals(KLIB_ARM64E_FOLDER_NAME, manifest.getProperty(KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS))
         compileFrameworkAndCheckIr(testSuiteDir.resolve("platform_libraries.kt"), "LinkBitcodeDependencies")
     }
-
-    /** An Objective-C library without bitcode: with direct C calls, cinterop compiles no stubs. */
-    private fun objcLibrary() = TestModule.Given(cinterop("objc", listOf("-Xccall-mode", "direct")).klibFile)
 
     private fun cinterop(testName: String, cinteropArgs: List<String> = emptyList()): TestCompilationArtifact.KLIB =
         cinteropToLibrary(
