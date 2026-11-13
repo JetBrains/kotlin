@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -164,6 +165,7 @@ class IncrementalCompilationCustomScopeTest {
     }
 
     @Test
+    @OptIn(VirtualFileBasedApi::class)
     fun testFinderContinuesAfterAClassInAnExcludedRoot(@TempDir tempDir: File) {
         prepareClasspaths(tempDir, PlainComponents())
 

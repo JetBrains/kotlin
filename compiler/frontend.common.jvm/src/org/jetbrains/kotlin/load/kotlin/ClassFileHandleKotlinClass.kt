@@ -54,7 +54,7 @@ class ClassFileHandleKotlinClass private constructor(
     override fun hashCode() = classFile.hashCode()
     override fun toString() = "${this::class.java.simpleName}: $classFile"
 
-    companion object Factory {
+    companion object {
         /**
          * Reads [classFile], returning the Kotlin class, or the content of a
          * class file without Kotlin metadata, or `null` for a file which cannot be read anymore (a jar deleted during the compilation).
@@ -80,15 +80,16 @@ class ClassFileHandleKotlinClass private constructor(
                     // Valid situation. User can delete jar file.
                 } catch (_: NoSuchFileException) {
                     // Same (see FL-32618 as an exception example)
-                } catch (e: Throwable) {
-                    if (e is ControlFlowException) throw e
+                } catch (e: ControlFlowException) {
+                    throw e
+                } catch (e: Exception) {
                     throw fileReadingError(e, classFile)
                 }
                 null
             }
         }
 
-        private fun fileReadingError(e: Throwable, classFile: BinaryClassFileHandle): Throwable =
+        private fun fileReadingError(e: Exception, classFile: BinaryClassFileHandle): Throwable =
             IllegalStateException("Could not read file: ${classFile.pathForDiagnostics}", e)
     }
 }

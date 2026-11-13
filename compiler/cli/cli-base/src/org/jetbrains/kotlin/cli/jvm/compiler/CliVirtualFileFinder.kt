@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.load.kotlin.ClassFileHandleKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -39,11 +40,11 @@ private val KOTLIN_METADATA_EXTENSIONS = JavaFileExtensions(JavaFileExtension.KO
  * Finds Kotlin binary classes in [index], applying [filter] during index traversal.
  *
  * Compiler code uses the [JvmClasspath] constructor, which reads Kotlin classes through [BinaryClassFileHandle]s
- * ([ClassFileHandleKotlinClass]). Finders over a file filter (Analysis API or K1 adapters over `GlobalSearchScope`) keep the
- * [VirtualFile]-based Kotlin classes of [VirtualFileFinder], which K1 and the decompiler still inspect.
+ * ([ClassFileHandleKotlinClass]). Finders over a file filter (Analysis API adapters over `GlobalSearchScope`) keep the
+ * [VirtualFile]-based Kotlin classes of [VirtualFileFinder], which the decompiler still inspects.
  *
- * TODO(KT-90203): drop the file filter constructor once K1 and the Analysis API adapters are gone or read handles; the
- *  finder then becomes handle-only and should be renamed.
+ * TODO(KT-90203): drop the file filter constructor once the Analysis API adapters read handles; the finder then becomes
+ *  handle-only and should be renamed.
  */
 class CliVirtualFileFinder private constructor(
     private val index: JvmDependenciesIndex,
@@ -52,6 +53,7 @@ class CliVirtualFileFinder private constructor(
     private val kotlinClassesFromHandles: Boolean,
     private val perfManager: PerformanceManager?,
 ) : VirtualFileFinder(perfManager) {
+    @VirtualFileBasedApi
     constructor(
         index: JvmDependenciesIndex,
         accepts: (VirtualFile) -> Boolean,
