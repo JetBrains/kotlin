@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+package test
 
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
@@ -23,11 +24,11 @@ private fun KClass<*>.check(expectedFoo: String, expectedBar: String) {
 }
 
 fun box(): String {
-    B::class.check("fun B<U>.foo(U): U", "fun B<U>.bar(kotlin.collections.List<U>): kotlin.Unit")
-    C::class.check("fun C<V, W>.foo(W): W", "fun C<V, W>.bar(kotlin.collections.List<W>): kotlin.Unit")
+    B::class.check("fun test.B<U>.foo(U): U", "fun test.B<U>.bar(kotlin.collections.List<U>): kotlin.Unit")
+    C::class.check("fun test.C<V, W>.foo(W): W", "fun test.C<V, W>.bar(kotlin.collections.List<W>): kotlin.Unit")
 
-    D::class.check("fun D<X>.foo(X & Any): X & Any", "fun D<X>.bar(kotlin.collections.List<X & Any>): kotlin.Unit")
-    E::class.check("fun E<Y, Z>.foo(Z & Any): Z & Any", "fun E<Y, Z>.bar(kotlin.collections.List<Z & Any>): kotlin.Unit")
+    D::class.check("fun test.D<X>.foo(X & Any): X & Any", "fun test.D<X>.bar(kotlin.collections.List<X & Any>): kotlin.Unit")
+    E::class.check("fun test.E<Y, Z>.foo(Z & Any): Z & Any", "fun test.E<Y, Z>.bar(kotlin.collections.List<Z & Any>): kotlin.Unit")
 
     return "OK"
 }
