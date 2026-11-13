@@ -233,7 +233,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
         danglingAnnotations = storageManager.createMemoizedFunction(file -> createAnnotations(file, file.getDanglingAnnotations()));
 
-        syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
+        syntheticResolveExtension = SyntheticResolveExtension.EMPTY;
 
         this.project = project;
         this.kotlinTypeChecker = kotlinTypeChecker;

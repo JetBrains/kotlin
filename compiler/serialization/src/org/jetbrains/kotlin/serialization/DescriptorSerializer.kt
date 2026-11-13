@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.extensions.TypeAttributeTranslatorExtension
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
@@ -763,9 +762,8 @@ class DescriptorSerializer private constructor(
         ): DescriptorSerializer =
             DescriptorSerializer(
                 null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(), serializeTypeTableToFunction = false,
-                typeAttributeTranslators = project?.let { TypeAttributeTranslatorExtension.createTranslators(it) },
+                typeAttributeTranslators = project?.let { TypeAttributeTranslators(listOf(DefaultTypeAttributeTranslator)) },
                 languageVersionSettings = languageVersionSettings,
-                plugins = project?.let { DescriptorSerializerPlugin.getInstances(it) }.orEmpty(),
             )
 
         @JvmStatic
@@ -788,8 +786,7 @@ class DescriptorSerializer private constructor(
                 parentSerializer ?: create(container, extension, null, languageVersionSettings, project)
             else
                 createTopLevel(extension, languageVersionSettings)
-            val plugins = project?.let { DescriptorSerializerPlugin.getInstances(it) }.orEmpty()
-            val typeAttributeTranslators = project?.let { TypeAttributeTranslatorExtension.createTranslators(it) }
+            val typeAttributeTranslators = project?.let { TypeAttributeTranslators(listOf(DefaultTypeAttributeTranslator)) }
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
             // serializing outer classes before nested classes.
@@ -803,7 +800,7 @@ class DescriptorSerializer private constructor(
                     parent.versionRequirementTable else MutableVersionRequirementTable(),
                 serializeTypeTableToFunction = false,
                 languageVersionSettings,
-                plugins,
+                plugins = emptyList(),
                 typeAttributeTranslators
             )
             for (typeParameter in descriptor.declaredTypeParameters) {

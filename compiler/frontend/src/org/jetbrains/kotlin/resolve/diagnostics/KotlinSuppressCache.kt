@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.google.common.collect.ImmutableSet
-import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -26,9 +24,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.AbstractKotlinSuppressCache
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtStubbedPsiUtil
+import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -37,23 +36,12 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
     fun isSuppressed(diagnostic: Diagnostic, bindingContext: BindingContext?): Boolean = isSuppressed(diagnostic)
-
-    companion object : ProjectExtensionDescriptor<DiagnosticSuppressor>(
-        "org.jetbrains.kotlin.diagnosticSuppressor", DiagnosticSuppressor::class.java
-    ) {
-        @Deprecated(
-            message = "This field is deprecated for compatibility reasons. Use ProjectExtensionDescriptor API instead",
-            replaceWith = ReplaceWith("DiagnosticSuppressor.extensionPointName"),
-            level = DeprecationLevel.WARNING
-        )
-        val EP_NAME: ExtensionPointName<DiagnosticSuppressor> = extensionPointName
-    }
 }
 
 @K1Deprecation
-abstract class KotlinSuppressCache(project: Project?) : AbstractKotlinSuppressCache<PsiElement>() {
+abstract class KotlinSuppressCache : AbstractKotlinSuppressCache<PsiElement>() {
 
-    private val diagnosticSuppressors: List<DiagnosticSuppressor> = project?.let { DiagnosticSuppressor.getInstances(it) } ?: emptyList()
+    private val diagnosticSuppressors: List<DiagnosticSuppressor> = emptyList()
 
     val filter: (Diagnostic) -> Boolean = { diagnostic: Diagnostic ->
         !isSuppressed(DiagnosticSuppressRequest(diagnostic))
@@ -126,7 +114,7 @@ abstract class KotlinSuppressCache(project: Project?) : AbstractKotlinSuppressCa
 }
 
 @K1Deprecation
-class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressCache(context.project) {
+class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressCache() {
     override fun getSuppressionAnnotations(annotated: PsiElement): List<AnnotationDescriptor> {
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
 

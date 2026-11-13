@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.extensions
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -22,11 +21,6 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 @InternalNonStableExtensionPoints
 @K1Deprecation
 interface AssignResolutionAltererExtension : AnnotationBasedExtension {
-    companion object : ProjectExtensionDescriptor<AssignResolutionAltererExtension>(
-        "org.jetbrains.kotlin.assignResolutionAltererExtension",
-        AssignResolutionAltererExtension::class.java
-    )
-
     fun needOverloadAssign(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Boolean
 
     fun resolveAssign(

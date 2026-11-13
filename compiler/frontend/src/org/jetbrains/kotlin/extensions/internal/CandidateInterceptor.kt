@@ -10,16 +10,13 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
-import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
@@ -29,20 +26,15 @@ import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 
-@OptIn(InternalNonStableExtensionPoints::class)
 @K1Deprecation
 class CandidateInterceptor(project: Project) {
-    private val extensions = getInstances(project)
-
     fun interceptResolvedCallAtomCandidate(
         candidateDescriptor: CallableDescriptor,
         completedCallAtom: ResolvedCallAtom,
         trace: BindingTrace?,
         resultSubstitutor: NewTypeSubstitutor?,
         diagnostics: Collection<KotlinCallDiagnostic>
-    ): CallableDescriptor = extensions.fold(candidateDescriptor) { it, extension ->
-        extension.interceptResolvedCallAtomCandidate(it, completedCallAtom, trace, resultSubstitutor, diagnostics)
-    }
+    ): CallableDescriptor = candidateDescriptor
 
     fun interceptResolvedCandidates(
         candidates: Collection<NewResolutionOldInference.MyCandidate>,
@@ -52,9 +44,7 @@ class CandidateInterceptor(project: Project) {
         name: Name,
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
-    ): Collection<NewResolutionOldInference.MyCandidate> = extensions.fold(candidates) { it, extension ->
-        extension.interceptCandidates(it, context, candidateResolver, callResolver, name, kind, tracing)
-    }
+    ): Collection<NewResolutionOldInference.MyCandidate> = candidates
 
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
@@ -64,9 +54,7 @@ class CandidateInterceptor(project: Project) {
         callResolver: CallResolver,
         name: Name,
         location: LookupLocation
-    ): Collection<FunctionDescriptor> = extensions.fold(candidates) { it, extension ->
-        extension.interceptFunctionCandidates(it, scopeTower, resolutionContext, resolutionScope, callResolver, name, location)
-    }
+    ): Collection<FunctionDescriptor> = candidates
 
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
@@ -78,11 +66,7 @@ class CandidateInterceptor(project: Project) {
         location: LookupLocation,
         dispatchReceiver: ReceiverValueWithSmartCastInfo?,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
-    ): Collection<FunctionDescriptor> = extensions.fold(candidates) { it, extension ->
-        extension.interceptFunctionCandidates(
-            it, scopeTower, resolutionContext, resolutionScope, callResolver, name, location, dispatchReceiver, extensionReceiver
-        )
-    }
+    ): Collection<FunctionDescriptor> = candidates
 
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
@@ -92,9 +76,7 @@ class CandidateInterceptor(project: Project) {
         callResolver: CallResolver,
         name: Name,
         location: LookupLocation
-    ): Collection<VariableDescriptor> = extensions.fold(candidates) { it, extension ->
-        extension.interceptVariableCandidates(it, scopeTower, resolutionContext, resolutionScope, callResolver, name, location)
-    }
+    ): Collection<VariableDescriptor> = candidates
 
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
@@ -106,12 +88,5 @@ class CandidateInterceptor(project: Project) {
         location: LookupLocation,
         dispatchReceiver: ReceiverValueWithSmartCastInfo?,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
-    ): Collection<VariableDescriptor> = extensions.fold(candidates) { it, extension ->
-        extension.interceptVariableCandidates(it, scopeTower, resolutionContext, resolutionScope, callResolver, name, location, dispatchReceiver, extensionReceiver)
-    }
-
-    companion object : ProjectExtensionDescriptor<CallResolutionInterceptorExtension>(
-        "org.jetbrains.kotlin.extensions.internal.callResolutionInterceptorExtension",
-        CallResolutionInterceptorExtension::class.java
-    )
+    ): Collection<VariableDescriptor> = candidates
 }

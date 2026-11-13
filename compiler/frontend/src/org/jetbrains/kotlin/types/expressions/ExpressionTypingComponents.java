@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
-import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor;
 import org.jetbrains.kotlin.types.WrappedTypeFactory;
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker;
 
@@ -70,7 +69,6 @@ public class ExpressionTypingComponents {
     public ContractParsingServices contractParsingServices;
     public DataFlowValueFactory dataFlowValueFactory;
     public NewKotlinTypeChecker kotlinTypeChecker;
-    public TypeResolutionInterceptor typeResolutionInterceptor;
     public MissingSupertypesResolver missingSupertypesResolver;
     public AnnotationChecker annotationChecker;
 
@@ -267,10 +265,6 @@ public class ExpressionTypingComponents {
         this.kotlinTypeChecker = kotlinTypeChecker;
     }
 
-    @Inject
-    public void setTypeResolutionInterceptor(@NotNull TypeResolutionInterceptor typeResolutionInterceptor) {
-        this.typeResolutionInterceptor = typeResolutionInterceptor;
-    }
 
     @Inject
     public void setMissingSupertypesResolver(@NotNull MissingSupertypesResolver missingSupertypesResolver) {

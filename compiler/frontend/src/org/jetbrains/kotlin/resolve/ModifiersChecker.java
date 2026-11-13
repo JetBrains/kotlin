@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
-import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension;
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
@@ -81,23 +80,6 @@ public class ModifiersChecker {
     ) {
         KtModifierList modifierList = (modifierListOwner != null) ? modifierListOwner.getModifierList() : null;
         Modality modality = resolveModalityFromModifiers(containingDescriptor, modifierList, defaultModality, allowSealed);
-
-        if (modifierListOwner != null) {
-            Collection<DeclarationAttributeAltererExtension> extensions =
-                    DeclarationAttributeAltererExtension.Companion.getInstances(modifierListOwner.getProject());
-
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, modifierListOwner);
-            for (DeclarationAttributeAltererExtension extension : extensions) {
-                Modality newModality = extension.refineDeclarationModality(
-                        modifierListOwner, descriptor, containingDescriptor, modality, false);
-
-                if (newModality != null) {
-                    modality = newModality;
-                    break;
-                }
-            }
-        }
-
         return modality;
     }
 

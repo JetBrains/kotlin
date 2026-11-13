@@ -58,9 +58,6 @@ import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.*
-import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
-import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
-import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
@@ -72,15 +69,8 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
-import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
-import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
-import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import java.io.File
 
 @OptIn(K1Deprecation::class, CoreEnvironmentDeprecation::class)
@@ -166,7 +156,6 @@ class KotlinCoreEnvironment private constructor(
 
         fun registerExtensionsFromPlugins(configuration: CompilerConfiguration) {
             if (!extensionRegistered) {
-                registerPluginExtensionPoints(project)
                 registerExtensionsFromPlugins(project, configuration)
                 extensionRegistered = true
             }
@@ -215,8 +204,6 @@ class KotlinCoreEnvironment private constructor(
             configuration, project,
             getSourceRootsCheckingForDuplicates(configuration)
         )
-
-        collectAdditionalSources(project)
 
         if (!configuration.dontSortSourceFiles) {
             sourceFiles.sortBy { it.virtualFile.path }
@@ -290,37 +277,6 @@ class KotlinCoreEnvironment private constructor(
         })
 
         project.setupHighestLanguageLevel()
-    }
-
-    private fun collectAdditionalSources(project: MockProject) {
-        var unprocessedSources: Collection<KtFile> = sourceFiles
-        val processedSources = HashSet<KtFile>()
-        val processedSourcesByExtension = HashMap<CollectAdditionalSourcesExtension, Collection<KtFile>>()
-        // repeat feeding extensions with sources while new sources a being added
-        var sourceCollectionIterations = 0
-        while (unprocessedSources.isNotEmpty()) {
-            if (sourceCollectionIterations++ > 10) { // TODO: consider using some appropriate global constant
-                throw IllegalStateException("Unable to collect additional sources in reasonable number of iterations")
-            }
-            processedSources.addAll(unprocessedSources)
-            val allNewSources = ArrayList<KtFile>()
-            for (extension in CollectAdditionalSourcesExtension.getInstances(project)) {
-                // do not feed the extension with the sources it returned on the previous iteration
-                val sourcesToProcess = unprocessedSources - (processedSourcesByExtension[extension] ?: emptyList())
-                val newSources = extension.collectAdditionalSourcesAndUpdateConfiguration(sourcesToProcess, configuration, project)
-                if (newSources.isNotEmpty()) {
-                    allNewSources.addAll(newSources)
-                    processedSourcesByExtension[extension] = newSources
-                }
-            }
-            unprocessedSources = allNewSources.filterNot { processedSources.contains(it) }.distinct()
-            sourceFiles += unprocessedSources
-        }
-    }
-
-    fun addKotlinSourceRoots(rootDirs: List<File>) {
-        val roots = rootDirs.map { KotlinSourceRoot(it.absolutePath, isCommon = false, hmppModuleName = null) }
-        sourceFiles += createSourceFilesFromSourceRoots(configuration, project, roots).toSet() - sourceFiles
     }
 
     /** Scope-based factory for the K1 analysis entry points only; K2 code uses the [JvmClasspath] overload. */
@@ -418,11 +374,7 @@ class KotlinCoreEnvironment private constructor(
     private fun findJarRoot(file: File): VirtualFile? =
         projectEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
-    fun getSourceFiles(): List<KtFile> =
-        ProcessSourcesBeforeCompilingExtension.getInstances(project)
-            .fold(sourceFiles as Collection<KtFile>) { files, extension ->
-                extension.processSources(files, configuration)
-            }.toList()
+    fun getSourceFiles(): List<KtFile> = sourceFiles
 
     companion object {
         private val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
@@ -680,34 +632,6 @@ class KotlinCoreEnvironment private constructor(
             registerApplicationServices(applicationEnvironment)
 
             return applicationEnvironment
-        }
-
-        @JvmStatic
-        @OptIn(InternalNonStableExtensionPoints::class)
-        @Suppress("MemberVisibilityCanPrivate") // made public for CLI Android Lint
-        @CoreEnvironmentDeprecation
-        fun registerPluginExtensionPoints(project: MockProject) {
-            // K1 extensions
-            SyntheticResolveExtension.registerExtensionPoint(project)
-            SyntheticJavaResolveExtension.registerExtensionPoint(project)
-            AnalysisHandlerExtension.registerExtensionPoint(project)
-            StorageComponentContainerContributor.registerExtensionPoint(project)
-            DeclarationAttributeAltererExtension.registerExtensionPoint(project)
-            TypeResolutionInterceptor.registerExtensionPoint(project)
-            CandidateInterceptor.registerExtensionPoint(project)
-            DescriptorSerializerPlugin.registerExtensionPoint(project)
-            TypeAttributeTranslatorExtension.registerExtensionPoint(project)
-            AssignResolutionAltererExtension.registerExtensionPoint(project)
-            DiagnosticSuppressor.registerExtensionPoint(project)
-
-            // K1 extensions for removal
-            @Suppress("DEPRECATION_ERROR")
-            PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
-
-            // K1 extensions for scripting
-            CollectAdditionalSourcesExtension.registerExtensionPoint(project)
-            ProcessSourcesBeforeCompilingExtension.registerExtensionPoint(project)
-            ExtraImportsProviderExtension.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
