@@ -35,6 +35,10 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     KSP_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
 
+    // Maven
+    MAVEN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
+    KOTLIN_MAVEN_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
+
     // Features
     KOTLIN_LANGUAGE_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_API_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
@@ -83,6 +87,6 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     ;
 
     companion object {
-        const val VERSION = 14
+        const val VERSION = 15
     }
 }

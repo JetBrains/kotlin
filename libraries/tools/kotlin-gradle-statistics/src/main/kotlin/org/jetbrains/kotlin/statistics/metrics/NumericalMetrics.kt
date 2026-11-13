@@ -70,9 +70,22 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
 
     // CLI arguments
     CLI_BACKEND_THREADS_COUNT(OVERRIDE, SAFE),
-    CLI_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT(OVERRIDE, SAFE);
+    CLI_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT(OVERRIDE, SAFE),
+
+    // Maven
+    // Max heap size of the JVM running Maven
+    MAVEN_JVM_HEAP_SIZE(OVERRIDE, RANDOM_10_PERCENT),
+
+    // duration of the whole Maven build
+    MAVEN_BUILD_DURATION(OVERRIDE, SAFE),
+
+    // duration of the Maven build since projects were read
+    MAVEN_EXECUTION_DURATION(OVERRIDE, SAFE),
+
+    // number of modules in the Maven reactor
+    NUMBER_OF_MODULES(SUM, RANDOM_10_PERCENT);
 
     companion object {
-        const val VERSION = 5
+        const val VERSION = 6
     }
 }

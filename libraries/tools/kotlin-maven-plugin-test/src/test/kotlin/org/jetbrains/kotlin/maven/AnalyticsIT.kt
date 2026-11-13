@@ -41,6 +41,39 @@ class AnalyticsIT : KotlinMavenTestBase() {
         assertTrue(content.contains("COMPILATION_STARTED=true"), content)
         assertTrue(Regex("COMPILATIONS_COUNT=[1-9]\\d*").containsMatchIn(content), content)
         assertTrue(content.contains("BUILD_FAILED=false"), content)
+
+        // Environment
+        assertTrue(content.contains("EXECUTED_FROM_IDEA=false"), content)
+        assertTrue(content.contains("OS_TYPE="), content)
+        assertTrue(Regex("CPU_NUMBER_OF_CORES=[1-9]\\d*").containsMatchIn(content), content)
+        assertTrue(Regex("MAVEN_JVM_HEAP_SIZE=\\d+").containsMatchIn(content), content)
+        // Versions
+        assertTrue(content.contains("MAVEN_VERSION="), content)
+        assertTrue(content.contains("KOTLIN_MAVEN_PLUGIN_VERSION="), content)
+        assertTrue(Regex("PROJECT_PATH=[0-9a-f]{64}").containsMatchIn(content), content)
+        // Project walk
+        assertTrue(content.contains("NUMBER_OF_MODULES=1"), content)
+        assertTrue(content.contains("STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD="), content)
+        // Compilation
+        assertTrue(content.contains("KOTLIN_BTA_USED=true"), content)
+        assertTrue(content.contains("KOTLIN_COMPILER_EXECUTION_POLICY=daemon"), content)
+        // Build finish
+        assertTrue(Regex("MAVEN_BUILD_DURATION=\\d+").containsMatchIn(content), content)
+        assertTrue(Regex("MAVEN_EXECUTION_DURATION=\\d+").containsMatchIn(content), content)
+        assertTrue(Regex("BUILD_FINISH_TIME=\\d+").containsMatchIn(content), content)
+    }
+
+    @MavenTest
+    @DisplayName("In-process execution policy is reported")
+    fun testInProcessPolicy(mavenVersion: TestVersions.Maven) {
+        val kotlinHome = tmpDir.resolve("kotlin-home").createDirectories()
+
+        testProject("test-enable-extensions", mavenVersion) {
+            build("compile", "-Dkotlin.user.home=$kotlinHome", "-Dkotlin.compiler.daemon=false")
+        }
+
+        val content = profileFiles(kotlinHome).single().readText()
+        assertTrue(content.contains("KOTLIN_COMPILER_EXECUTION_POLICY=in-process"), content)
     }
 
     @MavenTest

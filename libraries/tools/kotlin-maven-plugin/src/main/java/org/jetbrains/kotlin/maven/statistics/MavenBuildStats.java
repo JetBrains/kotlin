@@ -11,9 +11,11 @@ import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
+import org.jetbrains.kotlin.maven.Util;
 import org.jetbrains.kotlin.statistics.BuildSessionLogger;
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics;
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics;
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics;
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics;
 
 import java.io.File;
@@ -31,8 +33,13 @@ import java.util.WeakHashMap;
  * Every {@link MavenSession} owns its own {@link BuildSessionLogger}, so parallel builds (several Maven processes,
  * {@code -T} module parallelism, or several sessions in one JVM like mvnd) each produce their own profile file.
  * <p>
- * Reported events: {@code kotlin_compiler_version}, {@code number_of_subprojects}, {@code compilation_started},
- * {@code compilations_count}, {@code build_failed}.
+ * Reported events: environment ({@code executed_from_idea}, {@code os_type}, {@code os_version},
+ * {@code cpu_number_of_cores}, {@code maven_jvm_heap_size}), versions ({@code maven_version},
+ * {@code kotlin_maven_plugin_version}, {@code kotlin_compiler_version}), {@code project_path}, project walk
+ * ({@code number_of_modules}, {@code number_of_subprojects}, {@code statistics_visit_all_projects_overhead}),
+ * compilation ({@code compilation_started}, {@code compilations_count}, {@code kotlin_bta_used},
+ * {@code kotlin_compiler_execution_policy}) and build finish ({@code build_failed}, {@code build_finish_time},
+ * {@code maven_build_duration}, {@code maven_execution_duration}).
  * <p>
  * Location follows the Kotlin Gradle plugin convention: {@code <kotlin.user.home>/kotlin-profile}, where the
  * {@code kotlin.user.home} property (relative values are resolved against the root project directory) defaults to
@@ -51,7 +58,8 @@ public final class MavenBuildStats {
     private static final class SessionStats {
         @NotNull
         final BuildSessionLogger logger;
-        final long startTime = System.currentTimeMillis();
+        // timestamp of afterProjectsRead
+        final long executionStartTime = System.currentTimeMillis();
 
         SessionStats(@NotNull BuildSessionLogger logger) {
             this.logger = logger;
@@ -74,8 +82,60 @@ public final class MavenBuildStats {
 
             synchronized (stats.logger) {
                 String name = subprojectName(session.getTopLevelProject());
-                logger.report(StringMetrics.KOTLIN_COMPILER_VERSION, KotlinCompilerVersion.VERSION, name, null);
-                logger.report(NumericalMetrics.NUMBER_OF_SUBPROJECTS, session.getProjects().size(), name, null);
+                reportEnvironment(logger, name);
+                reportVersions(logger, session, name);
+                reportProjectInfo(logger, session, name);
+            }
+        } catch (Throwable ignored) {
+            // analytics must never break the build
+        }
+    }
+
+    private static void reportEnvironment(@NotNull BuildSessionLogger logger, @NotNull String name) {
+        String osName = System.getProperty("os.name");
+        if (osName != null) logger.report(StringMetrics.OS_TYPE, osName, name, null);
+        String osVersion = System.getProperty("os.version");
+        if (osVersion != null) logger.report(StringMetrics.OS_VERSION, osVersion, name, null);
+        logger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, (long) Runtime.getRuntime().availableProcessors(), name, null);
+        logger.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null, name, null);
+        logger.report(NumericalMetrics.MAVEN_JVM_HEAP_SIZE, Runtime.getRuntime().maxMemory(), name, null);
+    }
+
+    private static void reportVersions(@NotNull BuildSessionLogger logger, @NotNull MavenSession session, @NotNull String name) {
+        logger.report(StringMetrics.KOTLIN_COMPILER_VERSION, KotlinCompilerVersion.VERSION, name, null);
+        String mavenVersion = session.getSystemProperties().getProperty("maven.version");
+        if (mavenVersion != null) logger.report(StringMetrics.MAVEN_VERSION, mavenVersion, name, null);
+        try {
+            logger.report(StringMetrics.KOTLIN_MAVEN_PLUGIN_VERSION, Util.getMavenPluginVersion(), name, null);
+        } catch (Exception ignored) {
+            // plugin version is not available
+        }
+    }
+
+    private static void reportProjectInfo(@NotNull BuildSessionLogger logger, @NotNull MavenSession session, @NotNull String name) {
+        long walkStart = System.nanoTime();
+        long modules = 0;
+        for (MavenProject ignored : session.getProjects()) modules++;
+        MavenProject root = session.getTopLevelProject();
+        if (root != null && root.getBasedir() != null) {
+            logger.report(StringMetrics.PROJECT_PATH, sha256(root.getBasedir().getAbsolutePath()), name, null);
+        }
+        logger.report(NumericalMetrics.NUMBER_OF_MODULES, modules, name, null);
+        logger.report(NumericalMetrics.NUMBER_OF_SUBPROJECTS, modules, name, null);
+        logger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, (System.nanoTime() - walkStart) / 1_000_000, name, null);
+    }
+
+    /**
+     * Reports how the compiler is executed. Called by compile mojos right before the compilation starts.
+     */
+    public static void reportCompilerExecution(@NotNull MavenSession session, @NotNull MavenProject project, boolean useDaemon) {
+        try {
+            SessionStats stats = SESSIONS.get(session);
+            if (stats == null) return;
+            synchronized (stats.logger) {
+                String name = subprojectName(project);
+                stats.logger.report(BooleanMetrics.KOTLIN_BTA_USED, true, name, null);
+                stats.logger.report(StringListMetrics.KOTLIN_COMPILER_EXECUTION_POLICY, useDaemon ? "daemon" : "in-process", name, null);
             }
         } catch (Throwable ignored) {
             // analytics must never break the build
@@ -107,7 +167,14 @@ public final class MavenBuildStats {
             synchronized (stats.logger) {
                 boolean failed = session.getResult() != null &&
                                  (session.getResult().hasExceptions());
-                stats.logger.report(BooleanMetrics.BUILD_FAILED, failed, subprojectName(session.getTopLevelProject()), null);
+                String name = subprojectName(session.getTopLevelProject());
+                long finish = System.currentTimeMillis();
+                if (session.getStartTime() != null) {
+                    stats.logger.report(NumericalMetrics.MAVEN_BUILD_DURATION, finish - session.getStartTime().getTime(), name, null);
+                }
+                stats.logger.report(NumericalMetrics.MAVEN_EXECUTION_DURATION, finish - stats.executionStartTime, name, null);
+                stats.logger.report(NumericalMetrics.BUILD_FINISH_TIME, finish, name, null);
+                stats.logger.report(BooleanMetrics.BUILD_FAILED, failed, name, null);
                 stats.logger.finishBuildSession();
             }
         } catch (Throwable ignored) {

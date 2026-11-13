@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.compilerRunner.ArgumentUtils;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.maven.incremental.FileCopier;
 import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
+import org.jetbrains.kotlin.maven.statistics.MavenBuildStats;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -367,6 +368,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             List<File> sourceRoots
     ) throws MojoExecutionException {
         try {
+            MavenBuildStats.reportCompilerExecution(session, project, useDaemon);
             KotlinToolchains kotlinToolchains = getKotlinToolchains();
             ExecutionPolicy executionPolicy;
             if (useDaemon) {
