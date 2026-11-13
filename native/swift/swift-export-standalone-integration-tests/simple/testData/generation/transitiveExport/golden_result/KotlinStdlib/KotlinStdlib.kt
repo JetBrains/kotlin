@@ -9,6 +9,16 @@ import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 
+@ImportedBridge("kotlin_collections_ByteIterator_hasNext__reverse_swift")
+internal external fun kotlin_collections_ByteIterator_hasNext__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlin.collections.ByteIterator::class, "hasNext")
+public fun kotlin_collections_ByteIterator_hasNext__reverse(self: kotlin.collections.ByteIterator): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_collections_ByteIterator_hasNext__reverse_swift(__self)
+    return _result
+}
+
 @ImportedBridge("kotlin_collections_ByteIterator_nextByte__reverse_swift")
 internal external fun kotlin_collections_ByteIterator_nextByte__reverse_swift(self: kotlin.native.internal.NativePtr): Byte
 
@@ -98,6 +108,13 @@ public fun kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(self
 public fun kotlin_ByteArray_size_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
     val _result = __self.size
+    return _result
+}
+
+@ExportedBridge("kotlin_collections_ByteIterator_hasNext")
+public fun kotlin_collections_ByteIterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator
+    val _result = __self.hasNext()
     return _result
 }
 

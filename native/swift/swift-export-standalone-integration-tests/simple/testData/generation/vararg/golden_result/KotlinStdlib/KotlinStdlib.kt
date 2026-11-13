@@ -80,6 +80,16 @@ public fun kotlin_Number_toShort__reverse(self: kotlin.Number): Short {
     return _result
 }
 
+@ImportedBridge("kotlin_collections_BooleanIterator_hasNext__reverse_swift")
+internal external fun kotlin_collections_BooleanIterator_hasNext__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlin.collections.BooleanIterator::class, "hasNext")
+public fun kotlin_collections_BooleanIterator_hasNext__reverse(self: kotlin.collections.BooleanIterator): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_collections_BooleanIterator_hasNext__reverse_swift(__self)
+    return _result
+}
+
 @ImportedBridge("kotlin_collections_BooleanIterator_nextBoolean__reverse_swift")
 internal external fun kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -87,6 +97,16 @@ internal external fun kotlin_collections_BooleanIterator_nextBoolean__reverse_sw
 public fun kotlin_collections_BooleanIterator_nextBoolean__reverse(self: kotlin.collections.BooleanIterator): Boolean {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("kotlin_collections_IntIterator_hasNext__reverse_swift")
+internal external fun kotlin_collections_IntIterator_hasNext__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlin.collections.IntIterator::class, "hasNext")
+public fun kotlin_collections_IntIterator_hasNext__reverse(self: kotlin.collections.IntIterator): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = kotlin_collections_IntIterator_hasNext__reverse_swift(__self)
     return _result
 }
 
@@ -225,6 +245,13 @@ public fun kotlin_Number_toShort(self: kotlin.native.internal.NativePtr): Short 
     return _result
 }
 
+@ExportedBridge("kotlin_collections_BooleanIterator_hasNext")
+public fun kotlin_collections_BooleanIterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.BooleanIterator
+    val _result = __self.hasNext()
+    return _result
+}
+
 @ExportedBridge("kotlin_collections_BooleanIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
 public fun kotlin_collections_BooleanIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
@@ -243,6 +270,13 @@ public fun kotlin_collections_BooleanIterator_next(self: kotlin.native.internal.
 public fun kotlin_collections_BooleanIterator_nextBoolean(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.BooleanIterator
     val _result = __self.nextBoolean()
+    return _result
+}
+
+@ExportedBridge("kotlin_collections_IntIterator_hasNext")
+public fun kotlin_collections_IntIterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.IntIterator
+    val _result = __self.hasNext()
     return _result
 }
 

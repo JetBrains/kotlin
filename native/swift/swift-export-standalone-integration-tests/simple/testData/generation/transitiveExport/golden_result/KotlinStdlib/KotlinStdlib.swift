@@ -43,6 +43,13 @@ extension ExportedKotlinPackages.kotlin.collections {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        open func hasNext() -> Swift.Bool {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.ByteIterator.self {
+                return kotlin_collections_ByteIterator_hasNext(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.ByteIterator.hasNext': a Swift subclass must override it and must not call super.")
+            }
+        }
         public final func next() -> Swift.Int8 {
             return kotlin_collections_ByteIterator_next(self.__externalRCRef())
         }
@@ -148,6 +155,13 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
 }
+@_cdecl("kotlin_collections_ByteIterator_hasNext__reverse_swift")
+package func kotlin_collections_ByteIterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Bool = _self.hasNext()
+    return _result
+}
+
 @_cdecl("kotlin_collections_ByteIterator_nextByte__reverse_swift")
 package func kotlin_collections_ByteIterator_nextByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
     let _self = ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: `self`)

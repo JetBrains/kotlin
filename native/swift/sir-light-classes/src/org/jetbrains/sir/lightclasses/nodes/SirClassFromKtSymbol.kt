@@ -112,7 +112,8 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
-        childDeclarations + intersectionOverrideDeclarations + syntheticDeclarations() + sealedTypeFunctions
+        childDeclarations + intersectionOverrideDeclarations + inheritedInterfaceMethodDeclarations + syntheticDeclarations() +
+                sealedTypeFunctions
     }
 
     override val attributes: List<SirAttribute> by lazy {
@@ -138,6 +139,27 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .filter { it.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE }
             .filter { it.intersectionOverriddenSymbols.all { it.modality == KaSymbolModality.ABSTRACT } }
             .extractDeclarations()
+            .toList()
+    }
+
+    private val inheritedInterfaceMethodDeclarations: List<SirDeclaration> by lazyWithSessions {
+        if (ktSymbol.classKind != KaClassKind.CLASS) return@lazyWithSessions emptyList()
+        if (ktSymbol.modality != KaSymbolModality.OPEN && ktSymbol.modality != KaSymbolModality.ABSTRACT) {
+            return@lazyWithSessions emptyList()
+        }
+        val superClassSymbol = ktSymbol.superTypes
+            .filterIsInstanceAnd<KaClassType> { it.isRegularClass && it.classId != KaStandardTypeClassIds.ANY }
+            .firstOrNull()?.expandedSymbol
+        ktSymbol.combinedMemberScope.callables
+            .filterIsInstance<KaNamedFunctionSymbol>()
+            .filter { it.origin != KaSymbolOrigin.INTERSECTION_OVERRIDE && it.origin != KaSymbolOrigin.SUBSTITUTION_OVERRIDE }
+            .filter { function ->
+                val declaringInterface = function.containingSymbol as? KaClassSymbol ?: return@filter false
+                declaringInterface.classKind == KaClassKind.INTERFACE &&
+                        superClassSymbol?.isSubClassOf(declaringInterface) != true
+            }
+            .filter { it.toSir().allDeclarations.firstIsInstanceOrNull<SirFunctionFromKtSymbol>() != null }
+            .map { SirInheritedFunctionFromKtSymbol(it, sirSession, this@SirAbstractClassFromKtSymbol) }
             .toList()
     }
 

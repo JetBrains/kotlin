@@ -1095,6 +1095,30 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_coroutines_JobSupport_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(__kt, active); return () }()
         }
+        open func cancel() -> Swift.Void {
+            return { kotlinx_coroutines_JobSupport_cancel(self.__externalRCRef()); return () }()
+        }
+        open func plus(
+            context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
+        ) -> any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_JobSupport_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(self.__externalRCRef(), context.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
+        }
+        open func get(
+            key: any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key
+        ) -> (any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element)? {
+            return { switch kotlinx_coroutines_JobSupport_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(self.__externalRCRef(), key.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res, conformsTo: KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element.Type.self) as! any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element; } }()
+        }
+        open func fold(
+            initial: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+            operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlinx_coroutines_JobSupport_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        open func minusKey(
+            key: any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key
+        ) -> any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_JobSupport_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(self.__externalRCRef(), key.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
+        }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
@@ -5415,6 +5439,12 @@ package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptio
 @_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer? {
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__")
+package func KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?, _ _2: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _2, conformsTo: KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element.Type.self) as! any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element)
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 

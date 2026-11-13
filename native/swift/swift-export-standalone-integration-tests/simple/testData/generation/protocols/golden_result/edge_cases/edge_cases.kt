@@ -27,6 +27,26 @@ public fun Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeab
     return run<Unit> { _result }
 }
 
+@ImportedBridge("ClassC_bar__reverse_swift")
+internal external fun ClassC_bar__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(ClassC::class, "bar")
+public fun ClassC_bar__reverse(self: ClassC): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = ClassC_bar__reverse_swift(__self)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("ClassC_foo__reverse_swift")
+internal external fun ClassC_foo__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(ClassC::class, "foo")
+public fun ClassC_foo__reverse(self: ClassC): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = ClassC_foo__reverse_swift(__self)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("InterfaceA_foo__reverse_swift")
 internal external fun InterfaceA_foo__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -127,10 +147,24 @@ public fun Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeab
     return true
 }
 
+@ExportedBridge("ClassC_bar")
+public fun ClassC_bar(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassC
+    __self.bar()
+    return true
+}
+
 @ExportedBridge("ClassC_baz")
 public fun ClassC_baz(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassC
     __self.baz()
+    return true
+}
+
+@ExportedBridge("ClassC_foo")
+public fun ClassC_foo(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassC
+    __self.foo()
     return true
 }
 

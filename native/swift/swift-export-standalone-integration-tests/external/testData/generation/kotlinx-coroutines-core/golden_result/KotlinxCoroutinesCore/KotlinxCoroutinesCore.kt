@@ -195,6 +195,9 @@ internal external fun KotlinxCoroutinesCore_internal_functional_type_callee_Swif
 @ImportedBridge("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 internal external fun KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
+@ImportedBridge("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__")
+internal external fun KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, _2: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
 @ImportedBridge("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 internal external fun KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -2482,6 +2485,13 @@ public fun kotlinx_coroutines_JobSupport_cancel__TypesOfArguments__Swift_Optiona
     return true
 }
 
+@ExportedBridge("kotlinx_coroutines_JobSupport_cancel")
+public fun kotlinx_coroutines_JobSupport_cancel(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.JobSupport
+    __self.cancel()
+    return true
+}
+
 @ExportedBridge("kotlinx_coroutines_JobSupport_cancelCoroutine__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
 @OptIn(kotlinx.coroutines.InternalCoroutinesApi::class)
 public fun kotlinx_coroutines_JobSupport_cancelCoroutine__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(self: kotlin.native.internal.NativePtr, cause: kotlin.native.internal.NativePtr): Boolean {
@@ -2515,6 +2525,32 @@ public fun kotlinx_coroutines_JobSupport_children_get(self: kotlin.native.intern
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.JobSupport
     val _result = __self.children
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_coroutines_JobSupport_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlinx_coroutines_JobSupport_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, initial: kotlin.native.internal.NativePtr, operation: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.JobSupport
+    val __initial = if (initial == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(initial) as kotlin.Any
+    val __operation = run {
+        val closurePtr = operation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: kotlin.Any?, arg1: kotlin.coroutines.CoroutineContext.Element ->
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _arg1 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg1)
+            val _result = KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(closureBox.objcPtr(), _arg0, _arg1)
+            if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+        }
+    }
+    val _result = __self.fold<kotlin.Any?>(__initial, __operation)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_coroutines_JobSupport_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__")
+public fun kotlinx_coroutines_JobSupport_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(self: kotlin.native.internal.NativePtr, key: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.JobSupport
+    val __key = kotlin.native.internal.ref.dereferenceExternalRCRef(key) as kotlin.coroutines.CoroutineContext.Key<kotlin.coroutines.CoroutineContext.Element>
+    val _result = __self.`get`<kotlin.coroutines.CoroutineContext.Element>(__key)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlinx_coroutines_JobSupport_getCancellationException")
@@ -2661,6 +2697,14 @@ public fun kotlinx_coroutines_JobSupport_key_get(self: kotlin.native.internal.Na
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("kotlinx_coroutines_JobSupport_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__")
+public fun kotlinx_coroutines_JobSupport_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(self: kotlin.native.internal.NativePtr, key: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.JobSupport
+    val __key = kotlin.native.internal.ref.dereferenceExternalRCRef(key) as kotlin.coroutines.CoroutineContext.Key<kotlin.coroutines.CoroutineContext.Element>
+    val _result = __self.minusKey(__key)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("kotlinx_coroutines_JobSupport_onJoin_get")
 @OptIn(kotlinx.coroutines.InternalCoroutinesApi::class)
 public fun kotlinx_coroutines_JobSupport_onJoin_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -2675,6 +2719,14 @@ public fun kotlinx_coroutines_JobSupport_parent_get(self: kotlin.native.internal
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.JobSupport
     val _result = __self.parent
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_coroutines_JobSupport_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__")
+public fun kotlinx_coroutines_JobSupport_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(self: kotlin.native.internal.NativePtr, context: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.JobSupport
+    val __context = kotlin.native.internal.ref.dereferenceExternalRCRef(context) as kotlin.coroutines.CoroutineContext
+    val _result = __self.plus(__context)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlinx_coroutines_JobSupport_start")

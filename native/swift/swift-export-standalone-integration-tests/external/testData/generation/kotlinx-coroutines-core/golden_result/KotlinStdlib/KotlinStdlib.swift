@@ -808,6 +808,13 @@ extension ExportedKotlinPackages.kotlin.collections {
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
+        open func hasNext() -> Swift.Bool {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.IntIterator.self {
+                return kotlin_collections_IntIterator_hasNext(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.IntIterator.hasNext': a Swift subclass must override it and must not call super.")
+            }
+        }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
@@ -831,6 +838,13 @@ extension ExportedKotlinPackages.kotlin.collections {
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_collections_LongIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        open func hasNext() -> Swift.Bool {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.LongIterator.self {
+                return kotlin_collections_LongIterator_hasNext(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.LongIterator.hasNext': a Swift subclass must override it and must not call super.")
+            }
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -910,6 +924,43 @@ extension ExportedKotlinPackages.kotlin.coroutines {
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_coroutines_AbstractCoroutineContextElement_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(__kt, key.__externalRCRef()); return () }()
+        }
+        open func get(
+            key: any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key
+        ) -> (any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element)? {
+            if Self.self == ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.self {
+                return { switch kotlin_coroutines_AbstractCoroutineContextElement_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(self.__externalRCRef(), key.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res, conformsTo: KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element.Type.self) as! any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element; } }()
+            } else {
+                return { switch kotlin_coroutines_AbstractCoroutineContextElement_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key___direct(self.__externalRCRef(), key.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res, conformsTo: KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element.Type.self) as! any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element; } }()
+            }
+        }
+        open func fold(
+            initial: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+            operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            if Self.self == ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.self {
+                return { switch kotlin_coroutines_AbstractCoroutineContextElement_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+            } else {
+                return { switch kotlin_coroutines_AbstractCoroutineContextElement_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+            }
+        }
+        open func minusKey(
+            key: any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key
+        ) -> any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
+            if Self.self == ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.self {
+                return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_coroutines_AbstractCoroutineContextElement_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(self.__externalRCRef(), key.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
+            } else {
+                return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_coroutines_AbstractCoroutineContextElement_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key___direct(self.__externalRCRef(), key.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
+            }
+        }
+        open func plus(
+            context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
+        ) -> any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
+            if Self.self == ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.self {
+                return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_coroutines_AbstractCoroutineContextElement_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(self.__externalRCRef(), context.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
+            } else {
+                return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_coroutines_AbstractCoroutineContextElement_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext___direct(self.__externalRCRef(), context.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
+            }
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -2206,6 +2257,13 @@ package func kotlin_collections_Collection_size_get__reverse_swift(_ `self`: Swi
     return _result
 }
 
+@_cdecl("kotlin_collections_IntIterator_hasNext__reverse_swift")
+package func kotlin_collections_IntIterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Bool = _self.hasNext()
+    return _result
+}
+
 @_cdecl("kotlin_collections_IntIterator_nextInt__reverse_swift")
 package func kotlin_collections_IntIterator_nextInt__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
     let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)
@@ -2351,6 +2409,13 @@ package func kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swif
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = _self.subList(fromIndex: fromIndex, toIndex: toIndex)
     return _result.map { it in it as! NSObject? ?? NSNull() }
+}
+
+@_cdecl("kotlin_collections_LongIterator_hasNext__reverse_swift")
+package func kotlin_collections_LongIterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlin.collections.LongIterator.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Bool = _self.hasNext()
+    return _result
 }
 
 @_cdecl("kotlin_collections_LongIterator_nextLong__reverse_swift")
@@ -2633,10 +2698,41 @@ package func kotlin_collections_Set_size_get__reverse_swift(_ `self`: Swift.Unsa
     return _result
 }
 
+@_cdecl("kotlin_coroutines_AbstractCoroutineContextElement_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+package func kotlin_coroutines_AbstractCoroutineContextElement_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ initial: Swift.UnsafeMutableRawPointer?, _ operation: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.fold(initial: { switch initial { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), operation: {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: operation, options: .asBestFittingWrapper)
+    return { _1, _2 in return { switch KotlinStdlib_internal_functional_type_caller_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(pointerToBlock.__externalRCRef(), _1.map { it in it.__externalRCRef() } ?? nil, _2.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }() }
+}())
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlin_coroutines_AbstractCoroutineContextElement_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift")
+package func kotlin_coroutines_AbstractCoroutineContextElement_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ key: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Optional<any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element> = _self.get(key: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: key, conformsTo: KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key.Type.self) as! any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key)
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
 @_cdecl("kotlin_coroutines_AbstractCoroutineContextElement_key_get__reverse_swift")
 package func kotlin_coroutines_AbstractCoroutineContextElement_key_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
     let _self = ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key = _self.key
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlin_coroutines_AbstractCoroutineContextElement_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift")
+package func kotlin_coroutines_AbstractCoroutineContextElement_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ key: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.__createClassWrapper(externalRCRef: `self`)
+    let _result: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext = _self.minusKey(key: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: key, conformsTo: KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key.Type.self) as! any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlin_coroutines_AbstractCoroutineContextElement_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext____reverse_swift")
+package func kotlin_coroutines_AbstractCoroutineContextElement_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ context: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.__createClassWrapper(externalRCRef: `self`)
+    let _result: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext = _self.plus(context: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: context, conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext)
     return _result.__externalRCRef()
 }
 
