@@ -570,6 +570,24 @@ class ExportExtensionXcodeIntegrationTests {
     }
 
     @Test
+    fun `test the xcode integration can be activated before the targets are declared`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { configureRepositoriesForTests() },
+            code = {
+                exportExtension.swift {
+                    xcodeIntegration()
+                }
+                kotlin { iosSimulatorArm64() }
+                exportExtension.swift {
+                    moduleName.set("Shared")
+                }
+            }
+        ).also { it.evaluate() }
+
+        assertNotNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    @Test
     fun `test the pipeline is registered for an activated project in the xcode environment`() {
         val project = exportDslProject(withXcodeEnvironment = true) {
             exportExtension.swift {

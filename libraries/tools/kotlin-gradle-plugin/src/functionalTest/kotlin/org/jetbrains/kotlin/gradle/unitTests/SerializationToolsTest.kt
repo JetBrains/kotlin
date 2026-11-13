@@ -54,14 +54,6 @@ class SerializationToolsTest {
     }
 
     @Test
-    fun `test hierarchy SwiftModule equality`() {
-        val modulesA = hierarchyModules()
-        val modulesB = hierarchyModules()
-
-        assertEquals(modulesA, modulesB)
-    }
-
-    @Test
     fun `test nested SwiftModule serialization`() {
         val json = SerializationTools.writeToJson(GradleSwiftExportModules(nestedModules()), baseDirectory)
         val nestedJson = testJson("nestedJson").readText()
@@ -78,14 +70,6 @@ class SerializationToolsTest {
         val nestedModules = GradleSwiftExportModules(nestedModules())
 
         assertEquals(nestedModules, modules)
-    }
-
-    @Test
-    fun `test nested SwiftModule equality`() {
-        val modulesA = nestedModules()
-        val modulesB = nestedModules()
-
-        assertEquals(modulesA, modulesB)
     }
 
     @Test
