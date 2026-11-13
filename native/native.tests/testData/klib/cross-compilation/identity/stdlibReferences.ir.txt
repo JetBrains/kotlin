@@ -21,7 +21,7 @@ MODULE_FRAGMENT name:<stdlibReferences>
           INSTANCE_INITIALIZER_CALL classDescriptor='test/E|null[0]' type=kotlin.Unit
       ENUM_ENTRY name:A signature:test/E.A|null[0]
         init: EXPRESSION_BODY
-          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.E'
+          ENUM_CONSTRUCTOR_CALL 'test/E.<init>|<init>(){}[0]'
       FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/E.values|values#static(){}[0] visibility:public modality:FINAL returnType:kotlin.Array<test.E> [companion]
         SYNTHETIC_BODY kind=ENUM_VALUES
       FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:test/E.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL returnType:test.E [companion]
