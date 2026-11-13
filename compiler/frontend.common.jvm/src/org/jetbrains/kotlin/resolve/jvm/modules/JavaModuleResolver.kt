@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.load.java.JavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBackedClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.name.FqName
 
 interface JavaModuleResolver : JavaModuleAnnotationsProvider {
@@ -19,7 +20,10 @@ interface JavaModuleResolver : JavaModuleAnnotationsProvider {
      * [checkAccessibility] for a class read from a binary class file: the module of [referencedClassFile] is the module owning
      * the classpath root the file was found in ([BinaryClassFileHandle.rootId]). The default only covers resolvers which know
      * their modules by virtual files, and fails for a class file which is not one rather than skipping the check.
+     *
+     * TODO(KT-90203): move [JavaModuleResolver] to class file handles altogether, then this default goes away.
      */
+    @OptIn(VirtualFileBasedApi::class)
     fun checkAccessibility(fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?): AccessError? {
         val referencedFile = (referencedClassFile as? VirtualFileBackedClassFileHandle)?.virtualFile
             ?: error("${this::class.java.name} cannot check Java module accessibility of ${referencedClassFile.pathForDiagnostics}")

@@ -215,7 +215,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             }
 
             when (javaClass) {
-                is BinaryJavaClass -> sourceElement = binaryClassSourceElement(javaClass.classFile)
+                is BinaryJavaClass -> sourceElement = BinaryClassSourceElement(javaClass.classFile)
                 is VirtualFileBoundJavaClass -> javaClass.virtualFile?.let {
                     sourceElement = VirtualFileBasedSourceElement(it)
                 }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.modules.javaModuleResolverProvider
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.kotlin.ClassFileHandleKotlinClass
@@ -60,16 +59,10 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
     ) {
         if (symbol.origin.fromSource) return
 
-        @OptIn(SymbolInternals::class)
-        val sourceElement = symbol.fir.sourceElement
         val packageFqName = symbol.packageFqName()
-        when (sourceElement) {
+        when (val sourceElement = symbol.sourceElement) {
             is BinaryClassSourceElement -> checkPackageAccess(sourceElement.classFile, packageFqName, element)
-            is VirtualFileBasedSourceElement -> {
-                val classFile = sourceElement.classFile
-                if (classFile != null) checkPackageAccess(classFile, packageFqName, element)
-                else checkPackageAccess(sourceElement.virtualFile, packageFqName, element)
-            }
+            is VirtualFileBasedSourceElement -> checkPackageAccess(sourceElement.virtualFile, packageFqName, element)
             is KotlinJvmBinarySourceElement -> checkPackageAccess(sourceElement.binaryClass, packageFqName, element)
             else -> return
         }
@@ -92,7 +85,7 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    internal fun checkPackageAccess(
+    private fun checkPackageAccess(
         fileFromPackage: VirtualFile,
         referencedPackageFqName: FqName,
         element: FirElement,

@@ -47,7 +47,7 @@ class CliJavaModuleResolver(
         }
         // `findJavaModule(rootId)` looks in the system modules first, which is only correct if no root belongs to both.
         val systemRootIds = systemModules.flatMapTo(HashSet()) { module -> module.moduleRoots.map { root -> root.id } }
-        assert(userModules.none { module -> module.moduleRoots.any { root -> root.id in systemRootIds } }) {
+        check(userModules.none { module -> module.moduleRoots.any { root -> root.id in systemRootIds } }) {
             "A classpath root cannot belong to both a system module and a user module: $userModules"
         }
     }
