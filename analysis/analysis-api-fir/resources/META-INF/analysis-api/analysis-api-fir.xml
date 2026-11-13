@@ -8,6 +8,10 @@
     <languageStubDefinition language="kotlin"
                             implementationClass="org.jetbrains.kotlin.psi.stubs.KotlinLanguageStubDefinition"/>
     <stubElementRegistryExtension implementation="org.jetbrains.kotlin.psi.stubs.KotlinStubRegistryExtension"/>
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.psi.impl.KotlinElementFactory"
+        serviceImplementation="org.jetbrains.kotlin.psi.impl.KotlinElementFactoryImpl"
+    />
 
     <fileType name="ARCHIVE" extensions="klib"/>
 

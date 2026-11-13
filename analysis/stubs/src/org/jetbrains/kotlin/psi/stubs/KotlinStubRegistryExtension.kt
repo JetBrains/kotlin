@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.psi.stubs
 
+import com.intellij.openapi.components.service
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubRegistry
 import com.intellij.psi.stubs.StubRegistryExtension
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeType
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.impl.KtCompanionBlockImpl
-import org.jetbrains.kotlin.psi.impl.KtUnionTypeImpl
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
+import org.jetbrains.kotlin.psi.impl.KotlinElementFactory
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.factories.*
 import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
  */
 internal class KotlinStubRegistryExtension : StubRegistryExtension {
     override fun register(registry: StubRegistry) {
-        registry.registerStubSerializer(KtFileElementType, KtFileStubSerializer)
+        registry.registerStubSerializer(KtNodeTypes.FILE, KtFileStubSerializer)
 
         for ((key, value) in KtStubElementFactories.factories) {
             registry.registerStubSerializingFactory(key, value)
@@ -153,7 +153,7 @@ internal object KtStubElementFactories {
 
         registerPlaceHolderFactory(
             type = KtStubElementTypes.COMPANION_BLOCK,
-            psiFactory = ::KtCompanionBlockImpl,
+            psiFactory = { stub -> elementFactory.createCompanionBlock(stub) },
         )
 
         registerPlaceHolderFactory(
@@ -208,7 +208,7 @@ internal object KtStubElementFactories {
 
         registerPlaceHolderFactory(
             type = KtStubElementTypes.UNION_TYPE,
-            psiFactory = ::KtUnionTypeImpl,
+            psiFactory = { stub -> elementFactory.createUnionType(stub) },
         )
 
         registerPlaceHolderFactory(
@@ -423,6 +423,11 @@ internal object KtStubElementFactories {
      * Returns the factory registered for [type], or `null` if the element type is not stubbed.
      */
     operator fun get(type: IElementType): KtStubSerializingElementFactory<*, *>? = factories[type]
+
+    private val elementFactory: KotlinElementFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        // Requested on the first PSI creation, as services must not be requested from class initializers
+        service()
+    }
 }
 
 /**
@@ -443,7 +448,7 @@ private fun KtStubFactoryBuilder.registerStubSerializingFactory(
 /**
  * Registers a factory for an element whose stub carries no data beyond its own presence.
  */
-private fun <Psi : KtElementImplStub<out StubElement<*>>> KtStubFactoryBuilder.registerPlaceHolderFactory(
+private fun <Psi : KtElement> KtStubFactoryBuilder.registerPlaceHolderFactory(
     type: KtNodeType,
     psiFactory: (KotlinPlaceHolderStub<Psi>) -> Psi,
 ) {
