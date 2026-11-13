@@ -6,22 +6,21 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
+import org.jetbrains.kotlin.backend.common.lower.optimizations.TailrecOptimization
+import org.jetbrains.kotlin.backend.common.lower.optimizations.lowerTailRecursionCalls
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-open class TailrecCheckerLowering<Context : LoweringContext>(val context: Context) : FileLoweringPass {
-    open fun followRichFunctionReference(reference: IrRichFunctionReference) = false
-    open fun followFunctionReference(reference: IrFunctionReference) = false
-
+open class TailrecCheckerLowering<Context : LoweringContext>(
+    override val context: Context,
+) : FileLoweringPass, TailrecOptimization {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
@@ -39,29 +38,35 @@ open class TailrecCheckerLowering<Context : LoweringContext>(val context: Contex
                         .report(CommonBackendErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR)
                 }
 
-                val tailCalls = collectTailRecursionCalls(
+                (val ir, val nonTailCalls, val callsInTry, val fromManyFunctions) = collectTailRecursionCalls(
                     declaration,
                     followFunctionReference = ::followFunctionReference,
                     followRichFunctionReference = ::followRichFunctionReference,
                     collectNonTailCallsInNestedFunctions = true,
                 )
 
-                for (call in tailCalls.nonTailCalls) {
+                for (call in nonTailCalls) {
                     context.diagnosticReporter
                         .at(call, declaration.file, call.referencedNameSourceElement())
                         .report(CommonBackendErrors.NON_TAIL_RECURSIVE_CALL)
                 }
 
-                for (call in tailCalls.callsInTry) {
+                for (call in callsInTry) {
                     context.diagnosticReporter
                         .at(call, declaration.file, call.referencedNameSourceElement())
                         .report(CommonBackendErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED)
                 }
 
-                if (tailCalls.ir.isEmpty()) {
+                if (ir.isEmpty()) {
                     context.diagnosticReporter
                         .at(declaration, declaration.file)
                         .report(CommonBackendErrors.NO_TAIL_CALLS_FOUND)
+                } else {
+                    lowerTailRecursionCalls(
+                        declaration,
+                        fromManyFunctions,
+                        ir
+                    )
                 }
             }
         })
