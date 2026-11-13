@@ -57,8 +57,6 @@ internal class Runtime(
 
     val initNodeType = getStructType("InitNode")
 
-    val target = LLVMGetTarget(llvmModule)!!.toKString()
-
     val dataLayout = LLVMGetDataLayout(llvmModule)!!.toKString()
 
     val targetData = LLVMCreateTargetData(dataLayout)!!
