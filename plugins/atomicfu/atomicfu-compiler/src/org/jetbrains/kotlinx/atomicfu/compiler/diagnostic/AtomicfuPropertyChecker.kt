@@ -99,14 +99,25 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDelegatedPropertyContainer(declaration: FirProperty) {
-        if (declaration.symbol is FirLocalPropertySymbol) return
-
         val delegate = declaration.delegate
         val delegateExpression = if (delegate is FirWrappedDelegateExpression) delegate.expression else delegate
         val delegatePropertyAccess = delegateExpression as? FirPropertyAccessExpression ?: return
+        // Check if the property delegate is an expression pointing to another property,
         val delegateProperty = delegatePropertyAccess.calleeReference.toResolvedPropertySymbol() ?: return
-        if (delegateProperty is FirLocalPropertySymbol) return // Local properties with atomic types are taken care of separately.
+        // and check that that other property has an atomic type.
         if (delegateProperty.resolvedReturnType.classId?.isAtomicType() != true) return
+        // At this point, we certainly are dealing with a property delegated to an atomic property.
+        if (declaration.symbol is FirLocalPropertySymbol) {
+            // Explicitly report local properties delegated to atomic properties as forbidden because there is no scenario where they can
+            // work. The delegate property can't be local, and if it's not local, it and our local property are definitely in different
+            // containers. Even though the both cases produce their own diagnostics, reporting local delegated properties as unsupported
+            // is a more targeted diagnostics.
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN,
+            )
+            return
+        }
 
         if (declaration.symbol.isInDifferentContainerThan(delegateProperty)) {
             reporter.reportOn(

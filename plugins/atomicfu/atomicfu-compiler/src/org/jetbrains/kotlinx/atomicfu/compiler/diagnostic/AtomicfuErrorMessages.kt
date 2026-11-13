@@ -76,6 +76,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
     private const val ATOMIC_LOCALS_ARE_FORBIDDEN_MESSAGE =
         "Local properties with kotlinx.atomicfu.Atomic* types are unsupported."
 
+    private const val LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN_MESSAGE =
+        "Local properties delegated to properties with kotlinx.atomicfu.Atomic* types are unsupported."
+
     private const val ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN_MESSAGE =
         "Function parameters with kotlinx.atomicfu.Atomic* types are unsupported."
 
@@ -124,6 +127,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_LOCALS_ARE_FORBIDDEN, ATOMIC_LOCALS_ARE_FORBIDDEN_MESSAGE
+        )
+        map.put(
+            AtomicfuErrors.LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN, LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN_MESSAGE
         )
         map.put(
             AtomicfuErrors.ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN, ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN_MESSAGE

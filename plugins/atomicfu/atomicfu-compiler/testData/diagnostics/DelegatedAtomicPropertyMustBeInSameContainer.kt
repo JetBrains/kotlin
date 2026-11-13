@@ -9,8 +9,11 @@ class CompanionObjectMint {
         private val coinsAtomic = atomic(0)
 
         fun mint() {
+            <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> local = atomic(0)
+
             class First {
                 val <!ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER!>outerSeen<!> by coinsAtomic
+                val <!ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER!>localSeen<!> by local
                 val internal = atomic(0)
             }
 
@@ -84,6 +87,15 @@ class SameContainerCompanionBlock {
         private val atomicProperty = atomic(0)
         var delegated: Int by atomicProperty
     }
+}
+
+fun mint() {
+   val coins = ClassMint()
+   <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> localCoins = atomic(0)
+   val lazyDelegate = lazy { 10 }
+   <!LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN!>val<!> seen by coins.coinsAtomic
+   <!LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN!>val<!> seenLocal by localCoins
+   val lazyCoins by lazyDelegate
 }
 
 // FILE: TopLevel.kt
