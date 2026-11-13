@@ -335,6 +335,8 @@ class NativeSecondStageCompilationConfig(
                 ?: defaultGenericSafeCasts
     }
 
+    val canonicalizeNaNsInEquality: Boolean = configuration.get(BinaryOptions.canonicalizeNaNsInEquality) ?: true
+
     internal val defaultPagedAllocator: Boolean get() = sanitizer == null
 
     val pagedAllocator: Boolean by lazy {
@@ -528,6 +530,8 @@ class NativeSecondStageCompilationConfig(
             append("-stack_protector${stackProtectorMode.name}")
         if (genericSafeCasts != defaultGenericSafeCasts)
             append("-generic_safe_casts${if (genericSafeCasts) "ENABLE" else "DISABLE"}")
+        if (!canonicalizeNaNsInEquality)
+            append("-canonicalize_nans_in_equalityDISABLE")
         // Ideally, we would like to use targetTriple instead, but this requires a lot of changes in our test infrastructure.
         if (macabi) {
             append("-macabi")
