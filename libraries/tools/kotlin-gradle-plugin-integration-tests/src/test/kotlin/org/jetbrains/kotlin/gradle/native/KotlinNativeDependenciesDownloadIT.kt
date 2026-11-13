@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
@@ -110,7 +111,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
                 assertTrue(dependencies.listFiles() != null, "Dependencies were not downloaded")
                 dependencies.listFiles()?.filter { it.name != "cache" }?.forEach {
                     val processRunResult =
-                        runProcess(listOf("clang", "-Werror", "-c", file.path, "-isysroot", it.absolutePath), workingDir.toFile())
+                        runProcess(listOf("clang", "-Werror", "-c", file.path, "-isysroot", it.normalizedAbsolutePath().toString()), workingDir.toFile())
                     processRunResult.assertProcessRunResult {
                         assertTrue(isSuccessful)
                     }

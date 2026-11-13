@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -772,7 +773,7 @@ private fun commonBuildSetup(
                 // Useful for the tests like KGPDaemonsBaseTest
                 if (buildOptions.customKotlinDaemonRunFilesDirectory != null) {
                     @Suppress("DEPRECATION")
-                    "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${buildOptions.customKotlinDaemonRunFilesDirectory.absolutePath}"
+                    "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${buildOptions.customKotlinDaemonRunFilesDirectory.normalizedAbsolutePath().toString()}"
                 } else null,
             )
 }
@@ -1264,7 +1265,7 @@ private fun BuildResult.printBuildScanUrl() {
 private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
     gradleProperties.modify {
         """
-        |org.gradle.java.home=${pathToJdk.absolutePath.normalizePath()}
+        |org.gradle.java.home=${pathToJdk.normalizedAbsolutePath().toString().normalizePath()}
         |
         |$it
         """.trimMargin()
@@ -1292,7 +1293,7 @@ internal fun Path.enableAndroidSdk() {
         .also { if (!it.exists()) it.createFile() }
         .appendText(
             """
-            sdk.dir=${androidSdk.absolutePath.normalizePath()}
+            sdk.dir=${androidSdk.normalizedAbsolutePath().toString().normalizePath()}
             """.trimIndent()
         )
     acceptAndroidSdkLicenses(androidSdk)

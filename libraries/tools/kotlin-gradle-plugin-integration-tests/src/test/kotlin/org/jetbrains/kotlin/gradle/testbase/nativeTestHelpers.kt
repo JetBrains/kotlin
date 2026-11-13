@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -107,7 +108,7 @@ fun TestProject.getFileCache(
 ): Path {
     val cacheFlavor = computeCacheDirName(HostManager.host, NativeCacheKind.STATIC.name, true, true)
     val libCacheDir = getICCacheDir(executableName, executableProjectName).resolve(cacheFlavor).resolve("$fileProjectName-per-file-cache")
-    val fileId = cacheFileId(fqName, projectPath.toRealPath().resolve(fileRelativePath).toFile().absolutePath)
+    val fileId = cacheFileId(fqName, projectPath.toRealPath().resolve(fileRelativePath).toFile().normalizedAbsolutePath().toString())
     return libCacheDir.resolve(fileId)
 }
 

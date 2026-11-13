@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -73,7 +74,7 @@ class CinteropIT : KGPBaseTest() {
     fun cinteropWithDefFileFromTaskOutput(gradleVersion: GradleVersion) {
         nativeProject("cinterop-with-def-creation-task", gradleVersion = gradleVersion) {
 
-            val defFilePath = projectPath.resolve("def/cinterop.def").toFile().absoluteFile.absolutePath
+            val defFilePath = projectPath.resolve("def/cinterop.def").toFile().normalizedAbsolutePath().toString()
 
             build(":assemble") {
                 assertTasksExecuted(":createDefFileTask")
@@ -94,7 +95,7 @@ class CinteropIT : KGPBaseTest() {
     @GradleTest
     fun cinteropWithExplicitPassingHeader(gradleVersion: GradleVersion) {
         nativeProject("cinterop-with-header", gradleVersion = gradleVersion) {
-            val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().absolutePath
+            val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().normalizedAbsolutePath().toString()
             build(":assemble") {
                 assertTasksExecuted(":cinteropCinteropNative")
                 extractNativeTasksCommandLineArgumentsFromOutput(":cinteropCinteropNative", toolName = NativeToolKind.C_INTEROP) {
@@ -295,7 +296,7 @@ class CinteropIT : KGPBaseTest() {
     @GradleTest
     fun cinteropWithOptionalDefFileAndConfigurationCache(gradleVersion: GradleVersion) {
         nativeProject("cinterop-with-header", gradleVersion = gradleVersion) {
-            val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().absolutePath
+            val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().normalizedAbsolutePath().toString()
             // first build with non-existing .def file and configuration cache enabled
             build(":assemble") {
                 assertTasksExecuted(":cinteropCinteropNative")
@@ -322,7 +323,7 @@ class CinteropIT : KGPBaseTest() {
                     assertCommandLineArgumentsContainSequentially("-header", dummyHeaderPath)
                     assertCommandLineArgumentsContainSequentially("-Ilibs/include")
                     assertCommandLineArgumentsContainSequentially("-pkg", "cinterop")
-                    assertCommandLineArgumentsContainSequentially("-def", cinteropDefFile.toFile().absolutePath)
+                    assertCommandLineArgumentsContainSequentially("-def", cinteropDefFile.toFile().normalizedAbsolutePath().toString())
                 }
             }
         }

@@ -401,6 +401,7 @@ include(
     ":gradle:kotlin-gradle-ecosystem-plugin",
     ":kotlin-gradle-plugin-tcs-android",
     ":kotlin-gradle-plugin-test-utils-embeddable",
+    ":kotlin-gradle-plugin-arch-test-utils",
     ":kotlin-gradle-plugin-integration-tests",
     ":kotlin-gradle-plugins-bom",
     ":kotlin-gradle-plugin-test-coverage",
@@ -928,6 +929,8 @@ project(":gradle:kotlin-gradle-ecosystem-plugin").projectDir = File("$rootDir/li
 project(":kotlin-gradle-plugin-tcs-android").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-tcs-android")
 project(":kotlin-gradle-plugin-test-utils-embeddable").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-test-utils-embeddable")
+project(":kotlin-gradle-plugin-arch-test-utils").projectDir =
+    File("$rootDir/libraries/tools/kotlin-gradle-plugin-arch-test-utils")
 project(":kotlin-gradle-plugin-integration-tests").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-integration-tests")
 project(":kotlin-gradle-plugins-bom").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugins-bom")
 project(":kotlin-gradle-plugin-test-coverage").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-test-coverage")

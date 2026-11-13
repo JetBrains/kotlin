@@ -23,6 +23,7 @@ import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.junit.jupiter.api.Disabled
@@ -193,9 +194,9 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
             build("compileKotlin") {
                 val startOptions = output.findAllStringsPrefixed("starting the daemon as: ").single()
                 // ensure that new daemon was started and that specified JDK is used as runtime JDK for it
-                assert(startOptions.startsWith(jdkVersion.location.absolutePath)) {
+                assert(startOptions.startsWith(jdkVersion.location.normalizedAbsolutePath().toString())) {
                     printBuildOutput()
-                    "Kotlin daemon used non-expected JDK (expected ${jdkVersion.location.absolutePath}): $startOptions"
+                    "Kotlin daemon used non-expected JDK (expected ${jdkVersion.location.normalizedAbsolutePath().toString()}): $startOptions"
                 }
             }
         }

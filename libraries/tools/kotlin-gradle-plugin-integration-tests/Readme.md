@@ -23,6 +23,19 @@ If you want to run only one test class, you need to append `--tests` flag with v
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllParallelTests --tests <class-name-with-package>
 ```
 
+#### How to run architecture tests
+
+The `archTest` suite documents architectural conventions of this module's test code in the form of tests, using [ArchUnit](https://www.archunit.org).
+The rules are frozen: existing violations are stored in [src/archTest/archunit-store](src/archTest/archunit-store), and only new violations fail the tests:
+```shell
+./gradlew :kotlin-gradle-plugin-integration-tests:archTest
+```
+
+After adding a new rule or fixing an existing violation, update the store by running the task with `-ParchunitRefreeze` and commit the updated store:
+```shell
+./gradlew :kotlin-gradle-plugin-integration-tests:archTest -ParchunitRefreeze
+```
+
 #### How to Run Using Kotlin Native from Master
 
 Currently, Kotlin Native from master involves three configurations: `kgpMppTests`, `kgpNativeTests`, and `kgpOtherTests`. 

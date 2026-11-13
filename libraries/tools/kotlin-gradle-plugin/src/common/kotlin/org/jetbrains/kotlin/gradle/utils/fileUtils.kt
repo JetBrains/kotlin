@@ -55,7 +55,13 @@ internal fun File.relativeOrAbsolute(base: File): String =
  * Does not resolve symlinks. Avoids [java.io.File.getCanonicalFile] (banned per KT-69613).
  */
 internal fun File.normalizedAbsoluteFile(): File =
-    toPath().toAbsolutePath().normalize().toFile()
+    normalizedAbsolutePath().toFile()
+
+/**
+ * Same as [normalizedAbsoluteFile], but returns a [Path] and avoids the extra conversion back to [File].
+ */
+internal fun File.normalizedAbsolutePath(): Path =
+    toPath().toAbsolutePath().normalize()
 
 internal fun Iterable<File>.pathsAsStringRelativeTo(base: File): String =
     map { it.relativeOrAbsolute(base) }.sorted().joinToString()

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -371,7 +372,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                         file.asFile to listOf(
                             "--symbolmap=" + rootDir
                                 .resolve("mappings")
-                                .resolve(file.asFile.nameWithoutExtension + ".txt").absolutePath
+                                .resolve(file.asFile.nameWithoutExtension + ".txt").normalizedAbsolutePath().toString()
                         )
                     }
                 }
@@ -415,7 +416,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 
                     val mappings = rootDir.resolve("mappings")
 
-                    it.binaryenArguments.add("--symbolmap=" + mappings.absolutePath)
+                    it.binaryenArguments.add("--symbolmap=" + mappings.normalizedAbsolutePath().toString())
                 }
             }
 
@@ -1317,7 +1318,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                                     println("ALL IMPORTED: ")
                                     it.listFiles()
                                         ?.forEach {
-                                            println(it.absolutePath)
+                                            println(it.normalizedAbsolutePath().toString())
                                         }
                                     it.resolve(".visited-gradle").let {
                                         println("visited-gradle content")

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.tooling.core.linearClosure
 import java.io.File
 import java.io.Serializable
@@ -80,11 +81,11 @@ data class SourceSetCommonizerDependencies(
 
     fun assertDependencyFilesMatches(fileMatchers: Set<Regex>) = apply {
         val unmatchedDependencies = dependencies.filter { dependency ->
-            fileMatchers.none { matcher -> dependency.file.absolutePath.matches(matcher) }
+            fileMatchers.none { matcher -> dependency.file.normalizedAbsolutePath().toString().matches(matcher) }
         }
 
         val unmatchedMatchers = fileMatchers.filter { matcher ->
-            dependencies.none { dependency -> dependency.file.absolutePath.matches(matcher) }
+            dependencies.none { dependency -> dependency.file.normalizedAbsolutePath().toString().matches(matcher) }
         }
 
         if (unmatchedDependencies.isNotEmpty() || unmatchedMatchers.isNotEmpty()) {
