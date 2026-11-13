@@ -150,6 +150,29 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
         assertAnnotationsOnMyClass(ktFile, testServices)
     }
 
+    /**
+     * [KotlinAnnotationsResolver] has to resolve an annotation used through an import alias by the alias name.
+     */
+    @Test
+    fun importAliasedAnnotation(ktFile: KtFile, testServices: TestServices) {
+        // ERROR: should produce "other.MyAnnotation"
+        assertAnnotationsOnMyClass(ktFile, testServices)
+    }
+
+    /**
+     * An aliased import makes the declaration accessible only by its alias, so [KotlinAnnotationsResolver] mustn't resolve
+     * an annotation used by its original name through such an import.
+     */
+    @Test
+    fun importAliasedAnnotationByOriginalName(ktFile: KtFile, testServices: TestServices) {
+        // ERROR: should produce no annotation
+        assertAnnotationsOnMyClass(ktFile, testServices, "other.MyAnnotation")
+    }
+
+    /**
+     * Checks that [KotlinAnnotationsResolver] resolves the annotations on the `MyClass` declaration of [ktFile]
+     * to exactly the [expected] top-level annotation FQ names.
+     */
     private fun assertAnnotationsOnMyClass(ktFile: KtFile, testServices: TestServices, vararg expected: String) {
         val project = ktFile.project
         val ktClass = ktFile.declarations.single { it.name == "MyClass" } as KtClass

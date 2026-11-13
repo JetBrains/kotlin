@@ -7960,6 +7960,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveSingleByPsiTestGenerated
     }
 
     @Test
+    @TestMetadata("dummyFunction_importAlias.kt")
+    public void testDummyFunction_importAlias() {
+      run("dummyFunction_importAlias.kt");
+    }
+
+    @Test
     @TestMetadata("dummyFunction_localDeclarations.kt")
     public void testDummyFunction_localDeclarations() {
       run("dummyFunction_localDeclarations.kt");
