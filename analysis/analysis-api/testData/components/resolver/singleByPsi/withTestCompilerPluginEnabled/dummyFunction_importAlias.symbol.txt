@@ -2,6 +2,7 @@ KtNameReferenceExpression(150,159): 'dummyTest'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dummyTest'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      test/dummyTest(value: test.Test): kotlin.String
+    ]
