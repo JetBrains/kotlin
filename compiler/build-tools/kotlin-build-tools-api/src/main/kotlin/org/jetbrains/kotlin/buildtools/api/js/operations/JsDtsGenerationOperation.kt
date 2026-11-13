@@ -164,16 +164,27 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
             Option("USE_UNKNOWN_INSTEAD_ANY", KotlinReleaseVersion(2, 5, 0))
 
         /**
-         * Custom main module output name.
+         * The base name of the generated declaration file, without the extension.
          * Must match the JS linking `-ir-output-name`.
+         * The name is resolved in the following order; the first value that is not `null` is used:
+         * 1. The value of this option.
+         * 2. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlibArguments.X_IR_PER_MODULE_OUTPUT_NAME] the main KLIB was compiled with.
+         * 3. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.X_IR_MODULE_NAME] the main KLIB was compiled with.
+         * 4. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.IR_OUTPUT_NAME] the main KLIB was compiled with.
          */
         @JvmField
         public val OUTPUT_NAME: Option<String?> =
             Option("OUTPUT_NAME", KotlinReleaseVersion(2, 5, 0))
 
         /**
-         * Custom main module output name.
+         * The name of the main module. For the `umd` and `plain` module kinds, it is the name of the global namespace
+         * in the declarations, converted to a valid identifier; other module kinds do not use it.
          * Must match the JS linking `-Xir-module-name`.
+         * The name is resolved in the following order; the first value that is not `null` is used:
+         * 1. The value of this option.
+         * 2. The value of [OUTPUT_NAME].
+         * 3. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.X_IR_MODULE_NAME] the main KLIB was compiled with.
+         * 4. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.IR_OUTPUT_NAME] the main KLIB was compiled with.
          */
         @JvmField
         public val MAIN_MODULE_NAME: Option<String?> =
