@@ -24,7 +24,17 @@ annotation class FirCacheInternals
  * @see FirCachesFactory
  */
 abstract class FirCache<in K : Any, out V, in CONTEXT> {
+    /**
+     * Gets the value from the cache for the given [key] and [context].
+     * The value is computed in case it wasn't done before.
+     */
     abstract fun getValue(key: K, context: CONTEXT): V
+
+    /**
+     * Gets the value from the cache for the given [key] if it was computed before.
+     *
+     * @return the cached value or `null` if it wasn't computed before
+     */
     abstract fun getValueIfComputed(key: K): V?
 
     /**
