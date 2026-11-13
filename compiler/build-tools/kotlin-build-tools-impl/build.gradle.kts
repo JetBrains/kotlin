@@ -49,7 +49,7 @@ dependencies {
     compileOnly(project(":libraries:tools:abi-validation:abi-tools-api"))
     embedded(project(":libraries:tools:abi-validation:abi-tools-api")) { isTransitive = false }
     embedded(project(":libraries:tools:abi-validation:abi-tools")) { isTransitive = false }
-    embedded(project(":kotlin-metadata-jvm")) { isTransitive = false }
+    embedded(project(":prepare:kotlin-metadata-jvm")) { isTransitive = false }
     embedded(libs.diff.utils) { isTransitive = false }
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
