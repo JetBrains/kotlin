@@ -37,6 +37,8 @@ CompilerInfrastructure:
     - "compiler/util-io"
     - "compiler/build.gradle.kts"
     - "jps"
+  exclude:
+    - "core/language.syntax"
   mustRunAllTestsOnChangesIn:
     - CoreLibs
 
@@ -56,6 +58,7 @@ Frontend:
     - "compiler/serialization.common"
     - "compiler/tests-java8"
     - "compiler/tests-spec"
+    - "core/language.syntax"
   mustRunAllTestsOnChangesIn:
     - CoreLibs
     - CompilerInfrastructure

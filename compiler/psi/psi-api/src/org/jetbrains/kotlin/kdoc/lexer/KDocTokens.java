@@ -20,22 +20,23 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KotlinElementTypeProvider;
+import org.jetbrains.kotlin.syntax.KDocSyntaxTokenIds;
 
 public interface KDocTokens {
     @NotNull ILazyParseableElementType KDOC = KotlinElementTypeProvider.getInstance().getKdocType();
 
-    int START_Id = 1;
-    int END_Id = START_Id + 1;
-    int LEADING_ASTERISK_Id = END_Id + 1;
-    int TEXT_Id = LEADING_ASTERISK_Id + 1;
-    int CODE_BLOCK_TEXT_Id = TEXT_Id + 1;
-    int TAG_NAME_Id = CODE_BLOCK_TEXT_Id + 1;
-    int MARKDOWN_ESCAPED_CHAR_Id = TAG_NAME_Id + 1;
+    int START_Id = KDocSyntaxTokenIds.START;
+    int END_Id = KDocSyntaxTokenIds.END;
+    int LEADING_ASTERISK_Id = KDocSyntaxTokenIds.LEADING_ASTERISK;
+    int TEXT_Id = KDocSyntaxTokenIds.TEXT;
+    int CODE_BLOCK_TEXT_Id = KDocSyntaxTokenIds.CODE_BLOCK_TEXT;
+    int TAG_NAME_Id = KDocSyntaxTokenIds.TAG_NAME;
+    int MARKDOWN_ESCAPED_CHAR_Id = KDocSyntaxTokenIds.MARKDOWN_ESCAPED_CHAR;
     @Deprecated
-    int MARKDOWN_INLINE_LINK_Id = MARKDOWN_ESCAPED_CHAR_Id + 1;
-    int KDOC_LPAR_Id= MARKDOWN_INLINE_LINK_Id + 1;
-    int KDOC_RPAR_Id = KDOC_LPAR_Id + 1;
-    int CODE_SPAN_TEXT_Id = KDOC_RPAR_Id + 1;
+    int MARKDOWN_INLINE_LINK_Id = KDocSyntaxTokenIds.MARKDOWN_LINK;
+    int KDOC_LPAR_Id = KDocSyntaxTokenIds.KDOC_LPAR;
+    int KDOC_RPAR_Id = KDocSyntaxTokenIds.KDOC_RPAR;
+    int CODE_SPAN_TEXT_Id = KDocSyntaxTokenIds.CODE_SPAN_TEXT;
 
     @NotNull KDocToken START                 = new KDocToken("KDOC_START", START_Id);
     @NotNull KDocToken END                   = new KDocToken("KDOC_END", END_Id);
