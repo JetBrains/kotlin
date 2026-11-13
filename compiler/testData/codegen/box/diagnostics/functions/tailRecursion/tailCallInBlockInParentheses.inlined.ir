@@ -1,0 +1,35 @@
+FILE fqName:<root> fileName:/tailCallInBlockInParentheses.kt lineStartOffsets: [0, 24, 25, 51, 75, 96, 102, 116, 118, 119, 139, 156, 172, 174]
+  FUN[119, 173] name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY[137, 173]
+      CALL[143, 155] 'public final fun foo (x: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG x: CONST[147, 154] Int type=kotlin.Int value=1000000
+      RETURN[160, 171] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST[167, 171] String type=kotlin.String value="OK"
+  FUN[33, 117] name:foo visibility:public modality:FINAL returnType:kotlin.Unit [tailrec]
+    VALUE_PARAMETER[41, 47] kind:Regular name:x index:0 type:kotlin.Int
+    BLOCK_BODY[49, 117]
+      VAR[49, 117] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [var]
+        GET_VAR[49, 117] 'x: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+      DO_WHILE[49, 117] label=null origin=null
+        body: BLOCK[49, 117] type=kotlin.Unit origin=null
+          RETURN[55, 115] type=kotlin.Nothing from='public final fun foo (x: kotlin.Int): kotlin.Unit declared in <root>'
+            WHEN[62, 115] type=kotlin.Unit origin=IF
+              BRANCH[66, 101]
+                if: CALL[66, 71] 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
+                  ARG arg0: GET_VAR[66, 67] 'var tmp_0: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+                  ARG arg1: CONST[70, 71] Int type=kotlin.Int value=0
+                then: BLOCK[73, 101] type=kotlin.Unit origin=null
+                  BLOCK[84, 94] type=kotlin.Unit origin=null
+                    VAR[84, 94] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+                      CALL[88, 93] 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
+                        ARG <this>: GET_VAR[88, 89] 'var tmp_0: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+                        ARG other: CONST[92, 93] Int type=kotlin.Int value=1
+                    SET_VAR[84, 94] 'var tmp_0: kotlin.Int declared in <root>.foo' type=kotlin.Unit origin=EQ
+                      GET_VAR[84, 94] 'val tmp_1: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+                    CONTINUE[84, 94] label=null loop.label=null
+              BRANCH[111, 115]
+                if: CONST[111, 115] Boolean type=kotlin.Boolean value=true
+                then: GET_OBJECT[111, 115] 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          BREAK[49, 117] label=null loop.label=null
+        condition: BLOCK[49, 117] type=kotlin.Boolean origin=null
+          CONST[49, 117] Boolean type=kotlin.Boolean value=true
