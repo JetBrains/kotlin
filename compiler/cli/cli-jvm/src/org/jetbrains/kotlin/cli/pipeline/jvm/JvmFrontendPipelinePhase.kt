@@ -625,7 +625,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val javaModuleFinder = CliJavaModuleFinder(
             configuration.jdkHome,
             configuration,
-            javaFileManager::findClassOnClasspath,
+            javaFileManager,
             jdkRelease
         )
 

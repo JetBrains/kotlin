@@ -210,7 +210,7 @@ class KotlinCoreEnvironment private constructor(
         val javaModuleFinder = CliJavaModuleFinder(
             jdkHome,
             configuration,
-            javaFileManager::findClassOnClasspath,
+            javaFileManager,
             releaseTarget
         )
 

@@ -23,10 +23,10 @@ import com.intellij.psi.PsiJavaModule
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassIdToJavaClass
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
@@ -34,13 +34,14 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo.FileReadingExcept
 import java.io.File
 
 /**
- * @param findClassOnClasspath Resolves the annotation classes of a `module-info` anywhere on the classpath, lazily: the
- *  classpath index is built after the modules are, so the lookup must not run while a module is being read.
+ * @param javaFileManager Resolves the annotation classes of a `module-info` anywhere on the classpath, lazily: the
+ *  classpath index is built after the modules are, so the lookup must not run while a module is being read. `null` leaves
+ *  the annotation classes unresolved.
  */
 class CliJavaModuleFinder(
     private val jdkHome: File?,
     private val configuration: CompilerConfiguration,
-    private val findClassOnClasspath: ClassIdToJavaClass,
+    private val javaFileManager: KotlinCliJavaFileManagerImpl?,
     private val jdkRelease: Int?
 ) : JavaModuleFinder {
 
@@ -122,7 +123,7 @@ class CliJavaModuleFinder(
         val file = moduleRoot.findChild(if (useSig) PsiJavaModule.MODULE_INFO_CLASS + ".sig" else PsiJavaModule.MODULE_INFO_CLS_FILE)
             ?: return null
         val moduleInfo = try {
-            readJavaModuleInfo(file, findClassOnClasspath) ?: return null
+            readJavaModuleInfo(file) { javaFileManager?.findClassOnClasspath(it) } ?: return null
         } catch (e: FileReadingException) {
             reportError(e.message + "\nCaused by: ${e.cause::class.java.name}: ${e.cause.message}")
             throw CompilationErrorException()

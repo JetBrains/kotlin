@@ -71,7 +71,7 @@ class ClasspathRootsResolverModuleInfoTest {
             this,
             additionalModules = emptyList(),
             contentRootToVirtualFile = { localFileSystem.findFileByIoFile((it as JavaSourceRoot).file) },
-            javaModuleFinder = CliJavaModuleFinder(jdkHome = null, this, findClassOnClasspath, jdkRelease = 8),
+            javaModuleFinder = CliJavaModuleFinder(jdkHome = null, this, javaFileManager = null, jdkRelease = 8),
             requireStdlibModule = false,
             outputDirectory = null,
             findClassOnClasspath = findClassOnClasspath,
