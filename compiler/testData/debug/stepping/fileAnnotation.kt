@@ -44,12 +44,10 @@ fun box(): String =
 // EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:14 box
 // test.kt:6 foo
-// EXPECTATIONS JS_IR
 // test.kt:14 box
 // test.kt:9 <init>
+// EXPECTATIONS JS_IR
 // test.kt:8 <init>
-// EXPECTATIONS JS_IR_ES6
-// test.kt:13 box
 
 // EXPECTATIONS WASM_JS
 // test.kt:13 $box (4)

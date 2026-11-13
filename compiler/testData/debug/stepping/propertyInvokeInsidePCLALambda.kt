@@ -109,6 +109,7 @@ fun box(): String {
 // test.kt:6 generate
 // test.kt:6 generate
 // test.kt:11 foo
+// test.kt:9 <init>
 // test.kt:7 generate
 // test.kt:19 bar
 // test.kt:27 box

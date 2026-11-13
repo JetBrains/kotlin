@@ -787,6 +787,8 @@ private val debugFriendlyOrigins: Set<IrDeclarationOrigin> = hashSetOf(
     SecondaryConstructorLowering.SECONDARY_CONSTRUCTOR_INIT_ORIGIN,
     WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER,
     WebCallableReferenceLowering.LIFTED_CALLABLE_REFERENCE_FUNCTION,
+    ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT,
+    ES6_CONSTRUCTOR_REPLACEMENT,
 )
 
 val IrDeclaration.isInlinedCode: Boolean
