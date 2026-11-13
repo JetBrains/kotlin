@@ -390,7 +390,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         missedOverrides.add(it)
                     }
                 }
-                .find { it.modality != Modality.ABSTRACT }
+                .find { it.modality != Modality.ABSTRACT && !it.isEffectivelyExternal() }
                 ?.let { realOverride ->
                     val implClassDeclaration = realOverride.parent as IrClass
 
