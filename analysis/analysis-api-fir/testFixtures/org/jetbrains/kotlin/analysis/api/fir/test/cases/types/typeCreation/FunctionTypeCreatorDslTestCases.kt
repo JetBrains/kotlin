@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames
@@ -142,6 +143,32 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
             valueParameter(name = null, stringType)
             returnType = intType
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
+        }
+    }
+
+    fun testFunctionWithMaxArity(): KaType {
+        return functionTypeWithIntValueParameters(FunctionTypeKind.Function.maxArity, isSuspend = false)
+    }
+
+    fun testFunctionWithArityAboveMax(): KaType {
+        return functionTypeWithIntValueParameters(FunctionTypeKind.Function.maxArity + 1, isSuspend = false)
+    }
+
+    fun testSuspendFunctionWithMaxArity(): KaType {
+        return functionTypeWithIntValueParameters(FunctionTypeKind.SuspendFunction.maxArity, isSuspend = true)
+    }
+
+    fun testSuspendFunctionWithArityAboveMax(): KaType {
+        return functionTypeWithIntValueParameters(FunctionTypeKind.SuspendFunction.maxArity + 1, isSuspend = true)
+    }
+
+    private fun functionTypeWithIntValueParameters(arity: Int, isSuspend: Boolean): KaType {
+        val type = getTypeByCaret("type")
+        return session.typeCreator.functionType {
+            this.isSuspend = isSuspend
+            repeat(arity) {
+                valueParameter(name = null, type)
+            }
         }
     }
 

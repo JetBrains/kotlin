@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
@@ -29,7 +30,7 @@ public interface KaInternalsTypeCreatorProvider {
     public fun copy(type: KaUsualClassType, init: KaClassTypeBuilder.() -> Unit): KaUsualClassType
 
     @KaExperimentalApi
-    public fun copy(type: KaFunctionType, init: KaFunctionTypeBuilder.() -> Unit): KaFunctionType
+    public fun copy(type: KaFunctionType, init: KaFunctionTypeBuilder.() -> Unit): KaType
 
     @KaExperimentalApi
     public fun copy(type: KaTypeParameterType, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType

@@ -1,0 +1,3 @@
+KaType
+Rendered type:
+ERROR

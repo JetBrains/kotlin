@@ -628,6 +628,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     }
 
     @Test
+    @TestMetadata("functionWithArityAboveMax.kt")
+    public void testFunctionWithArityAboveMax() {
+      run("functionWithArityAboveMax.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithMaxArity.kt")
+    public void testFunctionWithMaxArity() {
+      run("functionWithMaxArity.kt");
+    }
+
+    @Test
     @TestMetadata("reflectAndSuspendWithDefaultValues.kt")
     public void testReflectAndSuspendWithDefaultValues() {
       run("reflectAndSuspendWithDefaultValues.kt");
@@ -649,6 +661,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeCreatorDslTestGenerated ext
     @TestMetadata("reflectWithStringReceiver.kt")
     public void testReflectWithStringReceiver() {
       run("reflectWithStringReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunctionWithArityAboveMax.kt")
+    public void testSuspendFunctionWithArityAboveMax() {
+      run("suspendFunctionWithArityAboveMax.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunctionWithMaxArity.kt")
+    public void testSuspendFunctionWithMaxArity() {
+      run("suspendFunctionWithMaxArity.kt");
     }
 
     @Test

@@ -21,8 +21,11 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -47,8 +50,14 @@ import kotlin.reflect.full.primaryConstructor
  * corresponding test cases (`ClassTypeCreatorDslTestCases`) is located in [TypeCreatorDslTestRenderer.testClassesMapping].
  *
  * If the test case throws an exception, the exception is rendered instead of the value.
+ *
+ * With the [TypeCreatorDslTestRenderer.Directives.RENDER_PRETTY_ONLY] directive, only the pretty-rendered value is printed,
+ * without the full dump of its properties.
  */
 abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(TypeCreatorDslTestRenderer.Directives)
+
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actualText = analyzeForTest(mainFile) {
             val testInfo = testServices.testInfo
@@ -67,6 +76,12 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
 }
 
 object TypeCreatorDslTestRenderer {
+    object Directives : SimpleDirectivesContainer() {
+        val RENDER_PRETTY_ONLY by directive(
+            "Render only the pretty-printed value without the full dump of its properties, e.g., for very large types"
+        )
+    }
+
     context(_: KaSession)
     fun createdTypePresentation(
         mainFile: KtFile,
@@ -86,44 +101,47 @@ object TypeCreatorDslTestRenderer {
         }
 
         val value = produceValue(directoryName, testDataFileName, caretToType).let(processor)
-        return render(value)
+        val prettyOnly = Directives.RENDER_PRETTY_ONLY in testServices.moduleStructure.allDirectives
+        return render(value, prettyOnly)
     }
 
     context(session: KaSession)
-    private fun render(value: Any?): String {
+    private fun render(value: Any?, prettyOnly: Boolean): String {
         val renderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
             this.capturedTypeRenderer = KaCapturedTypeRenderer.AS_CAPTURED_TYPE_WITH_PROJECTION
         }
+
+        fun debug(type: KaType): String = KaDebugRenderer(renderTypeByProperties = true).renderType(session, type)
+
         return buildString {
+            fun appendDebugPart(vararg lines: String) {
+                if (prettyOnly) return
+                lines.forEach(::appendLine)
+                appendLine()
+            }
+
             when (value) {
                 is KaType -> {
                     appendLine("KaType")
-                    appendLine(KaDebugRenderer(renderTypeByProperties = true).renderType(session, value))
-                    appendLine()
+                    appendDebugPart(debug(value))
                     appendLine("Rendered type:")
                     appendLine(value.render(renderer, position = Variance.INVARIANT))
                 }
                 is KaTypeArgumentWithVariance -> {
                     appendLine("KaTypeArgumentWithVariance")
-                    appendLine("Variance: ${value.variance.name}")
-                    appendLine("Type: ${KaDebugRenderer(renderTypeByProperties = true).renderType(session, value.type)}")
-                    appendLine()
+                    appendDebugPart("Variance: ${value.variance.name}", "Type: ${debug(value.type)}")
                     appendLine("Rendered type argument:")
                     appendLine("${value.variance.name} ${value.type.render(renderer, position = Variance.INVARIANT)}")
                 }
                 is KaContextReceiver -> {
                     appendLine("KaContextReceiver")
-                    appendLine("Label: ${value.label}")
-                    appendLine("Type: ${KaDebugRenderer(renderTypeByProperties = true).renderType(session, value.type)}")
-                    appendLine()
+                    appendDebugPart("Label: ${value.label}", "Type: ${debug(value.type)}")
                     appendLine("Rendered context receiver:")
                     appendLine("${value.label}: ${value.type.render(renderer, position = Variance.INVARIANT)}")
                 }
                 is KaFunctionValueParameter -> {
                     appendLine("KaFunctionValueParameter")
-                    appendLine("Name: ${value.name}")
-                    appendLine("Type: ${KaDebugRenderer(renderTypeByProperties = true).renderType(session, value.type)}")
-                    appendLine()
+                    appendDebugPart("Name: ${value.name}", "Type: ${debug(value.type)}")
                     appendLine("Rendered function value parameter:")
                     appendLine("${value.name}: ${value.type.render(renderer, position = Variance.INVARIANT)}")
                 }

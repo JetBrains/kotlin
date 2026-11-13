@@ -1,0 +1,12 @@
+KaType
+KaErrorType:
+  abbreviation: null
+  annotations: []
+  errorMessage: Function type arity 254 exceeds the maximum arity 253 of kotlin.coroutines.SuspendFunctionN
+  presentableText: null
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+ERROR
