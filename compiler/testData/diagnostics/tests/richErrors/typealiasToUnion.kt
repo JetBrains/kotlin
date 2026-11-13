@@ -39,7 +39,7 @@ fun smartCasts(x: R, e: Errs, u: Int | E1 | E2) {
         is E1 -> {}
         is E2 -> {}
     }
-    if (u is <!CANNOT_CHECK_FOR_ERASED!>Errs<!>) {
+    if (u is Errs) {
         u
     }
 }
