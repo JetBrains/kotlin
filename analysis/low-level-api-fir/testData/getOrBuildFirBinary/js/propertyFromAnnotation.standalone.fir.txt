@@ -1,0 +1,17 @@
+KT element: KtClass
+KT element text:
+public final annotation class Anno public constructor(
+    public final val value: kotlin.Int,
+) : kotlin.Annotation {
+}
+FIR element: FirRegularClassImpl
+FIR source kind: null
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [IsDeserializedPropertyFromAnnotation=true] val value: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|one/Anno|
+
+}
