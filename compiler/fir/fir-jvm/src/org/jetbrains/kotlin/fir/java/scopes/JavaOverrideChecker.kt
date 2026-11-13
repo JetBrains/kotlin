@@ -70,8 +70,8 @@ class JavaOverrideChecker internal constructor(
         if (candidateType is ConeFlexibleType) return isEqualTypes(candidateType.lowerBound, baseType, substitutor)
         if (baseType is ConeFlexibleType) return isEqualTypes(candidateType, baseType.lowerBound, substitutor)
         if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
-            val candidateTypeClassId = candidateType.fullyExpandedType().lookupTag.classId.let { it.readOnlyToMutable() ?: it }
-            val baseTypeClassId = baseType.fullyExpandedType().lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            val candidateTypeClassId = candidateType.fullyExpandedType().classId?.let { it.readOnlyToMutable() ?: it } ?: return false
+            val baseTypeClassId = baseType.fullyExpandedType().classId?.let { it.readOnlyToMutable() ?: it } ?: return false
             if (candidateTypeClassId != baseTypeClassId) return false
             if (candidateTypeClassId == StandardClassIds.Array) {
                 assert(candidateType.typeArguments.size == 1) {

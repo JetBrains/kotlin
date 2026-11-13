@@ -1,0 +1,38 @@
+FILE: typealiasToUnionSamConversion.kt
+    public abstract fun interface Sam : R|kotlin/Any| {
+        public abstract fun invoke(): R|kotlin/Unit|
+
+    }
+    public final error class Foo : R|kotlin/RichError| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final typealias SamOrFoo = R|union(primary=Sam, errors=Foo)|
+    public final typealias S = R|Sam|
+    public final typealias SOrFoo = R|union(primary={S=} Sam, errors=Foo)|
+    public final fun foo(f: R|{SamOrFoo=} union(primary=Sam, errors=Foo)|): R|kotlin/Unit| {
+    }
+    public final fun bar(f: R|{SOrFoo=} union(primary={S=} Sam, errors=Foo)|): R|kotlin/Unit| {
+    }
+    public final fun baz(f: R|union(primary={S=} Sam, errors=Foo)|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|(<L> = SAM(foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo Unit
+        }
+        ))
+        R|/bar|(<L> = SAM(bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@bar Unit
+        }
+        ))
+        R|/baz|(<L> = SAM(baz@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@baz Unit
+        }
+        ))
+        lval f: R|{SamOrFoo=} union(primary=Sam, errors=Foo)| = SAM(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+        )
+    }

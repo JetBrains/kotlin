@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -55,13 +54,14 @@ class FirSamResolver(
     private val samConversionTransformers = session.extensionService.samConversionTransformers
 
     @Suppress("SuspiciousWhenOverConeKotlinType")
-    fun isSamType(type: ConeKotlinType): Boolean = when (type) {
+    fun isSamType(type: ConeKotlinType): Boolean = when (val expandedType = type.fullyExpandedType()) {
         is ConeClassLikeType -> {
-            val symbol = type.fullyExpandedType().lookupTag.toSymbol()
+            val symbol = expandedType.lookupTag.toSymbol()
             symbol is FirRegularClassSymbol && resolveFunctionTypeIfSamInterface(symbol.fir) != null
         }
 
-        is ConeFlexibleType -> isSamType(type.lowerBound) && isSamType(type.upperBound)
+        is ConeFlexibleType -> isSamType(expandedType.lowerBound) && isSamType(expandedType.upperBound)
+        is ConeUnionType -> isSamType(expandedType.primaryType)
         else -> false
     }
 
@@ -76,21 +76,23 @@ class FirSamResolver(
     data class SamConversionInfo(val functionalType: ConeKotlinType, val samType: ConeKotlinType)
 
     fun getSamInfoForPossibleSamType(type: ConeKotlinType): SamConversionInfo? {
-        return when (type) {
-            is ConeClassLikeType -> SamConversionInfo(
-                functionalType = getFunctionTypeForPossibleSamType(type.fullyExpandedType()) ?: return null,
-                samType = type
-            )
+        return when (val expandedType = type.fullyExpandedType()) {
+            is ConeClassLikeType -> {
+                SamConversionInfo(
+                    functionalType = getFunctionTypeForPossibleSamType(expandedType) ?: return null,
+                    samType = type
+                )
+            }
             is ConeFlexibleType -> {
-                val lowerType = getSamInfoForPossibleSamType(type.lowerBound)?.functionalType ?: return null
+                val lowerType = getSamInfoForPossibleSamType(expandedType.lowerBound)?.functionalType ?: return null
 
-                if (type.isTrivial) {
+                if (expandedType.isTrivial) {
                     SamConversionInfo(
                         functionalType = lowerType.lowerBoundIfFlexible().toTrivialFlexibleType(session.typeContext),
                         samType = type
                     )
                 } else {
-                    val upperType = getSamInfoForPossibleSamType(type.upperBound)?.functionalType ?: return null
+                    val upperType = getSamInfoForPossibleSamType(expandedType.upperBound)?.functionalType ?: return null
                     SamConversionInfo(
                         functionalType = ConeFlexibleType(
                             lowerType.lowerBoundIfFlexible(),
@@ -106,9 +108,9 @@ class FirSamResolver(
             is ConeDefinitelyNotNullType, is ConeIntersectionType, is ConeIntegerLiteralType,
                 -> null
 
-            is ConeCapturedType -> type.constructor.lowerType?.let { getSamInfoForPossibleSamType(it) }
+            is ConeCapturedType -> expandedType.constructor.lowerType?.let { getSamInfoForPossibleSamType(it) }
 
-            is ConeUnionType -> getSamInfoForPossibleSamType(type.primaryType)
+            is ConeUnionType -> getSamInfoForPossibleSamType(expandedType.primaryType)
         }
     }
 
@@ -130,7 +132,7 @@ class FirSamResolver(
         if (firClassOrTypeAlias is FirTypeAlias) {
             // Precompute the constructor for the base type to avoid deadlocks in the IDE.
             firClassOrTypeAlias.symbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()
-                ?.fullyExpandedType()?.lookupTag?.toSymbol()
+                ?.fullyExpandedType()?.classLikeLookupTagIfAny?.toSymbol()
                 ?.let { samConstructorsCache.getValue(it, this) }
         }
 
@@ -147,7 +149,7 @@ class FirSamResolver(
         val firRegularClass = when (firClassOrTypeAlias) {
             is FirRegularClass -> firClassOrTypeAlias
             is FirTypeAlias -> firClassOrTypeAlias.symbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()
-                ?.fullyExpandedType()?.lookupTag?.toRegularClassSymbol()?.fir
+                ?.fullyExpandedType()?.toRegularClassSymbol()?.fir
             else -> null
         } ?: return null
 
@@ -248,7 +250,8 @@ class FirSamResolver(
     }
 
     fun buildSamConstructorForTypeAlias(typeAliasSymbol: FirTypeAliasSymbol): FirNamedFunctionSymbol? {
-        val type = typeAliasSymbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return null
+        val type = typeAliasSymbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedClassLikeType()
+            ?: return null
         val expansionRegularClass = type.lookupTag.toRegularClassSymbol()?.fir ?: return null
         val samConstructorForClass = getSamConstructor(expansionRegularClass) ?: return null
 

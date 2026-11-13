@@ -249,12 +249,19 @@ class FirTypeDeserializer(
             else -> ConeClassLikeTypeImpl(constructor, arguments, isMarkedNullable = proto.nullable, attributes)
         }
 
-        val withAbbreviation = proto.abbreviatedType(typeTable)
-            ?.let { rigidType(it, attributes) }
-            ?.let { classLikeType.withAttributes(classLikeType.attributes.add(AbbreviatedTypeAttribute(it))) }
-            ?: classLikeType
+        return classLikeType
+            .withAbbreviationFrom(proto, attributes, Type::abbreviatedType)
+            .toUnionIfNecessary(proto)
+            .withAbbreviationFrom(proto, attributes, Type::unionAbbreviatedType)
+    }
 
-        return withAbbreviation.toUnionIfNecessary(proto)
+    private inline fun ConeRigidType.withAbbreviationFrom(
+        proto: Type,
+        attributes: ConeAttributes,
+        abbreviationFun: (Type, TypeTable) -> Type?
+    ): ConeRigidType {
+        val abbreviatedType = abbreviationFun(proto, typeTable)?.let { rigidType(it, attributes) } ?: return this
+        return withAttributes(this.attributes.add(AbbreviatedTypeAttribute(abbreviatedType)))
     }
 
     private fun ConeRigidType.toUnionIfNecessary(proto: Type): ConeRigidType {

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeUnionType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.useArrayLiteralResolution
@@ -287,7 +288,9 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         val annotationTypeRef = expression.annotationTypeRef
         if (expression.calleeReference is FirErrorNamedReference &&
             annotationTypeRef !is FirErrorTypeRef &&
-            annotationTypeRef.coneType !is ConeClassLikeType
+            annotationTypeRef.coneType !is ConeClassLikeType &&
+            // A type alias may expand to a union type, which is reported as NOT_AN_ANNOTATION_CLASS by the resolver
+            annotationTypeRef.coneType !is ConeUnionType
         ) {
             reporter.reportOn(annotationTypeRef.source, FirErrors.NOT_A_CLASS)
         }

@@ -12,17 +12,25 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeUnionType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.forEachUnionComponentOrSelf
 
 fun ConeKotlinType?.ensureResolvedTypeDeclaration(
     useSiteSession: FirSession,
     requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS,
 ) {
+    if (this is ConeUnionType) {
+        forEachUnionComponentOrSelf { it.ensureResolvedTypeDeclaration(useSiteSession, requiredPhase) }
+        return
+    }
     if (this !is ConeClassLikeType) return
 
     lookupTag.toSymbol(useSiteSession)?.lazyResolveToPhase(requiredPhase)
-    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.lazyResolveToPhase(requiredPhase)
+    fullyExpandedType(useSiteSession).forEachUnionComponentOrSelf {
+        (it as? ConeClassLikeType)?.toSymbol(useSiteSession)?.lazyResolveToPhase(requiredPhase)
+    }
 }
 
 fun FirTypeRef.ensureResolvedTypeDeclaration(

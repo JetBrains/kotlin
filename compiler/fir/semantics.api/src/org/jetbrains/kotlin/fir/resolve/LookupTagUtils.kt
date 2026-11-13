@@ -88,20 +88,20 @@ fun ConeKotlinType.findClassRepresentation(
     dispatchReceiverParameterType: ConeKotlinType,
     session: FirSession
 ): ConeClassLikeLookupTag? =
-    when (this) {
-        is ConeClassLikeType -> this.fullyExpandedType(session).lookupTag
-        is ConeDynamicType -> upperBound.findClassRepresentation(dispatchReceiverParameterType, session)
-        is ConeFlexibleType -> lowerBound.findClassRepresentation(dispatchReceiverParameterType, session)
-        is ConeCapturedType -> constructor.supertypes.orEmpty()
+    when (val expandedType = this.fullyExpandedType(session)) {
+        is ConeClassLikeType -> expandedType.lookupTag
+        is ConeDynamicType -> expandedType.upperBound.findClassRepresentation(dispatchReceiverParameterType, session)
+        is ConeFlexibleType -> expandedType.lowerBound.findClassRepresentation(dispatchReceiverParameterType, session)
+        is ConeCapturedType -> expandedType.constructor.supertypes.orEmpty()
             .findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-        is ConeDefinitelyNotNullType -> original.findClassRepresentation(dispatchReceiverParameterType, session)
-        is ConeIntegerLiteralType -> possibleTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-        is ConeIntersectionType -> intersectedTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-        is ConeUnionType -> primaryType.findClassRepresentation(dispatchReceiverParameterType, session)
-        is ConeTypeParameterType -> lookupTag.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-        is ConeTypeVariableType -> (this.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
+        is ConeDefinitelyNotNullType -> expandedType.original.findClassRepresentation(dispatchReceiverParameterType, session)
+        is ConeIntegerLiteralType -> expandedType.possibleTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeIntersectionType -> expandedType.intersectedTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeUnionType -> expandedType.primaryType.findClassRepresentation(dispatchReceiverParameterType, session)
+        is ConeTypeParameterType -> expandedType.lookupTag.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeTypeVariableType -> (expandedType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
             ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-        is ConeStubType -> (this.constructor.variable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
+        is ConeStubType -> (expandedType.constructor.variable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
             ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
     }
 

@@ -1,0 +1,47 @@
+FILE: typealiasToUnionSmartCast.kt
+    public final error class Foo : R|kotlin/RichError| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final typealias R = R|union(primary=kotlin/String, errors=Foo)|
+    public final fun test1(x: R|{R?=} union(primary=kotlin/String?, errors=Foo)|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, Null(null)) ->  {
+                ^test1 Unit
+            }
+        }
+
+        R|<local>/x||.{ $subj$.R|kotlin/String.length| }
+    }
+    public final fun test2(x: R|{R?=} union(primary=kotlin/String?, errors=Foo)|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| ->  {
+                when () {
+                    ==(R|<local>/x|, Null(null)) ->  {
+                        ^test2 Unit
+                    }
+                }
+
+            }
+            else ->  {
+                when () {
+                    ==(R|<local>/x|, Null(null)) ->  {
+                        ^test2 Unit
+                    }
+                }
+
+            }
+        }
+
+        R|<local>/x||.{ $subj$.R|kotlin/String.length| }
+    }
+    public final fun test3(x: R|{R?=} union(primary=kotlin/String?, errors=Foo)|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x||.{ $subj$.R|kotlin/String.length| }
+            }
+        }
+
+    }

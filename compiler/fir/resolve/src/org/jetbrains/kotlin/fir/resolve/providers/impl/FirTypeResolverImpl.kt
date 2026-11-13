@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -600,7 +599,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         isOperandOfIsOperator: Boolean,
         resolveDeprecations: Boolean,
         supertypeSupplier: SupertypeSupplier,
-        expandTypeAliases: Boolean,
+        expandTypeAliases: TypeExpansionMode,
     ): FirTypeResolutionResult {
         return when (typeRef) {
             is FirResolvedTypeRef -> error("Do not resolve, resolved type-refs")
@@ -620,7 +619,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     else -> expandIfTypeAlias(
                         resolvedType,
                         resolvedTypeSymbol,
-                        expandNonLibraryTypeAlias = expandTypeAliases
+                        expandNonLibraryTypeAlias = expandTypeAliases == All
                     )
                 }
 
@@ -647,10 +646,16 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 }
             }
             is FirUnionTypeRef -> {
-                val coneTypes = typeRef.types.mapTo(mutableListOf()) { it.coneType }
+                val coneTypes = typeRef.types.mapTo(mutableListOf()) {
+                    if (expandTypeAliases != None) {
+                        it.coneType.fullyExpandedType(session) { supertypeSupplier.expansionForTypeAlias(it, session) }
+                    } else {
+                        it.coneType
+                    }
+                }
 
                 val firstType = coneTypes.first()
-                val primaryType = if (firstType.isNonRichError()) {
+                val primaryType = if (firstType.richErrorness(supertypeSupplier) != BoundedByRichError) {
                     coneTypes.removeAt(0)
                     firstType.applyIf(typeRef.isMarkedNullable) {
                         withNullability(true, session.typeContext)
@@ -666,19 +671,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     allowExtensionFunctionType = false,
                 )
                 val unionType = ConeTypeUnifier.unify(primaryType, coneTypes, attributes, session.typeContext)
+                val diagnostic = (unionType as? ConeErrorType)?.diagnostic
+                    ?: coneTypes.firstNotNullOfOrNull { it.richErrorness(supertypeSupplier).nonFirstComponentDiagnostic }
                 FirTypeResolutionResult(
-                    if (coneTypes.any { it.isNonRichError() }) {
-                        ConeErrorType(
-                            ConeSimpleDiagnostic(
-                                "Non-error component must appear first",
-                                NonErrorComponentWrongPositionInUnionType
-                            ),
-                            delegatedType = unionType,
-                            attributes = attributes,
-                        )
-                    } else {
-                        unionType
-                    },
+                    diagnostic?.let { ConeErrorType(it, delegatedType = unionType, attributes = attributes) } ?: unionType,
                     null,
                 )
             }
@@ -714,31 +710,54 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 
-    private fun ConeKotlinType.isNonRichError(): Boolean {
-        return unwrapToSimpleTypeUsingLowerBound().toSymbol(session).let { it != null && !it.isBoundedByRichError() }
+    private enum class RichErrorness(val nonFirstComponentDiagnostic: ConeSimpleDiagnostic?) {
+        NonError(ConeTypeUnifier.NonErrorComponentWrongPositionInUnionTypeDiagnostic),
+        NestedUnionNonError(ConeTypeUnifier.NonErrorComponentInNestedUnionTypeDiagnostic),
+        BoundedByRichError(null),
     }
 
-    private fun FirClassifierSymbol<*>.isBoundedByRichError(): Boolean {
+    private fun ConeKotlinType.richErrorness(supertypeSupplier: SupertypeSupplier): RichErrorness {
+        if (this is ConeUnionType) return if (this.primaryType.isNothing) BoundedByRichError else NestedUnionNonError
+        val symbol = unwrapToSimpleTypeUsingLowerBound().toSymbol(session) ?: return BoundedByRichError
+        return symbol.richErrorness(supertypeSupplier)
+    }
+
+    private fun FirClassifierSymbol<*>.richErrorness(supertypeSupplier: SupertypeSupplier): RichErrorness {
         return when (this) {
-            is FirRegularClassSymbol -> isRichError || classId == StandardClassIds.RichError
-            is FirTypeAliasSymbol -> fullyExpandedClass(sessionForExpansionOrNull(expandNonLibraryTypeAlias = true)!!)?.isBoundedByRichError() == true
+            is FirRegularClassSymbol -> if (isRichError || classId == StandardClassIds.RichError) BoundedByRichError else NonError
+            is FirTypeAliasSymbol -> {
+                val expansionSession = sessionForExpansionOrNull(expandNonLibraryTypeAlias = true)!!
+                // supertypeSupplier.expansionForTypeAlias returns null for recursive type aliases.
+                // We want to return `BoundedByRichError` in this case, so that we don't report bogus
+                // NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE.
+                supertypeSupplier.expansionForTypeAlias(fir, expansionSession)?.richErrorness(supertypeSupplier) ?: BoundedByRichError
+            }
             // It's safe to access fir because own type parameters and containing class type parameter bounds are guaranteed to be resolved
             // before resolving the rest of callable signatures.
-            is FirTypeParameterSymbol -> fir.bounds.any {
-                // We can only encounter unresolved bounds during the first round of type parameter bound resolution,
-                // and even in the second round in red code like `T : T | RichError`.
-                // When the bound is unresolved,
-                // we return true so that we don't produce error types (Non-rich error component must appear first).
-                // Otherwise, the topological sort could be incorrect as we'd miss dependencies in error types.
-                val coneType = it.coneTypeOrNull ?: return@any true
-                if (coneType is ConeUnionType) {
-                    coneType.primaryType.isNothing
-                } else {
-                    !coneType.isNonRichError()
-                }
-            }
-            is FirAnonymousObjectSymbol -> false
+            is FirTypeParameterSymbol -> if (fir.bounds.any {
+                    // We can only encounter unresolved bounds during the first round of type parameter bound resolution,
+                    // and even in the second round in red code like `T : T | RichError`.
+                    // When the bound is unresolved,
+                    // we return `NonError` so that we don't produce error types (Non-rich error component must appear first).
+                    // Otherwise, the topological sort could be incorrect as we'd miss dependencies in error types.
+                    val coneType = it.coneTypeOrNull?.fullyExpandedWith(supertypeSupplier) ?: return@richErrorness BoundedByRichError
+                    coneType.richErrorness(supertypeSupplier) == BoundedByRichError
+                }) BoundedByRichError else NonError
+            is FirAnonymousObjectSymbol -> NonError
         }
+    }
+
+    private fun ConeKotlinType.fullyExpandedWith(supertypeSupplier: SupertypeSupplier): ConeKotlinType {
+        val classLikeType = unwrapToSimpleTypeUsingLowerBound() as? ConeClassLikeType ?: return this
+        val typeAliasSymbol = classLikeType.lookupTag.toSymbol(session) as? FirTypeAliasSymbol ?: return this
+        val expansionSession = typeAliasSymbol.sessionForExpansionOrNull(expandNonLibraryTypeAlias = true)!!
+        // During the SUPER_TYPES phase, the expanded type of the alias is only available through the supplier.
+        // `fullyExpandedType` isn't used, as it would cache an expansion that may be incomplete at this point.
+        val directExpansionType = classLikeType.directExpansionType(expansionSession) {
+            supertypeSupplier.expansionForTypeAlias(it, expansionSession)
+        } ?: return this
+        val expandedType = directExpansionType.fullyExpandedWith(supertypeSupplier)
+        return expandedType.withAbbreviation(AbbreviatedTypeAttribute(classLikeType))
     }
 
     private fun TypeResolutionConfiguration.iterateScopesWithSubstitution(

@@ -125,6 +125,12 @@ fun ProtoBuf.Type.abbreviatedType(typeTable: TypeTable): ProtoBuf.Type? = when {
     else -> null
 }
 
+fun ProtoBuf.Type.unionAbbreviatedType(typeTable: TypeTable): ProtoBuf.Type? = when {
+    hasUnionAbbreviatedType() -> unionAbbreviatedType
+    hasUnionAbbreviatedTypeId() -> typeTable[unionAbbreviatedTypeId]
+    else -> null
+}
+
 fun ProtoBuf.Type.richErrors(typeTable: TypeTable): List<ProtoBuf.Type> =
     richErrorList.takeIf(Collection<*>::isNotEmpty) ?: richErrorIdList.map { typeTable[it] }
 

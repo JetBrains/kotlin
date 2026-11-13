@@ -1950,7 +1950,7 @@ class Fir2IrVisitor(
                         classifierStorage.getIrClassSymbol(symbol)
                     }
                     is FirTypeAliasSymbol -> {
-                        symbol.fir.fullyExpandedConeType(session).toIrClassSymbol()
+                        (symbol.fir.fullyExpandedConeType(session) as? ConeClassLikeType).toIrClassSymbol()
                     }
                     else ->
                         return getClassCall.convertWithOffsets { startOffset, endOffset ->

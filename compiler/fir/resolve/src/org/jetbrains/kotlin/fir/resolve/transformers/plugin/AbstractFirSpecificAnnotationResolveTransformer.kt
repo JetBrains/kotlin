@@ -277,7 +277,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         resolveDeprecations = false,
         // This transformer is only used for COMPILER_REQUIRED_ANNOTATIONS, which is <=SUPER_TYPES,
         // so we can't yet expand typealiases.
-        expandTypeAliases = false,
+        expandTypeAliases = None,
     )
 
     @PrivateForInline

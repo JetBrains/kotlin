@@ -1,0 +1,32 @@
+FILE: typealiasToUnionGeneric.kt
+    public final error class E : R|kotlin/RichError| {
+        public constructor(): R|E| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final typealias ListRes<T> = R|union(primary=kotlin/collections/List<T>, errors=E)|
+    public final fun resString(): R|{ListRes<kotlin/String>=} union(primary=kotlin/collections/List<kotlin/String>, errors=E)| {
+        ^resString R|kotlin/collections/listOf|<R|kotlin/String|>(String())
+    }
+    public final fun resNullableString(): R|{ListRes<kotlin/String?>=} union(primary=kotlin/collections/List<kotlin/String?>, errors=E)| {
+        ^resNullableString R|kotlin/collections/listOf|<R|kotlin/String?|>(Null(null))
+    }
+    public final fun listRes(l: R|kotlin/collections/List<kotlin/Int>|): R|{ListRes<kotlin/Int>=} union(primary=kotlin/collections/List<kotlin/Int>, errors=E)| {
+        ^listRes R|<local>/l|
+    }
+    public final fun listResOfE(l: R|kotlin/collections/List<E>|): R|{ListRes<E>=} union(primary=kotlin/collections/List<E>, errors=E)| {
+        ^listResOfE R|<local>/l|
+    }
+    public final fun nestedListRes(): R|{ListRes<{ListRes<kotlin/Int>=} union(primary=kotlin/collections/List<kotlin/Int>, errors=E)>=} union(primary=kotlin/collections/List<{ListRes<kotlin/Int>=} union(primary=kotlin/collections/List<kotlin/Int>, errors=E)>, errors=E)| {
+        ^nestedListRes R|kotlin/collections/listOf|<R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
+    }
+    public final fun <T> id(x: R|{ListRes<T>=} union(primary=kotlin/collections/List<T>, errors=E)|): R|{ListRes<T>=} union(primary=kotlin/collections/List<T>, errors=E)| {
+        ^id R|<local>/x|
+    }
+    public final fun star(x: R|{ListRes<*>=} union(primary=kotlin/collections/List<*>, errors=E)|): R|kotlin/Unit| {
+    }
+    public final fun inProjection(x: R|{ListRes<in kotlin/Int>=} union(primary=kotlin/collections/List<in kotlin/Int>, errors=E)|): R|kotlin/Unit| {
+    }
+    public final fun mapOfListRes(m: R|kotlin/collections/Map<kotlin/String, {ListRes<kotlin/Int>=} union(primary=kotlin/collections/List<kotlin/Int>, errors=E)>|): R|kotlin/Unit| {
+    }

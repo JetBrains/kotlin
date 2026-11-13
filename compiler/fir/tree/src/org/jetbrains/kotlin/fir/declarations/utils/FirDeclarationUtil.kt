@@ -13,16 +13,21 @@ import org.jetbrains.kotlin.fir.expressions.FirReplExpressionReference
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.isNullableAny
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
-val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
+/**
+ * Can be `null` when [this] expands to a [ConeUnionType].
+ */
+val FirTypeAlias.expandedClassLikeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
+
+val FirTypeAlias.expandedConeType: ConeSimpleKotlinType?
+    get() = expandedTypeRef.coneTypeSafe<ConeKotlinType>()?.asTypeAliasExpansionOrNull()
 
 val FirClassLikeDeclaration.classId: ClassId
     get() = symbol.classId

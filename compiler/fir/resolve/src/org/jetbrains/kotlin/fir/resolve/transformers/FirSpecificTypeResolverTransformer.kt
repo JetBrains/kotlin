@@ -36,7 +36,7 @@ class FirSpecificTypeResolverTransformer(
     private val errorTypeAsResolved: Boolean = true,
     private val resolveDeprecations: Boolean = true,
     private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
-    private val expandTypeAliases: Boolean,
+    private val expandTypeAliases: FirTypeResolver.TypeExpansionMode,
 ) : FirAbstractTreeTransformer<TypeResolutionConfiguration>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver get() = session.typeResolver
 
@@ -110,7 +110,7 @@ class FirSpecificTypeResolverTransformer(
     private fun FirSpecificTypeResolverTransformer.resolveType(
         typeRef: FirTypeRef,
         configuration: TypeResolutionConfiguration,
-        expandTypeAliases: Boolean = true,
+        expandTypeAliases: FirTypeResolver.TypeExpansionMode = All,
     ): FirTypeResolutionResult {
         return typeResolver.resolveType(
             typeRef,

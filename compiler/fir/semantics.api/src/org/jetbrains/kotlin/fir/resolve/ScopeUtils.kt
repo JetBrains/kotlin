@@ -103,8 +103,6 @@ private fun ConeKotlinType.scope(
             useSiteSession,
             scopeSession,
             requiredMembersPhase,
-            memberOwnerLookupTag = lookupTag,
-            memberOwnerClass = null
         )
     }
     is ConeTypeParameterType -> {
@@ -157,10 +155,10 @@ private fun ConeClassLikeType.classScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     requiredMembersPhase: FirResolvePhase?,
-    memberOwnerLookupTag: ConeClassLikeLookupTag,
-    memberOwnerClass: FirClassSymbol<*>?,
 ): FirTypeScope? {
     val fullyExpandedType = fullyExpandedType(useSiteSession)
+    // A type alias may expand to a union type
+    if (fullyExpandedType !is ConeClassLikeType) return fullyExpandedType.scope(useSiteSession, scopeSession, requiredMembersPhase)
     val fir = fullyExpandedType.lookupTag.toClassSymbol(useSiteSession)?.fir ?: return null
     val substitutor = when {
         attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
@@ -170,7 +168,14 @@ private fun ConeClassLikeType.classScope(
         )
     }
 
-    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, memberOwnerClass, memberOwnerLookupTag, requiredMembersPhase)
+    return fir.scopeForClass(
+        substitutor,
+        useSiteSession,
+        scopeSession,
+        memberOwnerClass = null,
+        memberOwnerLookupTag = lookupTag,
+        requiredMembersPhase,
+    )
 }
 
 fun FirClassLikeSymbol<*>.defaultType(): ConeClassLikeType = fir.defaultType()

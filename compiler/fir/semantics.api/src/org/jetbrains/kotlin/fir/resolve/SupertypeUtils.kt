@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 abstract class SupertypeSupplier {
     abstract fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType>
-    abstract fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType?
+    abstract fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeSimpleKotlinType?
 
     object Default : SupertypeSupplier() {
         override fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType> {
@@ -45,7 +45,7 @@ abstract class SupertypeSupplier {
             return firClass.superConeTypes
         }
 
-        override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
+        override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeSimpleKotlinType? {
             typeAlias.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
             return typeAlias.expandedConeType
         }
@@ -208,7 +208,8 @@ private fun computeNonTrivialTypeArgumentForScopeSubstitutor(
 fun ConeClassLikeType.computePartialExpansion(
     useSiteSession: FirSession,
     supertypeSupplier: SupertypeSupplier
-): ConeClassLikeType = fullyExpandedType(useSiteSession) { supertypeSupplier.expansionForTypeAlias(it, useSiteSession) }
+): ConeClassLikeType? =
+    fullyExpandedType(useSiteSession) { supertypeSupplier.expansionForTypeAlias(it, useSiteSession) } as? ConeClassLikeType
 
 private fun FirClassLikeSymbol<*>.collectSuperTypes(
     list: MutableList<ConeClassLikeType>,
@@ -257,7 +258,7 @@ inline fun FirClassLikeSymbol<*>.forEachSupertypeWithInheritor(
                     val superClassTypes =
                         supertypeSupplier.forClass(next.fir, useSiteSession).mapNotNull {
                             it.computePartialExpansion(useSiteSession, supertypeSupplier)
-                                .takeIf { type -> lookupInterfaces || type.isClassBasedType(useSiteSession) }
+                                ?.takeIf { type -> lookupInterfaces || type.isClassBasedType(useSiteSession) }
                         }
                     superClassTypes.forEach {
                         onSupertypeAndInheritor(substitutor.substituteOrSelf(it) as ConeClassLikeType, next)
@@ -274,8 +275,8 @@ inline fun FirClassLikeSymbol<*>.forEachSupertypeWithInheritor(
                     }
                 }
                 is FirTypeAliasSymbol -> {
-                    val expansion = supertypeSupplier
-                        .expansionForTypeAlias(next.fir, useSiteSession)
+                    // A type alias to a union type has no supertypes to traverse
+                    val expansion = (supertypeSupplier.expansionForTypeAlias(next.fir, useSiteSession) as? ConeClassLikeType)
                         ?.computePartialExpansion(useSiteSession, supertypeSupplier)
                         ?: return@act emptyList()
                     listOf(expansion to substitutor)

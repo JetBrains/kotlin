@@ -7257,6 +7257,12 @@ private fun KaDiagnosticConverterBuilder.addConversions152() {
             token,
         )
     }
+    add(FirErrors.TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER) { firDiagnostic ->
+        TypealiasToUnionTypeAsQualifierImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE) { firDiagnostic ->
         NestedClassInExternalInterfaceImpl(
             firDiagnostic as KtDiagnosticWithSource,

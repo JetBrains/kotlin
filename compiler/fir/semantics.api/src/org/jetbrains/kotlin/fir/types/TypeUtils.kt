@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringEras
 import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.wrapProjection
@@ -1143,7 +1144,7 @@ inline fun outerType(
     session: FirSession,
     outerClass: (FirClassLikeSymbol<*>) -> FirClassLikeSymbol<*>?,
 ): ConeClassLikeType? {
-    val fullyExpandedType = classLikeType.fullyExpandedType(session)
+    val fullyExpandedType = classLikeType.fullyExpandedClassLikeType(session) ?: return null
 
     val symbol = fullyExpandedType.lookupTag.toSymbol(session) ?: return null
 

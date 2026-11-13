@@ -38,13 +38,13 @@ annotation class ExplicitlyPassedSession
  * See `/docs/fir/k2_kmp.md`
  *
  * @param useSiteSession Session to be used for classifier lookups, see [toSymbol]
- * @return Type, that is expanded to the concrete class type w.r.t to the [useSiteSession] or the same instance
+ * @return Type, that is expanded to the concrete class or union type w.r.t to the [useSiteSession] or the same instance
  * if top-level constructor is not expandable type alias
  */
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
-): ConeClassLikeType {
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
+): ConeSimpleKotlinType {
     if (this is ConeClassLikeTypeImpl) {
         val [cachedSession, cachedExpandedType] = cachedExpandedType
         if (cachedSession === useSiteSession && cachedExpandedType != null) {
@@ -60,17 +60,17 @@ fun ConeClassLikeType.fullyExpandedType(
 }
 
 context(sessionHolder: SessionHolder)
-fun ConeClassLikeType.fullyExpandedType(): ConeClassLikeType {
+fun ConeClassLikeType.fullyExpandedType(): ConeSimpleKotlinType {
     return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
 @ExplicitlyPassedSession
 context(_: SessionHolder)
-fun ConeClassLikeType.fullyExpandedType(useSiteSession: FirSession): ConeClassLikeType {
+fun ConeClassLikeType.fullyExpandedType(useSiteSession: FirSession): ConeSimpleKotlinType {
     return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
-fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeClassLikeType? {
+fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeSimpleKotlinType? {
     lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
     return expandedConeType
 }
@@ -82,7 +82,7 @@ fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeClassLikeType? {
 @Suppress("SuspiciousWhenOverConeKotlinType") // Not handling intersection types seems a bit suspicious but adding it breaks some tests
 fun ConeKotlinType.fullyExpandedType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeKotlinType = when (this) {
     is ConeDynamicType -> this
     is ConeFlexibleType -> {
@@ -91,6 +91,7 @@ fun ConeKotlinType.fullyExpandedType(
         }
     }
     is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
+    is ConeUnionType -> fullyExpandedUnionType(useSiteSession, expandedConeType)
     else -> this
 }
 
@@ -111,10 +112,11 @@ fun ConeKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeKotlinType
 @Suppress("SuspiciousWhenOverConeKotlinType") // Not handling intersection types seems a bit suspicious but adding it breaks some tests
 fun ConeSimpleKotlinType.fullyExpandedType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeSimpleKotlinType {
     return when (this) {
         is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
+        is ConeUnionType -> fullyExpandedUnionType(useSiteSession, expandedConeType)
         else -> this
     }
 }
@@ -135,7 +137,7 @@ fun ConeSimpleKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeSimp
  */
 fun ConeRigidType.fullyExpandedType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeRigidType {
     return when (this) {
         is ConeSimpleKotlinType -> fullyExpandedType(useSiteSession, expandedConeType)
@@ -157,20 +159,49 @@ fun ConeRigidType.fullyExpandedType(useSiteSession: FirSession): ConeRigidType {
 
 private fun ConeClassLikeType.fullyExpandedTypeNoCache(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType?,
-): ConeClassLikeType {
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType?,
+): ConeSimpleKotlinType {
     val directExpansionType = directExpansionType(useSiteSession, expandedConeType) ?: return this
     val expansion = directExpansionType.fullyExpandedType(useSiteSession, expandedConeType)
     return expansion.withAbbreviation(AbbreviatedTypeAttribute(this))
 }
 
+/**
+ * Expands type aliases in the components of a union type and normalizes the result,
+ * e.g. flattens a component that is itself a type alias to a union type.
+ *
+ * @return the same instance if no component was expanded
+ */
+private fun ConeUnionType.fullyExpandedUnionType(
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType?,
+): ConeSimpleKotlinType {
+    var isAnyComponentExpanded = false
+
+    val expandedPrimary = primaryType.fullyExpandedType(useSiteSession, expandedConeType)
+    if (expandedPrimary !== primaryType) isAnyComponentExpanded = true
+
+    val expandedRichErrorTypes = richErrorTypes.map {
+        val expandedComponent = it.fullyExpandedType(useSiteSession, expandedConeType)
+        if (expandedComponent !== it) isAnyComponentExpanded = true
+        expandedComponent
+    }
+
+    if (!isAnyComponentExpanded) return this
+
+    val unifiedType = ConeTypeUnifier.unify(expandedPrimary, expandedRichErrorTypes, attributes, useSiteSession.typeContext)
+    // Cast should be safe as the only way the result of `unify` is not a `ConeSimpleKotlinType`
+    // is when passing `Nothing` and a single flexible error component to `unify` which shouldn't ever happen.
+    return unifiedType as ConeSimpleKotlinType
+}
+
 fun ConeClassLikeType.directExpansionType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType? = { alias ->
         alias.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
         alias.expandedConeType
     },
-): ConeClassLikeType? {
+): ConeSimpleKotlinType? {
     if (this is ConeErrorType) return null
     val typeAliasSymbol = lookupTag.toTypeAliasSymbol(useSiteSession) ?: return null
     val typeAlias = typeAliasSymbol.fir
@@ -180,21 +211,22 @@ fun ConeClassLikeType.directExpansionType(
         ?.applyAttributesFrom(this)
         ?: return null
 
-    if (resultType.typeArguments.isEmpty()) return resultType
-    return mapTypeAliasArguments(typeAlias, this, resultType, useSiteSession) as? ConeClassLikeType
+    // A union type has no type arguments of its own, but its components may still use the type parameters of the alias
+    if (resultType !is ConeUnionType && resultType.typeArguments.isEmpty()) return resultType
+    return mapTypeAliasArguments(typeAlias, this, resultType, useSiteSession).asTypeAliasExpansionOrNull()
 }
 
-private fun ConeClassLikeType.applyNullabilityFrom(
+private fun <T : ConeSimpleKotlinType> T.applyNullabilityFrom(
     session: FirSession,
     abbreviation: ConeClassLikeType
-): ConeClassLikeType {
+): T {
     if (abbreviation.isMarkedNullable) return withNullability(nullable = true, session.typeContext)
     return this
 }
 
-private fun ConeClassLikeType.applyAttributesFrom(
+private fun <T : ConeSimpleKotlinType> T.applyAttributesFrom(
     abbreviation: ConeClassLikeType
-): ConeClassLikeType {
+): T {
     val combinedAttributes = attributes.add(abbreviation.attributes)
     return withAttributes(combinedAttributes)
 }
@@ -260,20 +292,34 @@ fun FirTypeAlias.createParametersSubstitutor(abbreviatedType: ConeClassLikeType,
 private fun mapTypeAliasArguments(
     typeAlias: FirTypeAlias,
     abbreviatedType: ConeClassLikeType,
-    resultingType: ConeClassLikeType,
+    resultingType: ConeSimpleKotlinType,
     useSiteSession: FirSession,
 ): ConeKotlinType {
     if (typeAlias.typeParameters.isNotEmpty() && abbreviatedType.typeArguments.isEmpty()) {
-        return resultingType.lookupTag.constructClassType(isMarkedNullable = resultingType.isMarkedNullable)
+        return resultingType.withoutArgumentsForBareTypeAlias(useSiteSession.typeContext)
     }
 
     return typeAlias.createParametersSubstitutor(abbreviatedType, useSiteSession).substituteOrSelf(resultingType)
 }
 
 /**
+ * For a bare usage of a generic type alias (`TA` for `typealias TA<T> = List<T>`), the type arguments are dropped from the expansion.
+ */
+private fun ConeKotlinType.withoutArgumentsForBareTypeAlias(typeContext: ConeTypeContext): ConeKotlinType {
+    if (this is ConeClassLikeType) return lookupTag.constructClassType(isMarkedNullable = isMarkedNullable)
+    if (this !is ConeUnionType) return this
+    return ConeTypeUnifier.unify(
+        primaryType.withoutArgumentsForBareTypeAlias(typeContext),
+        richErrorTypes.map { it.withoutArgumentsForBareTypeAlias(typeContext) },
+        attributes,
+        typeContext,
+    )
+}
+
+/**
  * @see fullyExpandedType
  */
-fun FirTypeAlias.fullyExpandedConeType(useSiteSession: FirSession): ConeClassLikeType? {
+fun FirTypeAlias.fullyExpandedConeType(useSiteSession: FirSession): ConeSimpleKotlinType? {
     return expandedConeType?.fullyExpandedType(useSiteSession)
 }
 
@@ -281,9 +327,18 @@ fun FirTypeAlias.fullyExpandedConeType(useSiteSession: FirSession): ConeClassLik
  * @see fullyExpandedType
  */
 fun FirTypeAlias.fullyExpandedClass(session: FirSession): FirClassLikeDeclaration? {
-    return fullyExpandedConeType(session)?.toSymbol(session)?.fir
+    return (fullyExpandedConeType(session) as? ConeClassLikeType)?.toSymbol(session)?.fir
 }
 
 inline fun ConeKotlinType.forEachExpandedType(session: FirSession, action: (ConeKotlinType) -> Unit) {
     forEachType(prepareType = { it.fullyExpandedType(session) }, action = action)
+}
+
+fun ConeKotlinType.fullyExpandedClassLikeType(session: FirSession): ConeClassLikeType? {
+    return fullyExpandedType(session) as? ConeClassLikeType
+}
+
+context(holder: SessionHolder)
+fun ConeKotlinType.fullyExpandedClassLikeType(): ConeClassLikeType? {
+    return fullyExpandedClassLikeType(holder.session)
 }

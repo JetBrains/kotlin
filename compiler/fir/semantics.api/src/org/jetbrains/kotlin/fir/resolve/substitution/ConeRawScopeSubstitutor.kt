@@ -30,7 +30,7 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
                     )
                 }
 
-                val firClass = type.fullyExpandedType(useSiteSession).lookupTag.toRegularClassSymbol(useSiteSession) ?: return null
+                val firClass = type.fullyExpandedType(useSiteSession).toRegularClassSymbol(useSiteSession) ?: return null
                 val nullabilities = BooleanArray(firClass.typeParameterSymbols.size) { index ->
                     type.typeArguments.getOrNull(index)?.type?.isMarkedNullable == true
                 }

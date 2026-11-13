@@ -1,0 +1,45 @@
+public final fun f1(): R|{test/Errs=} union(errors=test/Foo | test/Bar)|
+
+public final fun f2(): R|{test/Res<kotlin/String>=} union(primary=kotlin/collections/List<kotlin/String>, errors=test/Foo)|
+
+public final fun f3(): R|{test/Res<{test/S=} kotlin/String>=} union(primary=kotlin/collections/List<{test/S=} kotlin/String>, errors=test/Foo)|
+
+public final fun f4(): R|{test/Errs?=} union(primary=kotlin/Nothing?, errors=test/Foo | test/Bar)|
+
+public final fun f5(x: R|{test/Res<kotlin/Int>?=} union(primary=kotlin/collections/List<kotlin/Int>?, errors=test/Foo)|): R|union(primary=kotlin/String, errors=test/Foo | test/Bar)|
+
+public final fun <T> f6(x: R|{test/Res<T>=} union(primary=kotlin/collections/List<T>, errors=test/Foo)|): R|{test/Res<T>=} union(primary=kotlin/collections/List<T>, errors=test/Foo)|
+
+public final fun f7(): R|union(primary={test/S=} kotlin/String, errors=test/Foo)|
+
+public final fun f8(): R|{test/SErrs=} union(primary={test/S=} kotlin/String, errors=test/Foo | test/Bar)|
+
+public final error class Bar : R|kotlin/RichError| {
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open fun hashCode(): R|kotlin/Int|
+
+    public open fun toString(): R|kotlin/String|
+
+    public constructor(): R|test/Bar|
+
+}
+
+public final typealias Errs = R|union(errors=test/Foo | test/Bar)|
+
+public final error class Foo : R|kotlin/RichError| {
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open fun hashCode(): R|kotlin/Int|
+
+    public open fun toString(): R|kotlin/String|
+
+    public constructor(): R|test/Foo|
+
+}
+
+public final typealias Res<T> = R|union(primary=kotlin/collections/List<T>, errors=test/Foo)|
+
+public final typealias S = R|kotlin/String|
+
+public final typealias SErrs = R|union(primary={test/S=} kotlin/String, errors=test/Foo | test/Bar)|

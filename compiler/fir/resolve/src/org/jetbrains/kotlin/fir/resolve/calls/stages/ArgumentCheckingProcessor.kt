@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor.argumentTypeWithCustomConversion
@@ -348,7 +349,7 @@ internal object ArgumentCheckingProcessor {
                 val nullableExpectedType = expectedType.withNullability(nullable = true, session.typeContext)
 
                 if (csBuilder.addSubtypeConstraintIfCompatible(
-                        argumentType.applyIf(argumentType is ConeUnionType) { argumentType.primaryType },
+                        argumentType.fullyExpandedType().primaryTypeIfUnion(),
                         nullableExpectedType,
                         position,
                     )

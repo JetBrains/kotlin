@@ -1,0 +1,40 @@
+FILE: typealiasToUnionNested.kt
+    public final error class E1 : R|kotlin/RichError| {
+        public constructor(): R|E1| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class E2 : R|kotlin/RichError| {
+        public constructor(): R|E2| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final typealias R = R|union(primary=kotlin/Int, errors=E1)|
+    public final typealias R2 = R|{R=} union(primary=kotlin/Int, errors=E1)|
+    public final typealias R3 = R|union(primary=kotlin/Int, errors=E1 | E2)|
+    public final typealias S = R|kotlin/String|
+    public final typealias SR = R|union(primary={S=} kotlin/String, errors=E1)|
+    public final typealias F = R|union(primary=kotlin/String, errors=E1 | E2)|
+    public final typealias G = R|union(errors=E1 | E2)|
+    public final fun r2(): R|{R2=} union(primary=kotlin/Int, errors=E1)| {
+        ^r2 Int(1)
+    }
+    public final fun r3(): R|{R3=} union(primary=kotlin/Int, errors=E1 | E2)| {
+        ^r3 R|/E2.E2|()
+    }
+    public final fun sr(): R|{SR=} union(primary={S=} kotlin/String, errors=E1)| {
+        ^sr String()
+    }
+    public final fun f(): R|{F=} union(primary=kotlin/String, errors=E1 | E2)| {
+        ^f R|/E2.E2|()
+    }
+    public final fun g(): R|{G=} union(errors=E1 | E2)| {
+        ^g R|/E1.E1|()
+    }
+    public final fun test(a: R|{R2=} union(primary=kotlin/Int, errors=E1)|, b: R|{R3=} union(primary=kotlin/Int, errors=E1 | E2)|, c: R|{F=} union(primary=kotlin/String, errors=E1 | E2)|): R|kotlin/Unit| {
+        lval a1: R|union(primary=kotlin/Int, errors=E1)| = R|<local>/a|
+        lval b1: R|union(primary=kotlin/Int, errors=E1 | E2)| = R|<local>/b|
+        lval c1: R|union(primary=kotlin/String, errors=E1 | E2)| = R|<local>/c|
+    }

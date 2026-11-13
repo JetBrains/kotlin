@@ -974,17 +974,17 @@ fun ConeKotlinType.fullyExpandedClassId(session: FirSession): ClassId? {
 
 context(_: SessionHolder)
 fun ConeKotlinType.forEachClassId(f: (ClassId) -> Unit) {
-    when (this) {
-        is ConeFlexibleType -> lowerBound.forEachClassId(f)
-        is ConeDefinitelyNotNullType -> original.forEachClassId(f)
-        is ConeCapturedType -> constructor.supertypes?.forEach { it.forEachClassId(f) }
-        is ConeIntersectionType -> intersectedTypes.forEach { it.forEachClassId(f) }
+    when (val expandedType = this.fullyExpandedType()) {
+        is ConeFlexibleType -> expandedType.lowerBound.forEachClassId(f)
+        is ConeDefinitelyNotNullType -> expandedType.original.forEachClassId(f)
+        is ConeCapturedType -> expandedType.constructor.supertypes?.forEach { it.forEachClassId(f) }
+        is ConeIntersectionType -> expandedType.intersectedTypes.forEach { it.forEachClassId(f) }
         is ConeUnionType -> {
-            primaryType.forEachClassId(f)
-            richErrorTypes.forEach { it.forEachClassId(f) }
+            expandedType.primaryType.forEachClassId(f)
+            expandedType.richErrorTypes.forEach { it.forEachClassId(f) }
         }
-        is ConeTypeParameterType -> lookupTag.symbol.resolvedBounds.forEach { it.coneType.forEachClassId(f) }
-        is ConeClassLikeType -> fullyExpandedType().classId.let(f)
+        is ConeTypeParameterType -> expandedType.lookupTag.symbol.resolvedBounds.forEach { it.coneType.forEachClassId(f) }
+        is ConeClassLikeType -> f(expandedType.classId)
         is ConeStubTypeForTypeVariableInSubtyping,
         is ConeTypeVariableType,
         is ConeIntegerLiteralType -> {}

@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
@@ -22,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 
 object FirUpperBoundViolatedTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -50,7 +49,9 @@ object FirUpperBoundViolatedTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
 
         checkUpperBoundViolated(
             typeRef,
+            typeRef.coneType.lowerBoundIfFlexible(),
             isIgnoreTypeParameters = context.containingDeclarations.lastOrNull() is FirTypeAliasSymbol,
+            fallbackSource = typeRef.source,
             isInsideTypeOperatorOrParameterBounds = isInTypeOperatorCall || isInParameterBoundsOfNonClass,
         )
     }

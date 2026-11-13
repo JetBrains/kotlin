@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstit
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -116,7 +115,7 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session, expandTypeAliases = true)
+    private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session, expandTypeAliases = All)
 
     @PrivateForInline
     var currentFile: FirFile? = initialCurrentFile
@@ -338,18 +337,6 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    /** Recursively replaces all resolved type refs with their delegated type refs */
-    private object UnresolveTypeRefs : FirTransformer<Nothing?>() {
-        override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
-            @Suppress("UNCHECKED_CAST")
-            return element.transformChildren(this, data) as E
-        }
-
-        override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): FirTypeRef {
-            return resolvedTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: resolvedTypeRef
-        }
-    }
-
     private fun <T> resolveTypeParameterBounds(declaration: T) where T : FirTypeParameterRefsOwner, T : FirDeclaration {
         if (declaration.typeParameters.isEmpty()) return
 
@@ -380,7 +367,7 @@ open class FirTypeResolveTransformer(
         }.asReversed()
 
         for (typeParameter in sorted) {
-            typeParameter.transformBounds(UnresolveTypeRefs, null)
+            typeParameter.transformBounds(FirUnresolveTypeRefsTransformer, null)
             typeParameter.transformBounds(this, null)
         }
     }

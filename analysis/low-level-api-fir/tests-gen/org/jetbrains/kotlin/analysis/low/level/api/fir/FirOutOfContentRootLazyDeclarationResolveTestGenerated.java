@@ -3052,6 +3052,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("typeAliasToUnionForwardReference.kt")
+    public void testTypeAliasToUnionForwardReference() {
+      run("typeAliasToUnionForwardReference.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasToUnionForwardReferenceNonError.kt")
+    public void testTypeAliasToUnionForwardReferenceNonError() {
+      run("typeAliasToUnionForwardReferenceNonError.kt");
+    }
+
+    @Test
     @TestMetadata("typeAliasWithAnnotationOnType.kt")
     public void testTypeAliasWithAnnotationOnType() {
       run("typeAliasWithAnnotationOnType.kt");

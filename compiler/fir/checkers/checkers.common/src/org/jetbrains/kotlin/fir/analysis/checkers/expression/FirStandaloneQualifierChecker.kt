@@ -41,6 +41,9 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             return true
         }
 
+        // Reported by FirTypeAliasToUnionTypeQualifierChecker
+        if (isTypeAliasToUnionType()) return true
+
         if (isNotResolvedToObject && !isTypeAliasToClassWithCompanion) {
             reporter.reportOn(source, FirErrors.NO_COMPANION_OBJECT, symbol)
             return true

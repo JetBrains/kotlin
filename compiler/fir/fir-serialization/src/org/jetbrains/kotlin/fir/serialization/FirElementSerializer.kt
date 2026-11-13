@@ -1006,7 +1006,8 @@ class FirElementSerializer private constructor(
         // So, the abbreviated type may have been set already by an inner call.
         // Note that in case of an `expect typealias`, the second expansion will
         // erase `AbbreviatedTypeAttribute` of `type`.
-        if (abbreviation != mainType && !mainTypeProto.hasAbbreviatedType() && !abbreviation.containsCapturedTypes) {
+        // In case of a union type, we do have a separate attribute, so we proceed.
+        if (abbreviation != mainType && (mainType is ConeUnionType || !mainTypeProto.hasAbbreviatedType()) && !abbreviation.containsCapturedTypes) {
             val abbreviationProto = typeOrTypealiasProto(
                 abbreviation, toSuper, correspondingTypeRef, isDefinitelyNotNullType,
                 abbreviationOnly = false,
@@ -1014,9 +1015,17 @@ class FirElementSerializer private constructor(
             )
 
             if (useTypeTable()) {
-                mainTypeProto.abbreviatedTypeId = typeTable[abbreviationProto]
+                if (type is ConeUnionType) {
+                    mainTypeProto.unionAbbreviatedTypeId = typeTable[abbreviationProto]
+                } else {
+                    mainTypeProto.abbreviatedTypeId = typeTable[abbreviationProto]
+                }
             } else {
-                mainTypeProto.setAbbreviatedType(abbreviationProto)
+                if (type is ConeUnionType) {
+                    mainTypeProto.setUnionAbbreviatedType(abbreviationProto)
+                } else {
+                    mainTypeProto.setAbbreviatedType(abbreviationProto)
+                }
             }
         }
 
@@ -1101,6 +1110,13 @@ class FirElementSerializer private constructor(
                 return typeProto(approximatedType)
             }
             is ConeUnionType -> {
+                // Union types share the same slot as the primary type.
+                // Rich errors are serialized in the respective repeated field.
+                // Both, union types and their primary type can be annotated and can have abbreviations.
+                // The primary type uses abbreviated_type/abbreviated_type_id and annotation while
+                // the union type uses union_abbreviated_type/union_abbreviated_type_id and union_type_annotation.
+                // Example: @A {X =} (@B {Y =} String) | E1 is serialized with
+                // union_type_annotation=A, union_abbreviated_type=X, annotation=B, abbreviated_type=Y
                 return typeProto(type.primaryType).apply {
                     val useTypeTable = useTypeTable()
                     type.richErrorTypes.forEach {

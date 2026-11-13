@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.expandedClassLikeType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.FirImplicitInvokeCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildImplicitInvokeCall
@@ -121,7 +121,7 @@ fun List<FirAnnotation>.computeTypeAttributes(
 }
 
 private fun FirAnnotation.tryExpandClassId(session: FirSession): ClassId? {
-    return when (val directlyExpanded = unexpandedConeClassLikeType?.directExpansionType(session) { it.expandedConeType }) {
+    return when (val directlyExpanded = unexpandedConeClassLikeType?.directExpansionType(session) { it.expandedClassLikeType }) {
         null -> unexpandedConeClassLikeType?.classId // mutually recursive typealiases
         else -> directlyExpanded.fullyExpandedType(session).classId
     }

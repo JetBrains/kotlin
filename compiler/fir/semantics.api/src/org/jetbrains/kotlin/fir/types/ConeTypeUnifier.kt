@@ -35,7 +35,7 @@ object ConeTypeUnifier {
             return unify(flexiblePrimaryType, lowerBound.richErrorTypes, attributes, typeContext)
         }
 
-        return unifyWithoutFlatteningPrimary(primaryType, attributes, richErrorTypes, typeContext)
+        return unifyWithoutFlatteningPrimary(primaryType, attributes, richErrorTypes)
     }
 
     private fun unify(
@@ -50,7 +50,7 @@ object ConeTypeUnifier {
             return unify(primaryType.primaryType, primaryType.richErrorTypes + richErrorTypes, attributes, typeContext)
         }
 
-        return unifyWithoutFlatteningPrimary(primaryType, attributes, richErrorTypes, typeContext)
+        return unifyWithoutFlatteningPrimary(primaryType, attributes, richErrorTypes)
     }
 
     @OptIn(DelicateUnionConstructor::class)
@@ -58,25 +58,20 @@ object ConeTypeUnifier {
         primaryType: ConeKotlinType,
         attributes: ConeAttributes,
         richErrorTypes: List<ConeKotlinType>,
-        typeContext: ConeTypeContext,
     ): ConeKotlinType {
         require(primaryType !is ConeUnionType) { "Primary type must not be a union type" }
 
         val flattenedErrorTypes = richErrorTypes.flatMap { it.flattenRecursively() }
 
-        if (flattenedErrorTypes.size == 1 && primaryType.isNothingOrNullableNothing) {
-            return flattenedErrorTypes.single().withNullability(primaryType.isMarkedNullable, typeContext, attributes)
+        if (flattenedErrorTypes.size == 1 && primaryType.isNothing) {
+            return flattenedErrorTypes.single().withAttributes(attributes)
         }
 
         val unionType = ConeUnionType(primaryType, flattenedErrorTypes.distinctBy { it.lookupTagIfAny }, attributes)
 
         for (richError in flattenedErrorTypes) {
             if (richError is ConeErrorType) return ConeErrorType(richError.diagnostic, delegatedType = unionType)
-            if (richError.isMarkedNullable)
-                return ConeErrorType(
-                    ConeSimpleDiagnostic("Nullable error component", NullableErrorComponentInUnionType),
-                    delegatedType = unionType
-                )
+            if (richError.isMarkedNullable) return ConeErrorType(NullableErrorComponentInUnionTypeDiagnostic, delegatedType = unionType)
         }
 
         return unionType
@@ -86,8 +81,8 @@ object ConeTypeUnifier {
         return if (this is ConeUnionType) {
             if (!primaryType.isNothing) {
                 val diagnostic = when {
-                    primaryType.isNullableNothing -> ConeSimpleDiagnostic("Nullable nested union type", NullableNestedUnionType)
-                    else -> ConeSimpleDiagnostic("Non-error component in nested union type", NonErrorComponentInNestedUnionType)
+                    primaryType.isNullableNothing -> NullableNestedUnionTypeDiagnostic
+                    else -> NonErrorComponentInNestedUnionTypeDiagnostic
                 }
                 return [ConeErrorType(diagnostic, delegatedType = this)]
             }
@@ -96,4 +91,13 @@ object ConeTypeUnifier {
             [this]
         }
     }
+
+    val NullableErrorComponentInUnionTypeDiagnostic: ConeSimpleDiagnostic =
+        ConeSimpleDiagnostic("Nullable error component", NullableErrorComponentInUnionType)
+    val NullableNestedUnionTypeDiagnostic: ConeSimpleDiagnostic =
+        ConeSimpleDiagnostic("Nullable nested union type", NullableNestedUnionType)
+    val NonErrorComponentInNestedUnionTypeDiagnostic: ConeSimpleDiagnostic =
+        ConeSimpleDiagnostic("Non-error component in nested union type", NonErrorComponentInNestedUnionType)
+    val NonErrorComponentWrongPositionInUnionTypeDiagnostic: ConeSimpleDiagnostic =
+        ConeSimpleDiagnostic("Non-error component must appear first", NonErrorComponentWrongPositionInUnionType)
 }
