@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
-import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
+import org.jetbrains.kotlin.backend.konan.lower.getLoweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
@@ -1665,7 +1665,7 @@ internal object DevirtualizationAnalysis {
         val getObjectTypeInfo = symbols.getObjectTypeInfo
         val createUninitializedInstance = symbols.createUninitializedInstance
         val kClassImplType = symbols.kClassImpl.defaultType
-        val kClassImplConstructorImpl = symbols.kClassImplConstructor.owner.loweredConstructorFunction!!
+        val kClassImplConstructorImpl = context.getLoweredConstructorFunction(symbols.kClassImplConstructor.owner)
         val throwInvalidReceiverTypeException = symbols.throwInvalidReceiverTypeException
 
         val optimize = context.shouldOptimize()
