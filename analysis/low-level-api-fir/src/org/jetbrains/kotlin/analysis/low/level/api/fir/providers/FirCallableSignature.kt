@@ -30,6 +30,19 @@ class FirCallableSignature private constructor(
     private val contextParameterTypes: List<String>,
     private val valueParameterTypes: List<String>?,
     /**
+     * The index of the `vararg` value parameter, if any. The type of a `vararg` parameter is its array type, so the index tells apart
+     * overloads such as:
+     *
+     * ```kotlin
+     * fun foo(vararg x: Int)
+     * fun foo(x: IntArray)
+     *
+     * fun foo(vararg x: Int, y: IntArray)
+     * fun foo(x: IntArray, vararg y: Int)
+     * ```
+     */
+    private val varargParameterIndex: Int?,
+    /**
      * The names and bounds of the type parameters. Types render type parameters by name only, so the bounds tell apart overloads
      * such as:
      *
@@ -57,6 +70,7 @@ class FirCallableSignature private constructor(
         if (contextParameterTypes.size != declaration.contextParameters.size) return false
         if (typeParameters.size != declaration.typeParameters.size) return false
         if (valueParameterTypes?.size != function?.valueParameters?.size) return false
+        if (varargParameterIndex != function?.varargParameterIndex) return false
 
         declaration.lazyResolveToPhase(FirResolvePhase.TYPES)
         if (receiverType != declaration.receiverParameter?.typeRef?.renderType()) return false
@@ -86,6 +100,7 @@ class FirCallableSignature private constructor(
         if (receiverType != other.receiverType) return false
         if (contextParameterTypes != other.contextParameterTypes) return false
         if (valueParameterTypes != other.valueParameterTypes) return false
+        if (varargParameterIndex != other.varargParameterIndex) return false
         if (typeParameters != other.typeParameters) return false
         return returnType == other.returnType
     }
@@ -94,6 +109,7 @@ class FirCallableSignature private constructor(
         var result = receiverType.hashCode()
         result = 31 * result + contextParameterTypes.hashCode()
         result = 31 * result + valueParameterTypes.hashCode()
+        result = 31 * result + varargParameterIndex.hashCode()
         result = 31 * result + typeParameters.hashCode()
         result = 31 * result + returnType.hashCode()
         return result
@@ -104,17 +120,22 @@ class FirCallableSignature private constructor(
         fun createSignature(callableSymbol: FirCallableSymbol<*>): FirCallableSignature {
             val declaration = callableSymbol.fir
             declaration.lazyResolveToPhase(FirResolvePhase.TYPES)
+            val function = declaration as? FirFunction
 
             return FirCallableSignature(
                 receiverType = declaration.receiverParameter?.typeRef?.renderType(),
                 contextParameterTypes = declaration.contextParameters.map { it.returnTypeRef.renderType() },
-                valueParameterTypes = (declaration as? FirFunction)?.valueParameters?.map { it.returnTypeRef.renderType() },
+                valueParameterTypes = function?.valueParameters?.map { it.returnTypeRef.renderType() },
+                varargParameterIndex = function?.varargParameterIndex,
                 typeParameters = declaration.typeParameters.map { it.renderTypeParameter() },
                 returnType = callableSymbol.resolvedReturnTypeRef.renderType(),
             )
         }
     }
 }
+
+private val FirFunction.varargParameterIndex: Int?
+    get() = valueParameters.indexOfFirst { it.isVararg }.takeIf { it >= 0 }
 
 private fun FirTypeParameterRef.renderTypeParameter(): String =
     symbol.resolvedBounds.joinToString(prefix = "${symbol.name} : ") { it.renderType() }

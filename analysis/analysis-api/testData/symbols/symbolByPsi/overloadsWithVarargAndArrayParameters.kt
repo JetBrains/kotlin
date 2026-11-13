@@ -1,6 +1,5 @@
 // KT-91580
 // WITH_STDLIB
-// DO_NOT_REQUIRE_DISTINCT_NON_PSI_SYMBOL_POINTERS
 package test
 
 fun foo(vararg x: Int) {}
