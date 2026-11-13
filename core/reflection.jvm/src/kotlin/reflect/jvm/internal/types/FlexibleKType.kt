@@ -50,11 +50,18 @@ internal class FlexibleKType private constructor(
         create(lowerBound.makeNullableAsSpecified(nullable), upperBound.makeNullableAsSpecified(nullable), isRawType)
 
     override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType =
-        create(
-            lowerBound.makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull),
-            upperBound.makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull),
-            isRawType,
-        )
+        if (isDefinitelyNotNull) {
+            // See `DefinitelyNotNullType.makeDefinitelyNotNull` in the compiler.
+            lowerBound.makeDefinitelyNotNullAsSpecified(true).let {
+                if (it.isDefinitelyNotNullType) it else makeNullableAsSpecified(false)
+            }
+        } else {
+            create(
+                lowerBound.makeDefinitelyNotNullAsSpecified(false),
+                upperBound.makeDefinitelyNotNullAsSpecified(false),
+                isRawType,
+            )
+        }
 
     override fun lowerBoundIfFlexible(): AbstractKType = lowerBound
     override fun upperBoundIfFlexible(): AbstractKType = upperBound
