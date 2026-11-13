@@ -124,6 +124,13 @@ fun box() {
 // test.kt:22 C_init_$Init$
 // test.kt:36 box
 
+// EXPECTATIONS JS_IR_ES6
+// test.kt:32 box
+// test.kt:33 box
+// test.kt:34 box
+// test.kt:35 box
+// test.kt:36 box
+
 // EXPECTATIONS WASM_JS
 // test.kt:33 $box (12)
 // test.kt:6 $O.<init> (8)

@@ -18,7 +18,7 @@ fun box() {
 
 // EXPECTATIONS NATIVE
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:10 box
 // test.kt:10 box
 // test.kt:6 main

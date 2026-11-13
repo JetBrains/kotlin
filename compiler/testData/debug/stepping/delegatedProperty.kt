@@ -70,11 +70,13 @@ fun box() {
 // test.kt:7 <set-x>
 // test.kt:24 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:21 box
+// EXPECTATIONS JS_IR
 // test.kt:7 <init>
 // test.kt:10 <init>
 // test.kt:4 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:22 box
 // test.kt:12 getValue
 // test.kt:23 box

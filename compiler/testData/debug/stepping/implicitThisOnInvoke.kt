@@ -49,12 +49,16 @@ fun test(b: B) {
 // test.kt:18 test
 // test.kt:6 box
 
+// EXPECTATIONS JS_IR JS_IR_ES6
+// test.kt:5 box
 // EXPECTATIONS JS_IR
-// test.kt:5 box
 // test.kt:8 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:5 box
+// EXPECTATIONS JS_IR
 // test.kt:10 <init>
 // test.kt:10 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:5 box
 // test.kt:16 test
 // test.kt:11 invoke

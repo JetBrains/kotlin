@@ -98,6 +98,13 @@ suspend fun box() {
 // test.kt:12 doResume
 // test.kt:18 doResume
 
+// EXPECTATIONS JS_IR_ES6
+// test.kt:12 foo
+// test.kt:17 box
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:18 box
+
 // EXPECTATIONS: WASM
 // test.kt:18 $box (1)
 // coroutineHelpers.kt:9 $EmptyContinuation.<get-context> (37)

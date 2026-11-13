@@ -41,18 +41,24 @@ fun box() {
 // test.kt:13 $getEnumAt
 // test.kt:19 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:16 box
 // test.kt:4 E$static_init
+// EXPECTATIONS JS_IR
 // test.kt:3 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:6 E$static_init
+// EXPECTATIONS JS_IR
 // test.kt:6 <init>
 // test.kt:3 <init>
 // test.kt:6 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:10 E$static_init
+// EXPECTATIONS JS_IR
 // test.kt:10 <init>
 // test.kt:3 <init>
 // test.kt:10 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:17 box
 // test.kt:18 box
 // test.kt:19 box

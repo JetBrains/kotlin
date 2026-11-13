@@ -85,7 +85,7 @@ fun box(): String {
 
 // test.kt:25 $box (11, 4)
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:11 box
 // test.kt:11 box
 // test.kt:11 box

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.runners
 
+import org.jetbrains.kotlin.js.test.utils.configureSteppingTests
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -151,5 +152,20 @@ abstract class AbstractJsES6CodegenWasmJsInteropTest : AbstractJsES6Test(
 private fun TestConfigurationBuilder.useConstLet() {
     defaultDirectives {
         +USE_CONST_AND_LET_FOR_VARIABLES
+    }
+}
+
+abstract class AbstractJsES6SteppingTest(
+    testGroupOutputDirPrefix: String = "debug/steppingEs6/"
+) : AbstractJsES6Test(
+    pathToTestDir = "compiler/testData/debug/stepping/",
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+) {
+    override val enableBoxHandlers: Boolean
+        get() = false
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureSteppingTests()
     }
 }
