@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.renderer.ConeAttributeRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeIdFullRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
@@ -28,7 +29,23 @@ class FirCallableSignature private constructor(
     private val receiverType: String?,
     private val contextParameterTypes: List<String>,
     private val valueParameterTypes: List<String>?,
-    private val typeParametersCount: Int,
+    /**
+     * The names and bounds of the type parameters. Types render type parameters by name only, so the bounds tell apart overloads
+     * such as:
+     *
+     * ```kotlin
+     * fun <T : A> foo(x: T)
+     * fun <T : B> foo(x: T)
+     * ```
+     *
+     * The names tell apart overloads whose bounds are the same by position:
+     *
+     * ```kotlin
+     * fun <T : A, U : B> foo(x: T, y: U)
+     * fun <U : A, T : B> foo(x: T, y: U)
+     * ```
+     */
+    private val typeParameters: List<String>,
     private val returnType: String,
 ) {
     /**
@@ -38,7 +55,7 @@ class FirCallableSignature private constructor(
         val function = declaration as? FirFunction
         if ((receiverType == null) != (declaration.receiverParameter == null)) return false
         if (contextParameterTypes.size != declaration.contextParameters.size) return false
-        if (typeParametersCount != declaration.typeParameters.size) return false
+        if (typeParameters.size != declaration.typeParameters.size) return false
         if (valueParameterTypes?.size != function?.valueParameters?.size) return false
 
         declaration.lazyResolveToPhase(FirResolvePhase.TYPES)
@@ -55,6 +72,10 @@ class FirCallableSignature private constructor(
             }
         }
 
+        for ([index, typeParameter] in declaration.typeParameters.withIndex()) {
+            if (typeParameters[index] != typeParameter.renderTypeParameter()) return false
+        }
+
         return returnType == declaration.symbol.resolvedReturnTypeRef.renderType()
     }
 
@@ -65,7 +86,7 @@ class FirCallableSignature private constructor(
         if (receiverType != other.receiverType) return false
         if (contextParameterTypes != other.contextParameterTypes) return false
         if (valueParameterTypes != other.valueParameterTypes) return false
-        if (typeParametersCount != other.typeParametersCount) return false
+        if (typeParameters != other.typeParameters) return false
         return returnType == other.returnType
     }
 
@@ -73,7 +94,7 @@ class FirCallableSignature private constructor(
         var result = receiverType.hashCode()
         result = 31 * result + contextParameterTypes.hashCode()
         result = 31 * result + valueParameterTypes.hashCode()
-        result = 31 * result + typeParametersCount.hashCode()
+        result = 31 * result + typeParameters.hashCode()
         result = 31 * result + returnType.hashCode()
         return result
     }
@@ -88,12 +109,15 @@ class FirCallableSignature private constructor(
                 receiverType = declaration.receiverParameter?.typeRef?.renderType(),
                 contextParameterTypes = declaration.contextParameters.map { it.returnTypeRef.renderType() },
                 valueParameterTypes = (declaration as? FirFunction)?.valueParameters?.map { it.returnTypeRef.renderType() },
-                typeParametersCount = declaration.typeParameters.size,
+                typeParameters = declaration.typeParameters.map { it.renderTypeParameter() },
                 returnType = callableSymbol.resolvedReturnTypeRef.renderType(),
             )
         }
     }
 }
+
+private fun FirTypeParameterRef.renderTypeParameter(): String =
+    symbol.resolvedBounds.joinToString(prefix = "${symbol.name} : ") { it.renderType() }
 
 private fun FirTypeRef.renderType(): String = FirRenderer(
     annotationRenderer = null,

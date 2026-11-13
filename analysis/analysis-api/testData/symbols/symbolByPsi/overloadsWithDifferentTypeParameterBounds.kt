@@ -1,5 +1,4 @@
 // KT-91552
-// DO_NOT_REQUIRE_DISTINCT_NON_PSI_SYMBOL_POINTERS
 package test
 
 interface A
