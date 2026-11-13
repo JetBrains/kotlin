@@ -155,8 +155,7 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
      */
     @Test
     fun importAliasedAnnotation(ktFile: KtFile, testServices: TestServices) {
-        // ERROR: should produce "other.MyAnnotation"
-        assertAnnotationsOnMyClass(ktFile, testServices)
+        assertAnnotationsOnMyClass(ktFile, testServices, "other.MyAnnotation")
     }
 
     /**
@@ -165,8 +164,7 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
      */
     @Test
     fun importAliasedAnnotationByOriginalName(ktFile: KtFile, testServices: TestServices) {
-        // ERROR: should produce no annotation
-        assertAnnotationsOnMyClass(ktFile, testServices, "other.MyAnnotation")
+        assertAnnotationsOnMyClass(ktFile, testServices)
     }
 
     /**
