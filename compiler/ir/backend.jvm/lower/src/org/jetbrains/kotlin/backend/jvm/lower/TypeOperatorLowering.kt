@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,9 +27,6 @@ import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.types.Variance
 
 /**
@@ -155,11 +149,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                 irComposite(resultType = expression.type) {
                     +expression.argument.transformVoid()
                     // TODO: Don't generate these casts in the first place
-                    // in K1, the nullable types had to be treated as compatible for Java interop (due to the absence of flexible nullability)
-                    val expressionExtendedType =
-                        if (backendContext.config.languageVersionSettings.languageVersion.usesK2) expression.type
-                        else expression.type.makeNullable()
-                    if (!expression.argument.type.isSubtypeOf(expressionExtendedType, backendContext.typeSystem)) {
+                    if (!expression.argument.type.isSubtypeOf(expression.type, backendContext.typeSystem)) {
                         +IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type)
                     }
                 }
@@ -229,59 +219,17 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         }
     }
 
-    private fun IrBuilderWithScope.computeNotNullAssertionText(typeOperatorCall: IrTypeOperatorCall): String? {
-        if (backendContext.config.noSourceCodeInNotNullAssertionExceptions) {
-            return when (val argument = typeOperatorCall.argument) {
-                is IrCall -> "${argument.symbol.owner.name.asString()}(...)"
-                is IrGetField -> {
-                    val field = argument.symbol.owner
-                    field.name.asString().takeUnless { field.origin.isSynthetic }
-                }
-                else -> null
+    private fun computeNotNullAssertionText(typeOperatorCall: IrTypeOperatorCall): String? =
+        when (val argument = typeOperatorCall.argument) {
+            is IrCall -> "${argument.symbol.owner.name.asString()}(...)"
+            is IrGetField -> {
+                val field = argument.symbol.owner
+                field.name.asString().takeUnless { field.origin.isSynthetic }
             }
+            else -> null
         }
-
-        val owner = scope.scopeOwnerSymbol.owner
-        if (owner is IrFunction && owner.isDelegated())
-            return "${owner.name.asString()}(...)"
-
-        val declarationParent = parent as? IrDeclaration
-        val sourceView = declarationParent?.let(::sourceViewFor)
-        val [startOffset, endOffset] = typeOperatorCall.extents()
-        return if (sourceView?.validSourcePosition(startOffset, endOffset) == true) {
-            sourceView.subSequence(startOffset, endOffset).toString()
-        } else {
-            // Fallback for inconsistent line numbers
-            (declarationParent as? IrDeclarationWithName)?.name?.asString() ?: "Unknown Declaration"
-        }
-    }
 
     private fun String.trimForRuntimeAssertion() = StringUtil.trimMiddle(this, 50)
-
-    private fun IrFunction.isDelegated() =
-        origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
-                origin == IrDeclarationOrigin.DELEGATED_MEMBER
-
-    private fun CharSequence.validSourcePosition(startOffset: Int, endOffset: Int): Boolean =
-        startOffset in 0 until endOffset && endOffset < length
-
-    private fun IrElement.extents(): Pair<Int, Int> {
-        var startOffset = Int.MAX_VALUE
-        var endOffset = 0
-        acceptVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-                if (element.startOffset in 0 until startOffset)
-                    startOffset = element.startOffset
-                if (endOffset < element.endOffset)
-                    endOffset = element.endOffset
-            }
-        })
-        return startOffset to endOffset
-    }
-
-    private fun sourceViewFor(declaration: IrDeclaration): CharSequence? =
-        declaration.fileParent.getKtFile()?.viewProvider?.contents
 
     private val throwTypeCastException: IrSimpleFunctionSymbol =
         backendContext.symbols.throwTypeCastException
