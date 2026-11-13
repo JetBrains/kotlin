@@ -178,6 +178,3 @@ kotlin {
         }
     }
 }
-kotlin.sourceSets.all {
-    it.languageSettings.enableLanguageFeature("InlineClasses")
-}
