@@ -1,0 +1,68 @@
+/**
+ * public final value class Money : kotlin/Any {
+ *
+ *   // signature: <init>(JLjava/lang/String;)V
+ *   public constructor(cents: kotlin/Long, currency: kotlin/String)
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: cents:J
+ *   // getter: getCents()J
+ *   public final val cents: kotlin/Long
+ *     public final get
+ *
+ *   // field: currency:Ljava/lang/String;
+ *   // getter: getCurrency()Ljava/lang/String;
+ *   public final val currency: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Money {
+    private final long cents = 0L;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String currency = null;
+
+    public Money(long cents, @org.jetbrains.annotations.NotNull()
+    java.lang.String currency) {
+        super();
+    }
+
+    public final long getCents() {
+        return 0L;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getCurrency() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
