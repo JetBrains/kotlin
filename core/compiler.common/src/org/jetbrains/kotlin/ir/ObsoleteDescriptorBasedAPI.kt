@@ -16,7 +16,6 @@ package org.jetbrains.kotlin.ir
 @Target(
     AnnotationTarget.CLASS,
     AnnotationTarget.PROPERTY,
-    AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.FUNCTION,
     AnnotationTarget.TYPEALIAS
 )

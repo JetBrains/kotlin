@@ -22,7 +22,6 @@ import kotlin.annotation.AnnotationTarget.*
     PROPERTY,
     FIELD,
     LOCAL_VARIABLE,
-    VALUE_PARAMETER,
     CONSTRUCTOR,
     FUNCTION,
     PROPERTY_GETTER,
