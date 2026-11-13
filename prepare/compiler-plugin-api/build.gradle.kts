@@ -17,6 +17,7 @@ dependencies {
     // Add stdlib as a transitive dependency.
     runtimeOnly(kotlinStdlib())
 
+    artifactContent(project(":core:language.targets.jvm"))
     artifactContent(project(":compiler:fir:plugin.api"))
     artifactContent(project(":compiler:ir.backend.common"))
     artifactContent(project(":compiler:plugin-api"))
