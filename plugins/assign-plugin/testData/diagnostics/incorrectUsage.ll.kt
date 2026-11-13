@@ -19,7 +19,7 @@ data class Task(val input: StringProperty)
 
 fun `should report error if type doesn't match`() {
     val task = Task(StringProperty("Fail"))
-    <!NONE_APPLICABLE!>task.input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> 42
+    task.<!NONE_APPLICABLE!>input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> 42
 }
 
 fun `should report error if type doesn't match with apply`() {

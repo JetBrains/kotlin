@@ -19,8 +19,8 @@ data class Task(val input: StringProperty)
 
 fun `should report error if type doesn't match`() {
     val task = Task(StringProperty("Fail"))
-    <!UNRESOLVED_REFERENCE!>task.input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> ""
-    <!UNRESOLVED_REFERENCE!>task.input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> 1
+    task.<!UNRESOLVED_REFERENCE!>input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> ""
+    task.<!UNRESOLVED_REFERENCE!>input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> 1
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, data, funWithExtensionReceiver, functionDeclaration,
