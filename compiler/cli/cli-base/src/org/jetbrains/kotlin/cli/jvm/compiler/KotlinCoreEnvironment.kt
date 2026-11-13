@@ -255,12 +255,12 @@ class KotlinCoreEnvironment private constructor(
             perfManager,
         )
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null, perfManager)
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, enableSearchInCtSym = releaseTarget != null, perfManager)
         project.registerService(
             JavaModuleResolver::class.java,
             CliJavaModuleResolver(
                 classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(),
-                fileFinderFactory.create(JvmClasspath.ProjectLibraries())::findSourceOrBinaryClassFile,
+                fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
             )
         )
 

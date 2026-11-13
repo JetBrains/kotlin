@@ -667,7 +667,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             JavaModuleResolver::class.java,
             CliJavaModuleResolver(
                 classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(),
-                fileFinderFactory.create(JvmClasspath.ProjectLibraries())::findSourceOrBinaryClassFile,
+                fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
             )
         )
 

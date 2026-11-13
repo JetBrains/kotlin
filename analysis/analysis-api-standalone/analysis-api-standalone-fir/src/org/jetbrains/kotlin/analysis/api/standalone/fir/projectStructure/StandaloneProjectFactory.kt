@@ -292,12 +292,11 @@ object StandaloneProjectFactory {
         //
         // Note that the registered `JavaModuleResolver` will still be the `KaFirJavaModuleResolver` registered by the Analysis API engine,
         // not `CliJavaModuleResolver`.
-        val classpathFinder = fileFinderFactory.create(JvmClasspath.ProjectLibraries())
         val delegateJavaModuleResolver = CliJavaModuleResolver(
             javaModuleGraph,
             emptyList(),
             javaModuleFinder.systemModules.toList(),
-            findSourceOrBinaryClassFile = classpathFinder::findSourceOrBinaryClassFile,
+            classpathFinder = fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
         )
         project.registerService(
             KotlinJavaModuleAccessibilityChecker::class.java,

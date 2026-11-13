@@ -68,7 +68,7 @@ class CliVirtualFileFinder private constructor(
         perfManager: PerformanceManager?,
     ) : this(index, JvmClasspathRootFilter(classpath), enableSearchInCtSym, kotlinClassesFromHandles = true, perfManager)
 
-    // The two `VirtualFile` lookups stay for the backend (`inlineCodegenUtils.findVirtualFile`) and IDE/K1 code.
+    // The two `VirtualFile` lookups stay for the backend (`inlineCodegenUtils.findVirtualFile`) and the IDE.
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
         findBinaryOrSigClass(classId)?.file
 
