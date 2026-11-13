@@ -11,8 +11,6 @@ dependencies {
     api(project(":compiler:frontend.common"))
 
     compileOnly(intellijCore())
-    compileOnly(libs.guava)
-    compileOnly(libs.intellij.fastutil)
 
     implementation(project(":compiler:psi:psi-api"))
 
