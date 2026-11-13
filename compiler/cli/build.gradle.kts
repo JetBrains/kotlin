@@ -8,9 +8,6 @@ plugins {
 dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:cli-base"))
-    implementation(project(":compiler:container"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend:cfg"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":core:descriptors"))

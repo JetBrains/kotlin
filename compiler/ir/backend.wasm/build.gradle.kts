@@ -22,7 +22,6 @@ dependencies {
     implementation(project(":core:compiler.common.wasm"))
     implementation(project(":core:compiler.common.js"))
     implementation(project(":core:descriptors"))
-    implementation(project(":compiler:ir.psi2ir"))
 
     // TODO(KT-79631): Remove these dependencies when we rewrite TS export to Analysis API
     api(project(":js:typescript-export-model"))

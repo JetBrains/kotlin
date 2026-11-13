@@ -11,7 +11,6 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend.common-psi"))
-    compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:fir:plugin.api"))
     compileOnly(project(":compiler:ir.backend.common"))
 

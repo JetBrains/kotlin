@@ -12,7 +12,6 @@ dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.inline"))
-    implementation(project(":compiler:ir.psi2ir"))
     api(project(":compiler:ir.serialization.common"))
     api(project(":compiler:ir.serialization.js"))
     api(project(":js:js.ast"))

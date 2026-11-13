@@ -16,7 +16,6 @@ dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:error.handling"))
     implementation(project(":compiler:ir.backend.common"))
-    implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
     implementation(project(":compiler:plugin-api"))

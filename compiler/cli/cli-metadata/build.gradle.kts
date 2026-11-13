@@ -17,7 +17,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-jvm"))
     implementation(project(":compiler:fir:fir2ir"))
     implementation(project(":compiler:fir:fir-serialization"))
-    implementation(project(":compiler:serialization"))
+    implementation(project(":compiler:serialization.common"))
     implementation(project(":wasm:wasm.frontend"))
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:entrypoint"))

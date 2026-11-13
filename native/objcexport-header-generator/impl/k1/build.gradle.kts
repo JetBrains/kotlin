@@ -40,7 +40,6 @@ dependencies {
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:psi:psi-impl"))
-    implementation(project(":compiler:resolution"))
     implementation(project(":core:util.runtime"))
     implementation(project(":kotlin-tooling-core"))
     implementation(project(":kotlin-util-klib"))
