@@ -365,9 +365,13 @@ internal object KotlinJsBrowserTestMetrics : FusMetrics {
     internal fun collectMetrics(project: Project, jdBrowserRunner: KotlinBrowserTestRunnerDsl) {
         // KT-90126: runners of unsupported types are reported via a diagnostic, FUS should not fail on them
         val browserKind = jdBrowserRunner.getBrowserKindOrNull() ?: return
-        project.addConfigurationMetrics { metricContainer ->
-            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, browserKind.browserName)
-            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION, jdBrowserRunner.optionsChangedFromDefaults())
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
+            //KT-91219: for default tests location access `testsLocation` leads to a task creation `KotlinJsIrCompilation.registerTestLocations`
+            val changedOptions = jdBrowserRunner.optionsChangedFromDefaults()
+            project.addConfigurationMetrics { metricContainer ->
+                metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, browserKind.browserName)
+                metricContainer.put(StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION, changedOptions)
+            }
         }
     }
 
