@@ -67,7 +67,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         return builderSymbol.typeParameterSymbols.elementAtOrNull(builderSymbol.typeParameterSymbols.size - BUILDER_TYPE_PARAMETER_INDEX_FROM_END)?.defaultType
     }
 
-    override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
+    override fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addSpecialBuilderMethods(
         builder: SuperBuilder,
         builderSymbol: FirClassSymbol<*>,
         ownerDeclaration: FirDeclaration,
