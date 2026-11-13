@@ -1,0 +1,10 @@
+KT element: KtPrimaryConstructor
+KT element text:
+public constructor()
+FIR element: FirPrimaryConstructor
+FIR source kind: null
+FIR container source: KotlinJvmBinarySourceElement Class 'test.MyClass'
+File name: MyClass.class
+
+FIR element rendered:
+public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|test/MyClass|

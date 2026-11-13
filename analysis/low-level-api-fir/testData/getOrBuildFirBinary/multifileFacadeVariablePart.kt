@@ -1,3 +1,5 @@
+// IGNORE_STANDALONE
+// `LLStandaloneFirElementByPsiElementChooser` crashes on building FIR type references with `createEmptySession()`
 // MAIN_FILE_NAME: MultifileClass__File2Kt
 // DECLARATION_TYPE: org.jetbrains.kotlin.psi.KtProperty
 
