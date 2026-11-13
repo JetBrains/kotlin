@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.source
 import com.intellij.lang.LighterASTNode
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.PREFIX_EXPRESSION
-import org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -46,8 +45,3 @@ fun LighterASTNode.getAssignmentLhsIfUnwrappable(tree: FlyweightCapableTreeStruc
         it?.tokenType in UNWRAPPABLE_TOKEN_TYPES
     }
 
-fun LighterASTNode.getExplicitReceiverOfDotQualified(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? =
-    when {
-        tokenType == DOT_QUALIFIED_EXPRESSION -> getChildren(tree).firstOrNull()
-        else -> null
-    }
