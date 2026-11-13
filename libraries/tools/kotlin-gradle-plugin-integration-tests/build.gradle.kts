@@ -5,10 +5,14 @@ import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.testbase.GRADLE_VERSION_FILTER_PROPERTY
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.nio.file.Paths
 
 plugins {
+    // For src/integrationTestingVersions/TestVersions.kt sharing
+    id("gradle-integration-tests-common-configuration") apply false
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
@@ -32,6 +36,9 @@ jvmToolchains {
 }
 
 kotlin {
+    sourceSets.test.configure {
+        kotlin.srcDir("src/integrationTestingVersions")
+    }
     compilerOptions {
         optIn.addAll(
             "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
@@ -277,20 +284,7 @@ val memoryPerGradleTestWorkerMb = 6000
 val maxParallelTestForks =
     (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
 
-// Must be in sync with TestVersions.kt KTI-1612
-val gradleVersions = listOf(
-    "8.13", // check org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion
-    "8.14.5",
-    "9.0.0",
-    "9.1.0",
-    "9.2.1",
-    "9.3.1",
-    "9.4.1",
-    "9.5.1",
-    "9.6.1",
-    "9.7.0",
-    "9.8.1",
-)
+val gradleVersions = TestVersions.Gradle.entries.map { it.version }.distinct()
 
 // Keep in sync with testTags.kt
 enum class JunitTag(
@@ -352,7 +346,6 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
         description = "Runs all tests for Kotlin Gradle plugins of the 'master' quality gate against all supported Gradle versions"
     }
 
-
     val testsGroupedByGradleVersionNightly = tasks.register("testsGroupedByGradleVersion_nightly") {
         group = gradleVersionTaskGroup
         description = "Runs all tests for Kotlin Gradle plugins of the 'nightly' quality gate against all supported Gradle versions"
@@ -380,8 +373,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
 
                 classpath = sourceSets["test"].runtimeClasspath
                 testClassesDirs = sourceSets["test"].output.classesDirs
-                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
-                systemProperty("gradle.integration.tests.gradle.versions", gradleVersions.joinToString(";"))
+                systemProperty(GRADLE_VERSION_FILTER_PROPERTY, gradleVersion)
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
             }
         }
@@ -405,8 +397,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
 
                 classpath = sourceSets["test"].runtimeClasspath
                 testClassesDirs = sourceSets["test"].output.classesDirs
-                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
-                systemProperty("gradle.integration.tests.gradle.versions", gradleVersions.joinToString(";"))
+                systemProperty(GRADLE_VERSION_FILTER_PROPERTY, gradleVersion)
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
                 useJUnitPlatform {
@@ -442,13 +433,30 @@ class TaskConfiguration(
     val taskName: String,
     val junitTag: JunitTag,
     val maxParallelForks: Int,
+    val gradleVersionFilter: TestVersions.Gradle?,
 )
 
 fun JunitTag.taskConfiguration(
     description: String,
     taskName: String,
     maxParallelForks: Int = maxParallelTestForks,
-) = TaskConfiguration(description, taskName, this, maxParallelForks)
+    gradleVersionFilter: TestVersions.Gradle? = null,
+) = TaskConfiguration(description, taskName, this, maxParallelForks, gradleVersionFilter)
+
+fun registerTestTask(junitTask: TaskConfiguration) = tasks.register<Test>(junitTask.taskName) {
+    group = KGP_TEST_TASKS_GROUP
+    description = junitTask.description
+    maxParallelForks = junitTask.maxParallelForks
+
+    junitTask.gradleVersionFilter?.let {
+        systemProperty(GRADLE_VERSION_FILTER_PROPERTY, it.version)
+    }
+
+    useJUnitPlatform {
+        includeTags(junitTask.junitTag.name)
+        excludeTags(junitTask.junitTag.excludedTags)
+    }
+}
 
 if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
     val perTagJunitTasks = JunitTag.entries.map { junitTag ->
@@ -508,23 +516,20 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
                 maxParallelForks = 1,
             )
         }
-    }.associateWith { junitTask ->
-        tasks.register<Test>(junitTask.taskName) {
-            group = KGP_TEST_TASKS_GROUP
-            description = junitTask.description
-            maxParallelForks = junitTask.maxParallelForks
-
-            useJUnitPlatform {
-                includeTags(junitTask.junitTag.name)
-                excludeTags(junitTask.junitTag.excludedTags)
-            }
-        }
-    }
+    }.associateWith(::registerTestTask)
 
     tasks.named<Task>("check") {
         // Tests of child tags are already run by the parent tag task
         dependsOn(perTagJunitTasks.filterKeys { it.junitTag.parent == null }.values)
     }
+
+    registerTestTask(
+        JunitTag.SwiftPMImportKGP.taskConfiguration(
+            description = "Run SwiftPM import tests with the maximum supported Gradle version",
+            taskName = "kgpSwiftPMImportTestsWithMaxGradleVersion",
+            gradleVersionFilter = TestVersions.Gradle.MAX_SUPPORTED,
+        )
+    )
 }
 
 val kgpTestingUtilities = configurations.detachedConfiguration(
