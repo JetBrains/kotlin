@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/diagnosticTests/crv/full.kt:4:5: warning: unused return value of 'basic'.
+compiler/testData/cli/jvm/diagnosticTests/crv/full.kt:4:5: warning: unused return value of 'basic'. If this is intentional, use 'val _ = ' to ignore the value explicitly.
     basic()
     ^^^^^
 OK

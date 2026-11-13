@@ -3152,10 +3152,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, "Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.")
 
-        map.put(RETURN_VALUE_NOT_USED, "Unused return value{0}.", OF_OPTIONAL_NAME)
+        map.put(RETURN_VALUE_NOT_USED, "Unused return value{0}. If this is intentional, use ''val _ = '' to ignore the value explicitly.", OF_OPTIONAL_NAME)
         map.put(
             RETURN_VALUE_NOT_USED_COERCION,
-            "Unused return value{0}. It was coerced to ''Unit'' due to a functional parameter type.",
+            "Unused return value{0}. It was coerced to ''Unit'' due to a functional parameter type. If this is intentional, use ''val _ = '' to ignore the value explicitly.",
             OF_OPTIONAL_NAME
         )
 

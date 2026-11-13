@@ -4,7 +4,7 @@ compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:2:19: warning: Java type mi
 compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:5: warning: unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
     annotated.nullable().length
     ^^^^^^^^^^^^^^^^^^^^
-compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:26: warning: unused return value of 'length'.
+compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:26: warning: unused return value of 'length'. If this is intentional, use 'val _ = ' to ignore the value explicitly.
     annotated.nullable().length
                          ^^^^^^
 OK
