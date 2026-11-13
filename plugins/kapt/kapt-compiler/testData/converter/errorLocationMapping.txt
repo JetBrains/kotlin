@@ -75,12 +75,6 @@ import kotlin.reflect.KClass;
  */
 @kotlin.Metadata()
 public final class ErrorInConstructorParameter {
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a = null;
-    @org.jetbrains.annotations.NotNull()
-    private final ABC b = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<ABC> c = null;
 
     public ErrorInConstructorParameter(@org.jetbrains.annotations.NotNull()
     java.lang.String a, @org.jetbrains.annotations.NotNull()
@@ -88,16 +82,22 @@ public final class ErrorInConstructorParameter {
     java.util.List<? extends ABC> c) {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final ABC b = null;
 
     @org.jetbrains.annotations.NotNull()
     public final ABC getB() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<ABC> c = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.util.List<ABC> getC() {
@@ -168,11 +168,6 @@ import kotlin.reflect.KClass;
  */
 @kotlin.Metadata()
 public final class ErrorInDeclarations {
-    public java.lang.String p1;
-    public ABC p2;
-    public BCD<java.lang.String> p3;
-    @org.jetbrains.annotations.NotNull()
-    public static final ErrorInDeclarations.Companion Companion = null;
 
     public ErrorInDeclarations() {
         super();
@@ -182,6 +177,7 @@ public final class ErrorInDeclarations {
     public final java.lang.String getP1() {
         return null;
     }
+    public java.lang.String p1;
 
     public final void setP1(@org.jetbrains.annotations.NotNull()
     java.lang.String p0) {
@@ -191,6 +187,7 @@ public final class ErrorInDeclarations {
     public final ABC getP2() {
         return null;
     }
+    public ABC p2;
 
     public final void setP2(@org.jetbrains.annotations.NotNull()
     ABC p0) {
@@ -200,6 +197,7 @@ public final class ErrorInDeclarations {
     public final BCD<java.lang.String> getP3() {
         return null;
     }
+    public BCD<java.lang.String> p3;
 
     public final void setP3(@org.jetbrains.annotations.NotNull()
     BCD<java.lang.String> p0) {
@@ -240,11 +238,6 @@ public final class ErrorInDeclarations {
     java.lang.String b) {
     }
 
-    @kotlin.jvm.JvmStatic()
-    public static final void f6(@org.jetbrains.annotations.NotNull()
-    ABC a) {
-    }
-
     /**
      * public final companion object ErrorInDeclarations.Companion : kotlin/Any {
      *
@@ -270,6 +263,13 @@ public final class ErrorInDeclarations {
         ABC a) {
         }
     }
+
+    @kotlin.jvm.JvmStatic()
+    public static final void f6(@org.jetbrains.annotations.NotNull()
+    ABC a) {
+    }
+    @org.jetbrains.annotations.NotNull()
+    public static final ErrorInDeclarations.Companion Companion = null;
 }
 
 ////////////////////

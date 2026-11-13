@@ -16,8 +16,6 @@
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class B implements NonExisting {
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a$delegate = null;
 
     public B() {
         super();
@@ -32,6 +30,8 @@ public final class B implements NonExisting {
     @java.lang.Deprecated()
     public static void getA$annotations() {
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a$delegate = null;
 }
 
 ////////////////////

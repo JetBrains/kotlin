@@ -22,12 +22,6 @@
 @kotlin.Metadata()
 public abstract interface Foo {
 
-    public abstract void foo();
-
-    public abstract void foo2(int a);
-
-    public abstract void bar();
-
     /**
      * synthetic class
      */
@@ -48,4 +42,10 @@ public abstract interface Foo {
         private static void privateDefaultMethod(Foo $this, java.lang.String x) {
         }
     }
+
+    public abstract void foo();
+
+    public abstract void foo2(int a);
+
+    public abstract void bar();
 }

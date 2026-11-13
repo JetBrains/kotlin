@@ -13,18 +13,9 @@
  */
 @kotlin.Metadata()
 public final class Test {
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String test = "";
-    @org.jetbrains.annotations.NotNull()
-    public static final Test.A A = null;
 
     public Test() {
         super();
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String getTest() {
-        return null;
     }
 
     /**
@@ -60,4 +51,13 @@ public final class Test {
         public static void getTest$annotations() {
         }
     }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getTest() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String test = "";
+    @org.jetbrains.annotations.NotNull()
+    public static final Test.A A = null;
 }

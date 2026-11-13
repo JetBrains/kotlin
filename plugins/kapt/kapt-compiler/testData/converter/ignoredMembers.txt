@@ -1,12 +1,10 @@
 public final class Test {
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String ignoredProperty = "";
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String nonIgnoredProperty = "";
 
     public Test() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String ignoredProperty = "";
 
     public final void nonIgnoredFun() {
     }
@@ -15,4 +13,6 @@ public final class Test {
     public final java.lang.String getNonIgnoredProperty() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String nonIgnoredProperty = "";
 }

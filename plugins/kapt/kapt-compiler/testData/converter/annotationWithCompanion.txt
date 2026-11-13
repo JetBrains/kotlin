@@ -18,17 +18,8 @@
  */
 @kotlin.Metadata()
 public abstract @interface Foo {
-    @org.jetbrains.annotations.NotNull()
-    public static final Foo.Companion Companion = null;
 
     public abstract java.lang.String value();
-
-    @kotlin.jvm.JvmStatic()
-    @org.jetbrains.annotations.NotNull()
-    public static Foo create(@org.jetbrains.annotations.NotNull()
-    java.lang.String value) {
-        return null;
-    }
 
     /**
      * public final companion object Foo.Companion : kotlin/Any {
@@ -57,4 +48,13 @@ public abstract @interface Foo {
             return null;
         }
     }
+
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    public static Foo create(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    public static final Foo.Companion Companion = null;
 }

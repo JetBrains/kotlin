@@ -58,8 +58,6 @@
  */
 @kotlin.Metadata()
 public final class MyList<T extends java.lang.Object> implements java.util.List<T>, kotlin.jvm.internal.markers.KMappedMarker {
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<T> wrappedList = null;
 
     @java.lang.Override()
     public final int size() {
@@ -70,6 +68,8 @@ public final class MyList<T extends java.lang.Object> implements java.util.List<
     java.util.List<? extends T> wrappedList) {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<T> wrappedList = null;
 
     @java.lang.Override()
     public void add(int index, T element) {

@@ -51,14 +51,6 @@ public abstract class Cls {
 @kotlin.Metadata()
 public abstract interface Intf {
 
-    public abstract void foo(@org.jetbrains.annotations.NotNull()
-    java.lang.String abc);
-
-    @org.jetbrains.annotations.NotNull()
-    public default java.lang.String bar(int bcd) {
-        return null;
-    }
-
     /**
      * synthetic class
      */
@@ -71,5 +63,13 @@ public abstract interface Intf {
         Intf $this, int bcd) {
             return null;
         }
+    }
+
+    public abstract void foo(@org.jetbrains.annotations.NotNull()
+    java.lang.String abc);
+
+    @org.jetbrains.annotations.NotNull()
+    public default java.lang.String bar(int bcd) {
+        return null;
     }
 }

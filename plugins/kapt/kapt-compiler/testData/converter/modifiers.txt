@@ -69,12 +69,6 @@ package modifiers;
  */
 @kotlin.Metadata()
 public final class Modifiers {
-    @kotlin.jvm.Transient()
-    @org.jetbrains.annotations.NotNull()
-    private final transient java.lang.String transientField = "";
-    @kotlin.jvm.Volatile()
-    @org.jetbrains.annotations.NotNull()
-    private volatile java.lang.String volatileField = "";
 
     public Modifiers() {
         super();
@@ -84,6 +78,9 @@ public final class Modifiers {
     public final java.lang.String getTransientField() {
         return null;
     }
+    @kotlin.jvm.Transient()
+    @org.jetbrains.annotations.NotNull()
+    private final transient java.lang.String transientField = "";
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getVolatileField() {
@@ -93,6 +90,9 @@ public final class Modifiers {
     public final void setVolatileField(@org.jetbrains.annotations.NotNull()
     java.lang.String p0) {
     }
+    @kotlin.jvm.Volatile()
+    @org.jetbrains.annotations.NotNull()
+    private volatile java.lang.String volatileField = "";
 
     @kotlin.jvm.Strictfp()
     public final strictfp void strictFp() {
@@ -225,20 +225,6 @@ public class PublicClassProtectedConstructor {
     }
 
     /**
-     * private abstract interface modifiers/PublicClassProtectedConstructor.PrivateInterface : kotlin/Any {
-     *
-     *   // module name: main
-     *
-     *   // has method bodies in interface
-     *
-     *   // is compiled in compatibility mode
-     * }
-     */
-    @kotlin.Metadata()
-    static abstract interface PrivateInterface {
-    }
-
-    /**
      * protected abstract interface modifiers/PublicClassProtectedConstructor.ProtectedInterface : kotlin/Any {
      *
      *   // module name: main
@@ -250,6 +236,20 @@ public class PublicClassProtectedConstructor {
      */
     @kotlin.Metadata()
     public static abstract interface ProtectedInterface {
+    }
+
+    /**
+     * private abstract interface modifiers/PublicClassProtectedConstructor.PrivateInterface : kotlin/Any {
+     *
+     *   // module name: main
+     *
+     *   // has method bodies in interface
+     *
+     *   // is compiled in compatibility mode
+     * }
+     */
+    @kotlin.Metadata()
+    static abstract interface PrivateInterface {
     }
 }
 
@@ -304,23 +304,6 @@ public abstract class SealedClass {
     }
 
     /**
-     * public final class modifiers/SealedClass.Four : modifiers/SealedClass.Three {
-     *
-     *   // signature: <init>()V
-     *   public constructor()
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class Four extends modifiers.SealedClass.Three {
-
-        public Four() {
-            super();
-        }
-    }
-
-    /**
      * public final class modifiers/SealedClass.One : modifiers/SealedClass {
      *
      *   // signature: <init>()V
@@ -333,6 +316,22 @@ public abstract class SealedClass {
     public static final class One extends modifiers.SealedClass {
 
         public One() {
+        }
+    }
+
+    /**
+     * public open class modifiers/SealedClass.Two : modifiers/SealedClass {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static class Two extends modifiers.SealedClass {
+
+        public Two() {
         }
     }
 
@@ -354,7 +353,7 @@ public abstract class SealedClass {
     }
 
     /**
-     * public open class modifiers/SealedClass.Two : modifiers/SealedClass {
+     * public final class modifiers/SealedClass.Four : modifiers/SealedClass.Three {
      *
      *   // signature: <init>()V
      *   public constructor()
@@ -363,9 +362,10 @@ public abstract class SealedClass {
      * }
      */
     @kotlin.Metadata()
-    public static class Two extends modifiers.SealedClass {
+    public static final class Four extends modifiers.SealedClass.Three {
 
-        public Two() {
+        public Four() {
+            super();
         }
     }
 }

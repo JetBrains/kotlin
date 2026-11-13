@@ -232,9 +232,6 @@ public final class TestAnno {
  */
 @kotlin.Metadata()
 public final class TestAnno2 {
-    @Anno3(value = "field")
-    @org.jetbrains.annotations.NotNull()
-    private java.lang.String b = "property initializer";
 
     public TestAnno2() {
         super();
@@ -245,6 +242,9 @@ public final class TestAnno2 {
     @org.jetbrains.annotations.NotNull()
     java.lang.String param) {
     }
+    @Anno3(value = "field")
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.String b = "property initializer";
 
     @Anno3(value = "getter")
     @org.jetbrains.annotations.NotNull()

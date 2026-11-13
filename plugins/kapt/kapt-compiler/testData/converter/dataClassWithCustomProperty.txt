@@ -36,7 +36,6 @@
  */
 @kotlin.Metadata()
 public final class C {
-    private final int x = 0;
 
     public C(int x) {
         super();
@@ -45,6 +44,7 @@ public final class C {
     public final int getX() {
         return 0;
     }
+    private final int x = 0;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getS() {

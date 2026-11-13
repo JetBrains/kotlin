@@ -16,33 +16,9 @@
  */
 @kotlin.Metadata()
 public final class ClassWithCompanion {
-    @org.jetbrains.annotations.NotNull()
-    public static final ClassWithCompanion.Companion Companion = null;
 
     public ClassWithCompanion() {
         super();
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    @java.lang.Deprecated()
-    public static final java.lang.String companionBlockFun(int a) {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    @java.lang.Deprecated()
-    public static final java.lang.String companionBlockFun(int a, @kotlin.IntroducedAt(version = "1")
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String b) {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String companionBlockFun(int a, @kotlin.IntroducedAt(version = "1")
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String b, @kotlin.IntroducedAt(version = "2")
-    boolean c) {
-        return null;
     }
 
     /**
@@ -86,6 +62,30 @@ public final class ClassWithCompanion {
             return null;
         }
     }
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public static final java.lang.String companionBlockFun(int a) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public static final java.lang.String companionBlockFun(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String companionBlockFun(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b, @kotlin.IntroducedAt(version = "2")
+    boolean c) {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    public static final ClassWithCompanion.Companion Companion = null;
 }
 
 ////////////////////
@@ -106,36 +106,9 @@ public final class ClassWithCompanion {
  */
 @kotlin.Metadata()
 public final class ClassWithJvmStaticCompanion {
-    @org.jetbrains.annotations.NotNull()
-    public static final ClassWithJvmStaticCompanion.Companion Companion = null;
 
     public ClassWithJvmStaticCompanion() {
         super();
-    }
-
-    @kotlin.jvm.JvmStatic()
-    @org.jetbrains.annotations.NotNull()
-    @java.lang.Deprecated()
-    public static final java.lang.String staticCompanionFun(int a) {
-        return null;
-    }
-
-    @kotlin.jvm.JvmStatic()
-    @org.jetbrains.annotations.NotNull()
-    @java.lang.Deprecated()
-    public static final java.lang.String staticCompanionFun(int a, @kotlin.IntroducedAt(version = "1")
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String b) {
-        return null;
-    }
-
-    @kotlin.jvm.JvmStatic()
-    @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String staticCompanionFun(int a, @kotlin.IntroducedAt(version = "1")
-    @org.jetbrains.annotations.NotNull()
-    java.lang.String b, @kotlin.IntroducedAt(version = "2")
-    boolean c) {
-        return null;
     }
 
     /**
@@ -183,4 +156,31 @@ public final class ClassWithJvmStaticCompanion {
             return null;
         }
     }
+
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public static final java.lang.String staticCompanionFun(int a) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public static final java.lang.String staticCompanionFun(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String staticCompanionFun(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b, @kotlin.IntroducedAt(version = "2")
+    boolean c) {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    public static final ClassWithJvmStaticCompanion.Companion Companion = null;
 }

@@ -16,8 +16,6 @@ package kaptk2.b451982470;
  */
 @kotlin.Metadata()
 public abstract class Paper implements kaptk2.b451982470.Scissors {
-    @org.jetbrains.annotations.NotNull()
-    private final error.NonExistentClass piedra = null;
 
     public Paper(@org.jetbrains.annotations.NotNull()
     error.NonExistentClass piedra) {
@@ -29,6 +27,8 @@ public abstract class Paper implements kaptk2.b451982470.Scissors {
     public final error.NonExistentClass getPiedra() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final error.NonExistentClass piedra = null;
 }
 
 ////////////////////

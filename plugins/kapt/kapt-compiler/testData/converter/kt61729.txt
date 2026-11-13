@@ -34,8 +34,6 @@ package a;
  */
 @kotlin.Metadata()
 public final class SphinxLinkify {
-    @org.jetbrains.annotations.NotNull()
-    public static final a.SphinxLinkify INSTANCE = null;
 
     private SphinxLinkify() {
         super();
@@ -44,6 +42,8 @@ public final class SphinxLinkify {
     private final void addLinks(@LinkifyMask()
     int mask) {
     }
+    @org.jetbrains.annotations.NotNull()
+    public static final a.SphinxLinkify INSTANCE = null;
 }
 
 ////////////////////

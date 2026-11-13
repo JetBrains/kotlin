@@ -10,8 +10,6 @@ package test;
 @Anno()
 @kotlin.Metadata()
 public final class User {
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String name = "John";
 
     public User(@org.jetbrains.annotations.NotNull()
     java.lang.String name, int age) {
@@ -22,6 +20,8 @@ public final class User {
     public final java.lang.String getName() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String name = "John";
 
     public User() {
         super();
