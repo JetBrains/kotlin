@@ -32,9 +32,12 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdap
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCTypeAdapter.Companion.ObjCTypeAdapterForBindClassToObjCName
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoOverrideError
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.bindObjCExportTypeAdapterTo
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.importObjCCollectionConverter
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.objCCollectionConverters
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedFileReference
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedObjCAdapter
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedObjCReverseBridge
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.file
@@ -44,6 +47,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
     val reverseBridgesByClass = collectReverseBridgeAdapters(file)
+    val collectionConverts = context.objCCollectionConverters
 
     file.allBindClassToObjCName.forEach {
         val layoutBuilder = generationState.context.getLayoutBuilder(it.kotlinClass)
@@ -68,8 +72,9 @@ internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
         if (generationState.config.produce.isCache)
             generationState.objCAdapters += buildSerializedObjCAdapter(file, it, isInterface, vtableSize, itableSize, reverseBridges)
 
+        val convertToRetained = collectionConverts[it.kotlinClass]?.let(::importObjCCollectionConverter)
         try {
-            bindObjCExportTypeAdapterTo(it.kotlinClass, typeAdapter)
+            bindObjCExportTypeAdapterTo(it.kotlinClass, typeAdapter, convertToRetained)
         } catch (e: WritableTypeInfoOverrideError) {
             val reason = when (e.reason) {
                 WritableTypeInfoOverrideError.Reason.NON_OVERRIDABLE -> "class cannot have ObjC class attachments"
@@ -92,18 +97,11 @@ private fun buildSerializedObjCAdapter(
         itableSize: Int,
         reverseBridges: List<ReverseBridgeAdapter>,
 ): SerializedObjCAdapter {
-    val kotlinClass = binding.kotlinClass
-    // The very name the type info of the class is emitted under, see `IrClass.typeInfoPtr`.
-    val typeInfoSymbolName = if (KonanBinaryInterface.isExported(kotlinClass)) {
-        kotlinClass.computeTypeInfoSymbolName()
-    } else {
-        kotlinClass.computePrivateTypeInfoSymbolName(kotlinClass.file.path)
-    }
     return SerializedObjCAdapter(
             file = SerializedFileReference(file),
             objCName = binding.objCName,
             isInterface = isInterface,
-            typeInfoSymbolName = typeInfoSymbolName,
+            typeInfoSymbolName = binding.kotlinClass.serializedTypeInfoSymbolName,
             vtableSize = vtableSize,
             itableSize = itableSize,
             reverseBridges = reverseBridges.map { bridge ->
@@ -118,6 +116,27 @@ private fun buildSerializedObjCAdapter(
                 )
             },
     )
+}
+
+private val IrClass.serializedTypeInfoSymbolName: String
+    get() = if (KonanBinaryInterface.isExported(this)) {
+        computeTypeInfoSymbolName()
+    } else {
+        computePrivateTypeInfoSymbolName(file.path)
+    }
+
+/**
+ * Whether a cache linked into this binary binds [irClass] with `@BindClassToObjCName`.
+ * Such a cache defines the writable type info of [irClass] itself, so this binary must not define it again.
+ */
+internal fun CodeGenerator.isBoundToObjCNameInCaches(irClass: IrClass): Boolean {
+    if (!context.config.isFinalBinary) return false
+    val typeInfoSymbolName = irClass.serializedTypeInfoSymbolName
+    return context.irModules.any { module ->
+        val library = module.kotlinLibrary ?: return@any false
+        val cache = context.config.cachedLibraries.getLibraryCache(library) ?: return@any false
+        cache.serializedObjCAdapters.any { it.typeInfoSymbolName == typeInfoSymbolName }
+    }
 }
 
 /**

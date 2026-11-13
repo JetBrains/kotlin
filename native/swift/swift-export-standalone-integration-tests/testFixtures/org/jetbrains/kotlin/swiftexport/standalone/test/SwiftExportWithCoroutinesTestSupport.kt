@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.NativeTestInstances
 import org.jetbrains.kotlin.konan.test.testLibraryAtomicFuKlibFile
@@ -36,7 +37,7 @@ class SwiftExportWithCoroutinesTestSupport : BeforeTestExecutionCallback {
                 kotlinxCoroutinesModule,
                 atomicFuModule,
             )
-            minOSVersion = "15.0"
+            minOSVersion[Family.OSX] = "15.0"
         }
     }
 }
