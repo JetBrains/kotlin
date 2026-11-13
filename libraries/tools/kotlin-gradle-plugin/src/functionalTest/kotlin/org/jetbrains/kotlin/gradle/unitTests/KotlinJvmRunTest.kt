@@ -52,9 +52,9 @@ class KotlinJvmRunTest {
         val task = assertNotNull(kotlin.jvm().mainRun.await()).task.get()
 
         /* Set properties using 'args()' */
-        kotlin.jvm().mainRun {
-            args("first", "second")
-            args(listOf("third", "fourth"))
+        kotlin.jvm().mainRun { runDsl ->
+            runDsl.args("first", "second")
+            runDsl.args(listOf("third", "fourth"))
         }
 
         launch {

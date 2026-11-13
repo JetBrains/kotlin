@@ -50,6 +50,16 @@ interface WasiAdapterToolchainManagementDsl {
     fun toolchainService(configure: DefaultWasiAdapterToolchainService.Parameters.() -> Unit)
 
     /**
+     * [Action] based version of [toolchainService] above.
+     */
+    @ExperimentalWasmDsl
+    fun toolchainService(configure: Action<DefaultWasiAdapterToolchainService.Parameters>) {
+        toolchainService {
+            configure.execute(this)
+        }
+    }
+
+    /**
      * Selects [serviceClass] as the [WasiAdapterToolchainService] used by the whole build, and configures its
      * [parameters][WasiAdapterToolchainService.Parameters].
      */

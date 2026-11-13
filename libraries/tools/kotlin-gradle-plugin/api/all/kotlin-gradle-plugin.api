@@ -2515,6 +2515,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinWasmTarget : 
 	public fun wasmtime (Lkotlin/jvm/functions/Function1;)V
 	public fun wasmtime (Lorg/gradle/api/Action;)V
 	public fun whenD8Configured (Lkotlin/jvm/functions/Function1;)V
+	public fun whenD8Configured (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/KotlinWasmTargetAttribute : java/lang/Enum, java/io/Serializable, org/gradle/api/Named {
@@ -2717,7 +2718,9 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 	public abstract fun isBrowserConfigured ()Z
 	public abstract fun isNodejsConfigured ()Z
 	public abstract fun whenBrowserConfigured (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun whenBrowserConfigured (Lorg/gradle/api/Action;)V
 	public abstract fun whenNodejsConfigured (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun whenNodejsConfigured (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl$DefaultImpls {
@@ -2730,7 +2733,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetC
 	public static fun isNodejsConfigured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;)Z
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun whenBrowserConfigured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;Lkotlin/jvm/functions/Function1;)V
+	public static fun whenBrowserConfigured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;Lorg/gradle/api/Action;)V
 	public static fun whenNodejsConfigured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;Lkotlin/jvm/functions/Function1;)V
+	public static fun whenNodejsConfigured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetDsl {
@@ -2831,6 +2836,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 	public abstract fun getSubTargets ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public abstract fun isD8Configured ()Z
 	public abstract fun whenD8Configured (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun whenD8Configured (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl$DefaultImpls {
@@ -2842,6 +2848,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTarge
 	public static fun isD8Configured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;)Z
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun whenD8Configured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;Lkotlin/jvm/functions/Function1;)V
+	public static fun whenD8Configured (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDsl : org/jetbrains/kotlin/gradle/plugin/KotlinTarget, org/jetbrains/kotlin/gradle/plugin/mpp/HasBinaries {
@@ -3277,7 +3284,9 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget
 	public fun useCommonJs ()V
 	public fun useEsModules ()V
 	public fun whenBrowserConfigured (Lkotlin/jvm/functions/Function1;)V
+	public fun whenBrowserConfigured (Lorg/gradle/api/Action;)V
 	public fun whenNodejsConfigured (Lkotlin/jvm/functions/Function1;)V
+	public fun whenNodejsConfigured (Lorg/gradle/api/Action;)V
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTargetConfigurator : org/jetbrains/kotlin/gradle/plugin/KotlinOnlyTargetConfigurator {
@@ -5148,6 +5157,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget : 
 	public fun getTestRuns ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public final fun getWithJavaEnabled ()Z
 	public final fun mainRun (Lkotlin/jvm/functions/Function1;)V
+	public final fun mainRun (Lorg/gradle/api/Action;)V
 	public final fun withJava ()V
 }
 

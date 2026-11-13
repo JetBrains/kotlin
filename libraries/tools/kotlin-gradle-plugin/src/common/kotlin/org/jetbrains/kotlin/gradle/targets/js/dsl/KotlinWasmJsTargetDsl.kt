@@ -59,6 +59,15 @@ interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
             .withType<KotlinD8Ir>()
             .configureEach(body)
     }
+
+    /**
+     * [Action] based version of [whenD8Configured] above.
+     */
+    fun whenD8Configured(body: Action<KotlinWasmD8Dsl>) {
+        whenD8Configured {
+            body.execute(this)
+        }
+    }
 }
 
 /**
