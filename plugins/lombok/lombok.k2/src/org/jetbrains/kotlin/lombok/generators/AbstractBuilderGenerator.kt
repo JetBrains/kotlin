@@ -1087,7 +1087,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         val pluralSetterName = item.name.toMethodName(builder)
-        addIfNonClashing(pluralSetterName, existingFunctionNames.takeIf { pluralSetterName != singularSetterName }.orEmpty()) { name ->
+        addIfNonClashing(pluralSetterName, existingFunctionNames) { name ->
             val addMultipleParameterTypeRef: FirTypeRef = if (builderSymbol.hasJavaOrigin) {
                 // Lombok uses runtime checks instead of @Nullable/@NotNull annotations.
                 // We include these annotations to enable static analysis and improve the developer experience.
@@ -1156,6 +1156,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         existingNames: Set<Name>,
         createCallable: (name: Name) -> FirNamedFunctionSymbol
     ) {
+        // TODO: write a comment and/or a commit message, why we need a separate check of existing names,
+        // and a separate check of function signatures if their names match.
         if (name !in existingNames) {
             getOrPut(name) { mutableListOf() }.apply {
                 val functionSymbol = createCallable(name)
