@@ -80,9 +80,9 @@ class ClassFileHandleKotlinClass private constructor(
                     // Valid situation. User can delete jar file.
                 } catch (_: NoSuchFileException) {
                     // Same (see FL-32618 as an exception example)
-                } catch (e: ControlFlowException) {
-                    throw e
                 } catch (e: Exception) {
+                    // `ControlFlowException` is a marker interface, so it cannot have a `catch` branch of its own.
+                    if (e is ControlFlowException) throw e
                     throw fileReadingError(e, classFile)
                 }
                 null
