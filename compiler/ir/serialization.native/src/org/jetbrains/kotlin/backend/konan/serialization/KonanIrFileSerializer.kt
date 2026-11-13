@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 open class KonanIrFileSerializer(
     settings: IrSerializationSettings,
@@ -19,8 +19,8 @@ open class KonanIrFileSerializer(
 ) : IrFileSerializer(settings, declarationTable) {
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
         val classId = when (node) {
-            is IrFunction -> NativeRuntimeNames.Annotations.exportForCppRuntimeClassId
-            is IrClass -> NativeRuntimeNames.Annotations.exportTypeInfoClassId
+            is IrFunction -> NativeStandardClassIds.Annotations.exportForCppRuntimeClassId
+            is IrClass -> NativeStandardClassIds.Annotations.exportTypeInfoClassId
             else -> return false
         }
 

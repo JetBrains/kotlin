@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.AbstractAtomicReferenceToPrimitiveCallChecker
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 object FirNativeAtomicReferenceToPrimitiveCallChecker : AbstractAtomicReferenceToPrimitiveCallChecker(
-    NativeRuntimeNames.atomicByPrimitive,
+    NativeStandardClassIds.atomicByPrimitive,
     MppCheckerKind.Platform,
-    NativeRuntimeNames.Callables.atomicReferenceCompareAndSet,
-    NativeRuntimeNames.Callables.atomicReferenceCompareAndExchange,
+    NativeStandardClassIds.Callables.atomicReferenceCompareAndSet,
+    NativeStandardClassIds.Callables.atomicReferenceCompareAndExchange,
 )
 
 object FirNativeAtomicArrayToPrimitiveCallChecker : AbstractAtomicReferenceToPrimitiveCallChecker(
-    NativeRuntimeNames.atomicArrayByPrimitive,
+    NativeStandardClassIds.atomicArrayByPrimitive,
     MppCheckerKind.Platform,
-    NativeRuntimeNames.Callables.atomicArrayCompareAndSet,
-    NativeRuntimeNames.Callables.atomicArrayCompareAndExchange,
+    NativeStandardClassIds.Callables.atomicArrayCompareAndSet,
+    NativeStandardClassIds.Callables.atomicArrayCompareAndExchange,
 )

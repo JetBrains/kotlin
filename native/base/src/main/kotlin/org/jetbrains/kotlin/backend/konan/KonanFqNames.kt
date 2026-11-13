@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 @InternalKotlinNativeApi
 const val NATIVE_PTR_NAME = "NativePtr"
@@ -34,7 +34,7 @@ object KonanFqNames {
     val typedIntrinsic = FqName("kotlin.native.internal.TypedIntrinsic")
     val constantConstructorIntrinsic = FqName("kotlin.native.internal.ConstantConstructorIntrinsic")
     val objCMethod = FqName("kotlinx.cinterop.ObjCMethod")
-    val gcUnsafeCall = NativeRuntimeNames.Annotations.gcUnsafeCallClassId.asSingleFqName()
+    val gcUnsafeCall = NativeStandardClassIds.Annotations.gcUnsafeCallClassId.asSingleFqName()
     val eagerInitialization = FqName("kotlin.native.EagerInitialization")
     val noReorderFields = FqName("kotlin.native.internal.NoReorderFields")
     val objCName = FqName("kotlin.native.ObjCName")

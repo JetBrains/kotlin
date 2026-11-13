@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.name
 
 import java.util.concurrent.atomic.AtomicReference
 
-object NativeRuntimeNames {
+object NativeStandardClassIds {
     private val kotlinNativePackage = FqName("kotlin.native")
     private val kotlinNativeInternalPackage = kotlinNativePackage.child(Name.identifier("internal"))
 
@@ -34,8 +34,8 @@ object NativeRuntimeNames {
 
         val atomicReferenceCompareAndSet = "compareAndSet".callableId(AtomicReference)
         val atomicReferenceCompareAndExchange = "compareAndExchange".callableId(AtomicReference)
-        val atomicArrayCompareAndSet = "compareAndSet".callableId(NativeRuntimeNames.AtomicArray)
-        val atomicArrayCompareAndExchange = "compareAndExchange".callableId(NativeRuntimeNames.AtomicArray)
+        val atomicArrayCompareAndSet = "compareAndSet".callableId(NativeStandardClassIds.AtomicArray)
+        val atomicArrayCompareAndExchange = "compareAndExchange".callableId(NativeStandardClassIds.AtomicArray)
     }
 
     object Annotations {

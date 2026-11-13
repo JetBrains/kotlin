@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 /**
  * Same as [tryGetIntrinsicType], but treats an intrinsic `kind` that isn't a value in this compiler's [IntrinsicType] enum
@@ -110,7 +110,7 @@ class EscapeAnalysisChecker(
         get() = isUnit() || isNothing() || computeBinaryType() is BinaryType.Primitive
 
     private val IrType.mustEscape: Boolean
-        get() = this.getClass()?.annotations?.hasAnnotation(NativeRuntimeNames.Annotations.HasFinalizer) ?: false
+        get() = this.getClass()?.annotations?.hasAnnotation(NativeStandardClassIds.Annotations.HasFinalizer) ?: false
 
     private val returnValueName = "<return>"
 
@@ -125,7 +125,7 @@ class EscapeAnalysisChecker(
         }
 
     private fun checkEscapesAnnotation(declaration: IrFunction, signatureElements: List<FunctionSignatureElement>) {
-        val escapesName = NativeRuntimeNames.Annotations.Escapes.asFqNameString()
+        val escapesName = NativeStandardClassIds.Annotations.Escapes.asFqNameString()
         val value = try {
             declaration.escapes
         } catch (e: IllegalArgumentException) {
@@ -146,7 +146,7 @@ class EscapeAnalysisChecker(
     }
 
     private fun checkPointsToAnnotation(declaration: IrFunction, signatureElements: List<FunctionSignatureElement>) {
-        val pointsToName = NativeRuntimeNames.Annotations.PointsTo.asFqNameString()
+        val pointsToName = NativeStandardClassIds.Annotations.PointsTo.asFqNameString()
         val annotation = try {
             declaration.pointsTo
         } catch (e: IllegalArgumentException) {
@@ -181,12 +181,12 @@ class EscapeAnalysisChecker(
     }
 
     private fun checkEscapeAnalysisAnnotations(declaration: IrFunction) {
-        val hasEscapes = declaration.annotations.hasAnnotation(NativeRuntimeNames.Annotations.Escapes)
-        val escapesName = NativeRuntimeNames.Annotations.Escapes.asFqNameString()
-        val hasEscapesNothing = declaration.annotations.hasAnnotation(NativeRuntimeNames.Annotations.EscapesNothing)
-        val escapesNothingName = NativeRuntimeNames.Annotations.EscapesNothing.asFqNameString()
-        val hasPointsTo = declaration.annotations.hasAnnotation(NativeRuntimeNames.Annotations.PointsTo)
-        val pointsToName = NativeRuntimeNames.Annotations.PointsTo.asFqNameString()
+        val hasEscapes = declaration.annotations.hasAnnotation(NativeStandardClassIds.Annotations.Escapes)
+        val escapesName = NativeStandardClassIds.Annotations.Escapes.asFqNameString()
+        val hasEscapesNothing = declaration.annotations.hasAnnotation(NativeStandardClassIds.Annotations.EscapesNothing)
+        val escapesNothingName = NativeStandardClassIds.Annotations.EscapesNothing.asFqNameString()
+        val hasPointsTo = declaration.annotations.hasAnnotation(NativeStandardClassIds.Annotations.PointsTo)
+        val pointsToName = NativeStandardClassIds.Annotations.PointsTo.asFqNameString()
 
         fun warnUnusedIf(condition: Boolean, message: () -> String): Any? {
             if (!condition)
