@@ -9,18 +9,23 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBackedClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import java.nio.file.Path
 
 /** The [BinaryClassFileHandle] of the CLI: a file of a [JvmDependenciesIndex] together with the [JavaRoot] it was found in. */
-class VfsClassFileHandle(override val virtualFile: VirtualFile, val root: JavaRoot) : VirtualFileBackedClassFileHandle {
-    /** The content version of [virtualFile] at the time of the creation of this handle. */
-    private val modificationStamp: Long = virtualFile.modificationStamp
+class VfsClassFileHandle(private val file: VirtualFile, val root: JavaRoot) : VirtualFileBackedClassFileHandle {
+    @VirtualFileBasedApi
+    override val virtualFile: VirtualFile
+        get() = file
+
+    /** The content version of [file] at the time of the creation of this handle. */
+    private val modificationStamp: Long = file.modificationStamp
 
     override val nameWithoutExtension: String
-        get() = virtualFile.nameWithoutExtension
+        get() = file.nameWithoutExtension
 
     override val extension: String
-        get() = virtualFile.extension.orEmpty()
+        get() = file.extension.orEmpty()
 
     override val rootId: JvmClasspathRootId
         get() = root.id
@@ -29,22 +34,22 @@ class VfsClassFileHandle(override val virtualFile: VirtualFile, val root: JavaRo
         get() = root.libraryPath()
 
     override val pathForDiagnostics: String
-        get() = virtualFile.path
+        get() = file.path
 
-    override fun readBytes(): ByteArray = virtualFile.contentsToByteArray()
+    override fun readBytes(): ByteArray = file.contentsToByteArray()
 
     override fun sibling(nameWithExtension: String): BinaryClassFileHandle? =
-        virtualFile.parent?.findChild(nameWithExtension)?.let { VfsClassFileHandle(it, root) }
+        file.parent?.findChild(nameWithExtension)?.let { VfsClassFileHandle(it, root) }
 
     override fun equals(other: Any?): Boolean =
         this === other ||
                 other is VfsClassFileHandle &&
-                virtualFile == other.virtualFile &&
+                file == other.file &&
                 modificationStamp == other.modificationStamp
 
-    override fun hashCode(): Int = virtualFile.hashCode()
+    override fun hashCode(): Int = file.hashCode()
 
-    override fun toString(): String = virtualFile.toString()
+    override fun toString(): String = file.toString()
 }
 
 fun IndexedClassFile.asBinaryClassFileHandle(): BinaryClassFileHandle = VfsClassFileHandle(file, root)

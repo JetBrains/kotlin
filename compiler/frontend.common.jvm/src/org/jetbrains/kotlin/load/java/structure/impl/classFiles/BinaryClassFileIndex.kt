@@ -46,7 +46,7 @@ interface BinaryClassFileIndex {
 interface BinaryClassFileHandle {
     val nameWithoutExtension: String
 
-    /** `class`, `sig`, ... */
+    /** `.class`, `.sig`, ... */
     val extension: String
 
     /** The classpath root this file was found in, as the index assigned it: not inferred from the file's path. */

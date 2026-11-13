@@ -33,7 +33,8 @@ class BinaryJavaClass(
     override val outerClass: JavaClass?,
     classContent: ByteArray? = null
 ) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MutableJavaAnnotationOwner {
-    /** Only the PSI Java view and K1 reach the file of a binary class; `null` when [classFile] is not backed by one. */
+    /** Used only by the PSI Java view; `null` when [classFile] is not backed by a virtual file. */
+    @OptIn(VirtualFileBasedApi::class)
     override val virtualFile: VirtualFile?
         get() = (classFile as? VirtualFileBackedClassFileHandle)?.virtualFile
 

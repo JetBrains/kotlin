@@ -10,9 +10,9 @@ import com.intellij.openapi.vfs.VirtualFile
 /**
  * A [BinaryClassFileHandle] over a [VirtualFile].
  *
- * Only the PSI Java view and K1 reach the file through a binary class (see [BinaryJavaClass.virtualFile]); the K2 CLI
- * path never does.
+ * [virtualFile] is used only by [BinaryJavaClass] in the PSI Java view.
  */
 interface VirtualFileBackedClassFileHandle : BinaryClassFileHandle {
+    @VirtualFileBasedApi
     val virtualFile: VirtualFile
 }
