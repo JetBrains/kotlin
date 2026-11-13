@@ -1052,6 +1052,7 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
      *
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
+     * @sample samples.misc.Builtins.shl
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun shl(bitCount: Int): Int
@@ -1061,6 +1062,7 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
      *
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
+     * @sample samples.misc.Builtins.shr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun shr(bitCount: Int): Int
@@ -1070,23 +1072,36 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
      *
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
+     * @sample samples.misc.Builtins.ushr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun ushr(bitCount: Int): Int
 
-    /** Performs a bitwise AND operation between the two values. */
+    /**
+     * Performs a bitwise AND operation between the two values.
+     * @sample samples.misc.Builtins.and
+     */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun and(other: Int): Int
 
-    /** Performs a bitwise OR operation between the two values. */
+    /**
+     * Performs a bitwise OR operation between the two values.
+     * @sample samples.misc.Builtins.or
+     */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun or(other: Int): Int
 
-    /** Performs a bitwise XOR operation between the two values. */
+    /**
+     * Performs a bitwise XOR operation between the two values.
+     * @sample samples.misc.Builtins.xor
+     */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun xor(other: Int): Int
 
-    /** Inverts the bits in this value. */
+    /**
+     * Inverts the bits in this value.
+     * @sample samples.misc.Builtins.inv
+     */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual fun inv(): Int
 
