@@ -54,13 +54,13 @@ fun box() {
 // EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:23 box
 // test.kt:5 E$static_init
-// EXPECTATIONS JS_IR
 // test.kt:12 <init>
+// EXPECTATIONS JS_IR
 // test.kt:4 <init>
 // EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:6 E$static_init
-// EXPECTATIONS JS_IR
 // test.kt:12 <init>
+// EXPECTATIONS JS_IR
 // test.kt:4 <init>
 // EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:23 box
@@ -69,13 +69,13 @@ fun box() {
 // test.kt:16 E2$static_init
 // EXPECTATIONS JS_IR
 // test.kt:15 <init>
-// test.kt:15 <init>
 // EXPECTATIONS JS_IR JS_IR_ES6
+// test.kt:15 <init>
 // test.kt:17 E2$static_init
 // EXPECTATIONS JS_IR
 // test.kt:15 <init>
-// test.kt:15 <init>
 // EXPECTATIONS JS_IR JS_IR_ES6
+// test.kt:15 <init>
 // test.kt:25 box
 
 // EXPECTATIONS WASM_JS
