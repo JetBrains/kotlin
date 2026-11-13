@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirInlineConstTrackerComponent
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.extensions.impl.FirPluginTypeResolverFactory
+import org.jetbrains.kotlin.fir.extensions.impl.PluginTypeResolverFactoryImpl
 import org.jetbrains.kotlin.fir.extensions.impl.PluginTypeResolverFactory
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
 import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
@@ -115,7 +115,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirInlineConstTrackerComponent::class, FirInlineConstTrackerComponent.Default)
 
     @OptIn(FirExtensionApiInternals::class)
-    register(PluginTypeResolverFactory::class, FirPluginTypeResolverFactory(this))
+    register(PluginTypeResolverFactory::class, PluginTypeResolverFactoryImpl(this))
 }
 
 @OptIn(SessionConfiguration::class)

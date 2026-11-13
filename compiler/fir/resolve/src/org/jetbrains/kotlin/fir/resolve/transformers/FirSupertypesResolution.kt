@@ -217,23 +217,7 @@ open class FirSupertypeResolverVisitor(
     @PrivateForInline
     var replSnippet: FirReplSnippet? = null
 
-    private val scopeProvider = object : FirSupertypeScopeProvider(
-        session,
-        scopeSession,
-        supertypeComputationSession.supertypesSupplier,
-        supertypeComputationSession,
-        localClassesNavigationInfo,
-        scopeForLocalClass,
-    ) {
-        override fun replSnippet(declaration: FirClassLikeDeclaration): FirReplSnippetSymbol? {
-            @OptIn(PrivateForInline::class)
-            return replSnippet?.symbol
-        }
-
-        override fun resolveAllSupertypesForOuterClass(outerClass: FirClass) {
-            return this@FirSupertypeResolverVisitor.resolveAllSupertypesForOuterClass(outerClass)
-        }
-    }
+    private val scopeProvider = SupertypeResolverScopeProvider(scopeSession, scopeForLocalClass)
 
     init {
         containingDeclarations.forEach {
@@ -532,9 +516,35 @@ open class FirSupertypeResolverVisitor(
             visitDeclarationContent(file, null)
         }
     }
+
+    private inner class SupertypeResolverScopeProvider(
+        scopeSession: ScopeSession,
+        scopeForLocalClass: PersistentList<FirScope>?,
+    ) : FirSupertypeScopeProvider(
+        session,
+        scopeSession,
+        supertypeComputationSession.supertypesSupplier,
+        supertypeComputationSession,
+        localClassesNavigationInfo,
+        scopeForLocalClass,
+    ) {
+        override fun replSnippet(declaration: FirClassLikeDeclaration): FirReplSnippetSymbol? {
+            @OptIn(PrivateForInline::class)
+            return replSnippet?.symbol
+        }
+
+        override fun resolveAllSupertypesForOuterClass(outerClass: FirClass) {
+            return this@FirSupertypeResolverVisitor.resolveAllSupertypesForOuterClass(outerClass)
+        }
+    }
 }
 
-internal open class FirSupertypeScopeProvider(
+/**
+ * Responsible for [creating][prepareOuterScopes] [FirScope]s used to resolve supertypes of a class.
+ * These are the same scopes which should be made available when generating declarations within a class,
+ * so this abstract class allows sharing some behavior between the resolution transformer and the plugin infrastructure.
+ */
+internal abstract class FirSupertypeScopeProvider(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val supertypeSupplier: SupertypeSupplier,
@@ -634,16 +644,12 @@ internal open class FirSupertypeScopeProvider(
         )
     }
 
-    protected open fun replSnippet(declaration: FirClassLikeDeclaration): FirReplSnippetSymbol? {
-        return declaration.containingReplSymbolAttr
-    }
+    protected abstract fun replSnippet(declaration: FirClassLikeDeclaration): FirReplSnippetSymbol?
 
     /**
      * Resolve all super types. [outerClass] is used as an outer scope for nested class or companion
      */
-    protected open fun resolveAllSupertypesForOuterClass(outerClass: FirClass) {
-        // do nothing
-    }
+    protected abstract fun resolveAllSupertypesForOuterClass(outerClass: FirClass)
 }
 
 private fun createErrorTypeRef(sourceElement: KtSourceElement?, message: String, kind: DiagnosticKind): FirErrorTypeRef = buildErrorTypeRef {
@@ -677,7 +683,7 @@ open class SupertypeComputationSession {
     }
 
     fun getSupertypesComputationStatus(classLikeDeclaration: FirClassLikeDeclaration): SupertypeComputationStatus =
-        supertypeStatusMap[classLikeDeclaration] ?: SupertypeComputationStatus.NotComputed
+        supertypeStatusMap[classLikeDeclaration] ?: NotComputed
 
     fun getOrPutFileScope(file: FirFile, scope: () -> ScopePersistentList): ScopePersistentList =
         fileScopesMap.getOrPut(file) { scope() }
@@ -700,7 +706,7 @@ open class SupertypeComputationSession {
     }
 
     fun storeSupertypes(classLikeDeclaration: FirClassLikeDeclaration, resolvedTypesRefs: List<FirResolvedTypeRef>) {
-        require(supertypeStatusMap[classLikeDeclaration] is SupertypeComputationStatus.Computing) {
+        require(supertypeStatusMap[classLikeDeclaration] is Computing) {
             "Unexpected in storeSupertypes supertype status for $classLikeDeclaration: ${supertypeStatusMap[classLikeDeclaration]}"
         }
 
@@ -785,7 +791,7 @@ open class SupertypeComputationSession {
 
             val supertypeStatus = supertypeStatusMap[classLikeDeclaration]
             val supertypeRefs: List<FirResolvedTypeRef> = if (supertypeStatus != null) {
-                require(supertypeStatus is SupertypeComputationStatus.Computed) {
+                require(supertypeStatus is Computed) {
                     "Expected computed supertypes in breakLoops for ${classLikeDeclaration.symbol.classId}"
                 }
 
@@ -916,7 +922,7 @@ open class SupertypeComputationSession {
 
     fun getResolvedSupertypeRefs(classLikeDeclaration: FirClassLikeDeclaration): List<FirResolvedTypeRef> {
         val status = getSupertypesComputationStatus(classLikeDeclaration)
-        require(status is SupertypeComputationStatus.Computed) {
+        require(status is Computed) {
             "Unexpected status at FirApplySupertypesTransformer: $status for ${classLikeDeclaration.symbol.classId}"
         }
         return status.supertypeRefs

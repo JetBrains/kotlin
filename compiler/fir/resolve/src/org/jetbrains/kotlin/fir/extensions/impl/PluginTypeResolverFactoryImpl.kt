@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.extensions.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingReplSymbolAttr
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
@@ -18,33 +20,23 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTran
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 @FirExtensionApiInternals
-class FirPluginTypeResolverFactory(
+class PluginTypeResolverFactoryImpl(
     private val session: FirSession,
 ) : PluginTypeResolverFactory() {
     private val scopeSession: ScopeSession = ScopeSession()
 
-    private val supertypeSupplier = object : SupertypeSupplier() {
-        override fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType> {
-            // TODO(KT-?): require supertypes to be resolved(?) when generating companion object is fixed.
-            return firClass.superTypeRefs.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
-        }
+    private val supertypeSupplier = PluginSupertypeSupplier()
 
-        override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
-            // TODO(KT-?): require supertypes to be resolved(?) when generating companion object is fixed.
-            return typeAlias.expandedTypeRef.coneTypeSafe()
-        }
-    }
-
-    private val scopeProvider = FirSupertypeScopeProvider(session, scopeSession, supertypeSupplier)
+    private val scopeProvider = PluginSupertypeScopeProvider()
 
     override fun getTypeResolver(klass: FirClassSymbol<*>): PluginTypeResolver {
-        // TODO cache?
         return PluginTypeResolverImpl(klass)
     }
 
@@ -82,6 +74,29 @@ class FirPluginTypeResolverFactory(
 
         return buildList {
             recurse(firProvider.getContainingClass(klass), this@buildList)
+        }
+    }
+
+    private class PluginSupertypeSupplier : SupertypeSupplier() {
+        override fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType> {
+            // TODO(KT-91606): require supertypes to be resolved(?) when generating companion object is fixed.
+            return firClass.superTypeRefs.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
+        }
+
+        override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
+            // TODO(KT-91606): require supertypes to be resolved(?) when generating companion object is fixed.
+            return typeAlias.expandedTypeRef.coneTypeSafe()
+        }
+    }
+
+    private inner class PluginSupertypeScopeProvider : FirSupertypeScopeProvider(session, scopeSession, supertypeSupplier) {
+        override fun replSnippet(declaration: FirClassLikeDeclaration): FirReplSnippetSymbol? {
+            return declaration.containingReplSymbolAttr
+        }
+
+        override fun resolveAllSupertypesForOuterClass(outerClass: FirClass) {
+            // TODO(KT-91606): require supertypes to be resolved(?) when generating companion object is fixed.
+            // do nothing
         }
     }
 }

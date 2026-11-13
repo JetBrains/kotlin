@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
-// TODO(KT-?): collapse abstraction when semantics and resolve modules are reorganized.
+// TODO(KT-91604): collapse abstraction when semantics and resolve modules are reorganized.
 @FirExtensionApiInternals
 abstract class PluginTypeResolverFactory : FirSessionComponent {
     abstract fun getTypeResolver(klass: FirClassSymbol<*>): PluginTypeResolver?
