@@ -29,3 +29,12 @@ public val KonanDistribution.sourcesDir: File
 
 public val KonanDistribution.toolsDir: File
     get() = root.resolve(KONAN_DISTRIBUTION_TOOLS_DIR)
+
+/**
+ * Directory containing compiled klibs for the commonizer support library.
+ * Mirrors the `build/classes/kotlin/` layout of the `commonizer-support-library` project:
+ *   - `<target>/main/klib/commonizer-support-library/` for leaf targets
+ *   - `metadata/<sourceSet>/klib/commonizer-support-library_<sourceSet>/` for intermediate source sets
+ */
+public val KonanDistribution.commonizerSupportLibrary: File
+    get() = root.resolve("klib/commonizer/support")

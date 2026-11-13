@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.konan.LibraryCommonizer
 import org.jetbrains.kotlin.commonizer.konan.ModuleSerializer
 import org.jetbrains.kotlin.commonizer.repository.*
+import org.jetbrains.kotlin.commonizer.repository.plus
 import org.jetbrains.kotlin.commonizer.stats.FileStatsOutput
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.stats.StatsType
@@ -66,12 +67,15 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val resultsConsumer = buildResultsConsumer {
             this add ModuleSerializer(destination)
         }
+        val supportLibraryRepository = CommonizerSupportLibraryRepository(distribution, logger)
 
         LibraryCommonizer(
             outputTargets = outputTargets,
             repository = repository,
-            dependencies = StdlibRepository(distribution, libraryLoader) +
-                    CommonizerDependencyRepository(dependencyLibraries.toSet(), libraryLoader),
+            supportLibraryRepository = supportLibraryRepository,
+            dependencies = StdlibRepository(distribution, libraryLoader)
+                    + CommonizerDependencyRepository(dependencyLibraries.toSet(), libraryLoader)
+                    + supportLibraryRepository,
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
             logger = logger,
@@ -106,11 +110,14 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
 
         val descriptionSuffix = estimateLibrariesCount(repository, outputTargets.allLeaves()).let { " ($it items)" }
         logger.log("${logPrefix}Preparing commonized Kotlin/Native libraries for ${outputTargets.allLeaves()}$descriptionSuffix")
+        val supportLibraryRepository = CommonizerSupportLibraryRepository(distribution, logger)
 
         LibraryCommonizer(
             outputTargets = outputTargets,
             repository = repository,
-            dependencies = StdlibRepository(distribution, libraryLoader),
+            supportLibraryRepository = supportLibraryRepository,
+            dependencies = StdlibRepository(distribution, libraryLoader)
+                    + supportLibraryRepository,
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
             logger = logger,

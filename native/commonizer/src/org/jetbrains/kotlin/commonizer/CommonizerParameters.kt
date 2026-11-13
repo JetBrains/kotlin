@@ -18,6 +18,7 @@ data class CommonizerParameters(
     val outputTargets: Set<SharedCommonizerTarget>,
     val manifestProvider: TargetDependent<NativeManifestDataProvider>,
     val dependenciesProvider: TargetDependent<ModulesProvider?>,
+    val supportLibraryModulesProvider: TargetDependent<ModulesProvider>,
     val targetProviders: TargetDependent<TargetProvider?>,
     val resultsConsumer: ResultsConsumer,
     val storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS,

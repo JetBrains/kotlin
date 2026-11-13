@@ -51,7 +51,7 @@ data class NamedMetadata(
 
 infix fun SerializedMetadata.named(name: String) = NamedMetadata(name, this)
 
-private fun nativeDistributionPath(): File =
+internal fun nativeDistributionPath(): File =
     System.getProperty("kotlin.internal.native.test.nativeHome")?.let(::File)
         ?: error("Missing 'kotlin.internal.native.test.nativeHome' system property")
 
@@ -61,6 +61,10 @@ private fun stdlibPath(): File = nativeDistributionKlibPath().resolve("common").
 
 private fun mockJdk(): File = KtTestUtil.findMockJdkRtJar()
 
+/**
+ * NB: the stdlib is supposed to come first.
+ * See [org.jetbrains.kotlin.library.loader.KlibLoaderResult] (KT-65837).
+ */
 fun loadStdlibMetadata() = loadStdlibMetadata(KotlinTestUtils.newConfiguration())
 
 fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
@@ -80,14 +84,8 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
     return NamedMetadata(stdlib.moduleName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
 }
 
-fun createEmptyModule(name: String, disposable: Disposable): SerializedMetadata {
-    val module = InlineSourceBuilder.ModuleBuilder().apply {
-        this.name = name
-        source(content = "", "empty.kt")
-    }.build()
-
-    return createModule(module, disposable).second.metadata
-}
+fun createEmptyModule(name: String, disposable: Disposable): SerializedMetadata =
+    createModule(createEmptyInlineSourceModule(name), disposable).second.metadata
 
 fun createModule(
     module: InlineSourceBuilder.Module,
@@ -117,8 +115,14 @@ fun serializeModuleAndAllDependenciesToMetadata(
         moduleRoot.resolve(sourceFile.name).writeText(sourceFile.content)
     }
 
-    for (dependency in module.dependencies) {
+    for (dependency in module.dependencies + module.refinesDependencies) {
         if (dependency !in dependencyToMetadata) {
+            if (dependency.precompiledArtifact != null) {
+                // NB: ignores transitive pre-compiled dependencies.
+                dependencyToMetadata[dependency] = dependency.precompiledArtifact
+                continue
+            }
+
             val [configuration, dependencyArtifact] = serializeModuleAndAllDependenciesToMetadata(
                 dependency, disposable, dependencyToMetadata, compiledDependenciesRoot,
             )
@@ -135,7 +139,11 @@ fun serializeModuleAndAllDependenciesToMetadata(
         regularDependencies = module.dependencies.map { dependency ->
             dependencyToMetadata[dependency]?.let { JvmClasspathRoot(File(it.destination)) }
                 ?: error("Missing dependency metadata for ${dependency.name}")
-        }
+        },
+        refinesDependencies = module.refinesDependencies.map { dependency ->
+            dependencyToMetadata[dependency]?.destination
+                ?: error("Missing dependency metadata for ${dependency.name}")
+        },
     )
 }
 
@@ -158,7 +166,9 @@ fun serializeModuleToMetadata(
     configuration.languageVersionSettings = LanguageVersionSettingsImpl(
         LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
         specificFeatures = mapOf(
-            LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
+            LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED,
+            LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor to LanguageFeature.State.ENABLED,
+            LanguageFeature.AllowMultipleExpectsForSingleActual to LanguageFeature.State.ENABLED,
         ),
         analysisFlags = mapOf(AnalysisFlags.allowKotlinPackage to true)
     )
@@ -166,16 +176,16 @@ fun serializeModuleToMetadata(
     configuration.targetPlatform = targetPlatform
     configuration.renderDiagnosticInternalName = true
 
-    configuration.contentRoots += JvmClasspathRoot(stdlibPath())
-    if (targetPlatform.isJvm()) {
-        configuration.contentRoots += JvmClasspathRoot(mockJdk())
-    }
     configuration.contentRoots += regularDependencies + refinesDependencies.map { JvmClasspathRoot(File(it)) }
     configuration.putIfNotNull(K2MetadataConfigurationKeys.REFINES_PATHS, refinesDependencies.takeIf { it.isNotEmpty() })
     configuration.contentRoots += moduleRoot.walkTopDown()
         .filter { it.isFile }
         .map { KotlinSourceRoot(it.path, isCommon, hmppModuleName = null) }
         .toList()
+    configuration.contentRoots += JvmClasspathRoot(stdlibPath())
+    if (targetPlatform.isJvm()) {
+        configuration.contentRoots += JvmClasspathRoot(mockJdk())
+    }
 
     val performanceManager = createPerformanceManagerFor(JvmPlatforms.unspecifiedJvmPlatform)
 
