@@ -29,7 +29,6 @@ abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtensi
     @Deprecated(
         message = "TypeResolveService is being replaced with PluginTypeResolver. " +
                 "Replace override with function that takes PluginTypeResolver as a parameter instead.",
-        replaceWith = ReplaceWith(""),
     )
     open fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
