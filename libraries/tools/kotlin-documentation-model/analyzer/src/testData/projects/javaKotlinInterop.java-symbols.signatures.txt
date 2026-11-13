@@ -1,0 +1,7 @@
+main:
+  class JPoint (declared)
+    constructor() (declared)
+    val x: int (declared)
+  class KUser (declared)
+    constructor() (declared)
+    fun describe(point: JPoint): Int (declared)

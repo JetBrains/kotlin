@@ -1,0 +1,25 @@
+KdBundle
+├── fragments
+│   └── KdFragment jvmMain
+│       └── elements
+│           ├── KdModule targetJvm [////PointingToDeclaration/]
+│           │   └── packages: pkg////PointingToDeclaration/
+│           ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│           │   └── declarations: pkg//javaClassName/#kotlin.Any/PointingToDeclaration/, pkg/JvmId///PointingToDeclaration/, pkg/JvmService///PointingToDeclaration/
+│           ├── KdFunction javaClassName(value: Any): String [pkg//javaClassName/#kotlin.Any/PointingToDeclaration/]
+│           ├── KdClass JvmId (CLASS) [pkg/JvmId///PointingToDeclaration/]
+│           │   └── declarations: pkg/JvmId/JvmId/#kotlin.Long/PointingToDeclaration/, pkg/JvmId/raw/#/PointingToDeclaration/
+│           ├── KdConstructor(raw: Long) [pkg/JvmId/JvmId/#kotlin.Long/PointingToDeclaration/]
+│           ├── KdProperty raw: Long [pkg/JvmId/raw/#/PointingToDeclaration/]
+│           ├── KdClass Companion (OBJECT) [pkg/JvmService.Companion///PointingToDeclaration/]
+│           │   └── declarations: pkg/JvmService.Companion/create/#/PointingToDeclaration/
+│           ├── KdFunction create(): JvmService [pkg/JvmService.Companion/create/#/PointingToDeclaration/]
+│           ├── KdClass JvmService (CLASS) [pkg/JvmService///PointingToDeclaration/]
+│           │   └── declarations: pkg/JvmService.Companion///PointingToDeclaration/, pkg/JvmService/JvmService/#kotlin.String#kotlin.Int/PointingToDeclaration/, pkg/JvmService/counter/#/PointingToDeclaration/, pkg/JvmService/name/#/PointingToDeclaration/, pkg/JvmService/read/#java.io.File/PointingToDeclaration/, pkg/JvmService/retries/#/PointingToDeclaration/, pkg/JvmService/state/#/PointingToDeclaration/
+│           ├── KdConstructor(name: String, retries: Int) [pkg/JvmService/JvmService/#kotlin.String#kotlin.Int/PointingToDeclaration/]
+│           ├── KdProperty counter: AtomicInteger [pkg/JvmService/counter/#/PointingToDeclaration/]
+│           ├── KdProperty name: String [pkg/JvmService/name/#/PointingToDeclaration/]
+│           ├── KdFunction read(file: File): ByteArray [pkg/JvmService/read/#java.io.File/PointingToDeclaration/]
+│           ├── KdProperty retries: Int [pkg/JvmService/retries/#/PointingToDeclaration/]
+│           └── KdProperty state: Int [pkg/JvmService/state/#/PointingToDeclaration/]
+└── expectActualMappings

@@ -1,0 +1,5 @@
+main:
+  class Greeter (declared)
+    constructor(name: String) (declared)
+    fun greet(): String (declared)
+    val name: String (declared)

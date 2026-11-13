@@ -124,6 +124,7 @@
         <option value="$PROJECT_DIR$/compiler/testData" />
         <option value="$PROJECT_DIR$/compiler/tests-spec/testData" />
         <option value="$PROJECT_DIR$/js/js.translator/testData" />
+        <option value="$PROJECT_DIR$/libraries/tools/kotlin-documentation-model/analyzer/src/testData" />
         <option value="$PROJECT_DIR$/libraries/tools/kotlinp/jvm/testData" />
         <option value="$PROJECT_DIR$/native/native.tests/cli-tests/testData" />
         <option value="$PROJECT_DIR$/native/native.tests/testData" />

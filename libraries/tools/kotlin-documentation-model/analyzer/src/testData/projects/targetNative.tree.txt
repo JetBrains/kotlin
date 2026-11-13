@@ -1,0 +1,19 @@
+KdBundle
+├── fragments
+│   └── KdFragment nativeMain
+│       └── elements
+│           ├── KdModule targetNative [////PointingToDeclaration/]
+│           │   └── packages: pkg////PointingToDeclaration/
+│           ├── KdPackage pkg [pkg////PointingToDeclaration/]
+│           │   └── declarations: pkg//nativeOs/#/PointingToDeclaration/, pkg//readInt/#kotlinx.cinterop.CPointer[kotlinx.cinterop.IntVarOf[kotlin.Int]]/PointingToDeclaration/, pkg/NativeCache///PointingToDeclaration/, pkg/NativeCounter///PointingToDeclaration/
+│           ├── KdFunction nativeOs(): OsFamily [pkg//nativeOs/#/PointingToDeclaration/]
+│           ├── KdFunction readInt(pointer: CPointer<IntVar>): Int [pkg//readInt/#kotlinx.cinterop.CPointer[kotlinx.cinterop.IntVarOf[kotlin.Int]]/PointingToDeclaration/]
+│           ├── KdClass NativeCache (OBJECT) [pkg/NativeCache///PointingToDeclaration/]
+│           │   └── declarations: pkg/NativeCache/hits/#/PointingToDeclaration/
+│           ├── KdProperty hits: Int [pkg/NativeCache/hits/#/PointingToDeclaration/]
+│           ├── KdClass NativeCounter (CLASS) [pkg/NativeCounter///PointingToDeclaration/]
+│           │   └── declarations: pkg/NativeCounter/NativeCounter/#/PointingToDeclaration/, pkg/NativeCounter/increment/#/PointingToDeclaration/, pkg/NativeCounter/value/#/PointingToDeclaration/
+│           ├── KdConstructor() [pkg/NativeCounter/NativeCounter/#/PointingToDeclaration/]
+│           ├── KdFunction increment(): Int [pkg/NativeCounter/increment/#/PointingToDeclaration/]
+│           └── KdProperty value: AtomicInt [pkg/NativeCounter/value/#/PointingToDeclaration/]
+└── expectActualMappings

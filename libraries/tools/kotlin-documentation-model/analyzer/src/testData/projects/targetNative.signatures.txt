@@ -1,0 +1,9 @@
+nativeMain:
+  class NativeCounter (declared)
+    constructor() (declared)
+    fun increment(): Int (declared)
+    val value: AtomicInt (declared)
+  fun nativeOs(): OsFamily (declared)
+  fun readInt(pointer: CPointer<IntVar>): Int (declared)
+  object NativeCache (declared)
+    var hits: Int (declared)

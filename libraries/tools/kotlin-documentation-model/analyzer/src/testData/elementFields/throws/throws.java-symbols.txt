@@ -1,0 +1,67 @@
+fragment main
+fun annotated(): Unit [sample//annotated/#/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "sample/FirstException///PointingToDeclaration/"
+  }
+  KdThrows {
+    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  }
+]
+fun externalException(): Unit [sample//externalException/#/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "java.io/IOException///PointingToDeclaration/"
+  }
+]
+fun getDocumentedProperty(): String [sample//getDocumentedProperty/#/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  }
+]
+val documentedProperty: String [sample//documentedProperty/#/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  }
+]
+fun getAccessors(): String [sample//getAccessors/#/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "sample/FirstException///PointingToDeclaration/"
+  }
+]
+fun setAccessors(value: String): Unit [sample//setAccessors/#kotlin.String/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  }
+]
+constructor() [sample/Constructed/Constructed/#/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "sample/FirstException///PointingToDeclaration/"
+  }
+]
+constructor() [sample/JavaDeclarations/JavaDeclarations/#/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "sample/FirstException///PointingToDeclaration/"
+  }
+]
+fun declared(): Unit [sample/JavaDeclarations/declared/#/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "sample/FirstException///PointingToDeclaration/"
+  }
+  KdThrows {
+    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  }
+]
+fun externalException(): Unit [sample/JavaDeclarations/externalException/#/PointingToDeclaration/].throws:
+[
+  KdThrows {
+    classLikeId = "java.io/IOException///PointingToDeclaration/"
+  }
+]

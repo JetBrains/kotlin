@@ -1,0 +1,291 @@
+fragment main
+interface Base [example/Base///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Any///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = true
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Any"
+      typeArguments = []
+    }
+  ]
+}
+
+constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/CharSequence///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "CharSequence"
+      typeArguments = []
+    }
+  ]
+}
+constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].valueParameters[0].type:
+KdTypeParameterType {
+  annotations = []
+  containerElementId = "example/Types///PointingToDeclaration/"
+  isMarkedNullable = false
+  name = "T"
+}
+
+val value: T [example/Types/value/#/PointingToDeclaration/].type:
+KdTypeParameterType {
+  annotations = []
+  containerElementId = "example/Types///PointingToDeclaration/"
+  isMarkedNullable = false
+  name = "T"
+}
+
+val nullable: String? [example/Types/nullable/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/String///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = true
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "String"
+      typeArguments = []
+    }
+  ]
+}
+
+val nested: Map<String, List<T?>> [example/Types/nested/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin.collections/Map///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Map"
+      typeArguments = [
+        Invariant {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "kotlin/String///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "String"
+                typeArguments = []
+              }
+            ]
+          }
+        }
+        Invariant {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "kotlin.collections/List///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "List"
+                typeArguments = [
+                  Invariant {
+                    type = KdTypeParameterType {
+                      annotations = []
+                      containerElementId = "example/Types///PointingToDeclaration/"
+                      isMarkedNullable = true
+                      name = "T"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+
+val projections: Map<in String, out List<*>> [example/Types/projections/#/PointingToDeclaration/].type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin.collections/Map///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Map"
+      typeArguments = [
+        In {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "kotlin/String///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "String"
+                typeArguments = []
+              }
+            ]
+          }
+        }
+        Out {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "kotlin.collections/List///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "List"
+                typeArguments = [
+                  Star
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+
+class Types [example/Types///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/CharSequence///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "CharSequence"
+      typeArguments = []
+    }
+  ]
+}
+class Types [example/Types///PointingToDeclaration/].superTypes[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "example/Base///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Base"
+      typeArguments = [
+        Invariant {
+          type = KdClassLikeType {
+            annotations = []
+            classLikeId = "kotlin.collections/List///PointingToDeclaration/"
+            isEnhancedNullability = false
+            isMarkedNullable = false
+            qualifiers = [
+              KdClassTypeQualifier {
+                name = "List"
+                typeArguments = [
+                  Invariant {
+                    type = KdTypeParameterType {
+                      annotations = []
+                      containerElementId = "example/Types///PointingToDeclaration/"
+                      isMarkedNullable = false
+                      name = "T"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+
+fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/CharSequence///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "CharSequence"
+      typeArguments = []
+    }
+  ]
+}
+fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Comparable///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Comparable"
+      typeArguments = [
+        Invariant {
+          type = KdTypeParameterType {
+            annotations = []
+            containerElementId = "example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/"
+            isMarkedNullable = false
+            name = "R"
+          }
+        }
+      ]
+    }
+  ]
+}
+fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].valueParameters[0].type:
+KdTypeParameterType {
+  annotations = []
+  containerElementId = "example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/"
+  isMarkedNullable = false
+  name = "R"
+}
+fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].returnType:
+KdTypeParameterType {
+  annotations = []
+  containerElementId = "example/MultipleBounds///PointingToDeclaration/"
+  isMarkedNullable = false
+  name = "T"
+}
+
+interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/CharSequence///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "CharSequence"
+      typeArguments = []
+    }
+  ]
+}
+interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Comparable///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Comparable"
+      typeArguments = [
+        Invariant {
+          type = KdTypeParameterType {
+            annotations = []
+            containerElementId = "example/MultipleBounds///PointingToDeclaration/"
+            isMarkedNullable = false
+            name = "T"
+          }
+        }
+      ]
+    }
+  ]
+}
