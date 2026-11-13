@@ -33,7 +33,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     protected val context: Context,
 ) {
-    private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
+    private data class AccessorKey(
+        val parent: IrDeclarationParent,
+        val superQualifierSymbol: IrClassSymbol?,
+        val nameSuffix: String? = null,
+    )
 
     protected class AccessorNameBuilder {
         private val nameParts = mutableListOf(ACCESSOR_PREFIX)
@@ -200,25 +204,26 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             copyAllParamsToArgs(it, accessor)
         }
 
-    fun getSyntheticGetter(expression: IrGetField, scopeInfo: ScopeInfo): IrSimpleFunction {
+    fun getSyntheticGetter(expression: IrGetField, scopeInfo: ScopeInfo, nameSuffix: String? = null): IrSimpleFunction {
         val [field, parent] = extractFieldAndParent(expression, scopeInfo)
         val getterMap =
             field.getterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.getterSyntheticAccessors = it }
-        return getterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
-            makeGetterAccessor(field, parent, expression.superQualifierSymbol)
+        return getterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol, nameSuffix)) {
+            makeGetterAccessor(field, parent, expression.superQualifierSymbol, nameSuffix)
         }
     }
 
     private fun makeGetterAccessor(
         field: IrField,
         parent: IrDeclarationParent,
-        superQualifierSymbol: IrClassSymbol?
+        superQualifierSymbol: IrClassSymbol?,
+        nameSuffix: String?,
     ): IrSimpleFunction =
         context.irFactory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = field.accessorNameForGetter(superQualifierSymbol)
+            name = field.accessorNameForGetter(superQualifierSymbol, nameSuffix)
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
             returnType = field.type
@@ -378,8 +383,11 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     protected abstract fun AccessorNameBuilder.buildFieldSetterName(field: IrField, superQualifierSymbol: IrClassSymbol?)
 
 
-    private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name =
-        AccessorNameBuilder().apply { buildFieldGetterName(this@accessorNameForGetter, superQualifierSymbol) }.build()
+    private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?, nameSuffix: String?): Name =
+        AccessorNameBuilder().apply {
+            buildFieldGetterName(this@accessorNameForGetter, superQualifierSymbol)
+            nameSuffix?.let(::contribute)
+        }.build()
 
     private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name =
         AccessorNameBuilder().apply { buildFieldSetterName(this@accessorNameForSetter, superQualifierSymbol) }.build()
