@@ -316,6 +316,7 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftExportTests")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftPMImportTests")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersionNightly")
     }
 
     // Nightly Gradle Plugin Integration Tests
