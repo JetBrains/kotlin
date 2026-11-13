@@ -16,12 +16,8 @@ import java.util.concurrent.atomic.AtomicReferenceArray
 
 /**
  * Atomics and AtomicArrays from the `kotlin.concurrent` package provide a compareAndExchange method.
- * However, since this method cannot be directly delegated to its corresponding Java implementation (as it's only available in Java 9 and later),
- * the current implementation relies on the methods listed below.
  *
- * Once multi-release JARs are supported, these methods can be directly delegated to the compareAndExchange implementation in Java for JDK 9 and above.
- *
- * See KT-71376
+ * Starting from Java 9, it's possible to delegate directly to its corresponding Java implementation.
  */
 
 @SinceKotlin("2.1")
