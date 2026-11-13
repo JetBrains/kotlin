@@ -11,18 +11,29 @@ import org.jetbrains.kotlin.konan.library.impl.KlibNativeIncludedBinariesCompone
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.writer.KlibManifestWriterSpec
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.KlibWriterSpec
 import java.nio.file.Path
 
+private val ABI_VERSION_WITHOUT_DEPENDS = KotlinAbiVersion(2, 5, 0)
+
+private fun shouldWriteLegacyDependsInManifest(
+    klibAbiVersion: KotlinAbiVersion?,
+): Boolean = klibAbiVersion == null || !klibAbiVersion.isAtLeast(ABI_VERSION_WITHOUT_DEPENDS)
+
 /**
- * A [KlibWriter] DSL extension to include names of dependencies to the manifest file.
+ * A [KlibWriter] DSL extension to include names of dependencies to the manifest file
+ * for KLIB ABI versions prior to 2.5.0 (including unspecified `null` ABI versions).
  *
  * TODO (KT-83158): Consider removing this extension along with dropping of KLIB resolver.
  */
-fun KlibManifestWriterSpec.legacyNativeDependenciesInManifest(uniqueNames: Collection<String>) {
-    if (uniqueNames.isEmpty()) return
+fun KlibManifestWriterSpec.legacyNativeDependenciesInManifest(
+    uniqueNames: Collection<String>,
+    klibAbiVersion: KotlinAbiVersion?,
+) {
+    if (uniqueNames.isEmpty() || !shouldWriteLegacyDependsInManifest(klibAbiVersion)) return
 
     customProperties {
         val existingDependencies: List<String> = propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)

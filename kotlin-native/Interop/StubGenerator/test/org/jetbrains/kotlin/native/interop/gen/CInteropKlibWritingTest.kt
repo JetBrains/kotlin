@@ -50,9 +50,11 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
 
     @Test
     fun `Writing C-interop klib with different ABI levels`() {
+        val testDependencies = listOf(mockKlibDependency("dep1"), mockKlibDependency("dep2"))
         KlibAbiCompatibilityLevel.entries.forEach { abiLevel ->
             runTestWithParameters {
                 this.abiLevel = abiLevel
+                dependencies = testDependencies
             }
         }
     }

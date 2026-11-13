@@ -40,13 +40,14 @@ fun createInteropLibrary(
         klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel,
         topLevelSignatures: ExtractedSignatures,
 ) {
+    val abiVersion = klibAbiCompatibilityLevel.toAbiVersionForManifest()
     KlibWriter {
         format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
         manifest {
             moduleName(moduleName)
             versions(
                     KotlinLibraryVersioning(
-                            abiVersion = klibAbiCompatibilityLevel.toAbiVersionForManifest(),
+                            abiVersion = abiVersion,
                             compilerVersion = KotlinCompilerVersion.VERSION,
                             metadataVersion = klibAbiCompatibilityLevel.toCInteropKlibMetadataVersion(),
                     )
@@ -56,7 +57,10 @@ fun createInteropLibrary(
                 this += (manifest - KLIB_PROPERTY_DEPENDS) // Do not propagate the `depends=` property from *.def files, rely on `dependencies` instead.
             }
             legacyNativeShortNameInManifest(shortName)
-            legacyNativeDependenciesInManifest(dependencies.map { it.uniqueName })
+            legacyNativeDependenciesInManifest(
+                    dependencies.map { it.uniqueName },
+                    klibAbiVersion = abiVersion,
+            )
         }
         includeMetadata(serializedMetadata)
         includeBitcode(target, nativeBitcodeFiles)

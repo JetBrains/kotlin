@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.klib.NativeKlibWriterTest.NewNativeKlibWr
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KlibMockDSL
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedSignatureIndex
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -45,6 +46,23 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
         ).forEach { targets ->
             runTestWithParameters {
                 this.targetsForManifest = targets
+            }
+        }
+    }
+
+    @Test
+    fun `Writing a klib with dependencies and different ABI versions`() {
+        val testDependencies = listOf(mockKlibDependency("dep1"), mockKlibDependency("dep2"))
+        val abiVersions = listOf(
+            KotlinAbiVersion(2, 4, 0),
+            KotlinAbiVersion(2, 5, 0),
+            KotlinAbiVersion(2, 6, 0),
+            null,
+        )
+        for (testAbiVersion in abiVersions) {
+            runTestWithParameters {
+                abiVersion = testAbiVersion
+                dependencies = testDependencies
             }
         }
     }
@@ -92,7 +110,7 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
                     builtInsPlatform = BuiltInsPlatform.NATIVE,
                     targetNames = parameters.targetsForManifest?.map { it.name } ?: listOf(parameters.target.name)
                 )
-                legacyNativeDependenciesInManifest(parameters.dependencies.map { it.uniqueName })
+                legacyNativeDependenciesInManifest(parameters.dependencies.map { it.uniqueName }, parameters.abiVersion)
                 legacyNativeShortNameInManifest(parameters.shortName)
                 customProperties {
                     parameters.customManifestProperties.forEach { [key, value] -> setProperty(key, value) }

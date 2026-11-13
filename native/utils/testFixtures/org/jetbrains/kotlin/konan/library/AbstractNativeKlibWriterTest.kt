@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.KlibMockDSL
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.junit.jupiter.api.Assumptions.abort
 import org.junit.jupiter.api.Test
@@ -103,7 +104,8 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
     override fun customizeManifestForMockKlib(parameters: P) {
         super.customizeManifestForMockKlib(parameters)
         parameters.shortName?.let { shortName -> properties[KLIB_PROPERTY_SHORT_NAME] = shortName }
-        if (parameters.dependencies.isNotEmpty()) {
+        val expectsDependsInManifest = parameters.abiVersion.let { it == null || !it.isAtLeast(KotlinAbiVersion(2, 5, 0)) }
+        if (parameters.dependencies.isNotEmpty() && expectsDependsInManifest) {
             properties[KLIB_PROPERTY_DEPENDS] = parameters.dependencies.joinToString(" ") { it.uniqueName }
         }
         properties[KLIB_PROPERTY_NATIVE_TARGETS] = parameters.target.visibleName

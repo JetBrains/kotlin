@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -44,9 +45,12 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             }
         }
 
+        // Pin ABI 2.4 because depends= is omitted starting from ABI 2.5 (KT-60874).
+        val legacyAbiArg = "-Xklib-abi-version=2.4.0"
+
         newSourceModules {
             addRegularModule("test")
-        }.compileToKlibsViaCli { _, successKlib ->
+        }.compileToKlibsViaCli(extraCliArgs = listOf(legacyAbiArg)) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
             )
@@ -54,7 +58,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
 
         newSourceModules {
             addRegularModule("test")
-        }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
+        }.compileToKlibsViaCli(extraCliArgs = listOf(legacyAbiArg, "-l", additionalUnusedModulePath)) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
                 /* because it was passed explicitly via CLI, even if "test" doesn't use any API from "additional" */ "additional",
@@ -65,7 +69,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             addRegularModule("test") {
                 sourceFileAddend("fun callAdditional() = additional.additional(-1)")
             }
-        }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
+        }.compileToKlibsViaCli(extraCliArgs = listOf(legacyAbiArg, "-l", additionalUnusedModulePath)) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
                 /* because it was passed explicitly via CLI and "test" uses some API from "additional" */ "additional",
@@ -76,11 +80,29 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             addRegularModule("test") {
                 sourceFileAddend("@kotlinx.cinterop.ExperimentalForeignApi fun callPosix() = platform.posix.fopen(\"test.txt\", \"r\")")
             }
-        }.compileToKlibsViaCli { _, successKlib ->
+        }.compileToKlibsViaCli(extraCliArgs = listOf(legacyAbiArg)) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
                 /* because "test" uses some API from posix */ "org.jetbrains.kotlin.native.platform.posix",
             )
+        }
+
+        // Starting with ABI version 2.5, depends= is no longer emitted in manifest even with explicit and posix dependencies.
+        newSourceModules {
+            addRegularModule("test") {
+                sourceFileAddend(
+                    """
+                    fun callAdditional() = additional.additional(-1)
+                    @kotlinx.cinterop.ExperimentalForeignApi fun callPosix() = platform.posix.fopen("test.txt", "r")
+                    """.trimIndent()
+                )
+            }
+        }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath)) { _, successKlib ->
+            val actualDepends = successKlib.resultingArtifact.klibFile.resolve("default").resolve("manifest").toPath()
+                .readProperties().getProperty(KLIB_PROPERTY_DEPENDS)
+            assertNull(actualDepends) {
+                "Expected no '$KLIB_PROPERTY_DEPENDS' property in manifest for ${successKlib.resultingArtifact.klibFile}, but got: $actualDepends"
+            }
         }
     }
 

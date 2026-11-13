@@ -111,7 +111,7 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
             platformAndTargets(BuiltInsPlatform.NATIVE, nativeTargetsForManifest)
             customProperties { this += manifestProperties }
             legacyNativeShortNameInManifest(shortLibraryName)
-            legacyNativeDependenciesInManifest(linkDependencies.map { it.uniqueName })
+            legacyNativeDependenciesInManifest(linkDependencies.map { it.uniqueName }, versions.abiVersion)
         }
         includeMetadata(input.serializerOutput.serializedMetadata)
         includeIr(input.serializerOutput.serializedIr)

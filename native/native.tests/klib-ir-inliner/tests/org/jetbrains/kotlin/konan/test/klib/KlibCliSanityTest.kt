@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.signatureIndex
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.io.propertyList
+import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
@@ -216,20 +218,44 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         doTestIgnoringNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop = true)
 
     private fun doTestIgnoringNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop: Boolean) {
-        var aKlib: KLIB? = null
+        lateinit var aKlib: KLIB
+        lateinit var bKlib: KLIB
+
+        // Pin ABI 2.4 because depends= is omitted starting from ABI 2.5 (KT-60874).
+        val olderAbiArgs = listOf("-Xklib-abi-version=2.4.0")
 
         newSourceModules {
             addRegularModule("a")
             addRegularModule("b") { dependsOn("a") }
+        }.compileToKlibsViaCli(
+            extraCliArgs = olderAbiArgs,
+            customGeneratedKlibsDir = buildDir.resolve("v1-$lastModuleIsCInterop-ab").toPath(),
+        ) { module, successKlib ->
+            when (module.name) {
+                "a" -> aKlib = successKlib.resultingArtifact
+                "b" -> {
+                    val artifact = successKlib.resultingArtifact
+                    bKlib = artifact
+                    val bDepends = artifact.klibFile.resolve("default/manifest").toPath()
+                        .readProperties()
+                        .propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
+                    assertTrue("a" in bDepends)
+                    aKlib.klibFile.deleteRecursively() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                }
+            }
+        }
+
+        newSourceModules {
+            addRegularModule("b", bKlib.klibFile.toPath())
             if (lastModuleIsCInterop)
                 addCInteropModule("c") { dependsOn("b") }
             else
                 addRegularModule("c") { dependsOn("b") }
-        }.compileToKlibsViaCli { module, successKlib ->
-            when (module.name) {
-                "a" -> aKlib = successKlib.resultingArtifact
-                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                "c" -> successKlib.assertNoKlibLoaderIssues()
+        }.compileToKlibsViaCli(
+            customGeneratedKlibsDir = buildDir.resolve("v1-$lastModuleIsCInterop-c").toPath(),
+        ) { module, successKlib ->
+            if (module.name == "c") {
+                successKlib.assertNoKlibLoaderIssues()
             }
         }
     }
@@ -248,7 +274,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
                     // for that, we need the same header file accessible to both `a` and `b`.
                     // Instead of overcomplicating the test engine, let's do a little shortcut:
                     patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
-                        properties[KLIB_PROPERTY_DEPENDS] += " a"
+                        properties[KLIB_PROPERTY_DEPENDS] = listOfNotNull(properties[KLIB_PROPERTY_DEPENDS], "a").joinToString(" ")
                     }
                     // In other words: unlike the previous test, don't compile-and-remove "a" at all,
                     // but just patch the manifest to mention it as if it existed.
