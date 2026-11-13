@@ -14,7 +14,6 @@ val excludedCompilerModules = listOf(
 
 val extraCompilerModules = listOf(
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
-    ":compiler:frontend.java",
 )
 
 val projects = fe10CompilerModules.asList() - excludedCompilerModules + extraCompilerModules
