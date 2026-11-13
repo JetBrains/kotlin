@@ -135,7 +135,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             if (!propertyAccessor.hasContractToResolve) {
                 return propertyAccessor
             }
-            return context.withPropertyAccessor(owner, propertyAccessor, forContracts = true) {
+            return context.withPropertyAccessor(owner, propertyAccessor, hideBackingField = true) {
                 transformContractDescriptionOwner(propertyAccessor)
             }
         }

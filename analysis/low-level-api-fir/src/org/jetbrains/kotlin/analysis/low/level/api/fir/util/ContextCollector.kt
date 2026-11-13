@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Con
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
@@ -690,8 +691,17 @@ private class ContextCollectorVisitor(
         dumpContext(propertyAccessExpression, ContextKind.SELF, hasBodyContext = false)
     }
 
+    /**
+     * Stores a local [regularClass] in the enclosing local scope before processing its annotations and header, as
+     * [runAllPhasesForLocalClassLikeDeclarations][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.runAllPhasesForLocalClassLikeDeclarations]
+     * does, so that the class is visible in its own annotations, type parameters and supertypes.
+     */
     override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor(regularClass) {
         dumpContext(regularClass, ContextKind.SELF)
+
+        if (regularClass.isLocal) {
+            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
+        }
 
         context.withClassHeader(regularClass) {
             processRawAnnotations(regularClass)
@@ -718,10 +728,6 @@ private class ContextCollectorVisitor(
                     }
                 }
             }
-        }
-
-        if (regularClass.isLocal) {
-            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
         }
     }
 
@@ -763,6 +769,44 @@ private class ContextCollectorVisitor(
                 }
 
                 processChildren(doWhileLoop)
+            }
+        }
+    }
+
+    /**
+     * Processes [whenExpression] with its subject variable in a separate local scope, as
+     * [FirControlFlowStatementsResolveTransformer][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirControlFlowStatementsResolveTransformer]
+     * does, so that the variable isn't visible after the `when`.
+     */
+    override fun visitWhenExpression(whenExpression: FirWhenExpression) {
+        withProcessor(whenExpression) {
+            dumpContext(whenExpression, ContextKind.SELF)
+
+            onActive {
+                processList(whenExpression.annotations)
+
+                context.withWhenExpression(whenExpression, bodyHolder.session) {
+                    dumpContext(whenExpression, ContextKind.BODY)
+                    processChildren(whenExpression)
+                }
+            }
+        }
+    }
+
+    /**
+     * Processes [catch] with its parameter in a separate local scope, as
+     * [FirControlFlowStatementsResolveTransformer][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirControlFlowStatementsResolveTransformer]
+     * does, so that the parameter isn't visible after the `try` expression.
+     */
+    override fun visitCatch(catch: FirCatch) {
+        withProcessor(catch) {
+            dumpContext(catch, ContextKind.SELF)
+
+            onActive {
+                context.forBlock(bodyHolder.session) {
+                    dumpContext(catch, ContextKind.BODY)
+                    processChildren(catch)
+                }
             }
         }
     }
@@ -876,19 +920,21 @@ private class ContextCollectorVisitor(
      * the call itself is resolved with the implicit receiver of the containing class (required for super calls to inner classes),
      * while its children (e.g., arguments) are resolved without it.
      */
-    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) = withProcessor(delegatedConstructorCall) {
-        val constructor = context.containerIfAny as? FirConstructor
-            ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
-                withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+        withProcessor(delegatedConstructorCall) {
+            val constructor = context.containerIfAny as? FirConstructor
+                ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
+                    withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+                }
+
+            context.forDelegatedConstructorCallResolution {
+                dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
             }
 
-        context.forDelegatedConstructorCallResolution {
-            dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
-        }
-
-        onActive {
-            context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
-                processChildren(delegatedConstructorCall)
+            onActive {
+                context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
+                    processChildren(delegatedConstructorCall)
+                }
             }
         }
     }
@@ -933,6 +979,11 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * Processes the contract description of [namedFunction] in the scope of the function body, as
+     * [FirContractResolveTransformer][org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer]
+     * does, so that the parameters are visible in a contract that is declared outside the body.
+     */
     override fun visitNamedFunction(namedFunction: FirNamedFunction) = withProcessor(namedFunction) {
         dumpContext(namedFunction, ContextKind.SELF)
 
@@ -956,10 +1007,11 @@ private class ContextCollectorVisitor(
                             processList(namedFunction.valueParameters)
                             processBody(namedFunction)
                         }
+
+                        process(namedFunction.contractDescription)
                     }
 
                     process(namedFunction.returnTypeRef)
-                    process(namedFunction.contractDescription)
                 }
             }
         }
@@ -1061,6 +1113,11 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * Processes [propertyAccessor] without the backing field in scope if the property type is inferred from it:
+     * [FirDeclarationsResolveTransformer][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer]
+     * resolves such a getter while the property type is still implicit, so without the backing field.
+     */
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = withProcessor(propertyAccessor) {
         dumpContext(propertyAccessor, ContextKind.SELF)
 
@@ -1069,7 +1126,12 @@ private class ContextCollectorVisitor(
         onActive {
             val holder = getSessionHolder(propertyAccessor)
 
-            context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder = holder) {
+            context.withPropertyAccessor(
+                property = propertyAccessor.propertySymbol.fir,
+                accessor = propertyAccessor,
+                hideBackingField = propertyAccessor.providesPropertyType,
+                holder = holder,
+            ) {
                 dumpContext(propertyAccessor, ContextKind.BODY)
                 processChildren(propertyAccessor)
             }
@@ -1366,3 +1428,9 @@ private class ContextCollectorVisitor(
         }
     }
 }
+
+/**
+ * Whether the type of the property is inferred from this accessor.
+ */
+private val FirPropertyAccessor.providesPropertyType: Boolean
+    get() = isGetter && propertySymbol.fir.initializer == null && !propertySymbol.hasExplicitReturnType
