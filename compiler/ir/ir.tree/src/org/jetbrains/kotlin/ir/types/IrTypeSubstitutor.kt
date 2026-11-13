@@ -55,7 +55,7 @@ abstract class AbstractIrTypeSubstitutor : TypeSubstitutorMarker {
          */
         fun forType(type: IrSimpleType): AbstractIrTypeSubstitutor {
             val clazz = type.classOrNull ?: return Empty
-            val typeParameters = clazz.owner.typeConstructorParameters.map { it.symbol }.toList()
+            val typeParameters = extractTypeParameters(clazz.owner).map { it.symbol }.toList()
             if (typeParameters.isEmpty()) return Empty
             return IrTypeSubstitutor(typeParameters, type.arguments, allowEmptySubstitution = true)
         }
