@@ -48,7 +48,7 @@ fun throwIfLess(a: Int, b: Int) {
 // test.kt:15 throwIfLess
 // test.kt:16 throwIfLess
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (12)
 // test.kt:5 $box (12)
 // test.kt:7 $box (20, 23, 8)

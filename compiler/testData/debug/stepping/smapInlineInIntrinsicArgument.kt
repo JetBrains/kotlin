@@ -59,7 +59,7 @@ fun fail() : String {
 // test.kt:17 fail
 // test.kt:10 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box (4)
 // test.kt:13 $box (11, 4)
 // test.kt:6 $box (12)

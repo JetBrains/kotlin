@@ -23,7 +23,7 @@ fun box() {
 // test.kt:6 box$lambda
 // test.kt:8 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box (4)
 // test.kt:6 $box$lambda.invoke (8, 12)
 // test.kt:5 $box (4)

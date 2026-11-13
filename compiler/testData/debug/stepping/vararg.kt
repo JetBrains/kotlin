@@ -90,7 +90,7 @@ fun box(): String {
 // test.kt:7 sum
 // test.kt:18 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:13 $box (8)
 // test.kt:12 $box (8)
 // test.kt:11 $box (4)

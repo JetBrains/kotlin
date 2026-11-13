@@ -70,7 +70,7 @@ class A {
 // test.kt:32 bar
 // test.kt:8 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:6 $box (4)
 // test.kt:33 $A.<init> (1)
 // test.kt:6 $box (8)

@@ -101,7 +101,7 @@ class A {
 // test.kt:14 test
 // test.kt:6 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box (4)
 // test.kt:29 $A.<init> (1)
 // test.kt:21 $A$static_init (32)

@@ -94,7 +94,7 @@ fun box(): String {
 // InlineFunDeclaration.kt:35 render
 // InlineFunCallSite.kt:20 render
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:51 $box (11)
 // InlineFunCallSite.kt:25 $InlineFunCallSite.<init> (1)
 // test.kt:51 $box (31)

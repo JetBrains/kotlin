@@ -38,7 +38,7 @@ fun box() {
 // test.kt:15 box: map=kotlin.collections.HashMap, a="1":kotlin.String, b="23":kotlin.String
 // test.kt:20 box: map=kotlin.collections.HashMap, a="1":kotlin.String, b="23":kotlin.String
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box: $map:(ref null $kotlin.Any)=null, $IS_INTERFACE_PARAMETER:(ref null $kotlin.Any)=null, $a:(ref null $kotlin.String)=null, $b:(ref null $kotlin.String)=null (41, 41, 41, 48, 48, 48, 41, 35)
 // test.kt:15 $box: $map:(ref $kotlin.collections.HashMap)=(ref $kotlin.collections.HashMap), $IS_INTERFACE_PARAMETER:(ref $kotlin.collections.HashMap$EntryRef)=(ref $kotlin.collections.HashMap$EntryRef), $a:(ref null $kotlin.String)=null, $b:(ref null $kotlin.String)=null (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
 // test.kt:10 $box: $map:(ref $kotlin.collections.HashMap)=(ref $kotlin.collections.HashMap), $IS_INTERFACE_PARAMETER:(ref $kotlin.collections.HashMap$EntryRef)=(ref $kotlin.collections.HashMap$EntryRef), $a:(ref null $kotlin.String)=null, $b:(ref null $kotlin.String)=null (8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8)

@@ -52,7 +52,7 @@ inline fun foo(n: Int) {}
 // test.kt:4 box
 // test.kt:7 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (14, 4, 17, 4, 14)
 // test.kt:5 $box (12, 8)
 // test.kt:9 $box (25)

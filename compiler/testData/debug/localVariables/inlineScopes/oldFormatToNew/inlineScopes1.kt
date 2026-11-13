@@ -54,7 +54,7 @@ fun box() {
 // library.kt:20 box: $i$f$flaf\1\27:int=0:int, flafVar\1:int=0:int
 // test.kt:28 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:27 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=0:i32, $y:i32=0:i32, $z:i32=0:i32 (4)
 // library.kt:10 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=0:i32, $y:i32=0:i32, $z:i32=0:i32 (18, 18)
 // library.kt:11 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=0:i32, $y:i32=0:i32, $z:i32=0:i32 (8, 8, 4, 4, 4)

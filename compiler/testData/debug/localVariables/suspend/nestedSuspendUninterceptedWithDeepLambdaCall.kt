@@ -134,7 +134,7 @@ suspend fun box() {
 // test.kt:33 doResume: b=2:number, e=5:number
 // test.kt:37 doResume: b=2:number, e=5:number, result=Unit
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:38 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1, 1, 1, 1)
 // coroutineHelpers.kt:9 $EmptyContinuation.<get-context>: $<this>:(ref $EmptyContinuation)=(ref $EmptyContinuation) (37, 37)
 // test.kt:38 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1)

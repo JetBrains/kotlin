@@ -75,7 +75,7 @@ fun box() {
 // library.kt:22 box: $i$f$bar\1\33:int=0:int
 // test.kt:36 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:33 $box: (4)
 // library.kt:5 $box: (4)
 // library.kt:21 $<no name provided>.<init>: $<this>:(ref $<no name provided>)=(ref $<no name provided>) (5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5)

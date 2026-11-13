@@ -149,7 +149,7 @@ fun box() {
 // test.kt:24 stringSwitch
 // test.kt:30 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:27 $box (17, 4)
 // test.kt:6 $stringSwitch (8, 13, 8, 20)
 // test.kt:5 $stringSwitch (12)

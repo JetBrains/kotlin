@@ -55,7 +55,7 @@ fun box(): String {
 
 // test.kt:25 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:11 $box (17, 29, 33, 29)
 // test.kt:11 $strToStr.invoke (17)
 // test.kt:3 $strToStr (32, 35, 32, 37)
