@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
@@ -419,7 +421,7 @@ private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runInsertEntryPointAl
 }
 
 internal class ModuleCompilationOutput(
-        val objectFile: Path,
+        val objectFiles: List<Path>,
         val dependenciesTrackingResult: DependenciesTrackingResult,
 )
 
@@ -458,9 +460,13 @@ private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.emitObjectFileWith(
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ): ModuleCompilationOutput {
-    val objectFile = temporaryFiles.createObjectFile(Path(outputFiles.nativeBinaryFile).name)
-    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesInput(llvmModule, bitcodeCompiler, objectFile))
-    return ModuleCompilationOutput(objectFile, dependenciesTrackingResult)
+    val count = (context.config.configuration[BinaryOptions.objectFileThreads] ?: 1u).toInt()
+    require(count > 0) { "objectFileThreads must be between 1 and ${Int.MAX_VALUE}" }
+    require(count == 1 || context.config.inProcessObjEmission) { "objectFileThreads requires -Xin-process-obj-emission" }
+    val name = Path(outputFiles.nativeBinaryFile).name
+    val objectFiles = List(count) { index -> temporaryFiles.createObjectFile(if (count == 1) name else "$name-part$index") }
+    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesInput(llvmModule, bitcodeCompiler, objectFiles))
+    return ModuleCompilationOutput(objectFiles, dependenciesTrackingResult)
 }
 
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkModule(
@@ -470,7 +476,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkModule(
         temporaryFiles: TempFiles,
         cacheInfo: PartialCacheInfo?,
 ) {
-    val compilationResult = moduleCompilationOutput.objectFile
+    val compilationResult = moduleCompilationOutput.objectFiles
     val linkerOutputKind = context.config.linkerOutputKind
     val [linkerInput, cacheBinaries] = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
@@ -480,9 +486,9 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkModule(
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
                 val prelinkResult = temporaryFiles.createObjectFile("withStaticCaches")
-                runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
+                runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(compilationResult, resolvedCacheBinaries, prelinkResult))
                 // Static caches are linked into binary, so we don't need to pass them.
-                prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
+                listOf(prelinkResult) to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
             }
             else -> {
                 compilationResult to resolvedCacheBinaries
@@ -492,7 +498,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkModule(
     val linkerPhaseInput = LinkerPhaseInput(
             linkerOutputFile,
             linkerOutputKind,
-            listOf(linkerInput.canonicalPathString()),
+            linkerInput.map { it.canonicalPathString() },
             moduleCompilationOutput.dependenciesTrackingResult,
             outputFiles,
             temporaryFiles,
