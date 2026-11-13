@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
-import org.jetbrains.kotlin.kmp.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 enum class ModifierFlag(val value: Long) {
     NONE(0L),
@@ -51,52 +51,52 @@ enum class ModifierFlag(val value: Long) {
     companion object {
         val ElementTypeToModifierFlagMap: Map<Int, ModifierFlag> = hashMapOf(
             // Class
-            KtTokens.ENUM_MODIFIER_ID to CLASS_ENUM,
-            KtTokens.ANNOTATION_MODIFIER_ID to CLASS_ANNOTATION,
-            KtTokens.DATA_MODIFIER_ID to CLASS_DATA,
-            KtTokens.INNER_MODIFIER_ID to CLASS_INNER,
-            KtTokens.COMPANION_MODIFIER_ID to CLASS_COMPANION,
-            KtTokens.FUN_MODIFIER_ID to CLASS_FUN,
-            KtTokens.ERROR_MODIFIER_ID to CLASS_ERROR,
+            KotlinSyntaxTokenIds.ENUM_MODIFIER to CLASS_ENUM,
+            KotlinSyntaxTokenIds.ANNOTATION_MODIFIER to CLASS_ANNOTATION,
+            KotlinSyntaxTokenIds.DATA_MODIFIER to CLASS_DATA,
+            KotlinSyntaxTokenIds.INNER_MODIFIER to CLASS_INNER,
+            KotlinSyntaxTokenIds.COMPANION_MODIFIER to CLASS_COMPANION,
+            KotlinSyntaxTokenIds.FUN_MODIFIER to CLASS_FUN,
+            KotlinSyntaxTokenIds.ERROR_MODIFIER to CLASS_ERROR,
 
             // Member
-            KtTokens.OVERRIDE_MODIFIER_ID to MEMBER_OVERRIDE,
-            KtTokens.LATEINIT_MODIFIER_ID to MEMBER_LATEINIT,
+            KotlinSyntaxTokenIds.OVERRIDE_MODIFIER to MEMBER_OVERRIDE,
+            KotlinSyntaxTokenIds.LATEINIT_MODIFIER to MEMBER_LATEINIT,
 
             // Visibility
-            KtTokens.PUBLIC_MODIFIER_ID to VISIBILITY_PUBLIC,
-            KtTokens.PRIVATE_MODIFIER_ID to VISIBILITY_PRIVATE,
-            KtTokens.INTERNAL_MODIFIER_ID to VISIBILITY_INTERNAL,
-            KtTokens.PROTECTED_MODIFIER_ID to VISIBILITY_PROTECTED,
+            KotlinSyntaxTokenIds.PUBLIC_MODIFIER to VISIBILITY_PUBLIC,
+            KotlinSyntaxTokenIds.PRIVATE_MODIFIER to VISIBILITY_PRIVATE,
+            KotlinSyntaxTokenIds.INTERNAL_MODIFIER to VISIBILITY_INTERNAL,
+            KotlinSyntaxTokenIds.PROTECTED_MODIFIER to VISIBILITY_PROTECTED,
 
             // Function
-            KtTokens.TAILREC_MODIFIER_ID to FUNCTION_TAILREC,
-            KtTokens.OPERATOR_MODIFIER_ID to FUNCTION_OPERATOR,
-            KtTokens.INFIX_MODIFIER_ID to FUNCTION_INFIX,
-            KtTokens.EXTERNAL_MODIFIER_ID to FUNCTION_EXTERNAL,
-            KtTokens.SUSPEND_MODIFIER_ID to FUNCTION_SUSPEND,
+            KotlinSyntaxTokenIds.TAILREC_MODIFIER to FUNCTION_TAILREC,
+            KotlinSyntaxTokenIds.OPERATOR_MODIFIER to FUNCTION_OPERATOR,
+            KotlinSyntaxTokenIds.INFIX_MODIFIER to FUNCTION_INFIX,
+            KotlinSyntaxTokenIds.EXTERNAL_MODIFIER to FUNCTION_EXTERNAL,
+            KotlinSyntaxTokenIds.SUSPEND_MODIFIER to FUNCTION_SUSPEND,
 
             // Inheritance
-            KtTokens.ABSTRACT_MODIFIER_ID to INHERITANCE_ABSTRACT,
-            KtTokens.FINAL_MODIFIER_ID to INHERITANCE_FINAL,
-            KtTokens.OPEN_MODIFIER_ID to INHERITANCE_OPEN,
-            KtTokens.SEALED_MODIFIER_ID to INHERITANCE_SEALED,
+            KotlinSyntaxTokenIds.ABSTRACT_MODIFIER to INHERITANCE_ABSTRACT,
+            KotlinSyntaxTokenIds.FINAL_MODIFIER to INHERITANCE_FINAL,
+            KotlinSyntaxTokenIds.OPEN_MODIFIER to INHERITANCE_OPEN,
+            KotlinSyntaxTokenIds.SEALED_MODIFIER to INHERITANCE_SEALED,
 
             // Parameter
-            KtTokens.VARARG_MODIFIER_ID to PARAMETER_VARARG,
-            KtTokens.NOINLINE_MODIFIER_ID to PARAMETER_NOINLINE,
-            KtTokens.CROSSINLINE_MODIFIER_ID to PARAMETER_CROSSINLINE,
+            KotlinSyntaxTokenIds.VARARG_MODIFIER to PARAMETER_VARARG,
+            KotlinSyntaxTokenIds.NOINLINE_MODIFIER to PARAMETER_NOINLINE,
+            KotlinSyntaxTokenIds.CROSSINLINE_MODIFIER to PARAMETER_CROSSINLINE,
 
             // Platform
-            KtTokens.EXPECT_MODIFIER_ID to PLATFORM_EXPECT,
-            KtTokens.ACTUAL_MODIFIER_ID to PLATFORM_ACTUAL,
+            KotlinSyntaxTokenIds.EXPECT_MODIFIER to PLATFORM_EXPECT,
+            KotlinSyntaxTokenIds.ACTUAL_MODIFIER to PLATFORM_ACTUAL,
 
             // Variance
-            KtTokens.IN_MODIFIER_ID to VARIANCE_IN,
-            KtTokens.OUT_MODIFIER_ID to VARIANCE_OUT,
+            KotlinSyntaxTokenIds.IN_MODIFIER to VARIANCE_IN,
+            KotlinSyntaxTokenIds.OUT_MODIFIER to VARIANCE_OUT,
 
             // Reification
-            KtTokens.REIFIED_MODIFIER_ID to REIFICATION_REIFIED,
+            KotlinSyntaxTokenIds.REIFIED_MODIFIER to REIFICATION_REIFIED,
         )
     }
 }

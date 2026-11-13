@@ -244,6 +244,7 @@
 
 /core/names/ "Kotlin Frontend"
 /core/language.model/ "Kotlin Frontend"
+/core/language.syntax/ "Kotlin Frontend"
 /core/language.targets/ "Kotlin Frontend"
 /core/language.targets.jvm/ "Kotlin Frontend" "Kotlin JVM"
 /core/language.version-settings/ "Kotlin Frontend"
@@ -254,6 +255,9 @@
 /core/error.handling/api/error.handling.api "Kotlin Analysis API"
 /core/error.handling/api/error-handling-api.foreign "Kotlin Analysis API"
 /core/language.model/api/language-model-api.foreign "Kotlin Analysis API"
+/core/language.syntax/api/language.syntax.api "Kotlin Analysis API"
+/core/language.syntax/api/language.syntax.klib.api "Kotlin Analysis API"
+/core/language.syntax/api/language-syntax-api.foreign "Kotlin Analysis API"
 /core/language.targets/api/language-targets-api.foreign "Kotlin Analysis API"
 /core/language.targets.jvm/api/language-targets-jvm-api.foreign "Kotlin Analysis API"
 /core/language.version-settings/api/language-version-settings-api.foreign "Kotlin Analysis API"
