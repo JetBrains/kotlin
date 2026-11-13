@@ -30,7 +30,7 @@ fun box(): String {
     val siblingBuilder = ChildA.builder()
 
     val childB = ChildB.builder()
-        .<!UNRESOLVED_REFERENCE!>a<!>("1")
+        .a("1")
         .build()
     return "OK"
 }
