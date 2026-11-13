@@ -9,12 +9,8 @@ typedef struct RemovedStruct {
     long long len;
 } RemovedStruct;
 
-typedef struct DuplicatedOnFirstStageStruct {
+typedef struct DuplicatedStruct {
     long long len;
-} DuplicatedOnFirstStageStruct;
-
-typedef struct DuplicatedOnSecondStageStruct {
-    long long len;
-} DuplicatedOnSecondStageStruct;
+} DuplicatedStruct;
 
 #endif  // LIBA_H

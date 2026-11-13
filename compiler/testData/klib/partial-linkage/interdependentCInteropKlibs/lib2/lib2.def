@@ -9,10 +9,7 @@ int acceptUnmodifiedStruct(UnmodifiedStruct* s, int result) {
 int acceptRemovedStruct(RemovedStruct* s, int result) {
     return result;
 }
-int acceptStructDuplicatedOnFirstStage(DuplicatedOnFirstStageStruct* s, int result) {
-    return result;
-}
-int acceptStructDuplicatedOnSecondStage(DuplicatedOnSecondStageStruct* s, int result) {
+int acceptDuplicatedStruct(DuplicatedStruct* s, int result) {
     return result;
 }
 
