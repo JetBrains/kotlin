@@ -1,0 +1,5 @@
+sample
+property:sample#c#typeParameters=[]; context=[]; parameters=[];  // REDECLARATION
+getter:sample#c#typeParameters=[]; context=[]; parameters=[];
+function:sample#c#typeParameters=[]; context=[]; parameters=[];
+function:sample#c#typeParameters=[]; context=[]; parameters=[kotlin/Int];

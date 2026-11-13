@@ -1,0 +1,11 @@
+sample
+sample/Text
+function:sample#clashing#typeParameters=[]; context=[]; parameters=[kotlin/String];  // CONFLICTING_OVERLOADS
+function:sample#clashing#typeParameters=[]; context=[]; parameters=[sample/Text];  // CONFLICTING_OVERLOADS
+function:sample#unresolvedParameter#typeParameters=[]; context=[]; parameters=[];  // UNRESOLVED_REFERENCE
+sample/BrokenSupertype  // UNRESOLVED_REFERENCE
+constructor:sample/BrokenSupertype#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+function:sample#unresolvedBound#typeParameters=[<T0_0>: ]; context=[]; parameters=[<T0_0>];  // UNRESOLVED_REFERENCE
+sample/Container
+function:sample/Container#brokenMember#typeParameters=[]; context=[]; parameters=[];  // UNRESOLVED_REFERENCE
+constructor:sample/Container#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];

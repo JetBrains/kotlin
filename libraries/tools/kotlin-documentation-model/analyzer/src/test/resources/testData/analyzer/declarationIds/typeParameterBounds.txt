@@ -1,0 +1,3 @@
+sample
+function:sample#test#typeParameters=[<T0_0>: ]; context=[]; parameters=[<T0_0>];
+function:sample#testNonNull#typeParameters=[<T0_0>: kotlin/Any]; context=[]; parameters=[<T0_0>];

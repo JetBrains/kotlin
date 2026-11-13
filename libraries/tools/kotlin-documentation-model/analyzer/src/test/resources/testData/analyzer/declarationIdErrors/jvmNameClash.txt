@@ -1,0 +1,7 @@
+kotlin.jvm
+kotlin.jvm/JvmName
+constructor:kotlin.jvm/JvmName#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[kotlin/String];
+property:kotlin.jvm/JvmName#name#typeParameters=[]; context=[]; parameters=[];
+getter:kotlin.jvm/JvmName#name#typeParameters=[]; context=[]; parameters=[];
+sample
+function:sample#g#typeParameters=[]; context=[]; parameters=[kotlin/String];  // CONFLICTING_OVERLOADS

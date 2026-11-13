@@ -9,3 +9,6 @@ constructor:sample%23/when#%3Cinit%3E#typeParameters=[]; context=[]; parameters=
 function:sample%23#when#typeParameters=[]; context=[]; parameters=[];
 property:sample%23#with%20spaces#typeParameters=[]; context=[]; parameters=[];
 getter:sample%23#with%20spaces#typeParameters=[]; context=[]; parameters=[];
+function:sample%23#say%2520hello%2521#typeParameters=[]; context=[]; parameters=[];
+function:sample%23#hashedClass#typeParameters=[]; context=[]; parameters=[sample%23/A%23B];
+function:sample%23#escapedHashClass#typeParameters=[]; context=[]; parameters=[sample%23/A%2523B];
