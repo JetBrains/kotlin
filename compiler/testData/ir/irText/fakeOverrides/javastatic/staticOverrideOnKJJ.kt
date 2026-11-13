@@ -1,6 +1,7 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JKLIB
+// ^ ACCIDENTAL_OVERRIDE is reported by the JVM backend, which JKlib doesn't run.
 // RUN_PIPELINE_TILL: FIR2IR
 // DISABLE_NEXT_PHASE_SUGGESTION: K2 fails at backend stage
 

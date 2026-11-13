@@ -1,6 +1,7 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JKLIB
+// ^ JKlib considers that properties read from a KLIB have a backing field, and reports JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY.
 
 // K1 reflect behavior is wrong.
 // In 'I' class:
