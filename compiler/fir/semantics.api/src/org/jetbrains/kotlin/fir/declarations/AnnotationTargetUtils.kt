@@ -54,7 +54,7 @@ fun FirAnnotation.forEachAnnotationTarget(session: FirSession, action: (Name) ->
         }
     }
 
-    argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]
+    argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.Target_allowedTargets]
         ?.unwrapAndFlattenArgument(flattenArrays = true)
         ?.forEach(::take)
 }

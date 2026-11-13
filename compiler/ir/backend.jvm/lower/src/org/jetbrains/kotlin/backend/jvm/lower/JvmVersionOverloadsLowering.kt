@@ -23,7 +23,7 @@ open class JvmVersionOverloadsLowering(irFactory: IrFactory, irBuiltIns: IrBuilt
         includedParams: BooleanArray,
     ): IrFunction = super.generateWrapperHeader(original, version, includedParams).apply {
         this.annotations = this.annotations.filter {
-            !it.isAnnotation(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)
+            !it.isAnnotation(JvmStandardClassIds.Annotations.JvmOverloads)
         }
     }
 }

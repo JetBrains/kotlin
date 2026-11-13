@@ -23,4 +23,4 @@ val IrSimpleFunction.exportedBridgeNonVirtualTargetMethod: String?
         ?.takeIf { it.isNotEmpty() }
 
 private fun IrAnnotation.isExportedBridge(): Boolean =
-    isAnnotation(NativeStandardClassIds.Annotations.exportedBridgeClassId.asSingleFqName())
+    isAnnotation(NativeStandardClassIds.Annotations.ExportedBridge.asSingleFqName())

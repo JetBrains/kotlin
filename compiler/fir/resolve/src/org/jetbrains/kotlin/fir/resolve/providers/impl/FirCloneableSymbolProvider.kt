@@ -70,8 +70,8 @@ private fun buildCloneableClass(
             )
             isLocal = false
 
-            name = StandardClassIds.Callables.clone.callableName
-            symbol = FirNamedFunctionSymbol(StandardClassIds.Callables.clone)
+            name = StandardClassIds.Callables.Cloneable_clone.callableName
+            symbol = FirNamedFunctionSymbol(StandardClassIds.Callables.Cloneable_clone)
             dispatchReceiverType = this@buildRegularClass.symbol.constructType()
         }
 

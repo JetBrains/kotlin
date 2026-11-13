@@ -67,7 +67,7 @@ internal fun FirBasedSymbol<*>.isEitherModuleOrNonModule(session: FirSession): B
 }
 
 fun FirBasedSymbol<*>.isLibraryObject(session: FirSession): Boolean {
-    return hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsLibrary, session)
+    return hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.library, session)
 }
 
 fun FirBasedSymbol<*>.isPresentInGeneratedCode(session: FirSession): Boolean = !isNativeObject(session) && !isLibraryObject(session)

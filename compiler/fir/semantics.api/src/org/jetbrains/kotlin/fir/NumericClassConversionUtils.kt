@@ -54,7 +54,7 @@ private fun FirBasedSymbol<*>.supportsNumericClassConversionTo(type: ConeKotlinT
 
 fun FirBasedSymbol<*>.getSupportedNumericClassConversions(session: FirSession): List<ConeKotlinType>? {
     val arguments = resolvedCompilerAnnotationsWithClassIds.getAnnotationByClassId(StandardClassIds.Annotations.NumericClass, session)
-        ?.findArgumentByName(StandardClassIds.Annotations.ParameterNames.actualizations)
+        ?.findArgumentByName(StandardClassIds.Annotations.ParameterNames.NumericClass_actualizations)
         ?.unwrapAndFlattenArgument(flattenArrays = true)
         ?: return null
 

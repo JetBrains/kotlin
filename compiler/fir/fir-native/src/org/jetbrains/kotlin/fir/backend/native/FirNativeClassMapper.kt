@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NativeStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 
 class FirNativeClassMapper : FirPlatformClassMapper() {
     override fun getCorrespondingPlatformClass(declaration: FirClassLikeDeclaration): FirRegularClass? {
@@ -25,8 +26,8 @@ class FirNativeClassMapper : FirPlatformClassMapper() {
     }
 
     override val classTypealiasesThatDontCauseAmbiguity: Map<ClassId, ClassId> = mapOf(
-        NativeStandardClassIds.Annotations.Throws to NativeStandardClassIds.Annotations.ThrowsAlias,
-        NativeStandardClassIds.Annotations.SharedImmutable to NativeStandardClassIds.Annotations.SharedImmutableAlias,
-        NativeStandardClassIds.Annotations.ThreadLocal to NativeStandardClassIds.Annotations.ThreadLocalAlias
+        StandardClassIds.Annotations.Throws to NativeStandardClassIds.Annotations.Throws_alias,
+        NativeStandardClassIds.Annotations.SharedImmutable to NativeStandardClassIds.Annotations.SharedImmutable_alias,
+        NativeStandardClassIds.Annotations.ThreadLocal to NativeStandardClassIds.Annotations.ThreadLocal_alias
     )
 }

@@ -47,7 +47,7 @@ object FirExplicitEqualityBoundAnnotationChecker : FirValueParameterChecker(MppC
             annotation.requireFeatureSupport(LanguageFeature.StrictEquals) {
                 val typeFromTypesPhase = declaration.equalityBoundType?.fullyExpandedType()
                 val argumentOfGetClass = annotation
-                    .findArgumentByName(StandardClassIds.Annotations.ParameterNames.equalityBound)
+                    .findArgumentByName(StandardClassIds.Annotations.ParameterNames.EqualityBound_bound)
                     ?.let { it as? FirGetClassCall }
                     ?.argument
                     ?: return

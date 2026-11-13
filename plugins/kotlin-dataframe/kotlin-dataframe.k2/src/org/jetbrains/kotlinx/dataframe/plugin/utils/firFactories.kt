@@ -125,10 +125,10 @@ private fun buildPropertyJvmName(
 
     return buildAnnotation {
         annotationTypeRef = buildResolvedTypeRef {
-            coneType = StandardClassIds.Annotations.jvmName.constructClassLikeType()
+            coneType = StandardClassIds.Annotations.JvmName.constructClassLikeType()
         }
         argumentMapping = buildAnnotationArgumentMapping {
-            mapping[StandardClassIds.Annotations.ParameterNames.parameterNameName] = buildLiteralExpression(
+            mapping[StandardClassIds.Annotations.ParameterNames.ParameterName_name] = buildLiteralExpression(
                 source = null,
                 kind = ConstantValueKind.String,
                 value = jvmNameArg,

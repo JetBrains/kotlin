@@ -28,7 +28,7 @@ fun FirAnnotation.getRetention(): AnnotationRetention? {
     (
         val enumId = enumClassId, val entryName = enumEntryName
     ) =
-        findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue)
+        findArgumentByName(StandardClassIds.Annotations.ParameterNames.Retention_value)
             ?.extractEnumValueArgumentInfo()
             ?: return null
 

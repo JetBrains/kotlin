@@ -5,62 +5,78 @@
 
 package org.jetbrains.kotlin.name
 
-import java.util.concurrent.atomic.AtomicReference
-
+/**
+ * Consult KDoc of [StandardClassIds] regarding naming rules when adding declarations here.
+ * Also, check if the desired id is already present there.
+ */
 object NativeStandardClassIds {
-    private val kotlinNativePackage = FqName("kotlin.native")
-    private val kotlinNativeInternalPackage = kotlinNativePackage.child(Name.identifier("internal"))
+    val BASE_NATIVE_PACKAGE = StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier("native"))
+    val BASE_NATIVE_CONCURRENT_PACKAGE = BASE_NATIVE_PACKAGE.child(Name.identifier("concurrent"))
+    val BASE_NATIVE_INTERNAL_PACKAGE = BASE_NATIVE_PACKAGE.child(Name.identifier("internal"))
+    val BASE_NATIVE_INTERNAL_ESCAPEANALYSIS_PACKAGE = BASE_NATIVE_INTERNAL_PACKAGE.child(Name.identifier("escapeAnalysis"))
+    val BASE_NATIVE_INTERNAL_OBJC_PACKAGE = BASE_NATIVE_INTERNAL_PACKAGE.child(Name.identifier("objc"))
 
-    val AtomicInt = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicInt"))
-    val AtomicLong = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicLong"))
-    val AtomicReference = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicReference"))
+    val AtomicInt_native = "AtomicInt".concurrentId()
+    val AtomicLong_native = "AtomicLong".concurrentId()
+    val AtomicReference_native = "AtomicReference".concurrentId()
 
-    val atomicByPrimitive = mapOf(
-        StandardClassIds.Int to AtomicInt,
-        StandardClassIds.Long to AtomicLong,
+    val atomicByPrimitive_native = mapOf(
+        StandardClassIds.Int to AtomicInt_native,
+        StandardClassIds.Long to AtomicLong_native,
     )
 
-    val AtomicArray = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicArray"))
-    val AtomicIntArray = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicIntArray"))
-    val AtomicLongArray = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier("AtomicLongArray"))
+    val AtomicArray_native = "AtomicArray".concurrentId()
+    val AtomicIntArray_native = "AtomicIntArray".concurrentId()
+    val AtomicLongArray_native = "AtomicLongArray".concurrentId()
 
-    val atomicArrayByPrimitive = mapOf(
-        StandardClassIds.Int to AtomicIntArray,
-        StandardClassIds.Long to AtomicLongArray,
+    val atomicArrayByPrimitive_native = mapOf(
+        StandardClassIds.Int to AtomicIntArray_native,
+        StandardClassIds.Long to AtomicLongArray_native,
     )
-
-    object Callables {
-        val AtomicArray = "AtomicArray".callableId(StandardClassIds.BASE_CONCURRENT_PACKAGE)
-
-        val atomicReferenceCompareAndSet = "compareAndSet".callableId(AtomicReference)
-        val atomicReferenceCompareAndExchange = "compareAndExchange".callableId(AtomicReference)
-        val atomicArrayCompareAndSet = "compareAndSet".callableId(NativeStandardClassIds.AtomicArray)
-        val atomicArrayCompareAndExchange = "compareAndExchange".callableId(NativeStandardClassIds.AtomicArray)
-    }
 
     object Annotations {
-        val symbolNameClassId = ClassId(kotlinNativePackage, Name.identifier("SymbolName"))
-        val cNameClassId = ClassId(kotlinNativePackage, Name.identifier("CName"))
-        val exportedBridgeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportedBridge"))
-        val importedBridgeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ImportedBridge"))
-        val exportForCppRuntimeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCppRuntime"))
-        val exportForCompilerClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCompiler"))
-        val exportTypeInfoClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportTypeInfo"))
-        val gcUnsafeCallClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("GCUnsafeCall"))
-        val Throws = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("Throws"))
-        val ThrowsAlias = ClassId(kotlinNativePackage, Name.identifier("Throws"))
-        val SharedImmutable = ClassId(kotlinNativePackage.child(Name.identifier("concurrent")), Name.identifier("SharedImmutable"))
-        val SharedImmutableAlias = ClassId(kotlinNativePackage, Name.identifier("SharedImmutable"))
-        val ThreadLocal = ClassId(kotlinNativePackage.child(Name.identifier("concurrent")), Name.identifier("ThreadLocal"))
-        val ThreadLocalAlias = ClassId(kotlinNativePackage, Name.identifier("ThreadLocal"))
-        val PointsTo = ClassId(kotlinNativeInternalPackage.child(Name.identifier("escapeAnalysis")), Name.identifier("PointsTo"))
-        val Escapes = ClassId(kotlinNativeInternalPackage.child(Name.identifier("escapeAnalysis")), Name.identifier("Escapes"))
-        val EscapesNothing = Escapes.createNestedClassId(Name.identifier("Nothing"))
-        val HasFinalizer = ClassId(kotlinNativeInternalPackage, Name.identifier("HasFinalizer"))
-        val BindClassToObjCName = ClassId(kotlinNativeInternalPackage.child(Name.identifier("objc")), Name.identifier("BindClassToObjCName"))
-        val BindReverseBridgeToMethod = ClassId(kotlinNativeInternalPackage.child(Name.identifier("objc")), Name.identifier("BindReverseBridgeToMethod"))
+        val SymbolName = "SymbolName".nativeId()
+        val CName = "CName".nativeId()
+
+        val ExportedBridge = "ExportedBridge".nativeInternalId()
+        val ImportedBridge = "ImportedBridge".nativeInternalId()
+        val ExportForCppRuntime = "ExportForCppRuntime".nativeInternalId()
+        val ExportForCompiler = "ExportForCompiler".nativeInternalId()
+        val ExportTypeInfo = "ExportTypeInfo".nativeInternalId()
+        val GCUnsafeCall = "GCUnsafeCall".nativeInternalId()
+        val HasFinalizer = "HasFinalizer".nativeInternalId()
+
+        /** `kotlin.native.Throws`: a typealias to the common `kotlin.Throws` ([StandardClassIds.Annotations.Throws]). */
+        val Throws_alias = "Throws".nativeId()
+
+        val SharedImmutable = "SharedImmutable".nativeConcurrentId()
+        val SharedImmutable_alias = "SharedImmutable".nativeId()
+
+        val ThreadLocal = "ThreadLocal".nativeConcurrentId()
+        val ThreadLocal_alias = "ThreadLocal".nativeId()
+
+        val PointsTo = "PointsTo".nativeInternalEscapeanalysisId()
+        val Escapes = "Escapes".nativeInternalEscapeanalysisId()
+        val Escapes_Nothing = Escapes.createNestedClassId(Name.identifier("Nothing"))
+
+        val BindClassToObjCName = "BindClassToObjCName".nativeInternalObjcId()
+        val BindReverseBridgeToMethod = "BindReverseBridgeToMethod".nativeInternalObjcId()
+    }
+
+    object Callables {
+        val AtomicReference_compareAndSet_native = "compareAndSet".callableId(AtomicReference_native)
+        val AtomicReference_compareAndExchange_native = "compareAndExchange".callableId(AtomicReference_native)
+        val AtomicArray_compareAndSet_native = "compareAndSet".callableId(AtomicArray_native)
+        val AtomicArray_compareAndExchange_native = "compareAndExchange".callableId(AtomicArray_native)
     }
 }
 
-private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
+private fun String.concurrentId() = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier(this))
+private fun String.nativeId() = ClassId(NativeStandardClassIds.BASE_NATIVE_PACKAGE, Name.identifier(this))
+private fun String.nativeConcurrentId() = ClassId(NativeStandardClassIds.BASE_NATIVE_CONCURRENT_PACKAGE, Name.identifier(this))
+private fun String.nativeInternalId() = ClassId(NativeStandardClassIds.BASE_NATIVE_INTERNAL_PACKAGE, Name.identifier(this))
+private fun String.nativeInternalEscapeanalysisId() =
+    ClassId(NativeStandardClassIds.BASE_NATIVE_INTERNAL_ESCAPEANALYSIS_PACKAGE, Name.identifier(this))
+private fun String.nativeInternalObjcId() = ClassId(NativeStandardClassIds.BASE_NATIVE_INTERNAL_OBJC_PACKAGE, Name.identifier(this))
+
 private fun String.callableId(classId: ClassId) = CallableId(classId, Name.identifier(this))

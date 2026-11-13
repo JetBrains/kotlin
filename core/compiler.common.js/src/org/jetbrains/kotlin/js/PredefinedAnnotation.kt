@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 enum class PredefinedAnnotation(val classId: ClassId) {
-    LIBRARY(JsStandardClassIds.Annotations.JsLibrary),
-    NATIVE(JsStandardClassIds.Annotations.JsNative),
-    NATIVE_INVOKE(JsStandardClassIds.Annotations.JsNativeInvoke),
-    NATIVE_GETTER(JsStandardClassIds.Annotations.JsNativeGetter),
-    NATIVE_SETTER(JsStandardClassIds.Annotations.JsNativeSetter);
+    LIBRARY(JsStandardClassIds.Annotations.library),
+    NATIVE(JsStandardClassIds.Annotations.native),
+    NATIVE_INVOKE(JsStandardClassIds.Annotations.nativeInvoke),
+    NATIVE_GETTER(JsStandardClassIds.Annotations.nativeGetter),
+    NATIVE_SETTER(JsStandardClassIds.Annotations.nativeSetter);
 
     val fqName: FqName = classId.asSingleFqName()
 

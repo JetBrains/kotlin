@@ -19,8 +19,8 @@ open class KonanIrFileSerializer(
 ) : IrFileSerializer(settings, declarationTable) {
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
         val classId = when (node) {
-            is IrFunction -> NativeStandardClassIds.Annotations.exportForCppRuntimeClassId
-            is IrClass -> NativeStandardClassIds.Annotations.exportTypeInfoClassId
+            is IrFunction -> NativeStandardClassIds.Annotations.ExportForCppRuntime
+            is IrClass -> NativeStandardClassIds.Annotations.ExportTypeInfo
             else -> return false
         }
 

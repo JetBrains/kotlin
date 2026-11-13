@@ -253,6 +253,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds {
 	public final fun getEnumEntries ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getFloat ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getFunction ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getFunctionN ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getInt ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getIntRange ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getIterable ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -275,6 +276,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds {
 	public final fun getLongRange ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMap ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMapEntry ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMap_Entry ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableCollection ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableIterable ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableIterator ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -282,6 +284,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds {
 	public final fun getMutableListIterator ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableMap ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableMapEntry ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMutableMap_MutableEntry ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableSet ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNonError ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNothing ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -337,6 +340,8 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getJsExport ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsExportDefault ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsExportIgnore ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJsExport_Default ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJsExport_Ignore ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsImplicitExport ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsNoDispatchReceiver ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsNoRuntime ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -353,6 +358,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getOnlyInputTypes ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getOptionalExpectation ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getPublishedApi ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getRawType ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getRawTypeAnnotation ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getReflectionPackageName ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getRepeatable ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -364,6 +370,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getSuppressBytecodeGeneration ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getTarget ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getTest ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getThrows ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getTransient ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getUsedFromCompilerGeneratedCode ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getVolatile ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -380,14 +387,29 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations$Parame
 	public final fun getDeprecatedSinceKotlinErrorSince ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinHiddenSince ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinWarningSince ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecatedSinceKotlin_errorSince ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecatedSinceKotlin_hiddenSince ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecatedSinceKotlin_warningSince ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecated_level ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecated_message ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecated_replaceWith ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getEqualityBound ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getEqualityBound_bound ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getNumericClass_actualizations ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getParameterNameName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getParameterName_name ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getReplaceWithExpression ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getReplaceWithImports ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getReplaceWith_expression ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getReplaceWith_imports ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getRetentionValue ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getRetention_value ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getSinceKotlinVersion ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getSinceKotlin_version ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getSuppressNames ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getSuppress_names ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getTargetAllowedTargets ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getTarget_allowedTargets ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getValue ()Lorg/jetbrains/kotlin/name/Name;
 }
 
@@ -395,9 +417,15 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Callables {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/name/StandardClassIds$Callables;
 	public final fun getAtomicArrayCompareAndExchangeAt ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getAtomicArrayCompareAndSetAt ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getAtomicArray_compareAndExchangeAt ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getAtomicArray_compareAndSetAt ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getAtomicReferenceCompareAndExchange ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getAtomicReferenceCompareAndSet ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getAtomicReference_compareAndExchange ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getAtomicReference_compareAndSet ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getBoolean_not ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getClone ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getCloneable_clone ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getContract ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getCoroutineContext ()Lorg/jetbrains/kotlin/name/CallableId;
 	public final fun getNot ()Lorg/jetbrains/kotlin/name/CallableId;

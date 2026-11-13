@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.allTypeParameters
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 internal fun IrPluginContext.generateNoArgConstructorBody(
     ctor: IrConstructor,
@@ -60,6 +60,6 @@ internal fun IrPluginContext.generateNoArgConstructorBody(
 internal fun IrConstructor.isZeroParameterConstructor(): Boolean {
     val valueParameters = parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
     return valueParameters.all { it.defaultValue != null } && (valueParameters.isEmpty() || isPrimary || hasAnnotation(
-        JVM_OVERLOADS_FQ_NAME
+        JvmStandardClassIds.Annotations.JvmOverloads.asSingleFqName()
     ))
 }

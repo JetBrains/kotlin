@@ -131,10 +131,10 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
                 )
             }
             argumentMapping = buildAnnotationArgumentMapping {
-                mapping[StandardClassIds.Annotations.ParameterNames.deprecatedMessage] = buildLiteralExpression(
+                mapping[StandardClassIds.Annotations.ParameterNames.Deprecated_message] = buildLiteralExpression(
                     null, ConstantValueKind.String, "", setType = true
                 )
-                mapping[StandardClassIds.Annotations.ParameterNames.deprecatedLevel] = buildPropertyAccessExpression {
+                mapping[StandardClassIds.Annotations.ParameterNames.Deprecated_level] = buildPropertyAccessExpression {
                     calleeReference = buildResolvedNamedReference {
                         name = Name.identifier("HIDDEN")
                         resolvedSymbol = FirEnumEntrySymbol(

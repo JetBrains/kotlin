@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirJsCodeConstantArgumentChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    private val jsCodeCallableId = WebCommonStandardClassIds.Callables.Js
+    private val jsCodeCallableId = WebCommonStandardClassIds.Callables.js
 
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true

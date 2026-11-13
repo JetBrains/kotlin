@@ -1116,7 +1116,7 @@ class Fir2IrVisitor(
         var result: MutableSet<String>? = null
         for (annotation in this) {
             if (annotation.toAnnotationClassIdSafe(session) != StandardClassIds.Annotations.Suppress) continue
-            val argument = annotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.suppressNames) ?: continue
+            val argument = annotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.Suppress_names) ?: continue
             fun collectStrings(expression: FirExpression) {
                 when (expression) {
                     is FirLiteralExpression -> {

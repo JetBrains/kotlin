@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.InlineStatus.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -26,7 +26,7 @@ object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Com
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotation) {
-        if (expression.fqName(context.session) == JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME) {
+        if (expression.fqName(context.session) == JvmStandardClassIds.Annotations.JvmSerializableLambda.asSingleFqName()) {
             val declaration = context.containingDeclarations.last()
             if (declaration !is FirAnonymousFunctionSymbol) {
                 val actualTargets = getActualTargetList(declaration)

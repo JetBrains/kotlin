@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebC
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmJsModuleChecker : FirWebCommonJsModuleChecker() {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 
     override fun FirBasedSymbol<*>.findModuleAnnotation(session: FirSession): FirAnnotation? =
-        resolvedAnnotationsWithClassIds.getAnnotationByClassId(JsModule, session)
+        resolvedAnnotationsWithClassIds.getAnnotationByClassId(WebCommonStandardClassIds.Annotations.JsModule, session)
 }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 
 @NoMutableState
 class FirJavaClassMapper(private val session: FirSession) : FirPlatformClassMapper() {
@@ -33,6 +34,6 @@ class FirJavaClassMapper(private val session: FirSession) : FirPlatformClassMapp
     }
 
     override val classTypealiasesThatDontCauseAmbiguity: Map<ClassId, ClassId> = mapOf(
-        JvmStandardClassIds.Annotations.Throws to JvmStandardClassIds.Annotations.ThrowsAlias,
+        JvmStandardClassIds.Annotations.Throws_aliased to StandardClassIds.Annotations.Throws,
     )
 }

@@ -34,7 +34,7 @@ object KonanFqNames {
     val typedIntrinsic = FqName("kotlin.native.internal.TypedIntrinsic")
     val constantConstructorIntrinsic = FqName("kotlin.native.internal.ConstantConstructorIntrinsic")
     val objCMethod = FqName("kotlinx.cinterop.ObjCMethod")
-    val gcUnsafeCall = NativeStandardClassIds.Annotations.gcUnsafeCallClassId.asSingleFqName()
+    val gcUnsafeCall = NativeStandardClassIds.Annotations.GCUnsafeCall.asSingleFqName()
     val eagerInitialization = FqName("kotlin.native.EagerInitialization")
     val noReorderFields = FqName("kotlin.native.internal.NoReorderFields")
     val objCName = FqName("kotlin.native.ObjCName")

@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.AbstractAtomicRefer
 import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 object FirNativeAtomicReferenceToPrimitiveCallChecker : AbstractAtomicReferenceToPrimitiveCallChecker(
-    NativeStandardClassIds.atomicByPrimitive,
+    NativeStandardClassIds.atomicByPrimitive_native,
     MppCheckerKind.Platform,
-    NativeStandardClassIds.Callables.atomicReferenceCompareAndSet,
-    NativeStandardClassIds.Callables.atomicReferenceCompareAndExchange,
+    NativeStandardClassIds.Callables.AtomicReference_compareAndSet_native,
+    NativeStandardClassIds.Callables.AtomicReference_compareAndExchange_native,
 )
 
 object FirNativeAtomicArrayToPrimitiveCallChecker : AbstractAtomicReferenceToPrimitiveCallChecker(
-    NativeStandardClassIds.atomicArrayByPrimitive,
+    NativeStandardClassIds.atomicArrayByPrimitive_native,
     MppCheckerKind.Platform,
-    NativeStandardClassIds.Callables.atomicArrayCompareAndSet,
-    NativeStandardClassIds.Callables.atomicArrayCompareAndExchange,
+    NativeStandardClassIds.Callables.AtomicArray_compareAndSet_native,
+    NativeStandardClassIds.Callables.AtomicArray_compareAndExchange_native,
 )

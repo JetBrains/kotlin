@@ -51,10 +51,7 @@ import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_RECORD_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
@@ -455,7 +452,7 @@ class ClassCodegen private constructor(
             metadataSerializer.bindFieldMetadata(it, fieldType to fieldName)
         }
 
-        if (irClass.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) && !field.isStatic) {
+        if (irClass.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord) && !field.isStatic) {
             val rcv = visitor.newRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
             val annotationCodegen = object : AnnotationCodegen(this@ClassCodegen) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
@@ -654,12 +651,13 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
-                hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
+                hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord) ->
+                    VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
                 else -> Opcodes.ACC_SUPER or modality.flags
             }.let { if (isKotlinValhallaValueClass(languageVersionSettings)) it and ACC_IDENTITY.inv() else it }
 
 private fun IrClass.getSynthAccessFlag(): Int {
-    if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
+    if (hasAnnotation(JvmStandardClassIds.Annotations.JvmSynthetic))
         return Opcodes.ACC_SYNTHETIC
     if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION)
         return Opcodes.ACC_SYNTHETIC
@@ -673,9 +671,9 @@ private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersio
             ) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else if (parentAsClass.isKotlinValhallaValueClass(languageVersionSettings)) Opcodes.ACC_STRICT else 0) or
-            (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
-            (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
-            (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
+            (if (hasAnnotation(JvmStandardClassIds.Annotations.Volatile)) Opcodes.ACC_VOLATILE else 0) or
+            (if (hasAnnotation(JvmStandardClassIds.Annotations.Transient)) Opcodes.ACC_TRANSIENT else 0) or
+            (if (hasAnnotation(JvmStandardClassIds.Annotations.JvmSynthetic) ||
                 isPrivateCompanionFieldInInterface()
             ) Opcodes.ACC_SYNTHETIC else 0)
 

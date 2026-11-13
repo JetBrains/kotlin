@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinErrorSince
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinHiddenSince
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinWarningSince
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.DeprecatedSinceKotlin_errorSince
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.DeprecatedSinceKotlin_hiddenSince
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.DeprecatedSinceKotlin_warningSince
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.isFulfilled
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -240,7 +240,7 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
 }
 
 private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
-    val argument = argumentMapping.mapping[ParameterNames.deprecatedLevel] ?: return null
+    val argument = argumentMapping.mapping[ParameterNames.Deprecated_level] ?: return null
 
     val targetName = argument.extractEnumValueArgumentInfo()?.enumEntryName?.asString() ?: return null
 
@@ -268,7 +268,7 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
         for ([deprecated, shouldPropagateToOverrides] in annotations) {
             if (deprecated.unexpandedClassId == StandardClassIds.Annotations.SinceKotlin) {
-                val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
+                val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.SinceKotlin_version)
                 val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression)?.value as? String)
                     ?.let(ApiVersion.Companion::parse) ?: continue
                 val wasExperimental = this@extractDeprecationAnnotationInfoPerUseSite.any {
@@ -459,9 +459,9 @@ class DeprecatedSinceKotlinProvider(
     }
 
     override fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): FirDeprecationInfo? {
-        val appliedLevel = DeprecationLevelValue.HIDDEN.takeIfVersionMatches(deprecatedSinceKotlinHiddenSince, 2, languageVersionSettings)
-            ?: DeprecationLevelValue.ERROR.takeIfVersionMatches(deprecatedSinceKotlinErrorSince, 1, languageVersionSettings)
-            ?: DeprecationLevelValue.WARNING.takeIfVersionMatches(deprecatedSinceKotlinWarningSince, 0, languageVersionSettings)
+        val appliedLevel = DeprecationLevelValue.HIDDEN.takeIfVersionMatches(DeprecatedSinceKotlin_hiddenSince, 2, languageVersionSettings)
+            ?: DeprecationLevelValue.ERROR.takeIfVersionMatches(DeprecatedSinceKotlin_errorSince, 1, languageVersionSettings)
+            ?: DeprecationLevelValue.WARNING.takeIfVersionMatches(DeprecatedSinceKotlin_warningSince, 0, languageVersionSettings)
 
         return appliedLevel?.let {
             SimpleFirDeprecationInfo(it, propagatesToOverride, deprecatedAnnotation)
@@ -476,12 +476,12 @@ class SimpleFirDeprecationInfo(
 ) : FirDeprecationInfo() {
     override fun getMessage(session: FirSession): String? {
         (annotation as? FirAnnotationCall)?.containingDeclarationSymbol?.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
-        return annotation.getStringArgument(ParameterNames.deprecatedMessage)
+        return annotation.getStringArgument(ParameterNames.Deprecated_message)
     }
 
     override fun getReplaceWith(session: FirSession): FirDeprecationReplaceWith? {
         (annotation as? FirAnnotationCall)?.containingDeclarationSymbol?.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
-        val replaceWith = annotation.findArgumentByName(ParameterNames.deprecatedReplaceWith, returnFirstWhenNotFound = false)
+        val replaceWith = annotation.findArgumentByName(ParameterNames.Deprecated_replaceWith, returnFirstWhenNotFound = false)
         return replaceWith?.extractReplaceWith()
     }
 }
@@ -495,18 +495,18 @@ private fun FirExpression.extractReplaceWith(): FirDeprecationReplaceWith? {
     // and as a [FirFunctionCall] of the annotation constructor for source declarations.
     when (this) {
         is FirAnnotation -> {
-            expression = getStringArgument(ParameterNames.replaceWithExpression) ?: return null
-            imports = getStringArrayArgument(ParameterNames.replaceWithImports).orEmpty()
+            expression = getStringArgument(ParameterNames.ReplaceWith_expression) ?: return null
+            imports = getStringArrayArgument(ParameterNames.ReplaceWith_imports).orEmpty()
         }
         is FirFunctionCall -> {
             // Arguments are guaranteed to be evaluated, we don't need to handle string concatenation, const val calls, etc.
             val mapping = resolvedArgumentMapping ?: return null
             expression =
-                (mapping.entries.firstOrNull { it.value.name == ParameterNames.replaceWithExpression }?.key as? FirLiteralExpression)
+                (mapping.entries.firstOrNull { it.value.name == ParameterNames.ReplaceWith_expression }?.key as? FirLiteralExpression)
                     ?.value as? String
                     ?: return null
             imports =
-                (mapping.entries.firstOrNull { it.value.name == ParameterNames.replaceWithImports }?.key as? FirCollectionLiteral)
+                (mapping.entries.firstOrNull { it.value.name == ParameterNames.ReplaceWith_imports }?.key as? FirCollectionLiteral)
                     ?.arguments?.mapNotNull { (it as? FirLiteralExpression)?.value as? String }.orEmpty()
         }
         else -> return null

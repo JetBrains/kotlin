@@ -105,7 +105,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         scopeProvider = JavaScopeProvider
         symbol = FirRegularClassSymbol(classId)
         annotations += buildAnnotation {
-            annotationTypeRef = buildResolvedTypeRef { coneType = JvmStandardClassIds.Annotations.Java.Target.constructClassLikeType() }
+            annotationTypeRef = buildResolvedTypeRef { coneType = JvmStandardClassIds.Annotations.Target_java.constructClassLikeType() }
             argumentMapping = buildAnnotationArgumentMapping {
                 mapping[Name.identifier("value")] = buildEnumEntryDeserializedAccessExpression {
                     enumClassId = ClassId.topLevel(FqName("java.lang.annotation.ElementType"))

@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
@@ -98,7 +98,7 @@ class JsIrBackendContext(
     override val catchAllThrowableType: IrType
         get() = dynamicType
 
-    override val internalPackageFqn = JsStandardClassIds.BASE_JS_PACKAGE
+    override val internalPackageFqn = StandardClassIds.BASE_JS_PACKAGE
 
     private val operatorMap by lazy { referenceOperators() }
 

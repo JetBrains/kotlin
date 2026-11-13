@@ -104,7 +104,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
         override val requiredAnnotationsWithArguments: CompilerRequiredParametersMap = buildMap {
             this[StandardClassIds.Annotations.Deprecated] = [
                 FirCompilerRequiredParameterDescription(
-                    name = StandardClassIds.Annotations.ParameterNames.deprecatedLevel,
+                    name = StandardClassIds.Annotations.ParameterNames.Deprecated_level,
                     kind = FirCraParameterKind.EnumParameter(StandardClassIds.DeprecationLevel, isVararg = false),
                     position = 2,
                 )
@@ -112,7 +112,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
 
             this[StandardClassIds.Annotations.Target] = [
                 FirCompilerRequiredParameterDescription(
-                    name = StandardClassIds.Annotations.ParameterNames.targetAllowedTargets,
+                    name = StandardClassIds.Annotations.ParameterNames.Target_allowedTargets,
                     kind = FirCraParameterKind.EnumParameter(StandardClassIds.AnnotationTarget, isVararg = true),
                     position = null,
                 )
@@ -120,17 +120,17 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
 
             this[StandardClassIds.Annotations.DeprecatedSinceKotlin] = [
                 FirCompilerRequiredParameterDescription(
-                    name = StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinWarningSince,
+                    name = StandardClassIds.Annotations.ParameterNames.DeprecatedSinceKotlin_warningSince,
                     kind = FirCraParameterKind.LiteralParameter(ConstantValueKind.String),
                     position = 0,
                 ),
                 FirCompilerRequiredParameterDescription(
-                    name = StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinErrorSince,
+                    name = StandardClassIds.Annotations.ParameterNames.DeprecatedSinceKotlin_errorSince,
                     kind = FirCraParameterKind.LiteralParameter(ConstantValueKind.String),
                     position = 1,
                 ),
                 FirCompilerRequiredParameterDescription(
-                    name = StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinHiddenSince,
+                    name = StandardClassIds.Annotations.ParameterNames.DeprecatedSinceKotlin_hiddenSince,
                     kind = FirCraParameterKind.LiteralParameter(ConstantValueKind.String),
                     position = 2,
                 ),
@@ -138,7 +138,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
 
             this[StandardClassIds.Annotations.SinceKotlin] = [
                 FirCompilerRequiredParameterDescription(
-                    name = StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion,
+                    name = StandardClassIds.Annotations.ParameterNames.SinceKotlin_version,
                     kind = FirCraParameterKind.LiteralParameter(ConstantValueKind.String),
                     position = 0,
                 )
@@ -146,7 +146,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
 
             this[StandardClassIds.Annotations.NumericClass] = [
                 FirCompilerRequiredParameterDescription(
-                    name = StandardClassIds.Annotations.ParameterNames.actualizations,
+                    name = StandardClassIds.Annotations.ParameterNames.NumericClass_actualizations,
                     kind = FirCraParameterKind.GetClassParameter(isVararg = true),
                     position = null,
                 )

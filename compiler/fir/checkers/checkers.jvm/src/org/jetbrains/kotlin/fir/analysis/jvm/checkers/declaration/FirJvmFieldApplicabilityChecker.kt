@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_ID
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -94,7 +94,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
 
     context(context: CheckerContext)
     private fun isInsideJvmMultifileClassFile(): Boolean {
-        return context.containingFileSymbol.hasAnnotation(JVM_MULTIFILE_CLASS_ID, context.session)
+        return context.containingFileSymbol.hasAnnotation(JvmStandardClassIds.Annotations.JvmMultifileClass, context.session)
     }
 }
 

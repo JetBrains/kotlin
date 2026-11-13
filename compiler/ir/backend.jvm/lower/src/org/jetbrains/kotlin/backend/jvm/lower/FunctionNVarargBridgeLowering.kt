@@ -94,7 +94,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
 
             // Add vararg invoke bridge
             val invokeFunction = declaration.functions.single { function ->
-                if (function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID)) return@single false
+                if (function.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed)) return@single false
 
                 val overridesInvoke = function.overriddenSymbols.any { symbol ->
                     symbol.owner.name.asString() == "invoke"

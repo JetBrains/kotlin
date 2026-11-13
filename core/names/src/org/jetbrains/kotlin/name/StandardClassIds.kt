@@ -5,6 +5,46 @@
 
 package org.jetbrains.kotlin.name
 
+/**
+ * Don't forget to run `./gradlew :core:names:updateKotlinAbi` after changes in this object.
+ *
+ * ## Placement
+ *
+ * - Classes, interfaces, enums and objects go directly into the object ([Any], [Map_Entry], [AnnotationTarget]).
+ * - Annotation classes go into `Annotations` ([Annotations.Deprecated]).
+ * - Callables go into `Callables` ([Callables.suspend]).
+ * - Annotation parameter names go into `Annotations.ParameterNames` ([Annotations.ParameterNames.Deprecated_message]).
+ * - Package constants go directly into the object.
+ *
+ * ## Naming rules
+ *
+ * 1. An id is named exactly as the declaration it refers to:
+ *    PascalCase for classes (`Any`, `JvmName`), and the declared name for callables and parameters (`suspend`, `javaClass`).
+ *    Classes with lowercase names keep them as well (`JsStandardClassIds.Annotations.nativeGetter`).
+ * 2. `_` goes one level down, mirroring the structure of the id:
+ *    - a nested class is `Outer_Nested`: [Map_Entry], [Annotations.JsExport_Ignore];
+ *    - a member callable is `Owner_member`: [Callables.Cloneable_clone], [Callables.AtomicReference_compareAndSet];
+ *    - an annotation parameter is `Annotation_parameter`: [Annotations.ParameterNames.Deprecated_message].
+ *    Top-level callables have no owner prefix: [Callables.suspend].
+ * 3. A trailing `_suffix` disambiguates an id whose name is also used by another declaration. Disambiguation always comes last,
+ *    after all nesting segments, and members of a disambiguated class carry its suffix (`AtomicReference_java` ->
+ *    `AtomicReference_compareAndSet_java`), e.g.
+ *    - `_java`: a `java.*` class (`JvmStandardClassIds.Annotations.Deprecated_java` vs [Annotations.Deprecated]);
+ *    - `_native`: a Native-only class (`NativeStandardClassIds.AtomicInt_native`, i.e. `kotlin.concurrent.AtomicInt`,
+ *      vs [AtomicInt], i.e. `kotlin.concurrent.atomics.AtomicInt`);
+ *    Ids without a collision get no suffix (`JvmStandardClassIds.Object`).
+ * 4. A package constant is named after its path: a leading `kotlin` becomes `BASE`, every other segment is uppercased
+ *    as is (camelCase segments are not split into words), segments are joined with `_`, and `_PACKAGE` is appended:
+ *    [BASE_COROUTINES_INTRINSICS_PACKAGE] is `kotlin.coroutines.intrinsics`,
+ *    `NativeStandardClassIds.BASE_NATIVE_INTERNAL_ESCAPEANALYSIS_PACKAGE` is `kotlin.native.internal.escapeAnalysis`,
+ *    `JvmStandardClassIds.JAVA_LANG_ANNOTATION_PACKAGE` is `java.lang.annotation`.
+ *    The only exception is `kotlin` itself, which is [BASE_KOTLIN_PACKAGE].
+ * 5. Unlike the platform-specific `*StandardClassIds`, this one is public API: `:core:names` has ABI validation
+ *    (`core/names/api/names.api`), so be careful when renaming or removing anything here.
+ *
+ * Prefer referring to ids qualified (`StandardClassIds.Annotations.Throws`): member imports hide which object (and thus which
+ * declaration) a name comes from.
+ */
 object StandardClassIds {
     val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
@@ -96,6 +136,7 @@ object StandardClassIds {
 
     val Function = "Function".baseId()
     val SuspendFunction = "SuspendFunction".coroutinesId()
+    val FunctionN = "FunctionN".jvmFunctionsId()
 
     fun byName(name: String) = name.baseId()
     fun reflectByName(name: String) = name.reflectId()
@@ -154,8 +195,8 @@ object StandardClassIds {
     val MutableSet = "MutableSet".collectionsId()
     val MutableMap = "MutableMap".collectionsId()
 
-    val MapEntry = Map.createNestedClassId(Name.identifier("Entry"))
-    val MutableMapEntry = MutableMap.createNestedClassId(Name.identifier("MutableEntry"))
+    val Map_Entry = Map.createNestedClassId(Name.identifier("Entry"))
+    val MutableMap_MutableEntry = MutableMap.createNestedClassId(Name.identifier("MutableEntry"))
 
     val Result = "Result".baseId()
 
@@ -169,10 +210,10 @@ object StandardClassIds {
 
     val EnumEntries = "EnumEntries".enumsId()
 
-    val AtomicBoolean = "AtomicBoolean".atomicsId()
-    val AtomicInt = "AtomicInt".atomicsId()
-    val AtomicLong = "AtomicLong".atomicsId()
-    val AtomicReference = "AtomicReference".atomicsId()
+    val AtomicBoolean = "AtomicBoolean".concurrentAtomicsId()
+    val AtomicInt = "AtomicInt".concurrentAtomicsId()
+    val AtomicLong = "AtomicLong".concurrentAtomicsId()
+    val AtomicReference = "AtomicReference".concurrentAtomicsId()
 
     val atomicByPrimitive = mapOf(
         Boolean to AtomicBoolean,
@@ -180,9 +221,9 @@ object StandardClassIds {
         Long to AtomicLong,
     )
 
-    val AtomicArray = "AtomicArray".atomicsId()
-    val AtomicIntArray = "AtomicIntArray".atomicsId()
-    val AtomicLongArray = "AtomicLongArray".atomicsId()
+    val AtomicArray = "AtomicArray".concurrentAtomicsId()
+    val AtomicIntArray = "AtomicIntArray".concurrentAtomicsId()
+    val AtomicLongArray = "AtomicLongArray".concurrentAtomicsId()
 
     val atomicArrayByPrimitive = mapOf(
         Int to AtomicIntArray,
@@ -190,6 +231,12 @@ object StandardClassIds {
     )
 
     val ClassCastException = "ClassCastException".baseId()
+
+    @Deprecated("Deprecated in 2.5.20.", ReplaceWith("Map_Entry"), level = ERROR)
+    val MapEntry get() = Map_Entry
+
+    @Deprecated("Deprecated in 2.5.20.", ReplaceWith("MutableMap_MutableEntry"), level = ERROR)
+    val MutableMapEntry get() = MutableMap_MutableEntry
 
     object Annotations {
         val Suppress = "Suppress".baseId()
@@ -224,16 +271,21 @@ object StandardClassIds {
 
         val Volatile = "Volatile".concurrentId()
 
+        /**
+         * `kotlin.Throws`: an `expect` class.
+         * On JVM, it is a typealias to `kotlin.jvm.Throws` (`JvmStandardClassIds.Annotations.Throws_aliased`).
+         * On Native, it is a class aliased by `kotlin.native.Throws` (`NativeStandardClassIds.Annotations.Throws_alias`).
+         */
+        val Throws = "Throws".baseId()
+
         val Test = "Test".testId()
 
-        val RawTypeAnnotation = "RawType".internalIrId()
+        val RawType = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
         val FlexibleMutability = "FlexibleMutability".internalIrId()
         val FlexibleArrayElementVariance = "FlexibleArrayElementVariance".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
         val NoInfer = "NoInfer".internalId()
-
-        val FunctionN = "FunctionN".jvmFunctionsId()
 
         val InlineOnly = "InlineOnly".internalId()
 
@@ -254,17 +306,18 @@ object StandardClassIds {
         val ImplicitlyActualizedByJvmDeclaration = "ImplicitlyActualizedByJvmDeclaration".jvmId()
         val KotlinActual = "KotlinActual".annotationsJvmId()
 
-        val jvmStatic = "JvmStatic".jvmId()
-        val jvmName = "JvmName".jvmId()
+        val JvmName = "JvmName".jvmId()
+        val JvmStatic = "JvmStatic".jvmId()
+
         val Transient = "Transient".jvmId()
         val JvmInline = "JvmInline".jvmId()
 
-        val jsExport = "JsExport".jsId()
-        val jsImplicitExport = "JsImplicitExport".jsId()
-        val jsExportIgnore = jsExport.createNestedClassId(Name.identifier("Ignore"))
-        val jsExportDefault = jsExport.createNestedClassId(Name.identifier("Default"))
-        val jsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()
-        val jsNoRuntime = "JsNoRuntime".jsId()
+        val JsExport = "JsExport".jsId()
+        val JsImplicitExport = "JsImplicitExport".jsId()
+        val JsExport_Ignore = JsExport.createNestedClassId(Name.identifier("Ignore"))
+        val JsExport_Default = JsExport.createNestedClassId(Name.identifier("Default"))
+        val JsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()
+        val JsNoRuntime = "JsNoRuntime".jsId()
 
         val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()
@@ -284,32 +337,89 @@ object StandardClassIds {
          */
         val ReflectionPackageName = "ReflectionPackageName".internalId()
 
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("JsExport_Ignore"), level = ERROR)
+        val jsExportIgnore get() = JsExport_Ignore
+
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("JsExport_Default"), level = ERROR)
+        val jsExportDefault get() = JsExport_Default
+
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("StandardClassIds.FunctionN"), level = ERROR)
+        val FunctionN get() = StandardClassIds.FunctionN
+
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("RawType"), level = ERROR)
+        val RawTypeAnnotation get() = RawType
+
         object ParameterNames {
             val value = Name.identifier("value")
 
-            val retentionValue = value
-            val targetAllowedTargets = Name.identifier("allowedTargets")
+            val Retention_value = value
+            val Target_allowedTargets = Name.identifier("allowedTargets")
 
-            val equalityBound = Name.identifier("bound")
+            val EqualityBound_bound = Name.identifier("bound")
 
-            val sinceKotlinVersion = Name.identifier("version")
+            val SinceKotlin_version = Name.identifier("version")
 
-            val actualizations = Name.identifier("actualizations")
+            val NumericClass_actualizations = Name.identifier("actualizations")
 
-            val deprecatedMessage = Name.identifier("message")
-            val deprecatedLevel = Name.identifier("level")
-            val deprecatedReplaceWith = Name.identifier("replaceWith")
+            val Deprecated_message = Name.identifier("message")
+            val Deprecated_level = Name.identifier("level")
+            val Deprecated_replaceWith = Name.identifier("replaceWith")
 
-            val replaceWithExpression = Name.identifier("expression")
-            val replaceWithImports = Name.identifier("imports")
+            val ReplaceWith_expression = Name.identifier("expression")
+            val ReplaceWith_imports = Name.identifier("imports")
 
-            val deprecatedSinceKotlinWarningSince = Name.identifier("warningSince")
-            val deprecatedSinceKotlinErrorSince = Name.identifier("errorSince")
-            val deprecatedSinceKotlinHiddenSince = Name.identifier("hiddenSince")
+            val DeprecatedSinceKotlin_warningSince = Name.identifier("warningSince")
+            val DeprecatedSinceKotlin_errorSince = Name.identifier("errorSince")
+            val DeprecatedSinceKotlin_hiddenSince = Name.identifier("hiddenSince")
 
-            val suppressNames = Name.identifier("names")
+            val Suppress_names = Name.identifier("names")
 
-            val parameterNameName = Name.identifier("name")
+            val ParameterName_name = Name.identifier("name")
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("Retention_value"), level = ERROR)
+            val retentionValue get() = Retention_value
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("Target_allowedTargets"), level = ERROR)
+            val targetAllowedTargets get() = Target_allowedTargets
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("EqualityBound_bound"), level = ERROR)
+            val equalityBound get() = EqualityBound_bound
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("SinceKotlin_version"), level = ERROR)
+            val sinceKotlinVersion get() = SinceKotlin_version
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("NumericClass_actualizations"), level = ERROR)
+            val actualizations get() = NumericClass_actualizations
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("Deprecated_message"), level = ERROR)
+            val deprecatedMessage get() = Deprecated_message
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("Deprecated_level"), level = ERROR)
+            val deprecatedLevel get() = Deprecated_level
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("Deprecated_replaceWith"), level = ERROR)
+            val deprecatedReplaceWith get() = Deprecated_replaceWith
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("ReplaceWith_expression"), level = ERROR)
+            val replaceWithExpression get() = ReplaceWith_expression
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("ReplaceWith_imports"), level = ERROR)
+            val replaceWithImports get() = ReplaceWith_imports
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("DeprecatedSinceKotlin_warningSince"), level = ERROR)
+            val deprecatedSinceKotlinWarningSince get() = DeprecatedSinceKotlin_warningSince
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("DeprecatedSinceKotlin_errorSince"), level = ERROR)
+            val deprecatedSinceKotlinErrorSince get() = DeprecatedSinceKotlin_errorSince
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("DeprecatedSinceKotlin_hiddenSince"), level = ERROR)
+            val deprecatedSinceKotlinHiddenSince get() = DeprecatedSinceKotlin_hiddenSince
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("Suppress_names"), level = ERROR)
+            val suppressNames get() = Suppress_names
+
+            @Deprecated("Deprecated in 2.5.20.", ReplaceWith("ParameterName_name"), level = ERROR)
+            val parameterNameName get() = ParameterName_name
         }
     }
 
@@ -317,18 +427,36 @@ object StandardClassIds {
         val suspend = "suspend".callableId(BASE_KOTLIN_PACKAGE)
         val coroutineContext = "coroutineContext".callableId(BASE_COROUTINES_PACKAGE)
 
-        val clone = "clone".callableId(Cloneable)
+        val Cloneable_clone = "clone".callableId(Cloneable)
 
-        val not = "not".callableId(Boolean)
+        val Boolean_not = "not".callableId(Boolean)
 
         val contract = "contract".callableId(BASE_CONTRACTS_PACKAGE)
 
-        val atomicReferenceCompareAndSet = "compareAndSet".callableId(AtomicReference)
-        val atomicReferenceCompareAndExchange = "compareAndExchange".callableId(AtomicReference)
-        val atomicArrayCompareAndSetAt = "compareAndSetAt".callableId(AtomicArray)
-        val atomicArrayCompareAndExchangeAt = "compareAndExchangeAt".callableId(AtomicArray)
+        val AtomicReference_compareAndSet = "compareAndSet".callableId(AtomicReference)
+        val AtomicReference_compareAndExchange = "compareAndExchange".callableId(AtomicReference)
+        val AtomicArray_compareAndSetAt = "compareAndSetAt".callableId(AtomicArray)
+        val AtomicArray_compareAndExchangeAt = "compareAndExchangeAt".callableId(AtomicArray)
 
         val throwNoWhenBranchMatchedException = "throwNoWhenBranchMatchedException".callableId(BASE_INTERNAL_PACKAGE)
+
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("Cloneable_clone"), level = ERROR)
+        val clone get() = Cloneable_clone
+
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("Boolean_not"), level = ERROR)
+        val not get() = Boolean_not
+
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("AtomicReference_compareAndSet"), level = ERROR)
+        val atomicReferenceCompareAndSet get() = AtomicReference_compareAndSet
+
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("AtomicReference_compareAndExchange"), level = ERROR)
+        val atomicReferenceCompareAndExchange get() = AtomicReference_compareAndExchange
+
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("AtomicArray_compareAndSetAt"), level = ERROR)
+        val atomicArrayCompareAndSetAt get() = AtomicArray_compareAndSetAt
+
+        @Deprecated("Deprecated in 2.5.20.", ReplaceWith("AtomicArray_compareAndExchangeAt"), level = ERROR)
+        val atomicArrayCompareAndExchangeAt get() = AtomicArray_compareAndExchangeAt
     }
 
     object Collections {
@@ -340,7 +468,7 @@ object StandardClassIds {
             StandardClassIds.Collection to StandardClassIds.MutableCollection,
             StandardClassIds.Set to StandardClassIds.MutableSet,
             StandardClassIds.Map to StandardClassIds.MutableMap,
-            StandardClassIds.MapEntry to StandardClassIds.MutableMapEntry
+            StandardClassIds.Map_Entry to StandardClassIds.MutableMap_MutableEntry
         )
 
         val mutableCollectionToBaseCollection: Map<ClassId, ClassId> =
@@ -367,7 +495,7 @@ private fun String.internalIrId() = ClassId(StandardClassIds.BASE_INTERNAL_IR_PA
 private fun String.coroutinesId() = ClassId(StandardClassIds.BASE_COROUTINES_PACKAGE, Name.identifier(this))
 private fun String.enumsId() = ClassId(StandardClassIds.BASE_ENUMS_PACKAGE, Name.identifier(this))
 private fun String.concurrentId() = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier(this))
-private fun String.atomicsId() = ClassId(StandardClassIds.BASE_CONCURRENT_ATOMICS_PACKAGE, Name.identifier(this))
+private fun String.concurrentAtomicsId() = ClassId(StandardClassIds.BASE_CONCURRENT_ATOMICS_PACKAGE, Name.identifier(this))
 private fun String.sequencesId() = ClassId(StandardClassIds.BASE_SEQUENCES_PACKAGE, Name.identifier(this))
 
 private fun String.testId() = ClassId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier(this))

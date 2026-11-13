@@ -273,7 +273,7 @@ private class JvmClsAnnotationLoader(
                 val extraSynthesizedAnnotations: List<AnnotationWithArgs> = if (exceptions.isNotEmpty()) {
                     listOf(
                         AnnotationWithArgs(
-                            JvmStandardClassIds.Annotations.Throws,
+                            JvmStandardClassIds.Annotations.Throws_aliased,
                             mapOf(Name.identifier("exceptionClasses") to ArrayValue(exceptions.map {
                                 KClassValue(
                                     it,

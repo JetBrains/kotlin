@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.name.JvmStandardClassIds.THROWS_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJvmThrowsChecker : FirFunctionChecker(MppCheckerKind.Platform) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -25,7 +25,7 @@ object FirJvmThrowsChecker : FirFunctionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
         val session = context.session
-        val annotation = declaration.getAnnotationByClassId(THROWS_ANNOTATION_CLASS_ID, session) ?: return
+        val annotation = declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.Throws_aliased, session) ?: return
 
         val containingClass = declaration.getContainingClassSymbol() ?: return
         when {

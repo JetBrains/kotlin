@@ -183,8 +183,8 @@ class EscapeAnalysisChecker(
     private fun checkEscapeAnalysisAnnotations(declaration: IrFunction) {
         val hasEscapes = declaration.annotations.hasAnnotation(NativeStandardClassIds.Annotations.Escapes)
         val escapesName = NativeStandardClassIds.Annotations.Escapes.asFqNameString()
-        val hasEscapesNothing = declaration.annotations.hasAnnotation(NativeStandardClassIds.Annotations.EscapesNothing)
-        val escapesNothingName = NativeStandardClassIds.Annotations.EscapesNothing.asFqNameString()
+        val hasEscapesNothing = declaration.annotations.hasAnnotation(NativeStandardClassIds.Annotations.Escapes_Nothing)
+        val escapesNothingName = NativeStandardClassIds.Annotations.Escapes_Nothing.asFqNameString()
         val hasPointsTo = declaration.annotations.hasAnnotation(NativeStandardClassIds.Annotations.PointsTo)
         val pointsToName = NativeStandardClassIds.Annotations.PointsTo.asFqNameString()
 

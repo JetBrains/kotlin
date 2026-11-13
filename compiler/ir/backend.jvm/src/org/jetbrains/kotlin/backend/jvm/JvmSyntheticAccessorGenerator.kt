@@ -197,7 +197,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         }
 
     fun isOrShouldBeHiddenSinceHasMangledParams(constructor: IrConstructor): Boolean {
-        if (constructor.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
+        if (constructor.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) &&
             !constructor.isExposedByMakingPublic()
         ) return false
         if (constructor.hiddenConstructorMangledParams != null) return true
@@ -243,6 +243,6 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
 // So, when exposing the constructor to Java, we simply make the hidden constructor public.
 // Also, we keep the constructor with the marker to preserve binary compatibility.
 fun IrConstructor.isExposedByMakingPublic(): Boolean =
-    hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
+    hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) &&
             constructedClass.modality != Modality.SEALED &&
             parameters.filter { it.type.isInlineClassType() }.all { it.type.isBoxedInlineClassType() }

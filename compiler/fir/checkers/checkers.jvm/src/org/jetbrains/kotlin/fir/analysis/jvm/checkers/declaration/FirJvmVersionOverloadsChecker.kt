@@ -26,7 +26,7 @@ object FirJvmVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platfor
         val parameters = declaration.contextParameters + listOfNotNull(declaration.receiverParameter) + declaration.valueParameters
         if (parameters.none { it.hasAnnotation(StandardClassIds.Annotations.IntroducedAt, context.session) }) return
 
-        val jvmOverloadsAnnotation = declaration.getAnnotationByClassId(JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID, context.session)
+        val jvmOverloadsAnnotation = declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmOverloads, context.session)
         if (jvmOverloadsAnnotation != null) {
             reporter.reportOn(
                 jvmOverloadsAnnotation.source,

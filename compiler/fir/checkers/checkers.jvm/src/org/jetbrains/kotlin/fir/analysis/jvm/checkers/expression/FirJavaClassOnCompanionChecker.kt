@@ -26,7 +26,7 @@ object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCh
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirPropertyAccessExpression) {
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
-        if ((reference.symbol as? FirCallableSymbol)?.callableId != JvmStandardClassIds.Callables.JavaClass) return
+        if ((reference.symbol as? FirCallableSymbol)?.callableId != JvmStandardClassIds.Callables.javaClass) return
 
         val receiver = expression.extensionReceiver as? FirResolvedQualifier ?: return
         if (!receiver.resolvedToCompanionObject) return

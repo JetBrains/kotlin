@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMember
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.light.classes.symbol.utils.*
-import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
@@ -111,13 +110,13 @@ internal open class SymbolLightSimpleMethod protected constructor(
 
         PsiModifier.STRICTFP -> {
             ifInlineOnly { return null }
-            val hasAnnotation = withFunctionSymbol { STRICTFP_ANNOTATION_CLASS_ID in it.annotations }
+            val hasAnnotation = withFunctionSymbol { JvmStandardClassIds.Annotations.Strictfp in it.annotations }
             mapOf(modifier to hasAnnotation)
         }
 
         PsiModifier.SYNCHRONIZED -> {
             ifInlineOnly { return null }
-            val hasAnnotation = withFunctionSymbol { SYNCHRONIZED_ANNOTATION_CLASS_ID in it.annotations }
+            val hasAnnotation = withFunctionSymbol { JvmStandardClassIds.Annotations.Synchronized in it.annotations }
             mapOf(modifier to hasAnnotation)
         }
 

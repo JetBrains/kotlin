@@ -1417,7 +1417,7 @@ class CallAndReferenceGenerator(
             applyCallArguments(statement, declarationSiteSymbol, receiverInfo)
         }
 
-        if (result is IrCall && statement is FirFunctionCall && declarationSiteSymbol?.callableId == WebCommonStandardClassIds.Callables.Js) {
+        if (result is IrCall && statement is FirFunctionCall && declarationSiteSymbol?.callableId == WebCommonStandardClassIds.Callables.js) {
             evaluateAndApplyJsCallArg(statement, result)
         }
 

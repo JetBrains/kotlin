@@ -910,7 +910,7 @@ abstract class ParameterizedKaptStubConverter<
     // @JvmExposeBoxed generates an exposed function, which is not an override.
     private fun IrSimpleFunction.isJvmOverride(): Boolean = when {
         overriddenSymbols.isEmpty() -> false
-        !hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) -> true
+        !hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) -> true
         else -> overriddenSymbols.any { it.owner.name == name }
     }
 

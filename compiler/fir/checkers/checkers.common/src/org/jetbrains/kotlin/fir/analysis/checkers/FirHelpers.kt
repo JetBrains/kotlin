@@ -1232,15 +1232,15 @@ fun FirBasedSymbol<*>.isExportedToJs(): Boolean {
         }
     }
 
-    if (hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.jsExportIgnore, session)) {
+    if (hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.JsExport_Ignore, session)) {
         return false
     }
 
     if (
-        hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.jsExport, session) ||
-        hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.jsExportDefault, session) ||
-        getAnnotationBooleanParameter(StandardClassIds.Annotations.jsImplicitExport, session) == true ||
-        getContainingFile()?.symbol.hasAnnotation(StandardClassIds.Annotations.jsExport, session)
+        hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.JsExport, session) ||
+        hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.JsExport_Default, session) ||
+        getAnnotationBooleanParameter(StandardClassIds.Annotations.JsImplicitExport, session) == true ||
+        getContainingFile()?.symbol.hasAnnotation(StandardClassIds.Annotations.JsExport, session)
     ) {
         /**
          * The rules for exporting data class copy functions are inheriting rules for consistent `copy` visibility,

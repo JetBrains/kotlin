@@ -4,13 +4,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 object RuntimeNames {
-    val symbolNameAnnotation = NativeStandardClassIds.Annotations.symbolNameClassId.asSingleFqName()
+    val symbolNameAnnotation = NativeStandardClassIds.Annotations.SymbolName.asSingleFqName()
     val forceNativeThreadStateAnnotation = FqName("kotlin.native.ForceNativeThreadState")
-    val cnameAnnotation = NativeStandardClassIds.Annotations.cNameClassId.asSingleFqName()
-    val exportForCppRuntime = NativeStandardClassIds.Annotations.exportForCppRuntimeClassId.asSingleFqName()
-    val exportedBridge = NativeStandardClassIds.Annotations.exportedBridgeClassId.asSingleFqName()
-    val importedBridge = NativeStandardClassIds.Annotations.importedBridgeClassId.asSingleFqName()
-    val exportTypeInfoAnnotation = NativeStandardClassIds.Annotations.exportTypeInfoClassId.asSingleFqName()
+    val cnameAnnotation = NativeStandardClassIds.Annotations.CName.asSingleFqName()
+    val exportForCppRuntime = NativeStandardClassIds.Annotations.ExportForCppRuntime.asSingleFqName()
+    val exportedBridge = NativeStandardClassIds.Annotations.ExportedBridge.asSingleFqName()
+    val importedBridge = NativeStandardClassIds.Annotations.ImportedBridge.asSingleFqName()
+    val exportTypeInfoAnnotation = NativeStandardClassIds.Annotations.ExportTypeInfo.asSingleFqName()
     val cCall = FqName("kotlinx.cinterop.internal.CCall")
     val cCallDirect = FqName("kotlinx.cinterop.internal.CCall.Direct")
     val cGlobalAccess = FqName("kotlinx.cinterop.internal.CGlobalAccess")

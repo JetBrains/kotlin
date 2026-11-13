@@ -19,7 +19,7 @@ object FirJavaClassPropertyReferenceChecker : FirCallableReferenceAccessChecker(
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCallableReferenceAccess) {
         val resolvedSymbol = expression.toResolvedCallableSymbol() ?: return
-        if (resolvedSymbol.callableId != JvmStandardClassIds.Callables.JavaClass) return
+        if (resolvedSymbol.callableId != JvmStandardClassIds.Callables.javaClass) return
 
         reporter.reportOn(expression.calleeReference.source, FirJvmErrors.JAVA_CLASS_PROPERTY_REFERENCE)
     }

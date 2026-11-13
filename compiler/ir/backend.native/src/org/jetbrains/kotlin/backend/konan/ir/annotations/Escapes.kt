@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.util.allParameters
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.name.NativeStandardClassIds
-import org.jetbrains.kotlin.name.NativeStandardClassIds.Annotations.EscapesNothing
+import org.jetbrains.kotlin.name.NativeStandardClassIds.Annotations.Escapes_Nothing
 
 /**
  * A representation of `@Escapes` and `@Escapes.Nothing` annotations.
@@ -49,4 +49,4 @@ value class Escapes private constructor(private val mask: Int) {
 val IrFunction.escapes: Escapes?
     get() = annotations.findAnnotation(NativeStandardClassIds.Annotations.Escapes.asSingleFqName())?.run {
         Escapes(getConstArgument<Int>("who")!!, allParameters.size + 1)
-    } ?: annotations.findAnnotation(EscapesNothing.asSingleFqName())?.let { Escapes(0, allParameters.size + 1) }
+    } ?: annotations.findAnnotation(Escapes_Nothing.asSingleFqName())?.let { Escapes(0, allParameters.size + 1) }

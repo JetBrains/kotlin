@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.name.NativeStandardClassIds
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
 val ANNOTATIONS_TO_TREAT_AS_EXPORTED = listOf(
-    NativeStandardClassIds.Annotations.symbolNameClassId,
-    NativeStandardClassIds.Annotations.gcUnsafeCallClassId,
-    NativeStandardClassIds.Annotations.exportForCppRuntimeClassId,
-    NativeStandardClassIds.Annotations.cNameClassId,
-    NativeStandardClassIds.Annotations.exportForCompilerClassId,
+    NativeStandardClassIds.Annotations.SymbolName,
+    NativeStandardClassIds.Annotations.GCUnsafeCall,
+    NativeStandardClassIds.Annotations.ExportForCppRuntime,
+    NativeStandardClassIds.Annotations.CName,
+    NativeStandardClassIds.Annotations.ExportForCompiler,
 )
 
 private val ANNOTATIONS_TO_TREAT_AS_EXPORTED_FQNS = ANNOTATIONS_TO_TREAT_AS_EXPORTED.map(ClassId::asSingleFqName)

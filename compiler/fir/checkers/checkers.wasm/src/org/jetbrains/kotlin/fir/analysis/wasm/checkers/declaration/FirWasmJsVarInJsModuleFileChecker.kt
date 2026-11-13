@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonVarInJsModuleFileChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmJsVarInJsModuleFileChecker : FirWebCommonVarInJsModuleFileChecker() {
     override val diagnostic: KtDiagnosticFactoryForDeprecation0 =
@@ -21,11 +20,11 @@ object FirWasmJsVarInJsModuleFileChecker : FirWebCommonVarInJsModuleFileChecker(
     context(context: CheckerContext)
     override fun isNonWritableModuleImport(property: FirProperty): Boolean {
         // An own module annotation is already covered by JS_MODULE_PROHIBITED_ON_VAR and NESTED_JS_MODULE_PROHIBITED.
-        if (property.hasAnnotation(JsModule, context.session)) return false
-        if (!context.containingFileSymbol.hasAnnotation(JsModule, context.session)) return false
+        if (property.hasAnnotation(WebCommonStandardClassIds.Annotations.JsModule, context.session)) return false
+        if (!context.containingFileSymbol.hasAnnotation(WebCommonStandardClassIds.Annotations.JsModule, context.session)) return false
         // A qualified declaration is referenced through its qualifier, so a write lands on a plain JS object.
         // Without a qualifier the declaration is a member of the module namespace object, which is never writable.
-        return !property.hasAnnotation(JsQualifier, context.session) &&
-                !context.containingFileSymbol.hasAnnotation(JsQualifier, context.session)
+        return !property.hasAnnotation(WebCommonStandardClassIds.Annotations.JsQualifier, context.session) &&
+                !context.containingFileSymbol.hasAnnotation(WebCommonStandardClassIds.Annotations.JsQualifier, context.session)
     }
 }

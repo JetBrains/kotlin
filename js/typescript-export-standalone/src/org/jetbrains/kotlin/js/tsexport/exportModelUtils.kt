@@ -24,13 +24,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.backend.js.tsexport.*
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsDontExportDefaultImplementation
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExport
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportDefault
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsImplicitExport
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNoRuntime
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsStatic
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ConsistentCopyVisibility
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExposedCopyVisibility
 import org.jetbrains.kotlin.psi.KtNonPublicApi
@@ -173,7 +167,7 @@ internal fun KaDeclarationSymbol.isEffectivelyExported(config: TypeScriptExportC
     }
 
     return when (parent) {
-        null -> containingFileAnnotations?.contains(JsExport) ?: false
+        null -> containingFileAnnotations?.contains(JsStandardClassIds.Annotations.JsExport) ?: false
         else -> parent.isEffectivelyExported(config, includingImplicitExport) &&
                 (!isDataClassCopyMethod(parent) || shouldExportDataClassCopy(parent, config, includingImplicitExport))
     }
@@ -254,22 +248,22 @@ private fun KaNamedSymbol.getTopLevelQualifier(shouldIncludePackage: Boolean): F
 }
 
 internal fun KaAnnotated.isJsImplicitExport(): Boolean =
-    annotations.contains(JsImplicitExport)
+    annotations.contains(JsStandardClassIds.Annotations.JsImplicitExport)
 
 internal fun KaAnnotated.isJsExportIgnore(): Boolean =
-    annotations.contains(JsExportIgnore)
+    annotations.contains(JsStandardClassIds.Annotations.JsExport_Ignore)
 
 internal fun KaAnnotated.isJsStatic(): Boolean =
-    annotations.contains(JsStatic)
+    annotations.contains(JsStandardClassIds.Annotations.JsStatic)
 
 private fun KaAnnotated.isExplicitlyExported(): Boolean =
-    annotations.contains(JsExport) || annotations.contains(JsExportDefault)
+    annotations.contains(JsStandardClassIds.Annotations.JsExport) || annotations.contains(JsStandardClassIds.Annotations.JsExport_Default)
 
 internal fun KaAnnotated.isJsNoRuntime(): Boolean =
-    annotations.contains(JsNoRuntime)
+    annotations.contains(JsStandardClassIds.Annotations.JsNoRuntime)
 
 internal fun KaAnnotated.noDefaultImplementation(): Boolean =
-    annotations.contains(JsDontExportDefaultImplementation)
+    annotations.contains(JsStandardClassIds.Annotations.JsDontExportDefaultImplementation)
 
 internal fun KaAnnotated.isExposedCopyVisibility(): Boolean =
     annotations.contains(ExposedCopyVisibility)
@@ -592,7 +586,7 @@ internal fun <T : ExportedDeclaration> T.withAttributes(source: KaDeclarationSym
         ?.takeIf { source.deprecation?.level != KaDeprecationLevel.HIDDEN }
         ?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
 
-    if (source.annotations.contains(JsExportDefault)) {
+    if (source.annotations.contains(JsStandardClassIds.Annotations.JsExport_Default)) {
         attributes.add(ExportedAttribute.DefaultExport)
     }
 

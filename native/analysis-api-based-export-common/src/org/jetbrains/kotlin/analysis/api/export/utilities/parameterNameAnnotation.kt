@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 public fun KaType.getValueFromParameterNameAnnotation(): Name? {
     val resultingAnnotation = findParameterNameAnnotation() ?: return null
     val parameterNameArgument = resultingAnnotation.arguments
-        .singleOrNull { it.name == StandardClassIds.Annotations.ParameterNames.parameterNameName }
+        .singleOrNull { it.name == StandardClassIds.Annotations.ParameterNames.ParameterName_name }
 
     val constantArgumentValue = parameterNameArgument?.expression as? KaAnnotationValue.ConstantValue ?: return null
 

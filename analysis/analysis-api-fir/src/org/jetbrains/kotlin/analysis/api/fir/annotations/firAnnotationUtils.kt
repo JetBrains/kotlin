@@ -81,7 +81,7 @@ internal fun computeAnnotationArguments(annotation: FirAnnotation, builder: KaSy
         if (symbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
             when (annotation.toAnnotationClassId(builder.rootSession)) {
                 StandardClassIds.Annotations.Target -> return computeKotlinTargetAnnotationArguments(annotation, builder)
-                JvmStandardClassIds.Annotations.Java.Target -> return computeJavaTargetAnnotationArguments(annotation, builder)
+                JvmStandardClassIds.Annotations.Target_java -> return computeJavaTargetAnnotationArguments(annotation, builder)
             }
         }
 
@@ -130,12 +130,12 @@ private fun computeTargetAnnotationArguments(
 
 private fun computeKotlinTargetAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
     val enumClassId = StandardClassIds.AnnotationTarget
-    val parameterName = StandardClassIds.Annotations.ParameterNames.targetAllowedTargets
+    val parameterName = StandardClassIds.Annotations.ParameterNames.Target_allowedTargets
     return computeTargetAnnotationArguments(annotation, builder, enumClassId, parameterName) { KotlinTarget.valueOrNull(it)?.name }
 }
 
 private fun computeJavaTargetAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
-    val enumClassId = JvmStandardClassIds.Annotations.Java.ElementType
+    val enumClassId = JvmStandardClassIds.ElementType
     val parameterName = StandardClassIds.Annotations.ParameterNames.value
     return computeTargetAnnotationArguments(annotation, builder, enumClassId, parameterName) {
         ElementType.entries.firstOrNull { enumValue -> enumValue.name == it }?.name

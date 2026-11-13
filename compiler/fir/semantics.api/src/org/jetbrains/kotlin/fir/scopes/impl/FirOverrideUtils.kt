@@ -83,7 +83,7 @@ inline fun <D> chooseIntersectionVisibilityOrNull(
 ): Visibility? {
     val nonAbstractOverrides = nonSubsumedOverrides.filter {
         // Kotlin's Cloneable interface contains phantom `protected open fun clone()`.
-        !isAbstract(it) && toSymbol(it).callableId != StandardClassIds.Callables.clone
+        !isAbstract(it) && toSymbol(it).callableId != StandardClassIds.Callables.Cloneable_clone
     }
     val allAreAbstract = nonAbstractOverrides.isEmpty()
 

@@ -329,7 +329,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
             isOverride = true
         }
         isLocal = false
-        name = StandardClassIds.Callables.clone.callableName
+        name = StandardClassIds.Callables.Cloneable_clone.callableName
         symbol = FirNamedFunctionSymbol(CallableId(classId, name))
         dispatchReceiverType = dispatchReceiver!!
     }

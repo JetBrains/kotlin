@@ -58,7 +58,7 @@ private fun FirBasedSymbol<*>.getOwnSinceKotlinVersion(session: FirSession): Fir
     val sinceKotlinSingleArgument = getAnnotationWithResolvedArgumentsByClassId(
         StandardClassIds.Annotations.SinceKotlin, session
     )?.findArgumentByName(
-        StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion
+        StandardClassIds.Annotations.ParameterNames.SinceKotlin_version
     )
     val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression)?.value as? String)?.let(ApiVersion.Companion::parse)
     return if (apiVersion != null) {
