@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -313,7 +313,6 @@ fun TestConfigurationBuilder.setUpDefaultDirectivesForJsBoxTest(parser: FirParse
         val runIc = getBoolean("kotlin.js.ir.icMode")
         if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
         if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
-        if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
         +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
         -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
         DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
