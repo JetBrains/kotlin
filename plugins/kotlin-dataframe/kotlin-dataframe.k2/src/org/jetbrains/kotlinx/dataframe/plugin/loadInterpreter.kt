@@ -315,6 +315,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeBy0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeBy1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeInto0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeIntoPath
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Min0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Min1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
@@ -801,6 +802,8 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "GroupByAdd" -> GroupByAdd()
         "Merge0" -> Merge0()
         "MergeInto0" -> MergeInto0()
+        "MergeIntoPath" -> MergeIntoPath()
+        "MergeWithTransformIntoPath" -> MergeIntoPath()
         "MergeId" -> MergeId()
         "MergeBy0" -> MergeBy0()
         "MergeBy1" -> MergeBy1()

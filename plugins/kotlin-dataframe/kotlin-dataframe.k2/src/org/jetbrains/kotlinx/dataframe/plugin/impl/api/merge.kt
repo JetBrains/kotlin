@@ -34,6 +34,20 @@ class MergeInto0 : AbstractSchemaModificationInterpreter() {
     }
 }
 
+/**
+ * `merge { }.into(pathOf("group", "merged"))`, interprets both
+ * `Merge.into(path)` (MergeIntoPath) and `MergeWithTransform.into(path)` (MergeWithTransformIntoPath).
+ */
+class MergeIntoPath : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: MergeApproximation by arg()
+    val Arguments.path: ColumnPathApproximation by arg()
+    val Arguments.typeArg2 by type()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return merge(receiver.df, receiver.columns, path.path, typeArg2.coneType, receiver.transform)
+    }
+}
+
 class MergeId : AbstractInterpreter<MergeApproximation>() {
     val Arguments.receiver: MergeApproximation by arg()
 
