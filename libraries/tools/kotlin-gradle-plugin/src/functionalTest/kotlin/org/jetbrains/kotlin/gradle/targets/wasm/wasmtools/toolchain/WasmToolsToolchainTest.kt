@@ -135,4 +135,18 @@ class WasmToolsToolchainTest {
         val service = assertIs<PreInstalledWasmToolsToolchainServiceImpl>(registeredService(project))
         assertEquals("/opt/bin/wasm-tools", service.parameters.wasmToolsExecutable.get())
     }
+
+    @Test
+    fun `toolchainService with an Action configures the default service`() {
+        val (project, dsl) = buildProjectAndDsl()
+
+        dsl.toolchainService { parameters ->
+            parameters.downloadBaseUrl.set("https://example.com/wasm-tools")
+        }
+
+        registerWasmToolsToolchainServiceIfAbsent(project)
+
+        val service = assertIs<DefaultWasmToolsToolchainServiceImpl>(registeredService(project))
+        assertEquals("https://example.com/wasm-tools", service.parameters.downloadBaseUrl.get())
+    }
 }

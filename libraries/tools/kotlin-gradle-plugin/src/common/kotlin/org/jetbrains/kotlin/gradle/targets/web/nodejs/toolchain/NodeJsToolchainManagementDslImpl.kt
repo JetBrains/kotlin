@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
+import org.gradle.api.Action
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -26,6 +27,14 @@ open class NodeJsToolchainManagementDslImpl @Inject constructor(
         toolchainService(DefaultNodeJsToolchainService::class) {
             offline.set(gradle.startParameter.isOffline)
             configure()
+        }
+    }
+
+    @ExperimentalNodeJsToolchainDsl
+    override fun toolchainService(configure: Action<DefaultNodeJsToolchainService.Parameters>) {
+        toolchainService(DefaultNodeJsToolchainService::class) {
+            offline.set(gradle.startParameter.isOffline)
+            configure.execute(this)
         }
     }
 

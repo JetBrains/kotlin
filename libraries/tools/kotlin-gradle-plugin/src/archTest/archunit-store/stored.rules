@@ -1,1 +1,2 @@
+methods\ that\ be\ public\ DSL\ methods\ with\ Kotlin\ Unit\ lambdas\ should\ have\ an\ Action\ or\ Closure\ overload,\ because\ Groovy\ can't\ set\ the\ delegate\ of\ a\ Kotlin\ lambda,\ see\ KT-91330=dsl-methods-without-action-overloads.txt
 no\ classes\ should\ call\ method\ Project.getRootProject(),\ because\ Project.rootProject\ is\ incompatible\ with\ Isolated\ Projects.=project-root-project-usages.txt

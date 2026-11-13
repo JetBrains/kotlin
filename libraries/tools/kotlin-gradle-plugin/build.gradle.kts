@@ -4,6 +4,7 @@ import gradle.GradlePluginVariant
 import gradle.addKgpGradleApiDependency
 import gradle.enableKotlinSerializationPlugin
 import gradle.removeGradleApiDependencyFromTestConfiguration
+import org.gradle.api.attributes.Attribute
 import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -538,6 +539,22 @@ gradlePlugin {
     }
 }
 
+val archTestApiClassesDependencies = configurations.dependencyScope("archTestApiClassesDependencies")
+val archTestApiClassesConfiguration = configurations.resolvable("archTestApiClasses") {
+    extendsFrom(archTestApiClassesDependencies.get())
+    isTransitive = false
+
+    val commonCompileClasspathAttributes = configurations.commonCompileClasspath.get().attributes
+    @Suppress("UNCHECKED_CAST")
+    commonCompileClasspathAttributes.keySet().forEach { attribute ->
+        attributes.attribute(
+            attribute as Attribute<Any>,
+            commonCompileClasspathAttributes.getAttribute(attribute) as Any,
+        )
+    }
+}
+dependencies.add(archTestApiClassesDependencies.name, project(":kotlin-gradle-plugin-api"))
+
 testing {
     suites {
         withType<JvmTestSuite>().configureEach {
@@ -709,6 +726,7 @@ testing {
                     configureArchUnit(
                         task = this,
                         sources = files(
+                            archTestApiClassesConfiguration,
                             project.sourceSets.main.map { it.output.classesDirs },
                             project.sourceSets.common.map { it.output.classesDirs },
                             GradlePluginVariant.entries.map { variant ->

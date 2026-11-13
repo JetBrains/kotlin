@@ -48,6 +48,16 @@ interface WasmToolsToolchainManagementDsl {
     fun toolchainService(configure: DefaultWasmToolsToolchainService.Parameters.() -> Unit)
 
     /**
+     * [Action] based version of [toolchainService] above.
+     */
+    @ExperimentalWasmDsl
+    fun toolchainService(configure: Action<DefaultWasmToolsToolchainService.Parameters>) {
+        toolchainService {
+            configure.execute(this)
+        }
+    }
+
+    /**
      * Selects [serviceClass] as the [WasmToolsToolchainService] used by the whole build, and configures its
      * [parameters][WasmToolsToolchainService.Parameters].
      */

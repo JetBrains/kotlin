@@ -96,6 +96,11 @@ abstract class KotlinJvmTarget @Inject constructor(
         mainRun.await()?.configure()
     }
 
+    @ExperimentalKotlinGradlePluginApi
+    fun mainRun(configure: Action<KotlinJvmRunDsl>) = project.launch {
+        mainRun.await()?.let(configure::execute)
+    }
+
     private val binariesDsl by lazy {
         // lazy is required as compilation is lateinit property
         project.objects.DefaultKotlinJvmBinariesDsl(
