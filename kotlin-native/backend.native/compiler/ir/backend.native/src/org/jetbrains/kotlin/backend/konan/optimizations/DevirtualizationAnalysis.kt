@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
+import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.lower.getLoweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
@@ -1721,16 +1722,23 @@ internal object DevirtualizationAnalysis {
 
         fun IrBuilderWithScope.irDevirtualizedCall(callSite: IrCall, actualType: IrType,
                                                    actualCallee: DataFlowIR.FunctionSymbol,
+                                                   actualCalleeIr: IrSimpleFunction,
                                                    arguments: List<PossiblyCoercedValue>): IrExpression {
             return (actualCallee as? DataFlowIR.FunctionSymbol.Declared)?.bridgeTarget.let { bridgeTarget ->
-                if (bridgeTarget == null || genericSafeCasts) // Can't easily inline bridges with casts.
+                // A bridge only gets here with its IR attached (an IR-less deserialized bridge is never devirtualized, see
+                // [resolveIrFunction]), but its target might belong to a cached library with the DFG symbol having no IR attached,
+                // so the target's IR is taken from the bridge's IR instead. Such a target must be public: the DFG rebuild of
+                // the transformed callers resolves cross-module callees by hash through [DataFlowIR.SymbolTable.externalPublicFunctions].
+                val canInlineBridge = bridgeTarget != null
+                        && !genericSafeCasts // Can't easily inline bridges with casts.
+                        && (bridgeTarget.irFunction != null || bridgeTarget is DataFlowIR.FunctionSymbol.Public)
+                if (!canInlineBridge)
                     irDevirtualizedCall(callSite, actualType,
-                            actualCallee.irFunction!!,
+                            actualCalleeIr,
                             arguments.map { it.getFullValue(this@irDevirtualizedCall) }
                     )
                 else {
-                    val actualCalleeIr = actualCallee.irFunction!!
-                    val bridgeTargetIr = bridgeTarget.irFunction!!
+                    val bridgeTargetIr = actualCalleeIr.bridgeTarget!!.target
                     val callResult = irDevirtualizedCall(callSite, actualType,
                             bridgeTargetIr,
                             arguments.mapIndexed { index, value ->
@@ -1786,6 +1794,26 @@ internal object DevirtualizationAnalysis {
                     // Callsite too complicated to devirtualize.
                     return expression
                 }
+
+                // A callee that came from a cached library's DFG has no IR attached, but its declaration can still
+                // be found in the IR of its declaring class - as the member overriding the function being called.
+                // The lookup only works when:
+                //  - the declaring class' IR is present (it is attached when anything in the current module references the class,
+                //    see [DataFlowIR.SymbolTable.mapClassReferenceType])
+                //  - the callee is not a bridge: bridges are synthesized by lowerings and don't exist in the deserialized
+                //    (unlowered) IR of a dependency
+                //  - the callee is public: only public functions are resolved cross-module by hash through
+                //    [DataFlowIR.SymbolTable.externalPublicFunctions]
+                // If some possible callee cannot be resolved, there is no way to reference it from the IR - keep the call site virtual.
+                fun DataFlowIR.FunctionSymbol.resolveIrFunction(): IrSimpleFunction? {
+                    irFunction?.let { return it }
+                    if (isBridge || this !is DataFlowIR.FunctionSymbol.Public) return null
+                    val declaringClass = declaringType?.irClass ?: return null
+                    return declaringClass.simpleFunctions().firstOrNull { it.isReal && it.overrides(callee) }
+                }
+
+                val resolvedCallees = possibleCallees.map { it.first.resolveIrFunction() ?: return expression }
+
                 ++actuallyDevirtualizedCallSitesCount
                 changedDeclarations.add(caller as IrDeclaration)
 
@@ -1811,7 +1839,7 @@ internal object DevirtualizationAnalysis {
                                     // Temporary val is not required here for a parameter, since each one is used for only one devirtualized callsite
                                     irSplitCoercion(caller, arg.second, tempName = null, arg.first.type)
                                 }
-                                +irDevirtualizedCall(expression, type, possibleCallees[0].first, parameters)
+                                +irDevirtualizedCall(expression, type, possibleCallees[0].first, resolvedCallees[0], parameters)
                             }
                         }
 
@@ -1831,17 +1859,22 @@ internal object DevirtualizationAnalysis {
                              * (since the number of possible callees is small, it is ok in terms of performance).
                              */
 
-                            data class Target(val actualCallee: DataFlowIR.FunctionSymbol, val possibleReceivers: List<DataFlowIR.Type>) {
-                                val declType = actualCallee.irFunction!!.parentAsClass
+                            data class Target(val actualCallee: DataFlowIR.FunctionSymbol,
+                                              val actualCalleeIr: IrSimpleFunction,
+                                              val possibleReceivers: List<DataFlowIR.Type>) {
+                                val declType = actualCalleeIr.parentAsClass
+                                // Comparing type infos requires the receiver class' IR; without it (a receiver type from a cached
+                                // library's DFG that nothing in the current module references), fall back to the full type check.
+                                val singleTypeInfoCheck = possibleReceivers.size == 1 && possibleReceivers[0].irClass != null
                                 val weight = when {
-                                    possibleReceivers.size == 1 -> 0 // The fastest.
+                                    singleTypeInfoCheck -> 0 // The fastest.
                                     declType.isInterface -> 2 // The slowest.
                                     else -> 1 // In between.
                                 }
                                 var used = false
                             }
 
-                            val targets = possibleCallees.map { Target(it.first, it.second) }
+                            val targets = possibleCallees.mapIndexed { index, it -> Target(it.first, resolvedCallees[index], it.second) }
                             var bestOrder: List<Target>? = null
                             var bestLexOrder = Int.MAX_VALUE
                             fun backTrack(order: List<Target>, lexOrder: Int) {
@@ -1878,13 +1911,13 @@ internal object DevirtualizationAnalysis {
                             }
                             val branches = mutableListOf<IrBranchImpl>()
                             bestOrder!!.mapIndexedTo(branches) { index, target ->
-                                (val actualCallee, val receiverTypes = possibleReceivers) = target
+                                (val actualCallee, val actualCalleeIr, val receiverTypes = possibleReceivers) = target
                                 val condition = when {
                                     optimize && index == possibleCallees.size - 1 -> {
                                         // Don't check the last type in optimize mode.
                                         irTrue()
                                     }
-                                    receiverTypes.size == 1 -> {
+                                    target.singleTypeInfoCheck -> {
                                         // It is faster to just compare type infos instead of a full type check.
                                         val receiverType = receiverTypes[0]
                                         val receiverClass = receiverType.irClass!!
@@ -1909,7 +1942,7 @@ internal object DevirtualizationAnalysis {
                                         startOffset = startOffset,
                                         endOffset = endOffset,
                                         condition = condition,
-                                        result = irDevirtualizedCall(expression, type, actualCallee, arguments)
+                                        result = irDevirtualizedCall(expression, type, actualCallee, actualCalleeIr, arguments)
                                 )
                             }
                             if (!optimize) { // Add else branch throwing exception for debug purposes.
