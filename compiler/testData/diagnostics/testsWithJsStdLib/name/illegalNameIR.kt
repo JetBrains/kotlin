@@ -1,10 +1,11 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: FIR2IR
 // IGNORE_NON_REVERSED_RESOLVE: KT-62937
+// IGNORE_REVERSED_RESOLVE: KT-62937
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
-private fun ` .private `(): String = TODO("")
+private fun <!DOT_IN_TOP_LEVEL_DECLARATION_NAME!>` .private `<!>(): String = TODO("")
 
-fun ` .public `(): String = TODO("")
+fun <!DOT_IN_TOP_LEVEL_DECLARATION_NAME!>` .public `<!>(): String = TODO("")
 
 @JsName("  __  ")
 fun foo(): String = TODO("")
@@ -13,9 +14,9 @@ fun foo(): String = TODO("")
 private fun bar(): String = TODO("")
 
 @JsName("validName")
-private fun ` .private with @JsName `(): String = TODO("")
+private fun <!DOT_IN_TOP_LEVEL_DECLARATION_NAME!>` .private with @JsName `<!>(): String = TODO("")
 
-private class ` .private class ` {
+private class <!DOT_IN_TOP_LEVEL_DECLARATION_NAME!>` .private class `<!> {
     val ` .field. ` = ""
 }
 
