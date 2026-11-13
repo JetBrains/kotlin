@@ -1,1 +1,1 @@
-inline class ExplicitInlineValueClassFromCommonBinary(value: kotlin.Int)
+inline value class ExplicitInlineValueClassFromCommonBinary(value: kotlin.Int)

@@ -9,6 +9,6 @@ var ValueClass.companionExtensionVariable: kotlin.Int
   get()
   set(value: kotlin.Int)
 
-inline class ValueClass(value: kotlin.String) {
+inline value class ValueClass(value: kotlin.String) {
   val value: kotlin.String
 }

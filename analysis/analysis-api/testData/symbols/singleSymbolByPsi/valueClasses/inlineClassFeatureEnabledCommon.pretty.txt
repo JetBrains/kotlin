@@ -1,2 +1,2 @@
 @kotlin.jvm.JvmInline
-inline class ValueClassJvmInlineCommon(value: kotlin.Int)
+inline value class ValueClassJvmInlineCommon(value: kotlin.Int)

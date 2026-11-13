@@ -1,1 +1,1 @@
-inline class LegacyInlineClass(value: kotlin.Int)
+inline value class LegacyInlineClass(value: kotlin.Int)

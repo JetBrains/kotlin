@@ -1,2 +1,2 @@
 @kotlin.jvm.JvmInline
-inline class ExplicitInlineValueClassFromBinary(value: kotlin.Int)
+inline value class ExplicitInlineValueClassFromBinary(value: kotlin.Int)
