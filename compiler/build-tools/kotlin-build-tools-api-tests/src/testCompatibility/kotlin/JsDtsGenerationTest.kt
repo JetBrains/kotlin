@@ -72,6 +72,30 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ts-generation-no-export")
+    @DisplayName("An empty export model produces a declaration file")
+    fun emptyExportModelProducesDtsFile(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+
+        jsProject(strategyConfig) {
+            val module = module("js-ts-generation-no-export")
+            module.compile()
+
+            val outputDirectory = module.buildDirectory.resolve("dts")
+            outputDirectory.createDirectories()
+            module.generateDts(outputDirectory = outputDirectory)
+
+            val declarationFiles = outputDirectory.walk().filter { it.isRegularFile() }.toList()
+            assertEquals(setOf("js-ts-generation-no-export.d.ts"), declarationFiles.map { it.fileName.toString() }.toSet()) {
+                "Unexpected declaration files: $declarationFiles"
+            }
+            val declarations = declarationFiles.single().readText()
+            assertTrue(declarations.contains("KtSingleton"))
+            assertTrue(declarations.contains("export as namespace"))
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("Per-file granularity emits declarations for each source file")
     fun perFileGranularitySplitsDeclarations(strategyConfig: CompilerExecutionStrategyConfiguration) {
