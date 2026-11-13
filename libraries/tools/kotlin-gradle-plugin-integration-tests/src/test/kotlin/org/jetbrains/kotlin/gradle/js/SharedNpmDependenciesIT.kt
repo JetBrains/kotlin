@@ -131,6 +131,12 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     ":lib-web:jsNpmDependenciesReport",
                     ":lib-web:jsTestNpmDependenciesReport",
                 )
+                assertTasksAreNotInTaskGraph(
+                    ":lib-a:compileKotlinJs",
+                    ":lib-b:compileKotlinJs",
+                    ":lib-b:compileKotlinWasmJs",
+                    ":lib-web:compileKotlinJs",
+                )
 
                 val js = projectPath.resolve("build/js/shared-npm-project")
                 val wasm = projectPath.resolve("build/wasmJs/shared-npm-project")

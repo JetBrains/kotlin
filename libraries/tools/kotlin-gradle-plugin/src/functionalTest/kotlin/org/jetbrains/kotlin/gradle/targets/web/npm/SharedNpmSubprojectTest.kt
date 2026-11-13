@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinNpmDependencyRep
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -281,7 +280,6 @@ class SharedNpmSubprojectTest {
     }
 
     @Test
-    @Disabled("will be fixed by KT-91337")
     fun `collecting the npm dependencies of a test compilation does not compile main`() {
         val project = buildProjectWithMPP {
             kotlin { js { nodejs() } }
