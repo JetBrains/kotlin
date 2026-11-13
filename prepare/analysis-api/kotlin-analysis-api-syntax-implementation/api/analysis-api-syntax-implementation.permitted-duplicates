@@ -1,0 +1,11 @@
+# Entries which are allowed to be present in more than one JAR of the runtime classpath of the syntax-only Analysis API artifacts.
+# One entry name per line. Blank lines and lines starting with '#' are ignored.
+#
+# Prefer fixing the dependency declarations over adding an exception here: for every entry listed below,
+# which of the copies wins is decided by the classpath order.
+
+# An index of the IntelliJ fat JARs, so there is one per archive by design.
+__index__
+
+# Bundled both by the IntelliJ 'util' JARs and by the embedded 'org.jetbrains.intellij.deps:log4j'.
+org/apache/log4j/Level.class
