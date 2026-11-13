@@ -36,7 +36,6 @@ val testJsRuntime: Configuration = configurations.create("testJsRuntime") {
 dependencies {
     implementation(project(":kotlin-stdlib"))
     compileOnly(project(":compiler:backend.common.jvm"))
-    compileOnly(project(":compiler:container"))
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":core:descriptors.jvm"))
     compileOnly(project(":core:language.targets.jvm"))

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.converters
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -78,11 +76,7 @@ class NativeDeserializerFacade(
             moduleName,
             LockBasedStorageManager.NO_LOCKS,
             builtIns,
-            capabilities = mapOf(
-                KlibModuleOrigin.CAPABILITY to moduleOrigin,
-                @OptIn(K1Deprecation::class)
-                ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
-            ),
+            capabilities = mapOf(KlibModuleOrigin.CAPABILITY to moduleOrigin),
             platform = NativePlatforms.unspecifiedNativePlatform
         )
     }

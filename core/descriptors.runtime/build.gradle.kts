@@ -7,7 +7,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":compiler:frontend.java"))
     implementation(project(":core:deserialization"))
 
     compileOnly(project(":core:util.runtime"))
