@@ -127,7 +127,7 @@ object StandaloneProjectFactory {
                 return
             }
             application.apply {
-                registerService(KotlinStandaloneIndexCache::class.java, KotlinStandaloneIndexCache::class.java)
+                registerService(KotlinStandaloneIndexCache::class.java, KotlinStandaloneIndexCache())
                 registerService(ClsKotlinBinaryClassCache::class.java)
                 registerService(
                     BuiltinsVirtualFileProvider::class.java,
