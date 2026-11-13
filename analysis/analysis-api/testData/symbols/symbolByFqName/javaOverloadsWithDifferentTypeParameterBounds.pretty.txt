@@ -1,0 +1,7 @@
+open fun <T : A!> foo(x: T!)
+
+open fun <T : B!> foo(x: T!)
+
+open fun <T : A!> foo(x: T!, s: kotlin.String!)
+
+open fun <T : B!> foo(x: T!, s: kotlin.String!)

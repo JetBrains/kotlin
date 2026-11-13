@@ -507,6 +507,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByPsiTestGenerated extend
   }
 
   @Test
+  @TestMetadata("overloadsWithDifferentTypeParameterBounds.kt")
+  public void testOverloadsWithDifferentTypeParameterBounds() {
+    run("overloadsWithDifferentTypeParameterBounds.kt");
+  }
+
+  @Test
+  @TestMetadata("overloadsWithVarargAndArrayParameters.kt")
+  public void testOverloadsWithVarargAndArrayParameters() {
+    run("overloadsWithVarargAndArrayParameters.kt");
+  }
+
+  @Test
   @TestMetadata("propertiesFromCompanion.kt")
   public void testPropertiesFromCompanion() {
     run("propertiesFromCompanion.kt");
