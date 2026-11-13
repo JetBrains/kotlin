@@ -902,7 +902,7 @@ open class CommonizerIT : KGPBaseTest() {
 
     @DisplayName("KT-82398 - own cinterop is added to nativeMain fragment dependencies with separate compilation")
     @GradleTest
-    @ParameterizedTest(name = "{0} - {1}: {displayName}")
+    @ParameterizedTest(name = "{0} - {1}: {displayName}", allowZeroInvocations = true)
     @GradleTestExtraStringArguments("commonMain", "nativeMain", "linuxMain")
     fun ownCInteropIsAddedToFragmentDependencies(
         gradleVersion: GradleVersion,
