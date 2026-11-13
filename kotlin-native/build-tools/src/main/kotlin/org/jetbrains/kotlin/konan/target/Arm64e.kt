@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.konan.target
 
 /**
- * The triple of the arm64e variant of the target, if konan.properties describe one with `targetTriple.arm64e.<target>`.
- * `-Xbinary=arm64e=true` selects the variant, and the compiler reads the same properties.
+ * The triple of the arm64e variant of the target, from `targetTriple.arm64e.<target>` in konan.properties, or null if
+ * the target has no arm64e variant. `-Xbinary=arm64e=true` selects the variant.
  */
 val Configurables.arm64eTargetTriple: TargetTriple?
     get() = targetString("targetTriple.arm64e")?.let(TargetTriple::fromString)
 
-// Copy of Distribution.hasArm64eVariant: the build tools compile against the bootstrap kotlin-native-utils, which doesn't have it yet.
 /**
  * Whether [target] has an arm64e variant, see [arm64eTargetTriple].
  */

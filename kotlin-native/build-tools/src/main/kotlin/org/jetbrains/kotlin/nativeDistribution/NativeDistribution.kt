@@ -138,7 +138,6 @@ class NativeDistribution(val root: Directory) {
      */
     fun runtime(target: String): Directory = root.dir("konan/targets/$target/native")
 
-    // Copy of Distribution.arm64eNatives: the build tools compile against the bootstrap kotlin-native-utils, which doesn't have it yet.
     /**
      * Runtime files for a specific [target] built for the arm64e ABI, used with `-Xbinary=arm64e=true`.
      */

@@ -242,7 +242,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             } + arm64eCompilerArgs
         }
 
-        // The arm64e variant uses the dependencies of its target.
+        // Native dependencies have variants for each target and sanitizer (see kotlin-native/dependencies), but not for
+        // arm64e, so the arm64e variant uses the dependencies of its target.
         private val dependenciesTarget = target.withSanitizer(sanitizer)
 
         /**
@@ -585,7 +586,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 testTaskName: String,
                 action: Action<in TestsGroup>,
         ) {
-            // The arm64e variant only provides runtime bitcode for the distribution.
+            // The arm64e variant only builds runtime bitcode for the distribution, so it has no tests.
             if (_target.arm64e) return
             val testsGroup = project.objects.newInstance(TestsGroup::class.java, _target).apply {
                 testSupportModules.set(listOf("googletest", "googlemock"))

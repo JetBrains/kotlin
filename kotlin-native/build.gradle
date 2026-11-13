@@ -313,23 +313,23 @@ tasks.register("crossDistStdlibCache") {
     mustRunAfter("distInvalidateStaleCaches")
 }
 
-targetList.each { target ->
-    def registerBitcodeCopy = { taskName, runtime, destination ->
-        tasks.register(taskName, Sync) {
-            def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
-                attributes {
-                    attribute(TargetVariant.TARGET_ATTRIBUTE, runtime)
-                }
-            }.files
-
-            into(destination)
-
-            from(bitcodeFiles) {
-                include("*.bc")
+void registerBitcodeCopy(String taskName, TargetVariant runtime, Provider<Directory> destination) {
+    tasks.register(taskName, Sync) {
+        def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
+            attributes {
+                attribute(TargetVariant.TARGET_ATTRIBUTE, runtime)
             }
+        }.files
+
+        into(destination)
+
+        from(bitcodeFiles) {
+            include("*.bc")
         }
     }
+}
 
+targetList.each { target ->
     def konanTarget = platformManager.targetByName(target)
     // The runtime for -Xbinary=arm64e=true.
     def hasArm64eRuntime = Arm64eKt.hasArm64eVariant(platformManager, konanTarget)

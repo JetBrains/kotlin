@@ -14,7 +14,8 @@ import java.io.Serializable
 
 /**
  * [Target][KonanTarget] with optional [sanitizer][SanitizerKind].
- * With [arm64e], the arm64e variant of the target, which `-Xbinary=arm64e=true` selects, see [arm64eTargetTriple].
+ * If [arm64e] is true, this is the arm64e variant of the target, which `-Xbinary=arm64e=true` selects.
+ * See [arm64eTargetTriple].
  *
  * Can be used as a gradle attribute: `attribute(TargetVariant.TARGET_ATTRIBUTE, target.withSanitizer())`
  */
