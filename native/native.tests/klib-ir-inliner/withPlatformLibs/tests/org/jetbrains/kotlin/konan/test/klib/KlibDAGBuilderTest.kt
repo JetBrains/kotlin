@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import org.jetbrains.kotlin.backend.common.LegacyKlibDependencies
 import org.jetbrains.kotlin.backend.konan.library.InternalKlibDAGApi
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
@@ -50,6 +52,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
+import kotlin.plus
 
 @Tag("klib")
 @Execution(ExecutionMode.SAME_THREAD)
@@ -582,6 +585,160 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
             assertLosslessDeserialization(dag)
         }
 
+    @ParameterizedTest
+    @EnumSource
+    fun `first library in the load order provides a clashing declaration (full DAG)`(mode: KlibDAGBuildingMode) =
+        doTestFirstLibraryProvidesClashingDeclaration(
+            contractedDag = false,
+            mode,
+            extraClashingDeclarations = emptyList(),
+        ) { firstAPath, secondAPath ->
+            "Libraries $firstAPath and $secondAPath declare 1 top-level declaration with the same signature: 'A/A'. " +
+                    "Declarations from $firstAPath are used because it comes first in the load order; the duplicates from $secondAPath are ignored. " +
+                    "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first."
+        }
+
+    @ParameterizedTest
+    @EnumSource
+    fun `first library in the load order provides a clashing declaration (contracted DAG, roots = consumers)`(mode: KlibDAGBuildingMode) =
+        doTestFirstLibraryProvidesClashingDeclaration(
+            contractedDag = true,
+            mode,
+            extraClashingDeclarations = emptyList(),
+        ) { firstAPath, secondAPath ->
+            "Libraries $firstAPath and $secondAPath declare 1 top-level declaration with the same signature: 'A/A'. " +
+                    "Declarations from $firstAPath are used because it comes first in the load order; the duplicates from $secondAPath are ignored. " +
+                    "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first."
+        }
+
+    @ParameterizedTest
+    @EnumSource
+    fun `first library in the load order provides multiple clashing declarations (contracted DAG, roots = consumers)`(
+        mode: KlibDAGBuildingMode,
+    ) = doTestFirstLibraryProvidesClashingDeclaration(
+        contractedDag = true,
+        mode,
+        extraClashingDeclarations = listOf("fun foo() = 42", "class Bar"),
+    ) { firstAPath, secondAPath ->
+        "Libraries $firstAPath and $secondAPath declare 3 top-level declarations with the same signatures: " +
+                "'A/A', 'A/Bar', 'A/foo'. " +
+                "Declarations from $firstAPath are used because it comes first in the load order; the duplicates from $secondAPath are ignored. " +
+                "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first."
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    fun `warning truncates the list of clashing declarations`(mode: KlibDAGBuildingMode) =
+        doTestFirstLibraryProvidesClashingDeclaration(
+            contractedDag = false,
+            mode,
+            extraClashingDeclarations = List(12) { "fun foo${it.toString().padStart(2, '0')}() = $it" },
+        ) { firstAPath, secondAPath ->
+            "Libraries $firstAPath and $secondAPath declare 13 top-level declarations with the same signatures: " +
+                    "'A/A', 'A/foo00', 'A/foo01', 'A/foo02', 'A/foo03', 'A/foo04', 'A/foo05', 'A/foo06', 'A/foo07', 'A/foo08', ... (and 3 more). " +
+                    "Declarations from $firstAPath are used because it comes first in the load order; the duplicates from $secondAPath are ignored. " +
+                    "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first."
+        }
+
+    /**
+     * @param extraClashingDeclarations The declarations that are added to both A1 and A2 in addition to the clashing `A.A()`.
+     */
+    private fun doTestFirstLibraryProvidesClashingDeclaration(
+        contractedDag: Boolean,
+        mode: KlibDAGBuildingMode,
+        extraClashingDeclarations: List<String>,
+        expectedWarning: (firstAPath: String, secondAPath: String) -> String,
+    ) = context(mode) {
+        /*
+         * A1 and A2 are two different libraries with the same package `A`. Both declare the clashing function `A.A()`
+         * and the [extraClashingDeclarations]. Each of them also has its own non-clashing function: `a1()` and `a2()`.
+         *
+         * N <-- A1 <-- B   (B uses only the clashing `A.A()`)
+         * M <-- A2 <-- C   (C uses only the non-clashing `a2()`)
+         */
+        val moduleNameToLibraryPath = compileModulesWithClashingDeclarations(extraClashingDeclarations)
+
+        fun doCheck(
+            loadOrder: List</* name of test module */ String>,
+            firstA: /* name of test module */ String,
+            secondA: /* name of test module */ String,
+            usedByFirstA: /* name of test module */ String,
+        ) {
+            val libraries = loadLibraries(others = loadOrder.map(moduleNameToLibraryPath::getValue))
+            val stdlib = libraries[0]
+            assertTrue(stdlib.isNativeStdlib)
+
+            val moduleNameToLibrary: Map<String, KotlinLibrary> = moduleNameToLibraryPath.mapValues { [_, path] ->
+                libraries.single { it.path == path }
+            }
+            val b = moduleNameToLibrary.getValue("B")
+            val c = moduleNameToLibrary.getValue("C")
+            val n = moduleNameToLibrary.getValue("N")
+            val m = moduleNameToLibrary.getValue("M")
+            val a1 = moduleNameToLibrary.getValue("A1")
+            val a2 = moduleNameToLibrary.getValue("A2")
+
+            val warnings = mutableListOf<String>()
+            val dag = KlibDAGBuilder(buildParams(libraries, onWarning = warnings::add) { !contractedDag || it == b || it == c }).build()
+
+            // Only the clashing declaration from the first library is used.
+            assertEquals(setOf(stdlib, moduleNameToLibrary.getValue(firstA)), dag[b].directDependencies)
+            assertEquals(
+                setOf(stdlib, moduleNameToLibrary.getValue(firstA), moduleNameToLibrary.getValue(usedByFirstA)),
+                dag[b].allDependencies
+            )
+
+            // Non-clashing declarations are not affected by the load order.
+            assertEquals(setOf(stdlib, a2), dag[c].directDependencies)
+            assertEquals(setOf(stdlib, a2, m), dag[c].allDependencies)
+            assertEquals(setOf(stdlib, m), dag[a2].directDependencies)
+
+            val expectedLibrariesInDag: Set<KotlinLibrary> = if (contractedDag && firstA == "A2") {
+                // Nobody uses A1, so neither A1 nor N are in the contracted DAG.
+                setOf(stdlib, b, c, a2, m)
+            } else {
+                setOf(stdlib, b, c, a1, a2, n, m)
+            }
+            assertEquals(expectedLibrariesInDag, dag.librariesReverseTopoSorted.toSet())
+            if (a1 in expectedLibrariesInDag) assertEquals(setOf(stdlib, n), dag[a1].directDependencies)
+
+            val firstAFullPath = moduleNameToLibrary.getValue(firstA).path
+            val secondAFullPath = moduleNameToLibrary.getValue(secondA).path
+
+            val firstARelativePath = convertLineSeparators(firstAFullPath.relativeTo(buildDir.toPath()).pathString)
+            val secondARelativePath = convertLineSeparators(secondAFullPath.relativeTo(buildDir.toPath()).pathString)
+
+            val signatureStrippingRegex = Regex("""'([^'|]+)\|[^']*'""")
+
+            val expectedWarning = expectedWarning(firstARelativePath, secondARelativePath)
+
+            val warningsWithStableLibraryLabels = warnings.map { warning ->
+                // Library paths are machine-specific; replace them with load-order labels before comparing fixed text.
+                warning
+                    .replace(firstAFullPath.pathString, firstARelativePath)
+                    .replace(secondAFullPath.pathString, secondARelativePath)
+                    .replace(signatureStrippingRegex, "'$1'")
+            }
+            assertEquals(listOf(expectedWarning), warningsWithStableLibraryLabels)
+
+            assertLosslessDeserialization(dag)
+        }
+
+        // Note: Checking both load orders makes it unlikely that the test passes by chance if the choice is not stable.
+        doCheck(
+            loadOrder = listOf("B", "C", "A1", "A2", "N", "M"),
+            firstA = "A1",
+            secondA = "A2",
+            usedByFirstA = "N",
+        )
+        doCheck(
+            loadOrder = listOf("B", "C", "A2", "A1", "N", "M"),
+            firstA = "A2",
+            secondA = "A1",
+            usedByFirstA = "M",
+        )
+    }
+
     @Test
     fun `SerializedKlibDAG creation sanity test (positive)`() {
         val foo = Path("__foo__")
@@ -731,6 +888,80 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     }
 
     /**
+     * Compile two different libraries, A1 and A2, that have the same package `A` and both declare the clashing function `A.A()`.
+     * A1 and A2 have different unique names:
+     * - A1 has the non-clashing function `a1()`, and its `A.A()` uses N.
+     * - A2 has the non-clashing function `a2()`, and its `A.A()` uses M.
+     *
+     * Both A1 and A2 also declare the [extraClashingDeclarations].
+     *
+     * Also compile two consumers:
+     * - B is compiled against A1 and uses only the clashing `A.A()`.
+     * - C is compiled against A2 and uses only the non-clashing `a2()`.
+     *
+     * @return The mapping from the name of a module ("A1", "A2", "B", "C", "N", "M") to the path of its KLIB.
+     */
+    private fun compileModulesWithClashingDeclarations(
+        extraClashingDeclarations: List<String>,
+    ): Map</* name of test module */ String, /* path of KLIB */ Path> {
+        val moduleNameToLibraryPath: MutableMap<String, Path> = mutableMapOf()
+
+        newSourceModules {
+            addRegularModule("N")
+            addRegularModule("M")
+            addRegularModule("A") {
+                dependsOn("N")
+                sourceFileAddend(
+                    buildString {
+                        appendLine("fun a1() = A(0)")
+                        for (extraClashingDeclaration in extraClashingDeclarations) appendLine(extraClashingDeclaration)
+                    }
+                )
+            }
+            addRegularModule("B") { dependsOn("A") }
+        }.compileToKlibsViaCli(
+            customGeneratedKlibsDir = buildDir.resolve("some/path").toPath(),
+        ) { module, successKlib ->
+            val moduleName = if (module.name == "A") "A1" else module.name
+            moduleNameToLibraryPath[moduleName] = successKlib.resultingArtifact.klibFile.toPath()
+        }
+
+        // Use separate directories to not overwrite the sources and the KLIB of A1.
+        newSourceModules(customGeneratedSourcesDir = buildDir.resolve("generated-sources-A2").toPath()) {
+            addRegularModule("M", moduleNameToLibraryPath.getValue("M"))
+            addRegularModule("A") {
+                dependsOn("M")
+                sourceFileAddend(
+                    buildString {
+                        appendLine("fun a2() = A(0)")
+                        for (extraClashingDeclaration in extraClashingDeclarations) appendLine(extraClashingDeclaration)
+                    }
+                )
+            }
+        }.compileToKlibsViaCli(
+            extraCliArgs = listOf("-module-name", "A2"),
+            customGeneratedKlibsDir = buildDir.resolve("another/path").toPath(),
+        ) { module, successKlib ->
+            if (module.name == "A") moduleNameToLibraryPath["A2"] = successKlib.resultingArtifact.klibFile.toPath()
+        }
+
+        newSourceModules {
+            addRegularModule("C") { sourceFileAddend("fun c() = A.a2()") }
+        }.compileToKlibsViaCli(
+            extraCliArgs = listOf("-l", moduleNameToLibraryPath.getValue("A2").absolutePathString()),
+            customGeneratedKlibsDir = buildDir.resolve("some/path").toPath(),
+        ) { module, successKlib ->
+            moduleNameToLibraryPath[module.name] = successKlib.resultingArtifact.klibFile.toPath()
+        }
+
+        assertEquals(setOf("A1", "A2", "B", "C", "N", "M"), moduleNameToLibraryPath.keys)
+        assertNotEquals(moduleNameToLibraryPath.getValue("A1"), moduleNameToLibraryPath.getValue("A2"))
+
+        return moduleNameToLibraryPath
+    }
+
+
+    /**
      * Load libraries in the [loadOrder] and check that building the DAG fails with exactly the [expectedCycle] reported.
      *
      * Note: The load order matters, as the cycle is reported starting from the first library in the load order.
@@ -845,10 +1076,11 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     context(mode: KlibDAGBuildingMode)
     private fun buildParams(
         libraries: List<KotlinLibrary>,
+        onWarning: (String) -> Unit = ::fail,
         isRoot: (KotlinLibrary) -> Boolean = { true },
     ) = KlibDAGBuilder.Parameters(
         libraries = libraries,
-        onWarning = ::fail,
+        onWarning = onWarning,
         onError = KlibDAGCyclicDependencyException::createAndThrow,
         isRoot = isRoot,
     ).apply {
