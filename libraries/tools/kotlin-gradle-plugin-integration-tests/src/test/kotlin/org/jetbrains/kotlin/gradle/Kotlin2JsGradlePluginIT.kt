@@ -50,6 +50,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     fun generateDts(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
             gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=false\n")
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        freeCompilerArgs.add("-Xexport-kdoc")
+                    }
+                }
+            }
             build("build") {
                 assertOutputDoesNotContain("GenerateTypeScriptDefinitions")
                 assertFileInProjectExists("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.js")
