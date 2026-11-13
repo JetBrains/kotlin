@@ -1,0 +1,4 @@
+fun main() {
+    second()
+    first()
+}
