@@ -29,14 +29,8 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-analysis-api-intellij-api-surface-components</artifactId>
+      <artifactId>kotlin-analysis-api-syntax-surface</artifactId>
       <version>ArtifactsTest.version</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains</groupId>
-      <artifactId>annotations</artifactId>
-      <version>26.0.2</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
