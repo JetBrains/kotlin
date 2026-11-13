@@ -136,7 +136,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         if (declaration.isInner || declaration.isLocal) {
             reportOn(
                 declaration.source, kind.isWillBecomeValueClass,
-                FirErrors.VALUE_CLASS_NOT_TOP_LEVEL, FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL,
+                FirErrors.VALUE_CLASS_NOT_TOP_LEVEL, if (declaration.isInner) "inner" else "local",
+                FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL,
             )
         }
     }

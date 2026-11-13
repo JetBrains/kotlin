@@ -2523,6 +2523,7 @@ private fun KaDiagnosticConverterBuilder.addConversions52() {
 private fun KaDiagnosticConverterBuilder.addConversions53() {
     add(FirErrors.VALUE_CLASS_NOT_TOP_LEVEL) { firDiagnostic ->
         ValueClassNotTopLevelImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

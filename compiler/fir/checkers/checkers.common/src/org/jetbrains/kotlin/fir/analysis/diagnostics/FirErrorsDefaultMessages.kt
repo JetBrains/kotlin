@@ -2549,7 +2549,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(MUTABLE_PROPERTY_WITH_CAPTURED_TYPE, "Captured type in mutable property reference. Usages of 'set' may lead to cast exceptions.")
 
         // Value classes
-        map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be inner.")
+        map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be {0}.", STRING)
         map.put(VALUE_CLASS_NOT_FINAL, "{0} class can only be final.", STRING)
         map.put(VALUE_CLASS_OPEN, "Value class cannot be open.")
         map.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for {0} classes.", STRING)
