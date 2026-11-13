@@ -128,7 +128,7 @@ internal class DokkaSymbolVisitor(
                 (analysisContext.modulesWithFiles[ancestorModule] ?: emptySet()).filterIsInstance<KtFile>()
             }
         val ktFiles = sourceFiles.filterIsInstance<KtFile>().toSet()
-        val javaFiles = if (InternalConfiguration.enableExperimentalSymbolsJavaAnalysis) sourceFiles.filterIsInstance<PsiJavaFile>().toSet() else emptySet()
+        val javaFiles = sourceFiles.filterIsInstance<PsiJavaFile>().toSet()
 
         val processedPackages: MutableSet<FqName> = mutableSetOf()
         return analyze(sourceModule) {
@@ -577,7 +577,7 @@ internal class DokkaSymbolVisitor(
                 visibility = getDokkaVisibility(propertySymbol, isJavaContext).toSourceSetDependent(),
                 documentation = getDocumentation(propertySymbol)?.toSourceSetDependent() ?: emptyMap(), // TODO
                 modifier = propertySymbol.getDokkaModality().toSourceSetDependent(),
-                type = (propertySymbol.getter?.psi as? PsiMethod)?.returnType?.toJavaBoundOrNull()
+                type = (propertySymbol.getter?.psi as? PsiMethod)?.returnType?.toJavaBound()
                     ?: toBoundFrom(propertySymbol.returnType, propertySymbol),
                 expectPresentInSet = sourceSet.takeIf { isExpect },
                 sourceSets = setOf(sourceSet),
@@ -628,7 +628,7 @@ internal class DokkaSymbolVisitor(
                 visibility = getDokkaVisibility(javaFieldSymbol, isJavaContext).toSourceSetDependent(),
                 documentation = getDocumentation(javaFieldSymbol)?.toSourceSetDependent() ?: emptyMap(), // TODO
                 modifier = javaFieldSymbol.getDokkaModality().toSourceSetDependent(),
-                type = (javaFieldSymbol.psi as? PsiField)?.type?.toJavaBoundOrNull()
+                type = (javaFieldSymbol.psi as? PsiField)?.type?.toJavaBound()
                     ?: toBoundFrom(javaFieldSymbol.returnType, javaFieldSymbol),
                 expectPresentInSet = sourceSet.takeIf { isExpect },
                 sourceSets = setOf(sourceSet),
@@ -705,7 +705,7 @@ internal class DokkaSymbolVisitor(
             generics = generics,
             documentation = getAccessorSymbolDocumentation(propertyAccessorSymbol)?.toSourceSetDependent() ?: emptyMap(),
             modifier = propertyAccessorSymbol.getDokkaModality().toSourceSetDependent(),
-            type = (propertyAccessorSymbol.psi as? PsiMethod)?.returnType?.toJavaBoundOrNull()
+            type = (propertyAccessorSymbol.psi as? PsiMethod)?.returnType?.toJavaBound()
                 ?: toBoundFrom(propertyAccessorSymbol.returnType, propertyAccessorSymbol),
             sourceSets = setOf(sourceSet),
             isExpectActual = false,
@@ -810,7 +810,7 @@ internal class DokkaSymbolVisitor(
                 generics = generics,
                 documentation = getDocumentation(functionSymbol)?.toSourceSetDependent() ?: emptyMap(),
                 modifier = functionSymbol.getDokkaModality().toSourceSetDependent(),
-                type = (functionSymbol.psi as? PsiMethod)?.javaReturnTypeOrNull()
+                type = (functionSymbol.psi as? PsiMethod)?.javaReturnType()
                     ?: toBoundFrom(functionSymbol.returnType, functionSymbol),
                 sourceSets = setOf(sourceSet),
                 isExpectActual = (isExpect || isActual),
@@ -844,7 +844,7 @@ internal class DokkaSymbolVisitor(
     ) = DParameter(
         dri = dri.copy(target = PointingToCallableParameters(index)),
         name = valueParameterSymbol.name.asString(),
-        type = (valueParameterSymbol.psi as? PsiParameter)?.type?.toJavaBoundOrNull()
+        type = (valueParameterSymbol.psi as? PsiParameter)?.type?.toJavaBound()
             ?: toBoundFrom(valueParameterSymbol.returnType, valueParameterSymbol),
         expectPresentInSet = null,
         documentation = getDocumentation(valueParameterSymbol)?.toSourceSetDependent() ?: emptyMap(),
@@ -975,13 +975,10 @@ internal class DokkaSymbolVisitor(
         return with(typeTranslator) { toBoundFrom(type, Location(containingSymbol)) }
     }
 
-    private fun PsiType.toJavaBoundOrNull(): Bound? =
-        if (InternalConfiguration.enableExperimentalSymbolsJavaAnalysis) psiHelper.getBound(this) else null
+    private fun PsiType.toJavaBound(): Bound = psiHelper.getBound(this)
 
-    private fun PsiMethod.javaReturnTypeOrNull(): Bound? =
-        if (InternalConfiguration.enableExperimentalSymbolsJavaAnalysis)
-            (returnType?.let { psiHelper.getBound(it) } ?: Void)
-        else null
+    private fun PsiMethod.javaReturnType(): Bound =
+        returnType?.let { psiHelper.getBound(it) } ?: Void
 
     /**
      * `createDRI` returns the DRI of the exact element and potential DRI of an element that is overriding it

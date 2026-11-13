@@ -8,7 +8,6 @@ import com.intellij.lang.jvm.annotation.JvmAnnotationAttribute
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiAnnotation
-import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.analysis.java.doccomment.DocCommentCreator
@@ -22,7 +21,6 @@ import org.jetbrains.dokka.analysis.java.parsers.doctag.InheritDocTagResolver
 import org.jetbrains.dokka.analysis.java.parsers.doctag.PsiDocTagParser
 import org.jetbrains.dokka.analysis.java.util.NoopIntellijLoggerFactory
 import org.jetbrains.dokka.plugability.*
-import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
 import java.io.File
 
 
@@ -89,11 +87,6 @@ internal class JavaAnalysisPlugin : DokkaPlugin() {
                 )
             )
         }
-    }
-
-    @InternalDokkaApi
-    val psiToDocumentableTranslator: Extension<SourceToDocumentableTranslator, *, *> by extending {
-        CoreExtensions.sourceToDocumentableTranslator providing { DefaultPsiToDocumentableTranslator() }
     }
 
     @OptIn(DokkaPluginApiPreview::class)
