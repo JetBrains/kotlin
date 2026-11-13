@@ -154,7 +154,7 @@
     },
     {
       "parentPhaseType": IrPreLowering,
-      "name": "TailrecCheckerLowering",
+      "name": "TailrecPreSerializationLowering",
       "time": {
         "nanos": $UINT$
       }

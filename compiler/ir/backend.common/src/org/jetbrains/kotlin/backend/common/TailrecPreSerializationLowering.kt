@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-open class TailrecCheckerLowering<Context : LoweringContext>(
+open class TailrecPreSerializationLowering<Context : LoweringContext>(
     override val context: Context,
 ) : FileLoweringPass, TailrecOptimization {
     override fun lower(irFile: IrFile) {
