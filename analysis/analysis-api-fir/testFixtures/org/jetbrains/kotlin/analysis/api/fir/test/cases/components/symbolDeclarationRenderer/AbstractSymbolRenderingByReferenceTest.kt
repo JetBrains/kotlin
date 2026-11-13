@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer
 
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES_DENOTABLE
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -27,10 +28,19 @@ abstract class AbstractSymbolRenderingByReferenceTest : AbstractAnalysisApiBased
                 val ktSymbol = contextReferenceExpression.resolveSymbolPreferringCall()
                 testServices.assertions.assertNotNull(ktSymbol)
                 testServices.assertions.assertTrue(ktSymbol is KaDeclarationSymbol)
-                (ktSymbol as KaDeclarationSymbol).render(WITH_QUALIFIED_NAMES_DENOTABLE)
+                (ktSymbol as KaDeclarationSymbol).render(renderer)
             }
         }
 
         testServices.assertions.assertEqualsToTestOutputFile(renderedString)
+    }
+
+    /**
+     * Renders the members of a referenced class as well, so that the test can show the members of library and Java classes, which
+     * the renderer tests by PSI cannot render. The members are sorted as in [AbstractLegacyRenderingTest].
+     */
+    private val renderer = WITH_QUALIFIED_NAMES_DENOTABLE.with {
+        classifierBodyRenderer = KaClassifierBodyRenderer.BODY_WITH_MEMBERS
+        bodyMemberScopeSorter = MembersByRenderedTextSorter
     }
 }

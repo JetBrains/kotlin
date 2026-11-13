@@ -1,0 +1,1 @@
+open fun test(p0: (kotlin.Array<kotlin.Annotation!>..kotlin.Array<out kotlin.Annotation!>))

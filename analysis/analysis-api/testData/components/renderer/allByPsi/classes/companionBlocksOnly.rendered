@@ -1,0 +1,17 @@
+class OnlyCompanionBlocks {
+  companion {
+    fun foo()
+
+    val bar: Int
+  }
+}
+
+class Outer {
+  class Nested {
+    fun regular()
+
+    companion {
+      fun static()
+    }
+  }
+}

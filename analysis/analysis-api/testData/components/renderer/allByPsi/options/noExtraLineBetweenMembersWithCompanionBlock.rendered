@@ -1,0 +1,9 @@
+class Compact {
+  fun member()
+
+  companion {
+    fun first()
+
+    val x: Int
+  }
+}

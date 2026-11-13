@@ -1,2 +1,2 @@
-val Foo.static1: kotlin.Int
+companion val Foo.static1: kotlin.Int
   get()

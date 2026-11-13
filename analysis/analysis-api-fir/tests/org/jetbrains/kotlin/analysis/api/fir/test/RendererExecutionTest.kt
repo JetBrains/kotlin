@@ -234,8 +234,8 @@ class RendererExecutionTest : AbstractAnalysisApiExecutionTest("testData/rendere
                 .filterIsInstance<KaJavaFieldSymbol>()
                 .associateBy { it.name.asString() }
             // The type of `CONSTANT` is non-flexible, as a `static final` field with a constant initializer is enhanced to non-null.
-            assertEquals("static val CONSTANT: String", KaRenderer.default.renderToString(javaFields.getValue("CONSTANT")))
-            assertEquals("static var mutableText: String!", KaRenderer.default.renderToString(javaFields.getValue("mutableText")))
+            assertEquals("val CONSTANT: String", KaRenderer.default.renderToString(javaFields.getValue("CONSTANT")))
+            assertEquals("var mutableText: String!", KaRenderer.default.renderToString(javaFields.getValue("mutableText")))
             // The Java `protected` maps to the protected-and-package visibility, which has no Kotlin modifier, so it is not rendered.
             assertEquals("var counter: Int", KaRenderer.default.renderToString(javaFields.getValue("counter")))
         }

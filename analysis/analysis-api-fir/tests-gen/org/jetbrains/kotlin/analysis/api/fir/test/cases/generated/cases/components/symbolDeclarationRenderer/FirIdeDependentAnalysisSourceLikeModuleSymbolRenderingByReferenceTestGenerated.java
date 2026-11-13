@@ -51,6 +51,38 @@ public class FirIdeDependentAnalysisSourceLikeModuleSymbolRenderingByReferenceTe
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/renderer/symbolByReference/companionBlocks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocks {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/renderer/symbolByReference/companionBlocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/symbolByReference/companionBlocks"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("javaStaticMembers.kt")
+    public void testJavaStaticMembers() {
+      run("javaStaticMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryClass.kt")
+    public void testLibraryClass() {
+      run("libraryClass.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryEnum.kt")
+    public void testLibraryEnum() {
+      run("libraryEnum.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/renderer/symbolByReference/javaTypeEnhancement")
   @TestDataPath("$PROJECT_ROOT")
   public class JavaTypeEnhancement {

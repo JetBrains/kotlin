@@ -164,24 +164,30 @@ private object ClassBodyRenderer : KaPieceRenderer<KaClassSymbol>(KaPiece.ClassB
 
             output.withIndent {
                 val enumEntries = members.filterIsInstance<KaEnumEntrySymbol>()
-                val otherMembers = members.filter { it !is KaEnumEntrySymbol }
+                val [companionBlockMembers, otherMembers] = members
+                    .filter { it !is KaEnumEntrySymbol }
+                    .partition { it is KaCallableSymbol && it.isCompanion }
 
                 enumEntries.forEachIndexed { index, entry ->
                     output.newLine()
                     render(entry, KaPiece.Symbol)
                     when {
                         index < enumEntries.lastIndex -> output.punctuation(",")
-                        otherMembers.isNotEmpty() -> output.punctuation(";")
+                        otherMembers.isNotEmpty() || companionBlockMembers.isNotEmpty() -> output.punctuation(";")
                     }
                 }
 
-                val extraLineBetweenMembers = context.valueFor(KaRenderingOption.ExtraLineBetweenMembers)
-                otherMembers.forEachIndexed { index, member ->
-                    if (extraLineBetweenMembers && (enumEntries.isNotEmpty() || index > 0)) {
-                        output.newLine()
+                renderMembers(otherMembers, afterOtherContent = enumEntries.isNotEmpty())
+
+                if (companionBlockMembers.isNotEmpty()) {
+                    renderLineBreak(afterOtherContent = enumEntries.isNotEmpty() || otherMembers.isNotEmpty())
+                    output.keyword(KtTokens.COMPANION_KEYWORD)
+                    output.punctuation("{")
+                    output.withIndent {
+                        renderMembers(companionBlockMembers, afterOtherContent = false)
                     }
                     output.newLine()
-                    render(member, KaPiece.Symbol)
+                    output.punctuation("}")
                 }
             }
 
@@ -190,6 +196,26 @@ private object ClassBodyRenderer : KaPieceRenderer<KaClassSymbol>(KaPiece.ClassB
         }
 
         return true
+    }
+
+    context(session: KaSession, context: KaRenderingContext, output: KaRenderingOutput)
+    private fun renderMembers(members: List<KaSymbol>, afterOtherContent: Boolean) {
+        members.forEachIndexed { index, member ->
+            renderLineBreak(afterOtherContent = afterOtherContent || index > 0)
+            render(member, KaPiece.Symbol)
+        }
+    }
+
+    /**
+     * Starts a new line for the next member, after an empty line if [afterOtherContent] and the
+     * [ExtraLineBetweenMembers][KaRenderingOption.ExtraLineBetweenMembers] option is enabled.
+     */
+    context(context: KaRenderingContext, output: KaRenderingOutput)
+    private fun renderLineBreak(afterOtherContent: Boolean) {
+        if (afterOtherContent && context.valueFor(KaRenderingOption.ExtraLineBetweenMembers)) {
+            output.newLine()
+        }
+        output.newLine()
     }
 }
 

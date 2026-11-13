@@ -30,19 +30,7 @@ abstract class AbstractLegacyRenderingTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val renderer = KaDeclarationRendererForSource.WITH_SHORT_NAMES.with {
             classifierBodyRenderer = KaClassifierBodyRenderer.BODY_WITH_MEMBERS
-            bodyMemberScopeSorter = object : KaRendererBodyMemberScopeSorter {
-                override fun sortMembers(
-                    analysisSession: KaSession,
-                    members: List<KaDeclarationSymbol>,
-                    container: KaDeclarationContainerSymbol,
-                ): List<KaDeclarationSymbol> {
-                    with(analysisSession) {
-                        return KaRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
-                            .sortMembers(analysisSession, members, container)
-                            .sortedBy { it.render() }
-                    }
-                }
-            }
+            bodyMemberScopeSorter = MembersByRenderedTextSorter
         }
 
         val actual = executeOnPooledThreadInReadAction {
@@ -62,5 +50,23 @@ abstract class AbstractLegacyRenderingTest : AbstractAnalysisApiBasedTest() {
         }
 
         testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".rendered")
+    }
+}
+
+/**
+ * Sorts class members by their rendered text, so that the order doesn't depend on how a library class is loaded: from stubs in the IDE
+ * mode or from class files in the Standalone mode.
+ */
+internal object MembersByRenderedTextSorter : KaRendererBodyMemberScopeSorter {
+    override fun sortMembers(
+        analysisSession: KaSession,
+        members: List<KaDeclarationSymbol>,
+        container: KaDeclarationContainerSymbol,
+    ): List<KaDeclarationSymbol> {
+        with(analysisSession) {
+            return KaRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
+                .sortMembers(analysisSession, members, container)
+                .sortedBy { it.render() }
+        }
     }
 }

@@ -1,0 +1,8 @@
+BEFORE MODIFICATION:
+public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] fun x(): R|kotlin/Int| {
+    [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|/doSmth|(String(str))
+    ^x R|<local>/a|
+}
+
+AFTER MODIFICATION:
+public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] fun x(): R|kotlin/Int| { LAZY_BLOCK }
