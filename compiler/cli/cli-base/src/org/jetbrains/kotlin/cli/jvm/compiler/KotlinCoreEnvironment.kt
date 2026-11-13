@@ -64,11 +64,9 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
-import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
@@ -168,9 +166,6 @@ class KotlinCoreEnvironment private constructor(
                     this.getService(JavaFileManager::class.java) as CoreJavaFileManager
                 )
 
-                val traceHolder = CliTraceHolder(project)
-                registerService(CodeAnalyzerInitializer::class.java, traceHolder)
-
                 // We don't pass Disposable because in some tests, we manually unregister these extensions, and that leads to LOG.error
                 // exception from `ExtensionPointImpl.doRegisterExtension`, because the registered extension can no longer be found
                 // when the project is being disposed.
@@ -197,7 +192,7 @@ class KotlinCoreEnvironment private constructor(
     private val initialRoots = ArrayList<JavaRoot>()
 
     init {
-        projectEnvironment.configureProjectEnvironment(configuration, configFiles)
+        projectEnvironment.configureProjectEnvironment(configuration)
         val project = projectEnvironment.project
 
         sourceFiles += createSourceFilesFromSourceRoots(
@@ -598,20 +593,12 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         @CoreEnvironmentDeprecation
-        fun ProjectEnvironment.configureProjectEnvironment(
-            configuration: CompilerConfiguration,
-            configFiles: EnvironmentConfigFiles
-        ) {
+        fun ProjectEnvironment.configureProjectEnvironment(configuration: CompilerConfiguration) {
             PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
                 .apply { isAccessible = true }
                 .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
 
             registerExtensionsFromPlugins(configuration)
-            // otherwise consider that project environment is properly configured before passing to the environment
-            // TODO: consider some asserts to check important extension points
-
-            val isJvm = configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES
-            project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(isJvm))
 
             registerProjectServicesForCLI(this)
 
