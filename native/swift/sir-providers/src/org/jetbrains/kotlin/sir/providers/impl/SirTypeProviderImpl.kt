@@ -277,8 +277,8 @@ public class SirTypeProviderImpl(
     ): SirType? {
         if (!sirSession.collectionsV2) return null
         val [primaryDeclaration, typedListDeclarations] = when (result) {
+            is SirTranslationResult.RegularClass -> result.primaryDeclaration to result.typedListDeclarations
             is SirTranslationResult.RegularInterface -> result.primaryDeclaration to result.typedListDeclarations
-            // TODO: Support classes KT-88831
             else -> null to null
         }
         if (primaryDeclaration == null || typedListDeclarations == null) return null

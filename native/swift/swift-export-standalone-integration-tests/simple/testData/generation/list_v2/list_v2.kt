@@ -69,3 +69,16 @@ fun badKClassList(): List<KClass<*>> = TODO()
 class Hidden
 
 fun badHiddenList(): List<Hidden> = TODO()
+
+// MODULE: CollectionsV2
+// EXPORT_TO_SWIFT
+// SWIFT_EXPORT_CONFIG: collectionsV2=true
+// FILE: main.kt
+
+open class MyListImpl<T>(impl: List<T>) : List<T> by impl
+
+fun testMyListImplInt(l: MyListImpl<Int>) = l
+
+class MyMutableListImpl<T>(impl: MutableList<T>) : MyListImpl<T>(impl), MutableList<T> by impl
+
+fun testMyMutableListImplInt(l: MyMutableListImpl<Int>) = l
