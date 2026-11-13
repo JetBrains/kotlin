@@ -6,13 +6,23 @@
 package org.jetbrains.kotlin.backend.wasm.utils
 
 import org.jetbrains.kotlin.backend.wasm.BackendWasmSymbols
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsCommonInlineClassesUtils
 import org.jetbrains.kotlin.ir.backend.js.utils.erase
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.eraseIfTypeParameter
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.isEquals
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isTypeParameter
 
 class WasmInlineClassesUtils(private val wasmSymbols: BackendWasmSymbols) : JsCommonInlineClassesUtils {
 
@@ -39,4 +49,31 @@ class WasmInlineClassesUtils(private val wasmSymbols: BackendWasmSymbols) : JsCo
 
     override val unboxIntrinsic: IrSimpleFunctionSymbol
         get() = wasmSymbols.unboxIntrinsic
+}
+
+internal fun IrType.getMostDeepValueClassUnderlyingType(
+    context: WasmBackendContext, stopWhenEqualsIsOverridden: Boolean = false
+): IrType {
+    var currentType = this
+
+    while (true) {
+        currentType = currentType.eraseIfTypeParameter()
+
+        if (currentType.isPrimitiveType() || currentType.isNullable()) break
+
+        val currentClass = currentType.classOrNull?.owner ?: break
+
+        if (!context.inlineClassesUtils.isClassInlineLike(currentClass)) break
+
+        if (stopWhenEqualsIsOverridden) {
+            if (currentClass.declarations.any {
+                    it is IrSimpleFunction &&
+                    it.origin != IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER &&
+                    it.isEquals()
+                }) break
+        }
+
+        currentType = context.inlineClassesUtils.getInlineClassUnderlyingType(currentClass)
+    }
+    return currentType
 }

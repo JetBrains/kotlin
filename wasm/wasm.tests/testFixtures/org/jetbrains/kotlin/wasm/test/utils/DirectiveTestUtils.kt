@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.utils
 
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
+import org.jetbrains.kotlin.codegen.inline.argumentsSize
 import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved
@@ -49,6 +50,7 @@ object DirectiveTestUtils {
         checkCalledInScope(
             module,
             arguments.getNamedArgument("shouldBeCalled"),
+            arguments.findNamedArgument("count")?.toInt(),
             arguments.getNamedArgument("inFunction"),
         )
     }
@@ -134,10 +136,16 @@ object DirectiveTestUtils {
     private fun checkCalledInScope(
         module: WasmModule,
         functionName: String,
+        callCount: Int?,
         scopeFunctionName: String,
     ) {
-        val errorMessage = "`$functionName` is not called inside `$scopeFunctionName`"
-        assertTrue(isCalledInScope(module, functionName, scopeFunctionName), errorMessage)
+        if (callCount != null) {
+            val errorMessage = "`$functionName` is called expected $callCount times inside `$scopeFunctionName`"
+            assertEquals(callCount, calledInScopeCount(module, functionName, scopeFunctionName), errorMessage)
+        } else {
+            val errorMessage = "`$functionName` is not called inside `$scopeFunctionName`"
+            assertTrue(calledInScopeCount(module, functionName, scopeFunctionName) != 0, errorMessage)
+        }
     }
 
     private fun checkInstructionInScope(
@@ -156,7 +164,7 @@ object DirectiveTestUtils {
         scopeFunctionName: String,
     ) {
         val errorMessage = "`$functionName` is called inside `$scopeFunctionName`"
-        assertFalse(isCalledInScope(module, functionName, scopeFunctionName), errorMessage)
+        assertTrue(calledInScopeCount(module, functionName, scopeFunctionName) == 0, errorMessage)
     }
 
     private fun checkInstructionNotInScope(
@@ -169,14 +177,14 @@ object DirectiveTestUtils {
         assertFalse(isInstructionInScope(module, operator, scopeFunctionName), errorMessage)
     }
 
-    private fun isCalledInScope(
+    private fun calledInScopeCount(
         module: WasmModule,
         functionName: String,
         scopeFunctionName: String,
-    ): Boolean {
+    ): Int {
         val scopeFunction = WasmIrCheckUtils.getDefinedFunction(module, scopeFunctionName)
 
-        return WasmIrCheckUtils.countCalls(module, scopeFunction, functionName) != 0
+        return WasmIrCheckUtils.countCalls(module, scopeFunction, functionName)
     }
 
     private fun isInstructionInScope(

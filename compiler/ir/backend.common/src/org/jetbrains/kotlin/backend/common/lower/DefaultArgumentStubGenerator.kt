@@ -268,7 +268,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 for (i in typeArguments.indices) {
                     typeArguments[i] = expression.typeArguments[i]
                 }
-                val parameter2arguments = argumentsForCall(expression, stubFunction)
+                val parameter2arguments = argumentsForCall(this@irBlock, expression, stubFunction)
 
                 for ([parameter, argument] in parameter2arguments) {
                     log { "call::params@$${parameter.indexInParameters}/${parameter.name}: ${ir2string(argument)}" }
@@ -358,7 +358,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         return stubFunction.symbol
     }
 
-    protected open fun IrBlockBuilder.argumentsForCall(expression: IrFunctionAccessExpression, stubFunction: IrFunction): Map<IrValueParameter, IrExpression?> {
+    protected open fun argumentsForCall(builder: IrBlockBuilder, expression: IrFunctionAccessExpression, stubFunction: IrFunction): Map<IrValueParameter, IrExpression?> {
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
