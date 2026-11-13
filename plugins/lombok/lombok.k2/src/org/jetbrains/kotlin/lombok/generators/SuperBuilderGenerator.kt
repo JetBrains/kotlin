@@ -45,7 +45,8 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         private val startProjectionsList = listOf(ConeStarProjection, ConeStarProjection)
     }
 
-    private val processedBuilderKeys: FirCache<BuilderKey, Boolean, Nothing?> = session.firCachesFactory.createCache { true }
+    private val processedSymbolsForClassesWithBuilders: FirCache<FirClassSymbol<*>, Boolean, Nothing?> =
+        session.firCachesFactory.createCache { true }
 
     override val builderModality: Modality = Modality.ABSTRACT
 
@@ -151,9 +152,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             // `@SingleBuilder` is only applicable to classes. It means it can be <= 1 builder in a super type.
             val builderName = builderNames.firstOrNull() ?: return@firstNotNullOfOrNull null
 
-            val builderKey = BuilderKey(superTypeSymbol, builderName)
-
-            if (processedBuilderKeys.getValueIfComputed(builderKey) != null) {
+            if (processedSymbolsForClassesWithBuilders.getValueIfComputed(classSymbol) != null) {
                 return@firstNotNullOfOrNull buildErrorTypeRef {
                     diagnostic = ConeSimpleDiagnostic(
                         "Loop in supertypes involving ${superTypeSymbol.classId}",
@@ -162,9 +161,10 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 }
             } else {
                 // Use the mutating `getValue` because the `FirCache` doesn't provide API for elements putting
-                require(processedBuilderKeys.getValue(builderKey))
+                require(processedSymbolsForClassesWithBuilders.getValue(classSymbol))
             }
 
+            val builderKey = BuilderKey(superTypeSymbol, builderName)
             val superBuilder = builderClassesCache.getValue(builderKey) ?: return@firstNotNullOfOrNull null
 
             superBuilder.constructType(
