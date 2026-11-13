@@ -1,0 +1,8 @@
+KT element: KtTypeParameter
+KT element text:
+T
+FIR element: FirTypeParameterImpl
+FIR source kind: null
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] T

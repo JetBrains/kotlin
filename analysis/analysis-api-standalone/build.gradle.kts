@@ -10,6 +10,10 @@ plugins {
     id("test-inputs-check")
 }
 
+val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
+    isTransitive = false
+}
+
 dependencies {
     api(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
@@ -28,6 +32,8 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    jvmAbiGenPlugin(project(":plugins:jvm-abi-gen"))
 }
 
 kotlin {
@@ -63,8 +69,10 @@ sourceSets {
 
 if (!kotlinBuildProperties.isTeamcityBuild.get()) {
     testDataManager {
-        // Ensure golden tests run first
+        // Ensure golden tests run first: `analysis-api-fir` and `low-level-api-fir` write the `.txt` files that the Standalone tests
+        // compare against
         mustRunAfterProjects.add(":analysis:analysis-api-fir")
+        mustRunAfterProjects.add(":analysis:low-level-api-fir")
     }
 }
 
@@ -75,6 +83,8 @@ projectTests {
                 includeAutoSamples(percentage = 1)
             }
         }
+
+        addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
     }
 
     testCodebaseTask(dumpDirs = listOf("api", "api-unstable"))
@@ -97,5 +107,5 @@ projectTests {
     testData(project.isolated, "testData")
     testData(project(":analysis:analysis-api").isolated, "testData")
     testData(project(":analysis:low-level-api-fir").isolated, "testData/resolveToFirSymbolPsiClass")
+    testData(project(":analysis:low-level-api-fir").isolated, "testData/getOrBuildFirBinary")
 }
-

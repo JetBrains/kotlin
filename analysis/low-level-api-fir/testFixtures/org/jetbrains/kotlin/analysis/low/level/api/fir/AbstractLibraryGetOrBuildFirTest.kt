@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompilerDirectory
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
-    override val configurator = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator()
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator()
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         val renderingOptionsBuilder = FirRenderingOptions.Builder().apply { renderKtText = true }
