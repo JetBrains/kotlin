@@ -975,6 +975,22 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
+        name = "Xllvm-isel"
+        description = """LLVM instruction selector used when generating machine code:
+- 'default' lets the compiler pick the selector configured for the target in konan.properties, or the LLVM default if none is configured;
+- 'selection-dag' lowers the code through a target-independent Selection DAG, producing high-quality machine code;
+- 'global' uses GlobalISel, which is faster when optimizations are disabled and falls back to SelectionDAG for constructs it does not support;
+- 'fast' uses FastISel, a greedy, line-by-line selector optimized for minimal compile time.
+Omitting the argument is equivalent to 'default'.""".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "{default|selection-dag|global|fast}".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+    }
+
+    compilerArgument {
         name = "Xmanifest-native-targets"
         description =
             "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.".asReleaseDependent()
