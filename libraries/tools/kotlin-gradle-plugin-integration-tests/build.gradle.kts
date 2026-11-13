@@ -571,6 +571,8 @@ tasks.withType<Test>().configureEach {
     // Publish only the Parcelize runtime variants consumed by the selected tests.
     dependsOn(parcelizeRuntimeKmpPublication)
     dependsOn(":plugins:parcelize:parcelize-runtime:publishJvmPublicationToMavenLocal")
+    dependsOn(":plugins:parcelize:parcelize-runtime:publishAndroidPublicationToMavenLocal")
+    dependsOn(":plugins:parcelize:parcelize-runtime:publishJsPublicationToMavenLocal")
     if (HostManager.hostIsMac && (name == "test" || name == "kgpAllParallelTests" || name.startsWith("kgpNativeTests"))) {
         dependsOn(parcelizeRuntimeNativePublications)
     }

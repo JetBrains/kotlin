@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
+import org.jetbrains.kotlin.gradle.dsl.ParcelizeExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
@@ -17,6 +21,7 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
@@ -263,6 +268,83 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
 
             build("assemble") {
                 assertTasksExecuted(":compileAndroidMain", ":compileKotlinJvm")
+            }
+        }
+    }
+
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811)
+    @GradleAndroidTest
+    @MustRunOnChangesInCompilerPlugins
+    fun `parcelize implicitlyAddParcelableSupertype makes common classes Parcelable on Android and for consumers`(
+        gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        // `js()` makes `commonMain` a source set with a metadata compilation.
+        val library = externalAndroidLibraryProject(
+            gradleVersion,
+            androidVersion,
+            jdkVersion,
+            namespace = "org.jetbrains.sample.library",
+            additionalPlugins = { kotlin("plugin.parcelize") },
+        ) {
+            buildScriptInjection {
+                @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                project.extensions.getByType<ParcelizeExtension>().implicitlyAddParcelableSupertype.set(true)
+                kotlinMultiplatform.apply {
+                    jvm()
+                    js()
+                    sourceSets.getByName("commonMain").compileSource(
+                        """
+                        package library
+
+                        import kotlinx.parcelize.Parcelize
+
+                        @Parcelize
+                        class CommonParcelized(val id: Int)
+                        """.trimIndent()
+                    )
+                    sourceSets.getByName("androidMain").compileSource(
+                        """
+                        package library
+
+                        val parcelable: android.os.Parcelable = CommonParcelized(1)
+                        """.trimIndent()
+                    )
+                }
+            }
+        }
+
+        // The consumer does not apply the Parcelize plugin. It sees the supertypes of the library classes only through
+        // the dependencies that the library exposes as `api`.
+        externalAndroidLibraryProject(
+            gradleVersion,
+            androidVersion,
+            jdkVersion,
+            namespace = "org.jetbrains.sample.consumer",
+        ) {
+            buildScriptInjection {
+                kotlinMultiplatform.sourceSets.getByName("androidMain").apply {
+                    dependencies {
+                        implementation(project(":library"))
+                    }
+                    compileSource(
+                        """
+                        package consumer
+
+                        val parcelable: android.os.Parcelable = library.CommonParcelized(1)
+                        """.trimIndent()
+                    )
+                }
+            }
+        }.apply {
+            include(library, "library")
+
+            build(":library:compileCommonMainKotlinMetadata", ":library:compileKotlinJvm", ":compileAndroidMain") {
+                assertTasksExecuted(
+                    ":library:compileCommonMainKotlinMetadata",
+                    ":library:compileKotlinJvm",
+                    ":library:compileAndroidMain",
+                    ":compileAndroidMain",
+                )
             }
         }
     }

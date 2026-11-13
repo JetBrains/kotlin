@@ -311,6 +311,10 @@ public final class org/jetbrains/kotlin/gradle/dsl/NativeCacheKind$Companion {
 	public final fun byCompilerArgument (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/NativeCacheKind;
 }
 
+public abstract class org/jetbrains/kotlin/gradle/dsl/ParcelizeExtension {
+	public abstract fun getImplicitlyAddParcelableSupertype ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/execution/KotlinAggregateExecutionSource : org/jetbrains/kotlin/gradle/plugin/KotlinExecution$ExecutionSource {
 	public abstract fun getExecutionSources ()Ljava/lang/Iterable;
 }

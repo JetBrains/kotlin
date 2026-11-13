@@ -59,4 +59,5 @@ object TestCompilePaths {
     const val MAIN_KTS_JAR_PATH: String = "main-kts.jar.path"
     const val KOTLIN_REFLECT_SHADOW_JAR_PATH: String = "kotlin.reflect.shadow.jar.path"
     const val PARCELIZE_COMPILER_PLUGIN_CLASSPATH: String = "parcelizeRuntime.classpath"
+    const val PARCELIZE_COMMON_RUNTIME_CLASSPATH: String = "parcelizeCommonRuntime.classpath"
 }

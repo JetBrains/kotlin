@@ -15,6 +15,22 @@
     },
     "variants": [
         {
+            "name": "androidApiElements-published",
+            "attributes": {
+                "org.gradle.category": "library",
+                "org.gradle.usage": "java-api",
+                "org.gradle.jvm.environment": "android",
+                "org.gradle.libraryelements": "jar",
+                "org.jetbrains.kotlin.platform.type": "androidJvm"
+            },
+            "available-at": {
+                "url": "../../kotlin-parcelize-runtime-android/ArtifactsTest.version/kotlin-parcelize-runtime-android-ArtifactsTest.version.module",
+                "group": "org.jetbrains.kotlin",
+                "module": "kotlin-parcelize-runtime-android",
+                "version": "ArtifactsTest.version"
+            }
+        },
+        {
             "name": "androidNativeArm32ApiElements-published",
             "attributes": {
                 "org.gradle.category": "library",
@@ -147,6 +163,40 @@
                 "url": "../../kotlin-parcelize-runtime-androidnativex86/ArtifactsTest.version/kotlin-parcelize-runtime-androidnativex86-ArtifactsTest.version.module",
                 "group": "org.jetbrains.kotlin",
                 "module": "kotlin-parcelize-runtime-androidnativex86",
+                "version": "ArtifactsTest.version"
+            }
+        },
+        {
+            "name": "androidRuntimeElements-published",
+            "attributes": {
+                "org.gradle.category": "library",
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.jvm.environment": "android",
+                "org.gradle.libraryelements": "jar",
+                "org.jetbrains.kotlin.platform.type": "androidJvm"
+            },
+            "available-at": {
+                "url": "../../kotlin-parcelize-runtime-android/ArtifactsTest.version/kotlin-parcelize-runtime-android-ArtifactsTest.version.module",
+                "group": "org.jetbrains.kotlin",
+                "module": "kotlin-parcelize-runtime-android",
+                "version": "ArtifactsTest.version"
+            }
+        },
+        {
+            "name": "androidSourcesElements-published",
+            "attributes": {
+                "org.gradle.category": "documentation",
+                "org.gradle.dependency.bundling": "external",
+                "org.gradle.docstype": "sources",
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.jvm.environment": "android",
+                "org.gradle.libraryelements": "jar",
+                "org.jetbrains.kotlin.platform.type": "androidJvm"
+            },
+            "available-at": {
+                "url": "../../kotlin-parcelize-runtime-android/ArtifactsTest.version/kotlin-parcelize-runtime-android-ArtifactsTest.version.module",
+                "group": "org.jetbrains.kotlin",
+                "module": "kotlin-parcelize-runtime-android",
                 "version": "ArtifactsTest.version"
             }
         },

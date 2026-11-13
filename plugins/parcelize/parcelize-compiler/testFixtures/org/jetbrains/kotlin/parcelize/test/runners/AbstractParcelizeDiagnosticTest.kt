@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.FirParser
@@ -32,6 +33,7 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
 
         configureFirParser(FirParser.LightTree)
 
+        useDirectives(ParcelizeDirectives)
         useConfigurators(::ParcelizeEnvironmentConfigurator)
 
         useFailureSuppressors(::FirFailingTestSuppressor)
