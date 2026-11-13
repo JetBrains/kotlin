@@ -393,6 +393,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             latestDag = KlibDAGBuilder(
                 Parameters(
                     libraries = allLibraries,
+                    onWarning = ::fail,
                     onError = ::fail,
                 ) { it in roots }.apply {
                     @OptIn(InternalKlibDAGApi::class)
