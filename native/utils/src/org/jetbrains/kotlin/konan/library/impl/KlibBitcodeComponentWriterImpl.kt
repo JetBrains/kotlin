@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.library.impl
 
+import org.jetbrains.kotlin.konan.library.components.BitcodeVariant
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeComponentLayout
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
@@ -16,10 +17,10 @@ import kotlin.io.path.name
 internal class KlibBitcodeComponentWriterImpl(
     private val target: KonanTarget,
     private val bitcodeFilePaths: Collection<Path>,
-    private val arm64e: Boolean = false,
+    private val variant: BitcodeVariant = BitcodeVariant.DEFAULT,
 ) : KlibComponentWriter {
     override fun writeTo(root: Path) {
-        val layout = KlibBitcodeComponentLayout(target, root, arm64e)
+        val layout = KlibBitcodeComponentLayout(target, root, variant)
         layout.bitcodeDir.createDirectories()
 
         for (filePath in bitcodeFilePaths) {

@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignat
 import org.jetbrains.kotlin.backend.common.includeSignatureIndex
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.konan.library.components.BitcodeVariant
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_ARM64E_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS
 import org.jetbrains.kotlin.konan.library.writer.includeBitcode
@@ -64,7 +65,7 @@ fun createInteropLibrary(
         }
         includeMetadata(serializedMetadata)
         includeBitcode(target, nativeBitcodeFiles)
-        if (arm64eBitcodeFiles.isNotEmpty()) includeBitcode(target, arm64eBitcodeFiles, arm64e = true)
+        if (arm64eBitcodeFiles.isNotEmpty()) includeBitcode(target, arm64eBitcodeFiles, BitcodeVariant.ARM64E)
         includeNativeIncludedBinaries(target, staticLibraries)
         includeSignatureIndex(topLevelSignatures)
     }.writeTo(outputPath)

@@ -153,12 +153,13 @@ class Arm64eTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testMissingArm64eBitcode() {
+        val library = cinterop("c_stubs", listOf("-Xarm64e-bitcode", "disabled")).klibFile
         val result = compileFramework(
             testSuiteDir.resolve("c_stubs/c_stubs.kt"),
             listOf("-Xbinary=arm64e=true"),
-            givenDependencies = setOf(TestModule.Given(cinterop("c_stubs").klibFile)),
+            givenDependencies = setOf(TestModule.Given(library)),
         ).result
-        assertTrue(result is TestCompilationResult.CompilationToolFailure && "of library 'c_stubs.def' is compiled for 'arm64-apple-ios" in result.loggedData.toolOutput) {
+        assertTrue(result is TestCompilationResult.CompilationToolFailure && "${library.name}' is compiled for 'arm64-apple-ios" in result.loggedData.toolOutput) {
             "Expected the arm64e framework to reject arm64 bitcode, got: $result"
         }
     }
@@ -187,12 +188,39 @@ class Arm64eTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testCInteropArm64eBitcodeFailure() {
+        val result = cinteropToLibrary(
+            defFile = testSuiteDir.resolve("arm64e_bitcode_failure/arm64e_bitcode_failure.def"),
+            outputDir = buildDir,
+            freeCompilerArgs = TestCompilerArgs(emptyList()),
+        )
+        // The error shows why the compilation failed and how to create the library without the arm64e bitcode.
+        assertTrue(
+            result is TestCompilationResult.CompilationToolFailure &&
+                    listOf("No arm64e support", "'-Xarm64e-bitcode disabled'").all { it in result.loggedData.toolOutput }
+        ) {
+            "Expected cinterop to fail on the arm64e bitcode and suggest disabling it, got: $result"
+        }
+    }
+
+    @Test
+    fun testCInteropArm64eBitcodeDisabled() {
+        val interopLibrary = cinterop("arm64e_bitcode_failure", listOf("-nopack", "-Xarm64e-bitcode", "disabled")).klibFile
+        val targetDir = interopLibrary.resolve("default/targets/ios_arm64")
+        assertTrue(targetDir.resolve("native").exists() && !targetDir.resolve(KLIB_ARM64E_FOLDER_NAME).exists()) {
+            "Expected bitcode only for arm64 in ${targetDir.absolutePath}, got: ${targetDir.list()?.toList()}"
+        }
+        val manifest = interopLibrary.resolve("default/manifest").bufferedReader().use { Properties().apply { load(it) } }
+        assertEquals(null, manifest.getProperty(KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS))
+    }
+
+    @Test
     fun testCInteropArm64eBitcode() {
         val testName = "arm64e_bitcode"
         val interopLibrary = cinterop(
             testName,
             listOf(
-                "-nopack", "-Xarm64e-bitcode",
+                "-nopack",
                 "-Xccall-mode", "indirect", "-Xcompile-source", testSuiteDir.resolve("$testName/compiled.cpp").absolutePath,
             ),
         ).klibFile

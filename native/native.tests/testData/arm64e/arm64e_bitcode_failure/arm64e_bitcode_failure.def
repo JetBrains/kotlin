@@ -1,0 +1,9 @@
+package = arm64e_bitcode_failure
+---
+#ifdef __arm64e__
+#error "No arm64e support"
+#endif
+
+static inline int answer(void) {
+    return 42;
+}

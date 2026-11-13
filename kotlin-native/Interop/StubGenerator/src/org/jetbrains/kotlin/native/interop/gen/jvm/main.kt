@@ -490,35 +490,14 @@ private fun processCLib(
         compileSources(nativeLibsDir, tool, cinteropArguments)
     }
 
-    val arm64eBitcodeFiles = when {
-        !cinteropArguments.arm64eBitcode -> emptyList()
-        !tool.hasArm64eVariant -> {
-            warn("'-Xarm64e-bitcode' is supported only for the iosArm64 target and is ignored.")
-            emptyList()
-        }
-        // Without stubs, the library has no bitcode.
-        nativeOutputPath == null -> emptyList()
-        else -> {
-            // The same sources and stubs, compiled with the arm64e variant of the target.
-            val arm64eTool = ToolConfig(
-                    tool.target.name,
-                    flavor,
-                    // As in the compiler, overrides from the command line take precedence.
-                    arm64ePropertyOverrides(tool.target.name) + parseKeyValuePairs(cinteropArguments.overrideKonanProperties),
-                    cinteropArguments.konanDataDir,
-                    cinteropArguments.konanHome,
-            )
-            val arm64eLibsDir = File(nativeLibsDir, "arm64e").apply { mkdirs() }
-            // The stubs get their declarations from precompiled headers, which have to be compiled for arm64e too:
-            // first the library's, then the ones the stubs add, as for the ordinary stubs.
-            val arm64eStubsCompilation = buildNativeLibrary(arm64eTool, def, cinteropArguments, imports)
-                    .precompileHeaders()
-                    .forCStubs(flavor)
-                    .precompileHeaders()
-            compileSources(arm64eLibsDir.absolutePath, arm64eTool, cinteropArguments) +
-                    compileStubsToBitcode(arm64eStubsCompilation.compilerArgs.toTypedArray(), File(arm64eLibsDir, "$libName.bc"))
-        }
-    }
+    val arm64eBitcodeFiles = compileArm64eBitcode(
+            cinteropArguments, tool, flavor, def, library, File(nativeLibsDir, "arm64e"),
+            // Without stubs, the library has no bitcode at all, because header mode compiles nothing and
+            // -Xccall-mode direct doesn't allow -Xcompile-source.
+            compileStubs = if (nativeOutputPath == null) null else { compilerArgs, outputDir ->
+                compileStubsToBitcode(compilerArgs, File(outputDir, "$libName.bc"))
+            },
+    )
 
     return when (stubIrOutput) {
         is StubIrDriver.Result.SourceCode -> {
@@ -623,6 +602,63 @@ private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments)
             }
         }
 
+/**
+ * Compiles the library's -Xcompile-source files and C stubs for the arm64e variant of its target into [outputDir], and
+ * returns the bitcode files. Returns an empty list if [CInteropArguments.arm64eBitcode] is [Arm64eBitcodeMode.DISABLED],
+ * if the target has no arm64e variant, or if the library has no bitcode (the JVM flavor, or no stubs). If the
+ * compilation fails, throws an exception that suggests '-Xarm64e-bitcode disabled'.
+ */
+private fun compileArm64eBitcode(
+        cinteropArguments: CInteropArguments,
+        tool: ToolConfig,
+        flavor: KotlinPlatform,
+        def: DefFile,
+        library: NativeLibrary,
+        outputDir: File,
+        compileStubs: ((compilerArgs: Array<String>, outputDir: File) -> String)?,
+): List<String> {
+    val mode = cinteropArguments.arm64eBitcode
+    when {
+        mode == Arm64eBitcodeMode.DISABLED -> return emptyList()
+        !tool.hasArm64eVariant -> {
+            if (mode == Arm64eBitcodeMode.ENABLED) warn("'-Xarm64e-bitcode' is supported only for the iosArm64 target and is ignored.")
+            return emptyList()
+        }
+        // Only libraries of the native flavor store bitcode.
+        flavor != KotlinPlatform.NATIVE -> return emptyList()
+        compileStubs == null -> return emptyList()
+    }
+    return try {
+        // The same sources and stubs, compiled with the arm64e variant of the target.
+        val arm64eTool = ToolConfig(
+                tool.target.name,
+                flavor,
+                // As in the compiler, overrides from the command line take precedence.
+                arm64ePropertyOverrides(tool.target.name) + parseKeyValuePairs(cinteropArguments.overrideKonanProperties),
+                cinteropArguments.konanDataDir,
+                cinteropArguments.konanHome,
+        )
+        outputDir.mkdirs()
+        // The stubs get their declarations from precompiled headers, so those have to be compiled for arm64e too. As for
+        // the ordinary stubs, precompile the library's headers first, then the ones the stubs add.
+        val stubsCompilation = CompilationImpl(
+                includes = library.includes,
+                additionalPreambleLines = library.additionalPreambleLines,
+                compilerArgs = nativeLibraryCompilerArgs(arm64eTool, def, cinteropArguments, library.language),
+                language = library.language,
+        ).precompileHeaders().forCStubs(flavor).precompileHeaders()
+        compileSources(outputDir.absolutePath, arm64eTool, cinteropArguments) +
+                compileStubs(stubsCompilation.compilerArgs.toTypedArray(), outputDir)
+    } catch (e: Throwable) {
+        if (e is VirtualMachineError) throw e
+        throw IllegalStateException(
+                "Failed to compile the library's arm64e bitcode, which binaries built with '-Xbinary=arm64e=true' need. " +
+                        "To create the library without it, use '-Xarm64e-bitcode disabled'.\n${e.message}",
+                e,
+        )
+    }
+}
+
 private fun compileSources(
         nativeLibsDir: String,
         toolConfig: ToolConfig,
@@ -686,6 +722,23 @@ internal fun prepareTool(
 
 internal val predefinedObjCClassesIncludingCategories: Set<String> by lazy { setOf("NSView", "UIView") }
 
+/**
+ * The arguments that [tool] uses to compile the [language] headers of the library that [def] describes.
+ */
+private fun nativeLibraryCompilerArgs(tool: ToolConfig, def: DefFile, arguments: CInteropArguments, language: Language): List<String> {
+    val additionalCompilerOpts = (arguments.compilerOpts +
+            arguments.compilerOptions + arguments.compilerOption).toTypedArray()
+
+    val compilerOpts: List<String> = mutableListOf<String>().apply {
+        addAll(def.config.compilerOpts)
+        addAll(tool.getDefaultCompilerOptsForLanguage(language))
+        addAll(additionalCompilerOpts)
+        addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
+        add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see buildNativeLibrary)
+    }
+    return defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts
+}
+
 internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
@@ -693,18 +746,9 @@ internal fun buildNativeLibrary(
         imports: Imports
 ): NativeLibrary {
     val additionalHeaders = (arguments.header).toTypedArray()
-    val additionalCompilerOpts = (arguments.compilerOpts +
-            arguments.compilerOptions + arguments.compilerOption).toTypedArray()
 
     val headerFiles = def.config.headers + additionalHeaders
     val language = selectNativeLanguage(def.config)
-    val compilerOpts: List<String> = mutableListOf<String>().apply {
-        addAll(def.config.compilerOpts)
-        addAll(tool.getDefaultCompilerOptsForLanguage(language))
-        addAll(additionalCompilerOpts)
-        addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
-        add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see below)
-    }
 
     // Expanding macros such as __FILE__ or __TIME__ exposes arbitrary generated filenames and timestamps from the compiler pipeline
     // which are not useful for interop though makes the klib generation non-deterministic. See KT-54284
@@ -716,7 +760,7 @@ internal fun buildNativeLibrary(
     val compilation = CompilationImpl(
             includes = headerFiles.map { IncludeInfo(it, null) },
             additionalPreambleLines = def.defHeaderLines + predefinedMacrosRedefinitions,
-            compilerArgs = defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts,
+            compilerArgs = nativeLibraryCompilerArgs(tool, def, arguments, language),
             language = language
     )
 

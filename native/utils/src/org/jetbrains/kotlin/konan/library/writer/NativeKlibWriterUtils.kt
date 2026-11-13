@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.library.writer
 
 import org.jetbrains.kotlin.io.propertyList
+import org.jetbrains.kotlin.konan.library.components.BitcodeVariant
 import org.jetbrains.kotlin.konan.library.impl.KlibBitcodeComponentWriterImpl
 import org.jetbrains.kotlin.konan.library.impl.KlibNativeIncludedBinariesComponentWriterImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -50,15 +51,14 @@ fun KlibManifestWriterSpec.legacyNativeShortNameInManifest(shortName: String?) {
 }
 
 /**
- * A [KlibWriter] DSL extension to include bitcode files to the created library.
- * With [arm64e], the files are the bitcode compiled for arm64e, which arm64e binaries of [target] link.
+ * A [KlibWriter] DSL extension to include bitcode files of [variant] to the created library.
  */
 fun KlibWriterSpec.includeBitcode(
     target: KonanTarget,
     bitcodeFilePaths: Collection<Path>,
-    arm64e: Boolean = false,
+    variant: BitcodeVariant = BitcodeVariant.DEFAULT,
 ) {
-    include(KlibBitcodeComponentWriterImpl(target, bitcodeFilePaths, arm64e))
+    include(KlibBitcodeComponentWriterImpl(target, bitcodeFilePaths, variant))
 }
 
 /**
