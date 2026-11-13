@@ -25,8 +25,6 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.commonizer.KonanDistribution
-import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
@@ -414,7 +412,7 @@ internal constructor(
         dependencyClasspath { args ->
             args.libraries = runSafe {
                 //filterKlibsPassedToCompiler call exists on files
-                val filteredLibraries = libraries.exclude(originalPlatformLibraries()).files
+                val filteredLibraries = libraries.files
                     .filterKlibsPassedToCompiler(this@KotlinNativeCompile).toMutableList()
 
                 filteredLibraries.toPathsArray()
@@ -453,23 +451,6 @@ internal constructor(
     internal val isMetadataCompilation: Boolean = when (compilation) {
         is KotlinCompilationInfo.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
     }
-
-    /**
-     * Retuns list of native platform dependencies that are present in [compileDependencyFiles]
-     * but should be excluded from actual classpath because they are included by default by Kotlin Native Compiler.
-     * this behaviour will be fixed as part of KT-65232
-     */
-    internal fun originalPlatformLibraries() =
-        if (isMetadataCompilation) {
-            null
-        } else {
-            objectFactory.fileCollection()
-                .from(kotlinNativeProvider.flatMap { it.bundleDirectory }
-                          .map { KonanDistribution(it).platformLibsDir.absoluteFile.resolve(konanTarget.name).listLibraryFiles() })
-        }
-
-    private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
-        .filter { it.isDirectory || it.extension == "klib" }
 
     private fun createSharedCompilationDataOrNull(): SharedCompilationData? {
         if (!isMetadataCompilation) return null

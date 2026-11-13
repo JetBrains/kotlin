@@ -145,7 +145,7 @@ class KotlinNativeCompileArgumentsTest {
     }
 
     @Test
-    fun `native compilation dependency files should contain native platform dependencies and stdlib`() {
+    fun `leaf native compilation dependency files should contain stdlib but not native platform dependencies`() {
         val project = buildProjectWithMPP()
         project.repositories.kotlinBuildDeps()
         project.repositories.mavenCentralCacheRedirector()
@@ -156,7 +156,7 @@ class KotlinNativeCompileArgumentsTest {
         project.evaluate()
         val nativeCompilation = kotlin.linuxX64().compilations.main
 
-        val expectedDependencies = setOf("stdlib", "nativeDependencies")
+        val expectedDependencies = setOf("stdlib")
 
         val actualDependencies = nativeCompilation.compileDependencyFiles
             .map { it.name }
@@ -181,25 +181,17 @@ class KotlinNativeCompileArgumentsTest {
 
         val compileLinuxX64 = project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
         val compileLinuxArm64 = project.tasks.getByName("compileKotlinLinuxArm64") as KotlinNativeCompile
-        val compileLinuxMainMetadata = project.tasks.getByName("compileLinuxMainKotlinMetadata") as KotlinNativeCompile
 
         val linkLinuxX64 = project.tasks.getByName("linkDebugExecutableLinuxX64") as KotlinNativeLink
         val linkLinuxArm64 = project.tasks.getByName("linkDebugExecutableLinuxArm64") as KotlinNativeLink
 
-        fun FileCollection?.assertIsPlatformDependencies(target: String) {
-            if (this == null) fail("Expected to have platform dependencies of target $target but got null")
-            for (file in this) {
-                if (!file.path.contains("platform${File.separator}$target")) fail("File $file is expected to be a platform dependency of $target")
-            }
+        // Platform libraries are not task inputs anymore (KT-91182): the compiler takes them from its distribution
+        for (task in listOf(compileLinuxX64, compileLinuxArm64)) {
+            task.libraries.files.assertNoPlatformLibraries(task.name)
         }
-        compileLinuxX64.originalPlatformLibraries().assertIsPlatformDependencies("linux_x64")
-        compileLinuxArm64.originalPlatformLibraries().assertIsPlatformDependencies("linux_arm64")
-        if (compileLinuxMainMetadata.originalPlatformLibraries() != null) fail(
-            "Native metadata compilation should not exclude platform libraries because they are coming from commonizer. " +
-                    "And is not included by default by Kotlin/Native compiler like default platform libraries."
-        )
-        linkLinuxX64.excludeDependencies.assertIsPlatformDependencies("linux_x64")
-        linkLinuxArm64.excludeDependencies.assertIsPlatformDependencies("linux_arm64")
+        for (task in listOf(linkLinuxX64, linkLinuxArm64)) {
+            task.libraries.files.assertNoPlatformLibraries(task.name)
+        }
 
         fun Array<String>?.assertFilePathsDontContain(pathSubString: String) {
             if (this == null) return
@@ -217,6 +209,11 @@ class KotlinNativeCompileArgumentsTest {
         linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_arm64")
         linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
     }
+}
+
+private fun Set<File>.assertNoPlatformLibraries(taskName: String) {
+    val platformLibs = filter { it.path.contains("platform${File.separator}") || it.path.contains("nativeDependencies") }
+    if (platformLibs.isNotEmpty()) fail("Task $taskName must not have platform libraries as inputs, but has: $platformLibs")
 }
 
 private fun assertEmpty(array: Array<String>, message: String) {

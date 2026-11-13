@@ -41,12 +41,9 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
                     )
                 }
             } else if (compilation is AbstractKotlinNativeCompilation) {
-                launch {
-                    compilation.configureStdlibAndPlatformDependencies(
-                        stdlib,
-                        AbstractKotlinNativeCompilation::retrievePlatformDependenciesWithNativeDownloadTask
-                    )
-                }
+                // Platform libraries of leaf targets are provided by the Kotlin/Native compiler from its distribution
+                // and must not be passed explicitly (KT-65232, KT-91182)
+                compilation.configureStdlib(stdlib)
             }
         }
     }
@@ -54,13 +51,6 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
     launch { kotlin.excludeStdlibFromNativeSourceSetDependencies() }
 }
 
-internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependenciesWithNativeDownloadTask(): FileCollection {
-    val commonizerTarget = commonizerTarget.await() ?: return project.files()
-    val nativeDependency = project.getNativeDistributionDependenciesWithNativeDownloadTask(
-        commonizerTarget,
-    )
-    return nativeDependency
-}
 
 internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependenciesWithNativeDistribution(): FileCollection {
     val commonizerTarget = commonizerTarget.await() ?: return project.files()
@@ -77,6 +67,15 @@ internal fun CommonizerTarget.retrievePlatformDependenciesWithNativeDistribution
         nativeBundleBuildService
     )
     return nativeDependency
+}
+
+private fun AbstractKotlinNativeCompilation.configureStdlib(stdlib: FileCollection) {
+    // Platform libraries are not passed explicitly, but the compiler reads them from the distribution,
+    // so the distribution must be downloaded before the compilation/linking
+    val distributionDownload = project.files().apply {
+        if (!project.kotlinPropertiesProvider.isFunctionalTestMode) builtBy(project.downloadKotlinNativeDistributionTask)
+    }
+    compileDependencyFiles = project.files().from(stdlib, compileDependencyFiles, distributionDownload)
 }
 
 private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDependencies(
@@ -167,5 +166,13 @@ internal fun ObjectFactory.getOriginalPlatformLibrariesForTargetWithKonanDistrib
         )
 
 
+/**
+ * Returns the libraries of this directory: packaged *.klib files and directories (normally containing an unpacked klib).
+ *
+ * The result is sorted by name to get a machine independent order: [File.listFiles] doesn't guarantee any order
+ * (on ext4, for example, it depends on a per-filesystem hash seed). The order of these libraries is part of the
+ * '@Classpath' fingerprint of Kotlin/Native compile and link tasks and therefore of their build cache keys (KT-91182)
+ */
 fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
     .filter { it.isDirectory || it.extension == "klib" }
+    .sortedBy { it.name }
