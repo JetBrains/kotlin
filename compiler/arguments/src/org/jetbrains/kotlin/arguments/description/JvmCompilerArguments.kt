@@ -285,6 +285,54 @@ The default value is 1.""".asReleaseDependent()
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xadd-reads"
+        compilerName = "additionalJavaModuleReads"
+        description =
+            "Additional modules to be read by <module>, or the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<module>=<other-module>(,<other-module>)*".asReleaseDependent()
+        argumentType = StringListType.defaultEmpty
+        delimiter = KotlinCompilerArgument.Delimiter.None
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+    }
+
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xadd-exports"
+        compilerName = "additionalJavaModuleExports"
+        description =
+            "Export <package> of <module> to additional modules, or to the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<module>/<package>=<other-module>(,<other-module>)*".asReleaseDependent()
+        argumentType = StringListType.defaultEmpty
+        delimiter = KotlinCompilerArgument.Delimiter.None
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+    }
+
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xpatch-module"
+        compilerName = "javaModulePatches"
+        description =
+            "Override or augment <module> with the classes and sources in .jar files or directories. Can be specified once for each module.".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<module>=<path>(<path-separator><path>)*".asReleaseDependent()
+        argumentType = StringListType.defaultEmpty
+        delimiter = KotlinCompilerArgument.Delimiter.None
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+    }
+
     compilerArgument {
         name = "Xno-call-assertions"
         description = "Don't generate not-null assertions for arguments of platform types.".asReleaseDependent()

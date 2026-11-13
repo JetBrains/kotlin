@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.cli.common.getLibraryFromHome
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
+import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModuleAccessOption
+import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModulePatch
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
@@ -142,11 +144,52 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
+    addJavaModuleAccessOptions(
+        JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_READS, "-Xadd-reads", arguments.additionalJavaModuleReads, isExports = false,
+    )
+    addJavaModuleAccessOptions(
+        JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_EXPORTS, "-Xadd-exports", arguments.additionalJavaModuleExports, isExports = true,
+    )
+    addJavaModulePatches(arguments.javaModulePatches)
 
     put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, arguments.ignoredAnnotationsForBridges?.toList().orEmpty())
 
     put(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH, arguments.useMetadataOnIncrementalClasspath)
     put(JVMConfigurationKeys.USE_JAVA_DIRECT, arguments.javaDirect)
+}
+
+private fun CompilerConfiguration.addJavaModuleAccessOptions(
+    key: CompilerConfigurationKey<List<String>>, flag: String, values: Array<String>, isExports: Boolean,
+) {
+    for (value in values) {
+        val option = parseJavaModuleAccessOption(value, isExports)
+        if (option == null) {
+            val syntax =
+                if (isExports) "<module>/<package>=<other-module>(,<other-module>)*" else "<module>=<other-module>(,<other-module>)*"
+            this.report(COMPILER_ARGUMENTS_ERROR, "Bad value for '$flag': '$value'.\nExpected: '$syntax'.")
+            continue
+        }
+        for (name in option.badNames) {
+            this.report(COMPILER_ARGUMENTS_WARNING, "Bad name in value for '$flag': '$name'.")
+        }
+        add(key, value)
+    }
+}
+
+private fun CompilerConfiguration.addJavaModulePatches(values: Array<String>) {
+    val patchedModules = HashSet<String>()
+    for (value in values) {
+        val moduleName = parseJavaModulePatch(value)?.first
+        if (moduleName == null) {
+            this.report(
+                COMPILER_ARGUMENTS_ERROR, "Bad value for '-Xpatch-module': '$value'.\nExpected: '<module>=<path>(<path-separator><path>)*'."
+            )
+        } else if (!patchedModules.add(moduleName)) {
+            this.report(COMPILER_ARGUMENTS_ERROR, "'-Xpatch-module' is specified more than once for module '$moduleName'.")
+        } else {
+            add(JVMConfigurationKeys.JAVA_MODULE_PATCHES, value)
+        }
+    }
 }
 
 private fun isCompatibleJvmTargetAndRelease(jvmTarget: String, release: String): Boolean {
