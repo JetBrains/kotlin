@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.diagnostic
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -135,7 +134,7 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
         val containingClass = context.session.firProvider.getContainingClass(this) as? FirClassSymbol<*>
             ?: return DeclarationInSame.FILE
-        if (containingClass.isCompanion && containingClass.classKind == ClassKind.OBJECT) return DeclarationInSame.COMPANION_OBJECT
+        if (containingClass.isCompanion) return DeclarationInSame.COMPANION_OBJECT
         return DeclarationInSame.type(containingClass.classKind)
     }
 
