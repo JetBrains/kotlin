@@ -33,8 +33,8 @@ class NodeJsToolchainManagementDslTest {
     fun `toolchainService without a class configures the default DefaultNodeJsToolchainService`() {
         val (project, dsl) = buildProjectAndDsl()
 
-        dsl.toolchainService {
-            downloadBaseUrl.set("https://example.com/dist")
+        dsl.toolchainService { parameters ->
+            parameters.downloadBaseUrl.set("https://example.com/dist")
         }
         registerNodeJsToolchainServiceIfAbsent(project)
 

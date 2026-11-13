@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain
 
+import org.gradle.api.Action
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -25,6 +26,13 @@ open class WasiAdapterToolchainManagementDslImpl @Inject constructor(
     override fun toolchainService(configure: DefaultWasiAdapterToolchainService.Parameters.() -> Unit) {
         toolchainService(DefaultWasiAdapterToolchainService::class) {
             configure()
+        }
+    }
+
+    @ExperimentalWasmDsl
+    override fun toolchainService(configure: Action<DefaultWasiAdapterToolchainService.Parameters>) {
+        toolchainService(DefaultWasiAdapterToolchainService::class) {
+            configure.execute(this)
         }
     }
 

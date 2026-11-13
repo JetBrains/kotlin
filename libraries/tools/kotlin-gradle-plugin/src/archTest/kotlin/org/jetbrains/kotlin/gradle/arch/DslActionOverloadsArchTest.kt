@@ -23,6 +23,8 @@ import kotlin.test.Test
  *
  * A Groovy closure passed to a Kotlin lambda-only method gets the wrong delegate (KT-91330).
  * This rule is a temporary guard until KT-91480 generates the overloads automatically.
+ * Hierarchy-template methods, source-set convention operators, and `invokeWhenCreated` remain frozen because they
+ * are Kotlin-DSL-specific entry points rather than Groovy-facing configuration APIs.
  */
 class DslActionOverloadsArchTest {
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain
 
+import org.gradle.api.Action
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -26,6 +27,14 @@ open class WasmToolsToolchainManagementDslImpl @Inject constructor(
         toolchainService(DefaultWasmToolsToolchainServiceImpl::class) {
             offline.set(gradle.startParameter.isOffline)
             configure()
+        }
+    }
+
+    @ExperimentalWasmDsl
+    override fun toolchainService(configure: Action<DefaultWasmToolsToolchainService.Parameters>) {
+        toolchainService(DefaultWasmToolsToolchainServiceImpl::class) {
+            offline.set(gradle.startParameter.isOffline)
+            configure.execute(this)
         }
     }
 
