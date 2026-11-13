@@ -29,16 +29,17 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import java.nio.charset.StandardCharsets
 
 class SourceFile(
@@ -68,7 +69,14 @@ class SourceFile(
 
         if (!ignoreParseErrors) {
             try {
-                AnalyzingUtils.checkForSyntacticErrors(ktFile)
+                SyntaxErrorReporter.reportSyntaxErrors(ktFile) { element, _ ->
+                    throw IllegalArgumentException(
+                        element.errorDescription + "; looking at " +
+                                element.node.elementType + " '" +
+                                element.text + PsiDiagnosticUtils.atLocation(element)
+                    )
+
+                }
             } catch (e: Exception) {
                 throw TestsCompilerError(e)
             }
