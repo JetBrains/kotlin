@@ -13,22 +13,34 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import test.concurrent.ThreadPool
+import kotlin.test.Ignore
 
 @OptIn(ExperimentalAtomicApi::class)
 class CollectionsConcurrentAccessStressTest {
-    @BeforeTest fun init() = ThreadPool.init(20)
+    @BeforeTest fun init() = ThreadPool.init(Platform.getAvailableProcessors())
     @AfterTest fun deinit() = ThreadPool.deinit()
 
+    @Ignore // The test is slow, so run it only when needed
     @Test // regression test of KT-91299
-    fun hashMapIteration() {
-        val originalMap = IntArray(1) { it }.associate { it to it }
+    fun hashMapEntriesIteration() = stressTest { putAll(it) }
+
+    @Ignore // The test is slow, so run it only when needed
+    @Test // regression test of KT-91299
+    fun hashMapKeysIteration() = stressTest { it.keys.forEach { put(it, it) } }
+
+    @Ignore // The test is slow, so run it only when needed
+    @Test // regression test of KT-91299
+    fun hashMapValuesIteration() = stressTest { it.values.forEach { put(it, it) } }
+
+    private inline fun stressTest(crossinline onMapUpdate: MutableMap<Int, Int>.(Map<Int, Int>) -> Unit) {
+        val originalMap = IntArray(1) { it }.associateWith { it }
         val mapRef = AtomicReference(originalMap)
 
         val futures = ThreadPool.execute {
             repeat(100_000) {
                 val _ = mapRef.updateAndFetch {
                     buildMap {
-                        putAll(it)
+                        onMapUpdate(it)
                     }
                 }
             }

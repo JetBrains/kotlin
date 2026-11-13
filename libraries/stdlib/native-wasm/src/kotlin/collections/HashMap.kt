@@ -109,11 +109,12 @@ public actual class HashMap<K, V> private constructor(
     override actual val size: Int
         get() = _size
 
-    @Volatile
+    // If you're planning to get rid of @Volatile, make sure to enable and run CollectionsConcurrentAccessStressTest tests
+    @Volatile // required to ensure correct initialization on concurrent read access
     private var keysView: HashMapKeys<K>? = null
-    @Volatile
+    @Volatile // required to ensure correct initialization on concurrent read access
     private var valuesView: HashMapValues<V>? = null
-    @Volatile
+    @Volatile // required to ensure correct initialization on concurrent read access
     private var entriesView: HashMapEntrySet<K, V>? = null
 
     private var isReadOnly: Boolean = false

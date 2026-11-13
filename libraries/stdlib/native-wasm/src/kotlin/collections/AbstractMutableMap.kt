@@ -48,7 +48,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         entries.clear()
     }
 
-    @Volatile
+    @Volatile // required to ensure correct initialization on concurrent read access
     private var _keys: MutableSet<K>? = null
     actual override val keys: MutableSet<K>
         get() {
@@ -84,7 +84,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
             return _keys!!
         }
 
-    @Volatile
+    @Volatile // required to ensure correct initialization on concurrent read access
     private var _values: MutableCollection<V>? = null
     actual override val values: MutableCollection<V>
         get() {
