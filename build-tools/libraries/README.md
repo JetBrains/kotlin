@@ -42,7 +42,9 @@ the API dump.
 
 ## Modules
 
-None yet.
+| Module | What it does |
+|--------|--------------|
+| [`apple`](apple) | Finds the Xcode to use and runs Apple developer tools against it: `xcodebuild`, `lipo`, `swift`, `simctl` and others |
 
 How to add one, what it may depend on and how to test it: see [AGENTS.md](AGENTS.md).
 The rules the AI review checks for every library are in [library-rules.md](library-rules.md).
