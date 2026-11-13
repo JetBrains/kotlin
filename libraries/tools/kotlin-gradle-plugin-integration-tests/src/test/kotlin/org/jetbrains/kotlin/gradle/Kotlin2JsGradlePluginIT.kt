@@ -145,6 +145,53 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @TestMetadata("kotlin2JsIrDtsGeneration")
     @MustRunOnChangesInJs
+    @DisplayName("Rich TS export resolves language features from -XXLanguage")
+    @GradleTest
+    fun richDtsResolvesLanguageFeaturesFromXXLanguage(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=true\n")
+            kotlinSourcesDir("jsMain").resolve("Test.kt").writeText(
+                """
+                |package foo
+                |
+                |@JsExport
+                |interface Greeter {
+                |    fun greet(): String
+                |}
+                """.trimMargin()
+            )
+
+            // These features have no sinceVersion, so -language-version cannot enable them by default.
+            val dts = projectPath.resolve(
+                "build/compileSync/js/main/productionExecutable/typescript-definitions/kotlin2JsIrDtsGeneration.d.ts"
+            )
+            build("jsProductionExecutableGenerateTypeScriptDefinitions") {
+                assertTasksExecuted(":jsProductionExecutableGenerateTypeScriptDefinitions")
+
+                assertFileContains(dts, "__doNotUseOrImplementIt")
+                assertFileDoesNotContain(dts, "readonly [foo.Greeter.Symbol]: true;")
+                assertFileDoesNotContain(dts, "const Symbol: unique symbol;")
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        freeCompilerArgs.add("-XXLanguage:+JsExportInterfacesInImplementableWay")
+                    }
+                }
+            }
+            build("jsProductionExecutableGenerateTypeScriptDefinitions") {
+                assertTasksExecuted(":jsProductionExecutableGenerateTypeScriptDefinitions")
+
+                assertFileDoesNotContain(dts, "__doNotUseOrImplementIt")
+                assertFileContains(dts, "readonly [foo.Greeter.Symbol]: true;")
+                assertFileContains(dts, "const Symbol: unique symbol;")
+            }
+        }
+    }
+
+    @TestMetadata("kotlin2JsIrDtsGeneration")
+    @MustRunOnChangesInJs
     @DisplayName("Rich TS export emit diagnostics")
     @GradleTest
     fun richDtsEmitDiagnostics(gradleVersion: GradleVersion) {
