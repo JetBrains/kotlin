@@ -80,4 +80,12 @@ abstract class GroupingStageHandler<A : ResultingArtifact<A>>(
     doNotRunIfThereWerePreviousFailures: Boolean
 ) : AnalysisHandlerBase<A>(testServices, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures) {
     abstract fun processArtifact(artifact: A)
+
+    /**
+     * Creates a handler to delegate a check of the artifact to, as the one of a test step would be created: it is executed in
+     * the compilation stage of this handler. A handler created by its constructor alone has no [compilationStage] to work with.
+     */
+    @OptIn(TestInfrastructureInternals::class)
+    protected fun <H : AnalysisHandlerBase<*>> Constructor<H>.createDelegate(testServices: TestServices): H =
+        invoke(testServices).also { it.setCompilationStage(compilationStage) }
 }
