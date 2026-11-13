@@ -77,7 +77,7 @@ internal class TestFederationPlanHtmlRenderer(
         when {
             entry.isChanged -> {
                 strong { +domainName }
-                +" (changed)"
+                +" ✏️"
             }
             else -> +domainName
         }
