@@ -9,15 +9,30 @@ sealed class S {
     data class DataClass(val x: Int) : S()
     data object DataObject
     inner class InnerClass
-    companion object
+    companion object {
+        val anonymousObject = object : Any() {}
+    }
     object RegularObject
     fun interface FunInterface { fun invoke() }
+    annotation class Annotation
+    enum class Enum {
+        ENTRY {
+            // A declaration is required for the enum entry to not be mistaken for an enum class
+            val x = 1
+        }
+    }
 }
 
 @JvmInline
 value class V(val value: String)
 
 fun box(): String {
+    assertTrue(S::class.isRegularClass)
+    assertFalse(S::class.isInterface)
+    assertFalse(S::class.isEnumClass)
+    assertFalse(S::class.isEnumEntry)
+    assertFalse(S::class.isAnnotation)
+    assertFalse(S::class.isObject)
     assertTrue(S::class.isSealed)
     assertFalse(S::class.isFinal)
     assertFalse(S::class.isOpen)
@@ -28,6 +43,12 @@ fun box(): String {
     assertFalse(S::class.isFun)
     assertFalse(S::class.isValue)
 
+    assertTrue(S.DataClass::class.isRegularClass)
+    assertFalse(S.DataClass::class.isInterface)
+    assertFalse(S.DataClass::class.isEnumClass)
+    assertFalse(S.DataClass::class.isEnumEntry)
+    assertFalse(S.DataClass::class.isAnnotation)
+    assertFalse(S.DataClass::class.isObject)
     assertFalse(S.DataClass::class.isSealed)
     assertTrue(S.DataClass::class.isData)
     assertFalse(S.DataClass::class.isInner)
@@ -35,6 +56,12 @@ fun box(): String {
     assertFalse(S.DataClass::class.isFun)
     assertFalse(S.DataClass::class.isValue)
 
+    assertFalse(S.DataObject::class.isRegularClass)
+    assertFalse(S.DataObject::class.isInterface)
+    assertFalse(S.DataObject::class.isEnumClass)
+    assertFalse(S.DataObject::class.isEnumEntry)
+    assertFalse(S.DataObject::class.isAnnotation)
+    assertTrue(S.DataObject::class.isObject)
     assertFalse(S.DataObject::class.isSealed)
     assertTrue(S.DataObject::class.isData)
     assertFalse(S.DataObject::class.isInner)
@@ -42,6 +69,12 @@ fun box(): String {
     assertFalse(S.DataObject::class.isFun)
     assertFalse(S.DataObject::class.isValue)
 
+    assertTrue(S.InnerClass::class.isRegularClass)
+    assertFalse(S.InnerClass::class.isInterface)
+    assertFalse(S.InnerClass::class.isEnumClass)
+    assertFalse(S.InnerClass::class.isEnumEntry)
+    assertFalse(S.InnerClass::class.isAnnotation)
+    assertFalse(S.InnerClass::class.isObject)
     assertFalse(S.InnerClass::class.isSealed)
     assertFalse(S.InnerClass::class.isData)
     assertTrue(S.InnerClass::class.isInner)
@@ -49,6 +82,12 @@ fun box(): String {
     assertFalse(S.InnerClass::class.isFun)
     assertFalse(S.InnerClass::class.isValue)
 
+    assertFalse(S.Companion::class.isRegularClass)
+    assertFalse(S.Companion::class.isInterface)
+    assertFalse(S.Companion::class.isEnumClass)
+    assertFalse(S.Companion::class.isEnumEntry)
+    assertFalse(S.Companion::class.isAnnotation)
+    assertTrue(S.Companion::class.isObject)
     assertFalse(S.Companion::class.isSealed)
     assertFalse(S.Companion::class.isData)
     assertFalse(S.Companion::class.isInner)
@@ -56,6 +95,12 @@ fun box(): String {
     assertFalse(S.Companion::class.isFun)
     assertFalse(S.Companion::class.isValue)
 
+    assertFalse(S.RegularObject::class.isRegularClass)
+    assertFalse(S.RegularObject::class.isInterface)
+    assertFalse(S.RegularObject::class.isEnumClass)
+    assertFalse(S.RegularObject::class.isEnumEntry)
+    assertFalse(S.RegularObject::class.isAnnotation)
+    assertTrue(S.RegularObject::class.isObject)
     assertFalse(S.RegularObject::class.isSealed)
     assertFalse(S.RegularObject::class.isData)
     assertFalse(S.RegularObject::class.isInner)
@@ -63,6 +108,12 @@ fun box(): String {
     assertFalse(S.RegularObject::class.isFun)
     assertFalse(S.RegularObject::class.isValue)
 
+    assertFalse(S.FunInterface::class.isRegularClass)
+    assertTrue(S.FunInterface::class.isInterface)
+    assertFalse(S.FunInterface::class.isEnumClass)
+    assertFalse(S.FunInterface::class.isEnumEntry)
+    assertFalse(S.FunInterface::class.isAnnotation)
+    assertFalse(S.FunInterface::class.isObject)
     assertFalse(S.FunInterface::class.isSealed)
     assertFalse(S.FunInterface::class.isData)
     assertFalse(S.FunInterface::class.isInner)
@@ -70,6 +121,12 @@ fun box(): String {
     assertTrue(S.FunInterface::class.isFun)
     assertFalse(S.FunInterface::class.isValue)
 
+    assertFalse(JavaInterface::class.isRegularClass)
+    assertTrue(JavaInterface::class.isInterface)
+    assertFalse(JavaInterface::class.isEnumClass)
+    assertFalse(JavaInterface::class.isEnumEntry)
+    assertFalse(JavaInterface::class.isAnnotation)
+    assertFalse(JavaInterface::class.isObject)
     assertFalse(JavaInterface::class.isSealed)
     assertFalse(JavaInterface::class.isData)
     assertFalse(JavaInterface::class.isInner)
@@ -77,6 +134,64 @@ fun box(): String {
     assertFalse(JavaInterface::class.isFun)
     assertFalse(JavaInterface::class.isValue)
 
+    assertFalse(S.Annotation::class.isRegularClass)
+    assertFalse(S.Annotation::class.isInterface)
+    assertFalse(S.Annotation::class.isEnumClass)
+    assertFalse(S.Annotation::class.isEnumEntry)
+    assertTrue(S.Annotation::class.isAnnotation)
+    assertFalse(S.Annotation::class.isObject)
+    assertFalse(S.Annotation::class.isSealed)
+    assertFalse(S.Annotation::class.isData)
+    assertFalse(S.Annotation::class.isInner)
+    assertFalse(S.Annotation::class.isCompanion)
+    assertFalse(S.Annotation::class.isFun)
+    assertFalse(S.Annotation::class.isValue)
+
+    assertFalse(S.Enum::class.isRegularClass)
+    assertFalse(S.Enum::class.isInterface)
+    assertTrue(S.Enum::class.isEnumClass)
+    assertFalse(S.Enum::class.isEnumEntry)
+    assertFalse(S.Enum::class.isAnnotation)
+    assertFalse(S.Enum::class.isObject)
+    assertFalse(S.Enum::class.isData)
+    assertFalse(S.Enum::class.isInner)
+    assertFalse(S.Enum::class.isCompanion)
+    assertFalse(S.Enum::class.isFun)
+    assertFalse(S.Enum::class.isValue)
+
+    assertFalse(S.Enum.ENTRY::class.isRegularClass)
+    assertFalse(S.Enum.ENTRY::class.isInterface)
+    assertFalse(S.Enum.ENTRY::class.isEnumClass)
+    assertTrue(S.Enum.ENTRY::class.isEnumEntry)
+    assertFalse(S.Enum.ENTRY::class.isAnnotation)
+    assertFalse(S.Enum.ENTRY::class.isObject)
+    assertFalse(S.Enum.ENTRY::class.isData)
+    assertFalse(S.Enum.ENTRY::class.isInner)
+    assertFalse(S.Enum.ENTRY::class.isCompanion)
+    assertFalse(S.Enum.ENTRY::class.isFun)
+    assertFalse(S.Enum.ENTRY::class.isValue)
+
+    // Broken assertion since tests run on Java 8 and Kotlin generates non-compliant names for anonymous classes
+    // resulting in a class with a non-empty simple name. See KT-23072.
+//    assertFalse(S.anonymousObject::class.isRegularClass)
+    assertFalse(S.anonymousObject::class.isInterface)
+    assertFalse(S.anonymousObject::class.isEnumClass)
+    assertFalse(S.anonymousObject::class.isEnumEntry)
+    assertFalse(S.anonymousObject::class.isAnnotation)
+    assertFalse(S.anonymousObject::class.isObject) // This isn't solely about the "object" keyword being present
+    assertFalse(S.anonymousObject::class.isSealed)
+    assertFalse(S.anonymousObject::class.isData)
+    assertFalse(S.anonymousObject::class.isInner)
+    assertFalse(S.anonymousObject::class.isCompanion)
+    assertFalse(S.anonymousObject::class.isFun)
+    assertFalse(S.anonymousObject::class.isValue)
+
+    assertTrue(V::class.isRegularClass)
+    assertFalse(V::class.isInterface)
+    assertFalse(V::class.isEnumClass)
+    assertFalse(V::class.isEnumEntry)
+    assertFalse(V::class.isAnnotation)
+    assertFalse(V::class.isObject)
     assertFalse(V::class.isSealed)
     assertFalse(V::class.isData)
     assertFalse(V::class.isInner)
