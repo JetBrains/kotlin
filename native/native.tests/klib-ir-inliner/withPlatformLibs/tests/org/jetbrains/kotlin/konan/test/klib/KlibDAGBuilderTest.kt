@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.LegacyKlibDependencies
 import org.jetbrains.kotlin.backend.konan.library.InternalKlibDAGApi
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
-import org.jetbrains.kotlin.backend.konan.library.KlibDAGCyclicDependencyException
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGNode
 import org.jetbrains.kotlin.backend.konan.library.deserialize
 import org.jetbrains.kotlin.io.readProperties
@@ -643,13 +642,21 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         assertEquals(2, serializedDagWithOnlyStdlibAndPosix.dag.size)
 
         // Pass the exact number of libraries:
-        val deserializedDag: KlibDAG = serializedDagWithOnlyStdlibAndPosix.deserialize(libraries.filter { it.path.isStdlibOrPosix() })
+        val deserializedDag: KlibDAG = serializedDagWithOnlyStdlibAndPosix.deserialize(
+            librariesUsedInCurrentCompilation = libraries.filter { it.path.isStdlibOrPosix() },
+            onError = KlibDAGCyclicDependencyException::createAndThrow,
+        )
+
         assertEquals(2, deserializedDag.librariesReverseTopoSorted.size)
         assertTrue(deserializedDag.librariesReverseTopoSorted.all { it.canonicalPath.isStdlibOrPosix() })
 
         // Pass more libraries as the input that there are actually required:
         try {
-            serializedDagWithOnlyStdlibAndPosix.deserialize(libraries)
+            serializedDagWithOnlyStdlibAndPosix.deserialize(
+                libraries,
+                onError = KlibDAGCyclicDependencyException::createAndThrow,
+            )
+
             fail { "Normally unreachable" }
         } catch (e: Exception) {
             val message = e.message.orEmpty()
@@ -827,7 +834,10 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
     private fun assertLosslessDeserialization(dag: KlibDAG) {
         val serializedOnce = dag.serialize()
-        val serializedTwice = serializedOnce.deserialize(dag.librariesReverseTopoSorted).serialize()
+        val serializedTwice = serializedOnce.deserialize(
+            dag.librariesReverseTopoSorted,
+            onError = KlibDAGCyclicDependencyException::createAndThrow,
+        ).serialize()
 
         assertEquals(serializedOnce, serializedTwice)
     }
@@ -838,6 +848,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         isRoot: (KotlinLibrary) -> Boolean = { true },
     ) = KlibDAGBuilder.Parameters(
         libraries = libraries,
+        onError = KlibDAGCyclicDependencyException::createAndThrow,
         isRoot = isRoot,
     ).apply {
         @OptIn(InternalKlibDAGApi::class)
@@ -851,4 +862,13 @@ enum class KlibDAGBuildingMode(val useSignatureIndices: Boolean) {
     WITH_INDICES(useSignatureIndices = true);
 
     override fun toString() = if (useSignatureIndices) "with-indices" else "no-indices"
+}
+
+/**
+ * This exception is used only in tests.
+ */
+internal class KlibDAGCyclicDependencyException(override val message: String) : Exception(message) {
+    companion object {
+        fun createAndThrow(message: String): Nothing = throw KlibDAGCyclicDependencyException(message)
+    }
 }
