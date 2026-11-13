@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.AbstractCliTest.getNormalizedCompilerOutput
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
@@ -30,12 +29,10 @@ import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
-import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.test.fail
 
 class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
@@ -722,20 +719,12 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     @Test
-    fun testPatchModuleSymlink() {
-        assumeFalse(isWindows, "Symlinks do not work on Windows")
-        // Like javac, a source file counts as being in a patch path when its real path is, whatever path it is compiled through.
+    fun testPatchModuleRelativePath() {
+        // A source file given with an absolute path is in a patch path given with a relative path.
         val lib = module("lib")
-        val linked = File(testDataDirectory, "linked")
-        val sources = File(tmpdir, "sources").apply { mkdirs() }
-        File(sources, "link").toPath().createSymbolicLinkPointingTo(linked.toPath())
-        module("main", listOf(lib), additionalKotlinArguments = listOf(sources.path, patchModule("lib", "linked")))
-        val patch = File(tmpdir, "patch").apply { mkdirs() }
-        File(patch, "link").toPath().createSymbolicLinkPointingTo(linked.toPath())
-        module(
-            "main", listOf(lib), additionalKotlinArguments = listOf(patch.path, "-Xpatch-module=lib=${patch.path}"),
-            checkKotlinOutput = assertCompilationError("unresolved reference 'Impl'"),
-        )
+        val patch = File(testDataDirectory, "patch")
+        val relativePatch = patch.toRelativeString(File("").absoluteFile)
+        module("main", listOf(lib), additionalKotlinArguments = listOf(patch.absolutePath, "-Xpatch-module=lib=$relativePatch"))
     }
 
     @Test
