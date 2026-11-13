@@ -23,9 +23,14 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.structure.JavaLiteralAnnotationArgument
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil
@@ -259,6 +264,135 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     @Test
     fun testMissingDependencyJavaNestedAnnotation() {
         doTestBrokenLibrary("library", $$"test/A$Anno.class")
+    }
+
+    /**
+     * Emulating an incremental compilation scenario where a class file of the library mentions a nested Java class in a signature,
+     * and that nested class is changed, and therefore its class file is deleted by the incremental pipeline, and the changed source
+     * is passed instead. The referring class file records the nested `ClassId`, so the reference has to be resolved against the source.
+     *
+     * The similar scenario with a nested *Kotlin* class is covered by
+     * `JKlibJavaInteropIntegrationTest.testJavaExtendingNestedKotlinClassFromKlib`.
+     */
+    @Test
+    fun testBinarySignatureReferencesNestedJavaClassFromSource() {
+        val library = copyJarFileWithoutEntry(
+            compileLibrary(
+                "library",
+                compileJava = { _, javaFiles, outputDir ->
+                    compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
+                },
+            ),
+            "p/Outer.class", $$"p/Outer$Inner.class"
+        )
+        for (javaDirect in listOf(true, false)) {
+            compileKotlin(
+                "source.kt", tmpdir, listOf(library),
+                additionalOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString())),
+                additionalSources = listOf("p/Outer.java"),
+            )
+        }
+    }
+
+    @Test
+    fun testBinarySignatureReferencesGenericJavaClassFromSource() {
+        val fullLibrary = compileLibrary(
+            "library",
+            compileJava = { _, javaFiles, outputDir ->
+                compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
+            },
+        )
+        val sourceOnlyLibrary = copyJarFileWithoutEntry(fullLibrary, "p/Gen.class")
+        for (javaDirect in listOf(true, false)) {
+            compileKotlin(
+                "source.kt", tmpdir, listOf(sourceOnlyLibrary),
+                additionalOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString())),
+                additionalSources = listOf("p/Gen.java"),
+            )
+
+            val rawSourceOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString()))
+            val binaryResult = compileKotlin(
+                fileName = "rawSource.kt",
+                output = tmpdir,
+                classpath = listOf(fullLibrary),
+                additionalOptions = rawSourceOptions,
+                expectedFileName = null,
+            )
+            val sourceResult = compileKotlin(
+                fileName = "rawSource.kt",
+                output = tmpdir,
+                classpath = listOf(sourceOnlyLibrary),
+                additionalOptions = rawSourceOptions,
+                expectedFileName = null,
+                additionalSources = listOf("p/Gen.java"),
+            )
+            assertEquals(ExitCode.COMPILATION_ERROR, binaryResult.second, binaryResult.first)
+            assertEquals(binaryResult, sourceResult)
+        }
+    }
+
+    @Test
+    fun testBinaryAnnotationReferencesNestedJavaAnnotationFromSource() {
+        val library = copyJarFileWithoutEntry(
+            compileLibrary(
+                "library",
+                compileJava = { _, javaFiles, outputDir ->
+                    compileJavaFiles(javaFiles, listOf("-classpath", outputDir.path, "-d", outputDir.path))
+                },
+            ),
+            "p/Outer.class", $$"p/Outer$Ann.class"
+        )
+        val [innerClasses, binaryAnnotations] = JarFile(library).use { jar ->
+            val refClassBytes = jar.getInputStream(jar.getEntry("p/Ref.class")).readBytes()
+            val innerClasses = mutableListOf<Triple<String, String, String>>()
+            val binaryAnnotations = mutableListOf<Pair<String, List<Pair<String?, Any?>>>>()
+            ClassReader(refClassBytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+                override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
+                    if (outerName != null && innerName != null) {
+                        innerClasses += Triple(name, outerName, innerName)
+                    }
+                }
+
+                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
+                    val arguments = mutableListOf<Pair<String?, Any?>>()
+                    binaryAnnotations += desc to arguments
+                    return object : AnnotationVisitor(Opcodes.API_VERSION) {
+                        override fun visit(name: String?, value: Any?) {
+                            arguments += name to value
+                        }
+                    }
+                }
+            }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
+            innerClasses to binaryAnnotations
+        }
+        assertTrue(innerClasses.contains(Triple($$"p/Outer$Ann", "p/Outer", "Ann")))
+
+        val context = ClassifierResolutionContext { null }
+        val addInnerClass = ClassifierResolutionContext::class.java.declaredMethods
+            .single { it.name.startsWith("addInnerClass") }
+            .apply { isAccessible = true }
+        for ([name, outerName, innerName] in innerClasses) {
+            addInnerClass.invoke(context, name, outerName, innerName)
+        }
+
+        val [descriptor, annotationValues] = binaryAnnotations.single()
+        val [annotation, annotationVisitor] = BinaryJavaAnnotation.createAnnotationAndVisitor(
+            descriptor, context, BinaryClassSignatureParser()
+        )
+        for ([name, value] in annotationValues) {
+            annotationVisitor.visit(name, value)
+        }
+        annotationVisitor.visitEnd()
+        assertEquals("p/Outer.Ann", annotation.classId?.asString())
+        assertEquals(42, (annotation.arguments.single() as JavaLiteralAnnotationArgument).value)
+
+        for (javaDirect in listOf(true, false)) {
+            compileKotlin(
+                "source.kt", tmpdir, listOf(library),
+                additionalOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString())),
+                additionalSources = listOf("p/Outer.java"),
+            )
+        }
     }
 
     @Test

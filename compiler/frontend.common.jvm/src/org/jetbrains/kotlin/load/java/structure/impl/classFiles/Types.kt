@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.SmartList
 
 internal abstract class JavaPlainType : ListBasedJavaAnnotationOwner, MutableJavaAnnotationOwner {
@@ -54,7 +55,18 @@ internal class PlainJavaClassifierType(
     override val classifierQualifiedName: String
         get() = classifierResolverResult.qualifiedName
 
+    val classifierClassId: ClassId?
+        get() = classifierResolverResult.classId
+
     // TODO: render arguments for presentable text
     override val presentableText: String
         get() = classifierQualifiedName
 }
+
+/**
+ * [ClassId] recorded in a class file for the classifier, known even when the [JavaClassifierType.classifier] itself
+ * was not found; unlike [JavaClassifierType.classifierQualifiedName] it tells where the package name ends.
+ * `null` if only the qualified name is known.
+ */
+val JavaClassifierType.classifierClassId: ClassId?
+    get() = (this as? PlainJavaClassifierType)?.classifierClassId

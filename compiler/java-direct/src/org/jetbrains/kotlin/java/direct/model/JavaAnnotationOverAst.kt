@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
 import org.jetbrains.kotlin.java.direct.util.MemberResolutionResult
 import org.jetbrains.kotlin.java.direct.util.StaticMemberReference
+import org.jetbrains.kotlin.java.direct.util.childrenWithoutCommentsAndWhitespace
 import org.jetbrains.kotlin.java.direct.util.referenceNameParts
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
@@ -86,7 +87,7 @@ private fun createAnnotationArgument(
         Name.identifier(tree.getText(it).toString())
     }
 
-    val valueNode = tree.getChildren(nameValuePair).firstOrNull { child ->
+    val valueNode = tree.childrenWithoutCommentsAndWhitespace(nameValuePair).firstOrNull { child ->
         val t = tree.getType(child)
         t != JavaSyntaxTokenType.IDENTIFIER && t != JavaSyntaxTokenType.EQ
     }
@@ -183,7 +184,7 @@ class JavaArrayAnnotationArgumentOverAst(
     private val resolutionContext: JavaResolutionContext,
 ) : JavaArrayAnnotationArgument {
     override fun getElements(): List<JavaAnnotationArgument> {
-        return tree.getChildren(arrayNode)
+        return tree.childrenWithoutCommentsAndWhitespace(arrayNode)
             .filter {
                 val t = tree.getType(it)
                 t != JavaSyntaxTokenType.LBRACE && t != JavaSyntaxTokenType.RBRACE &&

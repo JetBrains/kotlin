@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // ISSUE: KT-90361
 // ISSUE: KT-90363
+// ISSUE: KT-91584
 // DISABLE_JAVA_FACADE
 
 // FILE: neg/Marker.kt
@@ -22,6 +23,15 @@ annotation class Marker(val value: Scope) {
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ArrayMarker(vararg val value: Marker.Scope)
+
+@Retention(AnnotationRetention.RUNTIME)
+annotation class DefaultedMarker(val value: Marker.Scope = Marker.Scope.B)
+
+@Retention(AnnotationRetention.RUNTIME)
+annotation class NestedMarker(val value: Marker)
+
+@Retention(AnnotationRetention.RUNTIME)
+annotation class NestedArrayMarker(vararg val value: Marker)
 
 // FILE: neg/Greeter.java
 package neg;
@@ -46,6 +56,15 @@ public interface Greeter {
 
     @Marker(Marker.Holder.VALUE)
     String objectProperty();
+
+    @DefaultedMarker(Scope.MISSING)
+    String defaultedMissingEntry();
+
+    @NestedMarker(@Marker(Scope.MISSING))
+    String nestedMissingEntry();
+
+    @NestedArrayMarker({@Marker(Scope.A), @Marker(Scope.MISSING)})
+    String nestedArrayWithMissingEntry();
 }
 
 // FILE: neg/main.kt
@@ -58,6 +77,9 @@ class GreeterImpl : Greeter {
     override fun missingPackage(): String = "missingPackage"
     override fun nonEnumNestedField(): String = "nonEnumNestedField"
     override fun objectProperty(): String = "objectProperty"
+    override fun defaultedMissingEntry(): String = "defaultedMissingEntry"
+    override fun nestedMissingEntry(): String = "nestedMissingEntry"
+    override fun nestedArrayWithMissingEntry(): String = "nestedArrayWithMissingEntry"
 }
 
 class Delegator(delegate: Greeter) : Greeter by delegate

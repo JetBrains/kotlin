@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
@@ -17,6 +19,8 @@ import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.java.findJvmNameValue
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -50,6 +54,7 @@ internal fun FirSession.resolveExternalFieldValue(
     qualifierClassId: ClassId?,
     fieldName: String,
     currentPackage: FqName,
+    inheritingPackage: FqName? = null,
 ): MemberResolutionResult? {
     if (nullableSymbolProvider == null) return null
     val propertyName = Name.identifier(fieldName)
@@ -61,12 +66,22 @@ internal fun FirSession.resolveExternalFieldValue(
             ?.let(MemberResolutionResult::Constant)
     }
 
-    tryResolveAsClassMember(qualifierClassId, propertyName)?.let { return MemberResolutionResult.Constant(it) }
-    tryResolveAsCompanionMember(qualifierClassId, propertyName)?.let { return MemberResolutionResult.Constant(it) }
-    if (getClassDeclaredPropertySymbols(qualifierClassId, propertyName).any()) {
-        return MemberResolutionResult.NonConstantField
+    val classMembers = getClassDeclaredPropertySymbols(qualifierClassId, propertyName).filter {
+        it.rawStatus.visibility.isInheritedTo(inheritingPackage, qualifierClassId.packageFqName)
     }
+    for (symbol in classMembers) {
+        if (symbol is FirEnumEntrySymbol) return MemberResolutionResult.EnumEntry(qualifierClassId, propertyName)
+        symbol.tryExtractConstantValue(this)?.let { return MemberResolutionResult.Constant(it) }
+    }
+    tryResolveAsCompanionMember(qualifierClassId, propertyName, inheritingPackage)?.let { return MemberResolutionResult.Constant(it) }
+    if (classMembers.isNotEmpty()) return MemberResolutionResult.NonConstantField
     return null
+}
+
+internal fun Visibility.isInheritedTo(inheritingPackage: FqName?, declaringPackage: FqName): Boolean {
+    if (inheritingPackage == null) return true
+    if (this == Visibilities.Private) return false
+    return this != JavaVisibilities.PackageVisibility || inheritingPackage == declaringPackage
 }
 
 /**
@@ -95,22 +110,14 @@ private fun FirVariableSymbol<*>.jvmFacadeClassName(): String? {
     return file.findJvmNameValue() ?: (file.name.removeSuffix(".kt").capitalizeAsciiOnly() + "Kt")
 }
 
-/** Direct class member property (e.g. `object Foo { const val BAR = 1 }`, or a Java static field on a Kotlin class). */
-private fun FirSession.tryResolveAsClassMember(classId: ClassId, propertyName: Name): Any? {
-    if (nullableSymbolProvider == null) return null
-    for (symbol in getClassDeclaredPropertySymbols(classId, propertyName)) {
-        symbol.tryExtractConstantValue(this)?.let { return it }
-    }
-    return null
-}
-
 /** Companion-object property (e.g. `Foo.BAR` where `BAR` lives in `Foo.Companion`). */
 @OptIn(SymbolInternals::class)
-private fun FirSession.tryResolveAsCompanionMember(classId: ClassId, propertyName: Name): Any? {
+private fun FirSession.tryResolveAsCompanionMember(classId: ClassId, propertyName: Name, inheritingPackage: FqName?): Any? {
     val provider = nullableSymbolProvider ?: return null
     val classSymbol = provider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
     val companionClassId = classSymbol?.companionObjectSymbol?.classId ?: return null
     for (symbol in getClassDeclaredPropertySymbols(companionClassId, propertyName)) {
+        if (!symbol.rawStatus.visibility.isInheritedTo(inheritingPackage, companionClassId.packageFqName)) continue
         symbol.tryExtractConstantValue(this)?.let { return it }
     }
     return null
@@ -125,7 +132,9 @@ private fun FirSession.tryResolveAsCompanionMember(classId: ClassId, propertyNam
  */
 @OptIn(SymbolInternals::class)
 private fun FirVariableSymbol<*>.tryExtractConstantValue(session: FirSession): Any? {
-    (resolvedInitializer as? FirLiteralExpression)?.let { return it.value }
+    if (this is FirFieldSymbol) {
+        (resolvedInitializer as? FirLiteralExpression)?.let { return it.value }
+    }
     if (this is FirPropertySymbol && isConst) {
         return extractEvaluatedConstValue(fir, session)
     }
@@ -149,5 +158,5 @@ private fun extractEvaluatedConstValue(property: FirProperty, session: FirSessio
 internal fun FirSession.hasEnumEntry(classId: ClassId, entryName: String): Boolean {
     val classSymbol = cycleSafeClassLikeSymbol(classId) as? FirRegularClassSymbol ?: return false
     if (classSymbol.classKind != ClassKind.ENUM_CLASS) return false
-    return classSymbol.collectEnumEntries(this).any { it.name.asString() == entryName }
+    return getClassDeclaredPropertySymbols(classId, Name.identifier(entryName)).any { it is FirEnumEntrySymbol }
 }
