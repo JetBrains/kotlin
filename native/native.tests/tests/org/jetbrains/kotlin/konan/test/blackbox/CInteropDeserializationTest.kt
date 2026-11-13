@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExistingDependency
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.CompilationToolFailure
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -44,6 +47,7 @@ import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.metadata.KmAnnotation
+import kotlin.test.assertIs
 
 @Tag("cinterop")
 class CInteropDeserializationTest : AbstractNativeSimpleTest() {
@@ -83,7 +87,15 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
             }
         }
 
-        generateExecutable(includedLibrary = mainKlibDir, cinteropKlibDir)
+        val output = generateExecutable(includedLibrary = mainKlibDir, cinteropKlibDir)
+        assertIs<CompilationToolFailure>(output)
+        assertEquals(
+            """
+error: <cinterop_lib.def> @ CTypeDefinitions: Constructor 'InternalNativeProtobufApi.<init>' can not be called: No constructor found for symbol '/InternalNativeProtobufApi.<init>|?'
+error: <cinterop_lib.def> @ CTypeDefinitions: Unusable annotation 'InternalNativeProtobufApi.<init>' has been removed from class 'Point'
+error: <cinterop_lib.def> @ CTypeDefinitions: Unusable annotation 'InternalNativeProtobufApi.<init>' has been removed from companion object 'Point.Companion'
+        """.trimIndent(), output.loggedData.toolOutput.trim()
+        )
     }
 
     @Test
@@ -124,7 +136,7 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
             """.trimIndent()
         }
 
-        generateExecutable(includedLibrary = mainKlibDir, firstKlibDir, secondKlibDir)
+        generateExecutable(includedLibrary = mainKlibDir, firstKlibDir, secondKlibDir).assertSuccess()
     }
 
     @Test
@@ -157,7 +169,7 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
             """.trimIndent()
         }
 
-        generateExecutable(includedLibrary = mainKlibDir, firstKlibDir, secondKlibDir)
+        generateExecutable(includedLibrary = mainKlibDir, firstKlibDir, secondKlibDir).assertSuccess()
     }
 
     private inline fun compileToCInteropLibrary(
@@ -198,21 +210,19 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
         return libraryDir.toPath()
     }
 
-    private fun generateExecutable(includedLibrary: Path, vararg dependencies: Path) {
-        ExecutableCompilation(
-            settings = testRunSettings,
-            freeCompilerArgs = TestCompilerArgs.EMPTY,
-            sourceModules = emptyList(),
-            extras = NoTestRunnerExtras("main"),
-            dependencies = buildList {
-                this += ExistingDependency(KLIB(includedLibrary.toFile()), IncludedLibrary)
-                for (dependency in dependencies) {
-                    this += ExistingDependency(KLIB(dependency.toFile()), Library)
-                }
-            },
-            expectedArtifact = getExecutableArtifact(),
-        ).result.assertSuccess()
-    }
+    private fun generateExecutable(includedLibrary: Path, vararg dependencies: Path) = ExecutableCompilation(
+        settings = testRunSettings,
+        freeCompilerArgs = TestCompilerArgs.EMPTY,
+        sourceModules = emptyList(),
+        extras = NoTestRunnerExtras("main"),
+        dependencies = buildList {
+            this += ExistingDependency(KLIB(includedLibrary.toFile()), IncludedLibrary)
+            for (dependency in dependencies) {
+                this += ExistingDependency(KLIB(dependency.toFile()), Library)
+            }
+        },
+        expectedArtifact = getExecutableArtifact(),
+    ).result
 
     private val sourcesDir: File
         get() = buildDir.resolve("sources").apply { mkdirs() }
