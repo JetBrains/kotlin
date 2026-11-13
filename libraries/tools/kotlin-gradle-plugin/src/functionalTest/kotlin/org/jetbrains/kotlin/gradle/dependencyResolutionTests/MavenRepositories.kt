@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
+import dev.adamko.gradle.dev_publish.devMavenRepo
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
@@ -14,16 +15,10 @@ fun RepositoryHandler.mavenCentralCacheRedirector(): MavenArtifactRepository =
     maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
 
 /**
- * Resolves Kotlin build artifacts from `build/repo` via a standard `maven { url }` repository.
- *
- * The path is forwarded by the `functionalTest` task as `-DkotlinBuildRepo`. Both dev machines
- * and CI use this same repository, so resolution behaviour is identical in both environments.
+ * Resolves Kotlin build artifacts from the dev-publish repository via a standard `maven { url }` repository.
  */
-fun RepositoryHandler.kotlinBuildDeps(): MavenArtifactRepository {
-    val buildRepo = System.getProperty("kotlinBuildRepo")
-        ?: error("kotlinBuildRepo is not set; functionalTest task must provide it")
-    return maven { it.url = java.io.File(buildRepo).toURI() }
-}
+fun RepositoryHandler.kotlinBuildDeps(): MavenArtifactRepository =
+    maven { it.url = devMavenRepo().toUri() }
 
 fun Project.configureRepositoriesForTests() {
     allprojects {
