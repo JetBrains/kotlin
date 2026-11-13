@@ -115,7 +115,7 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session, expandTypeAliases = true)
+    private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session, expandTypeAliases = All)
 
     @PrivateForInline
     var currentFile: FirFile? = initialCurrentFile

@@ -20,6 +20,12 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 abstract class FirTypeResolver : FirSessionComponent {
+    enum class TypeExpansionMode {
+        None,
+        UnionComponentsOnly,
+        All,
+    }
+
     abstract fun resolveType(
         typeRef: FirTypeRef,
         configuration: TypeResolutionConfiguration,
@@ -28,7 +34,7 @@ abstract class FirTypeResolver : FirSessionComponent {
         isOperandOfIsOperator: Boolean,
         resolveDeprecations: Boolean,
         supertypeSupplier: SupertypeSupplier,
-        expandTypeAliases: Boolean = true,
+        expandTypeAliases: TypeExpansionMode = All,
     ): FirTypeResolutionResult
 
     abstract fun resolveTypeOnDoubleColonLhs(

@@ -142,7 +142,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
 
         val typeResolverTransformer: FirSpecificTypeResolverTransformer by lazy(LazyThreadSafetyMode.NONE) {
-            FirSpecificTypeResolverTransformer(session, expandTypeAliases = expandTypeAliases)
+            FirSpecificTypeResolverTransformer(session, expandTypeAliases = if (expandTypeAliases) All else None)
         }
 
         override val callCompleter: FirCallCompleter by lazy(LazyThreadSafetyMode.NONE) { FirCallCompleter(transformer, this) }

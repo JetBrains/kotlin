@@ -375,7 +375,7 @@ open class FirSupertypeResolverVisitor(
 
         supertypeComputationSession.startComputingSupertypes(classLikeDeclaration)
 
-        val resolvedTypesRefs = useSpecificTypeResolverOn(classLikeDeclaration, resolveSuperTypeRefs)
+        val resolvedTypesRefs = useSpecificTypeResolverOn(classLikeDeclaration, expandUnionComponents = false, resolveSuperTypeRefs)
 
         supertypeComputationSession.storeSupertypes(classLikeDeclaration, resolvedTypesRefs)
         return resolvedTypesRefs
@@ -384,6 +384,7 @@ open class FirSupertypeResolverVisitor(
     @OptIn(PrivateForInline::class)
     internal fun <T> useSpecificTypeResolverOn(
         classLikeDeclaration: FirClassLikeDeclaration,
+        expandUnionComponents: Boolean,
         resolveSuperTypeRefs: (FirSpecificTypeResolverTransformer, TypeResolutionConfiguration) -> T,
     ): T {
         val scopes = prepareScopes(classLikeDeclaration, forStaticNestedClass = false)
@@ -391,8 +392,7 @@ open class FirSupertypeResolverVisitor(
         val transformer = FirSpecificTypeResolverTransformer(
             session,
             supertypeSupplier = supertypeComputationSession.supertypesSupplier,
-            // They will be unwrapped later during this phase.
-            expandTypeAliases = false,
+            expandTypeAliases = if (expandUnionComponents) UnionComponentsOnly else None,
         )
 
         val newUseSiteFile =
@@ -824,8 +824,8 @@ open class SupertypeComputationSession {
                     val componentType =
                         supertypeComponent.lowerBoundIfFlexible() as? ConeClassLikeType ?: return@forEachUnionComponentOrSelf
                     // rhs value is required only for the Analysis API, as in the CLI mode there are no invisible dependencies
-                    val supertypeFir = componentType.lookupTag.toSymbol(session)?.fir
-                        ?: componentType.lookupTag.toSymbol(classLikeDeclaration.moduleData.session)?.fir
+                    val supertypeFir = componentType.abbreviatedTypeOrSelf.toClassLikeSymbol(session)?.fir
+                        ?: componentType.abbreviatedTypeOrSelf.toClassLikeSymbol(classLikeDeclaration.moduleData.session)?.fir
                     checkIsInLoop(supertypeFir, isSubtypingInvolved, wereTypeArgumentsInvolved)
                 }
 
@@ -873,7 +873,10 @@ open class SupertypeComputationSession {
                         }
                         if (originalTypeRef !is FirResolvedTypeRef) {
                             superTypeNeedsUpdate = true
-                            supertypeResolver.useSpecificTypeResolverOn(classLikeDeclaration) { transformer, configuration ->
+                            supertypeResolver.useSpecificTypeResolverOn(
+                                classLikeDeclaration,
+                                expandUnionComponents = true
+                            ) { transformer, configuration ->
                                 // Unresolve nested type refs because arguments in `List<String | TA>` are resolved by FirSpecificTypeResolverTransformer.
                                 val unresolvedTypeRef = FirUnresolveTypeRefsTransformer.transformTypeRef(originalTypeRef, null)
                                 transformer.transformTypeRef(unresolvedTypeRef, configuration)
