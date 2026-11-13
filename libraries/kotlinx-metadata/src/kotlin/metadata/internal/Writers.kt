@@ -97,6 +97,7 @@ private fun WriteContext.writeType(kmType: KmType): ProtoBuf.Type.Builder {
 
     extensions.forEach { it.writeTypeExtensions(kmType, t, this) }
     kmType.richErrors.forEach { t.addRichError(writeType(it).build()) }
+    kmType.unionTypeAnnotations.forEach { t.addUnionTypeAnnotation(it.writeAnnotation(strings).build()) }
 
     if (kmType.isNullable) {
         t.nullable = true

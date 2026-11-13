@@ -1,3 +1,33 @@
+// Ann1.class
+// ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+public final annotation class Ann1 : kotlin/Annotation {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// Ann2.class
+// ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+public final annotation class Ann2 : kotlin/Annotation {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// Ann3.class
+// ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+public final annotation class Ann3 : kotlin/Annotation {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
 // Error1.class
 // ------------------------------------------
 public final error class Error1 : kotlin/RichError {
@@ -58,6 +88,11 @@ package {
 
   // signature: foobar()Ljava/lang/Object;
   public final fun foobar(): kotlin/Nothing | Error1 | Error2
+
+  // field: annotatedType:Ljava/lang/Object;
+  // getter: getAnnotatedType()Ljava/lang/Object;
+  public final val annotatedType: @Ann1 (@Ann2 kotlin/String | @Ann3 Error1)
+    public final get
 
   // module name: test-module
 }

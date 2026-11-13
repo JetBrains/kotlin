@@ -626,12 +626,14 @@ public final class kotlin/metadata/KmType {
 	public final fun getFlexibleTypeUpperBound ()Lkotlin/metadata/KmFlexibleTypeUpperBound;
 	public final fun getOuterType ()Lkotlin/metadata/KmType;
 	public final fun getRichErrors ()Ljava/util/List;
+	public final fun getUnionTypeAnnotations ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun setAbbreviatedType (Lkotlin/metadata/KmType;)V
 	public final fun setClassifier (Lkotlin/metadata/KmClassifier;)V
 	public final fun setFlexibleTypeUpperBound (Lkotlin/metadata/KmFlexibleTypeUpperBound;)V
 	public final fun setOuterType (Lkotlin/metadata/KmType;)V
 	public final fun setRichErrors (Ljava/util/List;)V
+	public final fun setUnionTypeAnnotations (Ljava/util/List;)V
 }
 
 public final class kotlin/metadata/KmTypeAlias {

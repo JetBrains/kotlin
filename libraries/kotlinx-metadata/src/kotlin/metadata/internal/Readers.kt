@@ -356,6 +356,7 @@ private fun ProtoBuf.Type.toKmType(c: ReadContext): KmType {
 
     c.extensions.forEach { it.readTypeExtensions(v, this, c) }
     v.richErrors = richErrors(c.types).map { it.toKmType(c) }
+    v.unionTypeAnnotations = unionTypeAnnotationList.map { it.readAnnotation(c.strings) }
 
     return v
 }

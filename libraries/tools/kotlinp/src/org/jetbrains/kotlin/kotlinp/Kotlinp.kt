@@ -441,6 +441,11 @@ abstract class Kotlinp(protected val settings: Settings) {
         val abbreviatedType = type.abbreviatedType
         val platformTypeUpperBound = type.flexibleTypeUpperBound?.let { renderFlexibleTypeUpperBound(it) }
 
+        if (type.unionTypeAnnotations.isNotEmpty()) {
+            printer.appendAnnotations(type.unionTypeAnnotations, onePerLine = false)
+            printer += "("
+        }
+
         printer += printString {
             appendAnnotations(getAnnotations(type), onePerLine = false)
             appendFlags(
@@ -479,6 +484,10 @@ abstract class Kotlinp(protected val settings: Settings) {
             }
 
             type.richErrors.forEach { append(" | ").appendType(it) }
+        }
+
+        if (type.unionTypeAnnotations.isNotEmpty()) {
+            printer += ")"
         }
     }
 

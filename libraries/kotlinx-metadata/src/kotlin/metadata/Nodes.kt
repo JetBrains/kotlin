@@ -730,6 +730,16 @@ public class KmType internal constructor(
     public var richErrors: List<KmType> = emptyList()
 
     /**
+     * If this type has rich errors, this list contains annotations applied to the entire union. For example:
+     *
+     *     @Ann1 (@Ann2 T | @Ann3 E1 | @Ann4 E2)
+     *
+     * Here, `unionTypeAnnotations` will contain `@Ann1`.
+     */
+    @ExperimentalRichErrors
+    public var unionTypeAnnotations: List<KmAnnotation> = emptyList()
+
+    /**
      * Determines whether this KmType is equal to the given [other].
      *
      * KmTypes are compared using structural equality, i.e., two objects are considered equal
