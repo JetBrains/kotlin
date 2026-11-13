@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.gradle.ecosystem
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.ecosystem.internal.KotlinEcosystemExtensionImpl
 
 @Suppress("unused")
-class KotlinEcosystemPlugin : Plugin<Settings> {
+abstract class KotlinEcosystemPlugin internal constructor() : Plugin<Settings> {
 
     private val logger = Logging.getLogger("KotlinEcosystemPlugin")
 
