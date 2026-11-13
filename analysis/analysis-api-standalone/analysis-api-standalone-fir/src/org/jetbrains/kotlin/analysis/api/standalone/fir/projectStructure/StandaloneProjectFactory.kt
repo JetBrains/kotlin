@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.psi.KtPlatformInterface
@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.utils.topologicalSort
 import org.picocontainer.PicoContainer
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.isDirectory
 
 @OptIn(StandaloneWorkaroundApi::class)
 @KaImplementationDetail
@@ -432,6 +433,12 @@ object StandaloneProjectFactory {
     ): GlobalSearchScope =
         createTrieLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
 
+    /**
+     * Finds the virtual files of the library [roots]: a JAR or KLIB archive in the JAR file system, a JDK module given as
+     * `<JDK home>!/<module name>` in the JRT file system, and any other root, such as a directory with class files or an unpacked KLIB,
+     * in the local file system. An archive is recognized by the `.jar` or `.klib` extension, but a directory with such a name, e.g. an
+     * unpacked KLIB in `library.klib`, is not an archive. Roots that can't be found are skipped.
+     */
     fun getVirtualFilesForLibraryRoots(
         roots: Collection<Path>,
         environment: CoreApplicationEnvironment,
@@ -439,7 +446,7 @@ object StandaloneProjectFactory {
         return roots.mapNotNull { path ->
             val pathString = FileUtil.toSystemIndependentName(path.toAbsolutePath().toString())
             when {
-                pathString.endsWith(JAR_PROTOCOL) || pathString.endsWith(KLIB_FILE_EXTENSION) -> {
+                (pathString.endsWith(".$JAR_PROTOCOL") || pathString.endsWith(KLIB_FILE_EXTENSION_WITH_DOT)) && !path.isDirectory() -> {
                     environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
                 }
 
