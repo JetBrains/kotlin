@@ -100,24 +100,24 @@ CheckKt
 jtree:
 FromIdentityLibrary [final, public], superclass IdentityBase [abstract, public]
 FromMiddle [final, public], superclass Middle [abstract, public]
-FromValueLibrary [final, public], superclass ValueBase [abstract, public, value]
+FromValueLibrary [final, public, value], superclass ValueBase [abstract, public, value]
 Identity [final, public]
 Interface [abstract, public]
 Middle [abstract, public], superclass IdentityBase [abstract, public]
-Money [final, public]
-Shape [abstract, public]
-Square [final, public], superclass Shape [abstract, public]
+Money [final, public, value]
+Shape [abstract, public, value]
+Square [final, public, value], superclass Shape [abstract, public, value]
 
 direct:
 FromIdentityLibrary [final, public], superclass IdentityBase [abstract, public]
 FromMiddle [final, public], superclass Middle [abstract, public]
-FromValueLibrary [final, public], superclass ValueBase [abstract, public, value]
+FromValueLibrary [final, public, value], superclass ValueBase [abstract, public, value]
 Identity [final, public]
 Interface [abstract, public]
 Middle [abstract, public], superclass IdentityBase [abstract, public]
-Money [final, public]
-Shape [abstract, public]
-Square [final, public], superclass Shape [abstract, public]
+Money [final, public, value]
+Shape [abstract, public, value]
+Square [final, public, value], superclass Shape [abstract, public, value]
 
 noValhalla:
 NoValhalla [final, public], superclass NoValhallaBase [abstract, public]

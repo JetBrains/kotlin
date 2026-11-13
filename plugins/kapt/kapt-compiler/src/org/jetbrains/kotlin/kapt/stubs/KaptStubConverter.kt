@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.kapt.stubs
 
 import com.sun.tools.javac.code.Flags
+import com.sun.tools.javac.code.Source
 import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
@@ -31,7 +32,10 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -82,6 +86,7 @@ import org.jetbrains.kotlin.kapt.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt.stubs.SignatureParser.ClassGenericSignature
 import org.jetbrains.kotlin.kapt.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.ACC_IDENTITY
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -192,6 +197,43 @@ abstract class ParameterizedKaptStubConverter<
     private val correctErrorTypes = kaptContext.options[KaptFlag.CORRECT_ERROR_TYPES]
     private val strictMode = kaptContext.options[KaptFlag.STRICT]
     private val stripMetadata = kaptContext.options[KaptFlag.STRIP_METADATA]
+
+    /**
+     * The javac flag of a value class (JEP 401), or `0` if no stub declares a value class: see [computeValueClassFlag].
+     */
+    protected val valueClassFlag: Long = computeValueClassFlag()
+
+    /**
+     * Value classes are declared in the stubs only if both sides have them:
+     * - the class files of the module, so the class files of the JVM target of the compilation with its JVM preview features. In other
+     *   class files, `ACC_IDENTITY` is `ACC_SUPER`, which means nothing;
+     * - javac, with its source level and with preview features enabled while they're a preview feature (as in JDK 28). javac is asked
+     *   instead of checking the JDK version or the `--enable-preview` option, which won't be needed once they're a final feature.
+     *
+     * `Flags.VALUE_CLASS`, `Source.Feature` and `Preview` are absent from the JDK 8 API kapt is compiled against, so they're used
+     * reflectively; the bit of `Flags.VALUE_CLASS` means another flag in older javac versions. If the flag is present, javac has
+     * `Source.Feature` and `Preview`.
+     */
+    private fun computeValueClassFlag(): Long {
+        val configuration = kaptContext.configuration
+        val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
+        if (!isJvmTargetValhallaCompatible(jvmTarget, configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW))) return 0L
+
+        val flag = try {
+            Flags::class.java.getField("VALUE_CLASS").getInt(null).toLong()
+        } catch (_: NoSuchFieldException) {
+            return 0L
+        }
+        val context = kaptContext.context
+        val featureClass = Class.forName("com.sun.tools.javac.code.Source\$Feature")
+        val feature = featureClass.enumConstants.find { (it as Enum<*>).name == "VALUE_CLASSES" } ?: return 0L
+        if (featureClass.getMethod("allowedInSource", Source::class.java).invoke(feature, Source.instance(context)) != true) return 0L
+
+        val previewClass = Class.forName("com.sun.tools.javac.code.Preview")
+        val preview = previewClass.getMethod("instance", Context::class.java).invoke(null, context)
+        val isPreview = previewClass.getMethod("isPreview", featureClass).invoke(preview, feature) == true
+        return if (!isPreview || previewClass.getMethod("isEnabled").invoke(preview) == true) flag else 0L
+    }
 
     private val typeMapper = KaptTypeMapper
 
@@ -363,7 +405,7 @@ abstract class ParameterizedKaptStubConverter<
 
         val modifiers = convertModifiers(
             clazz,
-            flags.toLong(),
+            flags.toLong() or getValueClassFlag(clazz),
             if (isEnum) ElementKind.ENUM else ElementKind.CLASS,
             packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations, declaration.annotations
         )
@@ -722,6 +764,12 @@ abstract class ParameterizedKaptStubConverter<
         val containingClassForOuterClass = findContainingClassNode(outerClass) ?: return false
         return doesInnerClassNameConflictWithOuter(clazz, containingClassForOuterClass)
     }
+
+    // A Valhalla value class (JEP 401) is a class without ACC_IDENTITY, if the class files of the module can have value classes, which
+    // [valueClassFlag] accounts for. The class file is checked instead of the declaration, as a Kotlin value class can be compiled as an
+    // identity class, e.g., without Valhalla value classes or because of its superclass.
+    private fun getValueClassFlag(clazz: ClassNode): Long =
+        if (clazz.access and (Opcodes.ACC_INTERFACE or ACC_IDENTITY) == 0) valueClassFlag else 0L
 
     private fun getClassAccessFlags(clazz: ClassNode, irClass: IrClass): Int {
         var access = clazz.access
@@ -1324,7 +1372,7 @@ abstract class ParameterizedKaptStubConverter<
 
         val flags = when (kind) {
             ElementKind.ENUM -> access and CLASS_MODIFIERS and Opcodes.ACC_ABSTRACT.inv().toLong()
-            ElementKind.CLASS -> access and CLASS_MODIFIERS
+            ElementKind.CLASS -> access and (CLASS_MODIFIERS or valueClassFlag)
             ElementKind.METHOD if isDefaultInterfaceMethod(containingClass, access.toInt()) ->
                 (access and METHOD_MODIFIERS) or Flags.DEFAULT
             ElementKind.METHOD -> access and METHOD_MODIFIERS

@@ -29,20 +29,47 @@ private class PrettyWithWorkarounds(
 
         // Flags.RECORD, absent from the JDK 11 API kapt is compiled against
         private const val RECORD = 1L shl 61
+
+        // Flags.VALUE_CLASS, absent from the JDK API kapt is compiled against; its bit is another flag in older javac versions
+        private val VALUE_CLASS: Long = try {
+            Flags::class.java.getField("VALUE_CLASS").getInt(null).toLong()
+        } catch (_: NoSuchFieldException) {
+            0L
+        }
     }
 
     // Pretty prints a record as a class with its components as fields, so the record header is printed here
     private var pendingRecord: JCClassDecl? = null
     private var pendingRecordComponents: List<JCVariableDecl> = emptyList()
 
+    // Pretty prints the flag of a value class as `value_class`, so the `value` modifier is printed here
+    private var pendingValueClass: JCClassDecl? = null
+
     override fun print(s: Any) {
-        val record = pendingRecord
-        // JDK 21+ prints "class " and the name separately, JDK 17 in one call
         val text = s.toString()
-        out.write(if (record != null && (text == "class " || text == "class ${record.name}")) "record" + text.removePrefix("class") else text)
+        // JDK 21+ prints "class " and the name separately, JDK 17 in one call
+        fun isClassKeyword(tree: JCClassDecl?) = tree != null && (text == "class " || text == "class ${tree.name}")
+
+        val valueModifier = if (isClassKeyword(pendingValueClass)) "value " else ""
+        if (valueModifier.isNotEmpty()) pendingValueClass = null
+        out.write(valueModifier + if (isClassKeyword(pendingRecord)) "record" + text.removePrefix("class") else text)
     }
 
     override fun visitClassDef(tree: JCClassDecl) {
+        val flags = tree.mods.flags
+        if ((flags and VALUE_CLASS) == 0L) return visitClassOrRecordDef(tree)
+
+        tree.mods.flags = flags and VALUE_CLASS.inv()
+        pendingValueClass = tree
+        try {
+            visitClassOrRecordDef(tree)
+        } finally {
+            tree.mods.flags = flags
+            pendingValueClass = null
+        }
+    }
+
+    private fun visitClassOrRecordDef(tree: JCClassDecl) {
         if ((tree.mods.flags and RECORD) == 0L) return super.visitClassDef(tree)
 
         val defs = tree.defs
