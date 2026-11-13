@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeArgumentsForOuterClass
 import org.jetbrains.kotlin.fir.syntax.withSyntax
-import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsExplicitReceiver
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
 import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
@@ -44,8 +43,10 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkOutermostPackageParenthesized(expression: FirResolvedQualifier): Boolean {
         val containingElement = context.secondToLastContainer ?: return false
-        if (expression.isExplicitReceiverOf(containingElement) && containingElement.source.hasUnwrappableAsExplicitReceiver()) {
-            reportParenthesizedPackageQualifier(containingElement.source, onReceiver = true)
+        if (!expression.isExplicitReceiverOf(containingElement)) return false
+        val containingSource = containingElement.source ?: return false
+        if (containingSource.hasUnwrappableAsExplicitReceiver()) {
+            reportParenthesizedPackageQualifier(containingSource, onReceiver = true)
             return true
         }
         return false
@@ -153,4 +154,12 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
                 else SourceElementPositioningStrategies.DEFAULT,
         )
     }
+
+    /**
+     * Returns whether this is a dot-qualified expression whose explicit receiver is parenthesized, labeled or annotated,
+     * as in `(a).b`.
+     */
+    context(checker: CheckerContext)
+    private fun KtSourceElement.hasUnwrappableAsExplicitReceiver(): Boolean =
+        withSyntax { findExplicitReceiverOfDotQualifiedSource() }?.let { it.syntaxId in KotlinSyntaxIdSets.UNWRAPPABLE_TOKEN_TYPES } == true
 }
