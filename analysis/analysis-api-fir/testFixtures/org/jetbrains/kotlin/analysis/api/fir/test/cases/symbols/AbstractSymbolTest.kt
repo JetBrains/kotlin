@@ -391,6 +391,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                 }
 
                 val restored = pointer?.let { restoreSymbol(it, disablePsiBasedLogic) }
+                val actualRender = restored?.let { renderSymbolForComparison(it, directives) }
                 if (restored != null) {
                     if (psiOnly && disablePsiBasedLogic) {
                         fail(
@@ -399,12 +400,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         )
                     }
 
-                    restoredPointers += pointer
+                    // A pointer that restores another symbol is already recorded in the output, so it isn't checked like a restored one
+                    if (actualRender == expectedRender) {
+                        restoredPointers += pointer
+                    }
                 } else {
                     addNonRestoredSymbol()
                 }
-
-                val actualRender = restored?.let { renderSymbolForComparison(it, directives) }
 
                 when {
                     shouldBeRendered -> actualRender ?: expectedRender
