@@ -25,5 +25,11 @@ internal object TestDataManagerOption {
     const val TEST_CLASS_PATTERN = "$testDataManagerOptionsPrefix.testClassPattern"
     const val GOLDEN_ONLY = "$testDataManagerOptionsPrefix.goldenOnly"
     const val INCREMENTAL = "$testDataManagerOptionsPrefix.incremental"
+    const val RUN_ID = "$testDataManagerOptionsPrefix.runId"
+    const val RERUN_ID = "$testDataManagerOptionsPrefix.rerunId"
+    const val OUTPUT = "$testDataManagerOptionsPrefix.output"
     const val PROJECT_NAME = "$testDataManagerOptionsPrefix.projectName"
+    const val PROJECT_DIR = "$testDataManagerOptionsPrefix.projectDir"
+    const val ROOT_DIR = "$testDataManagerOptionsPrefix.rootDir"
+    const val REPORT_DIR = "$testDataManagerOptionsPrefix.reportDir"
 }

@@ -39,6 +39,21 @@ enum class TestDataManagerMode {
 
         private val isUnderTeamCityOverrideThreadLocal = ThreadLocal<Boolean?>()
 
+        /**
+         * Whether [CHECK] was requested explicitly (by `checkTestData`), as opposed to the [CHECK] fallback
+         * of [currentMode] in plain test runs, where the mode is not set at all.
+         */
+        internal val isExplicitCheck: Boolean
+            get() = isExplicitCheckOverride ?: (currentModeOrNull == CHECK)
+
+        @get:TestOnly
+        @set:TestOnly
+        internal var isExplicitCheckOverride: Boolean?
+            get() = isExplicitCheckOverrideThreadLocal.get()
+            set(value) = isExplicitCheckOverrideThreadLocal.set(value)
+
+        private val isExplicitCheckOverrideThreadLocal = ThreadLocal<Boolean?>()
+
         val isUnderIde: Boolean
             get() = System.getProperty("idea.active") != null
     }

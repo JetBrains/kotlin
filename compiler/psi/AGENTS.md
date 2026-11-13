@@ -135,25 +135,19 @@ All concrete `KtElement` classes must be covered by tests in `compiler/psi/psi-i
 
 ## Working with Test Data
 
-PSI test data (`compiler/psi/psi-impl/testData/`) is managed by the same test data manager as the Analysis API, since the
-`test-data-manager` convention is applied to `:compiler:psi:psi-impl`. When modifying test data files or running generated tests
-(`*Generated`) that compare output against `.txt` files, use `updateTestData` (to rewrite files) or `checkTestData` (to verify only)
-instead of standard test commands.
+PSI test data (`compiler/psi/psi-impl/testData/`) is managed by the same test data manager as the Analysis API: check and
+update it with the wrapper script, not with standard test commands.
 
 ```bash
-# Update all PSI test data
-./gradlew :compiler:psi:psi-impl:updateTestData
-
-# Update by directory (preferred for iteration)
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=compiler/psi/psi-impl/testData/psi/annotation/
+python3 analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation/
 ```
 
-Note that a single `.kt` file under `testData/psi/` feeds several suites across two modules: the PSI tree (`.txt`) from
+A single `.kt` file under `testData/psi/` feeds several suites across two modules: the PSI tree (`.txt`) from
 `:compiler:psi:psi-impl` (`PsiParsingTest`), plus source stubs (`.stubs.txt`) and compiled stubs (`.compiled.stubs.txt`,
 `.knm.compiled.stubs.txt`) together with the decompiled text (`.decompiledText.txt`, `.knm.decompiledText.txt`) from `:analysis:stubs`.
-Prefer a path-filtered `updateTestData` from the repo root so that every affected module is picked up.
+The script runs every module with tests under the path, so pass the path rather than a module.
 
-→ READ [`analysis/AGENTS.md`](../../analysis/AGENTS.md) ("Working with Test Data") for the full set of options and the rationale
+→ READ [`analysis/AGENTS.md`](../../analysis/AGENTS.md) ("Working with Test Data") for how to read the result
 
 ## Detailed Documentation
 

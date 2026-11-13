@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -47,12 +48,15 @@ import org.gradle.process.CommandLineArgumentProvider
  * All options are passed as Gradle properties; they are forwarded to the test runner as `-D<key>`
  * system properties at execution time.
  *
- * | Property                                                              | Effect                                          |
- * |-----------------------------------------------------------------------|-------------------------------------------------|
- * | `org.jetbrains.kotlin.testDataManager.options.testDataPath`           | Comma-separated test data paths (dir or file)   |
- * | `org.jetbrains.kotlin.testDataManager.options.testClassPattern`       | Regex pattern for test class names              |
- * | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`             | Run only golden tests (empty variant chain)     |
- * | `org.jetbrains.kotlin.testDataManager.options.incremental`            | Only run variant tests for changed golden paths |
+ * | Property                                                        | Effect                                                            |
+ * |-----------------------------------------------------------------|-------------------------------------------------------------------|
+ * | `org.jetbrains.kotlin.testDataManager.options.testDataPath`     | Comma-separated repository-relative test data paths (dir or file) |
+ * | `org.jetbrains.kotlin.testDataManager.options.testClassPattern` | Regex pattern for test class names                                |
+ * | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`       | Run only golden tests (empty variant chain)                       |
+ * | `org.jetbrains.kotlin.testDataManager.options.incremental`      | Only run variant tests for changed golden paths                   |
+ * | `org.jetbrains.kotlin.testDataManager.options.runId`            | Id of the run, names the report (generated if not set)            |
+ * | `org.jetbrains.kotlin.testDataManager.options.rerunId`          | Id of the run this one reruns; its report is kept                 |
+ * | `org.jetbrains.kotlin.testDataManager.options.output`           | `verbose` prints every group, pass and timing                     |
  *
  * @see CheckTestDataModuleTask
  * @see UpdateTestDataModuleTask
@@ -66,7 +70,7 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
     @get:Internal
     protected abstract val mode: Mode
 
-    /** Comma-separated test data paths (directory or file) to filter tests. */
+    /** Comma-separated repository-relative test data paths (directory or file) to filter tests. */
     @get:[Input Optional]
     abstract val testDataPath: Property<String>
 
@@ -81,6 +85,28 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
     /** When `true`, only runs variant tests for golden paths that changed (effective in update mode). */
     @get:[Input Optional]
     abstract val incremental: Property<Boolean>
+
+    /**
+     * Id of the run, the name of the report `build/test-data-manager/<runId>.json`. A caller running several modules
+     * passes one id to all of them; without it, the runner generates a UUIDv7 at execution time.
+     */
+    @get:[Input Optional]
+    abstract val runId: Property<String>
+
+    /** Id of the earlier run this one reruns: its report survives the rotation of old reports. */
+    @get:[Input Optional]
+    abstract val rerunId: Property<String>
+
+    /** `verbose` prints the progress of every group and pass and the timings; the default output is compact. */
+    @get:[Input Optional]
+    abstract val output: Property<String>
+
+    /**
+     * Where the runner writes its reports. `@Internal`: declaring it as an output would let Gradle consider the task
+     * UP-TO-DATE, while it has to run every time.
+     */
+    @get:Internal
+    abstract val reportDirectory: DirectoryProperty
 
     /**
      * Environment variables inherited from the carrier `Test` task.
@@ -121,6 +147,10 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
         forwardOption(TestDataManagerOption.TEST_CLASS_PATTERN, testClassPattern)
         forwardOption(TestDataManagerOption.GOLDEN_ONLY, goldenOnly)
         forwardOption(TestDataManagerOption.INCREMENTAL, incremental)
+        forwardOption(TestDataManagerOption.RUN_ID, runId)
+        forwardOption(TestDataManagerOption.RERUN_ID, rerunId)
+        forwardOption(TestDataManagerOption.OUTPUT, output)
+        systemProperty(TestDataManagerOption.REPORT_DIR, reportDirectory.get().asFile.absolutePath)
         super.exec()
     }
 

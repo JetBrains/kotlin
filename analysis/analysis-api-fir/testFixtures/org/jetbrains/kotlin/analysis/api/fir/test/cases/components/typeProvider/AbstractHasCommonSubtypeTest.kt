@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import kotlin.io.path.extension
 
 abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val ktFile = mainFile ?: mainModule.ktFiles.first()
         val errors = mutableListOf<String>()
-        val originalText = ktFile.text
         val actualTextBuilder = StringBuilder()
         analyzeForTest(ktFile) {
             val visitor = object : KtTreeVisitorVoid() {
@@ -84,10 +84,7 @@ abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
         if (errors.isNotEmpty()) {
             testServices.assertions.fail { errors.joinToString("\n") }
         }
-        val actualText = actualTextBuilder.toString()
-        if (actualText != originalText) {
-            testServices.assertions.assertEqualsToFile(testDataPath, actualText)
-        }
+        assertEqualsToTestOutputFile(actualTextBuilder.toString(), extension = testDataPath.extension)
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {

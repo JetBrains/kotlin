@@ -48,6 +48,9 @@ internal class MuteInTestWatcher : TestWatcher {
         context: ExtensionContext,
         cause: Throwable
     ) {
+        // `checkTestData` and `updateTestData` report every failure themselves; muting is not what they are run for
+        if (System.getProperty(TEST_DATA_MANAGER_MODE_PROPERTY) != null) return
+
         val testClass = context.testClassNullable
         val testMethod = context.testMethodNullable
         if (testClass != null &&
@@ -66,6 +69,12 @@ internal class MuteInTestWatcher : TestWatcher {
         }
     }
 }
+
+/**
+ * Set by the `checkTestData` and `updateTestData` tasks (`test-data-manager-convention`) for the test data manager runner,
+ * which this module doesn't depend on.
+ */
+private const val TEST_DATA_MANAGER_MODE_PROPERTY = "org.jetbrains.kotlin.testDataManager.options.mode"
 
 private fun getMethodKey(testMethod: Method, displayName: String): String = testMethod.name + if (displayName == "${testMethod.name}()") "" else "[${displayName}]"
 

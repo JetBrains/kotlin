@@ -34,6 +34,6 @@ abstract class CheckTestDataModuleTask : AbstractTestDataModuleTask() {
 
     init {
         description = "Checks test data files in this module and fails on mismatches without modifying them. " +
-                "Options via -P${testDataManagerOptionsPrefix}.{testDataPath,testClassPattern,goldenOnly,incremental}."
+                "Options via -P${testDataManagerOptionsPrefix}.{testDataPath,testClassPattern,goldenOnly,incremental,runId,rerunId,output}."
     }
 }
