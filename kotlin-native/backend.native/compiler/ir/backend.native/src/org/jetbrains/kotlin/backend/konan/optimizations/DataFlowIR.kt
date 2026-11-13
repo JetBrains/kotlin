@@ -45,7 +45,9 @@ internal object DataFlowIR {
             val isAbstract: Boolean,
             val hasFinalizer: Boolean,
             val module: Module?,
-            val irClass: IrClass?,
+            // Types deserialized from a cache are created without IR; the declaration is attached
+            // later, when the type gets resolved from IR (see SymbolTable.mapClassReferenceType).
+            var irClass: IrClass?,
             val name: String?
     ) {
         val superTypes = mutableListOf<Type>()
@@ -553,7 +555,9 @@ internal object DataFlowIR {
                 // Nothing is known about such a class.
                 if (!irClass.isExported) return Type.Virtual
 
+                // Attach the IR declaration to the deserialized type - the analyses might still need it.
                 return externalPublicTypes[computeHash()]
+                        ?.also { it.irClass = irClass }
                         ?: error("Class ${irClass.render()} is not found")
             }
 

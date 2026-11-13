@@ -664,7 +664,8 @@ internal object DFGSerializer {
                 typeMap[type] = id
                 // Only the types declared in this module are serialized along with their intestines
                 // (super types, vtable, itable), so close over what the intestines reference.
-                if (type is DataFlowIR.Type.Private || (type is DataFlowIR.Type.Public && type.irClass != null)) {
+                // Note: the only locally created types with no IR are the primitives, which have no intestines.
+                if (type.module === symbolTable.module && type.irClass != null) {
                     type.superTypes.forEach { mapType(it) }
                     type.vtable.forEach { mapFunctionSymbol(it) }
                     type.itable.values.forEach { vtable -> vtable.forEach { mapFunctionSymbol(it) } }
@@ -817,18 +818,20 @@ internal object DFGSerializer {
                         }
 
                         is DataFlowIR.Type.Public -> when {
-                            type.irClass != null -> {
+                            type.module !== symbolTable.module -> {
+                                // A type from another module - serialize only a reference to it.
+                                Type.external(type.hash, buildTypeBase(type))
+                            }
+                            type.irClass == null -> {
+                                // The only locally created types with no IR are the primitives.
+                                Type.primitive(PrimitiveBinaryType.entries[type.hash.toInt()])
+                            }
+                            else -> {
                                 val prevType = publicTypesMap[type.hash]
                                 if (prevType != null)
                                     error("Exported types name clash ${type.hash}: ${prevType.name} and ${type.name}")
                                 publicTypesMap[type.hash] = type
                                 Type.public(type.hash, buildTypeIntestines(type))
-                            }
-                            type.hash >= 0 && type.hash < PrimitiveBinaryType.entries.size -> {
-                                Type.primitive(PrimitiveBinaryType.entries[type.hash.toInt()])
-                            }
-                            else -> {
-                                Type.external(type.hash, buildTypeBase(type))
                             }
                         }
 

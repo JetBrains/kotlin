@@ -1887,11 +1887,12 @@ internal object DevirtualizationAnalysis {
                                     receiverTypes.size == 1 -> {
                                         // It is faster to just compare type infos instead of a full type check.
                                         val receiverType = receiverTypes[0]
+                                        val receiverClass = receiverType.irClass!!
                                         val expectedTypeInfo = IrClassReferenceImpl(
                                                 startOffset, endOffset,
                                                 symbols.nativePtrType,
-                                                receiverType.irClass!!.symbol,
-                                                receiverType.irClass.defaultType
+                                                receiverClass.symbol,
+                                                receiverClass.defaultType
                                         )
                                         irCall(nativePtrEqualityOperatorSymbol).apply {
                                             this.arguments[0] = irGet(typeInfo)
