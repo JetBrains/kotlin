@@ -51,7 +51,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
 
     override val builderModality: Modality = Modality.ABSTRACT
 
-    override val annotationClassId: ClassId = LombokNames.SUPER_BUILDER_ID
+    override val annotationClassIds: List<ClassId> = LombokNames.SUPER_BUILDER_IDS
 
     override fun getBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? {
         // There is also a build impl class, but it's private, and it's used only for internal purposes. Not relevant for API.
