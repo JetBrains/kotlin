@@ -140,6 +140,68 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
 }
+extension ExportedKotlinPackages.kotlinx.coroutines.channels {
+    public enum BufferOverflow: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
+        case SUSPEND
+        case DROP_OLDEST
+        case DROP_LATEST
+        public var description: Swift.String {
+            get {
+                switch self {
+                case .SUSPEND: "SUSPEND"
+                case .DROP_OLDEST: "DROP_OLDEST"
+                case .DROP_LATEST: "DROP_LATEST"
+                default: fatalError()
+                }
+            }
+        }
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                case .SUSPEND: 0
+                case .DROP_OLDEST: 1
+                case .DROP_LATEST: 2
+                default: fatalError()
+                }
+            }
+        }
+        public init?(
+            _ description: Swift.String
+        ) {
+            switch description {
+            case "SUSPEND": self = .SUSPEND
+            case "DROP_OLDEST": self = .DROP_OLDEST
+            case "DROP_LATEST": self = .DROP_LATEST
+            default: return nil
+            }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            guard 0..<3 ~= rawValue else { return nil }
+            self = BufferOverflow.allCases[Int(rawValue)]
+        }
+        public init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            switch kotlinx_coroutines_channels_BufferOverflow_ordinal(__externalRCRefUnsafe) {
+            case 0: self = .SUSPEND
+            case 1: self = .DROP_OLDEST
+            case 2: self = .DROP_LATEST
+            default: fatalError()
+            }
+        }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer {
+            return switch self {
+            case .SUSPEND: kotlinx_coroutines_channels_BufferOverflow_SUSPEND()
+            case .DROP_OLDEST: kotlinx_coroutines_channels_BufferOverflow_DROP_OLDEST()
+            case .DROP_LATEST: kotlinx_coroutines_channels_BufferOverflow_DROP_LATEST()
+            default: fatalError()
+            }
+        }
+    }
+}
 extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public protocol Flow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow._Flow, KotlinCoroutineSupport.KotlinFlow {
         func collect(
@@ -221,6 +283,18 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         function: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(Unmanaged.passRetained((function as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
+    }
+    public static func mutableSharedFlow(
+        replay: Swift.Int32,
+        extraBufferCapacity: Swift.Int32,
+        onBufferOverflow: ExportedKotlinPackages.kotlinx.coroutines.channels.BufferOverflow
+    ) -> any KotlinCoroutineSupport.KotlinTypedMutableSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
+        return KotlinCoroutineSupport._KotlinTypedMutableSharedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_MutableSharedFlow__TypesOfArguments__Swift_Int32_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow__(replay, extraBufferCapacity, onBufferOverflow.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+    }
+    public static func mutableStateFlow(
+        value: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
+        return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_MutableStateFlow__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(value.map { it in it.__externalRCRef() } ?? nil), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
     }
 }
 @_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
