@@ -5505,6 +5505,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/component/WasmCom
 	public abstract fun getComponentNewArguments ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getInputFile ()Lorg/gradle/api/file/RegularFileProperty;
 	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getSyntheticWitProjects ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getWasiAdapterRequest ()Lorg/gradle/api/provider/Property;
 	public abstract fun getWasmToolsRequest ()Lorg/gradle/api/provider/Property;
 	public abstract fun getWitProjects ()Lorg/gradle/api/file/ConfigurableFileCollection;

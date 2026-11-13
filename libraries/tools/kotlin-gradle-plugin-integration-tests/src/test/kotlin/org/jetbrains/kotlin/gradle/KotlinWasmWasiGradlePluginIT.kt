@@ -26,6 +26,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -217,12 +218,17 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         build(":wasmWasiTest") {
             assertTasksExecuted(":kotlinWasm${engineSetup}Setup")
             assertTasksExecuted(":compileKotlinWasmWasi")
+            assertTasksExecuted(":compileTestDevelopmentExecutableKotlinWasmWasiComponentize")
             assertTasksExecuted(":wasmWasi${engine}Test")
         }
 
         build(":wasmWasiTest") {
             assertTasksUpToDate(":kotlinWasm${engineSetup}Setup")
-            assertTasksUpToDate(":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
+            assertTasksUpToDate(
+                ":compileKotlinWasmWasi",
+                ":compileTestDevelopmentExecutableKotlinWasmWasiComponentize",
+                ":wasmWasi${engine}Test",
+            )
         }
 
         projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
@@ -760,6 +766,28 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                         """.trimIndent()
                         )
                     }
+
+                    @OptIn(ExperimentalWasmDsl::class)
+                    sourceSets.wasmWasiTest.get().apply {
+                        dependencies {
+                            implementation(kotlin("test"))
+                        }
+
+                        compileSource(
+                            """
+                            package my.pack.name
+
+                            import com.example.wasmlib.isClockMonotonic
+                            import kotlin.test.Test
+                            import kotlin.test.assertTrue
+
+                            class ClockTest {
+                                @Test
+                                fun clockIsMonotonic() = assertTrue(isClockMonotonic())
+                            }
+                        """.trimIndent()
+                        )
+                    }
                 }
             }
 
@@ -786,6 +814,17 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                     component = projectPath.resolve(componentFile)
                 )
             }
+
+            build(":wasmWasiWasmtimeTest") {
+                assertTasksExecuted(
+                    ":compileTestDevelopmentExecutableKotlinWasmWasiComponentize",
+                    ":wasmWasiWasmtimeTest",
+                )
+            }
+            assertEquals(
+                listOf("my.pack.name.ClockTest#clockIsMonotonic"),
+                readTestCases(":wasmWasiWasmtimeTest").map { it.id },
+            )
         }
     }
 

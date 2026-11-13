@@ -98,8 +98,8 @@ internal enum class WasiAdapterToolchainMode {
 // Keep in sync with WasmtimePlugin's version.convention("49.0.1")
 internal const val DEFAULT_WASI_ADAPTER_VERSION = "49.0.1"
 
-internal fun Project.requestDefaultWasiAdapter(): WasiAdapterRequest =
+internal fun Project.requestDefaultWasiAdapter(flavor: WasiAdapterFlavor = WasiAdapterFlavor.COMMAND): WasiAdapterRequest =
     objects.newInstance<WasiAdapterRequest>().also {
         it.version.convention(WasiAdapterVersion(DEFAULT_WASI_ADAPTER_VERSION))
-        it.flavor.convention(WasiAdapterFlavor.COMMAND)
+        it.flavor.convention(flavor)
     }
