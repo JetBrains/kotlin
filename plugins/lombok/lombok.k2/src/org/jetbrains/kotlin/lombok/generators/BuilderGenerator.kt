@@ -49,7 +49,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
 
     override val builderModality: Modality = Modality.OPEN
 
-    override val annotationClassId: ClassId = LombokNames.BUILDER_ID
+    override val annotationClassIds: List<ClassId> = listOf(LombokNames.BUILDER_ID)
 
     override fun getBuilder(symbol: FirBasedSymbol<*>): Builder? {
         return lombokService.getBuilder(symbol)
