@@ -12,12 +12,14 @@ import kotlin.test.*
 class Enums {
     enum class Direction { NORTH, SOUTH, EAST, WEST }
 
+    /** Must be kept in-sync with the inline sample in [enumValueOf] */
     @Sample
     fun enumValueOfSample() {
         // enum class Direction { NORTH, SOUTH, EAST, WEST }
 
-        val east = enumValueOf<Direction>("EAST")
+        val east: Direction = enumValueOf("EAST")
         assertPrints(east, "EAST")
+        assertPrints(east.ordinal, "2")
 
         // The lookup fails if a string does not correspond to any of the enum entries
         assertFailsWith<IllegalArgumentException> { enumValueOf<Direction>("UP") }
@@ -29,6 +31,7 @@ class Enums {
 
     enum class Empty
 
+    /** Must be kept in-sync with the inline sample in [enumEntries] */
     @Sample
     fun enumEntriesSample() {
         // enum class Direction { NORTH, SOUTH, EAST, WEST }

@@ -30,9 +30,24 @@ public sealed interface EnumEntries<E : Enum<E>> : List<E>
 /**
  * Returns [EnumEntries] list containing all enum entries for the given enum type [T].
  *
+ * The returned list is immutable, so this function can avoid instantiating a new instance of entries list every time
+ * and may return the same cached instance on subsequent invocations.
+ *
+ * ```kotlin
+ * enum class Direction { NORTH, SOUTH, EAST, WEST }
+ *
+ * val entries = enumEntries<Direction>()
+ * println(entries) // prints [NORTH, SOUTH, EAST, WEST]
+ * pritnln(entries.indexOf(Direction.EAST)) // 2
+ * println(entries[1]) // SOUTH
+ *
+ * enum class Empty {}
+ * println(enumEntries<Empty>()) // prints an empty list, []
+ * ```
+ *
  * @see EnumEntries
- * @sample samples.misc.Enums.enumEntriesSample
  */
+// @sample samples.misc.Enums.enumEntriesSample - not runnable due to enum declarations
 @WasExperimental(ExperimentalStdlibApi::class)
 @SinceKotlin("2.0")
 public inline fun <reified T : Enum<T>> enumEntries(): EnumEntries<T> = enumEntriesIntrinsic()
