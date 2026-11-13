@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.konan.config
  */
 
 import org.jetbrains.kotlin.backend.konan.AllocationMode
+import org.jetbrains.kotlin.backend.konan.LlvmInstructionSelector
 import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -229,6 +230,10 @@ object NativeConfigurationKeys {
 
     @JvmField
     val LLVM_VARIANT = CompilerConfigurationKey.create<LlvmVariant>("LLVM_VARIANT")
+
+    // LLVM instruction selector used when compiling bitcode into machine code.
+    @JvmField
+    val INSTRUCTION_SELECTOR = CompilerConfigurationKey.create<LlvmInstructionSelector>("INSTRUCTION_SELECTOR")
 
     @JvmField
     val RUNTIME_LOGS = CompilerConfigurationKey.create<String>("RUNTIME_LOGS")
@@ -522,6 +527,10 @@ var CompilerConfiguration.externalDependencies: String?
 var CompilerConfiguration.llvmVariant: LlvmVariant?
     get() = get(NativeConfigurationKeys.LLVM_VARIANT)
     set(value) { put(NativeConfigurationKeys.LLVM_VARIANT, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.instructionSelector: LlvmInstructionSelector?
+    get() = get(NativeConfigurationKeys.INSTRUCTION_SELECTOR)
+    set(value) { put(NativeConfigurationKeys.INSTRUCTION_SELECTOR, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.runtimeLogs: String?
     get() = get(NativeConfigurationKeys.RUNTIME_LOGS)

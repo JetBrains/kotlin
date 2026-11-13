@@ -234,6 +234,13 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             }
         }
     })
+    putIfNotNull(INSTRUCTION_SELECTOR, when (val selectorName = arguments.llvmIsel) {
+        null, "default" -> null // Let the compiler pick the selector from the per-target konan.properties configuration.
+        else -> LlvmInstructionSelector.fromStringOrNull(selectorName) ?: run {
+            report(KONAN_ARGUMENT_ERROR, "Unsupported -Xllvm-isel=$selectorName. Possible values are 'default', 'selection-dag' and 'global'")
+            null
+        }
+    })
     putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
 
