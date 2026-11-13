@@ -1,0 +1,4 @@
+compiler/testData/cli/classNameWithSlash.kt:2:7: error: name 'My/Class' of this declaration cannot contain '/' because it is not supported by the KLIB format.
+class `My/Class`
+      ^^^^^^^^^^
+COMPILATION_ERROR

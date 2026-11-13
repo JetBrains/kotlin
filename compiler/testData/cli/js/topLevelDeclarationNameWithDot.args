@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/../topLevelDeclarationNameWithDot.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+topLevelDeclarationNameWithDot.kt
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main

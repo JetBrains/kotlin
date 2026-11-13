@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/../classNameWithSlash.kt
+-ir-output-name
+classNameWithSlash
+-ir-output-dir
+$TEMP_DIR$
+-libraries
+$STDLIB_WASM_JS$

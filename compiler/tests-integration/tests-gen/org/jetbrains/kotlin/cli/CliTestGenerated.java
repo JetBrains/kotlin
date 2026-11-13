@@ -2303,6 +2303,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("classNameWithSlash.args")
+    public void testClassNameWithSlash() {
+      run("classNameWithSlash.args");
+    }
+
+    @Test
     @TestMetadata("compilationErrorConstDivByZero.args")
     public void testCompilationErrorConstDivByZero() {
       run("compilationErrorConstDivByZero.args");
@@ -2348,6 +2354,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("createMetadata.args")
     public void testCreateMetadata() {
       run("createMetadata.args");
+    }
+
+    @Test
+    @TestMetadata("declarationNameWithLeadingLessThan.args")
+    public void testDeclarationNameWithLeadingLessThan() {
+      run("declarationNameWithLeadingLessThan.args");
     }
 
     @Test
@@ -2675,6 +2687,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("topLevelDeclarationNameWithDot.args")
+    public void testTopLevelDeclarationNameWithDot() {
+      run("topLevelDeclarationNameWithDot.args");
+    }
+
+    @Test
     @TestMetadata("unknownFriendLibraries.args")
     public void testUnknownFriendLibraries() {
       run("unknownFriendLibraries.args");
@@ -2710,6 +2728,18 @@ public class CliTestGenerated extends AbstractCliTest {
     @Test
     public void testAllFilesPresentInWasm() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/wasm"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @Test
+    @TestMetadata("classNameWithSlash.args")
+    public void testClassNameWithSlash() {
+      run("classNameWithSlash.args");
+    }
+
+    @Test
+    @TestMetadata("declarationNameWithLeadingLessThan.args")
+    public void testDeclarationNameWithLeadingLessThan() {
+      run("declarationNameWithLeadingLessThan.args");
     }
 
     @Test
@@ -2770,6 +2800,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("tailrec.args")
     public void testTailrec() {
       run("tailrec.args");
+    }
+
+    @Test
+    @TestMetadata("topLevelDeclarationNameWithDot.args")
+    public void testTopLevelDeclarationNameWithDot() {
+      run("topLevelDeclarationNameWithDot.args");
     }
 
     @Test
