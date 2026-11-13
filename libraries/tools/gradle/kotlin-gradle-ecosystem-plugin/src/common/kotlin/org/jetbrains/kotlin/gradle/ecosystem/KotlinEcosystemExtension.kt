@@ -369,10 +369,11 @@ internal open class KotlinEcosystemExtensionImpl @Inject constructor(
     @OptIn(InternalKotlinGradlePluginApi::class, ExperimentalWasmDsl::class)
     @ExperimentalNodeJsToolchainDsl
     @ExperimentalWasmDsl
-    private val toolchainManagementDsl = KotlinToolchainManagementDslImpl(
-        NodeJsToolchainManagementDslImpl(settings.gradle),
-        WasiAdapterToolchainManagementDslImpl(settings.gradle),
-        WasmToolsToolchainManagementDslImpl(settings.gradle),
+    private val toolchainManagementDsl = objects.newInstance(
+        KotlinToolchainManagementDslImpl::class.java,
+        objects.newInstance(NodeJsToolchainManagementDslImpl::class.java, settings.gradle),
+        objects.newInstance(WasiAdapterToolchainManagementDslImpl::class.java, settings.gradle),
+        objects.newInstance(WasmToolsToolchainManagementDslImpl::class.java, settings.gradle),
     )
 
     @ExperimentalNodeJsToolchainDsl
@@ -381,7 +382,7 @@ internal open class KotlinEcosystemExtensionImpl @Inject constructor(
     }
 }
 
-internal class KotlinToolchainManagementDslImpl(
+internal open class KotlinToolchainManagementDslImpl @Inject constructor(
     private val nodeJsDsl: NodeJsToolchainManagementDsl,
     private val wasiAdapterDsl: WasiAdapterToolchainManagementDsl,
     private val wasmToolsDsl: WasmToolsToolchainManagementDsl,

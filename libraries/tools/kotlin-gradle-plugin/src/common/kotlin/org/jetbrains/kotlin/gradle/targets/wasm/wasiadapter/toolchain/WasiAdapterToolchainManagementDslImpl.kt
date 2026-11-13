@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.DefaultWasiAdapterToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainService
+import javax.inject.Inject
 import kotlin.reflect.KClass
 
 @ExperimentalWasmDsl
 @InternalKotlinGradlePluginApi
-class WasiAdapterToolchainManagementDslImpl(
+open class WasiAdapterToolchainManagementDslImpl @Inject constructor(
     private val gradle: Gradle,
 ) : WasiAdapterToolchainManagementDsl {
 
