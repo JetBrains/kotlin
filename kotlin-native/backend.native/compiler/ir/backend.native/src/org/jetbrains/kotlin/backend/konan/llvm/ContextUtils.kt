@@ -207,6 +207,22 @@ internal interface ContextUtils : RuntimeAware {
     val IrSimpleFunction.entryPointAddress: ConstPointer
         get() = llvmFunction.toConstPointer()
 
+    /**
+     * [this] function as a pointer that C code can call. On arm64e, it is signed with the IA key and no discriminator,
+     * as C code expects.
+     */
+    fun ConstPointer.toCFunctionPointer(): ConstCFunctionPointer = constCFunctionPointer(this.llvm)
+
+    /**
+     * [function] as a pointer that C code calls, see [toCFunctionPointer].
+     */
+    fun constCFunctionPointer(function: LLVMValueRef): ConstCFunctionPointer {
+        val pointer = llvm.signedPointer(constPointer(function), PtrAuthKey.IA)
+        return object : ConstCFunctionPointer {
+            override val llvm = pointer.llvm
+        }
+    }
+
     val IrClass.typeInfoPtr: ConstPointer
         get() {
             return if (isExternal(this)) {

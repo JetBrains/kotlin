@@ -46,7 +46,9 @@ import kotlin.time.Duration
 
 /**
  * Tests `-Xbinary=arm64e=true`. arm64e binaries cannot run on simulators or macOS hosts,
- * so these tests check the generated LLVM IR. They don't use caches, which would move code out of it, unless they test caches.
+ * so these tests check the generated LLVM IR.
+ *
+ * Caches would move code out of the IR, so only the cache tests use them.
  */
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.CACHE_MODE, "NO")
@@ -57,6 +59,17 @@ class Arm64eTest : AbstractNativeSimpleTest() {
     @BeforeEach
     fun assumeIosArm64() {
         Assumptions.assumeTrue(targets.testTarget == KonanTarget.IOS_ARM64)
+    }
+
+    @Test
+    fun testArm64eWithMacabi() {
+        val result = compileFramework(testSuiteDir.resolve("target.kt"), listOf("-Xbinary=arm64e=true", "-Xbinary=macabi=true")).result
+        assertTrue(
+            result is TestCompilationResult.CompilationToolFailure &&
+                    "options 'arm64e' and 'macabi' cannot be used together." in result.loggedData.toolOutput
+        ) {
+            "Expected the compiler to reject arm64e with macabi, got: $result"
+        }
     }
 
     @Test

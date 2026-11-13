@@ -136,13 +136,13 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 }
 
 /**
- * Whether [target] has an arm64e variant, the ABI with pointer authentication that `-Xbinary=arm64e=true` selects:
- * konan.properties then has `<property>.arm64e.<target>` entries for it.
+ * Whether [target] has an arm64e variant, the ABI with pointer authentication that `-Xbinary=arm64e=true` selects.
+ * konan.properties describes the variant with `<property>.arm64e.<target>` entries.
  */
 fun Distribution.hasArm64eVariant(target: String): Boolean = properties.getProperty("targetTriple.arm64e.$target") != null
 
 /**
- * Konan properties that make [target] generate code for its arm64e variant, see [hasArm64eVariant].
+ * Property overrides that replace the triple, CPU and CPU features of [target] with those of its arm64e variant.
  */
 fun arm64ePropertyOverrides(target: String): Map<String, String> =
         listOf("targetTriple", "targetCpu", "targetCpuFeatures").associate { "$it.$target" to "\$$it.arm64e.$target" }

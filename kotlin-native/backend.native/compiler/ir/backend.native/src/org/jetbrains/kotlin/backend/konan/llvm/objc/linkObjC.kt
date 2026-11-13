@@ -142,7 +142,7 @@ private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef, state: NativeG
         val initializer = LLVMGetInitializer(global) ?: continue
         val name = LLVMGetValueName(global)?.toKString().orEmpty()
         val section = LLVMGetSection(global)?.toKString()
-        // On arm64e, clang emits signed pointers to Objective-C globals as `<global name>.ptrauth` wrappers.
+        // On arm64e, Clang emits signed pointers to Objective-C globals as `<global name>.ptrauth` wrappers.
         // They need no patch: they point to the globals themselves, which are either patched or external.
         val isPtrAuthWrapper = section == "llvm.ptrauth"
 

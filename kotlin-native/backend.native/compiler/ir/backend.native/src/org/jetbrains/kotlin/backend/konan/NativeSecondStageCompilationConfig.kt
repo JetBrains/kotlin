@@ -101,6 +101,10 @@ class NativeSecondStageCompilationConfig(
 
     init {
         val arm64e = configuration.getBoolean(BinaryOptions.arm64e)
+        if (arm64e && configuration.getBoolean(BinaryOptions.macabi)) {
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_ERROR, "Binary options 'arm64e' and 'macabi' cannot be used together.")
+            throw KonanCompilationException()
+        }
         // We can't access `target` property, as it depends on the distribution.
         val target = configuration.konanTarget
         val distribution = createDistribution(arm64eTarget = target?.takeIf { arm64e })

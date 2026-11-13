@@ -96,7 +96,7 @@ internal class RTTIGenerator(
             classId: Int,
             writableTypeInfo: WritableTypeInfoPointer?,
             associatedObjects: ConstPointer?,
-            processObjectInMark: ConstPointer?,
+            processObjectInMark: ConstCFunctionPointer?,
             requiredAlignment: Int,
     ) : Struct(
                     runtime.typeInfoType,
@@ -134,7 +134,7 @@ internal class RTTIGenerator(
 
                     associatedObjects,
 
-                    processObjectInMark?.let(llvm::cFunctionPointer),
+                    processObjectInMark,
                     llvm.constInt32(requiredAlignment),
     )
 
@@ -256,7 +256,7 @@ internal class RTTIGenerator(
                 llvmDeclarations.writableTypeInfoGlobal,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
-                    irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_processArrayInMark.toConstPointer()
+                    irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_processArrayInMark.toConstPointer().toCFunctionPointer()
                     else -> genProcessObjectInMark(llvmDeclarations.bodyType)
                 },
                 requiredAlignment = llvmDeclarations.alignment
@@ -471,7 +471,7 @@ internal class RTTIGenerator(
         val associatedObjectTableRecords = associatedObjects.map { [key, value] ->
             val function = context.getObjectClassInstanceFunction(value)
 
-            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, llvm.cFunctionPointer(function.llvmFunction.toConstPointer()))
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer().toCFunctionPointer())
         }
 
         return staticData.placeGlobalConstArray(
@@ -481,16 +481,16 @@ internal class RTTIGenerator(
         )
     }
 
-    private fun genProcessObjectInMark(classType: ObjectBodyType): ConstPointer {
+    private fun genProcessObjectInMark(classType: ObjectBodyType): ConstCFunctionPointer {
         val indicesOfObjectFields = classType.sortedIndicesOfObjectFields
         return when {
             indicesOfObjectFields.isEmpty() -> {
                 // TODO: Try to generate it here instead of importing from the runtime.
-                llvm.Kotlin_processEmptyObjectInMark.toConstPointer()
+                llvm.Kotlin_processEmptyObjectInMark.toConstPointer().toCFunctionPointer()
             }
             else -> {
                 // TODO: specialize for "small" objects
-                llvm.Kotlin_processObjectInMark.toConstPointer()
+                llvm.Kotlin_processObjectInMark.toConstPointer().toCFunctionPointer()
             }
         }
     }
