@@ -5,6 +5,8 @@
 
 package kotlin.collections
 
+import kotlin.concurrent.Volatile
+
 /**
  * A hash table implementation of [MutableMap].
  *
@@ -107,8 +109,12 @@ public actual class HashMap<K, V> private constructor(
     override actual val size: Int
         get() = _size
 
+    // If you're planning to get rid of @Volatile, make sure to enable and run CollectionsConcurrentAccessStressTest tests
+    @Volatile // required to ensure correct initialization on concurrent read access
     private var keysView: HashMapKeys<K>? = null
+    @Volatile // required to ensure correct initialization on concurrent read access
     private var valuesView: HashMapValues<V>? = null
+    @Volatile // required to ensure correct initialization on concurrent read access
     private var entriesView: HashMapEntrySet<K, V>? = null
 
     private var isReadOnly: Boolean = false
