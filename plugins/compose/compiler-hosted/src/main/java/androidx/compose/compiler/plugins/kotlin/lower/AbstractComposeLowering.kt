@@ -1141,15 +1141,13 @@ abstract class AbstractComposeLowering(
 
             origin == null -> {
                 if (fqName == ComposeFqNames.remember) {
-                    // if it is a call to remember with 0 input arguments, then we can
-                    // consider the value static if the result type of the lambda is stable
+                    // If it is a call to remember with 0 input arguments, then we can consider the
+                    // result static; the result will be the same instance for the lifetime of its
+                    // group.
                     val syntheticRememberParams = 1 + // composer param
                             1 // changed param
                     val expectedArgumentsCount = 1 + syntheticRememberParams // 1 for lambda
-                    if (
-                        arguments.size == expectedArgumentsCount &&
-                        stabilityInferencer.stabilityOf(type, fileContainingDependent).knownStable()
-                    ) {
+                    if (arguments.size == expectedArgumentsCount) {
                         return true
                     }
                 } else if (

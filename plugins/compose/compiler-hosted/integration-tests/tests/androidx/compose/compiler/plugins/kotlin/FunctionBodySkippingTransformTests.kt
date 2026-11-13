@@ -1345,6 +1345,53 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
         """
     )
 
+    @Test
+    fun resultOfKeylessRememberIsStatic(): Unit = comparisonPropagation(
+        unchecked = "",
+        checked = """
+            import androidx.compose.runtime.remember
+
+            class Stable(val x: Int = 0)
+            class Unstable(var x: Int = 0)
+
+            @Composable
+            fun Foo(stable: Stable, unstable: Unstable) {
+                used(stable)
+                used(unstable)
+            }
+
+            @Composable
+            fun Test() {
+                val stable = remember { Stable() }
+                val unstable = remember { Unstable() }
+                Foo(stable, unstable)
+            }
+        """
+    )
+
+    @Test
+    fun resultOfStaticKeyedRememberIsStatic(): Unit = comparisonPropagation(
+        unchecked = "",
+        checked = """
+            import androidx.compose.runtime.remember
+
+            class Stable(val x: Int = 0)
+            class Unstable(var x: Int = 0)
+
+            @Composable
+            fun Foo(stable: Stable, unstable: Unstable) {
+                used(stable)
+                used(unstable)
+            }
+
+            @Composable
+            fun Test() {
+                val stable = remember(1, 2) { Stable() }
+                val unstable = remember(1, 2) { Unstable() }
+                Foo(stable, unstable)
+            }
+        """
+    )
 }
 
 class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransformTestsBase() {

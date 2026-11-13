@@ -1210,4 +1210,50 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
         }
         """,
     )
+
+    @Test
+    fun resultOfKeylessRememberIsStatic() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.mutableIntStateOf
+            import androidx.compose.runtime.remember
+
+            class Stable(val x: Int = 0)
+            class Unstable(var x: Int = 0)
+
+            @Composable
+            fun Button(onClick: () -> Unit) {}
+
+            @Composable
+            fun Test() {
+                val stable = remember { Stable() }
+                val unstable = remember { Unstable() }
+                Button { stable }
+                Button { unstable }
+            }
+        """,
+    )
+
+    @Test
+    fun resultOfStaticKeyedRememberIsStatic() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.mutableIntStateOf
+            import androidx.compose.runtime.remember
+
+            class Stable(val x: Int = 0)
+            class Unstable(var x: Int = 0)
+
+            @Composable
+            fun Button(onClick: () -> Unit) {}
+
+            @Composable
+            fun Test() {
+                val stable = remember(1, 2) { Stable() }
+                val unstable = remember(1, 2) { Unstable() }
+                Button { stable }
+                Button { unstable }
+            }
+        """,
+    )
 }
