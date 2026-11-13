@@ -252,14 +252,13 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     fun configureFromTakesGranularity(kotlinToolchain: KotlinToolchains) {
         kotlinToolchain.assumeJsDtsGenerationIsSupported()
 
-        // TODO (KT-90681): check TS_COMPILATION_STRATEGY once it is decided how it follows -Xir-per-file
         val perFile = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_FILE] = true }
         assertEquals(JsDtsGranularity.PER_FILE, perFile[JsDtsGenerationOperation.GRANULARITY])
         assertEquals(JsDtsCompilationStrategy.EACH_FILE, perFile[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY])
 
         val perModule = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_MODULE] = true }
-        assertEquals(JsDtsGranularity.WHOLE_PROGRAM, perModule[JsDtsGenerationOperation.GRANULARITY])
-        assertEquals(JsDtsCompilationStrategy.MERGED, perFile[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY])
+        assertEquals(JsDtsGranularity.PER_MODULE, perModule[JsDtsGenerationOperation.GRANULARITY])
+        assertEquals(JsDtsCompilationStrategy.MERGED, perModule[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY])
     }
 
     @DisplayName("configureFrom copies declaration flags from the linking arguments")
@@ -406,12 +405,14 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     fun configureFromTypedArgumentsTakesGranularity(kotlinToolchain: KotlinToolchains) {
         kotlinToolchain.assumeJsDtsGenerationIsSupported()
 
-        // TODO (KT-90681): check TS_COMPILATION_STRATEGY once it is decided how it follows -Xir-per-file
         val perFile = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_FILE] = true }
         assertEquals(JsDtsGranularity.PER_FILE, perFile[JsDtsGenerationOperation.GRANULARITY])
 
         val perModule = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_PER_MODULE] = true }
-        assertEquals(JsDtsGranularity.WHOLE_PROGRAM, perModule[JsDtsGenerationOperation.GRANULARITY])
+        assertEquals(JsDtsGranularity.PER_MODULE, perModule[JsDtsGenerationOperation.GRANULARITY])
+
+        val default = kotlinToolchain.dtsBuilderConfiguredFrom {}
+        assertEquals(JsDtsGranularity.WHOLE_PROGRAM, default[JsDtsGenerationOperation.GRANULARITY])
     }
 
     @DisplayName("configureFrom with command-line arguments takes GRANULARITY from -Xir-per-file and -Xir-per-module")
@@ -426,7 +427,7 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         assertEquals(JsDtsGranularity.PER_FILE, perFile[JsDtsGenerationOperation.GRANULARITY])
 
         val perModule = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-Xir-per-module")
-        assertEquals(JsDtsGranularity.WHOLE_PROGRAM, perModule[JsDtsGenerationOperation.GRANULARITY])
+        assertEquals(JsDtsGranularity.PER_MODULE, perModule[JsDtsGenerationOperation.GRANULARITY])
     }
 
     @DisplayName("configureFrom with typed arguments: explicit X_ES_LONG_AS_BIGINT takes precedence over auto-configuration from TARGET")

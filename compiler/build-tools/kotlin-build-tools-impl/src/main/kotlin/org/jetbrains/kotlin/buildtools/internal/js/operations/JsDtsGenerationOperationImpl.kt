@@ -87,10 +87,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val moduleName = this[MAIN_MODULE_NAME] ?: this[OUTPUT_NAME] ?: mainModule.name
 
         val tsCompilationStrategy = this[TS_COMPILATION_STRATEGY]?.name?.let(TsCompilationStrategy::valueOf)
-            ?: when (this[GRANULARITY]) {
-                JsDtsGranularity.PER_FILE -> TsCompilationStrategy.EACH_FILE
-                JsDtsGranularity.PER_MODULE, JsDtsGranularity.WHOLE_PROGRAM -> TsCompilationStrategy.MERGED
-            }
+            ?: TsCompilationStrategy.MERGED
 
         val typeScriptExportConfig = TypeScriptExportConfig(
             targetPlatform = JsPlatforms.defaultJsPlatform,
@@ -160,9 +157,16 @@ internal class JsDtsGenerationOperationImpl private constructor(
 
         this[GRANULARITY] = when {
             compilerArguments.irPerFile -> JsDtsGranularity.PER_FILE
-            // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
-            compilerArguments.irPerModule -> JsDtsGranularity.WHOLE_PROGRAM
+            compilerArguments.irPerModule -> JsDtsGranularity.PER_MODULE
             else -> JsDtsGranularity.WHOLE_PROGRAM
+        }
+
+        if (this[TS_COMPILATION_STRATEGY] == null) {
+            this[TS_COMPILATION_STRATEGY] = when (this[GRANULARITY]) {
+                JsDtsGranularity.PER_FILE -> JsDtsCompilationStrategy.EACH_FILE
+                // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
+                JsDtsGranularity.PER_MODULE, JsDtsGranularity.WHOLE_PROGRAM -> JsDtsCompilationStrategy.MERGED
+            }
         }
     }
 
