@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.impl.ZipHandler
@@ -356,7 +357,12 @@ object StandaloneProjectFactory {
             }
             javaDir?.let { result += it }
         }
-        return result.toList()
+
+        val rootFiles = result.mapTo(HashSet()) { it.virtualFile }
+        return result.filter { root ->
+            val parent = root.virtualFile.parent
+            parent == null || !VfsUtilCore.isUnder(parent, rootFiles)
+        }
     }
 
     fun getAllBinaryRoots(modules: List<KaModule>, environment: CoreApplicationEnvironment): List<JavaRoot> {
