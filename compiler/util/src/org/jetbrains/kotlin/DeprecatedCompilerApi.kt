@@ -33,7 +33,7 @@ enum class CompilerVersionOfApiDeprecation {
  */
 @Target(
     AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPEALIAS,
-    AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR,
     AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD,
 )
 @RequiresOptIn(message = "This compiler API is deprecated", level = RequiresOptIn.Level.WARNING)
@@ -52,7 +52,7 @@ annotation class DeprecatedCompilerApi(
  */
 @Target(
     AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPEALIAS,
-    AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR,
     AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD,
 )
 @RequiresOptIn("This compiler API is deprecated and will be removed soon.")
