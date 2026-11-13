@@ -26,13 +26,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportInfo
-import org.jetbrains.kotlin.resolve.BindingContext.COMPILER_CONFIGURATION
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.storage.getValue
@@ -188,15 +185,7 @@ class FileScopeFactory(
         val result = FileScopes(lexicalScope, lazyImportingScope, importResolver)
 
         private fun createDefaultImportResolversForFile(): DefaultImportResolvers {
-            val extraImports = ExtraImportsProviderExtension.getInstance(file.project).getExtraImports(
-                file, bindingTrace.get(COMPILER_CONFIGURATION, packageFragment.module)
-            )
-
-            if (extraImports.isEmpty() && aliasImportNames.isEmpty()) {
-                return defaultImportResolvers
-            }
-
-            return createDefaultImportResolvers(extraImports, aliasImportNames)
+            return defaultImportResolvers
         }
 
         fun createImportingScope(): LazyImportScope {

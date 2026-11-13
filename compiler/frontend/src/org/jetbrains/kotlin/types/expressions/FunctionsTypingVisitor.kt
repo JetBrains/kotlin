@@ -178,11 +178,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 
-        val resultType = components.typeResolutionInterceptor.interceptType(
-            expression,
-            context,
-            functionDescriptor.createFunctionType(components.builtIns, suspendFunctionTypeExpected)!!
-        )
+        val resultType = functionDescriptor.createFunctionType(components.builtIns, suspendFunctionTypeExpected)!!
 
         if (context.inferenceSession is BuilderInferenceSession) {
             context.inferenceSession.addExpression(expression)
@@ -206,9 +202,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
             CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
             context.expectedType.isSuspendFunctionType()
-        ).let {
-            facade.components.typeResolutionInterceptor.interceptFunctionLiteralDescriptor(expression, context, it)
-        }
+        )
         components.functionDescriptorResolver.initializeFunctionDescriptorAndExplicitReturnType(
             context.scope.ownerDescriptor, context.scope, functionLiteral,
             functionDescriptor, context.trace, context.expectedType, context.dataFlowInfo, context.inferenceSession

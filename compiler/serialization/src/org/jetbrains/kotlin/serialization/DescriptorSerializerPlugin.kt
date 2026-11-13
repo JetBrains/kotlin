@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 
@@ -57,7 +56,4 @@ interface DescriptorSerializerPlugin {
         extension: SerializerExtension
     ) {
     }
-
-    companion object : ProjectExtensionDescriptor<DescriptorSerializerPlugin>(
-        "org.jetbrains.kotlin.DescriptorSerializerPlugin", DescriptorSerializerPlugin::class.java)
 }

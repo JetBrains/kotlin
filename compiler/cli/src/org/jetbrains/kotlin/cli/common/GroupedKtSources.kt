@@ -9,6 +9,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.isFile
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.CliDiagnostics
@@ -21,8 +22,6 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.dontSortSourceFiles
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
 import java.io.File
@@ -58,9 +57,6 @@ fun collectSources(
     val platformSources = createSet()
     val commonSources = createSet()
     val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
-
-    @OptIn(K1Deprecation::class)
-    val virtualFileCreator = PreprocessedFileCreator(projectEnvironment.project)
 
     var pluginsConfigured = false
     fun ensurePluginsConfigured() {
@@ -101,8 +97,7 @@ fun collectSources(
                 }
             },
             convertToSourceFiles = {
-                @OptIn(K1Deprecation::class)
-                val sources = listOf(KtVirtualFileSourceFile(virtualFileCreator.create(it)))
+                val sources = listOf(KtVirtualFileSourceFile(it))
                 if (it.extension == KotlinFileType.EXTENSION) sources
                 else {
                     // currently applying the extension only to non-kt files, e.g. scripts

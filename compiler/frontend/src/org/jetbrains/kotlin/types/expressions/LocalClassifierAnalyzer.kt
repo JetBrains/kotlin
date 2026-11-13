@@ -107,7 +107,7 @@ class LocalClassifierAnalyzer(
                 annotationResolver,
                 supertypeLoopChecker,
                 languageVersionSettings,
-                SyntheticResolveExtension.getInstance(project),
+                SyntheticResolveExtension.EMPTY,
                 delegationFilter,
                 wrappedTypeFactory,
                 kotlinTypeChecker,

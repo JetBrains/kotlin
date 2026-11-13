@@ -123,7 +123,7 @@ public class DescriptorResolver {
         this.destructuringDeclarationResolver = destructuringDeclarationResolver;
         this.modifiersChecker = modifiersChecker;
         this.wrappedTypeFactory = wrappedTypeFactory;
-        this.syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
+        this.syntheticResolveExtension = SyntheticResolveExtension.EMPTY;
         typeApproximator = approximator;
         this.declarationReturnTypeSanitizer = declarationReturnTypeSanitizer;
         this.dataFlowValueFactory = dataFlowValueFactory;

@@ -57,10 +57,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize;
@@ -446,7 +443,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                                   ? refineTypeByPropertyInType(bindingContext, leftOperand, leftType)
                                   : refineTypeFromPropertySetterIfPossible(bindingContext, leftOperand, leftType);
 
-        List<AssignResolutionAltererExtension> assignAlterers = AssignResolutionAltererExtension.Companion.getInstances(expression.getProject());
+        List<AssignResolutionAltererExtension> assignAlterers = Collections.emptyList();
         if (!assignAlterers.isEmpty()) {
             KotlinTypeInfo alteredTypeInfo = assignAlterers.stream()
                     .filter((it) -> it.needOverloadAssign(expression, leftType, bindingContext))
