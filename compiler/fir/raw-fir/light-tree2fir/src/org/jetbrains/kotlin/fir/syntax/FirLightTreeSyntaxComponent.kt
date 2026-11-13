@@ -14,6 +14,7 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.diagnostics.findChildByType
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
-import org.jetbrains.kotlin.resolve.source.getExplicitReceiverOfDotQualified
 import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.toKtLightSourceElement
@@ -109,7 +109,10 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
     override fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement? {
         val source = unwrap()
         val tree = source.treeStructure
-        return source.lighterASTNode.getExplicitReceiverOfDotQualified(tree)?.toKtLightSourceElement(tree)
+        return when {
+            source.lighterASTNode.tokenType == DOT_QUALIFIED_EXPRESSION -> source.lighterASTNode.getChildren(tree).firstOrNull()
+            else -> null
+        }?.toKtLightSourceElement(tree)
     }
 
     override fun KtSourceElement.findParameterNameSource(name: Name): KtSourceElement? {
