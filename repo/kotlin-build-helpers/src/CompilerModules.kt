@@ -401,7 +401,6 @@ object CompilerModules {
     ":core:deserialization.common",
     ":core:deserialization.common.jvm",
     ":compiler:frontend.common.jvm",
-    ":compiler:frontend.java",
     ":core:metadata",
     ":core:metadata.jvm",
     ":kotlin-preloader",
