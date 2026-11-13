@@ -72,6 +72,7 @@ class CacheSupport(
         autoCacheDirectory: Path,
         incrementalCacheDirectory: Path?,
         target: KonanTarget,
+        compilerFingerprint: String,
         val produce: CompilerOutputKind
 ) {
     // Note: The order of libraries is not important here.
@@ -134,6 +135,7 @@ class CacheSupport(
         CachedLibraries(
                 configuration = configuration,
                 target = target,
+                compilerFingerprint = compilerFingerprint,
                 klibDag = klibDag,
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
@@ -165,7 +167,10 @@ class CacheSupport(
         val libraryToAddToCacheFile = Path(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
         val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
-        if (libraryCache is CachedLibraries.Cache.Monolithic)
+        // Only a full monolithic cache makes (re)caching the library a no-op. A metadata-only (header)
+        // cache does not: the full cache built in its place upgrades the cache directory in place,
+        // adding the missing native binary (see CacheStorage.renameOutput).
+        if (libraryCache is CachedLibraries.Cache.Monolithic && libraryCache.kind != CachedLibraries.Kind.HEADER)
             null
         else {
             val filesToCache = configuration.filesToCache
@@ -204,7 +209,9 @@ class CacheSupport(
         // Ensure not making cache for libraries that are already cached:
         librariesToCache.keys.forEach { library ->
             val cache = cachedLibraries.getLibraryCache(library)
-            if (cache is CachedLibraries.Cache.Monolithic) {
+            // A metadata-only (header) cache does not count as fully cached: the current compilation
+            // may upgrade it in place with the native binary (see CacheStorage.renameOutput).
+            if (cache is CachedLibraries.Cache.Monolithic && cache.kind != CachedLibraries.Kind.HEADER) {
                 configuration.reportCompilationErrorAndThrow("can't cache library '${library.path}' " +
                         "that is already cached in '${cache.path}'")
             }

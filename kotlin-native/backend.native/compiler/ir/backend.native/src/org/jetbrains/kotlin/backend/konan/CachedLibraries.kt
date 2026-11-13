@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.io.listDirectoryEntriesIfDirectoryExists
 import org.jetbrains.kotlin.konan.config.filesToCache
+import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.newCompanionInitializationEnabled
 import org.jetbrains.kotlin.library.uniqueName
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -48,6 +51,7 @@ private fun getArtifactName(target: KonanTarget, baseName: String, kind: Compile
 class CachedLibraries(
         private val configuration: CompilerConfiguration,
         private val target: KonanTarget,
+        private val compilerFingerprint: String,
         klibDag: KlibDAG,
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<Path>,
@@ -231,26 +235,33 @@ class CachedLibraries(
         if (dynamicFile.absolutePathString() in cacheBinaryPartDirContents && staticFile.absolutePathString() in cacheBinaryPartDirContents)
             error("Both dynamic and static caches files cannot be in the same directory." +
                     " Library: ${library.path}, path to cache: ${absolutePathString()}")
+        val perFileCache: Cache.PerFile by lazy {
+            // When the per-file cache of a library is being rebuilt in parallel (one fragment per dirty file),
+            // FinalizeCachePhase renames each file dir atomically over the old one, producing a brief window
+            // during which the main dir does not exist. A sibling fragment iterating existingFileDirs to read
+            // ir/{class_fields,inline_bodies,eager_init} would then throw NoSuchFileException. The cached data
+            // for those files is stale anyway (the dirty file is loaded as IR), so skip them entirely.
+            val filesToCache = configuration.filesToCache
+            val fileIdsToCache = libraryToCache?.takeIf { it == library }?.getFileFqNames(filesToCache)?.let { fqNames ->
+                filesToCache.zip(fqNames) { filePath, fqName -> cacheFileId(fqName, filePath) }.toSet()
+            } ?: emptySet()
+            val libraryFileDirs = library.getFilesWithFqNames().map { (filePath, fqName) ->
+                resolve(cacheFileId(fqName, filePath))
+            }
+            Cache.PerFile(target, Kind.STATIC, absolutePathString(),
+                    libraryFileDirs.filterNot { it.name in fileIdsToCache },
+                    complete = cacheDirContents.containsAll(libraryFileDirs.map { it.absolutePathString() }))
+        }
         return when {
             dynamicFile.absolutePathString() in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.DYNAMIC, dynamicFile.absolutePathString())
             staticFile.absolutePathString() in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.STATIC, staticFile.absolutePathString())
-            headerFile.absolutePathString() in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.HEADER, headerFile.absolutePathString())
+            // A metadata-only (header) cache yields to the per-file caches of the same library built into the
+            // same directory: the latter carry native code, while the header cache carries metadata only
+            // (see CacheStorage and CacheBuilder.staleCacheReason).
+            headerFile.absolutePathString() in cacheBinaryPartDirContents && perFileCache.fileIds.isEmpty() ->
+                    Cache.Monolithic(target, Kind.HEADER, headerFile.absolutePathString())
             else -> {
-                // When the per-file cache of a library is being rebuilt in parallel (one fragment per dirty file),
-                // FinalizeCachePhase renames each file dir atomically over the old one, producing a brief window
-                // during which the main dir does not exist. A sibling fragment iterating existingFileDirs to read
-                // ir/{class_fields,inline_bodies,eager_init} would then throw NoSuchFileException. The cached data
-                // for those files is stale anyway (the dirty file is loaded as IR), so skip them entirely.
-                val filesToCache = configuration.filesToCache
-                val fileIdsToCache = libraryToCache?.takeIf { it == library }?.getFileFqNames(filesToCache)?.let { fqNames ->
-                    filesToCache.zip(fqNames) { filePath, fqName -> cacheFileId(fqName, filePath) }.toSet()
-                } ?: emptySet()
-                val libraryFileDirs = library.getFilesWithFqNames().map { (filePath, fqName) ->
-                    resolve(cacheFileId(fqName, filePath))
-                }
-                Cache.PerFile(target, Kind.STATIC, absolutePathString(),
-                        libraryFileDirs.filterNot { it.name in fileIdsToCache },
-                        complete = cacheDirContents.containsAll(libraryFileDirs.map { it.absolutePathString() }))
+                perFileCache
             }
         }
     }
@@ -290,10 +301,73 @@ class CachedLibraries(
                 )
                 null
             } else {
-                library to it
+                val incompatibilityReason = cacheIncompatibilityReason(library, it)
+                if (incompatibilityReason != null) {
+                    // Never mix an incompatible metadata/binary combination into a compilation: a cache with
+                    // stale metadata (or a binary of a different compiler or target) would silently corrupt
+                    // the result. Drop the cache instead: the library is then either compiled from its klib
+                    // into the current artifact, or its cache is rebuilt (see CacheBuilder).
+                    configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING,
+                            "Ignoring the cache for library ${library.path} at ${it.path}: $incompatibilityReason"
+                    )
+                    null
+                } else {
+                    library to it
+                }
             }
         }
     }.toMap()
+
+    /**
+     * A human-readable reason why [cache] cannot be used for [library] in this compilation, or `null` if the cache is usable.
+     *
+     * A cache is an artifact of a particular (library content, compiler, host, target) combination, and a
+     * metadata-only (header) cache additionally carries the exact metadata the consumers agree on. A cache that
+     * does not match the current compilation must never be used: mixing its stale metadata into freshly compiled
+     * code (or its foreign binary into the final link) silently corrupts the result. An incompatible cache is
+     * dropped with a warning instead.
+     *
+     * Note: caches produced by compilers older than 2.2.20 carry no metadata at all (KT-87202). Such full caches
+     * are still accepted for backward compatibility. A metadata-only (header) cache is not: it has only ever
+     * been produced together with its identity, and an unidentified metadata artifact must not be trusted.
+     *
+     * Note: the fingerprint of the dependencies a cache was built against is verified by the incremental
+     * machinery only (see [CacheBuilder]); a standalone compilation has no reliable way to recompute it.
+     */
+    private fun cacheIncompatibilityReason(library: KotlinLibrary, cache: Cache): String? {
+        val metadata = when (cache) {
+            is Cache.Monolithic -> cache.getMetadataOrNull()
+            is Cache.PerFile -> cache.fileIds.firstOrNull()?.let { cache.getMetadataOrNull(it) }
+        }
+        if (metadata == null) {
+            return if (cache.kind == Kind.HEADER) "it has no metadata, so its identity cannot be verified" else null
+        }
+
+        // The same memoized fingerprint the auto-cache lookup computes (see [computeLibraryCacheDirectory]).
+        fun klibContentMismatch() = library.lazyEvaluatedFingerprintHash != metadata.hash
+
+        return when {
+            metadata.target != target ->
+                    "it was produced for target ${metadata.target}"
+            metadata.host != HostManager.host ->
+                    "it was produced on host ${metadata.host}"
+            metadata.compilerFingerprint != compilerFingerprint ->
+                    "it was produced by a different compiler version"
+            metadata.newCompanionInitialization != library.newCompanionInitializationEnabled ->
+                    "it was produced with a different companion initialization order"
+            // The metadata of a header cache and the binary of a full cache both must describe the klib at hand.
+            // The full monolithic caches of non-distribution libraries are checked as well: such a cache is
+            // normally located by name only, so a changed library would silently reuse the stale cache.
+            // The distribution libraries (including stdlib) only change together with the compiler, which the
+            // compiler fingerprint check above already covers; the per-file caches are the incremental
+            // machinery's responsibility (see CacheBuilder.staleCacheReason).
+            cache is Cache.Monolithic
+                    && (cache.kind == Kind.HEADER || (!library.isImplicitlyLoadedFromKotlinNativeDistribution && !library.isNativeStdlib))
+                    && klibContentMismatch() ->
+                    "it does not match the current content of the library"
+            else -> null
+        }
+    }
 
     fun isLibraryCached(library: KotlinLibrary, allowIncomplete: Boolean = false): Boolean =
             getLibraryCache(library, allowIncomplete) != null

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.serialization.PartialLinkageIssueCollector
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
+import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
 import org.jetbrains.kotlin.cli.CliDiagnostics
@@ -614,6 +615,7 @@ class NativeSecondStageCompilationConfig(
             autoCacheDirectory = autoCacheDirectory,
             incrementalCacheDirectory = incrementalCacheDirectory,
             target = target,
+            compilerFingerprint = distribution.compilerFingerprint,
             produce = produce
     )
 

@@ -153,6 +153,8 @@ class CacheBuilder(
             }
         }
         return when {
+            cache.kind == CachedLibraries.Kind.HEADER ->
+                "is a metadata-only (header) cache, so it cannot back incremental compilation"
             metadata == null ->
                 "has no metadata (it was produced by a compiler older than 2.2.20)"
             metadata.compilerFingerprint != currentCompilerFingerprint ->

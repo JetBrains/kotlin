@@ -63,7 +63,13 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         @OptIn(ExperimentalPathApi::class)
         fun renameOutput(outputFiles: OutputFiles, overwrite: Boolean) {
             if (outputFiles.mainFile.exists()) {
-                if (!overwrite) {
+                // A metadata-only (header) cache is upgraded in place by the full cache of the same library:
+                // both tiers record identical metadata (the collection point is the same, see CacheInfoBuilder),
+                // while only the full cache carries the native binary.
+                val upgradeHeaderOnlyCache = !overwrite
+                        && outputFiles.produce.isFullCache
+                        && outputFiles.containsOnlyHeaderCacheArtifact()
+                if (!overwrite && !upgradeHeaderOnlyCache) {
                     outputFiles.tempCacheDirectory!!.deleteRecursively()
                     return
                 }
@@ -81,9 +87,11 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
 
     fun saveAdditionalCacheInfo() {
         outputFiles.prepareTempDirectories()
-        if (!generationState.config.produce.isHeaderCache) {
-            saveMetadata()
-        }
+        // Both the full and the metadata-only (header) caches record their identity the same way, so that a
+        // cache can be validated before use whichever tier produced it (see CachedLibraries). A consumer
+        // compiled against a header cache and then linked against the full cache of the same library relies
+        // on the two agreeing, which the identical collection point (CacheInfoBuilder) guarantees.
+        saveMetadata()
         saveInlineFunctionBodies()
         saveCacheBitcodeDependencies()
         saveClassFields()

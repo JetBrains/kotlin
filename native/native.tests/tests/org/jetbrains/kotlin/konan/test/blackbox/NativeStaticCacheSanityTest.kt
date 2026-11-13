@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompiler
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolCallResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
@@ -27,7 +28,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHom
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.provisionedXcodeCompilerArgs
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
@@ -36,6 +40,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import java.io.File
 import java.lang.AssertionError
+import java.util.Properties
 
 @Tag("caches")
 @EnforcedHostTarget
@@ -480,6 +485,438 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
 
     private class TestLibrary(val name: String, val files: Map<String, String>)
 
+    // The granular cache operations model: a metadata-only (header) cache of a library and the full cache
+    // of the same library are separate artifacts. A dependent library can be compiled against the
+    // dependency's metadata alone, with the dependency's native binary produced later; the final link then
+    // combines the full caches of both.
+
+    @Test
+    fun dependentIsCompiledBeforeDependencyBinaryExists() {
+        assumeExecutableIsRun()
+        val dir = createDir("metadata-first")
+        val aKlibFile = dir.resolve("a.klib")
+        val bKlibFile = dir.resolve("b.klib")
+        val cacheDirAMetadata = createDir("metadata-first/cache-a-metadata")
+        val cacheDirAFull = createDir("metadata-first/cache-a-full")
+        val cacheDirB = createDir("metadata-first/cache-b")
+
+        // A: an eagerly initialized property, an open class subclassed by B, an exported inline function.
+        callNativeCompiler(
+            dir.resolve("a.kt").apply {
+                writeText(
+                    $$"""
+                        @file:OptIn(kotlin.ExperimentalStdlibApi::class)
+
+                        package a
+
+                        @kotlin.native.EagerInitialization
+                        val value = run {
+                            println("A initializer")
+                            42
+                        }
+
+                        open class Base {
+                            open fun greet() = "hello"
+                        }
+
+                        inline fun decorate(text: String): String = "[$text]"
+                    """.trimIndent()
+                )
+            }.absolutePath,
+            "-p", "library",
+            "-o", aKlibFile.absolutePath,
+        )
+
+        // B: depends on A, subclasses A.Base, calls A's inline function, observes A's eager initialization.
+        callNativeCompiler(
+            dir.resolve("b.kt").apply {
+                writeText(
+                    $$"""
+                        @file:OptIn(kotlin.ExperimentalStdlibApi::class)
+
+                        package b
+
+                        @kotlin.native.EagerInitialization
+                        val observed = run {
+                            println("B initializer sees ${a.value}")
+                            a.value
+                        }
+
+                        class Derived : a.Base() {
+                            override fun greet() = a.decorate("derived")
+                        }
+                    """.trimIndent()
+                )
+            }.absolutePath,
+            "-p", "library",
+            "-l", aKlibFile.absolutePath,
+            "-o", bKlibFile.absolutePath,
+        )
+
+        // Build the metadata-only (header) cache of A: no native code is produced.
+        callNativeCompiler(
+            "-g",
+            "-p", "header_cache",
+            "-Xcache-directory=${cacheDirAMetadata.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-Xadd-cache=${aKlibFile.absolutePath}",
+        )
+        val aMetadataCache = cacheDirAMetadata.listFiles()!!.single { it.isDirectory }
+        assertTrue(aMetadataCache.resolve("bin/${aMetadataCache.name}.header").isFile) {
+            "Metadata-only cache of A was not produced in $cacheDirAMetadata"
+        }
+
+        // Compile the FULL cache of B while A has no native binary anywhere: B consumes A's klib
+        // and the metadata from A's header cache only.
+        callNativeCompiler(
+            "-g",
+            "-p", "static_cache",
+            "-Xcache-directory=${cacheDirB.absolutePath}", // The cache of B is produced here.
+            "-Xcache-directory=${cacheDirAMetadata.absolutePath}", // A is used via its metadata-only cache.
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-l", aKlibFile.absolutePath,
+            "-Xadd-cache=${bKlibFile.absolutePath}",
+        )
+        val bCache = cacheDirB.listFiles()!!.single { it.isDirectory }
+        assertTrue(bCache.resolve("bin/lib${bCache.name}.a").isFile) {
+            "Full cache of B was not produced in $cacheDirB"
+        }
+        assertFalse(aMetadataCache.resolve("bin/lib${aMetadataCache.name}.a").exists()) {
+            "A must not have a native binary while B is being compiled"
+        }
+
+        // Only now produce the native (full) cache of A.
+        callNativeCompiler(
+            "-g",
+            "-p", "static_cache",
+            "-Xcache-directory=${cacheDirAFull.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-Xadd-cache=${aKlibFile.absolutePath}",
+        )
+        val aFullCache = cacheDirAFull.listFiles()!!.single { it.isDirectory }
+        assertTrue(aFullCache.resolve("bin/lib${aFullCache.name}.a").isFile) {
+            "Full cache of A was not produced in $cacheDirAFull"
+        }
+
+        // Link the final binary from the full caches of A and B and run it.
+        val appFile = dir.resolve("app.kexe")
+        callNativeCompiler(
+            dir.resolve("main.kt").apply {
+                writeText(
+                    """
+                        fun main() {
+                            println(b.observed)
+                            println(b.Derived().greet())
+                        }
+                    """.trimIndent()
+                )
+            }.absolutePath,
+            "-p", "program",
+            "-Xcache-directory=${cacheDirAFull.absolutePath}",
+            "-Xcache-directory=${cacheDirB.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-l", bKlibFile.absolutePath,
+            "-l", aKlibFile.absolutePath,
+            "-o", appFile.absolutePath,
+        )
+
+        runExecutableAndVerify(
+            testCase = TestCase(
+                id = TestCaseId.Named("main"),
+                kind = TestKind.STANDALONE_NO_TR,
+                modules = emptySet(),
+                freeCompilerArgs = TestCompilerArgs.EMPTY,
+                nominalPackageName = PackageName.EMPTY,
+                checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                    outputMatcher = TestRunCheck.OutputMatcher { output ->
+                        assertEquals(
+                            /* expected = */ """
+                                A initializer
+                                B initializer sees 42
+                                42
+                                [derived]
+                            """.trimIndent(),
+                            /* actual = */ output.trim()
+                        )
+                        true
+                    }
+                ),
+                extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
+            ),
+            executable = TestExecutable(
+                executable = TestCompilationArtifact.Executable(appFile),
+                loggedCompilationToolCall = LoggedData.NoopCompilerCall(appFile),
+                testNames = listOf(TestName("main"))
+            ),
+        )
+    }
+
+    @Test
+    fun metadataOnlyCacheAgreesWithFullCache() {
+        val dir = createDir("metadata-equivalence")
+        val klibFile = dir.resolve("lib.klib")
+        callNativeCompiler(
+            dir.resolve("lib.kt").apply {
+                writeText(
+                    """
+                        @file:OptIn(kotlin.ExperimentalStdlibApi::class)
+
+                        package lib
+
+                        @kotlin.native.EagerInitialization
+                        val eager = run { 42 }
+
+                        interface Api {
+                            fun call(): Int
+                        }
+
+                        class Impl(val payload: Int) : Api {
+                            override fun call() = payload
+                        }
+
+                        open class Shape(var x: Int, var y: Int) {
+                            open fun area() = x * y
+                        }
+
+                        class Square(side: Int) : Shape(side, side) {
+                            override fun area() = 4 * x
+                        }
+
+                        val trivial = "constant"
+
+                        inline fun twice(value: Int): Int = value + value
+                    """.trimIndent()
+                )
+            }.absolutePath,
+            "-p", "library",
+            "-o", klibFile.absolutePath,
+        )
+
+        val headerCacheDir = createDir("metadata-equivalence/cache-header")
+        val fullCacheDir = createDir("metadata-equivalence/cache-full")
+        for ([produce, cacheDir] in listOf("header_cache" to headerCacheDir, "static_cache" to fullCacheDir)) {
+            callNativeCompiler(
+                "-g",
+                "-p", produce,
+                "-Xcache-directory=${cacheDir.absolutePath}",
+                "-Xcache-directory=${systemCacheDir.absolutePath}",
+                "-Xadd-cache=${klibFile.absolutePath}",
+            )
+        }
+
+        val headerCache = headerCacheDir.listFiles()!!.single { it.isDirectory }
+        val fullCache = fullCacheDir.listFiles()!!.single { it.isDirectory }
+
+        // The metadata a consumer compiles against must not depend on which tier produced the cache.
+        // (The bitcode dependencies and the partial linkage issues record the code generator's usage
+        // tracking and are not part of the consumer-facing metadata contract; the ObjC adapters are
+        // empty either way, as the library binds no classes to ObjC names.)
+        for (fileName in listOf("class_fields", "inline_bodies", "eager_init", "trivial_getters", "objc_adapters")) {
+            assertArrayEquals(
+                headerCache.resolve("ir/$fileName").readBytes(),
+                fullCache.resolve("ir/$fileName").readBytes(),
+            ) {
+                "Mismatching '$fileName' between the metadata-only and the full cache of ${klibFile.path}"
+            }
+        }
+
+        // Both caches must carry the same identity.
+        val headerMetadata = headerCache.resolve("metadata.properties").loadProperties()
+        val fullMetadata = fullCache.resolve("metadata.properties").loadProperties()
+        for (key in listOf("hash", "host", "target", "compilerFingerprint")) {
+            assertEquals(
+                fullMetadata.getProperty(key),
+                headerMetadata.getProperty(key),
+            ) { "Mismatching '$key' between the metadata of the metadata-only and the full cache" }
+        }
+        assertEquals(
+            fullMetadata.getProperty("newCompanionInitialization") ?: "false",
+            headerMetadata.getProperty("newCompanionInitialization") ?: "false",
+        ) { "Mismatching companion initialization order between the metadata-only and the full cache" }
+    }
+
+    @Test
+    fun staleMetadataOnlyCacheIsRejectedNotReused() {
+        assumeExecutableIsRun()
+        val dir = createDir("stale-header")
+        val klibFile = dir.resolve("lib.klib")
+        val sourceFile = dir.resolve("lib.kt")
+
+        fun compileLibrary(source: String) {
+            sourceFile.writeText(source)
+            callNativeCompiler(
+                sourceFile.absolutePath,
+                "-p", "library",
+                "-o", klibFile.absolutePath,
+            )
+        }
+
+        compileLibrary(
+            """
+                package lib
+
+                class Box(val x: Int) {
+                    fun sum() = x
+                }
+            """.trimIndent()
+        )
+
+        val cacheDir = createDir("stale-header/cache")
+        callNativeCompiler(
+            "-g",
+            "-p", "header_cache",
+            "-Xcache-directory=${cacheDir.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-Xadd-cache=${klibFile.absolutePath}",
+        )
+
+        // Change the library so that the metadata recorded in the cache (the class fields of Box) is stale.
+        compileLibrary(
+            """
+                package lib
+
+                class Box(val x: Int, val y: Int) {
+                    fun sum() = x + y
+                }
+            """.trimIndent()
+        )
+
+        // The stale cache must be rejected with a warning rather than silently mixed with the new klib.
+        val appFile = dir.resolve("app.kexe")
+        val result = callNativeCompiler(
+            dir.resolve("main.kt").apply {
+                writeText(
+                    """
+                        fun main() {
+                            println(lib.Box(2, 3).sum())
+                        }
+                    """.trimIndent()
+                )
+            }.absolutePath,
+            "-p", "program",
+            "-Xcache-directory=${cacheDir.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-l", klibFile.absolutePath,
+            "-o", appFile.absolutePath,
+        )
+        // Note: the CLI renderer decapitalizes the message, hence the case-insensitive check.
+        assertTrue(result.toolOutput.contains("ignoring the cache for library", ignoreCase = true)) {
+            "The stale cache must be reported as ignored, got:\n${result.toolOutput}"
+        }
+
+        runExecutableAndVerify(
+            testCase = TestCase(
+                id = TestCaseId.Named("main"),
+                kind = TestKind.STANDALONE_NO_TR,
+                modules = emptySet(),
+                freeCompilerArgs = TestCompilerArgs.EMPTY,
+                nominalPackageName = PackageName.EMPTY,
+                checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                    outputMatcher = TestRunCheck.OutputMatcher { output ->
+                        assertEquals("5", output.trim())
+                        true
+                    }
+                ),
+                extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
+            ),
+            executable = TestExecutable(
+                executable = TestCompilationArtifact.Executable(appFile),
+                loggedCompilationToolCall = LoggedData.NoopCompilerCall(appFile),
+                testNames = listOf(TestName("main"))
+            ),
+        )
+    }
+
+    @Test
+    fun metadataOnlyCacheIsUpgradedToFullCacheInPlace() {
+        assumeExecutableIsRun()
+        val dir = createDir("header-upgrade")
+        val klibFile = dir.resolve("lib.klib")
+        callNativeCompiler(
+            dir.resolve("lib.kt").apply {
+                writeText(
+                    """
+                        package lib
+
+                        fun hello() = "hi"
+                    """.trimIndent()
+                )
+            }.absolutePath,
+            "-p", "library",
+            "-o", klibFile.absolutePath,
+        )
+
+        val cacheDir = createDir("header-upgrade/cache")
+        callNativeCompiler(
+            "-g",
+            "-p", "header_cache",
+            "-Xcache-directory=${cacheDir.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-Xadd-cache=${klibFile.absolutePath}",
+        )
+        val cacheArtifactDir = cacheDir.listFiles()!!.single { it.isDirectory }
+        val headerArtifact = cacheArtifactDir.resolve("bin/${cacheArtifactDir.name}.header")
+        assertTrue(headerArtifact.isFile) { "Metadata-only cache was not produced in $cacheDir" }
+
+        // Building the full cache into the same directory must upgrade the metadata-only cache in place
+        // instead of silently doing nothing: the metadata is identical, the native binary is added.
+        callNativeCompiler(
+            "-g",
+            "-p", "static_cache",
+            "-Xcache-directory=${cacheDir.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-Xadd-cache=${klibFile.absolutePath}",
+        )
+        assertTrue(cacheArtifactDir.resolve("bin/lib${cacheArtifactDir.name}.a").isFile) {
+            "The full cache was not produced in place of the metadata-only cache in $cacheDir"
+        }
+        assertFalse(headerArtifact.exists()) {
+            "The metadata-only artifact must be replaced by the full cache"
+        }
+
+        val appFile = dir.resolve("app.kexe")
+        callNativeCompiler(
+            dir.resolve("main.kt").apply {
+                writeText(
+                    """
+                        fun main() {
+                            println(lib.hello())
+                        }
+                    """.trimIndent()
+                )
+            }.absolutePath,
+            "-p", "program",
+            "-Xcache-directory=${cacheDir.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-l", klibFile.absolutePath,
+            "-o", appFile.absolutePath,
+        )
+
+        runExecutableAndVerify(
+            testCase = TestCase(
+                id = TestCaseId.Named("main"),
+                kind = TestKind.STANDALONE_NO_TR,
+                modules = emptySet(),
+                freeCompilerArgs = TestCompilerArgs.EMPTY,
+                nominalPackageName = PackageName.EMPTY,
+                checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                    outputMatcher = TestRunCheck.OutputMatcher { output ->
+                        assertEquals("hi", output.trim())
+                        true
+                    }
+                ),
+                extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
+            ),
+            executable = TestExecutable(
+                executable = TestCompilationArtifact.Executable(appFile),
+                loggedCompilationToolCall = LoggedData.NoopCompilerCall(appFile),
+                testNames = listOf(TestName("main"))
+            ),
+        )
+    }
+
+    private fun File.loadProperties(): Properties = Properties().apply { inputStream().use { load(it) } }
+
     // Compiles [libraries] in order, each depending on all the preceding ones, then an app whose `main`
     // prints `b.observed`, and verifies the output is "OK": `b.observed` must see the side effect performed
     // by `a.registration`'s eager initializer, because B depends on A.
@@ -582,7 +1019,7 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
         return buildDir.resolve(name).also { it.mkdirs() }
     }
 
-    private fun callNativeCompiler(vararg args: String?) {
+    private fun callNativeCompiler(vararg args: String?): CompilationToolCallResult {
         val compilerArgs = (args.filterNotNull() + provisionedXcodeCompilerArgs).toTypedArray()
         val result = callCompiler(
             compilerArgs = compilerArgs,
@@ -597,6 +1034,7 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
                 appendLine(result.toolOutput)
             }
         }
+        return result
     }
 
     companion object {

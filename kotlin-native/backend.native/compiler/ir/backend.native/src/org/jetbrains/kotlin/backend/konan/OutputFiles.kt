@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.io.listDirectoryEntriesIfDirectoryExists
 import org.jetbrains.kotlin.util.prefixBaseNameIfNot
 import org.jetbrains.kotlin.util.suffixIfNot
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -64,6 +65,23 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
     }
 
     val nativeBinaryFile = tempCacheDirectory?.cacheBinaryPart()?.resolve(cacheFileName)?.absolutePathString() ?: mainFileName
+
+    /**
+     * Whether the already existing cache directory holds nothing but the metadata-only (header) artifact
+     * of the library, i.e. whether a full cache being finalized can upgrade it in place
+     * (see [CacheStorage.renameOutput]).
+     */
+    internal fun containsOnlyHeaderCacheArtifact(): Boolean {
+        val binaryPartEntries = mainFile.resolve(CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+                .listDirectoryEntriesIfDirectoryExists()
+                .map { it.name }
+        val headerArtifactName = "$perFileCacheFileName.header"
+        // The header cache records its bitcode dependencies next to the placeholder artifact,
+        // and a full cache additionally carries the real binary - anything but the placeholder
+        // and the dependency file means the existing cache is not metadata-only.
+        return headerArtifactName in binaryPartEntries &&
+                binaryPartEntries.all { it == headerArtifactName || it == CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME }
+    }
 
     val symbolicInfoFile = "$nativeBinaryFile.dSYM"
 

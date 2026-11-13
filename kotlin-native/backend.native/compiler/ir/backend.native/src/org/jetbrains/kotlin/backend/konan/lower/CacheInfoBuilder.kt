@@ -33,6 +33,33 @@ internal class CacheInfoBuilder(
         private val moduleDeserializer: KonanPartialModuleDeserializer,
         private val irModule: IrModuleFragment
 ) {
+    /**
+     * Collects the dependency-facing metadata of the library being cached: the fields of its exported classes,
+     * references to the bodies of its exported inline functions (the bodies live in the klib itself), the
+     * eagerly initialized files and the trivial property getters.
+     *
+     * ## The collection point
+     *
+     * This runs before the IR lowerings, for the full caches and the metadata-only (header) caches alike
+     * (see [org.jetbrains.kotlin.backend.konan.driver.phases.TopLevelPhases]); the collected facts are then
+     * serialized by [org.jetbrains.kotlin.backend.konan.CacheStorage]. Both cache tiers therefore record
+     * identical metadata, which is the invariant the metadata-first compilation relies on: a dependent may be
+     * compiled against a header cache and linked against the full cache of the same library.
+     *
+     * Collecting before the lowerings is sound because the collected facts only depend on the deserialized IR
+     * of the library itself:
+     * - no lowering mutates the declared fields of an existing exported class (the only one adding fields,
+     *   the suspend function lowering, does so for the state machine classes it generates, which are not
+     *   exported and thus not recorded here);
+     * - the inline function references are pointers into the klib, whose bodies are deserialized and lowered
+     *   by the consumer, never taken from the cache;
+     * - the eager initialization and trivial getter facts are structural properties of the declarations.
+     *
+     * What is *not* collected here: the Objective-C type adapters are produced by the code generator, so a
+     * metadata-only cache records none, and any artifact that needs them (the final link) always consumes a
+     * full cache; the bitcode dependencies reflect the code generator's usage tracking and are likewise only
+     * meaningful for a full cache.
+     */
     fun build() {
         if (!generationState.config.producePerFileCache)
             generationState.klibHash = SerializedKlibFingerprint(moduleDeserializer.klib.path.toFile()).klibFingerprint

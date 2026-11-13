@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import org.jetbrains.kotlin.library.uniqueName
 
 /**
  * Check if we should link static caches into an object file before running full linkage.
@@ -47,7 +48,12 @@ internal fun resolveCacheBinaries(
         val list = when (cache.kind) {
             CachedLibraries.Kind.DYNAMIC -> dynamicCaches
             CachedLibraries.Kind.STATIC -> staticCaches
-            CachedLibraries.Kind.HEADER -> error("Header cache ${cache.path} cannot be used for linking")
+            CachedLibraries.Kind.HEADER -> error(
+                "Library ${library.uniqueName} cannot be linked: only a metadata-only (header) cache exists for it " +
+                        "at ${cache.path}, and such a cache carries no native code. " +
+                        "Build the full cache for the library (e.g. -p static_cache -Xadd-cache=<library.klib>) " +
+                        "and repeat the compilation"
+            )
         }
 
         list += if (dependency.kind is DependenciesTracker.DependencyKind.CertainFiles && cache is CachedLibraries.Cache.PerFile)
