@@ -607,21 +607,18 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 
     /**
-     * [pointer] as code that authenticates it with [key] and [discriminator], blended with [address] if there is one,
-     * expects it: signed on arm64e, as Clang signs it, and unchanged elsewhere. A null pointer stays unsigned, as in Clang.
+     * Returns [pointer] signed as Clang signs it, with [key], [integerDiscriminator] and, if given, [addressDiscriminator].
+     * Returns [pointer] unchanged when not compiling for arm64e, and for a null pointer, which Clang does not sign either.
      */
-    fun signedPointer(pointer: ConstPointer, key: PtrAuthKey, discriminator: Int = 0, address: ConstPointer? = null): ConstPointer =
+    fun signedPointer(
+            pointer: ConstPointer, key: PtrAuthKey, integerDiscriminator: Int = 0, addressDiscriminator: ConstPointer? = null,
+    ): ConstPointer =
             if (context.config.arm64e && LLVMIsNull(pointer.llvm) == 0) {
-                constPointer(LLVMConstantPtrAuth(pointer.llvm, int32(key.value), int64(discriminator.toLong()), address?.llvm ?: kNull)!!)
+                val discriminator = int64(integerDiscriminator.toLong())
+                constPointer(LLVMConstantPtrAuth(pointer.llvm, int32(key.value), discriminator, addressDiscriminator?.llvm ?: kNull)!!)
             } else {
                 pointer
             }
-
-    /**
-     * [function] as a function pointer that C code calls: on arm64e, Clang authenticates such calls with the IA key
-     * and no discriminator.
-     */
-    fun cFunctionPointer(function: ConstPointer): ConstPointer = signedPointer(function, PtrAuthKey.IA)
 
     /**
      * How virtual calls authenticate the entries of vtables and itables, if they are signed, see

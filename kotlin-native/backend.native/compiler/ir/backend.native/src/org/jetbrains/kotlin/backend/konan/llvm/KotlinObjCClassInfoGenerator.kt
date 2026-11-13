@@ -87,7 +87,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 .distinctBy { it.selector }
 
         allInitMethodsInfo.mapTo(this) {
-            ObjCMethodDesc(it.selector, it.encoding, llvm.missingInitImp.toConstPointer())
+            ObjCMethodDesc(it.selector, it.encoding, llvm.missingInitImp.toConstPointer().toCFunctionPointer())
         }
     }
 
@@ -106,11 +106,11 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
     }
 
     private inner class ObjCMethodDesc(
-            val selector: String, val encoding: String, val impFunction: ConstPointer
+            val selector: String, val encoding: String, imp: ConstCFunctionPointer
     ) : Struct(
             runtime.objCMethodDescription,
             // The runtime adds this implementation to the class with class_addMethod.
-            llvm.cFunctionPointer(impFunction),
+            imp,
             staticData.cStringLiteral(selector),
             staticData.cStringLiteral(encoding)
     )
@@ -125,11 +125,11 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 ObjCMethodDesc(
                         annotation.getConstArgument<String>("selector")!!,
                         annotation.getConstArgument<String>("encoding")!!,
-                        it.llvmFunction.toConstPointer()
+                        it.llvmFunction.toConstPointer().toCFunctionPointer()
                 )
             }
 
-    private fun generateClassDataImp(irClass: IrClass, objCLLvmDeclarations: KotlinObjCClassLlvmDeclarations): ConstPointer {
+    private fun generateClassDataImp(irClass: IrClass, objCLLvmDeclarations: KotlinObjCClassLlvmDeclarations): ConstCFunctionPointer {
         val classDataPointer = staticData.placeGlobal(
                 "kobjcclassdata:${irClass.fqNameForIrSerialization}#internal",
                 Struct(
@@ -153,7 +153,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
             ret(classDataPointer.llvm)
         }
 
-        return llvm.cFunctionPointer(functionCallable.toConstPointer())
+        return functionCallable.toConstPointer().toCFunctionPointer()
     }
 
     private val codegen = CodeGenerator(generationState)
