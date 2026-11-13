@@ -36,12 +36,14 @@ fun box() {
 // test.kt:7 <get-a>
 // test.kt:14 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:12 box
 // test.kt:4 Foo$static_init
+// EXPECTATIONS JS_IR
 // test.kt:3 <init>
 // test.kt:7 <init>
 // test.kt:6 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:13 box
 // test.kt:14 box
 

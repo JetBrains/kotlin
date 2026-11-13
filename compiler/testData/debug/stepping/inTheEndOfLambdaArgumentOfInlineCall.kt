@@ -51,7 +51,7 @@ fun nop() {}
 // test.kt:15 box
 // test.kt:10 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:13 box
 // test.kt:21 nop
 // test.kt:7 box

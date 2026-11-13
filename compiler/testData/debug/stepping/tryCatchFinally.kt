@@ -133,7 +133,7 @@ fun box() {
 // test.kt:30 mightThrow2
 // test.kt:30 mightThrow2
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:34 box
 // test.kt:6 foo
 // test.kt:26 mightThrow

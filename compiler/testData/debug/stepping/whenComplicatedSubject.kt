@@ -67,7 +67,7 @@ fun box() {
 // test.kt:14 foo
 // test.kt:20 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:17 box
 // test.kt:6 foo
 // test.kt:7 foo

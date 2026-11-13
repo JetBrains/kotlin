@@ -39,7 +39,7 @@ inline fun getB(): Int {
 // test.kt:9 box
 // test.kt:10 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:6 box
 // test.kt:12 getA
 // test.kt:9 box

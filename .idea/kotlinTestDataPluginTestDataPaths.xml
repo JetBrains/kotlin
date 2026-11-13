@@ -40,7 +40,7 @@
         <entry key="$PROJECT_DIR$/compiler/testData/debug/stepping">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/{stepping,steppingWithInlinedFunInKlib,steppingSplit,steppingSplitWithInlinedFunInKlib,steppingWithInlineAnonymousFunctions}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/{stepping,steppingEs6,steppingWithInlinedFunInKlib,steppingSplit,steppingSplitWithInlinedFunInKlib,steppingWithInlineAnonymousFunctions}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
@@ -214,6 +214,14 @@
             </array>
           </value>
         </entry>
+        <entry key="JsStepping.*">
+          <value>
+            <array>
+              <option value="JS" />
+              <option value="ES5" />
+            </array>
+          </value>
+        </entry>
         <entry key="JsES6.*BoxCodegen.*">
           <value>
             <array>
@@ -231,6 +239,14 @@
           </value>
         </entry>
         <entry key="JsES6.*Codegen.*">
+          <value>
+            <array>
+              <option value="JS" />
+              <option value="ES6" />
+            </array>
+          </value>
+        </entry>
+        <entry key="JsES6Stepping.*">
           <value>
             <array>
               <option value="JS" />

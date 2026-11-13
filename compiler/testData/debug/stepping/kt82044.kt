@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR, JS_IR_ES6
 // ^^^ Test hangs while executing the debugger.
 
 

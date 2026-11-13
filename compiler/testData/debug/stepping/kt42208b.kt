@@ -30,7 +30,7 @@ inline fun foo() = {
 // test1.kt:12 invoke
 // test.kt:8 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test1.kt:11 box
 // test.kt:7 box
 // test.kt:2 box$lambda

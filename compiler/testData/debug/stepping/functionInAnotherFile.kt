@@ -53,7 +53,7 @@ fun bar(x: Int) =
 // foo.kt:9 foo
 // test.kt:15 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:14 box
 // foo.kt:5 foo
 // foo.kt:8 foo

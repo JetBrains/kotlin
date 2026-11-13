@@ -72,7 +72,7 @@ fun testExpressionBody(nullable: String?) =
 // test.kt:22 testExpressionBody
 // test.kt:11 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:7 box
 // test.kt:14 test
 // test.kt:8 box

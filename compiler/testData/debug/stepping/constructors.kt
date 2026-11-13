@@ -252,6 +252,16 @@ class O<T>(i: T) {
 // test.kt:73 <init>
 // test.kt:18 box
 
+// EXPECTATIONS JS_IR_ES6
+// test.kt:6 box
+// test.kt:8 box
+// test.kt:10 box
+// test.kt:12 box
+// test.kt:15 box
+// test.kt:16 box
+// test.kt:17 box
+// test.kt:18 box
+
 // EXPECTATIONS WASM_JS
 // test.kt:5 $box (4)
 // test.kt:20 $B.<init> (9)
