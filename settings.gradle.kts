@@ -371,6 +371,7 @@ include(
     ":prepare:build.version",
     ":kotlin-build-common",
     ":prepare:kotlin-compiler-internal-test-framework",
+    ":prepare:kotlin-metadata-jvm",
     ":prepare:kotlinx-metadata-klib",
     ":kotlin-jklib-compiler",
     ":kotlin-compiler",

@@ -1,14 +1,16 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Kotlin JVM metadata manipulation library"
-group = "org.jetbrains.kotlin"
+
+// Do not reuse the published GA coordinates (org.jetbrains.kotlin:kotlin-metadata-jvm) here: the fat artifact with
+// those coordinates is assembled by :prepare:kotlin-metadata-jvm, and two projects with the same group:name would
+// make Gradle resolve project(":kotlin-metadata-jvm") dependencies to the prepare module (see KTI-3695 cleanup)
+group = "org.jetbrains.kotlin.internal"
 
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("org.jetbrains.dokka")
 }
 
@@ -18,35 +20,26 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val embedded = configurations.embedded.get()
-embedded.isTransitive = false
-configurations.compileOnly.get().extendsFrom(embedded)
-configurations.testApi.get().extendsFrom(embedded)
-
-val proguardLibraryJars = configurations.create("proguardLibraryJars") {
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-    }
-}
-
 dependencies {
     api(kotlinStdlib())
-    embedded(project(":kotlin-metadata"))
-    embedded(project(":core:metadata"))
-    embedded(project(":core:metadata.jvm"))
-    embedded(protobufLite())
+    api(project(":kotlin-metadata"))
+    implementation(project(":core:metadata"))
+    implementation(project(":core:metadata.jvm"))
+    implementation(protobufLite())
+
     testImplementation(kotlinTest("junit5"))
     testImplementation(libs.intellij.asm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
-    proguardLibraryJars(kotlinStdlib())
 }
 
 kotlin {
     explicitApi()
     compilerOptions {
         freeCompilerArgs.add("-Xallow-kotlin-package")
+
+        // Keep the *.kotlin_module file name (and therefore the module identity the compiler sees) stable
+        // regardless of the Gradle group assigned to this project above
+        moduleName.set("org.jetbrains.kotlin_kotlin-metadata-jvm")
     }
 
     tasks.named<KotlinCompile>("compileTestKotlin").configure {
@@ -58,73 +51,11 @@ projectTests {
     testTask()
 }
 
-publish()
-
 val unshaded = tasks.register<Jar>("unshaded") {
     archiveClassifier.set("unshaded")
     from(mainSourceSet.output)
 }
 project.addArtifact("unshaded", unshaded, unshaded)
-
-val relocatedJar = tasks.register<ShadowJar>("relocatedJar") {
-    configurations = listOf(embedded)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    destinationDirectory.set(layout.buildDirectory.dir("libs"))
-    archiveClassifier.set("shadow")
-
-    from(mainSourceSet.output)
-    exclude("**/*.proto")
-    relocate("org.jetbrains.kotlin", "kotlin.metadata.internal")
-}
-
-val proguard = tasks.register<CacheableProguardTask>("proguard") {
-    dependsOn(relocatedJar)
-
-    injars(mapOf("filter" to "!META-INF/versions/**"), relocatedJar.get().outputs.files)
-    outjars(fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-proguard.jar"))
-
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
-
-    libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
-    libraryjars(
-        project.files(
-            javaLauncher.map {
-                firstFromJavaHomeThatExists(
-                    "jre/lib/rt.jar",
-                    "../Classes/classes.jar",
-                    jdkHome = it.metadata.installationPath.asFile
-                )!!
-            }
-        )
-    )
-
-    configuration("metadata.pro")
-}
-
-val resultJar = tasks.register<Jar>("resultJar") {
-    val pack = if (kotlinBuildProperties.proguard) proguard else relocatedJar
-    dependsOn(pack)
-    setupPublicJar(base.archivesName.get())
-    from {
-        zipTree(pack.get().singleOutputFile(layout))
-    }
-
-    manifest {
-        attributes("Automatic-Module-Name" to "kotlin.metadata.jvm")
-    }
-}
-
-setPublishableArtifact(resultJar)
-
-tasks.apiBuild {
-    dependsOn(tasks.jar)
-    inputJar.value(resultJar.flatMap { it.archiveFile })
-}
-
-apiValidation {
-    ignoredPackages.add("kotlin.metadata.internal")
-    nonPublicMarkers.add("kotlin.metadata.internal.IgnoreInApiDump")
-}
 
 dokka {
     dokkaGeneratorIsolation = ProcessIsolation {
