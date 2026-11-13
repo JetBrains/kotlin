@@ -1,0 +1,2 @@
+KtNameReferenceExpression(150,159): 'dummyTest'
+  NO_CANDIDATES
