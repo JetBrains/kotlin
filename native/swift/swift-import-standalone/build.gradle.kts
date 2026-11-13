@@ -21,7 +21,10 @@ jvmToolchains {
 dependencies {
     compileOnly(kotlinStdlib())
 
+    api(project(":native:swift:kir"))
     api(project(":native:swift:sir"))
+    implementation(project(":native:swift:kir-providers"))
+    implementation(project(":native:swift:kir-light-classes"))
     implementation(variantOf(libs.swiftextract) { classifier("osx-aarch_64") })
 
     testImplementation(kotlinStdlib())
