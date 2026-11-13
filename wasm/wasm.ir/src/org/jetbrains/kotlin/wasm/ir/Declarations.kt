@@ -36,6 +36,16 @@ class WasmModule(
 
     val data: List<WasmData> = emptyList(),
     val dataCount: Boolean = true,
+
+    // Opaque named sections (id 0) appended to the binary after all standard
+    // sections. Hosts read them via WebAssembly.Module.customSections or
+    // straight from the file — e.g. the hot-reload payload-version registry.
+    val customSections: List<WasmCustomSection> = emptyList(),
+)
+
+class WasmCustomSection(
+    val name: String,
+    val payload: ByteArray,
 )
 
 sealed class WasmNamedModuleField {

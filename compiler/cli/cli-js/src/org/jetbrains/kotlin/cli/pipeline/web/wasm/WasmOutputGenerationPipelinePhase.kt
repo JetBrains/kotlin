@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
+import java.io.File
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGeneratorImpl
 
 object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelineArtifact, WasmBackendPipelineArtifact>(
@@ -39,7 +40,19 @@ object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
         (val backendIr, val cacheGuard, val configuration) = input
         val outputDir = configuration.outputDir!!
         return cacheGuard.tryAcquireAndRelease {
-            val results = backendIr.map { result ->
+            val results = backendIr.mapNotNull { result ->
+                // Hot-reload multimodule: the stdlib base is byte-identical
+                // across edits (deterministic compilation of the same klib) —
+                // emit it once per fresh output dir, skip it thereafter (the
+                // build dir is cleared after a dist rebuild by convention;
+                // `backendIr.size > 1` keeps stdlib-as-main builds emitting).
+                if (backendIr.size > 1 &&
+                    configuration.getBoolean(WasmConfigurationKeys.WASM_HOT_RELOAD) &&
+                    result.multimoduleOptions?.stdlibModuleNameForImport == null &&
+                    File(outputDir, result.baseFileName + ".wasm").exists()
+                ) {
+                    return@mapNotNull null
+                }
                 val linkedModule = linkWasmIr(result)
                 compileWasmIrToBinary(result, linkedModule)
             }
@@ -58,6 +71,8 @@ object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
             configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS) ->
                 ExceptionTagType.TRAP
             isWasmJsTarget -> ExceptionTagType.JS_TAG
+            configuration.getBoolean(WasmConfigurationKeys.WASM_HOT_RELOAD) ->
+                ExceptionTagType.WASM_SHARED_ANYREF
             else -> ExceptionTagType.WASM_TAG
         }
 
@@ -65,7 +80,8 @@ object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
 
         val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
             wasmCompiledFileFragments = wasmCompiledFileFragments,
-            isWasmJsTarget = isWasmJsTarget
+            isWasmJsTarget = isWasmJsTarget,
+            hotReloadPreviousRegistry = configuration.get(HotReloadPayloads.HOT_RELOAD_PREVIOUS_REGISTRY) ?: emptyMap(),
         )
 
         val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
@@ -78,6 +94,7 @@ object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
             wasmCommandModuleInitialization = wasmCommandModuleInitialization,
             useStackSwitching = useStackSwitching,
             importWasmMemoryInsteadOfExport = isWasmJsTarget,
+            emitHotReloadRegistry = configuration.getBoolean(WasmConfigurationKeys.WASM_HOT_RELOAD),
         )
     }
 

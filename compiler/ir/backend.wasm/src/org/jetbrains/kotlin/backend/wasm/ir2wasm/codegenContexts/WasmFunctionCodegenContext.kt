@@ -24,7 +24,13 @@ import org.jetbrains.kotlin.wasm.ir.*
 import java.util.LinkedList
 
 enum class LoopLabelType { BREAK, CONTINUE }
-enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR }
+enum class SyntheticLocalType {
+    IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR,
+    // hot-reload virtual dispatch: the stashed receiver cell (any cell —
+    // uniform shape), the extracted vtable (root-typed), and the looked-up
+    // interface itable (anyref — the lookup returns anyref before the cast)
+    HOT_DISPATCH_RECEIVER, HOT_DISPATCH_VTABLE, HOT_DISPATCH_ITABLE,
+}
 
 class WasmFunctionCodegenContext(
     val irFunction: IrFunction?,
@@ -91,6 +97,14 @@ class WasmFunctionCodegenContext(
             SyntheticLocalType.IS_INTERFACE_ANY_ARRAY ->
                 WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType)
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
+            SyntheticLocalType.HOT_DISPATCH_RECEIVER ->
+                WasmRefNullType(typeContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
+            SyntheticLocalType.HOT_DISPATCH_VTABLE ->
+                WasmRefNullType(typeContext.referenceVTableHeapType(backendContext.irBuiltIns.anyClass))
+            SyntheticLocalType.HOT_DISPATCH_ITABLE ->
+                // matches the intrinsics' result type (kotlin.wasm.internal
+                // .reftypes.anyref -> the abstract wasm anyref)
+                WasmAnyRef
         }
 
     fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {

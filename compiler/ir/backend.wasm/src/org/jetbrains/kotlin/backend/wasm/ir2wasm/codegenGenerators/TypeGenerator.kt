@@ -86,12 +86,65 @@ class TypeGenerator(
             fields.add(WasmStructFieldDeclaration("vtable", vtableRefGcType, false))
             fields.add(WasmStructFieldDeclaration("itable", WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType), false))
             fields.add(WasmStructFieldDeclaration("rtti", WasmRefType(Synthetics.HeapTypes.rttiType), isMutable = false))
-            declaration.allFields(irBuiltIns).mapTo(fields) {
-                WasmStructFieldDeclaration(
-                    name = it.name.toString(),
-                    type = wasmModuleTypeTransformer.transformFieldType(it.type),
-                    isMutable = true
+            if (backendContext.isHotReloadCompilation) {
+                // Cell encoding: {vtable, itable, rtti, payload} — the cell
+                // shape never changes, so field/method changes invalidate
+                // nothing already compiled; fields live in versioned payload
+                // structs behind the mutable field (HotReloadPayloads owns
+                // the version model; flat field indices match
+                // ClassMetadata.fields).
+val plan = HotReloadPayloads.payloadPlan(declaration, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer)
+                for ([version, struct] in plan.history) {
+                    typeCodegenContext.definePayloadVersionGcType(symbol, version, struct)
+                }
+                if (plan.currentVersion > (plan.history.lastOrNull()?.first ?: 0)) {
+                    typeCodegenContext.definePayloadVersionGcType(symbol, plan.currentVersion, plan.currentStruct)
+                }
+
+                // The payload field is mutable, and mutable fields are *invariant*
+                // in wasm GC subtyping — so every cell in the hierarchy must declare
+                // the exact same field type. `payload<Any>` is that type: every
+                // payload starts with Any's `_hashCode` (see wasm builtins Any.kt),
+                // so all payload versions and all subclass payloads are subtypes
+                // of it, and the cell subtyping chain stays valid. Field access
+                // down-casts to the declaring class's payload — the cast doubles
+                // as the version check once payload versions exist.
+                fields.add(
+                    WasmStructFieldDeclaration(
+                        "payload",
+                        WasmRefNullType(typeCodegenContext.referencePayloadHeapType(irBuiltIns.anyClass)),
+                        isMutable = true
+                    )
                 )
+                // The VTABLE gets the same indirection treatment: root-typed
+                // (Any's vtable) and MUTABLE, so the cell type is also stable
+                // across METHOD-SET changes — an added open method grows the
+                // vtable STRUCT, a new type, but no signature mentioning the
+                // class changes. A grown vtable is a SUBTYPE of the old one
+                // (fields append), so already-compiled code keeps dispatching
+                // on migrated instances for free; only new code on stale
+                // instances needs the migration arm, which virtual dispatch
+                // lowers (ref.test -> the module's __hot_vtable_update). The
+                // itable becomes mutable too — the stepper installs the
+                // current interface tables alongside the vtable.
+                fields[0] = WasmStructFieldDeclaration(
+                    "vtable",
+                    WasmRefNullType(typeCodegenContext.referenceVTableHeapType(irBuiltIns.anyClass)),
+                    isMutable = true,
+                )
+                fields[1] = WasmStructFieldDeclaration(
+                    "itable",
+                    WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType),
+                    isMutable = true,
+                )
+            } else {
+                declaration.allFields(irBuiltIns).mapTo(fields) {
+                    WasmStructFieldDeclaration(
+                        name = it.name.toString(),
+                        type = wasmModuleTypeTransformer.transformFieldType(it.type),
+                        isMutable = true
+                    )
+                }
             }
 
             val superClass = metadata.superClass

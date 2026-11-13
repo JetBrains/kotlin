@@ -19,11 +19,17 @@ import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import java.util.*
 
-enum class ExceptionTagType { WASM_TAG, JS_TAG, TRAP }
+enum class ExceptionTagType { WASM_TAG, JS_TAG, TRAP, WASM_SHARED_ANYREF }
 
 class WasmCompiledModuleFragment(
     private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
-    private val isWasmJsTarget: Boolean
+    private val isWasmJsTarget: Boolean,
+    /** Hot reload: the previous module's payload registry, ferried in as
+     *  the hidden source object (HOT_RELOAD_PREVIOUS_REGISTRY). Merged
+     *  into the emitted section so it stays COMPLETE — a delta defines
+     *  only its dirty files, so clean files' classes reach the section
+     *  only through this merge. */
+    private val hotReloadPreviousRegistry: Map<IdSignature, WasmTypeDeclaration> = emptyMap(),
 ) {
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
@@ -62,6 +68,7 @@ class WasmCompiledModuleFragment(
         wasmElements: MutableList<WasmElement>,
         exports: MutableList<WasmExport<*>>,
         wasmCommandModuleInitialization: Boolean,
+        emitHotReloadRegistry: Boolean,
     ) {
         stringAddressesAndLengthsField(
             definedDeclarations = definedDeclarations,
@@ -77,9 +84,18 @@ class WasmCompiledModuleFragment(
             WasmSpecialExportNames.START
 
         val mainFunctions = selectMainFunctions()
+        // Hot mode is REACTOR-STYLE: `_initialize` is the field-init export,
+        // and exporting `_start` alongside it violates the convention (a
+        // command has _start; a reactor has _initialize) — e.g. Node's WASI
+        // refuses either API when both exist. Main is still exported, under
+        // the neutral `main`, for hosts that want to run it explicitly.
+        val mainExportName = when {
+            emitHotReloadRegistry -> "main"
+            else -> mainFunctionsExportName
+        }
         mainFunctions.forEach { mainFunction ->
             val mainFunction = definedDeclarations.resolve(FuncSymbol(mainFunction))
-            exports.add(WasmExport.Function(mainFunctionsExportName, mainFunction))
+            exports.add(WasmExport.Function(mainExportName, mainFunction))
         }
 
         createStringPoolField(definedDeclarations, stringPoolSizeWithGlobals)
@@ -150,6 +166,7 @@ class WasmCompiledModuleFragment(
         wasmCommandModuleInitialization: Boolean,
         useStackSwitching: Boolean,
         importWasmMemoryInsteadOfExport: Boolean,
+        emitHotReloadRegistry: Boolean = false,
     ): WasmModule {
         val definedDeclarations = getDefinedDeclarationsFromFragments()
 
@@ -191,11 +208,27 @@ class WasmCompiledModuleFragment(
             wasmElements = elements,
             exports = exports,
             wasmCommandModuleInitialization = wasmCommandModuleInitialization,
+            emitHotReloadRegistry = emitHotReloadRegistry,
         )
 
         val masterInitFunction = createMasterInitFunction(
             definedDeclarations = definedDeclarations,
         )
+
+        // Hot reload Stage 3: the universal VTABLE STEPPER, created BEFORE
+        // the function lists are partitioned (it must land in
+        // definedFunctions). Virtual dispatch lowers to
+        // test -> (cast + read slot) | (call this function, retry): it
+        // reads the instance's RTTI klassId (a stable content hash), finds
+        // the class among this module's declared classes, installs the
+        // CURRENT vtable and itable into the (mutable, root-typed) cell
+        // fields, and returns the vtable. A grown vtable is a SUBTYPE of
+        // the old one, so already-compiled code keeps dispatching on
+        // migrated instances for free; only new code on stale instances
+        // arrives here.
+        if (emitHotReloadRegistry) {
+            createHotVtableUpdateFunction(definedDeclarations)
+        }
 
         val globals = getGlobals(definedDeclarations)
 
@@ -224,6 +257,41 @@ class WasmCompiledModuleFragment(
 
         val recursiveTypeGroups = getTypes(definedDeclarations)
 
+        // Hot reload: the registry section is the image's COMPLETE
+        // payload-version table — a delta defines only its dirty files, so
+        // clean files' classes reach the section only by merging the
+        // previous table in (own entries win; the host's ferry would
+        // otherwise silently lose history for a later edit of those files).
+        val customSections = if (emitHotReloadRegistry) {
+            val previousEntries = HotReloadPayloads.collectRegistryEntries(hotReloadPreviousRegistry)
+            val ownEntries = HotReloadPayloads.collectRegistryEntries(definedDeclarations.gcTypes)
+            val registry = previousEntries + ownEntries
+            if (registry.isNotEmpty()) {
+                listOf(
+                    WasmCustomSection(
+                        HotReloadPayloads.REGISTRY_SECTION_NAME,
+                        HotReloadPayloads.serializeRegistry(registry),
+                    )
+                )
+            } else {
+                emptyList()
+            }
+        } else {
+            emptyList()
+        }
+
+        // Hot reload: reactor-style output — no start section; init is
+        // exported as _initialize so the host controls instantiate ->
+        // init -> sweep (and a rejected patch never runs its init).
+        if (emitHotReloadRegistry) {
+            exports.add(
+                WasmExport.Function(
+                    field = masterInitFunction,
+                    name = WasmSpecialExportNames.INITIALIZE,
+                )
+            )
+        }
+
         return WasmModule(
             resolver = definedDeclarations,
             recGroups = recursiveTypeGroups,
@@ -237,11 +305,12 @@ class WasmCompiledModuleFragment(
             globals = definedGlobals,
             importedGlobals = importedGlobals,
             exports = exports,
-            startFunction = masterInitFunction,
+            startFunction = if (emitHotReloadRegistry) null else masterInitFunction,
             elements = elements,
             data = data,
             dataCount = true,
-            tags = definedTags
+            tags = definedTags,
+            customSections = customSections,
         ).apply { calculateIds() }
     }
 
@@ -299,6 +368,17 @@ class WasmCompiledModuleFragment(
                 )
                 definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.jsExceptionTagFuncType.type] = throwableTagFuncType
                 WasmTag(Synthetics.FunctionHeapTypes.jsExceptionTagFuncType)
+            }
+            // Hot reload (wasi): one host-created anyref-typed tag shared by
+            // every generation, so cross-generation catch works. Kotlin
+            // Throwables flow through untyped; catch sites cast back.
+            ExceptionTagType.WASM_SHARED_ANYREF -> {
+                val tagFuncType = WasmFunctionType(
+                    parameterTypes = listOf(WasmAnyRef),
+                    resultTypes = emptyList()
+                )
+                definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.jsExceptionTagFuncType.type] = tagFuncType
+                WasmTag(Synthetics.FunctionHeapTypes.jsExceptionTagFuncType, WasmImportDescriptor("intrinsics", WasmSymbol("tag")))
             }
         }
 
@@ -396,6 +476,95 @@ class WasmCompiledModuleFragment(
         }
 
         return recursiveGroups
+    }
+
+    /**
+     * The module's universal hot-reload vtable stepper:
+     *   `(ref null $AnyCell) -> (ref null $vt_root)`
+     * generated from the classes this module declares (linker-data
+     * hotReloadableClasses). Semantics: install the current vtable + itable
+     * for the instance's RUNTIME class — a method added by this module
+     * becomes dispatchable on instances created before it existed (SBCL's
+     * wrapper update; here the "wrapper" is the mutable vtable field and
+     * the grown vtable's prefix keeps old code sound).
+     */
+    private fun createHotVtableUpdateFunction(definedDeclarations: DefinedDeclarationsResolver) {
+        val classKeys = mutableSetOf<IdSignature>()
+        forEachLinkerData { classKeys.addAll(it.hotReloadableClasses) }
+        val concreteClasses = classKeys.filter { key ->
+            // classes with a vtable global (concrete); abstract classes
+            // never instantiate
+            definedDeclarations.globalVTables.containsKey(key)
+        }
+        if (concreteClasses.isEmpty()) return
+
+        val anyCellKey = Synthetics.HeapTypes.anyBuiltInType.type
+        val cellGcType = GcTypeSymbol(anyCellKey)
+        val rootVtableHeapType = VTableHeapTypeSymbol(anyCellKey)
+
+        val functionType = WasmFunctionType(
+            parameterTypes = listOf(WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)),
+            resultTypes = listOf(WasmRefNullType(rootVtableHeapType)),
+        )
+        definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.hotVtableUpdateType.type] = functionType
+
+        val serviceCodeLocation = SourceLocation.NoLocation("Hot reload vtable update")
+        val receiverLocal = WasmLocal(0, "cell", WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType), true)
+        val stepper = WasmFunction.Defined(
+            name = "_hot_vtable_update",
+            type = Synthetics.FunctionHeapTypes.hotVtableUpdateType,
+            locals = mutableListOf(receiverLocal),
+        )
+        with(WasmExpressionBuilder(stepper.instructions)) {
+            fun emitClassArm(classKey: IdSignature) {
+                val klassId = cityHash64(classKey.toString().encodeToByteArray()).toLong()
+                // the klassId is on the stack from the arm above (or the
+                // initial read below): compare, and on match install
+                buildConstI64(klassId, serviceCodeLocation)
+                buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
+                buildIf("Class matches")
+                // cell.vtable = $vt<Class> (typed (ref $vt<C>) <: root)
+                buildGetLocal(receiverLocal, serviceCodeLocation)
+                buildGetGlobal(VTableGlobalSymbol(classKey), serviceCodeLocation)
+                buildStructSet(cellGcType, 0, serviceCodeLocation)
+                // cell.itable = $it<Class> (or null when no interfaces)
+                buildGetLocal(receiverLocal, serviceCodeLocation)
+                if (definedDeclarations.globalClassITables.containsKey(classKey)) {
+                    buildGetGlobal(ClassITableGlobalSymbol(classKey), serviceCodeLocation)
+                } else {
+                    buildRefNull(WasmHeapType.Simple.None, serviceCodeLocation)
+                }
+                buildStructSet(cellGcType, 1, serviceCodeLocation)
+                // return the freshly installed vtable — global.get yields
+                // (ref $vt<C>) which is already a subtype of the declared
+                // (ref null $vt_root) result
+                buildGetGlobal(VTableGlobalSymbol(classKey), serviceCodeLocation)
+                buildInstr(WasmOp.RETURN, serviceCodeLocation)
+                buildEnd()
+            }
+            // klassId = cell.rtti.klassId, once; each arm re-pushes it
+            // for the next comparison — mirror of the associated-object
+            // getter's chain (the if-consumed compare value)
+            buildGetLocal(receiverLocal, serviceCodeLocation)
+            buildStructGet(cellGcType, 2, serviceCodeLocation) // rtti
+            buildStructGet(Synthetics.GcTypes.rttiType, BodyGenerator.RTTI_KLASS_ID_FIELD_ID, serviceCodeLocation)
+            for (classKey in concreteClasses) {
+                emitClassArm(classKey)
+                // re-push the klassId for the next arm (the previous
+                // comparison consumed it)
+                buildGetLocal(receiverLocal, serviceCodeLocation)
+                buildStructGet(cellGcType, 2, serviceCodeLocation)
+                buildStructGet(Synthetics.GcTypes.rttiType, BodyGenerator.RTTI_KLASS_ID_FIELD_ID, serviceCodeLocation)
+            }
+            // Unknown class to this module (deleted, or changed beyond
+            // structural identity): return the instance's CURRENT vtable —
+            // the dispatch's own cast is the gate, so compatible vtables keep
+            // dispatching and incompatible ones trap the honest "illegal cast".
+            buildInstr(WasmOp.DROP, serviceCodeLocation)
+            buildGetLocal(receiverLocal, serviceCodeLocation)
+            buildStructGet(cellGcType, 0, serviceCodeLocation)
+        }
+        definedDeclarations.functions[Synthetics.Functions.hotVtableUpdate.value] = stepper
     }
 
     private fun createAndBindRttiTypeDeclaration(

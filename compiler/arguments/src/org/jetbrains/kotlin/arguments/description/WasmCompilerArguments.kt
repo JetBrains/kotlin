@@ -114,6 +114,19 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xwasm-hot-reload"
+        compilerName = "wasmHotReload"
+        description = "Compile reloadable code: every function is dispatched through a mutable slot global, and a setter named `__set` + the function name is exported, so a host can hot-swap function bodies at runtime — including virtual method bodies for already-existing instances.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
+
     compilerArgument {
         name = "Xwasm-kclass-fqn"
         compilerName = "wasmKClassFqn"

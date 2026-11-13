@@ -86,8 +86,65 @@ class BodyGenerator(
     fun getStructFieldId(field: IrField): Int {
         val klass = field.parentAsClass
         val metadata = wasmModuleMetadataCache.getClassMetadata(klass.symbol)
-        val fieldId = metadata.fields.indexOf(field) + 3 //Implicit vtable, itable and rtti fields
-        return fieldId
+        val fieldId = metadata.fields.indexOf(field)
+        // In hot-reload mode the field lives in the class's *payload* struct,
+        // which has no header fields — the flat ClassMetadata index is the
+        // payload index. Otherwise the field follows the three header fields
+        // (vtable, itable, rtti) of the class struct itself.
+        return if (backendContext.isHotReloadCompilation) fieldId else fieldId + 3
+    }
+
+    /** Extracts the payload (statically payload<Any>) and casts to the
+     * declaring class's CURRENT version — the cast is the version check.
+     * Classes with versions that fail it go through the stepper (lazy
+     * in-place migration) instead. */
+private fun generatePayloadExtractAndCast(field: IrField, location: SourceLocation) {
+        val klassSymbol = field.parentAsClass.symbol
+        val plan = HotReloadPayloads.payloadPlan(klassSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer)
+        if (plan.migrateFromVersions.isNotEmpty()) {
+            body.buildCall(
+                FuncSymbol(typeCodegenContext.stepperSignature(klassSymbol, plan.currentVersion)),
+                location,
+            )
+        } else {
+            body.buildStructGet(typeCodegenContext.referenceGcType(klassSymbol), CLASS_PAYLOAD_FIELD_ID, location)
+            body.buildRefCastStatic(
+                typeCodegenContext.referencePayloadVersionHeapType(klassSymbol, plan.currentVersion),
+                location,
+            )
+        }
+    }
+
+    // Synthetic locals for hot-reload virtual dispatch: the receiver cell
+    // (reused across the fast/slow paths) and the extracted vtable (root-
+    // typed; the fast path re-casts it, the slow path replaces it). One
+    // pair per function — types are uniform, so a single local serves every
+    // dispatch site in the function.
+    private fun hotDispatchReceiverLocal(): WasmLocal =
+        functionContext.referenceLocal(SyntheticLocalType.HOT_DISPATCH_RECEIVER)
+
+    private fun hotDispatchVtableLocal(): WasmLocal =
+        functionContext.referenceLocal(SyntheticLocalType.HOT_DISPATCH_VTABLE)
+
+    private fun fieldStructGcType(field: IrField): GcTypeSymbol {
+        val klassSymbol = field.parentAsClass.symbol
+        return if (backendContext.isHotReloadCompilation) {
+            val version = HotReloadPayloads.payloadPlan(klassSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer).currentVersion
+            typeCodegenContext.referencePayloadVersionGcType(klassSymbol, version)
+        } else {
+            typeCodegenContext.referenceGcType(klassSymbol)
+        }
+    }
+
+    /** In hot mode the field-value block initializes the current payload
+     * version and the cell wraps it; plain mode initializes the class
+     * struct directly. */
+private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLocation) {
+        if (backendContext.isHotReloadCompilation) {
+            val version = HotReloadPayloads.payloadPlan(klassSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer).currentVersion
+            body.buildStructNew(typeCodegenContext.referencePayloadVersionGcType(klassSymbol, version), location)
+        }
+        body.buildStructNew(typeCodegenContext.referenceGcType(klassSymbol), location)
     }
 
     // Generates code for the given IR element. Leaves something on the stack unless expression was of the type Void.
@@ -184,7 +241,7 @@ class BodyGenerator(
         val location = expression.getSourceLocation()
         generateAnyParameters(arrayClass.symbol, location)
         if (!tryGenerateConstVarargArray(expression, wasmArrayType)) tryGenerateVarargArray(expression, wasmArrayType)
-        body.buildStructNew(typeCodegenContext.referenceGcType(expression.type.getRuntimeClass(irBuiltIns).symbol), location)
+        buildClassStructNew(expression.type.getRuntimeClass(irBuiltIns).symbol, location)
     }
 
     override fun visitThrow(expression: IrThrow) {
@@ -364,6 +421,10 @@ class BodyGenerator(
     private val rawExceptionType =
         if (backendContext.isWasmJsTarget)
             WasmExternRef
+        else if (backendContext.usesAnyrefExceptionTag)
+            // shared host-created tag: Kotlin Throwables cross module
+            // boundaries as anyref payloads; the catch funnel casts back
+            WasmAnyRef
         else
             wasmModuleTypeTransformer.transformBlockResultType(irBuiltIns.throwableType)
                 ?: error("Can't transform Throwable type to wasm block result type")
@@ -385,6 +446,13 @@ class BodyGenerator(
 
             body.buildCall(
                 declarationCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getKotlinException),
+                catchBlock.catchParameter.getSourceLocation()
+            )
+        } else if (backendContext.usesAnyrefExceptionTag) {
+            // wasm stack: [anyref] — a Kotlin Throwable from (any) generation,
+            // thrown through the shared tag. Cast it back to Throwable.
+            body.buildRefCastNullStatic(
+                Synthetics.HeapTypes.throwableBuiltInType,
                 catchBlock.catchParameter.getSourceLocation()
             )
         }
@@ -605,10 +673,13 @@ class BodyGenerator(
             else -> WasmOp.STRUCT_GET
         }
 
+        if (backendContext.isHotReloadCompilation) {
+            generatePayloadExtractAndCast(field, location)
+        }
         body.buildInstr(
             opcode,
             location,
-            typeCodegenContext.referenceGcType(field.parentAsClass.symbol),
+            fieldStructGcType(field),
             WasmImmediate.StructFieldIdx.get(getStructFieldId(field))
         )
         body.commentPreviousInstr { "name: ${field.name.asString()}, type: ${field.type.render()}" }
@@ -636,9 +707,12 @@ class BodyGenerator(
 
         if (receiver != null) {
             generateExpression(receiver)
+            if (backendContext.isHotReloadCompilation) {
+                generatePayloadExtractAndCast(field, location)
+            }
             generateExpression(expression.value)
             body.buildStructSet(
-                struct = typeCodegenContext.referenceGcType(field.parentAsClass.symbol),
+                struct = fieldStructGcType(field),
                 fieldId = getStructFieldId(field),
                 location
             )
@@ -726,7 +800,7 @@ class BodyGenerator(
             generateAnyParameters(klassSymbol, location)
             expression.arguments.forEach { generateExpression(it!!) }
 
-            body.buildStructNew(wasmGcType, location)
+            buildClassStructNew(klassSymbol, location)
             body.commentPreviousInstr { "@WasmPrimitiveConstructor ctor call: ${klass.fqNameWhenAvailable}" }
             return
         }
@@ -767,7 +841,7 @@ class BodyGenerator(
                     generateDefaultInitializerForType(wasmModuleTypeTransformer.transformType(field.type), body)
                 }
             }
-            body.buildStructNew(typeCodegenContext.referenceGcType(parentClass.symbol), location)
+            buildClassStructNew(parentClass.symbol, location)
             body.buildSetLocal(thisParameter, location)
             body.buildEnd()
         }
@@ -792,7 +866,7 @@ class BodyGenerator(
         val location = expression.getSourceLocation()
         generateAnyParameters(klassSymbol, location)
         generateExpression(expression)
-        body.buildStructNew(typeCodegenContext.referenceGcType(klassSymbol), location)
+        buildClassStructNew(klassSymbol, location)
         body.commentPreviousInstr { "box" }
     }
 
@@ -926,12 +1000,49 @@ class BodyGenerator(
                 //TODO: check why it could be needed
                 generateRefCast(receiver.type, klass.defaultType, isRefNullCast = false, location)
 
-                body.buildStructGet(typeCodegenContext.referenceGcType(klassSymbol), ANY_VTABLE_FIELD_ID, location)
+                if (backendContext.isHotReloadCompilation) {
+                    // The vtable is root-typed and mutable (method additions
+                    // swap it); the fast path is a test+cast, the slow path
+                    // migrates the instance (install the current vtable for
+                    // its RUNTIME class — the stepper reads the RTTI klassId)
+                    // and retries. The receiver is stashed in a synthetic
+                    // local because the stepper needs the CELL.
+                    val vTableHeapTypeReference = typeCodegenContext.referenceVTableHeapType(klassSymbol)
+                    val receiverLocal = hotDispatchReceiverLocal()
+                    body.buildSetLocal(receiverLocal, location)
+                    body.buildGetLocal(receiverLocal, location)
+                    // the local is uniformly any-cell typed; struct.get needs
+                    // the static class (the tee-optimizer makes the stash a
+                    // local.tee, so the pre-existing cast's refinement is
+                    // lost on the read-back path)
+                    body.buildRefCastStatic(typeCodegenContext.referenceHeapType(klassSymbol), location)
+                    body.buildStructGet(typeCodegenContext.referenceGcType(klassSymbol), ANY_VTABLE_FIELD_ID, location)
+                    val vtableLocal = hotDispatchVtableLocal()
+                    body.buildSetLocal(vtableLocal, location)
+                    body.buildGetLocal(vtableLocal, location)
+                    body.buildRefTestStatic(vTableHeapTypeReference, location)
+                    body.buildIf(null, WasmRefType(vTableHeapTypeReference))
+                    body.buildGetLocal(vtableLocal, location)
+                    body.buildRefCastStatic(vTableHeapTypeReference, location)
+                    body.buildElse()
+                    body.buildGetLocal(receiverLocal, location)
+                    body.buildCall(Synthetics.Functions.hotVtableUpdate, location)
+                    body.buildRefCastStatic(vTableHeapTypeReference, location)
+                    body.buildEnd()
+                } else {
+                    body.buildStructGet(typeCodegenContext.referenceGcType(klassSymbol), ANY_VTABLE_FIELD_ID, location)
+                }
                 val vTableSlotId = vfSlot + 1 //First element is always contains Special ITable
                 body.buildStructGet(vTableGcTypeReference, vTableSlotId, location)
                 body.buildInstr(if (isTail) WasmOp.RETURN_CALL_REF else WasmOp.CALL_REF, location, functionTypeReference)
             } else {
                 generateExpression(call.dispatchReceiver!!)
+                if (backendContext.isHotReloadCompilation) {
+                    // the interface path may need to migrate the instance
+                    // (retroactive interface changes) — keep the receiver
+                    body.buildSetLocal(hotDispatchReceiverLocal(), location)
+                    body.buildGetLocal(hotDispatchReceiverLocal(), location)
+                }
                 generateInterfaceVTableLookup(function, klassSymbol, location)
                 body.buildInstr(
                     if (isTail) WasmOp.RETURN_CALL_REF else WasmOp.CALL_REF,
@@ -1001,7 +1112,34 @@ class BodyGenerator(
             body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
         }
 
-        body.buildRefCastStatic(vTableHeapTypeReference, location)
+        if (backendContext.isHotReloadCompilation && !klassSymbol.isFunction() &&
+            backendContext.specialSlotITableTypes.indexOf(klassSymbol) == -1
+        ) {
+            // hot reload: the itable lookup can return an OLD itable for a
+            // retroactively-changed interface — test the cast, and on miss
+            // migrate the instance (the stepper installs the current
+            // itable) and retry the lookup
+            val itableLocal = functionContext.referenceLocal(SyntheticLocalType.HOT_DISPATCH_ITABLE)
+            body.buildSetLocal(itableLocal, location)
+            body.buildGetLocal(itableLocal, location)
+            body.buildRefTestStatic(vTableHeapTypeReference, location)
+            body.buildIf(null, WasmRefType(vTableHeapTypeReference))
+            body.buildGetLocal(itableLocal, location)
+            body.buildRefCastStatic(vTableHeapTypeReference, location)
+            body.buildElse()
+            body.buildGetLocal(hotDispatchReceiverLocal(), location)
+            body.buildCall(Synthetics.Functions.hotVtableUpdate, location)
+            body.buildDrop(location) // the vtable is not needed here; the itable is
+            body.buildGetLocal(hotDispatchReceiverLocal(), location)
+            // (the arm condition excludes special/functional interfaces, so
+            // the retry is always the generic lookup)
+            body.buildConstI64(linkerDataContext.referenceTypeId(klassSymbol), location)
+            body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
+            body.buildRefCastStatic(vTableHeapTypeReference, location)
+            body.buildEnd()
+        } else {
+            body.buildRefCastStatic(vTableHeapTypeReference, location)
+        }
         val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
             .indexOfFirst { it.function == function }
         body.buildStructGet(vTableGcTypeReference, vfSlot, location)
@@ -1075,10 +1213,21 @@ class BodyGenerator(
         val wasmContBoxGcType = typeCodegenContext.referenceGcType(wasmContBoxTypeSymbol)
         val wasmContBoxHeapType = typeCodegenContext.referenceHeapType(wasmContBoxTypeSymbol)
         body.buildRefCastStatic(wasmContBoxHeapType, location)
-        body.buildGetLocal(wasmContinuation, location)
 
-        // store contref in WasmContinuationBox
-        body.buildStructSet(wasmContBoxGcType, 4, location)
+        // store contref in WasmContinuationBox (struct field 4 = flat payload
+        // field 1 after the three cell headers)
+        if (backendContext.isHotReloadCompilation) {
+            val version = HotReloadPayloads.payloadPlan(
+                wasmContBoxTypeSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer,
+            ).currentVersion
+            body.buildStructGet(wasmContBoxGcType, CLASS_PAYLOAD_FIELD_ID, location)
+            body.buildRefCastStatic(typeCodegenContext.referencePayloadVersionHeapType(wasmContBoxTypeSymbol, version), location)
+            body.buildGetLocal(wasmContinuation, location)
+            body.buildStructSet(typeCodegenContext.referencePayloadVersionGcType(wasmContBoxTypeSymbol, version), 4 - 3, location)
+        } else {
+            body.buildGetLocal(wasmContinuation, location)
+            body.buildStructSet(wasmContBoxGcType, 4, location)
+        }
 
         // return COROUTINE_SUSPENDED
         body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutineSuspendedGetter), location)
@@ -1889,6 +2038,14 @@ class BodyGenerator(
         const val ANY_VTABLE_FIELD_ID = 0
         const val ANY_ITABLE_FIELD_ID = 1
         const val ANY_RTTI_FIELD_ID = 2
+        // Hot-reload cell encoding: index of the class struct's `payload` field
+        // holding the per-class payload struct (after vtable/itable/rtti).
+        const val CLASS_PAYLOAD_FIELD_ID = 3
+        // RTTI field index of the stable content-hash class id (see the
+        // RTTI struct in WasmCompiledModuleFragment). The universal vtable
+        // stepper is registered by the linker under
+        // Synthetics.Functions.hotVtableUpdate.
+        const val RTTI_KLASS_ID_FIELD_ID = 4
         const val VTABLE_SPECIAL_ITABLE_FIELD_ID = 0
         const val RTTI_IMPLEMENTED_INTERFACES_FIELD_ID = 0
         const val RTTI_SUPER_CLASS_FIELD_ID = 1

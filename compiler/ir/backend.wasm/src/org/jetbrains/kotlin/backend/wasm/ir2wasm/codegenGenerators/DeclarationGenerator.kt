@@ -67,7 +67,10 @@ import org.jetbrains.kotlin.wasm.ir.WasmGlobal
 import org.jetbrains.kotlin.wasm.ir.WasmHeapType
 import org.jetbrains.kotlin.wasm.ir.WasmI32
 import org.jetbrains.kotlin.wasm.ir.WasmI64
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
 import org.jetbrains.kotlin.wasm.ir.WasmImmediate
+import org.jetbrains.kotlin.wasm.ir.wasmInstrWithoutLocation
 import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
 import org.jetbrains.kotlin.wasm.ir.WasmInstr
 import org.jetbrains.kotlin.wasm.ir.WasmOp
@@ -132,12 +135,20 @@ class DeclarationGenerator(
         val wasmImportModule = declaration.getWasmImportDescriptor()
         val jsBuiltin = declaration.getJsBuiltinDescriptor()
         val jsCode = declaration.getJsFunAnnotation()
+        val hotAdoptName = (declaration as? IrSimpleFunction)?.let(HotReloadPayloads::hotAdoptImportName)
 
         val importedName = when {
             wasmImportModule != null -> {
                 check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
                 linkerDataContext.addJsModuleImport(declaration.symbol, wasmImportModule.moduleName)
                 wasmImportModule
+            }
+            hotAdoptName != null -> {
+                // object-state adoption (WasmHotReloadObjectAdoptionLowering):
+                // the host resolves the import to the PREVIOUS live binding's
+                // getter — or null when none exists (cold boot)
+                check(declaration.isExternal) { "Non-external fun with hot-adopt import ${declaration.fqNameWhenAvailable}"}
+                WasmImportDescriptor(HotReloadPayloads.HOT_ADOPT_MODULE, WasmSymbol(hotAdoptName))
             }
             jsBuiltin != null -> {
                 check(declaration.isExternal) { "Non-external fun with @JsBuiltin ${declaration.fqNameWhenAvailable}"}
@@ -239,8 +250,19 @@ class DeclarationGenerator(
 
         expressionBuilder.complete()
 
-        declarationCodegenContext.defineFunction(declaration.symbol, function)
-        multimoduleExportIfNeeded(declaration, function)
+        // Hot-reload codegen: route every use of this function — call sites,
+        // vtable/itable entries, function references — through a mutable slot
+        // global, so a host can swap the body at runtime. This includes
+        // method bodies: existing instances dispatch through vtables whose
+        // entries reference the slot-reading entry function below.
+        var hotReloadEntry: WasmFunction.Defined? = null
+        if (backendContext.isHotReloadCompilation && isHotReloadableFunction(declaration)) {
+            hotReloadEntry = defineHotReloadableFunction(declaration, function, functionTypeSymbol, watName)
+            multimoduleExportIfNeeded(declaration, hotReloadEntry)
+        } else {
+            declarationCodegenContext.defineFunction(declaration.symbol, function)
+            multimoduleExportIfNeeded(declaration, function)
+        }
 
         // Register callable reference and merged suspend lambda class members for deduplication at link time.
         // Multiple files may create classes with the same signature (e.g., Function1_bound1_I, SuspendLambda_2AA),
@@ -262,13 +284,120 @@ class DeclarationGenerator(
         }
 
         if (nameIfExported != null) {
+            // In hot-reload mode the callable registered for this declaration
+            // is the slot-reading entry — export that, not the body.
             linkerDataContext.addExport(
                 WasmExport.Function(
-                    field = function,
+                    field = hotReloadEntry ?: function,
                     name = nameIfExported
                 )
             )
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Hot reload codegen (-Xwasm-hot-reload)
+    //
+    // Layout per reloadable function `f`:
+    //   (global $__slot$f (mut (ref null $funType)) (ref.func $f$impl))
+    //   (func $f$entry (type $funType) local.get.. global.get $__slot$f call_ref)
+    //   (func $__set$f (param (ref null $funType)) local.get 0 global.set $__slot$f)
+    // The entry is registered under `f`'s real reference key, so every call
+    // site, vtable entry and function reference goes through the slot; the
+    // body is only reachable through the slot's initializer. Exports:
+    //   __hot_entry$<fqName>  — the slot-reading entry (for host funcref wiring)
+    //   __hot_set$<fqName>    — the setter (host installs a new body)
+    // ------------------------------------------------------------------
+
+    private fun hotReloadKeys(watName: String, realKey: IdSignature): HotReloadKeys {
+        fun synthetic(kind: String) = IdSignature.CommonSignature("hot.reload", "$kind<${realKey}>", null, 0, null)
+        return HotReloadKeys(
+            slot = synthetic("slot"),
+            impl = synthetic("impl"),
+            setter = synthetic("setter"),
+        )
+    }
+
+    private class HotReloadKeys(val slot: IdSignature, val impl: IdSignature, val setter: IdSignature)
+
+    private fun isHotReloadableFunction(declaration: IrFunction): Boolean {
+        if (declaration is IrConstructor) return false
+        if (declaration.isInline) return false
+        val parentClass = declaration.parentClassOrNull ?: return true
+        // Callable-reference and merged-suspend-lambda classes go through
+        // link-time deduplication; slotting their members would break it.
+        return parentClass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL &&
+                parentClass.origin != WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS
+    }
+
+    private fun defineHotReloadableFunction(
+        declaration: IrFunction,
+        impl: WasmFunction.Defined,
+        functionTypeSymbol: WasmHeapType.Type.FunctionType,
+        watName: String,
+    ): WasmFunction.Defined {
+        val wasmFunctionType = typeCodegenContext.getWasmFunctionType(declaration.symbol)
+            ?: error("hot reload: wasm function type not found for $watName")
+        val realKey = declarationCodegenContext.referenceKey(declaration.symbol)
+        val keys = hotReloadKeys(watName, realKey)
+
+        // FQ names are not unique (overloads); disambiguate with the
+        // reference key so slots, entries, setters and their exports are.
+        val uniqueSuffix = Integer.toHexString(realKey.hashCode())
+        val slotName = "__slot$" + watName + "#" + uniqueSuffix
+        val entryName = "__hot_entry$" + watName + "#" + uniqueSuffix
+        val setterName = "__hot_set$" + watName + "#" + uniqueSuffix
+        // The compiled body is only reachable through the slot initializer.
+        declarationCodegenContext.defineSyntheticFunction(keys.impl, impl)
+        linkerDataContext.addUsedAsWasmRawFunctionReference(keys.impl)
+
+        // Mutable slot global initialized with the compiled body.
+        val slotGlobal = WasmGlobal(
+            name = slotName,
+            type = WasmRefNullType(functionTypeSymbol),
+            isMutable = true,
+            init = listOf(wasmInstrWithoutLocation(WasmOp.REF_FUNC, FuncSymbol(keys.impl))),
+        )
+        declarationCodegenContext.defineSyntheticGlobalField(keys.slot, slotGlobal)
+
+        // Slot-reading entry, registered under the function's real key: all
+        // calls, vtable entries and function references resolve to it.
+        val entryInstructions = mutableListOf<WasmInstr>()
+        for (i in wasmFunctionType.parameterTypes.indices) {
+            entryInstructions.add(wasmInstrWithoutLocation(WasmOp.LOCAL_GET, WasmImmediate.LocalIdx.get(i)))
+        }
+        entryInstructions.add(wasmInstrWithoutLocation(WasmOp.GLOBAL_GET, FieldGlobalSymbol(keys.slot)))
+        entryInstructions.add(wasmInstrWithoutLocation(WasmOp.CALL_REF, typeCodegenContext.referenceFunctionType(declaration.symbol)))
+        // NB: no trailing END — the binary emitter appends the terminator.
+        val entry = WasmFunction.Defined(
+            name = entryName,
+            type = functionTypeSymbol,
+            instructions = entryInstructions,
+        )
+        declarationCodegenContext.defineFunction(declaration.symbol, entry)
+        linkerDataContext.addUsedAsWasmRawFunctionReference(realKey)
+        linkerDataContext.addExport(
+            WasmExport.Function(field = entry, name = entryName)
+        )
+
+        // Exported setter: installs a new implementation into the slot.
+        val setterType = typeCodegenContext.referenceWasmFunctionHeapType(
+            WasmFunctionType(listOf(WasmRefNullType(functionTypeSymbol)), emptyList())
+        )
+        val setter = WasmFunction.Defined(
+            name = setterName,
+            type = setterType,
+            instructions = mutableListOf(
+                wasmInstrWithoutLocation(WasmOp.LOCAL_GET, WasmImmediate.LocalIdx.get(0)),
+                wasmInstrWithoutLocation(WasmOp.GLOBAL_SET, FieldGlobalSymbol(keys.slot)),
+            ),
+        )
+        declarationCodegenContext.defineSyntheticFunction(keys.setter, setter)
+        linkerDataContext.addExport(
+            WasmExport.Function(field = setter, name = setterName)
+        )
+
+        return entry
     }
 
     private fun buildSpecialITableInit(metadata: ClassMetadata, builder: WasmExpressionBuilder, location: SourceLocation) {
@@ -519,6 +648,25 @@ class DeclarationGenerator(
             createVTable(metadata)
             createClassITable(metadata)
             createRtti(metadata)
+
+            // Hot reload: register the class for the module's universal
+            // vtable stepper (Stage 3 — method additions). Concrete classes
+            // only: abstract classes and interfaces have no instances.
+            if (backendContext.isHotReloadCompilation && !declaration.isAbstractOrSealed) {
+                linkerDataContext.addHotReloadableClass(declaration.symbol)
+            }
+
+            // Hot-reload payload migration (Stage 2): when the class's
+            // history contains payload versions that fail the current-version
+            // cast, emit the stepper + migrateFrom functions field access
+            // dispatches through. The plan was resolved by the type generator.
+            if (backendContext.isHotReloadCompilation) {
+                HotReloadPayloads.payloadPlan(declaration, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer)
+                    .takeIf { it.migrateFromVersions.isNotEmpty() }
+                    ?.let { plan ->
+                        HotReloadPayloads.generatePayloadFunctions(plan, backendContext, typeCodegenContext, declarationCodegenContext)
+                    }
+            }
         }
     }
 

@@ -52,6 +52,9 @@ class WasmCompiledLinkerDataFileFragment(
     val equivalentTypes: MutableList<Pair<String, IdSignature>> = mutableListOf(),
     val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = mutableSetOf(),
     val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
+    // hot reload: reference keys of the classes this file declares (the
+    // linker generates one universal vtable stepper per module from them)
+    val hotReloadableClasses: MutableList<IdSignature> = mutableListOf(),
     val objectInstanceFieldInitializers: MutableList<IdSignature> = mutableListOf(),
     val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
     val wasmReferencedFunctions: MutableSet<IdSignature> = mutableSetOf(),
@@ -98,10 +101,43 @@ inline fun <T> List<T>.collectDeclarationReferences(selector: (T) -> ModuleRefer
 
 fun WasmCompiledTypesFileFragment.makeProjection(onTypes: ModuleReferencedTypes): WasmCompiledTypesFileFragment =
     WasmCompiledTypesFileFragment().also { newFragment ->
-        definedGcTypes.filterTo(newFragment.definedGcTypes) { it.key in onTypes.gcTypes }
-        definedVTableGcTypes.filterTo(newFragment.definedVTableGcTypes) { it.key in onTypes.gcTypes }
+        val keptGcTypes = LinkedHashMap<IdSignature, WasmTypeDeclaration>()
+        definedGcTypes.filterTo(keptGcTypes) { it.key in onTypes.gcTypes }
+        closeOverSuperTypes(keptGcTypes, definedGcTypes)
+        newFragment.definedGcTypes.putAll(keptGcTypes)
+
+        val keptVTableTypes = LinkedHashMap<IdSignature, WasmStructDeclaration>()
+        definedVTableGcTypes.filterTo(keptVTableTypes) { it.key in onTypes.gcTypes }
+        closeOverSuperTypes(keptVTableTypes, definedVTableGcTypes)
+        newFragment.definedVTableGcTypes.putAll(keptVTableTypes)
+
         definedFunctionTypes.filterTo(newFragment.definedFunctionTypes) { it.key in onTypes.functionTypes }
     }
+
+/**
+ * Wasm requires a kept type's SUPERTYPE to be declared, and the
+ * reference recording only sees direct references — close the
+ * projection over supertype chains (payload structs subtype the
+ * superclass's payload; a grown vtable subtypes the previous one).
+ * LOCAL closure, within one fragment's own definitions — it protects
+ * every projection path (including the non-IC link) for intra-file
+ * chains; cross-FILE chains need the referenced-set closure in
+ * compileArtifactMultimodule, which sees the whole dependency universe.
+ */
+private fun <T : WasmTypeDeclaration> closeOverSuperTypes(
+    kept: LinkedHashMap<IdSignature, T>,
+    definitions: Map<IdSignature, T>,
+) {
+    val pending = ArrayDeque(kept.values.toList())
+    while (pending.isNotEmpty()) {
+        val superTypeSymbol = (pending.removeLast() as? WasmStructDeclaration)?.superType as? GcHeapTypeSymbol ?: continue
+        val superType = superTypeSymbol.type
+        if (superType in kept) continue
+        val superDeclaration = definitions[superType] ?: continue
+        kept[superType] = superDeclaration
+        pending.add(superDeclaration)
+    }
+}
 
 fun WasmCompiledDeclarationsFileFragment.makeProjection(onDeclarations: ModuleReferencedDeclarations): WasmCompiledDeclarationsFileFragment =
     WasmCompiledDeclarationsFileFragment().also { newFragment ->

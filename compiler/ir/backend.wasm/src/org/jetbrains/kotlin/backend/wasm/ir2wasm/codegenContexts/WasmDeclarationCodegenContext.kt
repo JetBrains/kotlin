@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.WasmGlobal
 
@@ -54,6 +55,23 @@ open class WasmDeclarationCodegenContext(
 
     open fun referenceFunction(irFunction: IrFunctionSymbol): FuncSymbol =
         FuncSymbol(irFunction.getReferenceKey())
+
+    /** The reference key a function is (or will be) registered under — used
+     *  by the hot-reload codegen to derive synthetic keys. */
+    fun referenceKey(irFunction: IrFunctionSymbol): IdSignature = irFunction.getReferenceKey()
+
+    /** Hot-reload support: register synthesized functions (bodies, entries,
+     *  setters) under synthetic keys so the linker can resolve them without
+     *  an IR counterpart. */
+    fun defineSyntheticFunction(key: IdSignature, wasmFunction: WasmFunction) {
+        wasmFileFragment.definedFunctions.put(key, wasmFunction)
+    }
+
+    /** Hot-reload support: register a synthesized global (a function slot)
+     *  under a synthetic key. */
+    fun defineSyntheticGlobalField(key: IdSignature, wasmGlobal: WasmGlobal) {
+        wasmFileFragment.definedGlobalFields.put(key, wasmGlobal)
+    }
 
     open fun referenceGlobalField(irField: IrFieldSymbol): FieldGlobalSymbol =
         FieldGlobalSymbol(irField.getReferenceKey())

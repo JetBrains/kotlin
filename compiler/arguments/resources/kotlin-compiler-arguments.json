@@ -13548,6 +13548,51 @@
                                                 "deprecatedMessage": null
                                             },
                                             {
+                                                "name": "Xwasm-hot-reload",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Compile reloadable code: every function is dispatched through a mutable slot global, and a setter named `__set` + the function name is exported, so a host can hot-swap function bodies at runtime — including virtual method bodies for already-existing instances.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.5.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "deprecatedMessage": null
+                                            },
+                                            {
                                                 "name": "Xwasm-included-module-only",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -15852,6 +15897,51 @@
                                                 },
                                                 "releaseVersionsMetadata": {
                                                     "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "deprecatedMessage": null
+                                            },
+                                            {
+                                                "name": "Xwasm-hot-reload",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Compile reloadable code: every function is dispatched through a mutable slot global, and a setter named `__set` + the function name is exported, so a host can hot-swap function bodies at runtime — including virtual method bodies for already-existing instances.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.5.20",
                                                     "stabilizedVersion": null,
                                                     "deprecatedVersion": null,
                                                     "removedVersion": null

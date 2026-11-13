@@ -11,9 +11,13 @@ import org.jetbrains.kotlin.backend.wasm.WasmModuleDependencyImport
 import org.jetbrains.kotlin.backend.wasm.ic.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.wasm.ir.WasmStructDeclaration
+import org.jetbrains.kotlin.wasm.ir.WasmTypeDeclaration
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
+import org.jetbrains.kotlin.wasm.config.wasmHotReload
 import org.jetbrains.kotlin.wasm.config.wasmIcGenerateUnchangedModules
 import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
 
@@ -69,15 +73,50 @@ private fun WasmModuleArtifactMultimodule.loadDependency(
     return loadedDependencies
 }
 
+private class LoadedRecompileFragments(
+    /** files whose declarations this run DEFINES in the emitted module */
+    val codeFragments: List<WasmIrProgramFragmentsMultimodule>,
+    /** hot-reload delta: files left clean by the IC — not defined here,
+     *  imported from the live patch instance instead (see
+     *  compileArtifactMultimodule) */
+    val cleanFragments: List<WasmIrProgramFragmentsMultimodule>,
+    /** the FULL import surface (all files) — other modules may import any
+     *  of it; the delta only narrows what is DEFINED, never what is
+     *  importable */
+    val dependencyFragments: List<WasmCompiledDependencyFileFragment>,
+)
+
+/** Worklist-closes [referenced] over the supertype chains of the structs
+ *  in [definitions]: a referenced struct's supertype becomes referenced
+ *  too, transitively (wasm requires declared supertypes; the chain is
+ *  acyclic so the worklist terminates). */
+private fun closeReferencedTypesOverSuperTypes(
+    referenced: MutableSet<IdSignature>,
+    definitions: Map<IdSignature, WasmTypeDeclaration>,
+) {
+    if (referenced.isEmpty() || definitions.isEmpty()) return
+    val pending = ArrayDeque(referenced.toList())
+    while (pending.isNotEmpty()) {
+        val superTypeSymbol = (definitions[pending.removeLast()] as? WasmStructDeclaration)?.superType as? GcHeapTypeSymbol ?: continue
+        if (referenced.add(superTypeSymbol.type)) pending.add(superTypeSymbol.type)
+    }
+}
+
 private fun WasmModuleArtifactMultimodule.loadRecompileAndDependency(
     builtInFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
-    isBuiltInFragments: Boolean
-): Pair<List<WasmIrProgramFragmentsMultimodule>, List<WasmCompiledDependencyFileFragment>> {
-    val loadedFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()
+    isBuiltInFragments: Boolean,
+    isCodeFile: (WasmSrcFileArtifactMultimodule) -> Boolean = { true },
+): LoadedRecompileFragments {
+    val loadedCodeFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()
+    val loadedCleanFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()
     val loadedDependencyFragments = mutableListOf<WasmCompiledDependencyFileFragment>()
     for (fileArtifact in this.fileArtifacts) {
         val loadedFragment = fileArtifact.loadIrFragments() ?: continue
-        loadedFragments.add(loadedFragment)
+        if (isCodeFile(fileArtifact)) {
+            loadedCodeFragments.add(loadedFragment)
+        } else {
+            loadedCleanFragments.add(loadedFragment)
+        }
         val dependencyFragment = WasmCompiledDependencyFileFragment(
             definedTypes = loadedFragment.definedTypes,
             definedDeclarations = loadedFragment.dependencyDeclarations
@@ -89,19 +128,19 @@ private fun WasmModuleArtifactMultimodule.loadRecompileAndDependency(
         }
     }
 
-    return loadedFragments to loadedDependencyFragments
+    return LoadedRecompileFragments(loadedCodeFragments, loadedCleanFragments, loadedDependencyFragments)
 }
 
 private fun compileArtifactMultimodule(
     artifact: WasmModuleArtifactMultimodule,
     dependencyFragments: Map<WasmModuleArtifactMultimodule, List<WasmCompiledDependencyFileFragment>>,
     loadedFragments: List<WasmIrProgramFragmentsMultimodule>,
+    cleanFragments: List<WasmIrProgramFragmentsMultimodule>,
     dependencyResolutionMap: Map<String, String>,
     builtInFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
     configuration: CompilerConfiguration,
     stdlibModuleName: String,
 ): WasmIrModuleConfiguration {
-
     val currentCodeFragments = mutableListOf<WasmCompiledFileFragment>()
     loadedFragments.mapTo(currentCodeFragments) { fragment ->
         WasmCompiledCodeFileFragment(fragment.definedTypes, fragment.codeDeclarations, fragment.linkerData)
@@ -110,6 +149,28 @@ private fun compileArtifactMultimodule(
     val currentModuleTypeReferences = (loadedFragments + builtInFragments).collectTypeReferences { it.referencedTypes }
     currentModuleTypeReferences.gcTypes.addAll(linkerTypeSignatures)
     currentModuleTypeReferences.functionTypes.addAll(linkerFunctionSignatures)
+
+    // Close the referenced types over supertype chains before any
+    // projection: wasm requires a kept struct's supertype to be declared,
+    // and hot reload's payload/vtable structs chain across FILES (a
+    // class's payload subtypes its SUPERCLASS's payload — Int's in the
+    // stdlib subtypes Number's). Only this site sees the whole dependency
+    // universe, so only here can cross-file chains close; the per-file
+    // closure in makeProjection handles intra-file chains for every path.
+    val fullGcTypeDeclarations = mutableMapOf<IdSignature, WasmTypeDeclaration>()
+    val fullVTableTypeDeclarations = mutableMapOf<IdSignature, WasmStructDeclaration>()
+    for (fragments in dependencyFragments.values) {
+        for (fragment in fragments) {
+            for (entry in fragment.definedTypes.definedGcTypes) {
+                fullGcTypeDeclarations.putIfAbsent(entry.key, entry.value)
+            }
+            for (entry in fragment.definedTypes.definedVTableGcTypes) {
+                fullVTableTypeDeclarations.putIfAbsent(entry.key, entry.value)
+            }
+        }
+    }
+    closeReferencedTypesOverSuperTypes(currentModuleTypeReferences.gcTypes, fullGcTypeDeclarations)
+    closeReferencedTypesOverSuperTypes(currentModuleTypeReferences.gcTypes, fullVTableTypeDeclarations)
 
     val currentModuleDeclarationReferences = loadedFragments.collectDeclarationReferences { it.referencedDeclarations }
     currentModuleDeclarationReferences.functions.addAll(linkerFunctionSignatures)
@@ -142,6 +203,34 @@ private fun compileArtifactMultimodule(
             )
             currentModuleImports.add(dependencyImport)
         }
+    }
+
+    // HOT-RELOAD DELTA (file granularity; no flag — a cold cache makes
+    // every file dirty, so the whole-module loop is just the all-dirty
+    // case): the files the IC left clean are not re-emitted — the
+    // declarations the dirty files reference become imports under the
+    // module's OWN name, which the host maps to the live patch chain.
+    // Imports bind to the owner's slot-reading entry, so redefinitions
+    // still reach this module's callers through the sweep.
+    var hasImportsFromSelf = false
+    for (cleanFragment in cleanFragments) {
+        val projectedTypes = cleanFragment.definedTypes.makeProjection(currentModuleTypeReferences)
+        val projectedDeclarations = cleanFragment.dependencyDeclarations.makeProjection(currentModuleDeclarationReferences)
+        val projectedFragment = WasmCompiledDependencyFileFragment(
+            definedTypes = projectedTypes,
+            definedDeclarations = projectedDeclarations,
+        )
+        hasImportsFromSelf = hasImportsFromSelf || projectedFragment.definedDeclarations.hasDeclarations
+        currentCodeFragments.add(projectedFragment)
+    }
+    if (hasImportsFromSelf) {
+        currentModuleImports.add(
+            WasmModuleDependencyImport(
+                name = artifact.moduleName,
+                fileName = dependencyResolutionMap[artifact.moduleName]
+                    ?: artifact.outputFileName
+            )
+        )
     }
 
     val multimoduleOptions = MultimoduleCompileOptions(
@@ -192,13 +281,25 @@ fun compileIncrementallyMultimodule(
     val builtInFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()
     val dependencyFragments = mutableMapOf<WasmModuleArtifactMultimodule, List<WasmCompiledDependencyFileFragment>>()
     val recompileFragments = mutableMapOf<WasmModuleArtifactMultimodule, List<WasmIrProgramFragmentsMultimodule>>()
+    val cleanFileFragments = mutableMapOf<WasmModuleArtifactMultimodule, List<WasmIrProgramFragmentsMultimodule>>()
     for (recompile in toRecompile) {
-        val [loadedToRecompile, loadedDependency] = recompile.loadRecompileAndDependency(
+        // Hot reload makes the delta the compilation unit at FILE
+        // granularity: an app artifact's files left clean by the IC are
+        // imported from the live patch instance instead of re-emitted
+        // (see compileArtifactMultimodule). The stdlib stays whole — it
+        // is the cold base by design.
+        val isDeltaArtifact = configuration.wasmHotReload &&
+                recompile != stdLibArtifact && recompile != kotlinTestArtifact
+        val loaded = recompile.loadRecompileAndDependency(
             builtInFragments = builtInFragments,
             isBuiltInFragments = (recompile == stdLibArtifact || recompile == kotlinTestArtifact),
+            isCodeFile = if (isDeltaArtifact) { fileArtifact -> fileArtifact.isModified() } else { _ -> true },
         )
-        recompileFragments[recompile] = loadedToRecompile
-        dependencyFragments[recompile] = loadedDependency
+        recompileFragments[recompile] = loaded.codeFragments
+        if (isDeltaArtifact) {
+            cleanFileFragments[recompile] = loaded.cleanFragments
+        }
+        dependencyFragments[recompile] = loaded.dependencyFragments
     }
 
     val allReferencedModules = mutableSetOf<String>()
@@ -231,6 +332,7 @@ fun compileIncrementallyMultimodule(
                 artifact = currentArtifact,
                 dependencyFragments = dependencyFragments,
                 loadedFragments = currentModuleCodeArtifact,
+                cleanFragments = cleanFileFragments[currentArtifact].orEmpty(),
                 dependencyResolutionMap = dependencyResolutionMap,
                 builtInFragments = builtInFragments,
                 configuration = configuration,

@@ -705,7 +705,7 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
     private fun compileDirtyFiles(
         compilerForIC: IrCompilerICInterface<TFragments>,
         loadedIr: LoadedJsIr,
-        dirtyFiles: Map<KotlinLibraryFile, Set<KotlinSourceFile>>
+        dirtyFiles: Map<KotlinLibraryFile, Set<KotlinSourceFile>>,
     ): MutableList<Triple<KotlinLibraryFile, KotlinSourceFile, () -> TFragments>> =
         stopwatch.measure("Processing IR - lowering") {
             val dirtyFilesForCompiling = mutableListOf<IrFile>()

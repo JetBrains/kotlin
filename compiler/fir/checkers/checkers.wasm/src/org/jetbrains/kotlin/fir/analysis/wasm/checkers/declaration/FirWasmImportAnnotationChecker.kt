@@ -77,6 +77,12 @@ private fun isTypeSupportedInWasmInterop(
         return isInFunctionReturnPosition
     }
 
-    // Primitive numbers and Boolean are supported
-    return (type.isPrimitive && !type.isChar) || type.isUnsignedType
+    // WASM-REPL SPIKE (local hack, not for upstream):
+    // Allow any type except Char. The original restriction (primitive numbers,
+    // Boolean, unsigned types) assumes the import/export is supplied or called
+    // by *JS*, which cannot construct user-typed wasm GC values. A host that
+    // supplies *wasm funcrefs* instead (wasm-to-wasm linking mediated through
+    // the JS import object) is fully type-safe: V8 checks the funcref against
+    // the declared signature's canonically-unified GC types at instantiation.
+    return !type.isChar
 }

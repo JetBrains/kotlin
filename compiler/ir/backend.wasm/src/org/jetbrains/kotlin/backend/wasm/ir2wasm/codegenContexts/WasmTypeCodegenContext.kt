@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.utils.redefinitionError
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
@@ -48,6 +49,34 @@ open class WasmTypeCodegenContext(
         }
     }
 
+    /** Cells: each class gets a *payload* struct holding its fields
+     * (incl. Any's `_hashCode`); the cell struct — vtable, itable, rtti,
+     * payload — never changes shape. Versioned payload keys live in the
+     * same definedGcTypes map under synthetic signatures (same trick as
+     * the slot globals); v1 keeps this unversioned key. */
+    fun payloadSignature(irClass: IrClassSymbol): IdSignature =
+        IdSignature.CommonSignature("hot.reload.payload", "payload<\$" + irClass.getReferenceKey().toString() + ">", null, 0, null)
+
+    fun classReferenceKey(irClass: IrClassSymbol): String = irClass.getReferenceKey().toString()
+
+    fun stepperSignature(irClass: IrClassSymbol, version: Int): IdSignature =
+        HotReloadPayloads.stepperSignature(classReferenceKey(irClass), version)
+
+    fun definePayloadVersionGcType(irClass: IrClassSymbol, version: Int, wasmType: WasmTypeDeclaration) {
+        val key = HotReloadPayloads.payloadVersionSignature(classReferenceKey(irClass), version)
+        if (wasmFileFragment.definedGcTypes.put(key, wasmType) != null) {
+            redefinitionError(key, "PayloadGcTypes")
+        }
+    }
+
+    open fun referencePayloadVersionGcType(irClass: IrClassSymbol, version: Int): GcTypeSymbol =
+        GcTypeSymbol(HotReloadPayloads.payloadVersionSignature(classReferenceKey(irClass), version))
+
+    open fun referencePayloadVersionHeapType(irClass: IrClassSymbol, version: Int): GcHeapTypeSymbol =
+        GcHeapTypeSymbol(HotReloadPayloads.payloadVersionSignature(classReferenceKey(irClass), version))
+
+    open fun referencePayloadHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol = GcHeapTypeSymbol(payloadSignature(irClass))
+
     fun defineVTableGcType(irClass: IrClassSymbol, wasmType: WasmStructDeclaration) {
         if (wasmFileFragment.definedVTableGcTypes.put(irClass.getReferenceKey(), wasmType) != null) {
             redefinitionError(irClass.getReferenceKey(), "VTableGcTypes")
@@ -59,6 +88,12 @@ open class WasmTypeCodegenContext(
             redefinitionError(irFunction.getReferenceKey(), "FunctionTypes")
         }
     }
+
+    /** The registered wasm function type of [irFunction] (types are generated
+     *  before function bodies), or null if not registered. Used by the
+     *  hot-reload codegen to synthesize slot/entry functions. */
+    fun getWasmFunctionType(irFunction: IrFunctionSymbol): WasmFunctionType? =
+        wasmFileFragment.definedFunctionTypes[irFunction.getReferenceKey()]
 
     open fun referenceWasmFunctionType(wasmFunctionType: WasmFunctionType): FunctionTypeSymbol {
         val signature = getFunctionTypeSignature(wasmFunctionType)

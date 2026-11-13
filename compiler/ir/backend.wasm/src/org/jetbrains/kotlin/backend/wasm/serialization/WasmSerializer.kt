@@ -117,6 +117,7 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeEquivalentDeclarations(equivalentTypes)
         serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
         serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
+        serializeList(hotReloadableClasses, ::serializeIdSignature)
         serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
         serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
         serializeSet(wasmReferencedFunctions, ::serializeIdSignature)

@@ -93,6 +93,38 @@ class WasmTrackedTypeCodegenContext(
         return super.referenceHeapType(irClass)
     }
 
+    override fun referencePayloadHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol {
+        addPayloadTypeToReferenced(irClass)
+        return super.referencePayloadHeapType(irClass)
+    }
+
+    // Hot-reload payload types are keyed by synthetic signatures (see
+    // payloadSignature), so they can't piggyback on the class-key walk in
+    // addGcTypeToReferenced — record them explicitly, the VERSIONED ones
+    // too (field access casts to the class's current payload version), or
+    // the dependency projection drops the struct and the link dies.
+    private fun addPayloadTypeToReferenced(irClass: IrClassSymbol, version: Int? = null) {
+        val signature = if (version == null) {
+            payloadSignature(irClass)
+        } else {
+            HotReloadPayloads.payloadVersionSignature(classReferenceKey(irClass), version)
+        }
+        if (!moduleReferencedTypes.gcTypes.add(signature)) return
+        if (referencedModules != null) {
+            irClass.owner.fileOrNull?.module?.let { referencedModules.add(it.name.asString()) }
+        }
+    }
+
+    override fun referencePayloadVersionGcType(irClass: IrClassSymbol, version: Int): GcTypeSymbol {
+        addPayloadTypeToReferenced(irClass, version)
+        return super.referencePayloadVersionGcType(irClass, version)
+    }
+
+    override fun referencePayloadVersionHeapType(irClass: IrClassSymbol, version: Int): GcHeapTypeSymbol {
+        addPayloadTypeToReferenced(irClass, version)
+        return super.referencePayloadVersionHeapType(irClass, version)
+    }
+
     override fun referenceVTableGcType(irClass: IrClassSymbol): VTableTypeSymbol {
         moduleReferencedTypes.addGcTypeToReferenced(irClass, referencedModules, idSignatureRetriever)
         return super.referenceVTableGcType(irClass)

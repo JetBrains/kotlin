@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmSymbol
@@ -42,6 +43,13 @@ open class WasmLinkerDataCodegenContext(
 
     fun addUsedAsWasmRawFunctionReference(irFunction: IrFunctionSymbol) {
         wasmFileFragment.wasmReferencedFunctions.add(irFunction.getReferenceKey())
+    }
+
+    /** Hot-reload support: declare a synthesized function (registered under a
+     *  synthetic key) as used via ref.func, so the linker emits the required
+     *  declarative element segment. */
+    fun addUsedAsWasmRawFunctionReference(key: IdSignature) {
+        wasmFileFragment.wasmReferencedFunctions.add(key)
     }
 
     fun addJsFun(irFunction: IrFunctionSymbol, importName: WasmSymbol<String>, jsCode: String) {
@@ -95,5 +103,12 @@ open class WasmLinkerDataCodegenContext(
 
     open fun addJsModuleAndQualifierReferences(reference: JsModuleAndQualifierReference) {
         wasmFileFragment.jsModuleAndQualifierReferences.add(reference)
+    }
+
+    /** Hot reload: register a class declared by this file — the linker
+     *  generates the module's universal vtable stepper from the collected
+     *  set (klassId -> current vtable + itable). */
+    fun addHotReloadableClass(irClass: IrClassSymbol) {
+        wasmFileFragment.hotReloadableClasses.add(irClass.getReferenceKey())
     }
 }

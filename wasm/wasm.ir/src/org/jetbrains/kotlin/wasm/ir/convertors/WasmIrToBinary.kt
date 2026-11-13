@@ -240,6 +240,14 @@ class WasmIrToBinary(
             }
 
             debugInformationGenerator?.let { consumeDebugInformation(it.generateDebugInformation()) }
+
+            // opaque named sections, after everything else
+            for (customSection in customSections) {
+                appendSection(WasmBinary.Section.CUSTOM) {
+                    b.writeString(customSection.name)
+                    b.writeBytes(customSection.payload)
+                }
+            }
         }
     }
 

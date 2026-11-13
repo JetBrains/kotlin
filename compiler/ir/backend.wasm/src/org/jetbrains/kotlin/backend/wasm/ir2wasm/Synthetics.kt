@@ -42,6 +42,10 @@ object Synthetics {
         val associatedObjectGetter = FuncSymbol("tryGetAssociatedObject".toSyntheticSignature())
         val startUnitTestsFunction = FuncSymbol("startUnitTestsFunction".toSyntheticSignature())
         val masterInitFunction = FuncSymbol("masterInitFunction".toSyntheticSignature())
+        // hot-reload vtable stepper (linker-generated, one per module):
+        // (ref null $AnyCell) -> (ref null $vt_root) — installs the current
+        // vtable + itable for the instance's RUNTIME class (RTTI klassId)
+        val hotVtableUpdate = FuncSymbol("hotVtableUpdate".toSyntheticSignature())
 
         val createStringBuiltIn = FuncSymbol("createStringBuiltInFunction".toSyntheticSignature())
         val tryGetAssociatedObjectBuiltIn = FuncSymbol("tryGetAssociatedObjectFunction".toSyntheticSignature())
@@ -69,6 +73,7 @@ object Synthetics {
     private val byteArraySignature = "byteArray".toSyntheticSignature()
     private val associatedObjectGetterWrapperSignature = "associatedObjectGetterWrapper".toSyntheticSignature()
     private val associatedObjectGetterTypeSignature = "associatedObjectGetterType".toSyntheticSignature()
+    private val hotVtableUpdateTypeSignature = "hotVtableUpdateType".toSyntheticSignature()
     private val stringLiteralFunctionTypeSignature = "stringLiteralFunctionType".toSyntheticSignature()
     private val stringLiteralJsStringFunctionTypeSignature = "stringLiteralJsStringFunctionType".toSyntheticSignature()
     private val parameterlessNoReturnFunctionTypeSignature = "parameterlessNoReturnFunctionTypeSignature".toSyntheticSignature()
@@ -91,6 +96,7 @@ object Synthetics {
         val wasmStringArrayType = GcHeapTypeSymbol(wasmStringArrayTypeSignature)
         val byteArray = GcHeapTypeSymbol(byteArraySignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
+        val hotVtableUpdateType = FunctionHeapTypeSymbol(hotVtableUpdateTypeSignature)
         val associatedObjectGetterWrapper = GcHeapTypeSymbol(associatedObjectGetterWrapperSignature)
         val throwableBuiltInType = GcHeapTypeSymbol(throwableBuiltInTypeSignature)
         val anyBuiltInType = GcHeapTypeSymbol(anyBuiltInTypeSignature)
@@ -117,6 +123,7 @@ object Synthetics {
         val jsExceptionTagFuncType = FunctionHeapTypeSymbol(jsExceptionTagFuncTypeSignature)
         val parameterlessNoReturnFunctionType = FunctionHeapTypeSymbol(parameterlessNoReturnFunctionTypeSignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
+        val hotVtableUpdateType = FunctionHeapTypeSymbol(hotVtableUpdateTypeSignature)
         val wasmContTagFuncType = FunctionHeapTypeSymbol(wasmContTagFuncTypeSignature)
         val boundContFuncType = FunctionHeapTypeSymbol(boundContFuncTypeSignature)
     }

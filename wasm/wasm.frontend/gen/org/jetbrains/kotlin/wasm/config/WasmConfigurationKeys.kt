@@ -92,6 +92,10 @@ object WasmConfigurationKeys {
     @JvmField
     val WASM_ENABLE_TAIL_CALLS = CompilerConfigurationKey.create<Boolean>("WASM_ENABLE_TAIL_CALLS")
 
+    // Compile reloadable code: functions dispatch through mutable slot globals with exported setters, enabling host-driven hot body swapping.
+    @JvmField
+    val WASM_HOT_RELOAD = CompilerConfigurationKey.create<Boolean>("WASM_HOT_RELOAD")
+
 }
 
 var CompilerConfiguration.wasmEnableArrayRangeChecks: Boolean
@@ -181,4 +185,8 @@ var CompilerConfiguration.wasmTestBoxFunctionToExport: FqName?
 var CompilerConfiguration.wasmEnableTailCalls: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_ENABLE_TAIL_CALLS)
     set(value) { put(WasmConfigurationKeys.WASM_ENABLE_TAIL_CALLS, value) }
+
+var CompilerConfiguration.wasmHotReload: Boolean
+    get() = getBoolean(WasmConfigurationKeys.WASM_HOT_RELOAD)
+    set(value) { put(WasmConfigurationKeys.WASM_HOT_RELOAD, value) }
 

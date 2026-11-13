@@ -190,6 +190,16 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
         WasmCompilerLinkingArgument("X_WASM_GENERATE_WAT", KotlinReleaseVersion(2, 1, 20))
 
     /**
+     * Compile reloadable code: every function is dispatched through a mutable slot global, and a setter named `__set` + the function name is exported, so a host can hot-swap function bodies at runtime — including virtual method bodies for already-existing instances.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_WASM_HOT_RELOAD: WasmCompilerLinkingArgument<Boolean> =
+        WasmCompilerLinkingArgument("X_WASM_HOT_RELOAD", KotlinReleaseVersion(2, 5, 20))
+
+    /**
      * Compile only a module passed using `-include` option.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

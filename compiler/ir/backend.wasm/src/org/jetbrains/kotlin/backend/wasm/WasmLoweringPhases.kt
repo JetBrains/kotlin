@@ -224,6 +224,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::WasmPurifyObjectInstanceGettersLowering,
 
     ::FieldInitializersLowering,
+    ::WasmHotReloadObjectAdoptionLowering,
 
     ::ExplicitlyCastExternalTypesLowering,
     ::WasmTypeOperatorLowering,

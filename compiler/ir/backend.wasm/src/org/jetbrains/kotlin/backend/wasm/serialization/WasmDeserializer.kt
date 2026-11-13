@@ -694,6 +694,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         equivalentTypes = deserializeEquivalentDeclarations(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
+        hotReloadableClasses = deserializeList(::deserializeIdSignature),
         objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
         nonConstantFieldInitializers = deserializeList(::deserializeIdSignature),
         wasmReferencedFunctions = deserializeWasmReferencedFunctions(),

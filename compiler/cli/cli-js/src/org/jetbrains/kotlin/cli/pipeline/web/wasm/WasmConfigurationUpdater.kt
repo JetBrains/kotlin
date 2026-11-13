@@ -73,6 +73,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, arguments.wasmNoJsTag)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, arguments.generateDwarf)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, arguments.forceDebugFriendlyCompilation)
+        configuration.put(WasmConfigurationKeys.WASM_HOT_RELOAD, arguments.wasmHotReload)
         configuration.put(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY, arguments.wasmIncludedModuleOnly)
         configuration.put(WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX, arguments.wasmInternalLocalVariablePrefix)
         configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, wasmTarget)

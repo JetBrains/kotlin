@@ -156,6 +156,16 @@ class KotlinWasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-hot-reload",
+        description = "Compile reloadable code: every function is dispatched through a mutable slot global, and a setter named `__set` + the function name is exported, so a host can hot-swap function bodies at runtime — including virtual method bodies for already-existing instances.",
+    )
+    var wasmHotReload: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-included-module-only",
         description = "Compile only a module passed using `-include` option.",
     )
