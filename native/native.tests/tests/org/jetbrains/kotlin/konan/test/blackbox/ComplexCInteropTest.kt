@@ -95,6 +95,9 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("embedStaticLibraries.kt")
     fun testNativeLibraries() {
+        // KT-89938:-native-library flag doesn't work with caches
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useIncrementalCompilation)
+
         // Reuse the test data from the previous test for simplicity.
         val embedStaticLibrariesDir = interopDir.resolve("embedStaticLibraries")
         val bcFiles = (1..4).map {

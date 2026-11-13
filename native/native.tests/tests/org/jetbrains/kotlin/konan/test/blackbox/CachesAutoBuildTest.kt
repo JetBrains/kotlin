@@ -77,8 +77,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         val cacheDir = buildDir.resolve("lib_cache")
         cacheDir.mkdirs()
         compileToStaticCache(lib, cacheDir)
-        val makePerFileCache = testRunSettings.get<CacheMode>().makePerFileCaches
-        assertTrue(cacheDir.resolve("lib-${if (makePerFileCache) "per-file-cache" else "cache"}").exists())
+        assertTrue(cacheDir.resolve("lib-cache").exists())
         val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, listOf(cacheDir), emptyList(), lib)
             .executableFile
 
