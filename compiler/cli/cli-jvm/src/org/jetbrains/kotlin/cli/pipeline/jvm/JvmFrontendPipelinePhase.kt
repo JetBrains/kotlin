@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
+import org.jetbrains.kotlin.fir.lightTree.isScript
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -157,7 +157,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             isScript = {
                 when (it) {
                     is KtPsiSourceFile -> (it.psiFile as? KtFile)?.isScript() == true
-                    else -> KotlinLightParser.isParsedAsScript(it)
+                    else -> it.isScript()
                 }
             },
             fileBelongsToModule = sources.fileBelongsToModuleForLt,
@@ -287,7 +287,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     psiFile.isScript() && (psiFile.isCommonSource == true || psiFile.hmppModuleName != lastHmppModuleName)
                 }
                 else -> when {
-                    !KotlinLightParser.isParsedAsScript(source) -> false
+                    !source.isScript() -> false
                     source in commonSources -> true
                     else -> {
                         val path = source.path ?: return@filter false
