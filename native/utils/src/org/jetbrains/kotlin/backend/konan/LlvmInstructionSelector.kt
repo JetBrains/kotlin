@@ -1,0 +1,17 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.backend.konan
+
+enum class LlvmInstructionSelector(val selectorName: String) {
+    SELECTION_DAG("selection-dag"),
+    GLOBAL_ISEL("global"),
+    FAST_ISEL("fast");
+
+    companion object {
+        fun fromStringOrNull(selectorName: String): LlvmInstructionSelector? =
+            entries.firstOrNull { it.selectorName == selectorName }
+    }
+}

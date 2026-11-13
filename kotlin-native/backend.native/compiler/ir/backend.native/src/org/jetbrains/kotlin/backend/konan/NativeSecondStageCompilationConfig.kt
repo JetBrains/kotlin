@@ -100,6 +100,17 @@ class NativeSecondStageCompilationConfig(
     // See https://youtrack.jetbrains.com/issue/KT-67692.
     val useLlvmOpaquePointers = true
 
+    /**
+     * The instruction selector used when generating machine code from LLVM bitcode.
+     */
+    val instructionSelector: LlvmInstructionSelector? by lazy {
+        configuration.instructionSelector
+                ?: platform.configurables.llvmInstructionSelector?.let { selectorName ->
+                    LlvmInstructionSelector.fromStringOrNull(selectorName)
+                            ?: error("Unknown 'llvmInstructionSelector' value in konan.properties for target $target: $selectorName")
+                }
+    }
+
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
     val debug: Boolean get() = configuration.debug
     val lightDebug: Boolean = configuration[NativeConfigurationKeys.LIGHT_DEBUG]

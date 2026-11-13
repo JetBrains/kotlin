@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.konan.config.*
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.pipeline.NativeKlibConfigurationUpdater
 import kotlin.io.path.Path
@@ -234,6 +236,22 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             }
         }
     })
+    putIfNotNull(INSTRUCTION_SELECTOR, when (val selectorName = arguments.llvmIsel) {
+        null, "default" -> null // Let the compiler pick the selector from the per-target konan.properties configuration.
+        else -> LlvmInstructionSelector.fromStringOrNull(selectorName) ?: run {
+            report(KONAN_ARGUMENT_ERROR, "Unsupported -Xllvm-isel=$selectorName. Possible values are 'default', 'selection-dag', 'global' and 'fast'")
+            null
+        }
+    })
+    if (instructionSelector == LlvmInstructionSelector.FAST_ISEL) {
+        val target = konanTarget?.let { KonanTarget.predefinedTargets[it] }
+        if (target != null && target.family.isAppleFamily && target.architecture == Architecture.ARM64) {
+            report(KONAN_ARGUMENT_STRONG_WARNING,
+                    "-Xllvm-isel=fast on Apple arm64 targets is known to miscompile sign extension " +
+                            "(e.g. of negative Byte and Short values), which may lead to failures at runtime. " +
+                            "Prefer 'selection-dag' or 'global' instead.")
+        }
+    }
     putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
 
