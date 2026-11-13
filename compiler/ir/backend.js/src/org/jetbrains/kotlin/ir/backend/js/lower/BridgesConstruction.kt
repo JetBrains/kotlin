@@ -232,5 +232,5 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         if (argument.type.classifierOrNull == type.classifierOrNull) argument else irAs(argument, type)
 
     protected val IrSimpleFunction.isRealOrOverridesInterface
-        get() = isReal || resolveFakeOverride()?.parentAsClass?.isInterface == true
+        get() = isReal || resolveFakeOverride()?.parentAsClass?.let { it.isInterface && !it.isEffectivelyExternal() } == true
 }
