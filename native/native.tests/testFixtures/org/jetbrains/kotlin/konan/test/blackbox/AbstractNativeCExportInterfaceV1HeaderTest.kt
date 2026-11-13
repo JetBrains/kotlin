@@ -25,7 +25,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
     private val testCompilationFactory = TestCompilationFactory()
 
     /** Extra compiler args for subclasses, e.g. to exercise the IR-based discovery mode. */
-    protected open val additionalCompilerArgs: List<String> get() = emptyList()
+    protected open val additionalCompilerArgs: List<String> get() = listOf("-Xbinary=cExportUseIrDiscovery=false")
 
     protected fun runTest(@TestDataFile testFile: String) {
         val path = File(ForTestCompileRuntime.transformTestDataPath(testFile).path)
@@ -81,7 +81,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
 
 /**
  * Same as [AbstractNativeCExportInterfaceV1HeaderTest], but with the model built from the IR instead
- * of K1 descriptors (`-Xbinary=cExportUseIrDiscovery=true`).
+ * of K1 descriptors (`-Xbinary=cExportUseIrDiscovery=true`, which is also the default mode).
  * The IR mode must produce byte-identical output to the descriptor mode, so both share the same
  * golden `.h` files.
  */
