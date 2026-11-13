@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
+import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.backend.konan.library.deserialize
@@ -391,8 +394,23 @@ class NativeSecondStageCompilationConfig(
     internal val produceStaticFramework get() = configuration.staticFramework
 
     override val loadedKlibs = loadNativeKlibs(configuration, target)
-    internal val klibDag = configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
-            ?: KlibDAGBuilder(Parameters(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }).build()
+
+    internal val klibDag: KlibDAG = run {
+        fun reportDagProblemAndHaltCompilation(message: String): Nothing {
+            configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, message)
+            throw CompilationErrorException(message)
+        }
+
+        configuration.serializedKlibDag?.deserialize(
+                librariesUsedInCurrentCompilation = loadedKlibs.all,
+                onError = ::reportDagProblemAndHaltCompilation,
+        ) ?: KlibDAGBuilder(
+                Parameters(
+                        libraries = loadedKlibs.all,
+                        onError = ::reportDagProblemAndHaltCompilation,
+                ) { it.isExplicitlySpecifiedByUserInCLIArgument }
+        ).build()
+    }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
 
