@@ -5,28 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure
 
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.util.io.URLUtil
+import com.intellij.testFramework.BinaryLightVirtualFile
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderBaseImpl
 import org.jetbrains.kotlin.psi.KtPlatformInterface
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.net.URL
 
 @OptIn(KtPlatformInterface::class)
 @KaImplementationDetail
 class BuiltinsVirtualFileProviderCliImpl : BuiltinsVirtualFileProviderBaseImpl() {
-    override fun findVirtualFile(url: URL): VirtualFile? {
-        val split = URLUtil.splitJarUrl(url.path)
-            ?: errorWithAttachment("URL for builtins does not contain jar separator") {
-                withEntry("url", url) { url.toString() }
-            }
-        val jarPath = split.first
-        val builtinFile = split.second
-        val pathToQuery = jarPath + URLUtil.JAR_SEPARATOR + builtinFile
-        val jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)
-        return jarFileSystem.findFileByPath(pathToQuery)
+    private val files: Set<VirtualFile> by lazy { super.getBuiltinVirtualFiles() }
+
+    override fun getBuiltinVirtualFiles(): Set<VirtualFile> = files
+
+    override fun findVirtualFile(url: URL): VirtualFile {
+        // With the default caching, the JDK would keep the JAR of the resource open
+        val content = url.openConnection().apply { useCaches = false }.getInputStream().use { it.readBytes() }
+        return BinaryLightVirtualFile(url.path.substringAfterLast('/'), content)
     }
 }
