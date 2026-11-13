@@ -1,0 +1,22 @@
+@kotlin.Metadata
+public final class Holder {
+    // source: 'UsageInExtensions.kt'
+    private synthetic final static field state$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field state$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method getState$volatile$FU$main(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public synthetic final method getState$volatile$main(): int
+    public synthetic final method setState$volatile$main(p0: int): void
+}
+
+@kotlin.Metadata
+public final class UsageInExtensionsKt {
+    // source: 'UsageInExtensions.kt'
+    public final static method advance(@org.jetbrains.annotations.NotNull p0: Holder): int
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method fastForward(@org.jetbrains.annotations.NotNull p0: Holder): int
+    public final static method getCurrentState(@org.jetbrains.annotations.NotNull p0: Holder): int
+    public final static method test(): void
+    private synthetic final static method updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): int
+}

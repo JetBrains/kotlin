@@ -82,6 +82,12 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   }
 
   @Test
+  @TestMetadata("DelegatedAtomicPropertyMustBeInSameContainer.kt")
+  public void testDelegatedAtomicPropertyMustBeInSameContainer() {
+    run("DelegatedAtomicPropertyMustBeInSameContainer.kt");
+  }
+
+  @Test
   @TestMetadata("errorProneAtomicArrayArguments.kt")
   public void testErrorProneAtomicArrayArguments() {
     run("errorProneAtomicArrayArguments.kt");

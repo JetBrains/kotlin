@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.diagnostic
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -76,6 +77,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
     private const val ATOMIC_LOCALS_ARE_FORBIDDEN_MESSAGE =
         "Local properties with kotlinx.atomicfu.Atomic* types are unsupported."
 
+    private const val LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN_MESSAGE =
+        "Local properties delegated to properties with kotlinx.atomicfu.Atomic* types are unsupported."
+
     private const val ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN_MESSAGE =
         "Function parameters with kotlinx.atomicfu.Atomic* types are unsupported."
 
@@ -96,6 +100,11 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
 
     private const val ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY_MESSAGE =
         "Calling equals/hashCode/toString functions on atomic properties is not supported."
+
+    private const val ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER_MESSAGE =
+        "Delegated properties must be declared {0} as the corresponding atomic properties."
+    private const val PROPERTY_DELEGATED_TO_ATOMIC_MUST_BE_IN_SAME_INSTANCE_MESSAGE =
+        "Properties delegated to atomic properties are only allowed in the same instance."
 
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
@@ -123,6 +132,9 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
             AtomicfuErrors.ATOMIC_LOCALS_ARE_FORBIDDEN, ATOMIC_LOCALS_ARE_FORBIDDEN_MESSAGE
         )
         map.put(
+            AtomicfuErrors.LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN, LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN_MESSAGE
+        )
+        map.put(
             AtomicfuErrors.ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN, ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN_MESSAGE
         )
         map.put(
@@ -143,6 +155,20 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             AtomicfuErrors.ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY, ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY_MESSAGE
         )
+        map.put(
+            AtomicfuErrors.ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER, ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER_MESSAGE, TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.PROPERTY_DELEGATED_TO_ATOMIC_MUST_BE_IN_SAME_INSTANCE,
+            PROPERTY_DELEGATED_TO_ATOMIC_MUST_BE_IN_SAME_INSTANCE_MESSAGE
+        )
     }
 
+    internal object DeclarationInSame {
+        const val FILE = "at the top level of the same file"
+        const val COMPANION_BLOCK = "in the same companion block"
+        const val COMPANION_OBJECT = "in the same companion object"
+
+        fun type(kind: ClassKind) = "in the same ${kind.codeRepresentation ?: "enum entry"}"
+    }
 }
