@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.MODULE_ES
 import org.jetbrains.kotlin.cli.js.targetVersion
 import org.jetbrains.kotlin.config.AnalysisFlag
@@ -23,6 +24,23 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
         if (irPerFile && (moduleKind != MODULE_ES && !targetVersion.supportsPerFileGranularity)) {
             reporter.reportError(
                 "Per-file compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)"
+            )
+        }
+        if (irPerClass && moduleKind != MODULE_ES) {
+            reporter.reportError(
+                "Per-class compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)"
+            )
+        }
+        val enabledGranularityFlags = listOfNotNull(
+            "irPerFile".takeIf { irPerFile },
+            "irPerClass".takeIf { irPerClass },
+            "irPerModule".takeIf { irPerModule },
+        )
+        if (enabledGranularityFlags.size > 1) {
+            reporter.report(
+                CliDiagnostics.WEB_ARGUMENT_WARNING,
+                "Multiple JS output granularity flags are enabled (${enabledGranularityFlags.joinToString(", ")}); " +
+                        "only the first one in the order irPerFile, irPerClass, irPerModule takes effect"
             )
         }
 

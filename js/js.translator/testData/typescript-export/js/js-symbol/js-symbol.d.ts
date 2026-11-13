@@ -5,8 +5,6 @@ declare namespace JS_TESTS {
         interface ExtItf {
             [Symbol.iterator](): any;
         }
-    }
-    namespace foo {
         class SymbolHost {
             constructor();
             [Symbol.toPrimitive](hint: string): string;

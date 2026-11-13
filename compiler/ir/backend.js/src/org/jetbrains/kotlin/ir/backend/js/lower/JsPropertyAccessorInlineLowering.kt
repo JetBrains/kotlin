@@ -7,10 +7,15 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
+import org.jetbrains.kotlin.js.config.artifactConfigurations
 
 class JsPropertyAccessorInlineLowering(
     val context: JsIrBackendContext
@@ -35,10 +40,34 @@ class JsPropertyAccessorInlineLowering(
             return true
         }
 
+        // In per-class granularity, declarations of a class are emitted into an artifact separate from the file's
+        // rest artifact where the accessed top-level property resides, and so is an initializer of an eagerly
+        // initialized property. An inlined accessor would produce a field reference crossing artifact boundaries,
+        // while an accessor call is a routine cross-artifact import: keep inlining only for use sites that are
+        // known to end up in the rest artifact together with the property.
+        if (
+            isTopLevel &&
+            context.configuration.artifactConfigurations.any { it.granularity == JsGenerationGranularity.PER_CLASS } &&
+            accessContainer.isInsideSeparateArtifactInPerClassMode()
+        ) {
+            return false
+        }
+
         // TODO: teach the deserializer to load constant property initializers
         val accessFile = accessContainer.fileOrNull ?: return false
         val file = fileOrNull ?: return false
 
         return accessFile == file
+    }
+
+    private fun IrDeclaration.isInsideSeparateArtifactInPerClassMode(): Boolean {
+        val eagerInitialization = context.propertyLazyInitialization.eagerInitialization
+        var current: IrDeclaration? = this
+        while (current != null) {
+            if (current is IrClass) return true
+            if (current is IrField && current.correspondingPropertySymbol?.owner?.hasAnnotation(eagerInitialization) == true) return true
+            current = current.parent as? IrDeclaration
+        }
+        return false
     }
 }

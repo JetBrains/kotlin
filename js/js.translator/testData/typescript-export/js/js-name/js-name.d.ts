@@ -5,8 +5,6 @@ declare namespace JS_TESTS {
         interface Object {
             readonly constructor?: any;
         }
-    }
-    namespace foo {
         class JsNameTest {
             private constructor();
             testName1(): string;

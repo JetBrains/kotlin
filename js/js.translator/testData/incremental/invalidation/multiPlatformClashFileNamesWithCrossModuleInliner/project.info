@@ -5,13 +5,16 @@ STEP 0:
     libs: lib1, lib2, main
     dirty js modules: lib1, lib2, main
     dirty js files: lib1/l1, lib2/l2js, main/m.export, main, lib2/l2common, main/m
+    dirty js per-class files: lib1/l1, lib2/l2js, main/m.export, main, lib2/l2common, main/m
 STEP 1:
     language: +MultiPlatformProjects, +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, lib2, main
     dirty js modules: lib1, lib2
     dirty js files: lib1/l1, lib2/l2js
+    dirty js per-class files: lib1/l1, lib2/l2js
 STEP 2:
     language: +MultiPlatformProjects, +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, lib2, main
     dirty js modules: lib1, lib2
     dirty js files: lib1/l1, lib2/l2common
+    dirty js per-class files: lib1/l1, lib2/l2common

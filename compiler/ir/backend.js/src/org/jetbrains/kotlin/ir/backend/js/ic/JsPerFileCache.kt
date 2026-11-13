@@ -463,9 +463,9 @@ class JsPerFileCache(
             override val JsIrProgramTestEnvironment.suiteFunctionTag: String
                 get() = suiteFunctionTag
 
-            override fun JsSrcFileArtifact.generateArtifact(module: JsModuleArtifact) = when {
-                isModified() -> module.loadFileInfoFor(this)
-                else -> module.fetchFileInfoFor(this) ?: module.loadFileInfoFor(this)
+            override fun JsSrcFileArtifact.generateArtifacts(module: JsModuleArtifact): List<CachedFileInfo> = when {
+                isModified() -> [module.loadFileInfoFor(this)]
+                else -> [module.fetchFileInfoFor(this) ?: module.loadFileInfoFor(this)]
             }
 
             override fun List<CachedFileInfo>.merge() = when (size) {

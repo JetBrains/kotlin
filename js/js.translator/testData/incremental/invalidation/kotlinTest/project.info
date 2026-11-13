@@ -4,15 +4,19 @@ STEP 0:
     libs: main
     dirty js modules: main
     dirty js files:   main/common, main/m, main/m.export, main
+    dirty js per-class files: main/common, main/m, main/m.export, main
 STEP 1:
     libs: main
     dirty js modules: main
     dirty js files:   main/test1, main/common, main
+    dirty js per-class files: main/test1, main/common, main
 STEP 2:
     libs: main
     dirty js modules: main
     dirty js files:   main/test1, main/common
+    dirty js per-class files: main/test1, main/common
 STEP 3:
     libs: main
     dirty js modules: main
     dirty js files:   main/test2, main
+    dirty js per-class files: main/test2, main
