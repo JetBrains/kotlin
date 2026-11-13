@@ -53,19 +53,11 @@ class AnalysisApiEnvironmentManagerImpl(
         )
     }
 
-    @OptIn(KtPlatformInterface::class)
     override fun initializeEnvironment() {
         testServices.disposableProvider.registerDisposables(
             projectDisposable = _projectEnvironment.parentDisposable,
             applicationDisposable = _projectEnvironment.environment.parentDisposable,
         )
-        KotlinCoreEnvironment.underApplicationLock {
-            _projectEnvironment.environment.application.apply {
-                if (getServiceIfCreated(BuiltinsVirtualFileProvider::class.java) == null) {
-                    registerService(BuiltinsVirtualFileProvider::class.java, BuiltinsVirtualFileProviderTestImpl())
-                }
-            }
-        }
 
         /**
          * This loading state modification is required to ensure that

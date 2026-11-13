@@ -34,6 +34,7 @@ class ProjectStructureInitialisationPreAnalysisHandler(
         val applicationParentDisposable = environmentManager.getApplicationEnvironment().parentDisposable
 
         configurator.serviceRegistrars.registerApplicationServices(application, applicationParentDisposable, testServices)
+
         createAndRegisterKtModules(moduleStructure, project)
         configurator.serviceRegistrars.registerProjectExtensionPoints(project, testServices)
         configurator.serviceRegistrars.registerProjectServices(project, testServices)

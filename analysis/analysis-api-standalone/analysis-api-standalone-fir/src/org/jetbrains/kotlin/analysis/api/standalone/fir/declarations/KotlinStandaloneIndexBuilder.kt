@@ -297,12 +297,19 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         for (virtualFile in BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles()) {
             if (cacheService != null) {
                 val sharedFiles = cacheService.getOrProcessBinaryRoot(virtualFile) { root ->
-                    setOfNotNull(findSharedDecompiledFile(root)?.first)
+                    // Detached built-ins (e.g., provided in-memory by the platform) yield non-physical view
+                    // providers, whose getPsi registers the provider in the file manager, which requires a
+                    // write action. Physical files inside binary roots skip the registration on getPsi.
+                    ApplicationManager.getApplication().runWriteAction<_> {
+                        setOfNotNull(findSharedDecompiledFile(root)?.first)
+                    }
                 }
 
                 sharedFiles.mapTo(decompiledFilesFromBuiltins, this::materializeSharedDecompiledFile)
             } else {
-                val [_, ktFile] = findSharedDecompiledFile(virtualFile) ?: continue
+                val [_, ktFile] = ApplicationManager.getApplication().runWriteAction<_> {
+                    findSharedDecompiledFile(virtualFile)
+                } ?: continue
                 decompiledFilesFromBuiltins += IndexableFile(virtualFile, ktFile, isShared = true)
             }
         }
