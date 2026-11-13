@@ -190,6 +190,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   }
 
   @Test
+  @TestMetadata("valhallaValueClasses")
+  public void testValhallaValueClasses() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/valhallaValueClasses/");
+  }
+
+  @Test
   @TestMetadata("withoutService")
   public void testWithoutService() {
     runTest("plugins/kapt/kapt-cli/testData/integration/withoutService/");
