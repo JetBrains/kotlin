@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle
 import com.google.gson.Gson
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.jetbrains.kotlin.gradle.targets.js.ir.Library
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -28,6 +31,8 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertAll
+import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.assertEquals
@@ -1473,13 +1478,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             build("jsDevelopmentExecutableCompileSync") {
                 val appSourceMap = subProject("app").projectPath
                     .resolve("build/compileSync/js/main/developmentExecutable/kotlin/$projectName-app.js.map")
-                assertFileContains(
+                assertSourceMapSourcesResolveTo(
                     appSourceMap,
-                    "\"sourceRoot\":\"../../../../../../\"",
-                    "\"src/jsMain/kotlin/main.kt\"",
-                    "\"../lib/src/jsMain/kotlin/foo.kt\"",
-                    "\"sourcesContent\":[null",
+                    projectPath.resolve("app/src/jsMain/kotlin/main.kt"),
+                    projectPath.resolve("lib/src/jsMain/kotlin/foo.kt"),
                 )
+                assertFileContains(appSourceMap, "\"sourcesContent\":[null")
 
                 // The default should be generating simple names.
                 assertFileContains(appSourceMap, "somewhereOverTheRainbow")
@@ -1488,33 +1492,28 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
                 val libSourceMap = subProject("app").projectPath
                     .resolve("build/compileSync/js/main/developmentExecutable/kotlin/$projectName-lib.js.map")
-                assertFileContains(
-                    libSourceMap,
-                    "\"../../../../../../../lib/src/jsMain/kotlin/foo.kt\"",
-                    "\"sourcesContent\":[null",
-                )
+                assertSourceMapSourcesResolveTo(libSourceMap, projectPath.resolve("lib/src/jsMain/kotlin/foo.kt"))
+                assertFileContains(libSourceMap, "\"sourcesContent\":[null")
 
                 // The default should be generating simple names.
                 assertFileDoesNotContain(libSourceMap, "\"names\":[]")
 
                 val libSourceMap2 = projectPath
                     .resolve("build/js/packages/$projectName-app/kotlin/$projectName-lib.js.map")
-                assertFileContains(
-                    libSourceMap2,
-                    "\"../../../../../lib/src/jsMain/kotlin/foo.kt\"",
-                    "\"sourcesContent\":[null",
-                )
+                assertSourceMapSourcesResolveTo(libSourceMap2, projectPath.resolve("lib/src/jsMain/kotlin/foo.kt"))
+                assertFileContains(libSourceMap2, "\"sourcesContent\":[null")
 
                 // The default should be generating simple names.
                 assertFileDoesNotContain(libSourceMap2, "\"names\":[]")
-                assertFileContains(
-                    projectPath
-                        .resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map"),
-                    "\"sourceRoot\":\"../../../../../app\"",
-                    "\"src/jsMain/kotlin/main.kt\"",
-                    "\"../lib/src/jsMain/kotlin/foo.kt\"",
-                    "\"sourcesContent\":[null",
+
+                val appSourceMap2 = projectPath
+                    .resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map")
+                assertSourceMapSourcesResolveTo(
+                    appSourceMap2,
+                    projectPath.resolve("app/src/jsMain/kotlin/main.kt"),
+                    projectPath.resolve("lib/src/jsMain/kotlin/foo.kt"),
                 )
+                assertFileContains(appSourceMap2, "\"sourcesContent\":[null")
             }
         }
     }
@@ -1526,45 +1525,36 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     fun testCorrectSourcesPathInPerFile(gradleVersion: GradleVersion) {
         project("js-per-file", gradleVersion) {
             build("jsDevelopmentExecutableCompileSync") {
+                val mainSource = projectPath.resolve("src/jsMain/kotlin/Main.kt")
+                val someModuleSource = projectPath.resolve("src/jsMain/kotlin/SomeModule.kt")
+
                 // In the sub-project build
                 var mainSourceMap = projectPath
                     .resolve("build/compileSync/js/main/developmentExecutable/kotlin/$projectName/org/jetbrains/kotlin/testData/Main.mjs.map")
 
-                assertFileContains(
-                    mainSourceMap,
-                    "\"../../../../../../../../../../../src/jsMain/kotlin/Main.kt\"",
-                    "\"sourcesContent\":[null",
-                )
+                assertSourceMapSourcesResolveTo(mainSourceMap, mainSource)
+                assertFileContains(mainSourceMap, "\"sourcesContent\":[null")
 
                 // In the root build
                 mainSourceMap = projectPath
                     .resolve("build/js/packages/$projectName/kotlin/$projectName/org/jetbrains/kotlin/testData/Main.mjs.map")
 
-                assertFileContains(
-                    mainSourceMap,
-                    "\"../../../../../../../../../../src/jsMain/kotlin/Main.kt\"",
-                    "\"sourcesContent\":[null",
-                )
+                assertSourceMapSourcesResolveTo(mainSourceMap, mainSource)
+                assertFileContains(mainSourceMap, "\"sourcesContent\":[null")
 
                 // In the sub-project build
                 var someModuleSourceMap = projectPath
                     .resolve("build/compileSync/js/main/developmentExecutable/kotlin/$projectName/SomeModule.mjs.map")
 
-                assertFileContains(
-                    someModuleSourceMap,
-                    "\"../../../../../../../src/jsMain/kotlin/SomeModule.kt\"",
-                    "\"sourcesContent\":[null",
-                )
+                assertSourceMapSourcesResolveTo(someModuleSourceMap, someModuleSource)
+                assertFileContains(someModuleSourceMap, "\"sourcesContent\":[null")
 
                 // In the root build
                 someModuleSourceMap = projectPath
                     .resolve("build/js/packages/$projectName/kotlin/$projectName/SomeModule.mjs.map")
 
-                assertFileContains(
-                    someModuleSourceMap,
-                    "\"../../../../../../src/jsMain/kotlin/SomeModule.kt\"",
-                    "\"sourcesContent\":[null",
-                )
+                assertSourceMapSourcesResolveTo(someModuleSourceMap, someModuleSource)
+                assertFileContains(someModuleSourceMap, "\"sourcesContent\":[null")
             }
         }
     }
@@ -1590,10 +1580,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             build("compileDevelopmentExecutableKotlinJs") {
                 val mapFilePath = subProject("app").projectPath
                     .resolve("build/kotlin2js/app.js.map")
-                assertFileContains(mapFilePath, "\"sourceRoot\":\"../../\"")
-                assertFileContains(mapFilePath, "\"src/jsMain/kotlin/main.kt\"")
-                // The IR BE generates correct paths for dependencies
-                assertFileContains(mapFilePath, "\"../lib/src/jsMain/kotlin/foo.kt\"")
+                assertSourceMapSourcesResolveTo(
+                    mapFilePath,
+                    projectPath.resolve("app/src/jsMain/kotlin/main.kt"),
+                    // The IR BE generates correct paths for dependencies
+                    projectPath.resolve("lib/src/jsMain/kotlin/foo.kt"),
+                )
             }
         }
     }
@@ -1612,7 +1604,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 val mapFilePath = projectPath
                     .resolve("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.js.map")
 
-                assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
+                assertSourceMapSourcesResolveTo(mapFilePath, projectPath.resolve("lib/src/jsMain/kotlin/Lib.kt"))
             }
 
             build(":lib:jsBrowserProductionDistribution") {
@@ -1622,8 +1614,98 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 val mapFilePath = projectPath
                     .resolve("lib/build/${Distribution.DIST}/js/productionLibrary/kotlin-js-browser-lib.js.map")
 
-                assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
+                assertSourceMapSourcesResolveTo(mapFilePath, projectPath.resolve("lib/src/jsMain/kotlin/Lib.kt"))
             }
+        }
+    }
+
+    @TestMetadata("kotlin-multiplatform-browser-project")
+    @MustRunOnChangesInJs
+    @DisplayName("path in source maps are remapped for custom distribution outputDirectory in library")
+    @GradleTest
+    fun testKotlinJsSourceMapCustomDistributionDirectoryInLibrary(gradleVersion: GradleVersion) {
+        project("kotlin-multiplatform-browser-project", gradleVersion) {
+            subProject("lib").buildScriptInjection {
+                kotlinMultiplatform.js {
+                    binaries.withType(Library::class.java).configureEach {
+                        it.distribution.outputDirectory.set(project.layout.buildDirectory.dir("custom/dist"))
+                    }
+                }
+            }
+
+            build(":lib:jsBrowserDevelopmentDistribution") {
+                assertSourceMapSourcesResolveTo(
+                    projectPath.resolve("lib/build/custom/dist/kotlin-js-browser-lib.js.map"),
+                    projectPath.resolve("lib/src/jsMain/kotlin/Lib.kt"),
+                )
+            }
+        }
+    }
+
+    @MustRunOnChangesInJs
+    @DisplayName("path in source maps are remapped for default distribution in single-module library")
+    @GradleTest
+    fun testKotlinJsSourceMapDefaultDistributionInSingleModuleLibrary(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    nodejs()
+                    binaries.library()
+                }
+            }
+            val libSource = kotlinSourcesDir("jsMain").resolve("Lib.kt").apply {
+                createParentDirectories()
+                writeText("fun lib(): Int = 42\n")
+            }
+
+            build(":jsNodeDevelopmentLibraryDistribution") {
+                assertSourceMapSourcesResolveTo(
+                    projectPath.resolve("build/dist/js/developmentLibrary/empty.js.map"),
+                    libSource,
+                )
+            }
+        }
+    }
+
+    /**
+     * Asserts that each of [expectedSources] is listed in the `sources` of [mapFile] as a relative path
+     * that resolves, against the map's directory and its `sourceRoot`, to that file.
+     */
+    private fun assertSourceMapSourcesResolveTo(mapFile: Path, vararg expectedSources: Path) {
+        assertFileExists(mapFile)
+        val sourceMap = SourceMapSource.decode(mapFile.readText())
+        val sourceRoot = Path(sourceMap.sourceRoot)
+        assertAll(
+            expectedSources.map { expectedSource ->
+                {
+                    assertFileExists(expectedSource)
+                    val source = sourceMap.sources.singleOrNull { Path(it).name == expectedSource.name }
+                    assertNotNull(source, "${expectedSource.name} is missing from the sources ${sourceMap.sources} of $mapFile")
+                    assertFalse(Path(sourceMap.sourceRoot).resolve(source).isAbsolute, "Source path '$source' in $mapFile is not relative")
+                    assertEquals(
+                        expectedSource.normalize(),
+                        mapFile.parent.resolve(sourceRoot).resolve(source).normalize(),
+                        "Source path '$source' in $mapFile does not point to $expectedSource",
+                    )
+                }
+            }
+        )
+    }
+
+    @Serializable
+    private data class SourceMapSource(
+        val sourceRoot: String = "",
+        val sources: List<String>,
+    ) {
+        companion object {
+            private val json = Json {
+                ignoreUnknownKeys = true
+            }
+
+            fun decode(content: String): SourceMapSource = json.decodeFromString(content)
         }
     }
 
@@ -1646,7 +1728,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 val mapFilePath = projectPath
                     .resolve("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.mjs.map")
 
-                assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
+                assertSourceMapSourcesResolveTo(mapFilePath, projectPath.resolve("lib/src/jsMain/kotlin/Lib.kt"))
             }
 
             build(":lib:jsBrowserProductionDistribution") {
@@ -1656,7 +1738,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 val mapFilePath = projectPath
                     .resolve("lib/build/${Distribution.DIST}/js/productionLibrary/kotlin-js-browser-lib.mjs.map")
 
-                assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
+                assertSourceMapSourcesResolveTo(mapFilePath, projectPath.resolve("lib/src/jsMain/kotlin/Lib.kt"))
             }
         }
     }
