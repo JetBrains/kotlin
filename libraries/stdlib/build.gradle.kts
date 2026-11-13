@@ -115,9 +115,7 @@ fun NamedDomainObjectContainer<KotlinJvmCompilation>.stdlibJvmMultiReleaseCompil
     compileJavaTaskProvider?.configure {
         targetCompatibility = target.target
         sourceCompatibility = target.target
-        javaCompiler.set(javaToolchains.compilerFor {
-            languageVersion.set(JavaLanguageVersion.of(target.target))
-        })
+        javaCompiler.set(getToolchainCompilerFor(toolchainVersion))
     }
 }
 
