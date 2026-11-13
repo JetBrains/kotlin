@@ -148,6 +148,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfFrames
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColsString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColsColumnPath
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfPairs
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColUntyped
@@ -582,6 +590,14 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "All1" -> All1()
         "All2" -> All2()
         "Cols0" -> Cols0()
+        "DslColsString" -> DslColsString()
+        "SingleColumnColsString" -> SingleColumnColsString()
+        "StringColsString" -> StringColsString()
+        "ColumnPathColsString" -> ColumnPathColsString()
+        "DslColsColumnPath" -> DslColsColumnPath()
+        "SingleColumnColsColumnPath" -> SingleColumnColsColumnPath()
+        "StringColsColumnPath" -> StringColsColumnPath()
+        "ColumnPathColsColumnPath" -> ColumnPathColsColumnPath()
         "AllAfter0" -> AllAfter0()
         "AllAfter1" -> AllAfter1()
         "AllAfter2" -> AllAfter2()
