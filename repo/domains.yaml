@@ -233,6 +233,7 @@ Gradle:
   include:
     - "build-common"
     - "libraries/tools/*gradle*"
+    - "libraries/tools/kotlin-import-models"
     - "compiler/build-tools/kotlin-build-statistics"
 
 Maven:
