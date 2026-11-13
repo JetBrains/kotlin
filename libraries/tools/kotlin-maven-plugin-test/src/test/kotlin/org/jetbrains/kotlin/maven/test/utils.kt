@@ -13,8 +13,6 @@ fun Path.toCanonicalLocalFileUrlString(): String {
     return "file://" + toFile().canonicalPath
 }
 
-val isWindowsHost get() = System.getProperty("os.name").lowercase().contains("windows")
-
 val isTeamCityRun = System.getenv("TEAMCITY_VERSION") != null
 
 inline fun <reified T : Annotation> findAnnotationOrNull(context: ExtensionContext): T? {

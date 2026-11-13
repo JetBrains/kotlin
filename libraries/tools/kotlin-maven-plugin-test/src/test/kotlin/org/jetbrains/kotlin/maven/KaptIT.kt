@@ -14,8 +14,7 @@ class KaptIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("KAPT annotationProcessorPaths is applied without explicit version in pom.xml")
     fun testKaptAnnotationProcessorPathsWithoutVersion(mavenVersion: TestVersions.Maven) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-kapt-annotationProcessorPaths-without-version", mavenVersion, buildOptions) {
+        testProject("test-kapt-annotationProcessorPaths-without-version", mavenVersion) {
             build(
                 "package",
                 expectedToFail = false
@@ -31,8 +30,7 @@ class KaptIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("KAPT generates Kotlin code from annotation processor")
     fun testKaptGenerateKotlinCode(mavenVersion: TestVersions.Maven) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
+        testProject("test-kapt-generateKotlinCode", mavenVersion) {
             build(
                 "package", "-X",
                 expectedToFail = false
@@ -52,8 +50,7 @@ class KaptIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("KAPT generates Kotlin code from annotation processor using direct stub generation mode")
     fun testKaptGenerateKotlinCodeUsingDirectStubMode(mavenVersion: TestVersions.Maven) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
+        testProject("test-kapt-generateKotlinCode", mavenVersion) {
             modifyPomXml("app/pom.xml") {
                 val kaptConfiguration = findKotlinPlugin().findExecution("kapt").getOrCreateChild("configuration")
                 kaptConfiguration.getOrCreateChild("stubGenerationScheme").textContent = "direct"
@@ -81,8 +78,7 @@ class KaptIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("KAPT writes stubs in parallel in direct stub generation mode")
     fun testKaptParallelStubWritesInDirectStubMode(mavenVersion: TestVersions.Maven) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
+        testProject("test-kapt-generateKotlinCode", mavenVersion) {
             modifyPomXml("app/pom.xml") {
                 val kaptConfiguration = findKotlinPlugin().findExecution("kapt").getOrCreateChild("configuration")
                 kaptConfiguration.getOrCreateChild("stubGenerationScheme").textContent = "direct"
@@ -111,9 +107,7 @@ class KaptIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("KAPT generates stubs in header mode")
     fun testKaptHeaderMode(mavenVersion: TestVersions.Maven) {
-        // TODO: Cleanup classloaders after the execution in Maven as well. KT-90859
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
+        testProject("test-kapt-generateKotlinCode", mavenVersion) {
             modifyPomXml("app/pom.xml") {
                 val kaptConfiguration = findKotlinPlugin().findExecution("kapt").getOrCreateChild("configuration")
                 kaptConfiguration.getOrCreateChild("headerMode").textContent = "true"
@@ -156,9 +150,8 @@ class KaptIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("KAPT respects includeCompileClasspath=false in kapt mojo configuration")
     fun testKaptIncludeCompileClasspathDisabledInKaptMojo(mavenVersion: TestVersions.Maven) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
         // first run with no options set
-        testProject("test-kapt-include-compile-classpath-disabled", mavenVersion, buildOptions) {
+        testProject("test-kapt-include-compile-classpath-disabled", mavenVersion) {
             build(
                 "package", "-X",
                 expectedToFail = false
@@ -271,8 +264,7 @@ class KaptIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("KAPT runs after standard resources are copied and can access them")
     fun testKaptHasAccessToResources(mavenVersion: TestVersions.Maven) {
-        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
-        testProject("test-kapt-hasAccessToResources", mavenVersion, buildOptions) {
+        testProject("test-kapt-hasAccessToResources", mavenVersion) {
             build(
                 "package", "-X",
                 expectedToFail = false
