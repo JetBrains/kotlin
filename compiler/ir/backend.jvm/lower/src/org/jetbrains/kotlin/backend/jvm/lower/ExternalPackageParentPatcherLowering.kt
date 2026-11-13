@@ -20,13 +20,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 
 /**
- * Replaces parent from package fragment to FileKt class for top-level callables (K2 only).
+ * Replaces parent from package fragment to FileKt class for top-level callables.
  */
 internal class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (context.config.languageVersionSettings.languageVersion.usesK2) {
-            irFile.acceptVoid(Visitor())
-        }
+        irFile.acceptVoid(Visitor())
     }
 
     private inner class Visitor : IrVisitorVoid() {
