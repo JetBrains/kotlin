@@ -1,5 +1,6 @@
 // HEADER_MODE
 // IGNORE_BACKEND: JS_IR, WASM_JS, NATIVE, JKLIB
+// ^ KLIB-based backends report IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR.
 
 class TestClass {
     // 1. Properties

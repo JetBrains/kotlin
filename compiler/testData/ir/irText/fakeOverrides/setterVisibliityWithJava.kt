@@ -1,8 +1,9 @@
-// IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // DUMP_EXTERNAL_CLASS: JavaChild
 // DISABLE_JAVA_FACADE
+// DUMP_IR_DIFFERENCE: JKLIB
+// ^ JKlib keeps the private members of Java classes in the IR.
 
 // FILE: JavaChild.java
 

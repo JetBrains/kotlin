@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JKLIB
+// ^ KT-91301: JKlib can't mangle properties without accessors or backing field.
 // SKIP_KT_DUMP
 
 // FILE: Base.java
