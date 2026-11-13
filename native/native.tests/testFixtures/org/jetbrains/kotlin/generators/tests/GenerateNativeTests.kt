@@ -249,6 +249,12 @@ fun main(args: Array<String>) {
             ) {
                 model("InterfaceV1HeaderTests")
             }
+            // Same goldens, but the library is linked from the IC-cached klibs instead of freshly compiled IR
+            testClass<AbstractNativeCExportInterfaceV1HeaderIrIncrementalTest>(
+                "CExportInterfaceV1HeaderIrIncrementalTestGenerated",
+            ) {
+                model("InterfaceV1HeaderTests")
+            }
         }
         // GC tests
         testGroup(testsRoot, "native/native.tests/testData/gc") {

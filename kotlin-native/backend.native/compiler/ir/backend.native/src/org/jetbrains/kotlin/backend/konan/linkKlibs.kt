@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.util.sortDeclarationsInFunctionInterfaceFile
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
@@ -179,6 +180,12 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
 ) {
     val exportedDependencies: Set<KotlinLibrary> = (config.loadedKlibs.exported + config.loadedKlibs.included + config.librariesToCache.keys).toSet()
 
+    val librariesWithCExportsFromIr: Set<KotlinLibrary> =
+            if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1 && config.cExportUseIrDiscovery)
+                (config.loadedKlibs.exported + config.loadedKlibs.included).toSet()
+            else
+                emptySet()
+
     val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptor> = moduleDescriptors
             .filterNot {
                 // The forward declarations module and the current (source-based) modules do not have
@@ -196,6 +203,7 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
 
         val deserializationStrategy = when {
             isFullyCachedLibrary && library.isHeader -> DeserializationStrategy.WITH_INLINE_BODIES
+            isFullyCachedLibrary && library in librariesWithCExportsFromIr -> DeserializationStrategy.ALL_WITHOUT_BODIES
             isFullyCachedLibrary -> DeserializationStrategy.ONLY_DECLARATION_HEADERS
             library in exportedDependencies -> DeserializationStrategy.ALL
             else -> DeserializationStrategy.EXPLICITLY_EXPORTED

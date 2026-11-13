@@ -445,6 +445,16 @@ enum class DeserializationStrategy(
     ALL(needBodies = true, explicitlyExported = true, theWholeWorld = true),
 
     /**
+     * All top-level declarations of the file are deserialized, whether referenced or not, but no function
+     * bodies are loaded.
+     *
+     * Used when every declaration has to be visible in the linked IR although nothing will be generated
+     * from this library, e.g. when a library is fully present in the compiler cache, but we still need to
+     * walk every declaration of it.
+     */
+    ALL_WITHOUT_BODIES(theWholeWorld = true),
+
+    /**
      * Only declarations reachable from elsewhere, plus explicitly exported ones, are deserialized,
      * and all of them get their function bodies.
      *
