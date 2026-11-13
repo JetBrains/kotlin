@@ -1,0 +1,22 @@
+# build artifacts (regenerated on demand)
+build*/
+browser/app/build/
+out/
+*.klib
+*.wasm
+*.wat
+server.jar
+ic-cache/
+
+# generated wasm glue, but keep hand-written JS
+*.mjs
+!lrepl/daemon.mjs
+!survival/driver*.mjs
+!survival/cells/driver9.mjs
+!browser/*.mjs
+
+# hand-written experiment sources (driver8/driver9 wat modules)
+!survival/subtyping/*.wat
+!survival/cells/*.wat
+
+.#*

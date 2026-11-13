@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Kotlin/Wasm hot reload — wasm-js</title>
+    <style>
+        :root { color-scheme: light dark; }
+        body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0; display: flex; min-height: 100vh; }
+        #main { flex: 1; padding: 2rem 3rem; }
+        h2 { margin-top: 0; }
+        h2 span { font-size: 0.7em; color: #888; font-weight: normal; }
+        .cards { display: flex; gap: 1.5rem; margin: 1.5rem 0; flex-wrap: wrap; align-items: stretch; }
+        .card { border: 1px solid #666; border-radius: 12px; padding: 1.2rem 1.6rem; min-width: 16rem;
+                transition: box-shadow .4s; }
+        .card.flash { box-shadow: 0 0 24px 4px #4caf50; }
+        .card .kind { color: #888; font-size: .8rem; }
+        .card .val { font-size: 2rem; margin: .4rem 0; }
+        .card .zoo-line { font-size: 1.05rem; margin: .25rem 0; color: #130a24; }
+        .card .zoo-line.changed { color: #6cf; }
+        button { font: inherit; padding: .4rem 1.2rem; border-radius: 8px; cursor: pointer; }
+        .ver { display: inline-block; background: #4caf50; color: #000; border-radius: 999px;
+               padding: .15rem .8rem; font-weight: bold; }
+        #log { margin-top: 1.5rem; max-width: 62rem; }
+        #log div { padding: .25rem 0; border-bottom: 1px dotted #444; color: #9d9; }
+        #log div.warn { color: #fb6; }
+        #log div.err { color: #f77; }
+        .edits { margin-top: 1.5rem; max-width: 62rem; }
+        .edit { border: 1px solid #555; border-radius: 8px; padding: .6rem .9rem; margin: .5rem 0; }
+        .edit summary { cursor: pointer; color: #0af; }
+        .edit pre { background: rgba(128,128,128,.15); padding: .6rem; border-radius: 6px; overflow-x: auto; font-size: .85rem; }
+        .edit .hint { color: #888; font-size: .8rem; }
+        /* the failure banner: a strip, not a takeover — dismissible, and it
+           clears itself the moment a good patch lands */
+        #banner { display: none; position: sticky; top: 0; z-index: 10; padding: .8rem 1.2rem;
+                  border-radius: 10px; margin-bottom: 1rem; font-size: .9rem; }
+        #banner.err { display: block; background: #5a1616; color: #fbb; border: 1px solid #a33; }
+        #banner.warn { display: block; background: #57430f; color: #fdb; border: 1px solid #a83; }
+        #banner .head { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+        #banner .x { cursor: pointer; color: #ccc; border: none; background: none; padding: 0 .4rem; }
+        #banner pre { margin: .5rem 0 0; max-height: 9rem; overflow: auto; font-size: .8rem; opacity: .9; }
+    </style>
+</head>
+<body>
+<div id="main">
+    <h2>Kotlin/Wasm hot reload <span>— wasm-js, the engine is the only type police</span></h2>
+    <div id="banner"><div class="head"><span id="banner-title"></span><button class="x" onclick="dismiss()">✕</button></div><pre id="banner-body"></pre></div>
+    <div>live module <span class="ver" id="ver">…</span></div>
+
+    <div class="cards">
+        <div class="card" id="card-old">
+            <div class="kind">Model born at v1 — held by the page across every patch</div>
+            <div class="val" id="val-old">…</div>
+            <div><button onclick="bump('old')">bump</button></div>
+        </div>
+        <div class="card" id="card-new" style="display:none">
+            <div class="kind">fresh Model — created by the CURRENT code</div>
+            <div class="val" id="val-new">…</div>
+            <div><button onclick="bump('new')">bump</button></div>
+        </div>
+        <div class="card" id="card-zoo">
+            <div class="kind">zoo — every animal born at v1; the chorus speaks through the swap</div>
+            <div id="zoo-lines"></div>
+        </div>
+    </div>
+    <button onclick="makeFresh()" id="freshBtn" disabled>create fresh Model</button>
+
+    <div class="edits">
+        <b>demo script — edit a file in <code>browser/app/src/</code> and save; the page updates in ~1–2 s</b>
+        <details class="edit">
+            <summary>1. change a body (slot swap — no types involved)</summary>
+            <pre>fun render(): String = "✨ " + label + ": " + count</pre>
+            <div class="hint">expect: the Model cards instantly show the new body; the v1-born instance keeps its count</div>
+        </details>
+        <details class="edit">
+            <summary>2. change behavior (bodies read live state)</summary>
+            <pre>fun bump(): Int {
+    count = count + 10   // was + 1
+    return count
+}</pre>
+            <div class="hint">expect: the bump buttons jump by ten — same slots, same instances</div>
+        </details>
+        <details class="edit">
+            <summary>3. add a field (payload version — held instances MIGRATE in place)</summary>
+            <pre>class Model(var count: Int, val label: String) {
+    var note: String = "hot"   // ← add this line, and use it in render:
+</pre>
+            <pre>fun render(): String = label + ": " + count + " [" + note + "]"</pre>
+            <div class="hint">expect: the v1-born Model shows <b>[null]</b> — migrated (type default; initializers for
+            new fields are a roadmap item) — then <i>create fresh Model</i> shows <b>[hot]</b>, the initializer.
+            That contrast IS the migration story.</div>
+        </details>
+        <details class="edit">
+            <summary>4. delete the field again (migration drops it; nothing is shadowed)</summary>
+            <pre>// remove the `var note` line, and stop using it:
+fun render(): String = label + ": " + count</pre>
+            <div class="hint">expect: the v1-born instance migrates AGAIN and keeps its count; the field is simply
+            gone. Old compiled code that still read the deleted field would trap — the invalidation
+            trampoline (see the REPL's `--demo cells` for that beat).</div>
+        </details>
+        <details class="edit">
+            <summary>5. the zoo: change the BASE body — overrides still win, live</summary>
+            <pre>// in Animal:
+open fun speak(): String = "…hums…"</pre>
+            <div class="hint">expect: the base Animal and the Cow (no override) speak the NEW body; Dog, Cat and
+            Duck STILL say woof/meow/quack — correct dispatch through the hot swap, same instances.
+            The changed lines are highlighted.</div>
+        </details>
+        <details class="edit">
+            <summary>6. the zoo grows: add a Pig (additive — new class, old callers)</summary>
+            <pre>// add next to the other animals:
+class Pig(name: String) : Animal(name) {
+    override fun speak(): String = "oink"
+}</pre>
+            <pre>// and a case in `make`:
+    "duck" -> Duck(name.toString())
+    "pig" -> Pig(name.toString())   // ← new line</pre>
+            <div class="hint">expect: after the swap the page auto-adds the Pig (the page keeps trying; until the
+            class exists, `make("pig")` throws and is skipped) — a NEW class flows into the OLD
+            `intro(a: Animal)` with zero migration: rec groups are content-addressed and additive.</div>
+        </details>
+        <details class="edit">
+            <summary>7a. break it: a COMPILE error (never reaches the engine)</summary>
+            <pre>fun render(): String = 42</pre>
+            <div class="hint">expect: kotlinc rejects it — the server keeps serving the last good version; the
+            banner shows the compiler's message, the app keeps running. Fix the file and save to recover.</div>
+        </details>
+        <details class="edit">
+            <summary>7b. break it: a RUNTIME trap in a swapped body</summary>
+            <pre>fun bump(): Int {
+    error("boom")   // compiles fine; traps when CALLED
+}</pre>
+            <div class="hint">expect: the patch swaps in cleanly, then the next bump click traps — the banner shows
+            the exception while render and the zoo keep working. The old body is already replaced, so
+            the trap repeats until you fix the file.</div>
+        </details>
+        <details class="edit">
+            <summary>7c. add a method to Model — ACCEPTED (additive; not a shape change)</summary>
+            <pre>class Model(var count: Int, val label: String) {
+    fun reset() { count = 0 }   // non-virtual, in a final class:
+}                                // never enters the vtable — no type changes</pre>
+            <div class="hint">expect: a clean swap. A non-virtual method in a final class doesn't touch the
+            vtable, so no wasm type changed — the additive case (Julia semantics: a new method,
+            old callers untouched).</div>
+        </details>
+        <details class="edit">
+            <summary>7d. add an OPEN method to Animal — NOW HOT (vtable migration, live!)</summary>
+            <pre>// in Animal, after speak():
+    open fun pet(): String = "pet"</pre>
+            <pre>// and use it in intro():
+fun intro(): String = name + " says " + speak() + " (" + pet() + ")"</pre>
+            <div class="hint">expect: a CLEAN SWAP — and the whole zoo chorus instantly gains
+            "(pet)", on the SAME instances born at v1. The vtable lives behind the same
+            indirection as the payload: adding an open method grows the vtable STRUCT (a new
+            type), but the cell's vtable field is root-typed and mutable, so no wasm signature
+            changed — and old instances migrate their vtable on the next dispatch (the
+            compiler-generated stepper installs the current vtable for the instance's runtime
+            class; overrides still win, so the Dog still says woof). This is SBCL's
+            wrapper-update, on wasm.<br><br>
+            HOW it works: dispatch lowers to test -> (cast + read slot) | (call the stepper,
+            retry); the stepper reads the instance's RTTI klassId, installs the current vtable
+            + itable. Old code keeps working on migrated instances for free — a grown vtable is
+            a SUBTYPE of the old one.</div>
+        </details>
+        <details class="edit">
+            <summary>7e. what's still rejected: give Model a CLASS supertype</summary>
+            <pre>open class Counted { fun kind() = "counted" }
+
+class Model(var count: Int, val label: String) : Counted() {</pre>
+            <div class="hint">expect: V8 rejects the Model-touching slots at the setters (createModel,
+            bumpModel, renderModel…) — the cell SUBTYPING CHAIN is part of every wasm signature
+            mentioning Model, so the engine refuses the swapped funcrefs, and the old code keeps
+            running. Revert to recover. Gaining an INTERFACE would be additive; a class
+            supertype changes the chain (the new Model literally is not the old Model type).
+            That's the honest boundary — new instances can be the new type, old code keeps the
+            old one (coexistence).</div>
+        </details>
+    </div>
+
+    <div id="log"></div>
+</div>
+
+<script type="module">
+    import { loadBase, liveView, applyDelta, readRegistry } from './glue.mjs'
+
+    const $ = (id) => document.getElementById(id)
+    const model = { old: null, fresh: null }
+    // the zoo lives in the PAGE: instances born at boot, held across every
+    // patch; the chorus is rendered through the LIVE intro export
+    const ZOO_KINDS = [['base', 'Rex'], ['dog', 'Rex'], ['cat', 'Tom'], ['cow', 'Belle'], ['duck', 'Donald']]
+    const EXTRA_KINDS = [['pig', 'Pig']]   // beat 6: auto-added once the class exists
+    let zoo = []
+    let base = null
+    let live = null
+    let version = 0
+
+    function log(text, cls = '') {
+        const row = document.createElement('div')
+        if (cls) row.className = cls
+        row.textContent = `${new Date().toLocaleTimeString()}  ${text}`
+        $('log').prepend(row)
+    }
+
+    function flash(el) {
+        el.classList.add('flash')
+        setTimeout(() => el.classList.remove('flash'), 600)
+    }
+
+    // the failure banner: shows compile errors, engine rejections and
+    // runtime traps; persists until dismissed or a good patch lands
+    function banner(title, body, cls) {
+        $('banner').className = cls
+        $('banner-title').textContent = title
+        $('banner-body').textContent = body ?? ''
+    }
+    function clearBanner() { $('banner').className = '' }
+    globalThis.dismiss = () => clearBanner()
+
+    async function bootOrPatch(target) {
+        const bytes = new Uint8Array(await (await fetch(`/app/build/app-v${target}.wasm`)).arrayBuffer())
+        const reg = readRegistry(bytes)
+        if (base === null) {
+            // the stdlib base is cold code — loaded once per session; every
+            // patch (~25 KB) imports it
+            const baseBytes = new Uint8Array(await (await fetch('/app/build/kotlin-kotlin-stdlib.wasm')).arrayBuffer())
+            base = await loadBase(baseBytes)
+        }
+        if (live === null) {
+            live = liveView([])
+        }
+        const result = await applyDelta(live, bytes, base)
+        if (live.instances.length === 1) {
+            model.old = live.exports.createModel('born-v1')
+            zoo = ZOO_KINDS.map(([k, n]) => live.exports.make(k, n))
+            log(`v${target}: live (${bytes.length} B patch over a ${(await (await fetch('/app/build/kotlin-kotlin-stdlib.wasm')).arrayBuffer()).byteLength} B base); instances born`)
+        } else {
+            const { swapped, added, rejected } = result
+            const rejectedNames = [...new Set(rejected.map((r) => r.name))]
+            if (rejected.length === 0) {
+                clearBanner()
+                // additive classes: the page keeps trying the extra kinds —
+                // `make` throws until the class exists, then the animal joins
+                for (const [k, n] of EXTRA_KINDS) {
+                    if (zoo.length >= ZOO_KINDS.length + EXTRA_KINDS.length) break
+                    try {
+                        zoo.push(live.exports.make(k, n))
+                        log(`v${target}: the zoo grew — ${k} added (new class, old callers)`)
+                    } catch { /* not defined yet — skip */ }
+                }
+                log(`v${target}: hot patch — ${swapped.length} slot(s) swapped` +
+                    (added.length ? `, new: ${added.join(', ')}` : '') +
+                    (reg ? `, registry ${reg.length} B` : ''))
+            } else {
+                banner(
+                    `v${target} rejected ${rejected.length} slot(s) — class shape changed; OLD code is still running`,
+                    `rejected: ${rejectedNames.join(', ')}\n\n${rejected[0].error}\n\n` +
+                    `an OPEN method grows the vtable — the cell type changes with it,\n` +
+                    `and so does every signature mentioning the class. The engine caught\n` +
+                    `it at the setter. Revert the edit and save to recover.`,
+                    'warn')
+                log(`v${target}: PARTIAL — ${swapped.length} swapped, ${rejected.length} rejected (shape change)`, 'warn')
+            }
+            flash($('card-old')); flash($('card-zoo')); if (model.fresh) flash($('card-new'))
+        }
+        version = target
+        $('ver').textContent = 'v' + target
+        $('freshBtn').disabled = false
+    }
+
+    let lastChorus = []
+
+    function paint() {
+        if (!live) return
+        try {
+            if (model.old) $('val-old').textContent = live.exports.renderModel(model.old)
+            if (model.fresh) $('val-new').textContent = live.exports.renderModel(model.fresh)
+            const lines = zoo.map((a) => live.exports.intro(a))
+            const box = $('zoo-lines')
+            box.innerHTML = ''
+            lines.forEach((line, i) => {
+                const div = document.createElement('div')
+                div.className = 'zoo-line' + (lastChorus[i] !== undefined && lastChorus[i] !== line ? ' changed' : '')
+                div.textContent = line
+                box.appendChild(div)
+            })
+            lastChorus = lines
+        } catch (e) {
+            // a runtime trap in the swapped body — show it, keep the rest
+            // running; it persists until dismissed or a good patch lands
+            banner(`runtime trap in the swapped code — ${e.message || e}`,
+                `${e}\n\nthe rest of the app keeps running; fix the body and save.`,
+                'err')
+        }
+    }
+
+    globalThis.bump = (which) => {
+        if (!live) return
+        const m = which === 'new' ? model.fresh : model.old
+        if (!m) return
+        try {
+            live.exports.bumpModel(m)
+            flash(which === 'new' ? $('card-new') : $('card-old'))
+        } catch (e) {
+            // the trap banner must fire from CLICKS too — a swapped-in bad
+            // body traps when called, not when painted
+            banner(`runtime trap in the swapped code — ${e.message || e}`,
+                `${e}\n\nthe rest of the app keeps running; fix the body and save.`,
+                'err')
+        }
+    }
+
+    globalThis.makeFresh = () => {
+        if (!live) return
+        model.fresh = live.exports.createModel('fresh')
+        $('card-new').style.display = ''
+        flash($('card-new'))
+    }
+
+    setInterval(paint, 300)
+    let booted = false
+    setInterval(async () => {
+        try {
+            // the first poll of a FRESH page tells the server its instance
+            // chain is empty — a delta compiled against the previous chain
+            // would import from instances this page doesn't hold, so the
+            // server forces a full patch (see dev.mjs /version?boot=1)
+            const bootFlag = booted ? '' : '?boot=1'
+            booted = true
+            const { version: latest, error } = await (await fetch('/version' + bootFlag)).json()
+            if (error) {
+                // a COMPILE error: the engine never saw it — the server is
+                // still serving the last good version, the app is fine
+                banner('compile error — the app is still running the last good version',
+                    error + '\n\nfix the file and save.', 'err')
+                $('banner').dataset.sticky = '1'
+            } else if ($('banner').dataset.sticky) {
+                delete $('banner').dataset.sticky
+                clearBanner()
+                log('compile recovered')
+            }
+            if (latest > version) {
+                try {
+                    await bootOrPatch(latest)
+                } catch (e) {
+                    banner('patch failed to load — the app keeps running', String(e), 'err')
+                }
+            }
+        } catch { /* server restarting */ }
+    }, 500)
+
+    bootOrPatch(1).catch((e) => {
+        banner('failed to boot — is the build clean?', String(e), 'err')
+    })
+    // a reloaded page must NOT boot from a stale delta: bootOrPatch(1)
+    // loads app-v1 (the session's original FULL patch), then the poll
+    // above pulls the newest versions in order
+</script>
+</body>
+</html>
