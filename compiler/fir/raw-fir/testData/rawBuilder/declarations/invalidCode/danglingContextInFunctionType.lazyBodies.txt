@@ -1,0 +1,52 @@
+FILE: danglingContextInFunctionType.kt
+    @Target(LAZY_EXPRESSION) public final? annotation class Anno : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Anno] constructor([CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? interface Properties : R|kotlin/Any| {
+        public? final? val ctx1: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val ctx2: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val ctx3: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val ctx4: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val ctx4Nullable: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val ctx5: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val ctx5Parenthesized: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val named: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val severalEntries: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val annotated: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val suspendModifier: <ERROR TYPE REF: Incomplete code>
+            public? [ContainingClassKey=Properties] get(): <ERROR TYPE REF: Incomplete code>
+
+        public? final? val typeArgument: List<<ERROR TYPE REF: Incomplete code>>
+            public? [ContainingClassKey=Properties] get(): List<<ERROR TYPE REF: Incomplete code>>
+
+    }
+    public? final? fun returnType(): <ERROR TYPE REF: Incomplete code> { LAZY_BLOCK }
+    public? final? fun valueParameter(p: <ERROR TYPE REF: Incomplete code>): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun <T> intersection(p: <ERROR TYPE REF: Incomplete code>): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun body(): R|kotlin/Unit| { LAZY_BLOCK }

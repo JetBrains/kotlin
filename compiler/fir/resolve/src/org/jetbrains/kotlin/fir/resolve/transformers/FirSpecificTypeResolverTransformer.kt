@@ -299,6 +299,7 @@ class FirSpecificTypeResolverTransformer(
     }
 
     override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: TypeResolutionConfiguration): FirTypeRef {
+        resolvedTypeRef.varargErrorElementTypeRef?.transformPartiallyResolvedTypeRef(this, data)
         return resolvedTypeRef
     }
 

@@ -1,0 +1,277 @@
+@Target(AnnotationTarget#.TYPE#)
+owner -> FirRegularClassSymbol Anno
+context -> FirRegularClassSymbol Anno
+
+@Target(AnnotationTarget#.TYPE#)
+owner -> FirRegularClassSymbol Other
+context -> FirRegularClassSymbol Other
+
+@Anno()
+owner -> FirRegularPropertySymbol /annotated
+context -> FirRegularPropertySymbol /annotated
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /annotated
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /annotated
+
+@Anno()
+owner -> FirRegularPropertySymbol /annotatedWithType
+context -> FirRegularPropertySymbol /annotatedWithType
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /annotatedWithType
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /annotatedWithType
+
+@Anno()
+owner -> FirValueParameterSymbol <local>/p from FirNamedFunctionSymbol /withAnnotatedVararg
+context -> FirValueParameterSymbol <local>/p from FirNamedFunctionSymbol /withAnnotatedVararg
+
+@Anno()
+owner -> FirValueParameterSymbol <local>/p from FirNamedFunctionSymbol /withAnnotatedVarargType
+context -> FirValueParameterSymbol <local>/p from FirNamedFunctionSymbol /withAnnotatedVarargType
+
+@Anno()
+owner -> FirValueParameterSymbol <local>/p from FirNamedFunctionSymbol /withNullableVararg
+context -> FirValueParameterSymbol <local>/p from FirNamedFunctionSymbol /withNullableVararg
+
+@Anno()
+owner -> FirRegularPropertySymbol /Forms.simple
+context -> FirRegularPropertySymbol /Forms.simple
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Forms.simple
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.simple
+
+@Anno(<strcat>(String(1), String(2)))
+owner -> FirRegularPropertySymbol /Forms.withArguments
+context -> FirRegularPropertySymbol /Forms.withArguments
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Forms.withArguments
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.withArguments
+
+@Anno()
+owner -> FirRegularPropertySymbol /Forms.several
+context -> FirRegularPropertySymbol /Forms.several
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Forms.several
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.several
+
+@Other()
+owner -> FirRegularPropertySymbol /Forms.several
+context -> FirRegularPropertySymbol /Forms.several
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Forms.several
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.several
+
+@Anno()
+owner -> FirRegularPropertySymbol /Forms.bracketed
+context -> FirRegularPropertySymbol /Forms.bracketed
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Forms.bracketed
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.bracketed
+
+@Other()
+owner -> FirRegularPropertySymbol /Forms.bracketed
+context -> FirRegularPropertySymbol /Forms.bracketed
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Forms.bracketed
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.bracketed
+
+@RECEIVER:Anno()
+owner -> FirRegularPropertySymbol /Forms.useSiteTarget
+context -> FirRegularPropertySymbol /Forms.useSiteTarget
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Forms.useSiteTarget
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.useSiteTarget
+
+@Anno()
+owner -> FirRegularPropertySymbol /Forms.suspendAfter
+context -> FirRegularPropertySymbol /Forms.suspendAfter
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Forms.suspendAfter
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.suspendAfter
+
+@Anno()
+owner -> FirRegularPropertySymbol /Forms.suspendBefore
+context -> FirRegularPropertySymbol /Forms.suspendBefore
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Forms.suspendBefore
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Forms.suspendBefore
+
+@Anno()
+owner -> FirRegularPropertySymbol /InsideList.inside
+context -> FirRegularPropertySymbol /InsideList.inside
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.inside
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.inside
+
+@Anno()
+owner -> FirRegularPropertySymbol /InsideList.insideUnresolved
+context -> FirRegularPropertySymbol /InsideList.insideUnresolved
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.insideUnresolved
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.insideUnresolved
+
+@Anno()
+owner -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.bothSides
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.bothSides
+
+@Other()
+owner -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.bothSides
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.bothSides
+
+@Anno(String(x))
+owner -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirRegularPropertySymbol /InsideList.bothSides
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.bothSides
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.bothSides
+
+@Anno()
+owner -> FirRegularPropertySymbol /InsideList.named
+context -> FirRegularPropertySymbol /InsideList.named
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.named
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.named
+
+@Other()
+owner -> FirRegularPropertySymbol /InsideList.named
+context -> FirRegularPropertySymbol /InsideList.named
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /InsideList.named
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /InsideList.named
+
+@Anno()
+owner -> FirRegularPropertySymbol /TypeAfterList.type
+context -> FirRegularPropertySymbol /TypeAfterList.type
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /TypeAfterList.type
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /TypeAfterList.type
+
+@Anno()
+owner -> FirRegularPropertySymbol /TypeAfterList.unresolvedType
+context -> FirRegularPropertySymbol /TypeAfterList.unresolvedType
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /TypeAfterList.unresolvedType
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /TypeAfterList.unresolvedType
+
+@Anno()
+owner -> FirRegularPropertySymbol /TypeAfterList.nullableType
+context -> FirRegularPropertySymbol /TypeAfterList.nullableType
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /TypeAfterList.nullableType
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /TypeAfterList.nullableType
+
+@Anno()
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.nullable
+context -> FirRegularPropertySymbol /NullableAndParenthesized.nullable
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.nullable
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.nullable
+
+@Anno()
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.nullableWithType
+context -> FirRegularPropertySymbol /NullableAndParenthesized.nullableWithType
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.nullableWithType
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.nullableWithType
+
+@Anno()
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.nullableWithReceiver
+context -> FirRegularPropertySymbol /NullableAndParenthesized.nullableWithReceiver
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.nullableWithReceiver
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.nullableWithReceiver
+
+@Anno()
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.doubleNullable
+context -> FirRegularPropertySymbol /NullableAndParenthesized.doubleNullable
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.doubleNullable
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.doubleNullable
+
+@Anno()
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
+context -> FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
+
+@Other()
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
+context -> FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.nullableInsideDangling
+
+@Other()
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.nullableAnnotatedEntry
+context -> FirRegularPropertySymbol /NullableAndParenthesized.nullableAnnotatedEntry
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.nullableAnnotatedEntry
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.nullableAnnotatedEntry
+
+@Anno()
+owner -> FirRegularPropertySymbol /NullableAndParenthesized.parenthesized
+context -> FirRegularPropertySymbol /NullableAndParenthesized.parenthesized
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /NullableAndParenthesized.parenthesized
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /NullableAndParenthesized.parenthesized
+
+@Anno()
+owner -> FirRegularPropertySymbol /Nested.typeArgument
+context -> FirRegularPropertySymbol /Nested.typeArgument
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Nested.typeArgument
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Nested.typeArgument
+
+@Anno()
+owner -> FirRegularPropertySymbol /Nested.functionTypeParameter
+context -> FirRegularPropertySymbol /Nested.functionTypeParameter
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Nested.functionTypeParameter
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Nested.functionTypeParameter
+
+@Anno()
+owner -> FirRegularPropertySymbol /Nested.functionTypeReturn
+context -> FirRegularPropertySymbol /Nested.functionTypeReturn
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Nested.functionTypeReturn
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /Nested.functionTypeReturn
+
+@Anno()
+owner -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /receiver
+context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /receiver
+
+@Anno()
+owner -> FirValueParameterSymbol <local>/p from FirNamedFunctionSymbol /parameter
+context -> FirValueParameterSymbol <local>/p from FirNamedFunctionSymbol /parameter
+
+@Anno()
+owner -> FirNamedFunctionSymbol /returnType
+context -> FirNamedFunctionSymbol /returnType
+
+@Anno()
+owner -> FirNamedFunctionSymbol /bound
+context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol /bound
+
+@Anno()
+owner -> FirNamedFunctionSymbol /whereConstraint
+context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol /whereConstraint
+
+@Anno()
+owner -> FirTypeAliasSymbol Alias
+context -> FirTypeAliasSymbol Alias
+
+@Anno()
+owner -> FirRegularClassSymbol Supertype
+context -> FirRegularClassSymbol Supertype
+
+@Anno()
+owner -> FirConstructorSymbol /AnnotatedData.AnnotatedData
+context -> FirValueParameterSymbol <local>/p from FirConstructorSymbol /AnnotatedData.AnnotatedData
+context -> FirRegularPropertySymbol /AnnotatedData.p
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /AnnotatedData.p
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /AnnotatedData.p
+context -> FirNamedFunctionSymbol /AnnotatedData.component1
+context -> FirValueParameterSymbol <local>/p from FirNamedFunctionSymbol /AnnotatedData.copy
+
+@Anno()
+owner -> FirRegularPropertySymbol /Setter.p
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /Setter.p
+
+@Anno()
+owner -> FirNamedFunctionSymbol /body
+context -> FirLocalPropertySymbol <local>/local from FirNamedFunctionSymbol /body
+context -> FirBackingFieldSymbol <local>/field from FirLocalPropertySymbol <local>/local from FirNamedFunctionSymbol /body
+
+@Anno()
+owner -> FirNamedFunctionSymbol /body
+context -> FirValueParameterSymbol <local>/p from FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/lambda from FirNamedFunctionSymbol /body
+
+@Anno()
+owner -> FirNamedFunctionSymbol /body
+context -> FirValueParameterSymbol <local>/p from FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/anonymousFunction from FirNamedFunctionSymbol /body
+
+@Anno()
+owner -> FirNamedFunctionSymbol /body
+context -> FirLocalPropertySymbol <local>/asTarget from FirNamedFunctionSymbol /body
+
+@Anno()
+owner -> FirNamedFunctionSymbol /body
+context -> FirLocalPropertySymbol <local>/isTarget from FirNamedFunctionSymbol /body
+
+@Anno()
+owner -> FirNamedFunctionSymbol /body
+context -> FirLocalPropertySymbol <local>/e from FirNamedFunctionSymbol /body

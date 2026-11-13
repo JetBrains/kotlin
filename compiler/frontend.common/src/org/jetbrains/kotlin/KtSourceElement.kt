@@ -106,6 +106,13 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ErrorTypeRef : KtFakeSourceElementKind()
 
     /**
+     * For the function type kept as the partially resolved type ref of an incomplete function type (`context(A)` or `context(A) B`
+     * without the parameter list and the arrow). It refers to the whole type reference, which is the source of the error type ref.
+     * Diagnostics are not reported on it, but its nested type refs are checked as in a complete function type.
+     */
+    object IncompleteFunctionType : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+
+    /**
      * For properties without accessors, FIR generates default getters and setters, as well as default backing fields.
      */
     sealed class DefaultAccessor : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true) {
