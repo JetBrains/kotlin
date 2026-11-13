@@ -98,6 +98,8 @@ fun mint() {
    val lazyCoins by lazyDelegate
 }
 
+fun ClassMint.doStuff() = coinsAtomic.incrementAndGet()
+
 // FILE: TopLevel.kt
 internal val topLevelAtomic = atomic(0)
 var topLevelDelegated: Int by topLevelAtomic

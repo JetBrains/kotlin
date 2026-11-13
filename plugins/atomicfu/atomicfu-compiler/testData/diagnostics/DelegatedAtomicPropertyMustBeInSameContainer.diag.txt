@@ -22,5 +22,5 @@
 
 /TopLevel.kt:97:4: error: Local properties delegated to properties with kotlinx.atomicfu.Atomic* types are unsupported.
 
-/TopLevel.kt:106:9: error: Delegated properties must be declared at the top level of the same file as the corresponding atomic properties.
-/OtherFile.kt:110:5: error: Delegated properties must be declared at the top level of the same file as the corresponding atomic properties.
+/TopLevel.kt:108:9: error: Delegated properties must be declared at the top level of the same file as the corresponding atomic properties.
+/OtherFile.kt:112:5: error: Delegated properties must be declared at the top level of the same file as the corresponding atomic properties.
