@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.filterModulePath
 import org.jetbrains.kotlin.compilerRunner.mergeBeans
 import org.jetbrains.kotlin.compilerRunner.reportInternalCompilerError
 import org.jetbrains.kotlin.config.CompilerSettings
@@ -46,6 +47,7 @@ internal class JpsBtaJvmCompilationRequest(
     val commonSources: List<File>,
     val outputDirectory: File,
     val classpathRoots: List<File>,
+    val modulePath: List<File>,
     val javaSourceRoots: List<JvmSourceRoot>,
     val friendDirectories: List<File>,
     val modularJdkRoot: File?,
@@ -155,6 +157,8 @@ internal class JpsBtaCompilerRunner {
 
         // String arguments keep the options without a typed Build Tools API counterpart (`-P`, `-Xplugin`, ...)
         val argumentStrings = JpsKotlinCompilerRunner().argumentStringsWithAdditional(arguments, compilerSettings)
+            // The module path set below includes the user's `-Xmodule-path`, which would be reported as passed twice
+            .let { if (request.modulePath.isEmpty()) it else it.filterModulePath() }
         if (KotlinBuilder.LOG.isDebugEnabled) {
             KotlinBuilder.LOG.debug("Build Tools API arguments for ${request.targetId.name}: ${argumentStrings.joinToString(" ")}")
         }
@@ -172,6 +176,9 @@ internal class JpsBtaCompilerRunner {
             this[JvmCompilerArguments.NO_JDK] = arguments.noJdk
             this[JvmCompilerArguments.JDK_HOME] = arguments.jdkHome?.let { Paths.get(it) }
             this[JvmCompilerArguments.CLASSPATH] = classpath.map { Paths.get(it) }.ifEmpty { null }
+            if (request.modulePath.isNotEmpty()) {
+                this[JvmCompilerArguments.X_MODULE_PATH] = request.modulePath.map { it.toPath() }
+            }
             this[JvmCompilerArguments.X_JAVA_SOURCE_ROOTS] = javaSourceRoots.map { it.toPath() }
             this[JvmCompilerArguments.X_FRIEND_PATHS] = arguments.friendPaths.map { Paths.get(it) }
         }

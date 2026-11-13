@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -173,11 +174,12 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
         }
     }
 
-    fun collectDependentChunksRecursivelyExportedOnly(result: MutableSet<KotlinChunk> = mutableSetOf()) {
+    fun collectDependentChunksRecursively(result: MutableSet<KotlinChunk> = mutableSetOf()) {
         dependents.forEach {
             if (result.add(it.src.chunk)) {
-                if (it.exported) {
-                    it.src.chunk.collectDependentChunksRecursivelyExportedOnly(result)
+                // `requires transitive` exposes a non-exported dependency of a module with a module-info.java to its dependents
+                if (it.exported || JavaBuilderUtil.findModuleInfoFile(context.jpsContext, it.src.jpsModuleBuildTarget) != null) {
+                    it.src.chunk.collectDependentChunksRecursively(result)
                 }
             }
         }
@@ -200,7 +202,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
     private fun addDependentCaches(targetsCaches: Collection<JpsIncrementalCache>) {
         val dependentChunks = mutableSetOf<KotlinChunk>()
 
-        collectDependentChunksRecursivelyExportedOnly(dependentChunks)
+        collectDependentChunksRecursively(dependentChunks)
 
         val dataManager = context.dataManager
         dependentChunks.forEach { decedentChunk ->

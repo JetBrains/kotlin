@@ -8,7 +8,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.FileCollectionFactory
 import com.intellij.util.io.URLUtil
+import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.jps.ModuleChunk
+import org.jetbrains.jps.ProjectPaths
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks.Backend
@@ -24,9 +26,12 @@ import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.mergeBeans
 import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaJvmCompilationRequest
 import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader.GENERATE_COMPILER_REF_INDEX_PROPERTY
@@ -52,6 +57,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.io.IOException
+import java.lang.module.ModuleFinder
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
@@ -176,6 +182,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 module.kotlinCompilerSettings,
                 environment,
                 moduleFile,
+                findModulePath(dirtyFilesHolder.context, commonArguments),
                 buildMetricReporter
             )
         } finally {
@@ -221,6 +228,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             commonSources = preprocessSources(sources.crossCompiledFiles),
             outputDirectory = outputDir,
             classpathRoots = findClassPathRoots().filter { it !in outputDirsToFilterOut },
+            modulePath = findModulePath(dirtyFilesHolder.context, commonArguments),
             javaSourceRoots = findJavaSourceRoots(dirtyFilesHolder.context),
             friendDirectories = friendOutputDirs,
             modularJdkRoot = findModularJdkRoot(),
@@ -402,6 +410,71 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
         true
     }
+
+    /**
+     * The module path for kotlinc: `-Xmodule-path` from the compiler arguments, then the dependencies whose modules are
+     * required, chosen the way the JPS Java builder chooses them (`ModulePathSplitter`). Non-exported dependencies are
+     * included, as for javac, although they aren't on the Kotlin classpath. Empty when the target has no module-info.java.
+     *
+     * The roots on the classpath stay there. Past the module's own requires, kotlinc adds only `requires transitive`
+     * dependencies to the module graph, so a module required by another dependency is read from the classpath, for
+     * example as the supertype of a class in a required module.
+     */
+    private fun findModulePath(context: CompileContext, commonArguments: CommonCompilerArguments): List<File> {
+        if (chunk.targets.size > 1) return emptyList()
+        val moduleInfo = JavaBuilderUtil.findModuleInfoFile(context, jpsModuleBuildTarget) ?: return emptyList()
+
+        // Merged as in both runners
+        val argumentStrings = JpsKotlinCompilerRunner().argumentStringsWithAdditional(
+            mergeBeans(commonArguments, XmlSerializerUtil.createCopy(module.k2JvmCompilerArguments)),
+            module.kotlinCompilerSettings,
+        )
+        // A `-Xmodule-path` value read from an argument file can't be removed, so the module path would be passed twice
+        if (argumentStrings.any { it.startsWith("@") }) return emptyList()
+
+        val arguments = parseCommandLineArguments<K2JVMCompilerArguments>(argumentStrings)
+        val argumentsModulePath = arguments.javaModulePath?.split(File.pathSeparator).orEmpty().map(::File)
+        val moduleRoots = try {
+            // kotlinc ignores a second copy of a module with a warning
+            val moduleNames = argumentsModulePath.filter(::isJavaModuleRoot).flatMapTo(HashSet()) { root ->
+                try {
+                    ModuleFinder.of(root.toPath()).findAll().map { it.descriptor().name() }
+                } catch (_: Exception) {
+                    // kotlinc reads some jars that ModuleFinder rejects, such as one with a class in the default package
+                    emptyList()
+                }
+            }
+            kotlinContext.modulePathSplitter.splitPath(
+                moduleInfo,
+                setOf(outputDir),
+                // The classpath goes first, so that kotlinc uses the copy of a module that it reads classes from
+                findClassPathRoots() + ProjectPaths.getCompilationModulePath(ModuleChunk(setOf(jpsModuleBuildTarget)), false),
+                arguments.additionalJavaModules.toList(),
+            ).first.path
+                .filter { it != outputDir && isJavaModuleRoot(it) }
+                .filter { root ->
+                    moduleNames.add(
+                        kotlinContext.javaModuleNames.computeIfAbsent(root) {
+                            ModuleFinder.of(it.toPath()).findAll().first().descriptor().name()
+                        }
+                    )
+                }
+        } catch (e: Exception) {
+            // Such as a syntax error in module-info.java, which the compilers report
+            KotlinBuilder.LOG.info("Cannot read the required modules of $moduleInfo", e)
+            return emptyList()
+        }
+        if (moduleRoots.isEmpty()) return emptyList()
+        moduleRoots.firstOrNull { File.pathSeparator in it.path }?.let {
+            KotlinBuilder.LOG.info("Cannot pass $it to -Xmodule-path, since its path contains the path separator")
+            return emptyList()
+        }
+
+        return (argumentsModulePath + moduleRoots).distinct()
+    }
+
+    // kotlinc reads a directory as a module only when it has a module-info.class, and doesn't read the jars in it
+    private fun isJavaModuleRoot(root: File): Boolean = root.isFile || File(root, "module-info.class").isFile
 
     private fun findModularJdkRoot(): File? {
         // List of paths to JRE modules in the following format:
