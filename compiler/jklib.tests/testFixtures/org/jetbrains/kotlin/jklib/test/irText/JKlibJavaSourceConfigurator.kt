@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.services.configuration.additionalClassPathForJa
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.javaFiles
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.services.transitiveDependsOnDependencies
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -60,14 +61,39 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
         // Kotlin sources of the whole `dependsOn` closure in this configuration, so its Java sources belong here too.
         val modulesWithJavaFiles = module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
             .filter { it.javaFiles.isNotEmpty() }
-        if (modulesWithJavaFiles.isEmpty()) return
+        // KLIBs don't contain Java classes, so the Java sources of the dependencies are compiled with javac and passed as class
+        // files, like the Kotlin/JVM tests do.
+        val dependencyJavaJars = module.javaJarsOfDependencies()
+        if (modulesWithJavaFiles.isEmpty() && dependencyJavaJars.isEmpty()) return
 
         for (moduleWithJavaFiles in modulesWithJavaFiles) {
             moduleWithJavaFiles.javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
             configuration.addJavaSourceRoot(testServices.sourceFileProvider.getJavaSourceDirectoryForModule(moduleWithJavaFiles))
         }
+        configuration.addJvmClasspathRoots(dependencyJavaJars)
 
-        val annotationsJar = if (ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
+        configuration.addJvmClasspathRoots(module.javaClasspath())
+    }
+
+    private val javaJars = mutableMapOf<TestModule, File?>()
+
+    private fun TestModule.javaJarsOfDependencies(): List<File> =
+        (regularDependencies + friendDependencies).mapNotNull { it.dependencyModule.compileJavaFilesToJar() }
+
+    private fun TestModule.compileJavaFilesToJar(): File? = javaJars.getOrPut(this) {
+        if (javaFiles.isEmpty()) return@getOrPut null
+        javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
+        MockLibraryUtil.compileLibraryToJar(
+            sourcesPath = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(this).path,
+            contentDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("java-binaries-$name"),
+            jarName = name,
+            allowKotlinSources = false,
+            extraClasspath = (javaJarsOfDependencies() + javaClasspath()).map { it.path },
+        )
+    }
+
+    private fun TestModule.javaClasspath(): List<File> {
+        val annotationsJar = if (ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS in directives) {
             libraryCache.getOrCompile("java8-annotations") {
                 MockLibraryUtil.compileJavaFilesLibraryToJar(
                     JavaForeignAnnotationType.Java8Annotations.path,
@@ -79,9 +105,7 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
         } else {
             KtTestUtil.getAnnotationsJar()
         }
-        configuration.addJvmClasspathRoot(annotationsJar)
-        configuration.addJvmClasspathRoots(
-            testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath?.map(::File).orEmpty()
-        )
+        return listOf(annotationsJar) +
+                testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath?.map(::File).orEmpty()
     }
 }
