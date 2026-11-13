@@ -391,7 +391,10 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             },
         ) {
             latestDag = KlibDAGBuilder(
-                Parameters(libraries = allLibraries) { it in roots }.apply {
+                Parameters(
+                    libraries = allLibraries,
+                    onError = ::fail,
+                ) { it in roots }.apply {
                     @OptIn(InternalKlibDAGApi::class)
                     useSignatureIndices = mode.dagMode.useSignatureIndices
                 }

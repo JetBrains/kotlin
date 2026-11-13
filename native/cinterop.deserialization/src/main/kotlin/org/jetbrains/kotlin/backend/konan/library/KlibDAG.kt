@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -47,7 +46,7 @@ import kotlin.io.path.pathString
  *  [librariesReverseTopoSorted] with Kahn's algorithm: among the libraries whose dependencies have all
  *  been emitted, the one that comes first in this order is emitted next.
  */
-class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
+class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNode>, onError: (String) -> Nothing) {
     init {
         // Sanity check.
         for (node in dag.values) {
@@ -88,7 +87,7 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
      *
      * Note: Computed eagerly, because the sorting also serves as the check that there are no cycles in the DAG.
      */
-    val librariesReverseTopoSorted: List<KotlinLibrary> = reverseTopoSortCheckingNoCycles(dag)
+    val librariesReverseTopoSorted: List<KotlinLibrary> = reverseTopoSortCheckingNoCycles(dag, onError)
 
     /**
      * A (library -> it's serial index in [librariesReverseTopoSorted]) mapping.
@@ -110,9 +109,12 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
 
     companion object {
         /**
-         * Compute [librariesReverseTopoSorted]. Throws [KlibDAGCyclicDependencyException] if there is a cycle in the DAG.
+         * Compute [librariesReverseTopoSorted]. Throws an exception using [onError] if there is a cycle in the DAG.
          */
-        private fun reverseTopoSortCheckingNoCycles(dag: Map<KotlinLibrary, KlibDAGNode>): List<KotlinLibrary> {
+        private fun reverseTopoSortCheckingNoCycles(
+            dag: Map<KotlinLibrary, KlibDAGNode>,
+            onError: (String) -> Nothing,
+        ): List<KotlinLibrary> {
             // Kahn's algorithm is used rather than a DFS because a DFS takes its *neighbour* order as part of
             // the output order, and `KlibDAGNode.directDependencies` is an unordered `HashSet`. Even if it was
             // a `LinkedHashSet` its order would be tied to the order we discover IR links between modules, which
@@ -158,14 +160,14 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
             if (emitted.size != dag.size) {
                 // Anything left is part of a cycle, or depends on one, and so never became ready.
                 val notEmitted = librariesInLoadOrder.filterIndexedTo(linkedSetOf()) { index, _ -> pendingDependencies[index] != 0 }
-                throwCyclicDependencyException(dag, notEmitted)
+                onError(computeCyclicDependencyErrorMessage(dag, notEmitted))
             }
 
             return emitted
         }
 
         /**
-         * Find a cycle in the DAG and throw [KlibDAGCyclicDependencyException] with all libraries forming the cycle.
+         * Find a cycle in the DAG and generate an error message with all libraries forming the cycle.
          *
          * [notEmitted] are the libraries left over by Kahn's algorithm in [reverseTopoSortCheckingNoCycles].
          * Each of them has at least one dependency that is also in [notEmitted] (otherwise it would have been emitted).
@@ -179,10 +181,10 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
          * use identity hash codes. Picking the next dependency costs O(|notEmitted|), so the walk is quadratic
          * in the worst case. This is acceptable, as it runs only once, right before the compilation fails.
          */
-        private fun throwCyclicDependencyException(
+        private fun computeCyclicDependencyErrorMessage(
             dag: Map<KotlinLibrary, KlibDAGNode>,
             notEmitted: Set<KotlinLibrary>,
-        ): Nothing {
+        ): String {
             // Libraries on the walked path, in the order they were visited.
             val librariesOnPath = LinkedHashSet<KotlinLibrary>()
 
@@ -192,7 +194,9 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
                 current = notEmitted.first { it in directDependencies }
             }
 
-            throw KlibDAGCyclicDependencyException(librariesOnPath.dropWhile { it != current })
+            val cycle = librariesOnPath.dropWhile { it != current }
+            return "Cyclic dependency detected while computing DAG of KLIB dependencies:\n" +
+                    (cycle + cycle.first()).joinToString(" ->\n") { it.path.pathString }
         }
     }
 }
@@ -206,7 +210,7 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
  * Which means that all libraries from [librariesUsedInCurrentCompilation] should be represented in
  * the deserialized [SerializedKlibDAG].
  */
-fun SerializedKlibDAG.deserialize(librariesUsedInCurrentCompilation: List<KotlinLibrary>): KlibDAG {
+fun SerializedKlibDAG.deserialize(librariesUsedInCurrentCompilation: List<KotlinLibrary>, onError: (String) -> Nothing): KlibDAG {
     val pathToLibrary: Map<Path, KotlinLibrary> = librariesUsedInCurrentCompilation.associateByCanonicalPathPreventingDuplicates()
 
     val librariesMissingInSerializedDag = pathToLibrary.keys - dag.keys
@@ -236,7 +240,7 @@ fun SerializedKlibDAG.deserialize(librariesUsedInCurrentCompilation: List<Kotlin
         }
     }
 
-    return KlibDAG(dagUnderConstruction)
+    return KlibDAG(dagUnderConstruction, onError)
 }
 
 /**
@@ -246,13 +250,6 @@ interface KlibDAGNode {
     val library: KotlinLibrary
     val directDependencies: Set<KotlinLibrary>
     val allDependencies: Set<KotlinLibrary>
-}
-
-class KlibDAGCyclicDependencyException(override val message: String) : KonanPendingCompilationError, Exception(message) {
-    constructor(cycle: List<KotlinLibrary>) : this(
-        "Cyclic dependency detected while computing DAG of KLIB dependencies:\n" +
-                (cycle + cycle.first()).joinToString(" ->\n") { it.path.pathString }
-    )
 }
 
 @RequiresOptIn("Direct access to the internal Klib DAG API is discouraged.")
@@ -269,6 +266,7 @@ annotation class InternalKlibDAGApi
 class KlibDAGBuilder(parameters: Parameters) {
     class Parameters(
         val libraries: List<KotlinLibrary>,
+        val onError: (String) -> Nothing,
         val isRoot: (KotlinLibrary) -> Boolean,
     ) {
         @InternalKlibDAGApi
@@ -428,7 +426,7 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
          * Select only the subset of actually used nodes.
          * Note that the entries in [KlibDAG.dag] in the returned object follow the order of [KlibDAGBuilder.Parameters.libraries].
          */
-        return KlibDAG(dagUnderConstruction.filterValues { it in usedNodes })
+        return KlibDAG(dagUnderConstruction.filterValues { it in usedNodes }, parameters.onError)
     }
 
     private fun stampStdlibNodeAsDependencyForEveryone() {
