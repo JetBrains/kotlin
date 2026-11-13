@@ -76,7 +76,7 @@ fun box(): String {
 // test.kt:19 box
 // test.kt:20 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:13 $box (9)
 // test.kt:10 $Enum$static_init (18)
 // test.kt:10 $Enum.<init> (34)

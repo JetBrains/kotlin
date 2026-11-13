@@ -78,7 +78,7 @@ fun box() {
 // test.kt:5 foo
 // test.kt:17 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:15 $box (5)
 // test.kt:15 $<no name provided>.<init> (18)
 // test.kt:15 $box (20)

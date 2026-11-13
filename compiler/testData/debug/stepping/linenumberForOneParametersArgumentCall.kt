@@ -37,7 +37,7 @@ inline fun lookAtMe(f: (String) -> Unit) {
 // test.kt:7 box
 // test.kt:9 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:6 $box (4)
 // test.kt:12 $box (12)
 // test.kt:13 $box (6, 4)

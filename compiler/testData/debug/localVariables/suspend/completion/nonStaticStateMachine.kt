@@ -32,7 +32,7 @@ suspend fun box() {
 // test.kt:16 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:17 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:16 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (4, 4)
 // test.kt:13 $A.<init>: $<this>:(ref $A)=(ref $A) (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 // test.kt:16 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (13, 13, 8)

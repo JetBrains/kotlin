@@ -50,7 +50,7 @@ fun box() {
 // test.kt:15 compute: result="y":kotlin.String, x="A":kotlin.String, y="y":kotlin.String
 // test.kt:16 compute: result="y":kotlin.String, x="A":kotlin.String, y="y":kotlin.String, z="z":kotlin.String
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:23 $box: (4)
 // test.kt:7 $compute: $result:(ref null $kotlin.String)=null, $x:(ref null $kotlin.String)=null, $y:(ref null $kotlin.String)=null, $z:(ref null $kotlin.String)=null (17, 17, 17, 17)
 // test.kt:8 $compute: $result:(ref $kotlin.String)=(ref $kotlin.String), $x:(ref null $kotlin.String)=null, $y:(ref null $kotlin.String)=null, $z:(ref null $kotlin.String)=null (21, 21, 21, 21, 21, 21, 21, 26, 26, 26, 21, 21, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14)

@@ -140,7 +140,7 @@ fun box() {
 // library.kt:8 box: mainVar:int=1:int, fooParam\13:int=1:int, $i$f$foo\13\54:int=0:int, fooVar\13:int=1:int
 // test.kt:60 box: mainVar:int=1:int
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:52 $box: $mainVar:i32=0:i32, $flafVar:i32=0:i32, $fooVar:i32=0:i32, $bazVar:i32=0:i32, $baz1Var:i32=0:i32, $baz2Var:i32=0:i32, $baz1LambdaVar:i32=0:i32, $baz1LambdaVar1:i32=0:i32, $fooLamdbdaVar:i32=0:i32, $barVar:i32=0:i32, $barLamdbdaVar:i32=0:i32 (18, 18)
 // test.kt:53 $box: $mainVar:i32=1:i32, $flafVar:i32=0:i32, $fooVar:i32=0:i32, $bazVar:i32=0:i32, $baz1Var:i32=0:i32, $baz2Var:i32=0:i32, $baz1LambdaVar:i32=0:i32, $baz1LambdaVar1:i32=0:i32, $fooLamdbdaVar:i32=0:i32, $barVar:i32=0:i32, $barLamdbdaVar:i32=0:i32 (4)
 // library.kt:38 $box: $mainVar:i32=1:i32, $flafVar:i32=0:i32, $fooVar:i32=0:i32, $bazVar:i32=0:i32, $baz1Var:i32=0:i32, $baz2Var:i32=0:i32, $baz1LambdaVar:i32=0:i32, $baz1LambdaVar1:i32=0:i32, $fooLamdbdaVar:i32=0:i32, $barVar:i32=0:i32, $barLamdbdaVar:i32=0:i32 (18, 18)

@@ -24,7 +24,7 @@ fun box() {
 // test.kt:10 box$lambda: $this$blockFun="OK":kotlin.String
 // test.kt:11 box:
 
-// TODO(KT-86460): the FQN of `Function1` sometimes is `Function1` and sometimes `kotlin.test.Function1`, so specifying a correct option isn't possible here; re-enable this EXPECTATIONS WASM block after KT-86460 is solved by replacing this line with // EXPECTATIONS WASM
+// TODO(KT-86460): the FQN of `Function1` sometimes is `Function1` and sometimes `kotlin.test.Function1`, so specifying a correct option isn't possible here; re-enable this EXPECTATIONS WASM_JS block after KT-86460 is solved by replacing this line with // EXPECTATIONS WASM_JS
 // test.kt:8 $box: (13, 4)
 // test.kt:5 $blockFun: $blockArg:(ref $kotlin.test.Function1)=(ref $kotlin.test.Function1) (9, 4, 4, 4, 9, 9, 9, 9, 9, 9, 9, 9, 9)
 // test.kt:8 $box$lambda.invoke: $$this$blockFun:(ref $kotlin.String)=(ref $kotlin.String) (13, 13, 13)

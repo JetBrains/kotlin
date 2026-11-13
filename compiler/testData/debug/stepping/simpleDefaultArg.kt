@@ -33,7 +33,7 @@ fun box(): String {
 // EXPECTATIONS JS_IR
 // test.kt:9 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:9 $box (11)
 // test.kt:4 $ifoo$default (22)
 // test.kt:5 $ifoo (11, 4)

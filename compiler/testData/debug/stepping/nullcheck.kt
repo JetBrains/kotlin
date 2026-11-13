@@ -83,7 +83,7 @@ fun testExpressionBody(nullable: String?) =
 // test.kt:22 testExpressionBody
 // test.kt:11 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:7 $box (9, 4)
 // test.kt:14 $test (11)
 // test.kt:16 $test (12, 21, 31, 12)

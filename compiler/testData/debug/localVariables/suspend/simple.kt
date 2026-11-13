@@ -13,6 +13,6 @@ suspend fun box() {
 // test.kt:5 box: $completion=EmptyContinuation
 // test.kt:6 box: $completion=EmptyContinuation, x=1:number
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation), $x:i32=1:i32 (12, 12, 12)
 // test.kt:6 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation), $x:i32=1:i32 (0)

@@ -15,7 +15,7 @@ fun box() {
 // test.kt:4 box$lambda: a="O":kotlin.String, b="K":kotlin.String
 // test.kt:6 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:3 $box: (4)
 // test.kt:5 $box: (6, 11)
 // test.kt:3 $box: (4)

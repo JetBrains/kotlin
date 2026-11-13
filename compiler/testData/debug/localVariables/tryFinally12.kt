@@ -51,7 +51,7 @@ fun box(): String {
 // test.kt:17 box: i=0:number, x="x":kotlin.String, e=kotlin.RuntimeException, y="y":kotlin.String, z="z":kotlin.String
 // test.kt:21 box: i=0:number, x="x":kotlin.String, e=kotlin.RuntimeException, y="y":kotlin.String, z="z":kotlin.String
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:8 $box: $i:i32=0:i32, $x:(ref null $kotlin.String)=null, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null, $y:(ref null $kotlin.String)=null, $z:(ref null $kotlin.String)=null (18, 8, 26, 8, 8, 18, 18, 18, 18, 18, 18)
 // test.kt:10 $box: $i:i32=0:i32, $x:(ref null $kotlin.String)=null, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null, $y:(ref null $kotlin.String)=null, $z:(ref null $kotlin.String)=null (24, 24, 24, 24)
 // test.kt:11 $box: $i:i32=0:i32, $x:(ref $kotlin.String)=(ref $kotlin.String), $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null, $y:(ref null $kotlin.String)=null, $z:(ref null $kotlin.String)=null (22, 39, 22, 16)

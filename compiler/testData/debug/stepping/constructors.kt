@@ -252,7 +252,7 @@ class O<T>(i: T) {
 // test.kt:73 <init>
 // test.kt:18 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box (4)
 // test.kt:20 $B.<init> (9)
 // test.kt:5 $box (4)

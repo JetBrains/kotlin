@@ -43,7 +43,7 @@ fun f(block: () -> Unit) {
 // test.kt:12 f
 // test.kt:8 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (12)
 // test.kt:5 $box (6, 4)
 // test.kt:11 $f (4)

@@ -71,7 +71,7 @@ open class B : A()
 // test.kt:12 foo
 // test.kt:18 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:15 $box (8)
 // test.kt:20 $A.<init> (12)
 // test.kt:15 $box (4)
