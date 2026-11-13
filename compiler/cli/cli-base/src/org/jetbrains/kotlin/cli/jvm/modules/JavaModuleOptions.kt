@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.cli.jvm.modules
 
+import org.jetbrains.kotlin.name.isValidJavaFqName
 import java.io.File
-import javax.lang.model.SourceVersion
 
 internal const val ALL_UNNAMED = "ALL-UNNAMED"
 
@@ -25,14 +25,14 @@ fun parseJavaModuleAccessOption(value: String, isExports: Boolean): JavaModuleAc
     val groups = (if (isExports) ADD_EXPORTS_VALUE else ADD_READS_VALUE).matchEntire(value)?.groupValues?.drop(1) ?: return null
     val sourceParts = groups.dropLast(1)
     val targets = groups.last()
-    val badSourceParts = sourceParts.filterNot(SourceVersion::isName)
+    val badSourceParts = sourceParts.filterNot(::isValidJavaFqName)
     // Like javac, names are checked split on commas, but applied split on spaces and commas.
     val badNames = badSourceParts + targets.split(',').filterNot { it.isEmpty() || isValidTarget(it) }
     if (badSourceParts.isNotEmpty()) return JavaModuleAccessOption(null, emptyList(), badNames)
     return JavaModuleAccessOption(sourceParts.joinToString("/"), targets.split(TARGET_SEPARATORS).filter(::isValidTarget), badNames)
 }
 
-private fun isValidTarget(name: String): Boolean = name == ALL_UNNAMED || SourceVersion.isName(name)
+private fun isValidTarget(name: String): Boolean = name == ALL_UNNAMED || isValidJavaFqName(name)
 
 private val PATCH_MODULE_VALUE = Regex("([^/]+)=(,*[^,].*)")
 

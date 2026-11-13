@@ -494,9 +494,9 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         module(
             "main",
             additionalKotlinArguments = listOf(
-                "-Xadd-reads=main=lib=other", "-Xadd-reads=1bad=lib", "-Xadd-reads=ALL-UNNAMED=lib", "-Xadd-reads=main=int,,lib",
+                "-Xadd-reads=main=lib=other", "-Xadd-reads=1bad=lib", "-Xadd-reads=ALL-UNNAMED=lib", "-Xadd-reads=main=,,lib",
                 "-Xadd-reads=main=lib other", "-Xadd-exports=lib/foo=main/bar", "-Xadd-exports=lib/foo/bar=main",
-                "-Xadd-exports=lib/foo=,int", "-Xadd-exports=1bad/foo=2bad",
+                "-Xadd-exports=lib/foo=,main", "-Xadd-exports=1bad/foo=2bad",
             ),
         )
     }
