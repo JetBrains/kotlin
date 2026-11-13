@@ -26,6 +26,15 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:$embeddedKotlinVersion") { isTransitive = false }
     implementation(kotlinBuildHelpers())
+    // The early source bootstrap keeps host detection available before the normal utilities project runs.
+    val bootstrapUtilsJar = providers.gradleProperty("kotlin.native.bootstrapUtilsJar").orNull
+    if (bootstrapUtilsJar != null) {
+        implementation(files((project.property("rootBuildDirectory") as java.io.File).resolve(bootstrapUtilsJar)))
+    } else if (gradle.includedBuilds.any { it.name == "bootstrap-native-utils" }) {
+        implementation("org.jetbrains.kotlin.build:bootstrap-native-utils:1") {
+            isTransitive = false
+        }
+    }
     implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
     // To build Konan Gradle plugin

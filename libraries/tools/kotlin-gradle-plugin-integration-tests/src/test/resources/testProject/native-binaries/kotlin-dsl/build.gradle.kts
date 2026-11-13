@@ -22,9 +22,10 @@ kotlin {
 
     val macosArm = macosArm64("macosArm64")
     val linux = linuxX64("linux64")
+    val linuxArm = linuxArm64("linuxArm64")
     val windows = mingwX64("mingw64")
 
-    configure(listOf(macosArm, linux, windows)) {
+    configure(listOf(macosArm, linux, linuxArm, windows)) {
         compilerOptions.verbose.set(true)
 
         compilations["test"].compileTaskProvider.configure {

@@ -76,19 +76,28 @@ fun extractNativeToolSettings(
 internal object MPPNativeTargets {
     val current = when (HostManager.host) {
         KonanTarget.LINUX_X64 -> "linux64"
+        KonanTarget.LINUX_ARM64 -> "linuxArm64"
         KonanTarget.MACOS_ARM64 -> "macosArm64"
         KonanTarget.MINGW_X64 -> "mingw64"
         else -> error("Unsupported host")
     }
 
     val unsupported = when {
+        HostManager.host == KonanTarget.LINUX_ARM64 -> setOf("linux64", "macosArm64", "mingw64")
         HostManager.hostIsMingw -> setOf("macosArm64")
         HostManager.hostIsLinux -> setOf("macosArm64")
         HostManager.hostIsMac -> emptySet()
         else -> error("Unknown host")
     }
 
-    val supported = listOf("linux64", "macosArm64", "mingw64").filter { !unsupported.contains(it) }
+    val supported = listOf("linux64", "linuxArm64", "macosArm64", "mingw64").filter { !unsupported.contains(it) }
+
+    val crossCompilable = if (HostManager.host in HostManager().hostsWithFullTargetSet) unsupported else emptySet()
+
+    val publishable = supported + crossCompilable
+
+    // Preserve the Linux x64 compilation checks on full hosts; partial hosts compile their own target.
+    val compilationTarget = if ("linux64" in publishable) "linux64" else current
 }
 
 fun computeCacheDirName(

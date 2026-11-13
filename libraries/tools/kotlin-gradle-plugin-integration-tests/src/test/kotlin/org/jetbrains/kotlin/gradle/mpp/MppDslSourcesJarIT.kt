@@ -21,6 +21,8 @@ class MppDslSourcesJarIT : KGPBaseTest() {
     fun testSourceJars(gradleVersion: GradleVersion) {
 
         val localRepoDir = defaultLocalRepo(gradleVersion)
+        val nativeTargetName = MPPNativeTargets.compilationTarget
+        val nativeArtifactId = "sample-lib-${nativeTargetName.lowercase()}"
 
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
@@ -51,7 +53,7 @@ class MppDslSourcesJarIT : KGPBaseTest() {
                     "sample-lib",
                     "sample-lib-jvm6",
                     "sample-lib-nodejs",
-                    "sample-lib-linux64",
+                    nativeArtifactId,
                 )
 
                 val sourceJarSourceRoots: Map<String, Set<String>> =
@@ -64,7 +66,7 @@ class MppDslSourcesJarIT : KGPBaseTest() {
                 assertEquals(setOf("commonMain", "nativeMain"), sourceJarSourceRoots["sample-lib"])
                 assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["sample-lib-jvm6"])
                 assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["sample-lib-nodejs"])
-                assertEquals(setOf("commonMain", "nativeMain", "linux64Main"), sourceJarSourceRoots["sample-lib-linux64"])
+                assertEquals(setOf("commonMain", "nativeMain", "${nativeTargetName}Main"), sourceJarSourceRoots[nativeArtifactId])
             }
         }
     }

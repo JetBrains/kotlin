@@ -14,6 +14,7 @@ kotlin {
     jvm("jvmWithoutJava")
     macosArm64()
     linuxX64("linux64")
+    linuxArm64("linuxArm64")
     mingwX64("mingw64")
     js {
         nodejs()
@@ -46,7 +47,7 @@ kotlin {
         nativeMain {
             dependsOn commonMain
         }
-        configure([macosArm64Main, linux64Main, mingw64Main]) {
+        configure([macosArm64Main, linux64Main, linuxArm64Main, mingw64Main]) {
             dependsOn nativeMain
         }
     }

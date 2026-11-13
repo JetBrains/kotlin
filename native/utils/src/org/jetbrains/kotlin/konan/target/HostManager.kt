@@ -75,9 +75,13 @@ open class HostManager() {
 
     val enabledByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
         LINUX_X64 to commonTargets,
+        LINUX_ARM64 to setOf(LINUX_ARM64),
         MINGW_X64 to commonTargets,
         MACOS_ARM64 to commonTargets + appleTargets
     )
+
+    /** Hosts that can produce klibs for the common Native target set. */
+    val hostsWithFullTargetSet: Set<KonanTarget> = enabledByHost.filterValues { it.containsAll(commonTargets) }.keys
 
     val enabled: List<KonanTarget>
         get() = enabledByHost[host]?.toList() ?: throw TargetSupportException("Unknown host platform: $host")
@@ -124,7 +128,7 @@ open class HostManager() {
         val jniHostPlatformIncludeDir: String
             get() = when (host) {
                 MACOS_ARM64 -> "darwin"
-                LINUX_X64 -> "linux"
+                LINUX_X64, LINUX_ARM64 -> "linux"
                 MINGW_X64 -> "win32"
                 else -> throw TargetSupportException("Unknown host: $host.")
             }
@@ -149,6 +153,7 @@ open class HostManager() {
         private val hostMapping: Map<Pair<String, String>, KonanTarget> = mapOf(
             Pair("osx", "aarch64") to MACOS_ARM64,
             Pair("linux", "x86_64") to LINUX_X64,
+            Pair("linux", "aarch64") to LINUX_ARM64,
             Pair("windows", "x86_64") to MINGW_X64
         )
 
@@ -172,12 +177,21 @@ open class HostManager() {
             throw TargetSupportException("Unknown host target: $os $arch")
         }
 
+        private val linuxArm64HostEnabled: Boolean
+            get() = System.getProperty("kotlin.native.experimental.linuxArm64Host")?.toBoolean()
+                ?: System.getenv("KOTLIN_NATIVE_EXPERIMENTAL_LINUX_ARM64_HOST")?.toBoolean() == true
+
         // Note Hotspot-specific VM option enforcing C1-only, critical for decent compilation speed.
         val defaultJvmArgs = listOf("-XX:TieredStopAtLevel=1", "-ea", "-Dfile.encoding=UTF-8")
         val regularJvmArgs = defaultJvmArgs + "-Xmx3G"
 
         @JvmStatic
-        val hostIsSupported: Boolean get() = hostOrNull != null
+        val hostIsSupported: Boolean
+            get() = when (hostOrNull) {
+                null -> false
+                LINUX_ARM64 -> linuxArm64HostEnabled
+                else -> true
+            }
 
         @JvmStatic
         val hostIsMac get() = hostOrNull?.family == Family.OSX

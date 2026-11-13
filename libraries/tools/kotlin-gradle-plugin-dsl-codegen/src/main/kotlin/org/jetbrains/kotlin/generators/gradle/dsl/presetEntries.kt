@@ -71,7 +71,7 @@ internal val androidTargetPresetEntry = KotlinPresetEntry(
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
 private val nativeTargetsWithHostTests =
-    setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.MINGW_X64)
+    setOf(KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM64, KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.MINGW_X64)
 private val nativeTargetsWithSimulatorTests =
     setOf(
         KonanTarget.IOS_X64,
@@ -88,6 +88,9 @@ internal val nativePresetEntries = HostManager().targets
     .map { [_, target] ->
 
         val [presetType, targetType] = when (target) {
+            // Keep the published linuxArm64 DSL signature while enabling host test runs.
+            KonanTarget.LINUX_ARM64 ->
+                Presets.withHostTests to Targets.base
             in nativeTargetsWithHostTests ->
                 Presets.withHostTests to Targets.withHostTests
             in nativeTargetsWithSimulatorTests ->

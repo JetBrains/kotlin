@@ -17,6 +17,7 @@ kotlin {
     }
     val macosArm64 = macosArm64("macosArm64")
     val linux64 = linuxX64("linux64")
+    val linuxArm64 = linuxArm64("linuxArm64")
     val mingw64 = mingwX64("mingw64")
 
     sourceSets {
@@ -49,7 +50,7 @@ kotlin {
         val nativeMain = create("nativeMain")
         nativeMain.dependsOn(commonMain)
 
-        configure(listOf(macosArm64, linux64, mingw64)) {
+        configure(listOf(macosArm64, linux64, linuxArm64, mingw64)) {
             compilations["main"].defaultSourceSet.dependsOn(nativeMain)
         }
     }

@@ -264,4 +264,6 @@ fun Project.registerNativeReleasedDistribution(version: String): Provider<Native
  * Get Native bootstrap distribution.
  */
 fun Project.registerNativeBootstrapDistribution(): Provider<NativeDistribution> =
-        registerNativeReleasedDistribution(bootstrapKotlinVersion)
+        providers.gradleProperty("kotlin.native.bootstrapDistribution").orNull?.let { path ->
+            layout.dir(providers.provider { rootProject.file(path) }).map(::NativeDistribution)
+        } ?: registerNativeReleasedDistribution(bootstrapKotlinVersion)
