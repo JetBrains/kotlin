@@ -9,8 +9,4 @@ typedef struct RemovedStruct {
     long long len;
 } RemovedStruct;
 
-typedef struct DuplicatedStruct {
-    long long len;
-} DuplicatedStruct;
-
 #endif  // LIBA_H

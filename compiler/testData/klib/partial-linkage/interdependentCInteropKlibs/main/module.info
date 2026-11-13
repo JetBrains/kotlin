@@ -1,2 +1,2 @@
 STEP 0:
-    dependencies: stdlib, lib1, lib1_dup, lib2
+    dependencies: stdlib, lib1, lib2

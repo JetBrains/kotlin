@@ -9,9 +9,6 @@ int acceptUnmodifiedStruct(UnmodifiedStruct* s, int result) {
 int acceptRemovedStruct(RemovedStruct* s, int result) {
     return result;
 }
-int acceptDuplicatedStruct(DuplicatedStruct* s, int result) {
-    return result;
-}
 
 typedef struct RemovedStructWrapper {
     RemovedStruct s;
