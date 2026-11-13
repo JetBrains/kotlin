@@ -40,6 +40,12 @@ internal fun THROW_CCE_WITH_INFO(obj: Any?, klass: KClass<*>, isNullable: Boolea
     throw ClassCastException(message)
 }
 
+// Shared failure path of checked casts to (non-external) classes: the compiler passes the target's rtti instead of
+// materializing its KClass at every cast site.
+@UsedFromCompilerGeneratedCode
+internal fun THROW_CCE_WITH_RTTI(obj: Any?, rtti: kotlin.wasm.internal.reftypes.structref, isNullable: Boolean): Nothing =
+    THROW_CCE_WITH_INFO(obj, KClassImpl<Any>(rtti), isNullable)
+
 @UsedFromCompilerGeneratedCode
 internal fun THROW_NPE(): Nothing {
     throw NullPointerException()

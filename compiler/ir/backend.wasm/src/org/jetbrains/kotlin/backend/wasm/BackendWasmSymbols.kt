@@ -75,6 +75,7 @@ class BackendWasmSymbols(
     override val throwISE by CallableIds.THROW_ISE.functionSymbol()
     override val throwTypeCastException by CallableIds.THROW_CCE.functionSymbol()
     val throwTypeCastWithInfoException by CallableIds.THROW_CCE_WITH_INFO.functionSymbol()
+    val throwTypeCastWithRttiException by CallableIds.THROW_CCE_WITH_RTTI.functionSymbol()
     override val throwIAE by CallableIds.THROW_IAE.functionSymbol()
     val throwNoBranchMatchedException by CallableIds.throwNoBranchMatchedException.functionSymbol()
     override val throwKotlinNothingValueException by CallableIds.throwKotlinNothingValueException.functionSymbol()
@@ -520,6 +521,7 @@ private object CallableIds {
     val THROW_ISE = "THROW_ISE".wasmCallableId
     val THROW_CCE = "THROW_CCE".wasmCallableId
     val THROW_CCE_WITH_INFO = "THROW_CCE_WITH_INFO".wasmCallableId
+    val THROW_CCE_WITH_RTTI = "THROW_CCE_WITH_RTTI".wasmCallableId
     val THROW_IAE = "THROW_IAE".wasmCallableId
     val throwNoBranchMatchedException = "throwNoBranchMatchedException".wasmCallableId
     val throwKotlinNothingValueException = "throwKotlinNothingValueException".wasmCallableId

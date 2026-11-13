@@ -18,32 +18,48 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.jsFunctionForExternalAdapterFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 
 
 class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(WasmBaseTypeOperatorTransformer(context))
+        val anchor = irFile.declarations.firstOrNull() ?: return
+        val transformer = WasmBaseTypeOperatorTransformer(context, irFile)
+        // A single restrictTo scope gives the per-file CCE helpers distinct, stable IC signatures.
+        context.irFactory.stageController.restrictTo(anchor) {
+            irFile.transformChildrenVoid(transformer)
+        }
+        irFile.declarations += transformer.cceHelpers.values
     }
 }
 
-class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrElementTransformerVoidWithContext() {
+class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext, private val irFile: IrFile) : IrElementTransformerVoidWithContext() {
     private val symbols = context.wasmSymbols
     private val builtIns = context.irBuiltIns
     private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
     private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
     private val unitGetInstance by lazy { context.findUnitGetInstanceFunction() }
+
+    // The failure path of a checked cast to an interface materializes its KClass with a TypeInfoData (including name
+    // strings) inline. Share it per target type within the file; Binaryen merges identical helpers across files.
+    val cceHelpers = mutableMapOf<Pair<IrClassSymbol, Boolean>, IrSimpleFunction>()
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -112,17 +128,44 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             return builder.irCall(context.symbols.throwTypeCastException)
         }
 
-        val kClass = builder.irCall(context.reflectionSymbols.getKClass).also { getKClassCall ->
-            getKClassCall.typeArguments[0] = klass.defaultType
-        }
-
         val value = narrowType(fromType, context.irBuiltIns.anyNType, valueProvider())
+        val isNullable = toType.isNullable()
 
-        return builder.irCall(context.symbols.throwTypeCastWithInfoException).also { cceCall ->
-            cceCall.arguments[0] = value
-            cceCall.arguments[1] = kClass
-            cceCall.arguments[2] = builder.irBoolean(toType.isNullable())
+        // A class's KClass is just a wrapper of its rtti, so the shared stdlib failure path can build it.
+        if (!klass.isInterface && !klass.isEffectivelyExternal()) {
+            return builder.irCall(symbols.throwTypeCastWithRttiException).also { cceCall ->
+                cceCall.arguments[0] = value
+                cceCall.arguments[1] = builder.irCall(symbols.wasmGetTypeRtti).also { it.typeArguments[0] = klass.defaultType }
+                cceCall.arguments[2] = builder.irBoolean(isNullable)
+            }
         }
+
+        val helper = cceHelpers.getOrPut(klass.symbol to isNullable) { createCceHelper(klass, isNullable) }
+
+        return builder.irCall(helper).also { it.arguments[0] = value }
+    }
+
+    private fun createCceHelper(klass: IrClass, isNullable: Boolean): IrSimpleFunction {
+        val helper = context.irFactory.buildFun {
+            name = Name.identifier("throwCce\$${cceHelpers.size}\$${klass.name.asStringStripSpecialMarkers()}")
+            returnType = builtIns.nothingType
+            visibility = DescriptorVisibilities.PRIVATE
+        }
+        helper.parent = irFile
+        val value = helper.addValueParameter("value", builtIns.anyNType)
+        val throwCce = context.symbols.throwTypeCastWithInfoException
+        val getKClass = context.reflectionSymbols.getKClass
+
+        helper.body = context.createIrBuilder(helper.symbol).irBlockBody {
+            +irCall(throwCce).also { cceCall ->
+                cceCall.arguments[0] = irGet(value)
+                cceCall.arguments[1] = irCall(getKClass).also { getKClassCall ->
+                    getKClassCall.typeArguments[0] = klass.defaultType
+                }
+                cceCall.arguments[2] = irBoolean(isNullable)
+            }
+        }
+        return helper
     }
 
     private fun generateTypeCheck(
