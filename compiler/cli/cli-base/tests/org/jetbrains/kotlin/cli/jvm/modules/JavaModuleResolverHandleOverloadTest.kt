@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.cli.jvm.modules
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
+import org.jetbrains.kotlin.cli.jvm.index.InMemoryClassFileHandleForTests
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
-import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
@@ -61,22 +61,13 @@ class JavaModuleResolverHandleOverloadTest {
     @Test
     fun testHandleWithoutVirtualFileFails() {
         val resolver = VirtualFileOnlyResolver()
+        val classFile = InMemoryClassFileHandleForTests("A")
 
         val exception = assertThrows<IllegalStateException> {
-            resolver.checkAccessibility(null, InMemoryClassFileHandleForTests, FqName("p"))
+            resolver.checkAccessibility(null, classFile, FqName("p"))
         }
 
-        assertTrue(InMemoryClassFileHandleForTests.pathForDiagnostics in exception.message.orEmpty(), exception.message)
+        assertTrue(classFile.pathForDiagnostics in exception.message.orEmpty(), exception.message)
         assertTrue(resolver.checkedFiles.isEmpty(), "the check is not skipped by passing something else")
-    }
-
-    private object InMemoryClassFileHandleForTests : BinaryClassFileHandle {
-        override val nameWithoutExtension: String get() = "A"
-        override val extension: String get() = "class"
-        override val rootId: JvmClasspathRootId = JvmClasspathRootId("memory:out")
-        override val rootPath: Path? get() = null
-        override val pathForDiagnostics: String get() = "memory:out/p/A.class"
-        override fun readBytes(): ByteArray = ByteArray(0)
-        override fun sibling(nameWithExtension: String): BinaryClassFileHandle? = null
     }
 }
