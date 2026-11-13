@@ -111,7 +111,18 @@ private fun lightClassForEnumEntryInitializer(enumEntrySymbol: KaEnumEntrySymbol
         (enumEntrySymbol.containingSymbol as? KaClassSymbol)?.asPsiClass() as? SymbolLightClassForClassOrObject ?: return null
     val enumEntryPsi = enumEntrySymbol.realPsi as? KtEnumEntry
     val enumEntrySymbolPointer = enumEntrySymbol.createPointer()
-    val targetField = symbolLightClass.ownFields.firstOrNull { psiField ->
+
+    // `SymbolLightClassForClassOrObject.addFieldsForEnumEntries` creates the field of the entry with this `kotlinOrigin`, so the
+    // cached lookup by it replaces a scan of all fields for each entry. The filter also matches fields by a different `enumEntryPsi`.
+    val kotlinOrigin = enumEntrySymbol.sourcePsiSafe<KtEnumEntry>()
+    val candidateFields = when {
+        kotlinOrigin == null -> symbolLightClass.ownFields
+        enumEntryPsi != null && enumEntryPsi != kotlinOrigin && symbolLightClass.findOwnFieldsByKotlinOrigin(enumEntryPsi).isNotEmpty() ->
+            symbolLightClass.ownFields
+        else -> symbolLightClass.findOwnFieldsByKotlinOrigin(kotlinOrigin)
+    }
+
+    val targetField = candidateFields.firstOrNull { psiField ->
         psiField is SymbolLightFieldForEnumEntry &&
                 (psiField.kotlinOrigin == enumEntryPsi || psiField.symbolPointer.pointsToTheSameSymbolAs(enumEntrySymbolPointer))
     } ?: return null

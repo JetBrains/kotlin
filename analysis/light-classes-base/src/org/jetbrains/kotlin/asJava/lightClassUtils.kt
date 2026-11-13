@@ -63,8 +63,8 @@ fun KtElement.toLightElements(): List<PsiNamedElement> = when (this) {
     is KtPropertyAccessor -> listOfNotNull(LightClassUtil.getLightClassAccessorMethod(this))
     is KtParameter -> mutableListOf<PsiNamedElement>().also { elements ->
         toPsiParameters().toCollection(elements)
+        // Includes the method of an annotation class parameter
         LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
-        toAnnotationLightMethod()?.let(elements::add)
     }
 
     is KtTypeParameter -> toPsiTypeParameters()
@@ -109,14 +109,6 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     } ?: return emptyList()
 
     return methods.mapNotNull { it.parameterList.parameters.getOrNull(lightParamIndex) }
-}
-
-private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
-    val parent = ownerFunction as? KtPrimaryConstructor ?: return null
-    val containingClass = parent.getContainingClassOrObject()
-    if (!containingClass.isAnnotation()) return null
-
-    return LightClassUtil.getLightClassMethod(this)
 }
 
 @Deprecated("Use `asPsiMethods` from Analysis API or replace with a custom implementation. See KT-85385")

@@ -63,6 +63,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         methodIndex = methodIndex,
         valueParameterPickMask = valueParameterPickMask,
         functionDeclaration = functionSymbol.sourcePsiSafe(),
+        // `LightClassMemberUtils.lightMemberKotlinOrigin` relies on this `kotlinOrigin` of named functions
         kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
         generationMode = generationMode,
     )
