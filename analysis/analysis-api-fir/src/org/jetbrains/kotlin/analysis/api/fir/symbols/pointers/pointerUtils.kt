@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -32,6 +34,43 @@ internal inline fun <reified D : FirCallableDeclaration> FirScope.findDeclaratio
         val declaration = symbol.fir
         if (declaration is D && signature.hasTheSameSignature(declaration)) {
             foundSymbol = declaration
+        }
+    }
+
+    return foundSymbol
+}
+
+/**
+ * Returns the symbol of the member of [owner] with [signature] among the declarations from [processor].
+ *
+ * A symbol whose containing class isn't [owner] is skipped, as its pointer has another owner. For example, the scope of `Derived`
+ * has substitution overrides of both `foo` functions, and their signatures are equal, but the symbol of the second one is
+ * `Base.foo(x: String)`:
+ *
+ * ```kotlin
+ * open class Base<X> {
+ *     fun foo(x: X) {}
+ *     fun foo(x: String) {}
+ * }
+ *
+ * class Derived : Base<String>()
+ * ```
+ */
+context(analysisSession: KaFirSession)
+internal inline fun <reified D : FirCallableDeclaration> FirScope.findMemberWithSignature(
+    owner: FirClassSymbol<*>,
+    signature: FirCallableSignature,
+    processor: FirScope.((FirBasedSymbol<*>) -> Unit) -> Unit,
+): KaCallableSymbol? {
+    val ownerLookupTag = owner.toLookupTag()
+    var foundSymbol: KaCallableSymbol? = null
+    processor { candidate ->
+        val declaration = candidate.fir
+        if (declaration is D && signature.hasTheSameSignature(declaration)) {
+            val symbol = analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(declaration.symbol)
+            if (symbol.firSymbol.containingClassLookupTag() == ownerLookupTag) {
+                foundSymbol = symbol
+            }
         }
     }
 

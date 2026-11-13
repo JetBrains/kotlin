@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 /** @see KaFirPrimaryConstructorSymbolPointer */
 internal class KaFirSecondaryConstructorSymbolPointer(
@@ -24,7 +24,7 @@ internal class KaFirSecondaryConstructorSymbolPointer(
     context(analysisSession: KaFirSession)
     override fun chooseCandidateAndCreateSymbol(
         candidates: FirScope,
-        firSession: FirSession,
+        owner: FirClassSymbol<*>,
     ): KaConstructorSymbol? {
         val firConstructor = candidates.findDeclarationWithSignature<FirConstructor>(signature) {
             processDeclaredConstructors(it)

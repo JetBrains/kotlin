@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -29,7 +28,7 @@ internal class KaFirJavaSyntheticPropertySymbolPointer(
     context(analysisSession: KaFirSession)
     override fun chooseCandidateAndCreateSymbol(
         candidates: FirScope,
-        firSession: FirSession,
+        owner: FirClassSymbol<*>,
     ): KaSyntheticJavaPropertySymbol? {
         val syntheticProperty = candidates.getProperties(propertyName)
             .mapNotNull { it.fir as? FirSyntheticProperty }
