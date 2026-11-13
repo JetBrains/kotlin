@@ -59,11 +59,12 @@ internal object DFGSerializer {
         }
     }
 
-    class PublicType(val hash: Long, val intestines: DeclaredType) {
-        constructor(data: ByteArrayStream) : this(data.readLong(), DeclaredType(data))
+    class PublicType(val hash: Long, val isLinkOnce: Boolean, val intestines: DeclaredType) {
+        constructor(data: ByteArrayStream) : this(data.readLong(), data.readBoolean(), DeclaredType(data))
 
         fun write(result: ByteArrayStream) {
             result.writeLong(hash)
+            result.writeBoolean(isLinkOnce)
             intestines.write(result)
         }
     }
@@ -106,8 +107,8 @@ internal object DFGSerializer {
             fun external(hash: Long, base: TypeBase) =
                     Type(null, ExternalType(hash, base), null, null, false)
 
-            fun public(hash: Long, intestines: DeclaredType) =
-                    Type(null, null, PublicType(hash, intestines), null, false)
+            fun public(hash: Long, isLinkOnce: Boolean, intestines: DeclaredType) =
+                    Type(null, null, PublicType(hash, isLinkOnce, intestines), null, false)
 
             fun private(intestines: DeclaredType) =
                     Type(null, null, null, PrivateType(intestines), false)
@@ -172,12 +173,13 @@ internal object DFGSerializer {
         }
     }
 
-    class PublicFunctionSymbol(val hash: Long, val bridgeTarget: Int?, val name: String?) {
-        constructor(data: ByteArrayStream) : this(data.readLong(),
+    class PublicFunctionSymbol(val hash: Long, val isLinkOnce: Boolean, val bridgeTarget: Int?, val name: String?) {
+        constructor(data: ByteArrayStream) : this(data.readLong(), data.readBoolean(),
                 data.readNullableInt(), data.readNullableString())
 
         fun write(result: ByteArrayStream) {
             result.writeLong(hash)
+            result.writeBoolean(isLinkOnce)
             result.writeNullableInt(bridgeTarget)
             result.writeNullableString(name)
         }
@@ -217,8 +219,8 @@ internal object DFGSerializer {
             fun external(base: FunctionSymbolBase, hash: Long, name: String?, isExported: Boolean, isNative: Boolean, escapes: Int?, pointsTo: IntArray?) =
                     FunctionSymbol(base, ExternalFunctionSymbol(hash, name, isExported, isNative, escapes, pointsTo), null, null)
 
-            fun public(base: FunctionSymbolBase, hash: Long, bridgeTarget: Int?, name: String?) =
-                    FunctionSymbol(base, null, PublicFunctionSymbol(hash, bridgeTarget, name), null)
+            fun public(base: FunctionSymbolBase, hash: Long, isLinkOnce: Boolean, bridgeTarget: Int?, name: String?) =
+                    FunctionSymbol(base, null, PublicFunctionSymbol(hash, isLinkOnce, bridgeTarget, name), null)
 
             fun private(base: FunctionSymbolBase, bridgeTarget: Int?, name: String?) =
                     FunctionSymbol(base, null, null, PrivateFunctionSymbol(bridgeTarget, name))
@@ -831,7 +833,7 @@ internal object DFGSerializer {
                                 if (prevType != null)
                                     error("Exported types name clash ${type.hash}: ${prevType.name} and ${type.name}")
                                 publicTypesMap[type.hash] = type
-                                Type.public(type.hash, buildTypeIntestines(type))
+                                Type.public(type.hash, type.isLinkOnce, buildTypeIntestines(type))
                             }
                         }
 
@@ -893,7 +895,7 @@ internal object DFGSerializer {
                                     error("Exported functions name clash ${symbol.hash}: ${prevSymbol.name} and ${symbol.name}")
                                 publicFunctionsMap[symbol.hash] = symbol
                                 FunctionSymbol.public(buildFunctionSymbolBase(symbol), symbol.hash,
-                                        bridgeTarget, symbol.name)
+                                        symbol.isLinkOnce, bridgeTarget, symbol.name)
                             }
                         }
                         else -> error("Unknown function symbol $symbol")
@@ -954,7 +956,13 @@ internal object DFGSerializer {
                 val moduleDataFlowGraph = Module(reader)
 
                 val moduleSymbolTable = moduleDataFlowGraph.symbolTable
-                val types = moduleSymbolTable.types.map { serializedType ->
+                // Link-once declarations (see [DataFlowIR.Type.Public.isLinkOnce]) are compiled into every module
+                // referencing them, so several libraries' DFGs can publish a copy of the same declaration.
+                // The first published symbol wins; the copies are skipped, along with their intestines.
+                // For anything not marked link-once hash clashing is still an error.
+                val deduplicatedTypes = mutableSetOf<Int>()
+                val deduplicatedFunctions = mutableSetOf<Int>()
+                val types = moduleSymbolTable.types.mapIndexed { index, serializedType ->
                     val primitiveBinaryType = serializedType.primitiveBinaryType
                     val external = serializedType.external
                     val public = serializedType.public
@@ -965,14 +973,21 @@ internal object DFGSerializer {
                         external != null ->
                             publicTypesMap[external.hash] ?: error("External type ${external.base.name} : ${external.hash} is not found")
                         public != null -> {
-                            DataFlowIR.Type.Public(public.hash, symbolTable.typeIndex++, public.intestines.base.isFinal,
-                                    public.intestines.base.isAbstract, public.intestines.base.hasFinalizer, module, null, public.intestines.base.name).also {
-                                val prevType = publicTypesMap[it.hash]
-                                if (prevType != null)
-                                    error("Exported types name clash ${it.hash}: ${prevType.name} and ${it.name}")
-                                publicTypesMap[it.hash] = it
-                                allTypes += it
-                                symbolTable.typesList += it
+                            val prevType = publicTypesMap[public.hash]
+                            when {
+                                prevType == null ->
+                                    DataFlowIR.Type.Public(public.hash, symbolTable.typeIndex++, public.intestines.base.isFinal,
+                                            public.intestines.base.isAbstract, public.intestines.base.hasFinalizer, module, null, public.intestines.base.name,
+                                            public.isLinkOnce).also {
+                                        publicTypesMap[it.hash] = it
+                                        allTypes += it
+                                        symbolTable.typesList += it
+                                    }
+                                public.isLinkOnce && prevType.isLinkOnce -> {
+                                    deduplicatedTypes += index
+                                    prevType
+                                }
+                                else -> error("Exported types name clash ${public.hash}: ${prevType.name} and ${public.intestines.base.name}")
                             }
                         }
                         else -> {
@@ -986,7 +1001,7 @@ internal object DFGSerializer {
                     }
                 }
 
-                val functionSymbols = moduleSymbolTable.functionSymbols.map { serializedSymbol ->
+                val functionSymbols = moduleSymbolTable.functionSymbols.mapIndexed { index, serializedSymbol ->
                     val attributes = serializedSymbol.base.attributes
                     val external = serializedSymbol.external
                     val public = serializedSymbol.public
@@ -1008,13 +1023,20 @@ internal object DFGSerializer {
                             }
                         }
                         public != null -> {
-                            DataFlowIR.FunctionSymbol.Public(public.hash,
-                                    module, attributes, null, null, public.name).also {
-                                val prevSymbol = publicFunctionsMap[it.hash]
-                                if (prevSymbol != null)
-                                    error("Exported functions name clash ${it.hash}: ${prevSymbol.name} and ${it.name}")
-                                publicFunctionsMap[it.hash] = it
-                                symbolTable.functionsList += it
+                            val prevSymbol = publicFunctionsMap[public.hash]
+                            when {
+                                prevSymbol == null ->
+                                    DataFlowIR.FunctionSymbol.Public(public.hash,
+                                            module, attributes, null, null, public.name,
+                                            public.isLinkOnce).also {
+                                        publicFunctionsMap[it.hash] = it
+                                        symbolTable.functionsList += it
+                                    }
+                                public.isLinkOnce && prevSymbol.isLinkOnce -> {
+                                    deduplicatedFunctions += index
+                                    prevSymbol
+                                }
+                                else -> error("Exported functions name clash ${public.hash}: ${prevSymbol.name} and ${public.name}")
                             }
                         }
                         else -> {
@@ -1031,6 +1053,7 @@ internal object DFGSerializer {
                 }
 
                 moduleSymbolTable.types.forEachIndexed { index, type ->
+                    if (index in deduplicatedTypes) return@forEachIndexed
                     val intestines = type.public?.intestines ?: type.private?.intestines ?: return@forEachIndexed
                     val deserializedType = types[index]
                     deserializedType.superTypes += intestines.superTypes.map { types[it] }
@@ -1043,7 +1066,9 @@ internal object DFGSerializer {
                 moduleSymbolTable.functionSymbols.forEachIndexed { index, symbol ->
                     // A reference to another module's Kotlin function resolves to the symbol published
                     // by its defining module - its parameters and bridge target are already set.
+                    // The same goes for a deduplicated copy of a link-once function.
                     if (symbol.external?.isNative == false) return@forEachIndexed
+                    if (index in deduplicatedFunctions) return@forEachIndexed
                     val deserializedSymbol = functionSymbols[index]
                     deserializedSymbol.parameters = symbol.base.parameters.map { DataFlowIR.FunctionParameter(types[it.type]) }.toTypedArray()
                     deserializedSymbol.returnParameter = DataFlowIR.FunctionParameter(types[symbol.base.returnParameter.type])

@@ -841,6 +841,10 @@ internal class ModuleDFGBuilder(
             }
         }, data = null)
 
+        // Note: the seal happens after building all the function DFGs rather than right after [DataFlowIR.SymbolTable.populateWith]:
+        // link-once types are only discovered when a function body references them.
+        symbolTable.seal()
+
         context.logMultiple {
             +"SYMBOL TABLE:"
             symbolTable.classMap.forEach { [irClass, type] ->

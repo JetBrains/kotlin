@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.annotations.Escapes
 import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsTo
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.metadata.FORWARD_DECLARATIONS_MODULE_NAME
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 
 internal object DataFlowIR {
     abstract class Type(
@@ -57,9 +59,20 @@ internal object DataFlowIR {
         // Special marker type forbidding devirtualization on its instances.
         object Virtual : Type(0, false, true, false, null, null, "\$VIRTUAL")
 
-        class Public(val hash: Long, index: Int, isFinal: Boolean, isAbstract: Boolean, hasFinalizer: Boolean,
-                     module: Module, irClass: IrClass?, name: String? = null)
-            : Type(index, isFinal, isAbstract, hasFinalizer, module, irClass, name) {
+        class Public(
+                val hash: Long,
+                index: Int,
+                isFinal: Boolean,
+                isAbstract: Boolean,
+                hasFinalizer: Boolean,
+                module: Module,
+                irClass: IrClass?,
+                name: String? = null,
+                // The declaration belongs to no DFG-carrying module (a cinterop library's class, a lazily generated cinterop stub,
+                // a lowering-synthesized class like a function-interface class) and is compiled into every module referencing it -
+                // like a C/C++ inline function in a header. Several DFGs can publish a copy of it (all are interchangeable).
+                val isLinkOnce: Boolean = false,
+        ) : Type(index, isFinal, isAbstract, hasFinalizer, module, irClass, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -108,10 +121,22 @@ internal object DataFlowIR {
 
     class FunctionParameter(val type: Type)
 
-    abstract class FunctionSymbol(val attributes: Int, val irDeclaration: IrDeclaration?, val name: String?) {
+    abstract class FunctionSymbol(val attributes: Int, irDeclaration: IrDeclaration?, val name: String?) {
+        // A symbol deserialized from a cache is created without IR; the declaration is attached later
+        // if it turns out to be a link-once one referenced from IR (see SymbolTable.mapFunction).
+        var irDeclaration: IrDeclaration? = irDeclaration
+            set(value) {
+                checkDeclaration(value)
+                field = value
+            }
+
         init {
-            require(irDeclaration == null || irDeclaration is IrSimpleFunction || irDeclaration is IrField) {
-                "Unexpected declaration: ${irDeclaration?.render()}"
+            checkDeclaration(irDeclaration)
+        }
+
+        private fun checkDeclaration(declaration: IrDeclaration?) {
+            require(declaration == null || declaration is IrSimpleFunction || declaration is IrField) {
+                "Unexpected declaration: ${declaration?.render()}"
             }
         }
 
@@ -156,9 +181,16 @@ internal object DataFlowIR {
                 val module: Module, attributes: Int, irDeclaration: IrDeclaration?, var bridgeTarget: FunctionSymbol?, name: String?
         ) : FunctionSymbol(attributes, irDeclaration, name)
 
-        class Public(val hash: Long, module: Module,
-                     attributes: Int, irDeclaration: IrDeclaration?, bridgeTarget: FunctionSymbol?, name: String? = null)
-            : Declared(module, attributes, irDeclaration, bridgeTarget, name) {
+        class Public(
+                val hash: Long,
+                module: Module,
+                attributes: Int,
+                irDeclaration: IrDeclaration?,
+                bridgeTarget: FunctionSymbol?,
+                name: String? = null,
+                // See similar [Type.Public] field.
+                val isLinkOnce: Boolean = false,
+        ) : Declared(module, attributes, irDeclaration, bridgeTarget, name) {
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -521,7 +553,9 @@ internal object DataFlowIR {
                     mapClassReferenceType(declaration)
                 }
             }, data = null)
+        }
 
+        fun seal() {
             sealed = true
         }
 
@@ -548,7 +582,12 @@ internal object DataFlowIR {
             // the modules get linked together by, so it is unique and is computed the same way by all of them.
             fun computeHash() = localHash(irClass.computeTypeInfoSymbolName().toByteArray())
 
-            if (!llvmModuleSpecification.containsDeclaration(irClass)) {
+            // Link-once declarations (see [Type.Public.isLinkOnce]) belong to no DFG-carrying module, so they aren't guaranteed
+            // to be resolvable by hash and are mapped by each module referencing them (see below).
+            val isLinkOnce = irClass.moduleFragment.kotlinLibrary.let {
+                it == null || it.isCInteropLibrary() // cinterop libraries' caches don't have DFGs
+            }
+            if (!isLinkOnce && !llvmModuleSpecification.containsDeclaration(irClass)) {
                 // A non-exported class of another module isn't published by that module's DFG. It can't be
                 // legitimately used from here, but still can be mentioned in a signature: partial linkage
                 // replaces the usages of a no longer accessible class with linkage errors but leaves the types.
@@ -561,10 +600,20 @@ internal object DataFlowIR {
                         ?: error("Class ${irClass.render()} is not found")
             }
 
+            // A cached library referencing a link-once class has published its own copy of the class -
+            // reuse it instead of duplicating.
+            if (isLinkOnce && irClass.isExported) {
+                externalPublicTypes[computeHash()]?.takeIf { it.isLinkOnce }?.let {
+                    it.irClass = irClass
+                    classMap[irClass] = it
+                    return it
+                }
+            }
+
             require(!sealed) { "The symbol table has been sealed. irClass = ${irClass.render()}" }
             val type = if (irClass.isExported)
                 Type.Public(computeHash(), typeIndex++, isFinal, isAbstract, irClass.hasFinalizer,
-                        module, irClass, takeName { name })
+                        module, irClass, takeName { name }, isLinkOnce)
             else
                 Type.Private(typeIndex++, isFinal, isAbstract, irClass.hasFinalizer,
                         module, irClass, takeName { name })
@@ -656,12 +705,25 @@ internal object DataFlowIR {
 
             // External functions and built-in operators don't belong to any of the compiled modules (built-in operators aren't
             // even declared in any klib) - they are always mapped locally to [FunctionSymbol.External], which is deduplicated by hash.
-            if (!it.isExternal && !it.isBuiltInOperator && !llvmModuleSpecification.containsDeclaration(function)) {
+            // Same goes for link-once declarations (see [Type.Public.isLinkOnce]), except they are mapped as ordinary declared
+            // functions - just in every module referencing them.
+            val isLinkOnce = it.moduleFragment.kotlinLibrary.let { library -> library == null || library.isCInteropLibrary() }
+            if (!it.isExternal && !it.isBuiltInOperator && !isLinkOnce
+                    && !llvmModuleSpecification.containsDeclaration(function)) {
                 return externalPublicFunctions[computePublicHash()]
                         ?: error("Function ${function.render()} is not found")
             }
 
             functionMap[it]?.let { return it }
+
+            // Same as for link-once classes (see [mapClassReferenceType]): reuse the copy published by a cached library, if any.
+            if (isLinkOnce && it.isExported && !it.isExternal && !it.isBuiltInOperator) {
+                externalPublicFunctions[computePublicHash()]?.takeIf { symbol -> symbol.isLinkOnce }?.let { symbol ->
+                    symbol.irDeclaration = it
+                    functionMap[it] = symbol
+                    return symbol
+                }
+            }
 
             val returnsUnit = it.returnType.isUnit()
             val returnsNothing = it.returnType.isNothing()
@@ -698,7 +760,7 @@ internal object DataFlowIR {
                     }
                     val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
                     val functionSymbol = if (it.isExported)
-                        FunctionSymbol.Public(computePublicHash(), module, attributes, it, bridgeTargetSymbol, takeName { name })
+                        FunctionSymbol.Public(computePublicHash(), module, attributes, it, bridgeTargetSymbol, takeName { name }, isLinkOnce)
                     else
                         FunctionSymbol.Private(privateFunIndex++, module, attributes, it, bridgeTargetSymbol, takeName { name })
                     functionSymbol
