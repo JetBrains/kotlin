@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:psi:parser"))
     implementation(project(":compiler:multiplatform-parsing"))
+    implementation(project(":core:language.syntax"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
@@ -57,4 +58,3 @@ projectTests {
     testData(project(":compiler:fir:raw-fir").isolated, "testData")
     testData(project(":compiler").isolated, "testData")
 }
-

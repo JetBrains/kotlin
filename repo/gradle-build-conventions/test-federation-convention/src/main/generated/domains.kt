@@ -30,14 +30,14 @@ enum class Domain {
 internal object CompilerInfrastructureDomainInfo : DomainInfo {
     override val domain = Domain.CompilerInfrastructure
     override val include: List<String> = listOf("core", "build-common", "compiler/arguments", "compiler/arguments.common", "compiler/cli/bin", "compiler/arguments.common", "compiler/cli/cli-arguments-generator", "compiler/cli/cli-base", "compiler/cli/cli-js", "compiler/cli/cli-jvm", "compiler/cli/cli-metadata", "compiler/cli/cli-native-klib", "compiler/cli/cli-runner", "compiler/cli/src", "compiler/cli/build.gradle.kts", "compiler/compiler.version", "compiler/config", "compiler/config.jvm", "compiler/preloader", "compiler/test-infrastructure", "compiler/test-infrastructure-utils", "compiler/test-infrastructure-utils.common", "compiler/testResources", "compiler/testData", "compiler/tests", "compiler/tests-common", "compiler/tests-common-new", "compiler/tests-compiler-utils", "compiler/tests-integration", "compiler/tests-mutes", "compiler/util", "compiler/util-io", "compiler/build.gradle.kts", "jps")
-    override val exclude: List<String> = listOf()
+    override val exclude: List<String> = listOf("core/language.syntax")
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo) }
     override val team: String = "Kotlin Frontend"
 }
 
 internal object FrontendDomainInfo : DomainInfo {
     override val domain = Domain.Frontend
-    override val include: List<String> = listOf("compiler/fir", "compiler/frontend.common", "compiler/frontend.common.jvm", "compiler/frontend.common-psi", "compiler/java-direct", "compiler/multiplatform-parsing", "compiler/psi/parser", "compiler/resolution.common", "compiler/resolution.common.jvm", "compiler/resolution.common.js", "compiler/serialization.common", "compiler/tests-java8", "compiler/tests-spec")
+    override val include: List<String> = listOf("compiler/fir", "compiler/frontend.common", "compiler/frontend.common.jvm", "compiler/frontend.common-psi", "compiler/java-direct", "compiler/multiplatform-parsing", "compiler/psi/parser", "compiler/resolution.common", "compiler/resolution.common.jvm", "compiler/resolution.common.js", "compiler/serialization.common", "compiler/tests-java8", "compiler/tests-spec", "core/language.syntax")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo) }
     override val team: String = "Kotlin Frontend"

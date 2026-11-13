@@ -255,6 +255,7 @@ include(
     ":core:error.handling",
     ":core:names",
     ":core:language.model",
+    ":core:language.syntax",
     ":core:language.targets",
     ":core:language.targets.jvm",
     ":core:language.version-settings",

@@ -601,6 +601,10 @@ tasks {
         dependsOn(":core:error.handling:check")
         dependsOn(":core:names:check")
         dependsOn(":core:language.model:check")
+        // Not `check`: it also runs Wasm tests, whose npm install task is incompatible with the configuration cache
+        dependsOn(":core:language.syntax:jvmTest")
+        dependsOn(":core:language.syntax:checkKotlinAbi")
+        dependsOn(":core:language.syntax:checkForeignClassUsage")
         dependsOn(":core:language.targets:check")
         dependsOn(":core:language.targets.jvm:check")
         dependsOn(":core:language.version-settings:check")

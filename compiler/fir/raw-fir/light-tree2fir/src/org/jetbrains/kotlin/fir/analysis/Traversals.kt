@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis
 
-import org.jetbrains.kotlin.kmp.lexer.KtTokens
-import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 inline fun <T> isCallTheFirstStatement(
@@ -19,14 +19,14 @@ inline fun <T> isCallTheFirstStatement(
     while (stack.isNotEmpty()) {
         val child = stack.popLast()
         when (getElementTokenId(child)) {
-            KtTokens.LBRACE_ID, KtTokens.WHITE_SPACE_ID, KtTokens.DOT_ID, KtTokens.EOL_COMMENT_ID -> {}
-            KtNodeTypes.CALL_EXPRESSION_ID -> return true
-            KtNodeTypes.REFERENCE_EXPRESSION_ID -> {}
-            KtNodeTypes.DOT_QUALIFIED_EXPRESSION_ID -> {
+            KotlinSyntaxTokenIds.LBRACE, KotlinSyntaxTokenIds.WHITE_SPACE, KotlinSyntaxTokenIds.DOT, KotlinSyntaxTokenIds.EOL_COMMENT -> {}
+            KotlinSyntaxNodeTypeIds.CALL_EXPRESSION -> return true
+            KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION -> {}
+            KotlinSyntaxNodeTypeIds.DOT_QUALIFIED_EXPRESSION -> {
                 stack += getChildren(child).asReversed()
             }
-            KtNodeTypes.ANNOTATION_ENTRY_ID -> {}
-            KtNodeTypes.ANNOTATED_EXPRESSION_ID -> {
+            KotlinSyntaxNodeTypeIds.ANNOTATION_ENTRY -> {}
+            KotlinSyntaxNodeTypeIds.ANNOTATED_EXPRESSION -> {
                 stack += getChildren(child).asReversed()
             }
             else -> return false
@@ -40,8 +40,8 @@ inline fun <T> firstFunctionCallInBlockHasLambdaArgumentWithLabel(
     getElementTokenId: (T) -> Int,
     getChildren: (T) -> List<T>,
 ): Boolean {
-    val functionCall = getChildren(root).firstOrNull { getElementTokenId(it) == KtNodeTypes.CALL_EXPRESSION_ID } ?: return false
-    val lambda = getChildren(functionCall).firstOrNull { getElementTokenId(it) == KtNodeTypes.LAMBDA_ARGUMENT_ID } ?: return false
+    val functionCall = getChildren(root).firstOrNull { getElementTokenId(it) == KotlinSyntaxNodeTypeIds.CALL_EXPRESSION } ?: return false
+    val lambda = getChildren(functionCall).firstOrNull { getElementTokenId(it) == KotlinSyntaxNodeTypeIds.LAMBDA_ARGUMENT } ?: return false
     val expr = getChildren(lambda).singleOrNull() ?: return false
-    return getElementTokenId(expr) == KtNodeTypes.LABELED_EXPRESSION_ID
+    return getElementTokenId(expr) == KotlinSyntaxNodeTypeIds.LABELED_EXPRESSION
 }

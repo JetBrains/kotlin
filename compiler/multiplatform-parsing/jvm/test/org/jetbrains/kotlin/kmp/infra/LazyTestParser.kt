@@ -9,10 +9,7 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.platform.syntax.CancellationProvider
-import com.intellij.platform.syntax.LazyParsingContext
-import com.intellij.platform.syntax.SyntaxLanguage
-import com.intellij.platform.syntax.canLazyNodeBeReparsedIncrementally
+import com.intellij.platform.syntax.*
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import com.intellij.platform.syntax.lexer.TokenList
 import com.intellij.platform.syntax.lexer.performLexing
@@ -20,11 +17,7 @@ import com.intellij.platform.syntax.parseLazyNode
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilderFactory
 import com.intellij.platform.syntax.parser.prepareProduction
-import com.intellij.platform.syntax.tree.KmpSyntaxNode
-import com.intellij.platform.syntax.tree.SyntaxNode
-import com.intellij.platform.syntax.tree.children
-import com.intellij.platform.syntax.tree.defaultTokenizationPolicy
-import com.intellij.platform.syntax.tree.parse
+import com.intellij.platform.syntax.tree.*
 import com.intellij.platform.syntax.util.cancellation.CancellationProviderExtension
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
@@ -35,7 +28,7 @@ import org.jetbrains.kotlin.kmp.lexer.KotlinLexer
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KotlinParser
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
-import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
+import org.jetbrains.kotlin.syntax.NO_ID
 import org.jetbrains.kotlin.tooling.core.withClosure
 
 /**
@@ -212,4 +205,4 @@ fun SyntaxNode.toTestParseNode(shift: Int = 0): TestParseNode<SyntaxNode> {
 }
 
 private fun SyntaxNode.isMarker(): Boolean =
-    type == SyntaxTokenTypes.ERROR_ELEMENT || KtNodeTypes.getElementTypeId(type) != SyntaxElementTypesWithIds.NO_ID
+    type == SyntaxTokenTypes.ERROR_ELEMENT || KtNodeTypes.getElementTypeId(type) != NO_ID
