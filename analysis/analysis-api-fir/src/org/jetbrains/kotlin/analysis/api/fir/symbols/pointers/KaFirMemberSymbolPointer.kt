@@ -26,16 +26,16 @@ internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
     @KaImplementationDetail
     final override fun restoreIfNotCached(analysisSession: KaSession): S? {
         require(analysisSession is KaFirSession)
-        val scope = with(analysisSession) {
+        return with(analysisSession) {
             val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
             val owner = ownerSymbol.firSymbol as? FirClassSymbol ?: return null
-            getSearchScope(analysisSession, owner)
-        } ?: return null
-
-        return analysisSession.chooseCandidateAndCreateSymbol(scope, analysisSession.firSession)
+            val scope = getSearchScope(analysisSession, owner) ?: return null
+            chooseCandidateAndCreateSymbol(scope, analysisSession.firSession)
+        }
     }
 
-    protected abstract fun KaFirSession.chooseCandidateAndCreateSymbol(candidates: FirScope, firSession: FirSession): S?
+    context(analysisSession: KaFirSession)
+    protected abstract fun chooseCandidateAndCreateSymbol(candidates: FirScope, firSession: FirSession): S?
 
     protected open fun getSearchScope(analysisSession: KaFirSession, owner: FirClassSymbol<*>): FirScope? {
         val firSession = analysisSession.firSession

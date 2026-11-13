@@ -23,7 +23,8 @@ internal class KaFirMemberPropertySymbolPointer(
     isStatic: Boolean,
     originalSymbol: KaKotlinPropertySymbol?,
 ) : KaFirMemberSymbolPointer<KaKotlinPropertySymbol>(ownerPointer, isStatic, originalSymbol) {
-    override fun KaFirSession.chooseCandidateAndCreateSymbol(
+    context(analysisSession: KaFirSession)
+    override fun chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession
     ): KaKotlinPropertySymbol? {
@@ -31,7 +32,7 @@ internal class KaFirMemberPropertySymbolPointer(
             processPropertiesByName(name, it)
         } ?: return null
 
-        return firSymbolBuilder.variableBuilder.buildVariableSymbol(firProperty.symbol) as? KaKotlinPropertySymbol
+        return analysisSession.firSymbolBuilder.variableBuilder.buildVariableSymbol(firProperty.symbol) as? KaKotlinPropertySymbol
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
