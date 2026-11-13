@@ -58,7 +58,9 @@ fun box(): String {
 // EXPECTATIONS JS_IR
 // test.kt:4 <init>
 // test.kt:4 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:16 foo
+// EXPECTATIONS JS_IR
 // test.kt:8 <init>
 // EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:17 foo
