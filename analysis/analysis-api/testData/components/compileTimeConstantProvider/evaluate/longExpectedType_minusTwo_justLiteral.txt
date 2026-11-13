@@ -1,0 +1,5 @@
+expression: 2
+constant: 2
+constantValueKind: LongValue
+constantValueSource: INTEGER_CONSTANT
+constantValueSourceText: 2

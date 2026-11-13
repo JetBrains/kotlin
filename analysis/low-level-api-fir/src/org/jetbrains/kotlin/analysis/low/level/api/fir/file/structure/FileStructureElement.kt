@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -79,8 +80,12 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
 
     companion object {
         context(session: FirSession)
-        private fun findIntMember(name: Name): FirNamedFunctionSymbol? {
-            return session.builtinTypes.intType.toRegularClassSymbol(session)?.fir?.declarations?.singleOrNull {
+        private fun findUnaryOperator(receiver: FirExpression, name: Name): FirNamedFunctionSymbol? {
+            // A literal in unresolved code keeps the integer literal type, which has no class, so it gets the operator of `Int`
+            val receiverClass = receiver.resolvedType.toRegularClassSymbol(session)
+                ?: session.builtinTypes.intType.toRegularClassSymbol(session)
+
+            return receiverClass?.fir?.declarations?.singleOrNull {
                 it is FirNamedFunction && it.name == name
             }?.symbol as? FirNamedFunctionSymbol
         }
@@ -95,6 +100,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
             expression: KtPrefixExpression,
             mapping: Map<KtElement, FirElement>,
         ): FirElement? {
+            val foldedLiteral = mapping[expression] as? FirLiteralExpression ?: return null
             val operatorExpression = expression.operationReference
             val operatorName = when (operatorExpression.getReferencedNameElementType()) {
                 KtTokens.PLUS -> OperatorNameConventions.UNARY_PLUS
@@ -104,7 +110,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
 
             val baseExpression = expression.baseExpression?.unwrapParenthesesLabelsAndAnnotations() as? KtElement ?: return null
             val firReceiver = firReceiverForUnaryIntLiteral(baseExpression, mapping) ?: return null
-            val operatorSymbol = findIntMember(operatorName) ?: return null
+            val operatorSymbol = findUnaryOperator(firReceiver, operatorName) ?: return null
             return buildFunctionCall {
                 source = expression.toKtPsiSourceElement()
                 origin = FirFunctionCallOrigin.Operator
@@ -117,26 +123,28 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 dispatchReceiver = firReceiver
                 explicitReceiver = firReceiver
 
-                coneTypeOrNull = firReceiver.resolvedType
+                coneTypeOrNull = foldedLiteral.resolvedType
             }
         }
 
         /**
          * Resolves the FIR receiver for [fakeCallForIntLiteralWithUnaryExpression] strictly downwards.
          *
-         * The operand of a desugared unary integer literal is either the recorded (folded) literal itself,
-         * or another desugared `+`/`-` unary prefix. Resolving it via the general parent-walking [getFir]
-         * would climb back up to the enclosing prefix expression and recurse infinitely (KT-87131), since
-         * the folded prefix has no FIR mapping of its own. Descending into [operand] is guaranteed to
-         * terminate because the PSI tree is finite.
+         * The operand of a desugared unary integer literal is either another desugared `+`/`-` unary prefix,
+         * or the recorded integer literal itself. Resolving it via the general parent-walking [getFir]
+         * could climb back up to the enclosing prefix expression and recurse infinitely (KT-87131).
+         * Descending into [operand] is guaranteed to terminate because the PSI tree is finite.
          */
         context(session: FirSession)
         private fun firReceiverForUnaryIntLiteral(
             operand: KtElement,
             mapping: Map<KtElement, FirElement>,
         ): FirExpression? {
-            val fir = mapping[operand]
-                ?: (operand as? KtPrefixExpression)?.let { fakeCallForIntLiteralWithUnaryExpression(it, mapping) }
+            val fir = if (operand is KtPrefixExpression) {
+                fakeCallForIntLiteralWithUnaryExpression(operand, mapping)
+            } else {
+                mapping[operand]
+            }
 
             return fir as? FirExpression
         }
@@ -230,6 +238,15 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
         }
 
         fun getFir(element: KtElement, session: FirSession, mapping: Map<KtElement, FirElement>): FirElement? {
+            // The prefix expressions of a folded integer literal are mapped to the literal itself, so the fake call goes first
+            if (element is KtPrefixExpression) {
+                fakeCallForIntLiteralWithUnaryExpression(
+                    expression = element,
+                    mapping = mapping,
+                    session = session,
+                )?.let { return it }
+            }
+
             var current: PsiElement? = element
             while (
                 current == element ||
@@ -241,19 +258,9 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 // We are still referring to the same element with possible type parameter/name qualification/nullability,
                 // hence it is always correct to return a corresponding element if present
                 if (current is KtElement) mapping[current]?.let { return it }
-                when (current) {
-                    is KtCallExpression -> {
-                        fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
-                            return it
-                        }
-                    }
-
-                    is KtPrefixExpression -> {
-                        fakeCallForIntLiteralWithUnaryExpression(
-                            expression = current,
-                            mapping = mapping,
-                            session = session,
-                        )?.let { return it }
+                if (current is KtCallExpression) {
+                    fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
+                        return it
                     }
                 }
 
@@ -274,8 +281,6 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 is KtAnnotationEntry,
                     // We replace a source for selector with the whole expression
                 is KtSafeQualifiedExpression,
-                    // Top level destructuring declarations do not have FIR for r-value at the moment, would probably be changed later
-                is KtDestructuringDeclaration,
                     // There is no separate FIR node for this in this@foo expressions, same for super@Foo
                 is KtThisExpression,
                 is KtSuperExpression,
@@ -306,13 +311,9 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                         mapping[current] ?: fakeReferenceToBuiltInSuspendOrNull(element, session)
                     }
                 }
-                is KtParenthesizedExpression -> checkStringLiteralFolderExpression(element, session, mapping)
                 is KtBinaryExpression -> checkStringLiteralFolderExpression(element, session, mapping)
                 // Here there is no separate FIR node for partial operator calls (like for a[i] = 1, there is no separate node for a[i])
                     ?: if (element is KtArrayAccessExpression || element is KtOperationReferenceExpression) mapping[current] else null
-                is KtBlockExpression ->
-                    // For script initializers, we need to return FIR element for script itself
-                    if (element is KtScriptInitializer) mapping[current.parent as KtScript] else null
                 is PsiErrorElement -> {
                     val parent = current.parent
                     if (parent is KtDestructuringDeclaration) mapping[parent] else null

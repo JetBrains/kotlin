@@ -1,0 +1,5 @@
+expression: 128
+constant: 128
+constantValueKind: IntValue
+constantValueSource: INTEGER_CONSTANT
+constantValueSourceText: 128

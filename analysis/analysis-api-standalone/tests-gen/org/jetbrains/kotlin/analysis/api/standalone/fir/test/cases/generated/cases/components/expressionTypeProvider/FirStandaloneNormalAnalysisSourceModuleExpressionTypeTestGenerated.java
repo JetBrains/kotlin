@@ -129,6 +129,18 @@ public class FirStandaloneNormalAnalysisSourceModuleExpressionTypeTestGenerated 
   }
 
   @Test
+  @TestMetadata("byteMinValueWithMinus.kt")
+  public void testByteMinValueWithMinus() {
+    run("byteMinValueWithMinus.kt");
+  }
+
+  @Test
+  @TestMetadata("byteMinValueWithMinus_literal.kt")
+  public void testByteMinValueWithMinus_literal() {
+    run("byteMinValueWithMinus_literal.kt");
+  }
+
+  @Test
   @TestMetadata("callableReference_consumer.kt")
   public void testCallableReference_consumer() {
     run("callableReference_consumer.kt");
@@ -324,6 +336,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpressionTypeTestGenerated 
   @TestMetadata("intLiteralWithInvalidExpectedType.kt")
   public void testIntLiteralWithInvalidExpectedType() {
     run("intLiteralWithInvalidExpectedType.kt");
+  }
+
+  @Test
+  @TestMetadata("intMinValueWithMinus.kt")
+  public void testIntMinValueWithMinus() {
+    run("intMinValueWithMinus.kt");
   }
 
   @Test

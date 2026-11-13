@@ -228,3 +228,284 @@ KtStringTemplateExpression(82,85): '"6"'
 
 KtLiteralStringTemplateEntry(83,84): '6'
   null
+
+KtNamedFunction(89,179): 'fun withExpectedType() {'
+  null
+
+KtParameterList(109,111): '()'
+  null
+
+KtBlockExpression(112,179): '{'
+  null
+
+KtProperty(118,134): 'val b: Byte = -1'
+  null
+
+KtTypeReference(125,129): 'Byte'
+  null
+
+KtUserType(125,129): 'Byte'
+  null
+
+KtNameReferenceExpression(125,129): 'Byte'
+  null
+
+KtPrefixExpression(132,134): '-1'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Byte
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Byte.unaryMinus(<dispatch receiver>: kotlin.Byte): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Byte.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtOperationReferenceExpression(132,133): '-'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Byte
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Byte.unaryMinus(<dispatch receiver>: kotlin.Byte): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Byte.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstantExpression(133,134): '1'
+  null
+
+KtProperty(139,156): 'val s: Short = -1'
+  null
+
+KtTypeReference(146,151): 'Short'
+  null
+
+KtUserType(146,151): 'Short'
+  null
+
+KtNameReferenceExpression(146,151): 'Short'
+  null
+
+KtPrefixExpression(154,156): '-1'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Short
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Short.unaryMinus(<dispatch receiver>: kotlin.Short): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Short.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtOperationReferenceExpression(154,155): '-'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Short
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Short.unaryMinus(<dispatch receiver>: kotlin.Short): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Short.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstantExpression(155,156): '1'
+  null
+
+KtProperty(161,177): 'val l: Long = -1'
+  null
+
+KtTypeReference(168,172): 'Long'
+  null
+
+KtUserType(168,172): 'Long'
+  null
+
+KtNameReferenceExpression(168,172): 'Long'
+  null
+
+KtPrefixExpression(175,177): '-1'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtOperationReferenceExpression(175,176): '-'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstantExpression(176,177): '1'
+  null
+
+KtNamedFunction(181,239): 'fun minValues() {'
+  null
+
+KtParameterList(194,196): '()'
+  null
+
+KtBlockExpression(197,239): '{'
+  null
+
+KtPrefixExpression(203,214): '-2147483648'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 2147483648
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtOperationReferenceExpression(203,204): '-'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 2147483648
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstantExpression(204,214): '2147483648'
+  null
+
+KtProperty(219,237): 'val b: Byte = -128'
+  null
+
+KtTypeReference(226,230): 'Byte'
+  null
+
+KtUserType(226,230): 'Byte'
+  null
+
+KtNameReferenceExpression(226,230): 'Byte'
+  null
+
+KtPrefixExpression(233,237): '-128'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 128
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Int.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtOperationReferenceExpression(233,234): '-'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 128
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Int.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstantExpression(234,237): '128'
+  null

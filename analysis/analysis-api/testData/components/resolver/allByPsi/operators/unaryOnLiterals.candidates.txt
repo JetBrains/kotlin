@@ -228,3 +228,294 @@ KtStringTemplateExpression(82,85): '"6"'
 
 KtLiteralStringTemplateEntry(83,84): '6'
   NO_CANDIDATES
+
+KtNamedFunction(89,179): 'fun withExpectedType() {'
+  NO_CANDIDATES
+
+KtParameterList(109,111): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(112,179): '{'
+  NO_CANDIDATES
+
+KtProperty(118,134): 'val b: Byte = -1'
+  NO_CANDIDATES
+
+KtTypeReference(125,129): 'Byte'
+  NO_CANDIDATES
+
+KtUserType(125,129): 'Byte'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(125,129): 'Byte'
+  NO_CANDIDATES
+
+KtPrefixExpression(132,134): '-1'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Byte
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Byte.unaryMinus(<dispatch receiver>: kotlin.Byte): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Byte.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(132,133): '-'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Byte
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Byte.unaryMinus(<dispatch receiver>: kotlin.Byte): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Byte.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(133,134): '1'
+  NO_CANDIDATES
+
+KtProperty(139,156): 'val s: Short = -1'
+  NO_CANDIDATES
+
+KtTypeReference(146,151): 'Short'
+  NO_CANDIDATES
+
+KtUserType(146,151): 'Short'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(146,151): 'Short'
+  NO_CANDIDATES
+
+KtPrefixExpression(154,156): '-1'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Short
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Short.unaryMinus(<dispatch receiver>: kotlin.Short): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Short.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(154,155): '-'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Short
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Short.unaryMinus(<dispatch receiver>: kotlin.Short): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Short.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(155,156): '1'
+  NO_CANDIDATES
+
+KtProperty(161,177): 'val l: Long = -1'
+  NO_CANDIDATES
+
+KtTypeReference(168,172): 'Long'
+  NO_CANDIDATES
+
+KtUserType(168,172): 'Long'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(168,172): 'Long'
+  NO_CANDIDATES
+
+KtPrefixExpression(175,177): '-1'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(175,176): '-'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(176,177): '1'
+  NO_CANDIDATES
+
+KtNamedFunction(181,239): 'fun minValues() {'
+  NO_CANDIDATES
+
+KtParameterList(194,196): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(197,239): '{'
+  NO_CANDIDATES
+
+KtPrefixExpression(203,214): '-2147483648'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 2147483648
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(203,204): '-'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 2147483648
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(204,214): '2147483648'
+  NO_CANDIDATES
+
+KtProperty(219,237): 'val b: Byte = -128'
+  NO_CANDIDATES
+
+KtTypeReference(226,230): 'Byte'
+  NO_CANDIDATES
+
+KtUserType(226,230): 'Byte'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(226,230): 'Byte'
+  NO_CANDIDATES
+
+KtPrefixExpression(233,237): '-128'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 128
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Int.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(233,234): '-'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 128
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Int.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(234,237): '128'
+  NO_CANDIDATES
