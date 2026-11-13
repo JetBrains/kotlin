@@ -215,6 +215,90 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         }
     }
 
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ts-generation")
+    @DisplayName("OUTPUT_NAME set on the operation names the declaration file and the exported namespace")
+    fun outputNameOptionNamesDeclarationFileAndNamespace(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+        strategyConfig.first.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        jsProject(strategyConfig) {
+            val module = module("js-ts-generation")
+            module.compile()
+
+            val outputDirectory = module.buildDirectory.resolve("dts-output-name")
+            module.generateDts(
+                outputDirectory = outputDirectory,
+                compilationConfigAction = { it[JsDtsGenerationOperation.OUTPUT_NAME] = "customOutput" },
+            ) {
+                assertOutputs("customOutput.d.ts")
+            }
+
+            val dts = outputDirectory.resolve("customOutput.d.ts").readText()
+            assertTrue("export as namespace customOutput;" in dts) {
+                "The UMD namespace must follow OUTPUT_NAME when MAIN_MODULE_NAME is not set. Declarations:\n$dts"
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ts-generation")
+    @DisplayName("MAIN_MODULE_NAME set on the operation names the exported namespace and does not affect the declaration file name")
+    fun mainModuleNameOptionNamesNamespaceOnly(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+        strategyConfig.first.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        jsProject(strategyConfig) {
+            val module = module("js-ts-generation")
+            module.compile()
+
+            val outputDirectory = module.buildDirectory.resolve("dts-main-module-name")
+            module.generateDts(
+                outputDirectory = outputDirectory,
+                compilationConfigAction = { it[JsDtsGenerationOperation.MAIN_MODULE_NAME] = "MyLib" },
+            ) {
+                assertOutputs("js-ts-generation.d.ts")
+            }
+
+            val dts = outputDirectory.resolve("js-ts-generation.d.ts").readText()
+            assertTrue("export as namespace MyLib;" in dts) {
+                "The UMD namespace must follow MAIN_MODULE_NAME. Declarations:\n$dts"
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ts-generation")
+    @DisplayName("MAIN_MODULE_NAME set on the operation takes precedence over OUTPUT_NAME for the exported namespace")
+    fun mainModuleNameOverridesOutputNameForNamespace(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+        strategyConfig.first.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        jsProject(strategyConfig) {
+            val module = module("js-ts-generation")
+            module.compile()
+
+            val outputDirectory = module.buildDirectory.resolve("dts-output-name-and-main-module-name")
+            module.generateDts(
+                outputDirectory = outputDirectory,
+                compilationConfigAction = {
+                    it[JsDtsGenerationOperation.OUTPUT_NAME] = "customOutput"
+                    it[JsDtsGenerationOperation.MAIN_MODULE_NAME] = "MyLib"
+                },
+            ) {
+                assertOutputs("customOutput.d.ts")
+            }
+
+            val dts = outputDirectory.resolve("customOutput.d.ts").readText()
+            assertTrue("export as namespace MyLib;" in dts) {
+                "The UMD namespace must follow MAIN_MODULE_NAME when both options are set. Declarations:\n$dts"
+            }
+            assertFalse("export as namespace customOutput;" in dts) {
+                "OUTPUT_NAME must not leak into the UMD namespace when MAIN_MODULE_NAME is set. Declarations:\n$dts"
+            }
+        }
+    }
+
     @DisplayName("configureFrom with typed arguments copies boolean options from their arguments")
     @BtaVersionsOnlyCompilationTest
     fun configureFromTypedArgumentsCopiesBooleanOptions(kotlinToolchain: KotlinToolchains) {
@@ -285,6 +369,32 @@ class JsDtsGenerationTest : BaseCompilationTest() {
 
         val dataClassCopy = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-XXLanguage:+DataClassCopyRespectsConstructorVisibility")
         assertEquals(true, dataClassCopy[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
+    }
+
+    @DisplayName("configureFrom with typed arguments takes OUTPUT_NAME from IR_OUTPUT_NAME and MAIN_MODULE_NAME from X_IR_MODULE_NAME")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromTypedArgumentsTakesNameOptions(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val outputNameOnly = kotlinToolchain.dtsBuilderConfiguredFrom { this[IR_OUTPUT_NAME] = "ir-output-name" }
+        assertEquals("ir-output-name", outputNameOnly[JsDtsGenerationOperation.OUTPUT_NAME])
+        assertEquals(null, outputNameOnly[JsDtsGenerationOperation.MAIN_MODULE_NAME])
+
+        val moduleNameOnly = kotlinToolchain.dtsBuilderConfiguredFrom { this[X_IR_MODULE_NAME] = "ir-module-name" }
+        assertEquals(null, moduleNameOnly[JsDtsGenerationOperation.OUTPUT_NAME])
+        assertEquals("ir-module-name", moduleNameOnly[JsDtsGenerationOperation.MAIN_MODULE_NAME])
+    }
+
+    @DisplayName("configureFrom with command-line arguments takes OUTPUT_NAME from -ir-output-name and MAIN_MODULE_NAME from -Xir-module-name")
+    @BtaVersionsOnlyCompilationTest
+    fun configureFromCommandLineTakesNameOptions(kotlinToolchain: KotlinToolchains) {
+        kotlinToolchain.assumeJsDtsGenerationIsSupported()
+        kotlinToolchain.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+
+        val bothSet = kotlinToolchain.dtsBuilderConfiguredFromCommandLine("-ir-output-name", "out", "-Xir-module-name=mod")
+        assertEquals("out", bothSet[JsDtsGenerationOperation.OUTPUT_NAME])
+        assertEquals("mod", bothSet[JsDtsGenerationOperation.MAIN_MODULE_NAME])
     }
 
     @DisplayName("configureFrom with typed arguments: explicit MODULE_KIND takes precedence over auto-configuration from TARGET")

@@ -399,6 +399,12 @@ class AvailableSinceTest : BaseCompilationTest() {
                     trySet(JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY.availableSinceVersion) {
                         this[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY] = true
                     }
+                    trySet(JsDtsGenerationOperation.OUTPUT_NAME.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.OUTPUT_NAME] = "ir-output-name"
+                    }
+                    trySet(JsDtsGenerationOperation.MAIN_MODULE_NAME.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.MAIN_MODULE_NAME] = "ir-module-name"
+                    }
                 }
             }
         }
