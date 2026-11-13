@@ -27,6 +27,9 @@ class A {
 // test.kt:9 <init>
 // test.kt:6 box
 
+// EXPECTATIONS JS_IR_ES6
+// test.kt:6 box
+
 // EXPECTATIONS WASM_JS
 // test.kt:5 $box (4)
 // test.kt:11 $A.<init> (1)

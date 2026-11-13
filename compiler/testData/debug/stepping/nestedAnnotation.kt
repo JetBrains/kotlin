@@ -43,11 +43,13 @@ fun box(): String =
 // test.kt:19 box
 // test.kt:20 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:20 box
 // test.kt:10 foo
 // test.kt:20 box
+// EXPECTATIONS JS_IR
 // test.kt:12 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:20 box
 // test.kt:15 foo
 

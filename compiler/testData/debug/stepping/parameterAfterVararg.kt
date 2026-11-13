@@ -139,7 +139,7 @@ fun box(): String {
 // test.kt:23 box
 // test.kt:24 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:11 box
 // test.kt:6 sum
 // test.kt:7 sum

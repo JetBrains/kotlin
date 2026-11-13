@@ -46,7 +46,7 @@ fun foo(n :Int ) : Int {
 // test.kt:5 box
 // test.kt:6 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:9 foo

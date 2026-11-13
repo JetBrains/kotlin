@@ -97,11 +97,13 @@ fun box() {
 // test.kt:27 testPropertyInInterfaceImpl
 // test.kt:34 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:31 box
+// EXPECTATIONS JS_IR
 // test.kt:18 <init>
 // test.kt:21 <init>
 // test.kt:16 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:32 box
 // test.kt:9 testPropertyInInterface
 // test.kt:10 testPropertyInInterface

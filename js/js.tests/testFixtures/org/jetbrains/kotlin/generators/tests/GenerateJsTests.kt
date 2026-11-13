@@ -248,6 +248,10 @@ fun main(args: Array<String>) {
             testClass<AbstractJsSteppingSplitTest> {
                 model("stepping")
             }
+
+            testClass<AbstractJsES6SteppingTest>(annotations = listOf(es6())) {
+                model("stepping")
+            }
         }
 
         testGroup(testsRoot, "compiler/testData/diagnostics", testRunnerMethodName = "runTest0") {

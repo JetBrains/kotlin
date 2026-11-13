@@ -47,18 +47,22 @@ open class B : A()
 // test.kt:12 foo
 // test.kt:18 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:15 box
+// EXPECTATIONS JS_IR
 // test.kt:20 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:15 box
 // test.kt:5 foo
 // test.kt:7 foo
 // test.kt:8 foo
 // test.kt:12 foo
 // test.kt:16 box
+// EXPECTATIONS JS_IR
 // test.kt:22 <init>
 // test.kt:20 <init>
 // test.kt:22 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:16 box
 // test.kt:5 foo
 // test.kt:6 foo
