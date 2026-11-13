@@ -1,6 +1,5 @@
 // DUMP_IR_DIFFERENCE: JKLIB
 // ^ JKlib tests compile against JDK 17 instead of the mock JDK.
-//   JKlib tests compile against a real JDK, whose default methods (`forEach`, `stream`, `spliterator`, ...) add fake overrides.
 // TARGET_BACKEND: JVM
 // FILE: implicitNotNullOnPlatformType.kt
 fun f(s: String) {}
