@@ -360,7 +360,7 @@ object FirDiagnosticRenderers {
             else -> lines.first() + " ... " + lines.last().replace(INDENT_WHITESPACE, "")
         }
         return when {
-            summary.length < EXPRESSION_RENDERING_LIMIT -> "'${summary.replace("'", "\\'")}'"
+            summary.length < EXPRESSION_RENDERING_LIMIT -> "'$summary'"
             else -> null
         }
     }
