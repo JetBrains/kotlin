@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":core:deserialization"))
     api(project(":compiler:util"))
     api(project(":compiler:config"))
+    api(project(":compiler:k1"))
     implementation(project(":compiler:container"))
     implementation(project(":compiler:resolution"))
     api(project(":compiler:psi:psi-api"))

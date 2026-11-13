@@ -172,6 +172,7 @@ include(
     ":compiler:arguments.common",
     ":compiler:arguments",
     ":compiler:container",
+    ":compiler:k1",
     ":compiler:resolution.common",
     ":compiler:resolution.common.js",
     ":compiler:resolution.common.jvm",

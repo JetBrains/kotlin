@@ -114,6 +114,7 @@ object CompilerModules {
         ":core:descriptors.jvm",
         ":compiler:resolution",
         ":compiler:serialization",
+        ":compiler:k1",
         ":compiler:frontend",
         ":compiler:frontend.java",
         ":compiler:container",

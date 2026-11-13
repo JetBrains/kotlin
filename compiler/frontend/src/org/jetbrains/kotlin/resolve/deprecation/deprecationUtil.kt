@@ -7,16 +7,11 @@ package org.jetbrains.kotlin.resolve.deprecation
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.container.DefaultImplementation
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
 
 @K1Deprecation
@@ -24,25 +19,6 @@ fun DescriptorBasedDeprecationInfo.deprecatedByOverriddenMessage(): String? = (t
 
 @K1Deprecation
 fun DescriptorBasedDeprecationInfo.deprecatedByAnnotationReplaceWithExpression(): String? = (this as? DeprecatedByAnnotation)?.replaceWithValue
-
-// The function extracts value of warningSince/errorSince/hiddenSince from DeprecatedSinceKotlin annotation
-@K1Deprecation
-fun AnnotationDescriptor.getSinceVersion(name: String): ApiVersion? =
-    (argumentValue(name) as? StringValue)?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
-
-@K1Deprecation
-fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
-    val hiddenSince = annotation.getSinceVersion("hiddenSince")
-    if (hiddenSince != null && apiVersion >= hiddenSince) return HIDDEN
-
-    val errorSince = annotation.getSinceVersion("errorSince")
-    if (errorSince != null && apiVersion >= errorSince) return ERROR
-
-    val warningSince = annotation.getSinceVersion("warningSince")
-    if (warningSince != null && apiVersion >= warningSince) return WARNING
-
-    return null
-}
 
 internal fun createDeprecationDiagnostic(
     element: PsiElement,
@@ -83,15 +59,5 @@ internal fun createDeprecationDiagnostic(
             }
             factory.on(element, targetOriginal, deprecation.message ?: "")
         }
-    }
-}
-
-@DefaultImplementation(DeprecationSettings.Default::class)
-@K1Deprecation
-interface DeprecationSettings {
-    fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor): Boolean
-
-    object Default : DeprecationSettings {
-        override fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor) = true
     }
 }

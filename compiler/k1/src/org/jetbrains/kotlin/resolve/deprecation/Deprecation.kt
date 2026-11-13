@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-internal sealed class DeprecatedByAnnotation(
+sealed class DeprecatedByAnnotation(
     val annotation: AnnotationDescriptor,
     override val target: DeclarationDescriptor,
     final override val propagatesToOverrides: Boolean,
@@ -35,7 +35,7 @@ internal sealed class DeprecatedByAnnotation(
     override val message: String?
         get() = (annotation.argumentValue("message") as? StringValue)?.value
 
-    internal val replaceWithValue: String?
+    val replaceWithValue: String?
         get() {
             val replaceWithAnnotation = (annotation.argumentValue(Deprecated::replaceWith.name) as? AnnotationValue)?.value
             return (replaceWithAnnotation?.argumentValue(ReplaceWith::expression.name) as? StringValue)?.value
@@ -125,7 +125,7 @@ internal sealed class DeprecatedByAnnotation(
     }
 }
 
-internal data class DeprecatedByOverridden(private val deprecations: Collection<DescriptorBasedDeprecationInfo>) : DescriptorBasedDeprecationInfo() {
+data class DeprecatedByOverridden(private val deprecations: Collection<DescriptorBasedDeprecationInfo>) : DescriptorBasedDeprecationInfo() {
     init {
         assert(deprecations.isNotEmpty())
         assert(deprecations.none { it is DeprecatedByOverridden })
@@ -144,11 +144,11 @@ internal data class DeprecatedByOverridden(private val deprecations: Collection<
             return "${additionalMessage()}. $message"
         }
 
-    internal fun additionalMessage() =
+    fun additionalMessage() =
         "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
 }
 
-internal data class DeprecatedByVersionRequirement(
+data class DeprecatedByVersionRequirement(
     val versionRequirement: VersionRequirement,
     override val target: DeclarationDescriptor
 ) : DescriptorBasedDeprecationInfo() {
@@ -178,7 +178,7 @@ internal data class DeprecatedByVersionRequirement(
         }
 }
 
-internal data class DeprecatedTypealiasByAnnotation(
+data class DeprecatedTypealiasByAnnotation(
     val typeAliasTarget: TypeAliasDescriptor,
     val nested: DeprecatedByAnnotation
 ) : DescriptorBasedDeprecationInfo() {
