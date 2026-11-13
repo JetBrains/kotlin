@@ -40,7 +40,7 @@ dependencies {
     // Note that kotlin-metadata-jvm already includes kotlin-metadata, core:metadata, core:metadata.jvm,
     // and protobuf-lite, so we only need to include kotlin-metadata-jvm in the shadow jar.
     compileOnly(project(":kotlin-metadata"))
-    embedded(project(":kotlin-metadata-jvm"))
+    embedded(project(":prepare:kotlin-metadata-jvm"))
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)

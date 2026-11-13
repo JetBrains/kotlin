@@ -123,7 +123,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib-jdk8",
     ":kotlin-test",
     ":kotlin-reflect",
-    ":kotlin-metadata-jvm",
+    ":prepare:kotlin-metadata-jvm",
 )
 extra["coreLibProjects"] = coreLibProjects
 val mppProjects = listOf(
