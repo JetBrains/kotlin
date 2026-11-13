@@ -16,6 +16,11 @@ import java.nio.file.Path
  */
 internal interface BitcodeCompiler {
     fun makeObjectFile(llvmModule: LLVMModuleRef, outputFilePath: Path)
+
+    fun makeObjectFiles(llvmModule: LLVMModuleRef, outputPaths: List<Path>) {
+        require(outputPaths.size == 1) { "Parallel object emission requires -Xin-process-obj-emission" }
+        makeObjectFile(llvmModule, outputPaths.single())
+    }
 }
 
 /**

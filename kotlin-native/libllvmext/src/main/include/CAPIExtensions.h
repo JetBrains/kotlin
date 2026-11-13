@@ -67,6 +67,11 @@ LLVMKotlinCreateTargetMachine(const char *TargetTriple, const char *CPU,
                               LLVMKotlinInstructionSelector Selector,
                               char **ErrorMessage);
 
+/// Consume the optimized module and emit Count objects with independent LLVM contexts.
+/// Partitions use SplitModule with PreserveLocals=false. OutputPaths has Count entries.
+LLVMErrorRef LLVMKotlinEmitObjectFiles(LLVMModuleRef Module, LLVMTargetMachineRef Machine,
+                                     unsigned Count, const char *const *OutputPaths);
+
 LLVM_C_EXTERN_C_END
 
 #endif

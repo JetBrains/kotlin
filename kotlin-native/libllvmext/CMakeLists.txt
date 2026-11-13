@@ -41,4 +41,4 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 include_directories(${LLVM_INCLUDE_DIRS})
 include_directories(${SRC_DIR}/main/include)
 
-add_library(libllvmext ${SRC_DIR}/main/cpp/CoverageMappingC.cpp ${SRC_DIR}/main/cpp/CAPIExtensions.cpp)
+add_library(libllvmext ${SRC_DIR}/main/cpp/CoverageMappingC.cpp ${SRC_DIR}/main/cpp/CAPIExtensions.cpp ${SRC_DIR}/main/cpp/ParallelObjectEmission.cpp)

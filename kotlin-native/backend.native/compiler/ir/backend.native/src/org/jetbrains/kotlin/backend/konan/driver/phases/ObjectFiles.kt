@@ -16,7 +16,7 @@ import java.nio.file.Path
 internal class ObjectFilesInput(
         override val llvmModule: LLVMModuleRef,
         val bitcodeCompiler: BitcodeCompiler,
-        val outputPath: Path,
+        val outputPaths: List<Path>,
 ) : LlvmIrHolder
 
 /**
@@ -28,5 +28,5 @@ internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<NativeBackendPhas
         name = "ObjectFiles",
         preactions = getDefaultLlvmModuleActions(),
 ) { _, input ->
-    input.bitcodeCompiler.makeObjectFile(input.llvmModule, input.outputPath)
+    input.bitcodeCompiler.makeObjectFiles(input.llvmModule, input.outputPaths)
 }
