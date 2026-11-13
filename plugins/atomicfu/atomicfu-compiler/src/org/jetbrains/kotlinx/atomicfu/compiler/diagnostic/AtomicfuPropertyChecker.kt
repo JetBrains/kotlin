@@ -20,12 +20,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInstanceExtension
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.getContainingSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.classId
@@ -35,7 +39,8 @@ import org.jetbrains.kotlin.text
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicfuStandardClassIds
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.DeclarationInSame
 
-private fun FirProperty.isKotlinxAtomicfu(): Boolean = returnTypeRef.coneType.classId?.packageFqName == AtomicfuStandardClassIds.BASE_ATOMICFU_PACKAGE
+private fun FirProperty.isKotlinxAtomicfu(): Boolean =
+    returnTypeRef.coneType.classId?.packageFqName == AtomicfuStandardClassIds.BASE_ATOMICFU_PACKAGE
 
 private val FirProperty.resolvedVisibility: EffectiveVisibility
     get() = publishedApiEffectiveVisibility ?: effectiveVisibility
@@ -124,6 +129,37 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                 declaration.source,
                 AtomicfuErrors.ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER,
                 delegateProperty.inSameContainerMessage(),
+            )
+            return
+        }
+
+        // Companion block members are static: there is no instance receiver to verify.
+        // The container check has already established the common containing class.
+        if (declaration.isCompanionBlockMember && delegateProperty.isCompanionBlockMember) {
+            return
+        }
+
+        // The instance receiver must be checked to recognize & report the following pattern:
+        // class Holder {
+        //     private val state = atomic(0);
+        //     internal val currentState by Holder().state
+        // }
+        val receiver = delegatePropertyAccess.dispatchReceiver?.unwrapSmartcastExpression()
+        val expectedOwner = declaration.symbol.getContainingSymbol(context.session)
+        val receiverIsAllowed = when (receiver) {
+            null -> expectedOwner is FirFileSymbol
+            is FirThisReceiverExpression ->
+                receiver.calleeReference.boundSymbol == expectedOwner
+            // This branch is needed to allow companion object references like ClassName.companionObjectProperty.
+            is FirResolvedQualifier ->
+                receiver.accessedObjectSymbol == expectedOwner
+            else -> false
+        }
+
+        if (!receiverIsAllowed) {
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.PROPERTY_DELEGATED_TO_ATOMIC_MUST_BE_IN_SAME_INSTANCE,
             )
         }
     }

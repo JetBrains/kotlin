@@ -7,6 +7,9 @@ import kotlinx.atomicfu.atomic
 class CompanionObjectMint {
     companion object {
         private val coinsAtomic = atomic(0)
+        val delegate by coinsAtomic
+        val delegateWithThis by this.coinsAtomic
+        val delegateExplicit by CompanionObjectMint.coinsAtomic
 
         fun mint() {
             <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> local = atomic(0)
@@ -33,7 +36,11 @@ class CompanionObjectMint {
 }
 
 class ClassMint {
-    internal val coinsAtomic = atomic(0)
+    internal val coinsAtomic = atomic(0);
+    internal val delegate by coinsAtomic
+    internal val delegateWithThis by this.coinsAtomic
+    internal val delegateWithExplicitThis by this@ClassMint.coinsAtomic
+    internal val <!PROPERTY_DELEGATED_TO_ATOMIC_MUST_BE_IN_SAME_INSTANCE!>delegateInline<!> by ClassMint().coinsAtomic
 }
 
 class ClassInspector {
@@ -94,6 +101,7 @@ fun mint() {
    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> localCoins = atomic(0)
    val lazyDelegate = lazy { 10 }
    <!LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN!>val<!> seen by coins.coinsAtomic
+   <!LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN!>val<!> seenInline by ClassMint().coinsAtomic
    <!LOCALS_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN!>val<!> seenLocal by localCoins
    val lazyCoins by lazyDelegate
 }

@@ -103,6 +103,8 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
 
     private const val ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER_MESSAGE =
         "Delegated properties must be declared {0} as the corresponding atomic properties."
+    private const val PROPERTY_DELEGATED_TO_ATOMIC_MUST_BE_IN_SAME_INSTANCE_MESSAGE =
+        "Properties delegated to atomic properties are only allowed in the same instance."
 
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
@@ -155,6 +157,10 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AtomicfuErrors.ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER, ATOMIC_DELEGATE_MUST_BE_IN_SAME_CONTAINER_MESSAGE, TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.PROPERTY_DELEGATED_TO_ATOMIC_MUST_BE_IN_SAME_INSTANCE,
+            PROPERTY_DELEGATED_TO_ATOMIC_MUST_BE_IN_SAME_INSTANCE_MESSAGE
         )
     }
 
