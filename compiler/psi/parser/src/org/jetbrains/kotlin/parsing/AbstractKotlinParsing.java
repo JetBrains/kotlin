@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.parsing;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
@@ -25,7 +26,6 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.utils.strings.StringsKt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -424,6 +424,28 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
     @SuppressWarnings("UnusedDeclaration")
     @TestOnly
     public String currentContext() {
-        return StringsKt.substringWithContext(myBuilder.getOriginalText(), myBuilder.getCurrentOffset(), myBuilder.getCurrentOffset(), 20);
+        return substringWithContext(myBuilder.getOriginalText(), myBuilder.getCurrentOffset(), 20);
+    }
+
+    /**
+     * Returns the text around {@code offset} with {@code range} characters on each side, marking the caret
+     * position and the line numbers at which the excerpt is cut.
+     */
+    private static String substringWithContext(CharSequence text, int offset, int range) {
+        int start = Math.max(0, offset - range);
+        int end = Math.min(text.length(), offset + range);
+
+        StringBuilder result = new StringBuilder(text.subSequence(start, end)).insert(offset - start, "<~!!~>");
+        if (start != 0) {
+            result.insert(0, "<~..." + position(text, start) + "~>");
+        }
+        if (end != text.length()) {
+            result.append("<~").append(position(text, end)).append("...~>");
+        }
+        return result.toString();
+    }
+
+    private static String position(CharSequence text, int offset) {
+        return "(line: " + (StringUtil.offsetToLineNumber(text, offset) + 1) + ")";
     }
 }
