@@ -1,0 +1,68 @@
+// Class: BaseClass
+STEP 0:
+    modifications:
+        U : bases.kt -> bases.kt
+        U : checkClass.kt -> checkClass.kt
+        U : checkInterface.kt -> checkInterface.kt
+        U : class.base.none.kt -> class.kt
+        U : asserts.tf.kt -> asserts.kt
+    added cache: bases.kt, checkClass.kt, checkInterface.kt, class.kt, asserts.kt
+
+// Class
+STEP 1:
+    modifications:
+        U : class.none.none.kt -> class.kt
+        U : asserts.ff.kt -> asserts.kt
+    modified cache: checkClass.kt, checkInterface.kt, class.kt, asserts.kt
+    unchanged cache: bases.kt
+
+// Class: BaseInterface
+STEP 2:
+    modifications:
+        U : class.none.base.kt -> class.kt
+        U : asserts.ft.kt -> asserts.kt
+    modified cache: checkClass.kt, checkInterface.kt, class.kt, asserts.kt
+    unchanged cache: bases.kt
+
+// Class
+STEP 3:
+    modifications:
+        U : class.none.none.kt -> class.kt
+        U : asserts.ff.kt -> asserts.kt
+    modified cache: checkClass.kt, checkInterface.kt, class.kt, asserts.kt
+    unchanged cache: bases.kt
+
+// Repeating the same changes, but hidden behind an additional intermediate class.
+// Class : (MidClass : BaseClass)
+STEP 4:
+    modifications:
+        U : midClass.base.none.kt -> midClass.kt
+        U : class.mid.none.kt -> class.kt
+        U : asserts.tf.kt -> asserts.kt
+    added cache: midClass.kt
+    modified cache: checkClass.kt, checkInterface.kt, class.kt, asserts.kt
+    unchanged cache: bases.kt
+
+// Class : MidClass
+STEP 5:
+    modifications:
+        U : midClass.none.none.kt -> midClass.kt
+        U : asserts.ff.kt -> asserts.kt
+    modified cache: checkClass.kt, checkInterface.kt, midClass.kt, class.kt, asserts.kt
+    unchanged cache: bases.kt
+
+// Class : (MidClass : BaseInterface)
+STEP 6:
+    modifications:
+        U : midClass.none.base.kt -> midClass.kt
+        U : asserts.ft.kt -> asserts.kt
+    modified cache: checkClass.kt, checkInterface.kt, midClass.kt, class.kt, asserts.kt
+    unchanged cache: bases.kt
+
+// Class : MidClass
+STEP 7:
+    modifications:
+        U : midClass.none.none.kt -> midClass.kt
+        U : asserts.ff.kt -> asserts.kt
+    modified cache: checkClass.kt, checkInterface.kt, midClass.kt, class.kt, asserts.kt
+    unchanged cache: bases.kt

@@ -1,0 +1,27 @@
+// See lib/module.info for step descriptions
+
+STEP 0:
+    dependencies: lib
+    modifications:
+        U : main.kt -> main.kt
+
+STEP 1:
+    dependencies: lib
+
+STEP 2:
+    dependencies: lib
+
+STEP 3:
+    dependencies: lib
+
+STEP 4:
+    dependencies: lib
+
+STEP 5:
+    dependencies: lib
+
+STEP 6:
+    dependencies: lib
+
+STEP 7:
+    dependencies: lib
