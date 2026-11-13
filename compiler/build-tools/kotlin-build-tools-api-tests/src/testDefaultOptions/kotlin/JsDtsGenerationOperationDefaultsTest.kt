@@ -35,5 +35,7 @@ class JsDtsGenerationOperationDefaultsTest {
         assertEquals(false, operation[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR])
         assertEquals(false, operation[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY])
         assertEquals(false, operation[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY])
+        assertEquals(null, operation[JsDtsGenerationOperation.OUTPUT_NAME])
+        assertEquals(null, operation[JsDtsGenerationOperation.MAIN_MODULE_NAME])
     }
 }
