@@ -287,8 +287,7 @@ internal class RTTIGenerator(
             if (implementation == null || implementation.isExternalObjCClassMethod() || referencedFunctions?.contains(implementation) == false) {
                 llvm.nullPointer
             } else {
-                // The runtime also calls the entries, and copies them into the vtables of Objective-C and Swift subclasses.
-                llvm.cFunctionPointer(implementation.entryPointAddress)
+                implementation.entryPointAddress.toKotlinVtableFunctionPointer()
             }
         }
         return ConstArray(llvm.pointerType, vtableEntries)
@@ -368,7 +367,7 @@ internal class RTTIGenerator(
                             val impl = layoutBuilder.overridingOf(ifaceFunction)
                             if (impl == null || referencedFunctions?.contains(impl) == false)
                                 llvm.nullPointer
-                            else llvm.cFunctionPointer(impl.entryPointAddress)
+                            else impl.entryPointAddress.toKotlinVtableFunctionPointer()
                         }
 
                         staticData.placeGlobalConstArray("kifacevtable:${className}_$interfaceId",
@@ -536,7 +535,7 @@ internal class RTTIGenerator(
             if (layoutBuilder == null) {
                 InterfaceTableRecord(llvm.constInt32(0), llvm.constInt32(0), null)
             } else {
-                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { llvm.cFunctionPointer(methodImpls[it]!!) }
+                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.toKotlinVtableFunctionPointer() }
                 val interfaceVTable = staticData.placeGlobalArray("", llvm.pointerType, vtableEntries)
                 val interfaceVTableType = LLVMArrayType(llvm.pointerType, vtableEntries.size)!!
                 InterfaceTableRecord(

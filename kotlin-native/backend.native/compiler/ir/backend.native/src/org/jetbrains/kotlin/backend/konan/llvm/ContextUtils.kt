@@ -214,6 +214,12 @@ internal interface ContextUtils : RuntimeAware {
     fun ConstPointer.toCFunctionPointer(): ConstCFunctionPointer = constCFunctionPointer(this.llvm)
 
     /**
+     * [this] function as an entry of a vtable or an itable. The runtime's C++ code also calls, copies and stores these
+     * entries, so they are signed as C function pointers, see [CodegenLlvmHelpers.kotlinVtableFunctionPointerAuth].
+     */
+    fun ConstPointer.toKotlinVtableFunctionPointer(): ConstPointer = toCFunctionPointer()
+
+    /**
      * [function] as a pointer that C code calls, see [toCFunctionPointer].
      */
     fun constCFunctionPointer(function: LLVMValueRef): ConstCFunctionPointer {
@@ -618,9 +624,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     fun cFunctionPointer(function: ConstPointer): ConstPointer = signedPointer(function, PtrAuthKey.IA)
 
     /**
-     * How calls authenticate function pointers signed by [cFunctionPointer], if they are signed.
+     * How virtual calls authenticate the entries of vtables and itables, if they are signed, see
+     * [ContextUtils.toKotlinVtableFunctionPointer].
      */
-    val cFunctionPointerAuth: PtrAuthBundle? by lazy {
+    val kotlinVtableFunctionPointerAuth: PtrAuthBundle? by lazy {
         if (context.config.arm64e) PtrAuthBundle(int32(PtrAuthKey.IA.value), int64(0)) else null
     }
 

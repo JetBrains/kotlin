@@ -47,7 +47,7 @@ internal class KotlinToObjCMethodAdapter private constructor(type: LLVMTypeRef, 
                 llvm.constInt32(itablePlace.methodIndex),
                 llvm.constInt32(vtableIndex),
                 // The runtime stores reverse adapters into vtables and itables.
-                llvm.cFunctionPointer(kotlinImpl),
+                kotlinImpl.toKotlinVtableFunctionPointer(),
         )
     }
 }

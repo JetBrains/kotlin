@@ -25,7 +25,7 @@ sealed class LlvmCallable(
     /**
      * How calls authenticate this callable, if it is a signed function pointer.
      */
-    open val ptrAuth: PtrAuthBundle? get() = null
+    abstract val ptrAuth: PtrAuthBundle?
 
     fun buildCall(builder: LLVMBuilderRef, args: List<LLVMValueRef>, name: String = "") =
             withOperandBundles { bundles, numBundles ->
@@ -69,9 +69,9 @@ class LlvmFunctionPointer(
         returnsObjectType: Boolean,
         llvmValue: LLVMValueRef,
         attributeProvider: LlvmFunctionAttributeProvider,
-        override val ptrAuth: PtrAuthBundle? = null,
+        override val ptrAuth: PtrAuthBundle?,
 ) : LlvmCallable(functionType, returnsObjectType, llvmValue, attributeProvider) {
-    internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature, ptrAuth: PtrAuthBundle? = null) :
+    internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature, ptrAuth: PtrAuthBundle?) :
             this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature, ptrAuth)
 }
 
@@ -81,6 +81,9 @@ sealed class LlvmFunction(
         llvmValue: LLVMValueRef,
         attributeProvider: LlvmFunctionAttributeProvider,
 ) : LlvmCallable(functionType, returnsObjectType, llvmValue, attributeProvider) {
+
+    // Functions are called directly.
+    override val ptrAuth: PtrAuthBundle? get() = null
 
     val isNoUnwind by lazy {
         requireNotNull(LLVMIsAFunction(llvmValue)) {
