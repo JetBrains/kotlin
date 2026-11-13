@@ -60,6 +60,15 @@ abstract class FakeOverrideBuilderStrategy {
     open val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean = false
 
     /**
+     * If true, property type and mutability are considered when checking if one property overrides another.
+     *
+     * This can lead to properties and fake overrides coexisting with the same name and even type. Such cases are prohibited and reported
+     * by the JVM backend, but for Klib-based backends this results in "IllegalStateException: IrPropertySymbolImpl is already bound"
+     * errors.
+     */
+    open val checkPropertyTypeAndMutability: Boolean = false
+
+    /**
      * Creates a fake override for [member] from [superType] to be added to the class [clazz] or returns null,
      * if no fake override should be created for this member
      */
