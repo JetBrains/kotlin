@@ -12,7 +12,8 @@ import org.junit.jupiter.api.Tag
 internal const val nightlyTagKey = "nightly"
 
 /**
- * Marks tests which are only executed by dedicated nightly test tasks. These tests are not executed during merging to master checks.
+ * Marks tests which are only executed by dedicated nightly test tasks.
+ * These tests are not executed during merging to master checks.
  *
  * A dedicated nightly test task must explicitly exclude not nightly tests (`useJUnitPlatform { excludeTags("!nightly") }`).
  * Other test tasks *which are executed on CI* must exclude the tag (`excludeTags("nightly")`).
