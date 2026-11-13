@@ -381,14 +381,14 @@ open class KaptIT : KaptBaseIT() {
     }
 
     @TestMetadata("kapt/simple")
-    @DisplayName("Kapt direct stub generation mode")
+    @DisplayName("Kapt jtree stub generation mode")
     @GradleTest
-    fun testDirectGenerationMode(gradleVersion: GradleVersion) {
+    fun testJTreeGenerationMode(gradleVersion: GradleVersion) {
         project("simple".withPrefix, gradleVersion) {
 
             buildScriptInjection {
                 val kaptExtension = project.extensions.getByType<KaptExtensionConfig>()
-                kaptExtension.stubGenerationScheme.set(KaptStubGenerationScheme.DIRECT)
+                kaptExtension.stubGenerationScheme.set(KaptStubGenerationScheme.JTREE)
             }
 
             build("build") {
@@ -745,7 +745,7 @@ open class KaptIT : KaptBaseIT() {
             buildAndFail("build") {
                 val actual = getErrorMessages()
                 assertEquals(
-                    expected = genJavaErrorString(7, 19),
+                    expected = genJavaErrorString(7, 17),
                     actual = actual
                 )
             }

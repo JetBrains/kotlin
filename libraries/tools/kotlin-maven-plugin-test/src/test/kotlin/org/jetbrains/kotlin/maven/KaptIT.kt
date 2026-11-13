@@ -50,13 +50,13 @@ class KaptIT : KotlinMavenTestBase() {
     }
 
     @MavenTest
-    @DisplayName("KAPT generates Kotlin code from annotation processor using direct stub generation mode")
-    fun testKaptGenerateKotlinCodeUsingDirectStubMode(mavenVersion: TestVersions.Maven) {
+    @DisplayName("KAPT generates Kotlin code from annotation processor using jtree stub generation mode")
+    fun testKaptGenerateKotlinCodeUsingJTreeStubMode(mavenVersion: TestVersions.Maven) {
         val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
         testProject("test-kapt-generateKotlinCode", mavenVersion, buildOptions) {
             modifyPomXml("app/pom.xml") {
                 val kaptConfiguration = findKotlinPlugin().findExecution("kapt").getOrCreateChild("configuration")
-                kaptConfiguration.getOrCreateChild("stubGenerationScheme").textContent = "direct"
+                kaptConfiguration.getOrCreateChild("stubGenerationScheme").textContent = "jtree"
             }
 
             build(
@@ -66,8 +66,8 @@ class KaptIT : KotlinMavenTestBase() {
                 assertBuildLogContains(
                     "[INFO] [kapt] Kapt is enabled.",
                     // the scheme reached the compiler rather than being dropped silently, which would leave
-                    // this test running the default 'jtree' scheme and testing nothing
-                    "plugin:org.jetbrains.kotlin.kapt3:stubGenerationScheme=direct",
+                    // this test running the default 'direct' scheme and testing nothing
+                    "plugin:org.jetbrains.kotlin.kapt3:stubGenerationScheme=jtree",
                     "[INFO] [kapt] Annotation processors: example.ExampleAnnotationProcessor"
                 )
                 assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")

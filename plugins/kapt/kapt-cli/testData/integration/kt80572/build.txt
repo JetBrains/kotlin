@@ -45,14 +45,14 @@ Test.kt
 TestKt
 
 # after
-    @OuterTypeA.TargetTypeAA()
-    public abstract void annotationUserAAOuter();
+@OuterTypeA.TargetTypeAA
+public abstract void annotationUserAAOuter();
 
-    @OuterTypeA.TargetTypeAA()
-    public abstract void annotationUserAAInner();
+@OuterTypeA.TargetTypeAA
+public abstract void annotationUserAAInner();
 
-    @OuterTypeB.TargetTypeBA()
-    public abstract void annotationUserBAOuter();
+@OuterTypeB.TargetTypeBA
+public abstract void annotationUserBAOuter();
 
-    @OuterTypeB.TargetTypeBA()
-    public abstract void annotationUserBAInner();
+@OuterTypeB.TargetTypeBA
+public abstract void annotationUserBAInner();

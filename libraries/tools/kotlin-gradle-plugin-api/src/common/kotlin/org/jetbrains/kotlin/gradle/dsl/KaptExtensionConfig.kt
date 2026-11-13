@@ -74,11 +74,11 @@ interface KaptExtensionConfig {
     /**
      * Selects how kapt generates Java stubs.
      *
-     * Possible values: [KaptStubGenerationScheme.JTREE], [KaptStubGenerationScheme.DIRECT].
+     * Possible values: [KaptStubGenerationScheme.DIRECT], [KaptStubGenerationScheme.JTREE].
+     * [KaptStubGenerationScheme.DIRECT] generates Java text directly.
      * [KaptStubGenerationScheme.JTREE] is the historical scheme that uses javac AST and will be deprecated eventually.
-     * [KaptStubGenerationScheme.DIRECT] is a new experimental scheme that generates Java text directly.
      *
-     * Default: [KaptStubGenerationScheme.JTREE]
+     * Default: [KaptStubGenerationScheme.DIRECT]
      */
     val stubGenerationScheme: Property<KaptStubGenerationScheme>
 
