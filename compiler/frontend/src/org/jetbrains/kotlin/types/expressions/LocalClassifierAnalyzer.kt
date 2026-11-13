@@ -21,7 +21,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
-import org.jetbrains.kotlin.frontend.di.createContainerForLazyLocalClassifierAnalyzer
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -87,46 +85,6 @@ class LocalClassifierAnalyzer(
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
         val project = classOrObject.project
         val moduleContext = globalContext.withProject(project).withModule(module)
-        val container = createContainerForLazyLocalClassifierAnalyzer(
-            moduleContext,
-            context.trace,
-            platform,
-            lookupTracker,
-            languageVersionSettings,
-            context.statementFilter,
-            LocalClassDescriptorHolder(
-                scope,
-                classOrObject,
-                containingDeclaration,
-                storageManager,
-                context,
-                module,
-                descriptorResolver,
-                functionDescriptorResolver,
-                typeResolver,
-                annotationResolver,
-                supertypeLoopChecker,
-                languageVersionSettings,
-                SyntheticResolveExtension.EMPTY,
-                delegationFilter,
-                wrappedTypeFactory,
-                kotlinTypeChecker,
-                samConversionResolver,
-                additionalClassPartsProvider,
-                sealedClassInheritorsProvider
-            ),
-            analyzerServices,
-            controlFlowInformationProviderFactory,
-            absentDescriptorHandler
-        )
-
-        @Suppress("DEPRECATION_ERROR")
-        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(
-            TopDownAnalysisMode.LocalDeclarations,
-            listOf(classOrObject),
-            context.dataFlowInfo,
-            localContext = context
-        )
     }
 }
 
