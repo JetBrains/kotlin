@@ -457,7 +457,7 @@ fun BuildOptions.suppressDeprecationWarnings(
 ) = copy(warningMode = WarningMode.Summary)
 
 fun BuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-    gradleVersion: String,
+    gradleVersion: TestVersions.Gradle,
     currentGradleVersion: GradleVersion,
     reason: String,
 ) = suppressDeprecationWarningsOn(reason) {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.MINIMALLY_SUPPORTED_GRADLE_VERSION
+import org.jetbrains.kotlin.gradle.testbase.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.OtherGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
