@@ -157,7 +157,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
 
             if (!superTypeSymbol.isClass) return@firstNotNullOfOrNull null
 
-            val builderNames = getBuilderNames(superTypeSymbol, filterExistingNames = true)
+            val builderNames = getBuilderNames(superTypeSymbol)
 
             // `@SingleBuilder` is only applicable to classes. It means it can be <= 1 builder in a super type.
             val builderName = builderNames.firstOrNull() ?: return@firstNotNullOfOrNull null
@@ -175,15 +175,26 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             }
 
             val builderKey = BuilderKey(superTypeSymbol, builderName)
-            val superBuilder = builderClassesCache.getValue(builderKey) ?: return@firstNotNullOfOrNull null
+            val existingBuilder = superTypeSymbol.existingBuilder(builderName)
+            if (existingBuilder != null) {
+                existingBuilder.constructType(
+                    typeArguments = arrayOf(
+                        *superTypeRef.coneType.typeArguments,
+                        classTypeParameterSymbol.defaultType,
+                        builderTypeParameterSymbol.defaultType,
+                    )
+                ).toFirResolvedTypeRef()
+            } else {
+                val superBuilder = builderClassesCache.getValue(builderKey) ?: return@firstNotNullOfOrNull null
 
-            superBuilder.constructType(
-                typeArguments = arrayOf(
-                    *superTypeRef.coneType.typeArguments,
-                    classTypeParameterSymbol.defaultType,
-                    builderTypeParameterSymbol.defaultType,
-                )
-            ).toFirResolvedTypeRef()
+                superBuilder.constructType(
+                    typeArguments = arrayOf(
+                        *superTypeRef.coneType.typeArguments,
+                        classTypeParameterSymbol.defaultType,
+                        builderTypeParameterSymbol.defaultType,
+                    )
+                ).toFirResolvedTypeRef()
+            }
         }
 
         superTypeRefs += superTypeRef ?: session.builtinTypes.anyType

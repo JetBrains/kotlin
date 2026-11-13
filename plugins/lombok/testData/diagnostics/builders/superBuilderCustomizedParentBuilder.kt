@@ -1,7 +1,5 @@
-// A manually declared (customized) super builder of `Parent` is filtered out by `getBuilderNames(..., filterExistingNames = true)`
-// in `SuperBuilderGenerator.completeBuilder`, so `ChildBuilder` gets `Any` as a supertype and loses `a(..)` and `twice(..)`.
-// Real Lombok makes `ChildBuilder` extend the customized `ParentBuilder<C, B>`.
-
+// RUN_PIPELINE_TILL: CODEGEN
+// ISSUE: KT-91508
 // FILE: Parent.java
 
 import lombok.experimental.SuperBuilder;
@@ -30,5 +28,8 @@ public class Child extends Parent {
 
 fun test() {
     Parent.builder().a("1").twice("2").build()
-    Child.builder().b(1).<!UNRESOLVED_REFERENCE!>a<!>("1").twice("2").build()
+    Child.builder().b(1).a("1").twice("2").build()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+starProjection, stringLiteral */
