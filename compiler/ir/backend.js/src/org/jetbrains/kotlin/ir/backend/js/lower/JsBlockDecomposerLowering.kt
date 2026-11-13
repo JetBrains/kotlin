@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.lower.calls.EqualityAndComparisonCallsTransformer
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -26,31 +27,30 @@ import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isElseBranch
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.artifactConfigurations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 /**
  * Transforms statement-like-expression nodes into pure-statement to make it easily transform into JS.
  */
 @PhasePrerequisites(TypeOperatorLowering::class, JsSuspendFunctionsLowering::class, JsSuspendFunctionWithGeneratorsLowering::class)
-class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlockDecomposerLowering(context) {
-    override fun unreachableExpression(): IrExpression =
-        JsIrBuilder.buildCall(context.symbols.unreachable, context.irBuiltIns.nothingType)
-}
-
-abstract class AbstractBlockDecomposerLowering(private val context: JsCommonBackendContext) : BodyLoweringPass {
+class JsBlockDecomposerLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
 
     private val nothingType = context.irBuiltIns.nothingType
 
-    // Expression with Nothing type to be inserted in places of unreachable expression
-    abstract fun unreachableExpression(): IrExpression
+    /**
+     * Expression with the [Nothing] type to be inserted in places of unreachable expression.
+     */
+    fun unreachableExpression(): IrExpression =
+        JsIrBuilder.buildCall(context.symbols.unreachable, context.irBuiltIns.nothingType)
 
     private val decomposerTransformer = BlockDecomposerTransformer(context, ::unreachableExpression)
 
@@ -101,7 +101,7 @@ abstract class AbstractBlockDecomposerLowering(private val context: JsCommonBack
     }
 }
 
-class BlockDecomposerTransformer(
+private class BlockDecomposerTransformer(
     private val context: JsCommonBackendContext,
     private val unreachableExpression: () -> IrExpression
 ) : IrElementTransformerVoid() {
@@ -183,7 +183,7 @@ class BlockDecomposerTransformer(
 
     private fun destructureComposite(expression: IrStatement) = (expression as? IrComposite)?.statements ?: listOf(expression)
 
-    private inner class BreakContinueUpdater(val breakLoop: IrLoop, val continueLoop: IrLoop) : IrTransformer<IrLoop>() {
+    private class BreakContinueUpdater(val breakLoop: IrLoop, val continueLoop: IrLoop) : IrTransformer<IrLoop>() {
         override fun visitBreak(jump: IrBreak, data: IrLoop) = jump.apply {
             if (loop == data) loop = breakLoop
         }
@@ -292,18 +292,21 @@ class BlockDecomposerTransformer(
             }
         }
 
-        // while (c_block {}) {
-        //  body {}
-        // }
-        //
-        // is transformed into
-        //
-        // while (true) {
-        //   var cond = c_block {}
-        //   if (!cond) break
-        //   body {}
-        // }
-        //
+        /**
+         * ```kotlin
+         * while (c_block {}) {
+         *  body {}
+         * }
+         * ```
+         * is transformed into
+         * ```kotlin
+         * while (true) {
+         *   var cond = c_block {}
+         *   if (!cond) break
+         *   body {}
+         * }
+         * ```
+         */
         override fun visitWhileLoop(loop: IrWhileLoop): IrExpression {
             val newBody = loop.body?.transform(statementTransformer, null)
             val newCondition = loop.condition.transform(expressionTransformer, null)
@@ -335,19 +338,22 @@ class BlockDecomposerTransformer(
             }
         }
 
-        // do  {
-        //  body {}
-        // } while (c_block {})
-        //
-        // is transformed into
-        //
-        // do {
-        //   do {
-        //     body {}
-        //   } while (false)
-        //   cond = c_block {}
-        // } while (cond)
-        //
+        /**
+         * ```kotlin
+         * do  {
+         *  body {}
+         * } while (c_block {})
+         *  ```
+         * is transformed into
+         * ```kotlin
+         * do {
+         *   do {
+         *     body {}
+         *   } while (false)
+         *   cond = c_block {}
+         * } while (cond)
+         * ```
+         */
         override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
             val newBody = loop.body?.transform(statementTransformer, null)
             val newCondition = loop.condition.transform(expressionTransformer, null)
@@ -384,27 +390,32 @@ class BlockDecomposerTransformer(
             }
         }
 
-        // when {
-        //  c1_block {} -> b1_block {}
-        //  ....
-        //  cn_block {} -> bn_block {}
-        //  else -> else_block {}
-        // }
-        //
-        // transformed into if-else chain
-        // c1 = c1_block {}
-        // if (c1) {
-        //   b1_block {}
-        // } else {
-        //   c2 = c2_block {}
-        //   if (c2) {
-        //     b2_block{}
-        //   } else {
-        //         ...
-        //           else {
-        //              else_block {}
-        //           }
-        // }
+        /**
+         * ```kotlin
+         * when {
+         *  c1_block {} -> b1_block {}
+         *  ....
+         *  cn_block {} -> bn_block {}
+         *  else -> else_block {}
+         * }
+         * ```
+         * transformed into if-else chain:
+         * ```kotlin
+         * c1 = c1_block {}
+         * if (c1) {
+         *   b1_block {}
+         * } else {
+         *   c2 = c2_block {}
+         *   if (c2) {
+         *     b2_block{}
+         *   } else {
+         *         ...
+         *           else {
+         *              else_block {}
+         *           }
+         * }
+         * ```
+         */
         override fun visitWhen(expression: IrWhen): IrExpression {
 
             var compositeCount = 0
@@ -571,10 +582,14 @@ class BlockDecomposerTransformer(
          * However, the box and unbox intrinsics should be preserved in the call.
          * They can be used later for optimizations, for example, in [EqualityAndComparisonCallsTransformer].
          * Example:
-         *      foo(boxIntrinsic(<expr>))
+         * ```kotlin
+         * foo(boxIntrinsic(<expr>))
+         * ```
          * should be transformed to:
-         *      var tmp = <expr>
-         *      foo(boxIntrinsic(tmp))
+         * ```kotlin
+         * var tmp = <expr>
+         * foo(boxIntrinsic(tmp))
+         * ```
          */
         private fun mapArgument(arg: IrExpression): Pair<IrExpression, IrVariable> {
             var saveToTmp = arg
@@ -630,18 +645,22 @@ class BlockDecomposerTransformer(
             return expression.run { IrCompositeImpl(startOffset, endOffset, type, null, newStatements) }
         }
 
-        // The point here is to keep original evaluation order so (there is the same story for StringConcat)
-        // d.foo(p1, p2, block {}, p4, block {}, p6, p7)
-        //
-        // is transformed into
-        //
-        // var d_tmp = d
-        // var p1_tmp = p1
-        // var p2_tmp = p2
-        // var p3_tmp = block {}
-        // var p4_tmp = p4
-        // var p5_tmp = block {}
-        // d_tmp.foo(p1_tmp, p2_tmp, p3_tmp, p4_tmp, p5_tmp, p6, p7)
+        /**
+         * The point here is to keep original evaluation order so (there is the same story for StringConcat)
+         * ```kotlin
+         * d.foo(p1, p2, block {}, p4, block {}, p6, p7)
+         * ```
+         * is transformed into
+         * ```kotlin
+         * var d_tmp = d
+         * var p1_tmp = p1
+         * var p2_tmp = p2
+         * var p3_tmp = block {}
+         * var p4_tmp = p4
+         * var p5_tmp = block {}
+         * d_tmp.foo(p1_tmp, p2_tmp, p3_tmp, p4_tmp, p5_tmp, p6, p7)
+         * ```
+         */
         override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)
 
@@ -722,8 +741,11 @@ class BlockDecomposerTransformer(
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-
-            expression.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue)) }
+            if (expression.statements.isEmpty()) {
+                return expression.run {
+                    IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue))
+                }
+            }
 
             val newStatements = mutableListOf<IrStatement>()
 
@@ -732,6 +754,13 @@ class BlockDecomposerTransformer(
             }
 
             newStatements += destructureComposite(expression.statements.last().transformStatement(expressionTransformer))
+
+            (newStatements.singleOrNull() as? IrExpression)?.let { expression ->
+                // Unwrapping the block may result in worse debug info, so only do it when compiling for production.
+                if (context.configuration.artifactConfigurations.all { it.production }) {
+                    return expression
+                }
+            }
 
             return JsIrBuilder.buildComposite(expression.type, newStatements)
         }
@@ -742,23 +771,27 @@ class BlockDecomposerTransformer(
         private fun wrap(expression: IrExpression, variable: IrVariable) =
             wrap(JsIrBuilder.buildSetVariable(variable.symbol, expression, unitType))
 
-        // try {
-        //   try_block {}
-        // } catch () {
-        //   catch_block {}
-        // } finally {}
-        //
-        // transformed into if-else chain
-        //
-        // Composite [
-        //   var tmp
-        //   try {
-        //     tmp = try_block {}
-        //   } catch () {
-        //     tmp = catch_block {}
-        //   } finally {}
-        //   tmp
-        // ]
+        /**
+         * ```kotlin
+         * try {
+         *   try_block {}
+         * } catch () {
+         *   catch_block {}
+         * } finally {}
+         * ```
+         * transformed into if-else chain
+         * ```kotlin
+         * { // COMPOSITE
+         *   var tmp
+         *   try {
+         *     tmp = try_block {}
+         *   } catch () {
+         *     tmp = catch_block {}
+         *   } finally {}
+         *   tmp
+         * }
+         * ```
+         */
         override fun visitTry(aTry: IrTry): IrExpression {
             val irVar = makeTempVar(aTry.type)
 
@@ -775,28 +808,30 @@ class BlockDecomposerTransformer(
             return JsIrBuilder.buildComposite(aTry.type, newStatements)
         }
 
-        // when {
-        //  c1 -> b1_block {}
-        //  ....
-        //  cn -> bn_block {}
-        //  else -> else_block {}
-        // }
-        //
-        // transformed into if-else chain if anything should be decomposed
-        //
-        // Composite [
-        //   var tmp
-        //   when {
-        //     c1 -> tmp = b1_block {}
-        //     ...
-        //     cn -> tmp = bn_block {}
-        //     else -> tmp = else_block {}
-        //   }
-        //   tmp
-        // ]
-        //
-        // kept `as is` otherwise
-
+        /**
+         * ```kotlin
+         * when {
+         *  c1 -> b1_block {}
+         *  ....
+         *  cn -> bn_block {}
+         *  else -> else_block {}
+         * }
+         * ```
+         * transformed into if-else chain if anything should be decomposed
+         * ```kotlin
+         * { // COMPOSITE
+         *   var tmp
+         *   when {
+         *     c1 -> tmp = b1_block {}
+         *     ...
+         *     cn -> tmp = bn_block {}
+         *     else -> tmp = else_block {}
+         *   }
+         *   tmp
+         * }
+         * ```
+         * kept "as is" otherwise
+         */
         override fun visitWhen(expression: IrWhen): IrExpression {
 
             var hasComposites = false

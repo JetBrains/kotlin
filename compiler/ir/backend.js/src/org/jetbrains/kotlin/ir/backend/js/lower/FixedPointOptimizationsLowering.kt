@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.lower.WhileConditionFoldingLowering
 import org.jetbrains.kotlin.ir.backend.js.JsIrOptimizationContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.js.config.useEs6DefaultArgs
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * For lowerings that can be ran in [FixedPointOptimizationsLowering].
@@ -32,8 +34,9 @@ abstract class ChangeAwareBodyLoweringPass : BodyLoweringPass {
 }
 
 class FixedPointOptimizationsLowering(context: JsIrOptimizationContext) : BodyLoweringPass {
-    val loop: List<ChangeAwareBodyLoweringPass> = listOf(
+    val loop: List<ChangeAwareBodyLoweringPass> = listOfNotNull(
         WhileConditionFoldingLowering(context),
+        runIf(context.configuration.useEs6DefaultArgs) { JsDefaultArgumentOptimizationLowering(context) },
     )
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
