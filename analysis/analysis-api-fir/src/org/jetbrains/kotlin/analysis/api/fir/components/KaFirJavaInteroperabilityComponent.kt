@@ -387,7 +387,11 @@ internal class KaFirJavaInteroperabilityComponent(
             if (!platform.has<JvmPlatform>()) return null
 
             val containingSymbolOrSelf = when (symbol) {
-                is KaParameterSymbol -> symbol.containingDeclaration as? KaCallableSymbol ?: symbol
+                is KaParameterSymbol -> when (val owner = symbol.containingDeclaration) {
+                    is KaPropertyAccessorSymbol -> owner.containingDeclaration as? KaPropertySymbol ?: owner
+                    is KaCallableSymbol -> owner
+                    else -> symbol
+                }
                 is KaPropertyAccessorSymbol -> symbol.containingDeclaration as? KaPropertySymbol ?: symbol
                 is KaBackingFieldSymbol -> symbol.owningProperty
                 else -> symbol

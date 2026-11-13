@@ -1255,7 +1255,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(enum.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: Regular
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1302,7 +1302,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(enum.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: Regular
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1491,7 +1491,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(enum.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: Regular
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1538,7 +1538,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(enum.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: Regular
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1727,7 +1727,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(enum.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: Regular
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1774,7 +1774,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(enum.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: Regular
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

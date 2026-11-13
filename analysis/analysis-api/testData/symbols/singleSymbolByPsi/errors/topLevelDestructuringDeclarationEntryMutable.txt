@@ -118,7 +118,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(topLevelDestructuringDeclarationEntryMutable.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TopLevelDestructuringDeclarationEntryMutableKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -165,7 +165,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(topLevelDestructuringDeclarationEntryMutable.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: TopLevelDestructuringDeclarationEntryMutableKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

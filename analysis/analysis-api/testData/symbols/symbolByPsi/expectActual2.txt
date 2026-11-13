@@ -685,7 +685,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(main.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: sample.MainKt
       getContainingModule: KaSourceModule "Sources of common-main"
       deprecation: null
       importableFqName: null
@@ -732,7 +732,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(main.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: sample.MainKt
         getContainingModule: KaSourceModule "Sources of common-main"
         deprecation: null
         importableFqName: null

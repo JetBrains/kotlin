@@ -32,7 +32,7 @@ KaValueParameterSymbol:
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(setterValueParameter.kt)
-  getContainingJvmClassName: null
+  getContainingJvmClassName: SetterValueParameterKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   importableFqName: null

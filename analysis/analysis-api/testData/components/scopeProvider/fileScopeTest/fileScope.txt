@@ -390,7 +390,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: FileScopeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -437,7 +437,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: FileScopeKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -610,7 +610,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: FileScopeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -657,7 +657,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: FileScopeKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -830,7 +830,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: FileScopeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -877,7 +877,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: FileScopeKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1050,7 +1050,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: FileScopeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1097,7 +1097,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: FileScopeKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1273,7 +1273,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: FileScopeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1320,7 +1320,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: FileScopeKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -1496,7 +1496,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: FileScopeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -1543,7 +1543,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: FileScopeKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -2418,7 +2418,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: FileScopeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -2465,7 +2465,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(fileScope.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: FileScopeKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null

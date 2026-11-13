@@ -153,7 +153,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(jvmField.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: JvmFieldKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -200,7 +200,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(jvmField.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: JvmFieldKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
@@ -376,7 +376,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(jvmField.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: JvmFieldKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecation: null
       importableFqName: null
@@ -423,7 +423,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(jvmField.kt)
-        getContainingJvmClassName: null
+        getContainingJvmClassName: JvmFieldKt
         getContainingModule: KaSourceModule "Sources of main"
         deprecation: null
         importableFqName: null
