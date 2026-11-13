@@ -23,7 +23,7 @@ private fun JCTree.withoutTypeAnnotations(): String = when (this) {
         prefix = "<", postfix = ">",
     ) { it.withoutTypeAnnotations() }
     is JCTree.JCFieldAccess -> selected.withoutTypeAnnotations() + "." + name
-    is JCTree.JCWildcard -> when (kind.kind) {
+    is JCTree.JCWildcard -> when (kind.kind!!) {
         BoundKind.UNBOUND -> "?"
         BoundKind.EXTENDS -> "? extends " + inner.withoutTypeAnnotations()
         BoundKind.SUPER -> "? super " + inner.withoutTypeAnnotations()
