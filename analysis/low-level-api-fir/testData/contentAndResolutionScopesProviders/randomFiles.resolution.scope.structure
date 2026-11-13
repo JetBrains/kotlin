@@ -3,16 +3,6 @@ Module MAIN:
 UnionScope
     FileScope: c.kt
     FileScope: x.kt
-    FilesScope
-        files:
-            annotation.kotlin_builtins
-            atomics.kotlin_builtins
-            collections.kotlin_builtins
-            coroutines.kotlin_builtins
-            internal.kotlin_builtins
-            kotlin.kotlin_builtins
-            ranges.kotlin_builtins
-            reflect.kotlin_builtins
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
         UnionScope
@@ -26,21 +16,22 @@ UnionScope
         UnionScope
             FileScope: a.kt
             FileScope: z.kt
+    KotlinBuiltinsFileScope
+        FilesScope
+            files:
+                annotation.kotlin_builtins
+                atomics.kotlin_builtins
+                collections.kotlin_builtins
+                coroutines.kotlin_builtins
+                internal.kotlin_builtins
+                kotlin.kotlin_builtins
+                ranges.kotlin_builtins
+                reflect.kotlin_builtins
 
 Module SOME_DEPENDENCY:
 UnionScope
     FileScope: c.kt
     FileScope: x.kt
-    FilesScope
-        files:
-            annotation.kotlin_builtins
-            atomics.kotlin_builtins
-            collections.kotlin_builtins
-            coroutines.kotlin_builtins
-            internal.kotlin_builtins
-            kotlin.kotlin_builtins
-            ranges.kotlin_builtins
-            reflect.kotlin_builtins
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
         UnionScope
@@ -48,3 +39,14 @@ UnionScope
             ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
+    KotlinBuiltinsFileScope
+        FilesScope
+            files:
+                annotation.kotlin_builtins
+                atomics.kotlin_builtins
+                collections.kotlin_builtins
+                coroutines.kotlin_builtins
+                internal.kotlin_builtins
+                kotlin.kotlin_builtins
+                ranges.kotlin_builtins
+                reflect.kotlin_builtins

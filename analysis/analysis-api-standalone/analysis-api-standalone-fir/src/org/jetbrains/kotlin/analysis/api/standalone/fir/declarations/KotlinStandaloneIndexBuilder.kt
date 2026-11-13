@@ -266,6 +266,8 @@ internal class KotlinStandaloneIndexBuilder private constructor(
      * Thanks to [findSharedDecompiledFile], we imitate the same behavior once for each [VirtualFile] and
      * cache the decompiler that results in a [KtDecompiledFile] via [SharedIndexableDecompiledFile].
      *
+     * Built-in files are an exception: they don't go through [findSharedDecompiledFile], as their decompiler is known from the file type.
+     *
      * Since we know all possible [SharedIndexableDecompiledFile.kotlinDecompiler] values,
      * we can safely skipp all checks on the way and directly instantiate required [KtDecompiledFile] files.
      */
@@ -294,24 +296,10 @@ internal class KotlinStandaloneIndexBuilder private constructor(
 
     @OptIn(KtPlatformInterface::class)
     fun collectDecompiledFilesFromBuiltins() {
+        val decompilers = ClassFileDecompilers.getInstance()
         for (virtualFile in BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles()) {
-            if (cacheService != null) {
-                val sharedFiles = cacheService.getOrProcessBinaryRoot(virtualFile) { root ->
-                    // Detached built-ins (e.g., provided in-memory by the platform) yield non-physical view
-                    // providers, whose getPsi registers the provider in the file manager, which requires a
-                    // write action. Physical files inside binary roots skip the registration on getPsi.
-                    ApplicationManager.getApplication().runWriteAction<_> {
-                        setOfNotNull(findSharedDecompiledFile(root)?.first)
-                    }
-                }
-
-                sharedFiles.mapTo(decompiledFilesFromBuiltins, this::materializeSharedDecompiledFile)
-            } else {
-                val [_, ktFile] = ApplicationManager.getApplication().runWriteAction<_> {
-                    findSharedDecompiledFile(virtualFile)
-                } ?: continue
-                decompiledFilesFromBuiltins += IndexableFile(virtualFile, ktFile, isShared = true)
-            }
+            val decompiler = decompilers.find(virtualFile, ClassFileDecompilers.Full::class.java) ?: continue
+            decompiledFilesFromBuiltins += materializeSharedDecompiledFile(SharedIndexableDecompiledFile(virtualFile, decompiler))
         }
     }
 
