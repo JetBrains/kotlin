@@ -7,17 +7,21 @@ package samples.misc
 
 import samples.*
 import kotlin.enums.enumEntries
+import kotlin.enums.valueOf
+import kotlin.enums.valueOfOrNull
 import kotlin.test.*
 
 class Enums {
     enum class Direction { NORTH, SOUTH, EAST, WEST }
 
+    /** Must be kept in-sync with the inline sample in [enumValueOf] */
     @Sample
     fun enumValueOfSample() {
         // enum class Direction { NORTH, SOUTH, EAST, WEST }
 
-        val east = enumValueOf<Direction>("EAST")
+        val east: Direction = enumValueOf("EAST")
         assertPrints(east, "EAST")
+        assertPrints(east.ordinal, "2")
 
         // The lookup fails if a string does not correspond to any of the enum entries
         assertFailsWith<IllegalArgumentException> { enumValueOf<Direction>("UP") }
@@ -29,6 +33,7 @@ class Enums {
 
     enum class Empty
 
+    /** Must be kept in-sync with the inline sample in [enumEntries] */
     @Sample
     fun enumEntriesSample() {
         // enum class Direction { NORTH, SOUTH, EAST, WEST }
@@ -39,5 +44,39 @@ class Enums {
 
         // enum class Empty {}
         assertPrints(enumEntries<Empty>(), "[]")
+    }
+
+    /** Must be kept in-sync with the inline sample in [valueOf] */
+    @Sample
+    fun enumEntriesValueOfSample() {
+        // enum class Direction { NORTH, SOUTH, EAST, WEST }
+
+        val east: Direction = Direction.entries.valueOf("EAST")
+        assertPrints(east, "EAST")
+        assertPrints(east.ordinal, "2")
+
+        // The lookup fails if a string does not correspond to any of the enum entries
+        assertFailsWith<NoSuchElementException> { Direction.entries.valueOf("UP") }
+        assertFailsWith<NoSuchElementException> { Direction.entries.valueOf("") }
+
+        // The lookup is case-sensitive and fails if the name doesn't match any constant
+        assertFailsWith<NoSuchElementException> { Direction.entries.valueOf("east") }
+    }
+
+    /** Must be kept in-sync with the inline sample in [valueOfOrNull] */
+    @Sample
+    fun enumEntriesValueOfOrNullSample() {
+        // enum class Direction { NORTH, SOUTH, EAST, WEST }
+
+        val east: Direction? = Direction.entries.valueOfOrNull("EAST")
+        assertPrints(east, "EAST")
+        assertPrints(east!!.ordinal, "2")
+
+        // The lookup returns null if a string does not correspond to any of the enum entries
+        assertPrints(Direction.entries.valueOfOrNull("UP"), "null")
+        assertPrints(Direction.entries.valueOfOrNull(""), "null")
+
+        // The lookup is case-sensitive and returns null if the name doesn't match any entry name exactly
+        assertPrints(Direction.entries.valueOfOrNull("east"), "null")
     }
 }

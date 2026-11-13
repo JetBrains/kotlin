@@ -6926,6 +6926,8 @@ final fun <#A: kotlin/Comparable<#A>> kotlin.comparisons/minOf(#A, kotlin/Array<
 final fun <#A: kotlin/Comparable<#A>> kotlin.comparisons/naturalOrder(): kotlin/Comparator<#A> // kotlin.comparisons/naturalOrder|naturalOrder(){0§<kotlin.Comparable<0:0>>}[0]
 final fun <#A: kotlin/Comparable<#A>> kotlin.comparisons/reverseOrder(): kotlin/Comparator<#A> // kotlin.comparisons/reverseOrder|reverseOrder(){0§<kotlin.Comparable<0:0>>}[0]
 final fun <#A: kotlin/Comparable<*>> kotlin.comparisons/compareValues(#A?, #A?): kotlin/Int // kotlin.comparisons/compareValues|compareValues(0:0?;0:0?){0§<kotlin.Comparable<*>>}[0]
+final fun <#A: kotlin/Enum<#A>> (kotlin.enums/EnumEntries<#A>).kotlin.enums/valueOf(kotlin/String): #A // kotlin.enums/valueOf|valueOf@kotlin.enums.EnumEntries<0:0>(kotlin.String){0§<kotlin.Enum<0:0>>}[0]
+final fun <#A: kotlin/Enum<#A>> (kotlin.enums/EnumEntries<#A>).kotlin.enums/valueOfOrNull(kotlin/String): #A? // kotlin.enums/valueOfOrNull|valueOfOrNull@kotlin.enums.EnumEntries<0:0>(kotlin.String){0§<kotlin.Enum<0:0>>}[0]
 final fun <#A: kotlin/Enum<#A>> kotlin.enums/enumEntries(kotlin/Array<#A>): kotlin.enums/EnumEntries<#A> // kotlin.enums/enumEntries|enumEntries(kotlin.Array<0:0>){0§<kotlin.Enum<0:0>>}[0]
 final fun <#A: kotlin/Enum<#A>> kotlin.enums/enumEntries(kotlin/Function0<kotlin/Array<#A>>): kotlin.enums/EnumEntries<#A> // kotlin.enums/enumEntries|enumEntries(kotlin.Function0<kotlin.Array<0:0>>){0§<kotlin.Enum<0:0>>}[0]
 final fun <#A: kotlin/Enum<#A>> kotlin.enums/enumEntriesIntrinsic(): kotlin.enums/EnumEntries<#A> // kotlin.enums/enumEntriesIntrinsic|enumEntriesIntrinsic(){0§<kotlin.Enum<0:0>>}[0]
