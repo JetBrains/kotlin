@@ -1,0 +1,11 @@
+STEP 0:
+    modifications:
+        U : a.kt -> a.kt
+    added cache: a.kt
+
+// lib gains the dependency on externalLib, and msg() changes.
+STEP 1:
+    dependencies: externalLib
+    modifications:
+        U : a.1.kt -> a.kt
+    modified cache: a.kt
