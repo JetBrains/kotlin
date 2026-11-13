@@ -51,3 +51,26 @@ fun KotlinToolchains.unwrap(): KotlinToolchains {
     }
     return this
 }
+
+// Keep the Kotlin/Native properties in sync with the values in kotlin-build-tools-api-tests/build.gradle.kts
+const val NATIVE_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.nativeStdlibClasspath"
+const val NATIVE_STDLIB_IS_BOOTSTRAP_PROPERTY = "kotlin.build-tools-api.test.nativeStdlibIsBootstrap"
+
+/**
+ * Whether the Kotlin/Native stdlib under test comes from the (older) bootstrap Kotlin/Native distribution
+ * rather than being built from sources together with the compiler.
+ */
+val isKotlinNativeStdlibFromBootstrap: Boolean
+    get() = System.getProperty(NATIVE_STDLIB_IS_BOOTSTRAP_PROPERTY).toBoolean()
+
+/**
+ * Whether the Kotlin/Native compiler is available to the Build Tools API implementation under test.
+ *
+ * Gradle sets [NATIVE_STDLIB_CLASSPATH_PROPERTY] only for test suites whose BTA classpath contains the Kotlin/Native compiler:
+ * every regular suite when the repository is built with `kotlin.native.enabled=true`, and the `testNative` suite otherwise.
+ */
+val isKotlinNativeCompilerAvailable: Boolean
+    get() = System.getProperty(NATIVE_STDLIB_CLASSPATH_PROPERTY) != null
+
+val currentKotlinNativeStdlibKlibLocation
+    get() = Paths.get(System.getProperty(NATIVE_STDLIB_CLASSPATH_PROPERTY))

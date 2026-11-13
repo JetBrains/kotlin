@@ -52,12 +52,6 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-compiler-embeddable</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-compiler-runner</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
@@ -65,6 +59,12 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>typescript-export-standalone-embeddable</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-compiler-embeddable</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>

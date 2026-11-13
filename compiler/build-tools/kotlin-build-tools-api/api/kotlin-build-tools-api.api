@@ -2113,6 +2113,46 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompila
 	public static synthetic fun snapshotBasedIcConfiguration$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain$Companion;
+	public static fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain;
+	public abstract fun nativeKlibCompilationOperationBuilder (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Builder;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain$Companion {
+	public final fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchainKt {
+	public static final fun nativeKlibCompilationOperation (Lorg/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation;
+	public static synthetic fun nativeKlibCompilationOperation$default (Lorg/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation, org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Companion;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments;
+	public abstract fun getDestination ()Ljava/nio/file/Path;
+	public abstract fun getSources ()Ljava/util/List;
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Builder : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$Builder;
+	public abstract fun getDestination ()Ljava/nio/file/Path;
+	public abstract fun getSources ()Ljava/util/List;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation, org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Companion;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Option;)Ljava/lang/Object;

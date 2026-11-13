@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jsScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.wasmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.isKotlinNativeCompilerAvailable
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.unwrap
 import org.jetbrains.kotlin.testFederation.testFederationAllTestsRequested
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -123,6 +124,9 @@ class BtaV2PlatformAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
                 if (toolchain.supportsMetadata()) named("$labelPrefix[Metadata]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
                     baseTest.metadataProject(toolchain, policy, action)
                 } else null,
+                if (toolchain.supportsNative()) named("$labelPrefix[Native]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
+                    baseTest.nativeProject(toolchain, policy, action)
+                } else null,
             )
         }
     }
@@ -169,6 +173,16 @@ class DefaultStrategyAndPlatformAgnosticProjectTestArgumentProvider : ArgumentsP
                             ) {
                                 { baseTest: BaseCompilationTest, testAction: ProjectAction ->
                                     baseTest.metadataProject(executionStrategyConfiguration.payload(), testAction)
+                                }
+                            }
+                        } else null,
+                        // Kotlin/Native compilation is not supported via the daemon yet, so only the in-process variants get [Native]
+                        if (temporaryKotlinToolchains.supportsNative() && executionStrategyConfiguration.payload().second is ExecutionPolicy.InProcess) {
+                            named(
+                                "${executionStrategyConfiguration.name}[Native]"
+                            ) {
+                                { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                                    baseTest.nativeProject(executionStrategyConfiguration.payload(), testAction)
                                 }
                             }
                         } else null,
@@ -268,3 +282,10 @@ typealias ScenarioAction = Scenario<out BaseCompilationOperation.Builder, out Ba
 fun KotlinToolchains.supportsJs() = KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 4, 20)
 fun KotlinToolchains.supportsWasm() = KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 4, 20)
 fun KotlinToolchains.supportsMetadata() = KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 4, 20)
+
+/**
+ * Kotlin/Native is only included when the Kotlin/Native compiler is on the classpath of the implementation under test,
+ * see [isKotlinNativeCompilerAvailable].
+ */
+fun KotlinToolchains.supportsNative() =
+    KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 5, 20) && isKotlinNativeCompilerAvailable
