@@ -50,7 +50,6 @@ ignored:
  - compiler/ir/ir.actualization/ReadMe.md
  - compiler/ir/ir.inline/ReadMe.md
  - compiler/ir/ir.objcinterop/ReadMe.md
- - compiler/ir/ir.psi2ir/ReadMe.md
  - compiler/ir/ir.tree/ReadMe.md
  - compiler/ir/ir.tree/tree-generator/ReadMe.md
  - compiler/ir/serialization.common/ReadMe.md
@@ -165,7 +164,6 @@ ignored:
  - plugins/kotlinx-serialization/README.md
  - plugins/lombok/README.md
  - plugins/parcelize/README.md
- - plugins/scripting/scripting-ide-common/README.md
  - prepare/compiler-native-image/README.md
  - repo/artifacts-tests/README.md
  - repo/auto-code-review/README.md
