@@ -45,10 +45,16 @@ class CliJavaModuleResolver(
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
         }
-        // `findJavaModule(rootId)` looks in the system modules first, which is only correct if no root belongs to both.
-        val systemRootIds = systemModules.flatMapTo(HashSet()) { module -> module.moduleRoots.map { root -> root.id } }
-        check(userModules.none { module -> module.moduleRoots.any { root -> root.id in systemRootIds } }) {
-            "A classpath root cannot belong to both a system module and a user module: $userModules"
+        // `findJavaModule(rootId)` takes the first module owning a root, which is only correct if the modules sharing a root have
+        // the same name: one module which is both a system and a user module.
+        val systemModuleNames = systemModules.flatMap { module -> module.moduleRoots.map { root -> root.id to module.name } }.toMap()
+        for (module in userModules) {
+            for (root in module.moduleRoots) {
+                val systemModuleName = systemModuleNames[root.id] ?: continue
+                check(systemModuleName == module.name) {
+                    "The classpath root ${root.file} belongs to the system module $systemModuleName and the user module ${module.name}"
+                }
+            }
         }
     }
 
@@ -77,9 +83,9 @@ class CliJavaModuleResolver(
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
         moduleRoots.any { (val root = file, val isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
 
-    /** The module owning the binary classpath root [rootId]; a system module and a user module never share a root. */
+    /** The module owning the binary classpath root [rootId], looked up in the user modules first. */
     private fun findJavaModule(rootId: JvmClasspathRootId): JavaModule? =
-        systemModules.firstOrNull { module -> rootId in module } ?: userModules.firstOrNull { module -> rootId in module }
+        userModules.firstOrNull { module -> rootId in module } ?: systemModules.firstOrNull { module -> rootId in module }
 
     private operator fun JavaModule.contains(rootId: JvmClasspathRootId): Boolean =
         moduleRoots.any { root -> root.isBinary && root.id == rootId }
