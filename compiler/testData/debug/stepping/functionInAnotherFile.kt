@@ -64,7 +64,7 @@ fun bar(x: Int) =
 // test.kt:22 bar
 // test.kt:15 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:14 $box (8, 4)
 // foo.kt:5 $foo (8, 13, 8)
 // foo.kt:8 $foo (15, 11)

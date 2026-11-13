@@ -81,7 +81,7 @@ suspend fun box() {
 // test.kt:27 doResume:
 // test.kt:28 doResume: a=Unit
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:29 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1)
 // test.kt:10 $atomic: $i:i32=0:i32 (21, 21, 31, 21)
 // test.kt:8 $AtomicInt.<init>: $<this>:(ref $AtomicInt)=(ref $AtomicInt), $value:i32=0:i32 (16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 31, 31, 31)

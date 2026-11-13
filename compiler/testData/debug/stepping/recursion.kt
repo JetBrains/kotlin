@@ -59,7 +59,7 @@ fun foo(n :Int ) : Int {
 // test.kt:12 foo
 // test.kt:6 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (12)
 // test.kt:5 $box (16, 12)
 // test.kt:9 $foo (8, 13, 8, 18, 23, 18)

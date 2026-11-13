@@ -41,7 +41,7 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // test.kt:7 component3:
 // test.kt:13 doResume: x_param="O":kotlin.String, y_param="K":kotlin.String
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // coroutineHelpers.kt:9 $EmptyContinuation.<get-context>: $<this>:(ref $EmptyContinuation)=(ref $EmptyContinuation) (37, 37)
 // test.kt:14 $SuspendLambda_0.doResume: $<this>:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (1, 1, 1, 1, 1, 1)
 // test.kt:14 $$box__JsExportAdapterCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)

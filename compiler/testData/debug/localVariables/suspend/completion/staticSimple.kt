@@ -10,5 +10,5 @@ suspend fun box() {}
 // EXPECTATIONS JS_IR
 // test.kt:4 box: $completion=EmptyContinuation
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (19, 19)

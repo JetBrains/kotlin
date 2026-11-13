@@ -96,7 +96,7 @@ fun nop() {}
 // test.kt:31 nop
 // test.kt:22 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (8)
 // test.kt:25 $box (11, 4)
 // test.kt:5 $box (8)

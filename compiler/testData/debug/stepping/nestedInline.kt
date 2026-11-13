@@ -95,7 +95,7 @@ inline fun html(init: () -> Unit) {
 // test.kt:16 box
 // test.kt:22 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:20 $box (19)
 // test.kt:8 $box (14)
 // test.kt:10 $box (4)

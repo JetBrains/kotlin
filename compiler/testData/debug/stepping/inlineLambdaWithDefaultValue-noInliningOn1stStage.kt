@@ -54,7 +54,7 @@ fun box(): String = if (defaultCall() == 7 && explicitCall(1) == 3) "OK" else "F
 // test.kt:28 box
 // default.kt:22 explicitCall
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:28 $box (24)
 // default.kt:18 $defaultCall (11)
 // wrapped.kt:11 $defaultCall (11)

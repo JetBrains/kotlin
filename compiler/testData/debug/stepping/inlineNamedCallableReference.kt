@@ -37,7 +37,7 @@ fun g() {}
 // test.kt:12 g
 // test.kt:6 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (12)
 // test.kt:5 $box (4)
 // test.kt:9 $box (4)

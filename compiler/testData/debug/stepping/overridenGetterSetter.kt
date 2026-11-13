@@ -112,7 +112,7 @@ fun box() {
 // test.kt:27 testPropertyInInterfaceImpl
 // test.kt:34 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:31 $box (17)
 // test.kt:18 $MyInterfaceImplWithBreakpoints.<init> (28)
 // test.kt:21 $MyInterfaceImplWithBreakpoints.<init> (28)

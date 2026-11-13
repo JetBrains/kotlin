@@ -70,7 +70,7 @@ fun baz(v:(() -> Unit)) {
 // test3.kt:17 baz
 // test.kt:9 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:6 $box (8)
 // test1.kt:12 $box (19)
 // test1.kt:13 $box (1)

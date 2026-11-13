@@ -23,7 +23,7 @@ suspend fun box() {
 // test.kt:9 box: $completion=EmptyContinuation
 // test.kt:5 foo: $completion=EmptyContinuation
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:9 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (4, 4)
 // test.kt:6 $A.<init>: $<this>:(ref $A)=(ref $A) (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 // test.kt:9 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (4, 8)

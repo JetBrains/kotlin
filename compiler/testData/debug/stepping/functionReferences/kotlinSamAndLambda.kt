@@ -134,7 +134,7 @@ fun box(): String {
 
 // test.kt:69 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:9 $box (17, 48, 52, 48)
 // test.kt:9 $box$lambda.invoke (17, 31, 38, 42, 38)
 // test.kt:9 $box$lambda$lambda.invoke (31, 33, 35)

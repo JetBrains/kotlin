@@ -102,7 +102,7 @@ fun box() {
 // test.kt:28 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="OK":kotlin.String, j=0:number
 // test.kt:31 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="OK":kotlin.String, j=0:number
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:37 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
 // test.kt:15 $compute: $y:i32=0:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (20, 20)
 // test.kt:16 $compute: $y:i32=42:i32, $i:i32=0:i32, $s:(ref null $kotlin.String)=null, $s2:(ref null $kotlin.String)=null, $j:i32=0:i32 (22, 12, 30, 12, 12, 22, 22, 22, 22, 22, 22)

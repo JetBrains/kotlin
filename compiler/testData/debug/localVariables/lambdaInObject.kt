@@ -84,7 +84,7 @@ fun box() {
 // test.kt:15 baz: param=6:number, b=2:number, d=4:number
 // test.kt:27 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:20 $box: (4)
 // test.kt:3 $box: (4)
 // test.kt:7 $<no name provided>.<init>: $<this>:(ref $<no name provided>)=(ref $<no name provided>) (5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5)

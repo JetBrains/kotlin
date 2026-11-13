@@ -31,7 +31,7 @@ fun box() {
 // test.kt:10 foo: x=1:number
 // test.kt:14 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:13 $box: (4)
 // test.kt:5 $foo: $x:i32=0:i32 (12)
 // test.kt:9 $foo: $x:i32=1:i32 (4, 4)

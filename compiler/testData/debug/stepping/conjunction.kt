@@ -59,7 +59,7 @@ fun getD() = true
 // test.kt:4 box
 // test.kt:12 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (16)
 // test.kt:14 $getA (13, 17)
 // test.kt:4 $box (16)
