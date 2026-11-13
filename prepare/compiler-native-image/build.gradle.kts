@@ -322,6 +322,7 @@ val kotlincNativeImageDist = tasks.register<Sync>("kotlincNativeImageDist") {
     val librariesStripVersionFiles = files(nativeImageClasspath)
     into("lib") {
         from(librariesStripVersionFiles) {
+            exclude("kotlin-compiler-embeddable*.jar")
             rename {
                 it.replace(Regex("-\\d.*\\.jar\$"), ".jar")
             }
