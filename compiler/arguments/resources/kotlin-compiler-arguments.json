@@ -17786,6 +17786,51 @@
                                         "deprecatedMessage": null
                                     },
                                     {
+                                        "name": "Xllvm-isel",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "LLVM instruction selector used when generating machine code:\n- 'default' lets the compiler pick the selector configured for the target in konan.properties, or the LLVM default if none is configured;\n- 'selection-dag' lowers the code through a target-independent Selection DAG, producing high-quality machine code;\n- 'global' uses GlobalISel, which is faster when optimizations are disabled and falls back to SelectionDAG for constructs it does not support;\n- 'fast' uses FastISel, a greedy, line-by-line selector optimized for minimal compile time.\nOmitting the argument is equivalent to 'default'.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "{default|selection-dag|global|fast}",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.5.20",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        },
+                                        "argumentType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "deprecatedMessage": null
+                                    },
+                                    {
                                         "name": "Xllvm-lto-passes",
                                         "shortName": null,
                                         "deprecatedName": null,
