@@ -118,10 +118,6 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
                 // Let BTA derive all the settings from the link compiler arguments the same way the compiler does it
                 // (defaults implied by the target, language features enabled via `-XXLanguage:` or `-language-version`, etc.)
                 configureFrom(createLinkingOperation(buildSession.kotlinToolchains))
-                this[GRANULARITY] = when (granularity.get()) {
-                    KotlinJsIrOutputGranularity.PER_FILE -> JsDtsGranularity.PER_FILE
-                    else -> JsDtsGranularity.WHOLE_PROGRAM
-                }
             }
             .build()
 

@@ -209,6 +209,67 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
+    @DisplayName("Rich TS declarations are generated per file")
+    @GradleTest
+    @TestMetadata("js-per-file")
+    fun generateRichDtsWithPerFileGranularity(gradleVersion: GradleVersion) {
+        project("js-per-file", gradleVersion) {
+            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=true\n")
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    generateTypeScriptDefinitions()
+                }
+            }
+
+            kotlinSourcesDir("jsMain").resolve("repro/users/Users.kt").apply {
+                createParentDirectories()
+                writeText(
+                    """
+                    |package repro.users
+                    |
+                    |@JsExport
+                    |class Users
+                    |
+                    |@JsExport
+                    |fun users(): String = "users"
+                    """.trimMargin()
+                )
+            }
+            kotlinSourcesDir("jsMain").resolve("repro/orders/Orders.kt").apply {
+                createParentDirectories()
+                writeText(
+                    """
+                    |package repro.orders
+                    |
+                    |@JsExport
+                    |class Orders
+                    |
+                    |@JsExport
+                    |fun orders(): String = "orders"
+                    """.trimMargin()
+                )
+            }
+
+            build("jsDevelopmentExecutableCompileSync") {
+                val packageDir = projectPath.resolve("build/js/packages/$projectName/kotlin/$projectName")
+                val usersDts = packageDir.resolve("repro/users/Users.export.d.mts")
+                val ordersDts = packageDir.resolve("repro/orders/Orders.export.d.mts")
+
+                assertTasksExecuted(":jsDevelopmentExecutableGenerateTypeScriptDefinitions")
+                assertFileExists(usersDts)
+                assertFileContains(usersDts, "class Users")
+                assertFileContains(usersDts, "function users(): string")
+                assertFileDoesNotContain(usersDts, "class Orders")
+
+                assertFileExists(ordersDts)
+                assertFileContains(ordersDts, "class Orders")
+                assertFileContains(ordersDts, "function orders(): string")
+                assertFileDoesNotContain(ordersDts, "class Users")
+            }
+        }
+    }
+
     @TestMetadata("simple-js-executable")
     @MustRunOnChangesInJs
     @DisplayName("es2020 target produces ES modules and compiles Long as bigint by default")
