@@ -357,7 +357,7 @@ private:
     std::queue<ObjHeader*> objQueue_;
 };
 
-void PrepareForMemoryDump() {
+void PrepareForMemoryDump() noexcept {
     mm::GlobalData::Instance().threadRegistry().PublishAll();
 }
 
@@ -375,9 +375,7 @@ void DumpMemoryOrThrow(int fd, bool omitPrimitiveArrayPayloads) {
     }
 }
 
-bool DumpMemory(int fd, bool omitPrimitiveArrayPayloads) noexcept {
-    PrepareForMemoryDump();
-
+bool WriteMemoryDump(int fd, bool omitPrimitiveArrayPayloads) noexcept {
     bool success = true;
     try {
         DumpMemoryOrThrow(fd, omitPrimitiveArrayPayloads);
@@ -387,6 +385,11 @@ bool DumpMemory(int fd, bool omitPrimitiveArrayPayloads) noexcept {
     }
 
     return success;
+}
+
+bool DumpMemory(int fd, bool omitPrimitiveArrayPayloads) noexcept {
+    PrepareForMemoryDump();
+    return WriteMemoryDump(fd, omitPrimitiveArrayPayloads);
 }
 
 } // namespace kotlin::mm
