@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.CODE_ANALYSIS
 import org.jetbrains.kotlin.build.report.metrics.COMPILER_INITIALIZATION
 import org.jetbrains.kotlin.build.report.metrics.CustomBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.GcMetric
 import org.jetbrains.kotlin.build.report.metrics.IR_LINKING
 import org.jetbrains.kotlin.build.report.metrics.IR_LOWERING
 import org.jetbrains.kotlin.build.report.metrics.IR_PRE_LOWERING
@@ -44,6 +45,7 @@ internal class CompilerMetricsJson(
     val backendStats: TimeJson? = null,
     val dynamicStats: List<DynamicStatsJson>? = null,
     val klibElementStats: List<KlibElementStatsJson>? = null,
+    val gcStats: List<GarbageCollectionStatsJson>? = null,
 ) {
     val phases: List<Pair<PhaseType, TimeJson?>>
         get() = listOf(
@@ -77,6 +79,10 @@ internal data class DynamicStatsJson(val parentPhaseType: PhaseType, val name: S
 @Serializable
 internal data class KlibElementStatsJson(val path: String, val size: Long)
 
+/** GC counters the compiler measured in its own JVM; populated for Native in both in-process and out-of-process execution. */
+@Serializable
+internal data class GarbageCollectionStatsJson(val kind: String, val millis: Long, val count: Long)
+
 internal fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.addCompilerMetrics(metrics: CompilerMetricsJson) {
     metrics.phases.forEach { (phaseType, time) ->
         if (time != null) addTimeMetricNs(phaseType.toGradleBuildTime(), time.nanos)
@@ -86,6 +92,9 @@ internal fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.addCo
     }
     metrics.klibElementStats?.forEach { (path, size) ->
         addMetric(KlibSizeMetric.createIfDoesNotExistAndReturn(path), size)
+    }
+    metrics.gcStats?.forEach { stats ->
+        addGcMetric(stats.kind, GcMetric(stats.millis, stats.count))
     }
 }
 
