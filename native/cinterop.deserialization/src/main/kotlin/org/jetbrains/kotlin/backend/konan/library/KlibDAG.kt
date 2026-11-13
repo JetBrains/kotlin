@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -266,6 +267,7 @@ annotation class InternalKlibDAGApi
 class KlibDAGBuilder(parameters: Parameters) {
     class Parameters(
         val libraries: List<KotlinLibrary>,
+        val onWarning: (String) -> Unit,
         val onError: (String) -> Nothing,
         val isRoot: (KotlinLibrary) -> Boolean,
     ) {
@@ -321,6 +323,14 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
 
     // Index: KLIB -> imported signatures.
     private val nodeToImportedSignatures: MutableMap<KlibDAGNodeImpl, Set<IdSignature>> = hashMapOf()
+
+    /**
+     * Signatures that are declared in more than one library, mapped to the libraries that declare them.
+     *
+     * Note: Each list holds at least two libraries. The libraries appear in the same order as in
+     * [KlibDAGBuilder.Parameters.libraries].
+     */
+    private val duplicatedSignatures: MutableMap<IdSignature, MutableList<KotlinLibrary>> = hashMapOf()
 
     fun build(): KlibDAG {
         // Optimization: Stdlib is a dependency for each library. We don't need to extract signatures from it.
@@ -422,6 +432,8 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
             usedNodes[node] = State.ALREADY_PROCESSED
         }
 
+        warnAboutDuplicatedSignatures()
+
         /**
          * Select only the subset of actually used nodes.
          * Note that the entries in [KlibDAG.dag] in the returned object follow the order of [KlibDAGBuilder.Parameters.libraries].
@@ -484,20 +496,67 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
      */
     private fun populateSignatureIndicesForLibrary(node: KlibDAGNodeImpl, extractedSignatures: ExtractedSignatures) {
         for (signature in extractedSignatures.declaredSignatures) {
-            // Note: It might happen that there are clashing signatures coming from different libraries.
-            // At the moment, we will just overwrite the first occurrence with the next one(s).
-            // However, this should be fixed in the appropriate way once we have a design decision for KT-82172.
-            // TODO(KT-82172): Handle clashing signatures here in the proper way.
-            declaredSignatureToNode[signature] = node
+            val storedNode = declaredSignatureToNode.getOrPut(signature) { node }
+            if (storedNode !== node) {
+                /**
+                 * The `signature` is declared in more than one library.
+                 * Keep the first node ([storedNode]) in the index, but collect the fact of the clash to [duplicatedSignatures]
+                 * so it can be later reported via a compiler diagnostic.
+                 */
+                duplicatedSignatures.getOrPut(signature) { mutableListOf(storedNode.library) } += node.library
+            }
         }
 
         nodeToImportedSignatures[node] = extractedSignatures.importedSignatures
+    }
+
+    private fun warnAboutDuplicatedSignatures() {
+        if (duplicatedSignatures.isEmpty()) return
+
+        duplicatedSignatures.entries
+            .groupBy(keySelector = { it.value.map(KotlinLibrary::path) }, valueTransform = { it.key })
+            .entries
+            .sortedWith(Comparator { [leftLibraryPaths, _], [rightLibraryPaths, _] ->
+                for (i in 0 until minOf(leftLibraryPaths.size, rightLibraryPaths.size)) {
+                    leftLibraryPaths[i].compareTo(rightLibraryPaths[i]).let { if (it != 0) return@Comparator it }
+                }
+                leftLibraryPaths.size.compareTo(rightLibraryPaths.size)
+            }).forEach { [libraryPaths: List<Path>, signatures: List<IdSignature>] ->
+                val declarations = signatures.map(IdSignature::render).sorted()
+                val displayedDeclarations = declarations.take(MAX_DECLARATIONS_IN_WARNING)
+                val omittedDeclarationsCount = declarations.size - displayedDeclarations.size
+
+                parameters.onWarning(
+                    buildString {
+                        append("Libraries ")
+                        append(libraryPaths.joinWithAnd())
+                        append(" declare ").append(declarations.size).append(" top-level declaration")
+                        if (declarations.size != 1) append('s')
+                        append(" with the same signature")
+                        if (declarations.size != 1) append('s')
+                        append(": ").append(displayedDeclarations.joinToString { "'$it'" })
+                        if (omittedDeclarationsCount > 0) append(", ... (and $omittedDeclarationsCount more)")
+                        append(". Declarations from ").append(libraryPaths.first())
+                        append(" are used because it comes first in the load order; the duplicates from ")
+                        append(libraryPaths.drop(1).joinWithAnd())
+                        append(" are ignored. To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.")
+                    }
+                )
+            }
     }
 
     private enum class State {
         SCHEDULED_FOR_PROCESSING,
         ALREADY_PROCESSED,
     }
+}
+
+private const val MAX_DECLARATIONS_IN_WARNING = 10
+
+private fun <T> List<T>.joinWithAnd(): String = when (size) {
+    0 -> ""
+    1 -> first().toString()
+    else -> dropLast(1).joinToString(", ") + " and " + last().toString()
 }
 
 private class KlibDAGNodeImpl(override val library: KotlinLibrary) : KlibDAGNode {

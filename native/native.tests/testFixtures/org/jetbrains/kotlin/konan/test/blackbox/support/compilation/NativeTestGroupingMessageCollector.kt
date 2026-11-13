@@ -76,6 +76,7 @@ internal class NativeTestGroupingMessageCollector(
                     || isK1LanguageVersionWarning(message)
                     || isArgumentPassedMultipleTimesWarning(message)
                     || isOutdatedRuntimeJdkWarning(message)
+                    || isDuplicatedSignatureInDependenciesWarning(message)
                 -> {
                 // These warnings are known and should not be reported as errors.
                 severity
@@ -132,6 +133,8 @@ internal class NativeTestGroupingMessageCollector(
 
     private fun isOutdatedRuntimeJdkWarning(message: String): Boolean = message.matches(OUTDATED_RUNTIME_JDK_WARNING_REGEX)
 
+    private fun isDuplicatedSignatureInDependenciesWarning(message: String): Boolean = message.matches(DUPLICATED_SIGNATURE_IN_DEPENDENCIES_WARNING_REGEX)
+
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
 
     companion object {
@@ -147,6 +150,7 @@ internal class NativeTestGroupingMessageCollector(
         private val PARTIAL_LINKAGE_WARNING_REGEX = Regex("^<[^<>]+>( @ (?:(?!: ).)+)?: .*")
         private val ARGUMENT_PASSED_MULTIPLE_TIMES_WARNING_REGEX = Regex("Argument '.*' is passed multiple times: .*")
         private val OUTDATED_RUNTIME_JDK_WARNING_REGEX = """Running Kotlin compiler using JDK \d+ will not be supported in future versions of Kotlin.*""".toRegex()
+        private val DUPLICATED_SIGNATURE_IN_DEPENDENCIES_WARNING_REGEX = """Libraries .* declare \d+ top-level declarations? with the same signatures?: .*""".toRegex()
 
         private fun parseLanguageFeatureArg(arg: String): String? =
             substringAfter(arg, "-XXLanguage:-") ?: substringAfter(arg, "-XXLanguage:+")

@@ -407,6 +407,7 @@ class NativeSecondStageCompilationConfig(
         ) ?: KlibDAGBuilder(
                 Parameters(
                         libraries = loadedKlibs.all,
+                        onWarning = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_WARNING, it) },
                         onError = ::reportDagProblemAndHaltCompilation,
                 ) { it.isExplicitlySpecifiedByUserInCLIArgument }
         ).build()
