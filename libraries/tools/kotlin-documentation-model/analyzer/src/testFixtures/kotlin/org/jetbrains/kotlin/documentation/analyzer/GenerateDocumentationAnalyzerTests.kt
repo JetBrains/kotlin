@@ -43,6 +43,9 @@ fun main(args: Array<String>) {
             testClass<AbstractUniqueDeclarationIdGoldenTest> {
                 model("declarationIds")
             }
+            testClass<AbstractDeclarationIdErrorsGoldenTest> {
+                model("declarationIdErrors")
+            }
         }
     }
 }

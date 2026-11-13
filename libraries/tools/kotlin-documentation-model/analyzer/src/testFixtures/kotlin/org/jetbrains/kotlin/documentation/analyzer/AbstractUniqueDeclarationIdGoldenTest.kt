@@ -3,26 +3,26 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(org.jetbrains.kotlin.analysis.api.KaExperimentalApi::class)
-
 package org.jetbrains.kotlin.documentation.analyzer
 
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiPackage
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.fileScope
+import org.jetbrains.kotlin.analysis.api.scopes.syntheticJavaPropertiesScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.StandaloneModeConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.documentation.analyzer.ids.generateDeclarationId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.test.services.TestServices
  * in source order, and checks that each ID identifies a single declaration.
  *
  * Runs on the Analysis API test framework in standalone mode, matching the sessions the KDM analyzer itself
- * creates. The `standalone.fir` output prefix is dropped so the JVM fixtures share the default golden files
- * with the other KDM suites.
+ * creates.
  */
 abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedTest() {
     override val configurator: AnalysisApiTestConfigurator =
@@ -47,7 +46,7 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
     ) {
         val contextFile = mainFile ?: mainModule.ktFiles.firstOrNull() ?: error("The fixture must contain a Kotlin file")
         val actual = analyzeForTest(contextFile) {
-            with(useSiteSession) { dumpUnhashedIds(mainModule.psiFiles) }
+            dumpUnhashedIds(mainModule.psiFiles)
         }
         assertEqualsToTestOutputFile(actual, ".txt")
     }
@@ -59,8 +58,15 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
  * sharing a package contribute it once, at the first file that declares it. Symbols with no declaration of their
  * own (default constructors, enum `values`/`valueOf`/`entries`, synthetic Java properties) follow the class body
  * that owns them. The order of the files themselves is not part of the contract.
+ *
+ * When [errorsByDeclaration] is supplied, every line whose declaration has compiler errors gets them appended
+ * after the ID, as `// ERROR_NAME, ...`.
  */
-private fun KaSession.dumpUnhashedIds(files: Collection<PsiFile>): String {
+context(session: KaSession)
+internal fun dumpUnhashedIds(
+    files: Collection<PsiFile>,
+    errorsByDeclaration: Map<PsiElement, List<String>> = emptyMap(),
+): String {
     // ID -> the real PSI of every visited declaration. Compiler-generated symbols (default constructors,
     // enum `values`/`entries`, synthetic Java properties) and packages have no real PSI; the generated symbols
     // are reached exactly once, through member scopes.
@@ -70,42 +76,33 @@ private fun KaSession.dumpUnhashedIds(files: Collection<PsiFile>): String {
             generateDeclarationId(symbol, hashSignature = false)?.let { id ->
                 ids.getOrPut(id) { mutableListOf() }.add(symbol.realPsi)
             }
-        } catch (_: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
+            error("Failed to generate a declaration ID for $symbol: ${e.message}")
         }
     }
 
-    // Visiting the class scopes also picks up symbols with no declaration in the source; symbols already
-    // reached through PSI are kept once by [ids].
-    fun addClassScopeSymbols(classSymbol: KaNamedClassSymbol) {
-        classSymbol.combinedDeclaredMemberScope.declarations.forEach(::add)
-        classSymbol.combinedDeclaredMemberScope.constructors.forEach(::add)
-        classSymbol.defaultType.syntheticJavaPropertiesScope
-            ?.getCallableSignatures()
-            ?.forEach { add(it.symbol) }
-    }
+    // Scopes do not promise source order, so it is restored here. A stable sort keeps symbols with no PSI
+    // (compiler-generated) after the declarations of the class that owns them, in scope order.
+    fun KaSymbol.sourceOrderKey(): Int = realPsi?.textOffset ?: Int.MAX_VALUE
 
-    fun walkKtDeclaration(declaration: KtDeclaration) {
-        val symbol = declaration.symbol
+    fun walkDeclaration(symbol: KaDeclarationSymbol) {
         add(symbol)
         if (symbol is KaPropertySymbol) {
             symbol.getter?.let(::add)
             symbol.setter?.let(::add)
         }
-        if (declaration is KtClassOrObject) {
+        if (symbol is KaNamedClassSymbol) {
             // The primary constructor is declared in the class header, before the body declarations.
-            declaration.primaryConstructor?.let { add(it.symbol) }
-            declaration.declarations.forEach { walkKtDeclaration(it) }
+            val scope = symbol.combinedDeclaredMemberScope
+            for (member in scope.declarations.sortedBy(KaSymbol::sourceOrderKey)) {
+                walkDeclaration(member)
+            }
+            // Symbols with no declaration of their own: synthetic Java properties of this class.
+            @OptIn(KaExperimentalApi::class)
+            symbol.defaultType.syntheticJavaPropertiesScope
+                ?.getCallableSignatures()
+                ?.forEach { add(it.symbol) }
         }
-        if (symbol is KaNamedClassSymbol) addClassScopeSymbols(symbol)
-    }
-
-    fun walkJavaClass(psiClass: PsiClass) {
-        val classSymbol = psiClass.namedClassSymbol ?: return
-        add(classSymbol)
-        for (member in psiClass.children.filterIsInstance<PsiMember>()) {
-            if (member is PsiClass) walkJavaClass(member) else member.callableSymbol?.let(::add)
-        }
-        addClassScopeSymbols(classSymbol)
     }
 
     fun addPackage(fqName: FqName) {
@@ -117,32 +114,49 @@ private fun KaSession.dumpUnhashedIds(files: Collection<PsiFile>): String {
         when (file) {
             is KtFile -> {
                 addPackage(file.packageFqName)
-                file.declarations.forEach { walkKtDeclaration(it) }
+                for (symbol in file.symbol.fileScope.declarations.sortedBy(KaSymbol::sourceOrderKey)) {
+                    walkDeclaration(symbol)
+                }
             }
             is PsiJavaFile -> {
                 addPackage(FqName(file.packageName))
-                file.classes.forEach { walkJavaClass(it) }
+                file.classes.forEach { psiClass -> psiClass.namedClassSymbol?.let(::walkDeclaration) }
             }
         }
     }
 
-    checkUniqueDeclarationIds(ids)
-    return ids.keys.joinToString("\n", postfix = "\n")
+    checkUniqueDeclarationIds(ids, errorsByDeclaration)
+    return ids.entries.joinToString("\n", postfix = "\n") { (id, declarations) ->
+        val errors = declarations
+            .filterNotNull()
+            .flatMap { errorsByDeclaration[it].orEmpty() }
+            .distinct()
+            .sorted()
+        if (errors.isEmpty()) id else "$id  // ${errors.joinToString(", ")}"
+    }
 }
 
 /**
  * Checks that every generated ID identifies a single declaration. Revisiting the same declaration through
  * PSI and through member scopes is expected, but an ID shared by distinct declarations would make them
  * indistinguishable in the model. Compiler-generated symbols contribute `null` entries, which are skipped.
+ *
+ * A collision is tolerated when it involves a declaration the compiler already rejects: on code that does
+ * not compile, the ambiguity is on the erroneous declaration, not on the ID scheme. Such collisions stay
+ * visible in the golden file as repeated lines.
  */
-private fun checkUniqueDeclarationIds(ids: Map<String, List<PsiElement?>>) {
+private fun checkUniqueDeclarationIds(
+    ids: Map<String, List<PsiElement?>>,
+    errorsByDeclaration: Map<PsiElement, List<String>>,
+) {
     for ([id, declarations] in ids) {
+        if (declarations.all { it is PsiPackage }) continue
+
         val psis = declarations.filterNotNull()
-        if (psis.size > 1) {
-            check(psis.all { it.isEquivalentTo(psis.first()) }) {
-                val locations = psis.joinToString { "${it.containingFile.name}:${it.textOffset}" }
-                "Declaration ID is not unique: \"$id\" is generated by several declarations: $locations"
-            }
+        if (psis.size > 1 && psis.none { it in errorsByDeclaration }) {
+            val locations = psis.joinToString { "${it.containingFile.name}:${it.textOffset}" }
+            error("Declaration ID is not unique: \"$id\" is generated by several declarations: $locations")
+
         }
     }
 }

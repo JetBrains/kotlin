@@ -1,0 +1,3 @@
+sample
+function:sample#k#typeParameters=[]; context=[]; parameters=[kotlin/String];
+function:sample#k#typeParameters=[]; context=[]; receiver=kotlin/String; parameters=[];

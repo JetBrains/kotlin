@@ -17,17 +17,6 @@ function:sample#complex#typeParameters=[<T0_0>: kotlin/CharSequence]; context=[k
 function:sample#mapAndLambda#typeParameters=[]; context=[]; parameters=[kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/Int>>, (kotlin/String) -> kotlin/Unit];
 sample/Text
 function:sample#aliased#typeParameters=[]; context=[]; parameters=[sample/Text];
-function:sample#quoted#typeParameters=[]; context=[]; parameters=[];
-function:sample#with%20spaces#typeParameters=[]; context=[]; parameters=[];
-function:sample#say%20hello%21#typeParameters=[]; context=[]; parameters=[];
-function:sample#say%2Bhello%21#typeParameters=[]; context=[]; parameters=[];
-function:sample#say%2520hello%2521#typeParameters=[]; context=[]; parameters=[];
-sample/A%23B
-constructor:sample/A%23B#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
-sample/A%2523B
-constructor:sample/A%2523B#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
-function:sample#hashedClass#typeParameters=[]; context=[]; parameters=[sample/A%23B];
-function:sample#escapedHashClass#typeParameters=[]; context=[]; parameters=[sample/A%2523B];
 sample/Outer
 function:sample/Outer#member#typeParameters=[]; context=[]; parameters=[<T0_0>];
 function:sample/Outer#member#typeParameters=[]; context=[]; parameters=[<T0_1>];

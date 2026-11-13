@@ -20,15 +20,6 @@ context(value: String) suspend fun <T : CharSequence> Int.complex(vararg values:
 fun mapAndLambda(values: Map<String, List<Int>>, block: (String) -> Unit) {}
 typealias Text = String
 fun aliased(value: Text) {}
-fun `quoted`() {}
-fun `with spaces`() {}
-fun `say hello!`() {}
-fun `say+hello!`() {}
-fun `say%20hello%21`() {}
-class `A#B`
-class `A%23B`
-fun hashedClass(value: `A#B`) {}
-fun escapedHashClass(value: `A%23B`) {}
 class Outer<T, U> {
     fun member(value: T) {}
     fun member(value: U) {}
