@@ -126,7 +126,7 @@ abstract class JsAbstractInvalidationTest(
 
             val dtsStrategy = when {
                 !projectInfo.checkTypeScriptDefinitions -> TsCompilationStrategy.NONE
-                granularity == JsGenerationGranularity.PER_FILE -> TsCompilationStrategy.EACH_FILE
+                granularity == JsGenerationGranularity.PER_FILE || granularity == JsGenerationGranularity.PER_CLASS -> TsCompilationStrategy.EACH_FILE
                 else -> TsCompilationStrategy.MERGED
             }
 
@@ -155,6 +155,7 @@ abstract class JsAbstractInvalidationTest(
 
                 val dirtyData = when (granularity) {
                     JsGenerationGranularity.PER_FILE -> projStep.dirtyJsFiles
+                    JsGenerationGranularity.PER_CLASS -> projStep.dirtyJsPerClassFiles ?: emptyList()
                     else -> projStep.dirtyJsModules
                 }
 
@@ -255,7 +256,7 @@ abstract class JsAbstractInvalidationTest(
                 val moduleName = File(info.modulePath).nameWithoutExtension
                 val expectedDTS = info.expectedDTS ?: continue
                 val dtsFilePath = when (granularity) {
-                    JsGenerationGranularity.PER_FILE -> "$moduleName/${expectedDTS.name.substringBefore('.')}.export$dtsFileExtension"
+                    JsGenerationGranularity.PER_FILE, JsGenerationGranularity.PER_CLASS -> "$moduleName/${expectedDTS.name.substringBefore('.')}.export$dtsFileExtension"
                     else -> "$moduleName$dtsFileExtension"
                 }
 
@@ -265,13 +266,25 @@ abstract class JsAbstractInvalidationTest(
                 }
 
                 val gotDTS = dtsFile.readText()
-                val expectedDtsFile = expectedDTS.file.withReplacedExtensionOrNull(".d.ts", "$expectedDtsSuffix.d.ts")
-                    ?: expectedDTS.file.withReplacedExtensionOrNull(".d.mts", "$expectedDtsSuffix.d.mts")
-                    ?: testInfraError("Unexpected extension in file ${expectedDTS.file.name}")
+                val expectedDtsFile = findExpectedDtsFile(expectedDTS.file, expectedDtsSuffix)
                 JUnit5Assertions.assertEqualsToFile(expectedDtsFile, gotDTS, { it }) {
                     "Mismatched $$dtsFileExtension for module ${info.moduleName} at step $stepId"
                 }
             }
+        }
+
+        // Per-class d.ts output can differ from the per-file/per-module one;
+        // a dedicated `<name>.perClass[<suffix>].d.ts` file next to the shared one overrides it when present.
+        private fun findExpectedDtsFile(expectedDtsFile: File, expectedDtsSuffix: String): File {
+            fun File.withSuffix(suffix: String): File? =
+                withReplacedExtensionOrNull(".d.ts", "$suffix.d.ts")
+                    ?: withReplacedExtensionOrNull(".d.mts", "$suffix.d.mts")
+
+            val shared = expectedDtsFile.withSuffix(expectedDtsSuffix)
+                ?: testInfraError("Unexpected extension in file ${expectedDtsFile.name}")
+            if (granularity != JsGenerationGranularity.PER_CLASS) return shared
+
+            return expectedDtsFile.withSuffix(".perClass$expectedDtsSuffix")?.takeIf { it.exists() } ?: shared
         }
 
         private fun writeJsCode(stepId: Int, jsOutput: CompilationOutputs): List<String> {
