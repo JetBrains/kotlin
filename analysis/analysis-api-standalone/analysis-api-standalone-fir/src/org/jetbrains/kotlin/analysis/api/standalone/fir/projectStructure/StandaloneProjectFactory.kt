@@ -122,17 +122,13 @@ object StandaloneProjectFactory {
     @OptIn(KtPlatformInterface::class)
     private fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
         val application = applicationEnvironment.application
-        if (application.getServiceIfCreated(KotlinStandaloneIndexCache::class.java) != null) {
-            // application services already registered by som other threads, tests
-            return
-        }
         KotlinCoreEnvironment.underApplicationLock {
             if (application.getServiceIfCreated(KotlinStandaloneIndexCache::class.java) != null) {
                 // application services already registered by som other threads, tests
                 return
             }
             application.apply {
-                registerService(KotlinStandaloneIndexCache::class.java, KotlinStandaloneIndexCache::class.java)
+                registerService(KotlinStandaloneIndexCache::class.java, KotlinStandaloneIndexCache())
                 registerService(ClsKotlinBinaryClassCache::class.java)
                 registerService(
                     BuiltinsVirtualFileProvider::class.java,
