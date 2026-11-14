@@ -114,6 +114,10 @@ internal fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSw
     }
 
     return if (name in objCSpecialNames) name.handleSpecialNames("the")
-    else if (name.isReservedPropertyName) name + "_"
+    // mangleObjCName is set to false if we're fetching name(s) for NS closed enum entries.
+    // Their ObjC names are prefixed with the NS closed enum name, and their corresponding
+    // Swift names can be of reserved names, as they don't cause any compilation errors.
+    // Either way, mangling them becomes unnecessary.
+    else if (mangleObjCName && name.isReservedPropertyName) name + "_"
     else name
 }

@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class A, B, C, Foo, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion;
+@class A, B, C, Foo, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion, ReservedSwiftNames;
 
 @protocol KotlinComparable, KotlinIterator;
 
@@ -124,6 +124,36 @@ __attribute__((objc_subclassing_restricted))
 @property (class, readonly) Foo *entryName3Swift __attribute__((swift_name("entryName3Swift")));
 + (KotlinArray<Foo *> *)values __attribute__((swift_name("values()")));
 @property (class, readonly) NSArray<Foo *> *entries __attribute__((swift_name("entries")));
+@end
+
+typedef NS_CLOSED_ENUM(int32_t, ReservedSwiftNamesNSEnum) {
+  ReservedSwiftNamesNSEnumIf __attribute__((swift_name("if"))) = 0,
+  ReservedSwiftNamesNSEnumDescription __attribute__((swift_name("description"))) = 1,
+  ReservedSwiftNamesNSEnumReservedEntry3 __attribute__((swift_name("throw"))) = 2,
+  ReservedSwiftNamesNSEnumRelease __attribute__((swift_name("release"))) = 3,
+  ReservedSwiftNamesNSEnumAlloc __attribute__((swift_name("alloc"))) = 4,
+  ReservedSwiftNamesNSEnumPublic __attribute__((swift_name("public"))) = 5,
+  ReservedSwiftNamesNSEnumDefault __attribute__((swift_name("default"))) = 6,
+  ReservedSwiftNamesNSEnumClass __attribute__((swift_name("class"))) = 7,
+} __attribute__((swift_name("ReservedSwiftNamesNSEnum")));
+
+
+__attribute__((objc_subclassing_restricted))
+@interface ReservedSwiftNames : KotlinEnum<ReservedSwiftNames *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (readonly) ReservedSwiftNamesNSEnum nsEnum;
+@property (class, readonly) ReservedSwiftNames *if_ __attribute__((swift_name("if_")));
+@property (class, readonly) ReservedSwiftNames *description_ __attribute__((swift_name("description_")));
+@property (class, readonly) ReservedSwiftNames *reservedEntry3 __attribute__((swift_name("throw_")));
+@property (class, readonly) ReservedSwiftNames *reservedEntry4 __attribute__((swift_name("reservedEntry4")));
+@property (class, readonly) ReservedSwiftNames *reservedEntry5 __attribute__((swift_name("reservedEntry5")));
+@property (class, readonly) ReservedSwiftNames *reservedEntry6 __attribute__((swift_name("reservedEntry6")));
+@property (class, readonly) ReservedSwiftNames *default_ __attribute__((swift_name("default_")));
+@property (class, readonly) ReservedSwiftNames *class_ __attribute__((swift_name("class_")));
++ (KotlinArray<ReservedSwiftNames *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<ReservedSwiftNames *> *entries __attribute__((swift_name("entries")));
 @end
 
 __attribute__((objc_subclassing_restricted))
