@@ -202,6 +202,14 @@ class Strings {
     }
 
     @Sample
+    fun maxByOrNull() {
+        val text = "kOtlIn"
+        assertPrints(text.maxByOrNull { it.isUpperCase() }, "O")
+
+        assertPrints("".maxByOrNull { it.isUpperCase() }, "null")
+    }
+
+    @Sample
     fun zip() {
         val stringA = "abcd"
         val stringB = "zyx"

@@ -771,7 +771,11 @@ object Aggregates : TemplateGroupBase() {
                         Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each ${f.element}.
                     """
                 }
-                sample("samples.collections.Collections.Aggregates.minMaxByOrNull")
+                if (family == CharSequences && op == "maxBy" && nullable) {
+                    sample("samples.text.Strings.maxByOrNull")
+                } else {
+                    sample("samples.collections.Collections.Aggregates.minMaxByOrNull")
+                }
 
                 if (!nullable) {
                     throws("NoSuchElementException", "if the ${f.collection} is empty.")

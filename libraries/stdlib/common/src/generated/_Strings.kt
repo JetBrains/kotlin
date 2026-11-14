@@ -1280,7 +1280,7 @@ public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R):
  * because in these cases it is clear which character to return without invoking the [selector].
  * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each character.
  * 
- * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
+ * @sample samples.text.Strings.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharSequence.maxByOrNull(selector: (Char) -> R): Char? {
