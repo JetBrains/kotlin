@@ -1,3 +1,3 @@
-/unclearTypeMismatchWithCapturedTypes.kt:15:22: error: Argument type mismatch: actual type is 'Box<CapturedType(in Number)>', but 'Box<Number>' was expected.
+/unclearTypeMismatchWithCapturedTypes.kt:15:22: error: Expression 'inNumberBox' of type 'Box<CapturedType(in Number)>' does not conform to value parameter 'box' of type 'Box<Number>'.
 
-/unclearTypeMismatchWithCapturedTypes.kt:16:25: error: Argument type mismatch: actual type is 'Box<CapturedType(in Number)>', but 'Box<out Number>' was expected.
+/unclearTypeMismatchWithCapturedTypes.kt:16:25: error: Expression 'inNumberBox' of type 'Box<CapturedType(in Number)>' does not conform to value parameter 'box' of type 'Box<out Number>'.

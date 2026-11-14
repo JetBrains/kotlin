@@ -2,6 +2,6 @@
 
 /insideGenericClass.kt:11:18: error: No type arguments expected for 'class L<Outer(T), Outer(U)> : Any'.
 
-/insideGenericClass.kt:14:11: error: Argument type mismatch: actual type is 'L<T (of fun <T> foo), U (of class C<U>)>', but 'L<Int, U (of class C<U>)>' was expected.
+/insideGenericClass.kt:14:11: error: Expression 'L()' of type 'L<T (of fun <T> foo), U (of class C<U>)>' does not conform to value parameter 'p1' of type 'L<Int, U (of class C<U>)>'.
 
-/insideGenericClass.kt:15:11: error: Argument type mismatch: actual type is 'L<T (of fun <T> foo), U (of class C<U>)>', but 'L<Int, Long>' was expected.
+/insideGenericClass.kt:15:11: error: Expression 'L()' of type 'L<T (of fun <T> foo), U (of class C<U>)>' does not conform to value parameter 'p1' of type 'L<Int, Long>'.

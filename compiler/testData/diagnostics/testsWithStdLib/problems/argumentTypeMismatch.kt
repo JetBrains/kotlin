@@ -10,7 +10,7 @@ public class Sample {
 // FILE: test.kt
 
 fun main() {
-    Sample.foo(<!ARGUMENT_TYPE_MISMATCH("String; (Mutable)List<(Mutable)List<String!>!>!")!>"123"<!>)
+    Sample.foo(<!ARGUMENT_TYPE_MISMATCH("String; (Mutable)List<(Mutable)List<String!>!>!;  value parameter 'listOfLists' of;  '\"123\"'")!>"123"<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, stringLiteral */

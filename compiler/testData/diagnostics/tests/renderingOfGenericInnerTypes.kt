@@ -52,8 +52,8 @@ class X<T> {
 }
 
 fun caller() {
-    veryCunningCallee<Int>().takeSame(<!ARGUMENT_TYPE_MISMATCH("C<String>; C<Int>")!>veryCunningCallee<String>()<!>)
-    X<Boolean>().<!INVISIBLE_REFERENCE("fun <T> veryCunningCallee(): C.Inner<Long, T, Boolean>; private; 'foo.X'")!>veryCunningCallee<!><String>().takeSame(<!ARGUMENT_TYPE_MISMATCH("C<Long, String, Short>.Inner; C<Long, String, Boolean>.Inner")!>X<Short>().<!INVISIBLE_REFERENCE("fun <T> veryCunningCallee(): C.Inner<Long, T, Short>; private; 'foo.X'")!>veryCunningCallee<!><String>()<!>)
+    veryCunningCallee<Int>().takeSame(<!ARGUMENT_TYPE_MISMATCH("C<String>; C<Int>;  value parameter 'c' of;  'veryCunningCallee<String>()'")!>veryCunningCallee<String>()<!>)
+    X<Boolean>().<!INVISIBLE_REFERENCE("fun <T> veryCunningCallee(): C.Inner<Long, T, Boolean>; private; 'foo.X'")!>veryCunningCallee<!><String>().takeSame(<!ARGUMENT_TYPE_MISMATCH("C<Long, String, Short>.Inner; C<Long, String, Boolean>.Inner;  value parameter 'inner' of")!>X<Short>().<!INVISIBLE_REFERENCE("fun <T> veryCunningCallee(): C.Inner<Long, T, Short>; private; 'foo.X'")!>veryCunningCallee<!><String>()<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, propertyDeclaration */

@@ -583,7 +583,7 @@ KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
     candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyEnum'.>
 
 KtNameReferenceExpression(656,663): 'receive'
   isImplicitReferenceToCompanion: false
@@ -593,7 +593,7 @@ KtNameReferenceExpression(656,663): 'receive'
     candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyEnum'.>
 
 KtTypeArgumentList(663,671): '<MyEnum>'
   null

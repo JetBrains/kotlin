@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/XeagerLambdaAnalysis/executorSubmit.kt:13:24: error: argument type mismatch: actual type is 'Future<CapturedType(*)>!', but 'Future<String>' was expected.
+compiler/testData/cli/jvm/XeagerLambdaAnalysis/executorSubmit.kt:13:24: error: expression 'future' of type 'Future<CapturedType(*)>!' does not conform to value parameter 'f' of type 'Future<String>'.
     expectFutureString(future)
                        ^^^^^^
 COMPILATION_ERROR

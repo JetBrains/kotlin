@@ -1557,7 +1557,7 @@ KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
     candidateSymbols = [
       /testTypeParamWithMultipleBound(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'MyClass & OtherI' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'InheritorObject' of type 'MyClass.InheritorObject' does not conform to type 'MyClass & OtherI'.>
 
 KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
   isImplicitReferenceToCompanion: false
@@ -1567,7 +1567,7 @@ KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
     candidateSymbols = [
       /testTypeParamWithMultipleBound(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'MyClass & OtherI' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'InheritorObject' of type 'MyClass.InheritorObject' does not conform to type 'MyClass & OtherI'.>
 
 KtValueArgumentList(1337,1354): '(InheritorObject)'
   null
@@ -1681,7 +1681,7 @@ KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
     candidateSymbols = [
       /testRegularIntersection(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'SealedInterface & MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'InheritorObject' of type 'MyClass.InheritorObject' does not conform to type 'SealedInterface & MyClass'.>
 
 KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
   isImplicitReferenceToCompanion: false
@@ -1691,7 +1691,7 @@ KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
     candidateSymbols = [
       /testRegularIntersection(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'SealedInterface & MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'InheritorObject' of type 'MyClass.InheritorObject' does not conform to type 'SealedInterface & MyClass'.>
 
 KtValueArgumentList(1528,1545): '(InheritorObject)'
   null

@@ -6,7 +6,7 @@ class A private constructor(x: Boolean, y: Int)
 fun A(y: Int) {}
 
 fun test() {
-    A(<!ARGUMENT_TYPE_MISMATCH("String; Int")!>"1"<!>)
+    A(<!ARGUMENT_TYPE_MISMATCH("String; Int;  value parameter 'y' of;  '\"1\"'")!>"1"<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nullableType,

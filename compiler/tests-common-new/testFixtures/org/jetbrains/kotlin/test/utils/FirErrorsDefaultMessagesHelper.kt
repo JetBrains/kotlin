@@ -128,6 +128,7 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
         val message = renderer.message
 
         val parameterCount = when (renderer) {
+            is KtDiagnosticWithParameters5Renderer<*, *, *, *, *> -> 5
             is KtDiagnosticWithParameters4Renderer<*, *, *, *> -> 4
             is KtDiagnosticWithParameters3Renderer<*, *, *> -> 3
             is KtDiagnosticWithParameters2Renderer<*, *> -> 2

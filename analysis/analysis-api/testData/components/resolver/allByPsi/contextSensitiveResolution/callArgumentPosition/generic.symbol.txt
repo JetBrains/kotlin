@@ -780,7 +780,7 @@ KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'NestedObject' of type 'MyClass.NestedObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(911,925): 'consumeMyClass'
   isImplicitReferenceToCompanion: false
@@ -790,7 +790,7 @@ KtNameReferenceExpression(911,925): 'consumeMyClass'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'NestedObject' of type 'MyClass.NestedObject' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(925,945): '(test(NestedObject))'
   null
@@ -833,7 +833,7 @@ KtCallExpression(950,976): 'consumeMyClass(test(prop))'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(950,964): 'consumeMyClass'
   isImplicitReferenceToCompanion: false
@@ -843,7 +843,7 @@ KtNameReferenceExpression(950,964): 'consumeMyClass'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(964,976): '(test(prop))'
   null
@@ -886,7 +886,7 @@ KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(981,995): 'consumeMyClass'
   isImplicitReferenceToCompanion: false
@@ -896,7 +896,7 @@ KtNameReferenceExpression(981,995): 'consumeMyClass'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(995,1012): '(test(superProp))'
   null
@@ -939,7 +939,7 @@ KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1017,1031): 'consumeMyClass'
   isImplicitReferenceToCompanion: false
@@ -949,7 +949,7 @@ KtNameReferenceExpression(1017,1031): 'consumeMyClass'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(1031,1047): '(test(lazyProp))'
   null
@@ -992,7 +992,7 @@ KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1052,1066): 'consumeMyClass'
   isImplicitReferenceToCompanion: false
@@ -1002,7 +1002,7 @@ KtNameReferenceExpression(1052,1066): 'consumeMyClass'
     candidateSymbols = [
       /consumeMyClass(arg: MyClass): kotlin.Unit
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(1066,1084): '(test(lambdaProp))'
   null

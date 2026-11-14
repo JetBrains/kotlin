@@ -42,7 +42,7 @@ KtConstructorCalleeExpression(126,127): 'A'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '5' of type 'Int' does not conform to value parameter 'p' of type 'String'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:

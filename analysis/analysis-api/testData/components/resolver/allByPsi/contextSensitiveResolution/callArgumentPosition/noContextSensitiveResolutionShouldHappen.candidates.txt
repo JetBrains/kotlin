@@ -603,7 +603,7 @@ KtCallExpression(350,356): 'foo(X)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'X' of type 'String' does not conform to value parameter 'a' of type 'MyEnum'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(350,353): 'foo'
@@ -684,7 +684,7 @@ KtNameReferenceExpression(350,353): 'foo'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'X' of type 'String' does not conform to value parameter 'a' of type 'MyEnum'.>
     isInBestCandidates = true
 
 KtValueArgumentList(353,356): '(X)'

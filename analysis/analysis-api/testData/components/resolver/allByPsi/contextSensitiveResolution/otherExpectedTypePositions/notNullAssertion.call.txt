@@ -486,7 +486,7 @@ KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass?' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass?'.>
 
 KtNameReferenceExpression(532,539): 'receive'
   KaSimpleCallResolutionError:
@@ -524,7 +524,7 @@ KtNameReferenceExpression(532,539): 'receive'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass?' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass?'.>
 
 KtTypeArgumentList(539,548): '<MyClass>'
   null
@@ -765,7 +765,7 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Pair<String, Int>', but 'Pair<MyClass, Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyClass.stringProp to 2' of type 'Pair<String, Int>' does not conform to value parameter 'pairs' of type 'Pair<MyClass, Int>'.>
 
 KtNameReferenceExpression(655,660): 'mapOf'
   KaSimpleCallResolutionError:
@@ -825,7 +825,7 @@ KtNameReferenceExpression(655,660): 'mapOf'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Pair<String, Int>', but 'Pair<MyClass, Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyClass.stringProp to 2' of type 'Pair<String, Int>' does not conform to value parameter 'pairs' of type 'Pair<MyClass, Int>'.>
 
 KtTypeArgumentList(660,674): '<MyClass, Int>'
   null

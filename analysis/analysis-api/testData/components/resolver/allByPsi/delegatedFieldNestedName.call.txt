@@ -1687,22 +1687,22 @@ KtBinaryExpression(406,415): '6 + inner'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     fun plus(other: Int): Int:
-      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Int'.
 
     fun plus(other: Byte): Int:
-      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
 
     fun plus(other: Short): Int:
-      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Short'.
 
     fun plus(other: Long): Long:
-      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Long'.
 
     fun plus(other: Float): Float:
-      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Float'.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Double'.>
 
 KtConstantExpression(406,407): '6'
   null
@@ -1912,22 +1912,22 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     fun plus(other: Int): Int:
-      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Int'.
 
     fun plus(other: Byte): Int:
-      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
 
     fun plus(other: Short): Int:
-      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Short'.
 
     fun plus(other: Long): Long:
-      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Long'.
 
     fun plus(other: Float): Float:
-      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Float'.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Double'.>
 
 KtNameReferenceExpression(410,415): 'inner'
   KaSimpleCallResolutionSuccess:
@@ -2280,22 +2280,22 @@ KtBinaryExpression(428,437): '7 + inner'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     fun plus(other: Int): Int:
-      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Int'.
 
     fun plus(other: Byte): Int:
-      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
 
     fun plus(other: Short): Int:
-      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Short'.
 
     fun plus(other: Long): Long:
-      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Long'.
 
     fun plus(other: Float): Float:
-      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Float'.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Double'.>
 
 KtConstantExpression(428,429): '7'
   null
@@ -2505,22 +2505,22 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     fun plus(other: Int): Int:
-      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Int'.
 
     fun plus(other: Byte): Int:
-      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
 
     fun plus(other: Short): Int:
-      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Short'.
 
     fun plus(other: Long): Long:
-      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Long'.
 
     fun plus(other: Float): Float:
-      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Float'.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Double'.>
 
 KtNameReferenceExpression(432,437): 'inner'
   KaSimpleCallResolutionSuccess:
@@ -2873,22 +2873,22 @@ KtBinaryExpression(450,459): '8 + inner'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     fun plus(other: Int): Int:
-      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Int'.
 
     fun plus(other: Byte): Int:
-      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
 
     fun plus(other: Short): Int:
-      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Short'.
 
     fun plus(other: Long): Long:
-      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Long'.
 
     fun plus(other: Float): Float:
-      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Float'.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Double'.>
 
 KtConstantExpression(450,451): '8'
   null
@@ -3098,22 +3098,22 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     fun plus(other: Int): Int:
-      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Int'.
 
     fun plus(other: Byte): Int:
-      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
 
     fun plus(other: Short): Int:
-      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Short'.
 
     fun plus(other: Long): Long:
-      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Long'.
 
     fun plus(other: Float): Float:
-      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Float'.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
+      Expression 'inner' of type 'String' does not conform to value parameter 'other' of type 'Double'.>
 
 KtNameReferenceExpression(454,459): 'inner'
   KaSimpleCallResolutionSuccess:

@@ -15,7 +15,7 @@ fun test() {
         otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner;  value parameter 'subtypeValue' of;  'Interloper'")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
@@ -42,7 +42,7 @@ fun test() {
     }
     // expected: CST(ScopeOwner, Interloper) == BaseType
     <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultB<!>
-    
+
     val resultC = pcla { otvOwner ->
         // InvariantContainer<in OTv> <: InvariantContainer<in PNTv>  =>  CapturedType(in OTv) <: CapturedType(in PNTv)  =>  PNTv <: OTv
         val pntvOwner = otvOwner.createDerivativeTypeVariable(otvOwner.provideProjectedContainer())
@@ -57,7 +57,7 @@ fun test() {
         otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner;  value parameter 'subtypeValue' of;  'Interloper'")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultC<!>

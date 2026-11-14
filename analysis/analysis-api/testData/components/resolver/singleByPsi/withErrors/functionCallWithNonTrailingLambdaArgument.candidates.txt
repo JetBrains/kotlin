@@ -180,5 +180,5 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unknown type for value parameter s)) -> ??? (Unknown type for value parameter it)', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '{ s -> true }' of type '(??? (Unknown type for value parameter s)) -> ??? (Unknown type for value parameter it)' does not conform to value parameter 'b' of type 'String'.>
     isInBestCandidates = false

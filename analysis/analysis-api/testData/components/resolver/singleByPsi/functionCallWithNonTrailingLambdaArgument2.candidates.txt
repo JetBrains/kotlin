@@ -125,5 +125,5 @@ KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(Int) -> Boolean', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '{ s -> true }' of type '(Int) -> Boolean' does not conform to value parameter 'b' of type 'String'.>
     isInBestCandidates = false

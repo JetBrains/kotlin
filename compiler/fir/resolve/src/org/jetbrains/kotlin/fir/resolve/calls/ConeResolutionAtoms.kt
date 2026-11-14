@@ -281,7 +281,7 @@ sealed class ConePostponedAtomWithRevisableExpectedType(
      * Note that for other kinds of resolution atoms, the new constraint error, if any, can be reported right away
      * when creating the atom, hence no need to store this field.
      */
-    val anonymousFunctionIfReturnExpression: FirAnonymousFunction?
+    val anonymousFunctionIfReturnExpression: FirAnonymousFunctionExpression?
 ) : ConeFunctionLikeAtom(), PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables {
     final override val registeredTypeVariables: List<TypeVariableMarker>
         field = mutableListOf<TypeVariableMarker>()
@@ -295,7 +295,7 @@ class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     override val expression: FirAnonymousFunctionExpression,
     private val initialExpectedTypeType: ConeKotlinType,
     override val containingCallCandidate: Candidate,
-    anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+    anonymousFunctionIfReturnExpression: FirAnonymousFunctionExpression? = null,
 ) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression),
     LambdaWithTypeVariableAsExpectedTypeMarker, ConeLambdaAtom {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
@@ -337,7 +337,7 @@ class ConeResolvedCallableReferenceAtom(
     val lhsAsType: CallableReferenceLhsAsType?,
     private val session: FirSession,
     override val containingCallCandidate: Candidate,
-    anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+    anonymousFunctionIfReturnExpression: FirAnonymousFunctionExpression? = null,
 ) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), PostponedCallableReferenceMarker {
     var subAtom: ConeAtomWithCandidate? = null
         private set

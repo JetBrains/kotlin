@@ -31,7 +31,7 @@ fun testYield() {
     val buildee = build {
         yield { val x: UserKlass = this<!UNRESOLVED_LABEL!>@yield<!> }
     }
-    checkExactType<Buildee<UserKlass.() -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>")!>buildee<!>)
+    checkExactType<Buildee<UserKlass.() -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>;  value parameter 'expr' of;  'buildee'")!>buildee<!>)
 }
 
 // test 2: PTV is in producing position (materialize-case)
@@ -43,7 +43,7 @@ fun testMaterialize() {
             materialize()
         )
     }
-    checkExactType<Buildee<UserKlass.() -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>")!>buildee<!>)
+    checkExactType<Buildee<UserKlass.() -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>;  value parameter 'expr' of;  'buildee'")!>buildee<!>)
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, asExpression, classDeclaration, functionDeclaration, functionalType,

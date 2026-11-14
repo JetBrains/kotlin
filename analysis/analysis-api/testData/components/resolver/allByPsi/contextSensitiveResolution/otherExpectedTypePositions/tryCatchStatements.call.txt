@@ -953,7 +953,7 @@ KtCallExpression(1108,1497): 'receive<MyClass>('
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1108,1115): 'receive'
   KaSimpleCallResolutionError:
@@ -1005,7 +1005,7 @@ KtNameReferenceExpression(1108,1115): 'receive'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1115,1124): '<MyClass>'
   null
@@ -1256,7 +1256,7 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1503,1506): 'run'
   KaSimpleCallResolutionError:
@@ -1310,7 +1310,7 @@ KtNameReferenceExpression(1503,1506): 'run'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'stringProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtTypeArgumentList(1506,1515): '<MyClass>'
   null

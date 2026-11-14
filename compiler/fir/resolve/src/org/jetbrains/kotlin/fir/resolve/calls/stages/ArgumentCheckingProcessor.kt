@@ -64,7 +64,7 @@ internal object ArgumentCheckingProcessor {
         /**
          * See [org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch.anonymousFunctionIfReturnExpression]
          */
-        val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+        val anonymousFunctionIfReturnExpression: FirAnonymousFunctionExpression? = null,
     ) : SessionHolder {
         override val session: FirSession
             get() = context.session
@@ -85,7 +85,7 @@ internal object ArgumentCheckingProcessor {
         context: ResolutionContext,
         isReceiver: Boolean,
         isDispatch: Boolean,
-        anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+        anonymousFunctionIfReturnExpression: FirAnonymousFunctionExpression? = null,
     ) {
         val argumentContext = ArgumentContext(
             csBuilder, containingCallCandidate,
@@ -121,7 +121,7 @@ internal object ArgumentCheckingProcessor {
         expectedType: ConeKotlinType?,
         context: ResolutionContext,
         returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
-        anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+        anonymousFunctionIfReturnExpression: FirAnonymousFunctionExpression? = null,
     ): ConeResolvedLambdaAtom {
         val argumentContext = ArgumentContext(
             csBuilder, containingCallCandidate, expectedType,

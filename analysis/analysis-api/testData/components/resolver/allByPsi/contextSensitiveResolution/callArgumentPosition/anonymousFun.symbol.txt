@@ -744,7 +744,7 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
     candidateSymbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
   isImplicitReferenceToCompanion: false
@@ -775,7 +775,7 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
     candidateSymbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
   isImplicitReferenceToCompanion: false
@@ -806,7 +806,7 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
     candidateSymbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
   isImplicitReferenceToCompanion: false
@@ -837,7 +837,7 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
     candidateSymbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
   isImplicitReferenceToCompanion: false
@@ -868,7 +868,7 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
     candidateSymbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
   isImplicitReferenceToCompanion: false
@@ -973,7 +973,7 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
     candidateSymbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
   isImplicitReferenceToCompanion: false
