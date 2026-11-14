@@ -123,6 +123,33 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
+    @GradleWithCompilerVersionTest
+    @CompilerVersions(versions = ["2.2.0", "2.1.0"])
+    @DisplayName("KT-80932: Compiler warnings have a single w: prefix")
+    fun compileWarningHasSinglePrefix(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("simpleProject", gradleVersion, compilerVersion = compilerVersion) {
+            kotlinSourcesDir().resolve("src.kt").writeText(
+                """
+                @Deprecated("Use bar() instead", ReplaceWith("bar()"))
+                fun foo() {}
+
+                fun bar() {}
+
+                fun baz() {
+                    foo()
+                }
+                """.trimIndent()
+            )
+            build("compileKotlin") {
+                val srcKtUri = kotlinSourcesDir().resolve("src.kt").toRealPath().toUri()
+                assertOutputContainsExactlyTimes(
+                    "\nw: $srcKtUri:7:5 'fun foo(): Unit' is deprecated. Use bar() instead."
+                )
+            }
+        }
+    }
+
     @GradleTest
     @DisplayName("Unsupported compiler flag with an older compiler does not trigger the daemon fallback")
     fun compileWithUnsupportedFlagAndOlderCompilerVersionWithFallback(gradleVersion: GradleVersion) =
