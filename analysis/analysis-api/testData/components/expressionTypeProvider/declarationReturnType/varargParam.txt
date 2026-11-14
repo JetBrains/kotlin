@@ -1,14 +1,14 @@
 Foo@(1,1)
   Foo@(1,10) : Foo
     constructorValues@(1,11) : kotlin.Array<out kotlin.String> (symbol: kotlin.String)
-test@(3,1) : kotlin.Unit
+test@(3,1) : kotlin.Unit (by PSI)
   values@(3,10) : kotlin.Array<out kotlin.String> (symbol: kotlin.String)
-test@(5,1) : kotlin.Unit
+test@(5,1) : kotlin.Unit (by PSI)
   primitiveValues@(5,10) : kotlin.IntArray (symbol: kotlin.Int)
-generic@(7,1) : kotlin.Unit
+generic@(7,1) : kotlin.Unit (by PSI)
   ts@(7,17) : kotlin.Array<out T> (symbol: T)
 Bar@(9,1)
   Bar@(9,10) : Bar
     props@(9,11) : kotlin.LongArray (symbol: kotlin.Long)
-functions@(11,1) : kotlin.Unit
+functions@(11,1) : kotlin.Unit (by PSI)
   fs@(11,15) : kotlin.Array<out () -> kotlin.Unit> (symbol: () -> kotlin.Unit)

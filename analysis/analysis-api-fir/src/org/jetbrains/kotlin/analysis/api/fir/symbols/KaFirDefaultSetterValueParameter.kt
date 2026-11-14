@@ -57,8 +57,9 @@ internal class KaFirDefaultSetterValueParameter(
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion { false }
 
+    // A setter parameter has the type of its property
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = withValidityAssertion { owningKaSetter.owningKaProperty.returnTypeByPsi ?: firSymbol.returnType(builder) }
 
     override val psi: PsiElement?
         get() = withValidityAssertion { null }

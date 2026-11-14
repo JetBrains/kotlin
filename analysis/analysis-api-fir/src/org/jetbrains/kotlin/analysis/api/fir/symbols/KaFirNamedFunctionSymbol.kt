@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -81,7 +82,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
     override val returnType: KaType
-        get() = withValidityAssertion { createReturnType() }
+        get() = withValidityAssertion { backingPsi?.inferReturnTypeByPsi(analysisSession) ?: createReturnType() }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {

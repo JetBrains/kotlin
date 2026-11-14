@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionTypeProvider
 
 import org.jetbrains.kotlin.analysis.api.expressions.returnType
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.dropBackingPsi
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.hasBuiltFirSymbol
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -38,11 +40,24 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest(
 
                             // Function type parameters have no symbol
                             val symbol = if (declaration is KtParameter && declaration.isFunctionTypeParameter) null else declaration.symbol
-                            val symbolReturnType = (symbol as? KaCallableSymbol)?.returnType?.render(position = Variance.INVARIANT)
-                            if (symbolReturnType != null && symbolReturnType != returnType) {
-                                append(" (symbol: ")
-                                append(symbolReturnType)
-                                append(")")
+                            if (symbol is KaCallableSymbol) {
+                                val symbolReturnType = symbol.returnType.render(position = Variance.INVARIANT)
+                                if (symbolReturnType != returnType) {
+                                    append(" (symbol: $symbolReturnType)")
+                                }
+
+                                if (!symbol.hasBuiltFirSymbol) {
+                                    append(" (by PSI)")
+                                }
+
+                                // The symbol may infer its return type from PSI, so check that it is consistent with the FIR-based one
+                                symbol.dropBackingPsi()
+                                testServices.assertions.assertEquals(
+                                    expected = symbol.returnType.render(position = Variance.INVARIANT),
+                                    actual = symbolReturnType,
+                                ) {
+                                    "The return type of ${declaration.getNameWithPositionString()} must be the same without the backing PSI"
+                                }
                             }
 
                             appendLine()
