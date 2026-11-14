@@ -9,7 +9,7 @@ configureKotlinCompileTasksGradleCompatibility()
 dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
-    implementation("org.ow2.asm:asm-tree:9.9.1")
+    implementation("org.ow2.asm:asm-tree:9.11.1")
 }
 
 base {
