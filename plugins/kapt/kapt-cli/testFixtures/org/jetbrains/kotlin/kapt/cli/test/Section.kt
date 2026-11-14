@@ -46,7 +46,8 @@ class Section(val name: String, val content: String) {
 fun List<Section>.render(): String = buildString {
     for (section in this@render) {
         append(SECTION_INDICATOR).appendLine(section.name)
-        appendLine(section.content).appendLine()
+        if (section.content.isNotEmpty()) appendLine(section.content)
+        appendLine()
     }
 }.trim()
 
