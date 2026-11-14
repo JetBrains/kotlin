@@ -95,7 +95,7 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
 error: <cinterop_lib.def> @ CTypeDefinitions: Constructor 'InternalNativeProtobufApi.<init>' can not be called: No constructor found for symbol '/InternalNativeProtobufApi.<init>|?'
 error: <cinterop_lib.def> @ CTypeDefinitions: Unusable annotation 'InternalNativeProtobufApi.<init>' has been removed from class 'Point'
 error: <cinterop_lib.def> @ CTypeDefinitions: Unusable annotation 'InternalNativeProtobufApi.<init>' has been removed from companion object 'Point.Companion'
-        """.trimIndent(), output.loggedData.toolOutput.trim().convertLineSeparators()
+        """.trimIndent(), output.loggedData.toolOutput.trimIndent()
         )
     }
 
