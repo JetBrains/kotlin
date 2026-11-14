@@ -410,7 +410,9 @@ fun <T> TestProject.buildModel(
             .applyIf(progressListener != null) { addProgressListener(progressListener) }
             .forTasks(tasks.toList())
             .withArguments(buildParams)
-            .setEnvironmentVariables(environmentVariables.environmentalVariables)
+            .apply {
+                environmentVariables.resolve()?.let { setEnvironmentVariables(it) }
+            }
             .get()
         return model
     } finally {
