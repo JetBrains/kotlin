@@ -60,21 +60,21 @@ class KlibTestSourceModules(
     val modules: List<KlibTestModule>
 )
 
-internal interface KlibTestSourceModuleBuilder {
+interface KlibTestSourceModuleBuilder {
     fun dependsOn(dependencyName: String, vararg otherDependencyNames: String)
     fun dependsOn(dependencyNames: List<String>)
 }
 
-internal interface RegularKlibTestSourceModuleBuilder : KlibTestSourceModuleBuilder {
+interface RegularKlibTestSourceModuleBuilder : KlibTestSourceModuleBuilder {
     fun sourceFileAddend(sourceFileAddend: String)
 }
 
-internal interface CInteropKlibTestSourceModuleBuilder : KlibTestSourceModuleBuilder {
+interface CInteropKlibTestSourceModuleBuilder : KlibTestSourceModuleBuilder {
     fun defFileAddend(defFileAddend: String)
     fun headerFileAddend(headerFileAddend: String)
 }
 
-internal interface KlibTestSourceModulesBuilder {
+interface KlibTestSourceModulesBuilder {
     fun addRegularModule(name: String, init: RegularKlibTestSourceModuleBuilder.() -> Unit = {})
     fun addRegularModule(name: String, path: Path)
     fun addCInteropModule(name: String, init: CInteropKlibTestSourceModuleBuilder.() -> Unit = {})
@@ -124,7 +124,7 @@ private class CInteropExistingModuleImpl(
 ) : CInteropKlibExistingModule, BaseModuleImpl(name, dependencyNames = emptyList())
 
 context(testRunner: AbstractNativeSimpleTest)
-internal fun newSourceModules(
+fun newSourceModules(
     customGeneratedSourcesDir: Path? = null,
     init: KlibTestSourceModulesBuilder.() -> Unit
 ): KlibTestSourceModules {
@@ -283,7 +283,7 @@ internal fun newSourceModules(
 }
 
 context(testRunner: AbstractNativeSimpleTest)
-internal fun KlibTestSourceModules.compileToKlibsViaCli(
+fun KlibTestSourceModules.compileToKlibsViaCli(
     produceUnpackedKlibs: Boolean = true,
     extraCliArgs: List<String> = emptyList(),
     customGeneratedKlibsDir: Path? = null,

@@ -108,7 +108,7 @@ projectTests {
         )
     ) {
         options {
-            // See [org.jetbrains.kotlin.konan.test.KlibCrossCompilationIdentityTest.FULL_CROSS_DIST_ENABLED_PROPERTY]
+            // See [org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTestBase.FULL_CROSS_DIST_ENABLED_PROPERTY]
             // See also kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/nativeFullCrossDist.kt
             systemProperty(
                 "kotlin.native.internal.fullCrossDistEnabled",

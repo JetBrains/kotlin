@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
+// KLIB-based Kotlin/Native tests which don't require platform libraries, so running them doesn't depend on building platform libraries.
+// Tests which require them belong to `:native:native.tests:klib-ir-inliner:withPlatformLibs`.
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -63,7 +66,7 @@ projectTests {
         taskName,
         tag = tag,
         allowParallelExecution = true,
-        requirePlatformLibs = true,
+        requirePlatformLibs = false,
         enableGroupingTestEngine = true,
         maxHeapSize = testMaxHeapSizeLarge
     ) {

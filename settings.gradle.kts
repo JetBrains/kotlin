@@ -761,6 +761,7 @@ include(
     ":native:native.tests:gc-fuzzing-tests:engine",
     ":native:native.tests:stress",
     ":native:native.tests:klib-ir-inliner",
+    ":native:native.tests:klib-ir-inliner:withPlatformLibs",
     ":native:native.tests:klib-compatibility",
     ":native:native.tests:litmus-tests"
 )
