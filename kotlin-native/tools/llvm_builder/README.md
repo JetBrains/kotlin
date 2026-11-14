@@ -74,3 +74,71 @@ docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --instal-path /ou
 
 ### Known problems
 1. No way to run LLVM tests out of the box.
+
+### IR PGO for the host LLVM toolchain
+
+`package.py --pgo-instrument` builds an IR-instrumented final stage for training.
+`--pgo-profile PATH` optimizes the final stage with an indexed profile. These
+options are mutually exclusive; earlier stages keep their original configuration.
+
+[package-pgo.py](package-pgo.py) runs the complete workflow on macOS arm64:
+
+1. Build instrumented LLVM with ThinLTO.
+2. Build Kotlin/Native against it, including the LLVM code linked into both JNI libraries.
+3. Compile a training project with that compiler.
+4. Merge the training profiles into one shared IR profile.
+5. Build and package optimized LLVM with ThinLTO and that profile.
+
+Configure the Kotlin/Native build prerequisites first (see
+[BUILDING_LLVM.md](../../BUILDING_LLVM.md)). The script locates the Kotlin checkout
+from its own path. Supply the training Git remote, branch or tag, and a shell
+command that prepares and compiles the project in a fresh clone:
+
+```shell
+python3 kotlin-native/tools/llvm_builder/package-pgo.py \
+    --training-repo <git-remote> \
+    --training-branch <branch-or-tag> \
+    --training-command './gradlew --no-daemon --no-build-cache --rerun-tasks <native-link-task>' \
+    --stage0 /absolute/path/to/bootstrap-llvm \
+    --llvm-sources /absolute/path/to/llvm-project \
+    --install-path /absolute/path/to/llvm-pgo-distribution
+```
+
+`--target` defaults to `ios_simulator_arm64`. Configure the training project's
+SDKs and compiler plugins to match the Native compiler. The script sets
+`KOTLIN_NATIVE_HOME` and `PATH`; for Gradle, it also sets `kotlin.native.home`,
+disables Native toolchain downloading and compiler daemons, and uses an isolated
+Gradle home. The training command must use this compiler, execute the Native
+compilation tasks, and wait for all profile-writing processes to exit.
+
+The training compiler build sets
+`kotlin.internal.native.llvm.pgoInstrument=true` to link the profile runtime into
+both JNI libraries. Raw profiles use `%m-%p` to separate binaries and processes.
+Only profiles from the training command are merged, using the bootstrap's
+`llvm-profdata` without `--sparse`.
+
+`--stage0` and `--llvm-sources` are optional. Without them, `package.py` downloads
+its default LLVM source and builds the bootstrap. Use matching, fixed LLVM sources
+and bootstrap for reproducible builds.
+
+The final LLVM package defaults to essentials. Like `package.py`, the script
+accepts `--build-targets` and `--distribution-components`, each followed by one or
+more values. The defaults are:
+
+```shell
+--build-targets install-distribution \
+--distribution-components clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers
+```
+
+Override the component list as needed, or use `--build-targets install` for a full
+development distribution.
+
+The output directory must not exist. It contains `llvm/`, `llvm.tar.gz`,
+`llvm.tar.gz.sha256`, and `common.profdata`. The archive and checksum are produced
+by `package.py --pack`. Kotlin/Native is built only for training and is not
+included in the output package.
+
+`--save-temporary-files` retains intermediate LLVM builds, the training compiler,
+the training clone, raw profiles, and isolated Gradle homes. Otherwise
+intermediates are removed as stages finish; failed runs retain unfinished
+intermediates. The Kotlin checkout's Gradle build outputs remain in place.

@@ -27,6 +27,10 @@ nativeInteropPlugin {
     selfHeaders.set(emptyList<String>())
     systemIncludeDirs.set(listOf("${nativeDependencies.llvmPath}/include"))
     linkerArgs.set(buildList {
+        if (providers.gradleProperty("kotlin.internal.native.llvm.pgoInstrument").orNull == "true") {
+            // Link the profile runtime for the instrumented LLVM static libraries.
+            add("-fprofile-generate")
+        }
         if (PlatformInfo.isMac()) {
             addAll(listOf(
                     "-Wl,--no-demangle",
