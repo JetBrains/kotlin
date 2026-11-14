@@ -63,7 +63,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         return builderSymbol.defaultType()
     }
 
-    override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
+    override fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addSpecialBuilderMethods(
         builder: Builder,
         builderSymbol: FirClassSymbol<*>,
         ownerDeclaration: FirDeclaration,
