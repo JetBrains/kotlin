@@ -58,7 +58,7 @@ class CancellableOperationTest {
                             ProjectId.RandomProjectUUID(),
                             KotlinToolchainsImpl().createInProcessExecutionPolicy(),
                             executionContext = ExecutionContext(
-                                LruClassLoadersCache(0, this::class.java.classLoader),
+                                null,
                                 DaemonConnectionRegistry(lazy { File(".") })
                             ),
                         )

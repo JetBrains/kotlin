@@ -19,7 +19,7 @@ internal object ApplicationEnvironmentPinProvider {
 }
 
 private class ApplicationEnvironmentPin : AutoCloseable {
-    private val closeableGuard = CloseableGuard(this)
+    private val closeableGuard = CloseableGuard(this::class)
     private val disposable: Disposable = Disposer.newDisposable("kotlin-dsl BTA application environment pin")
 
     init {
