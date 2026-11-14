@@ -130,8 +130,8 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
     ): List<KtFile> {
         assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
         val [moduleSourceDirs, moduleSourceFiles] =
-            JvmConfigurationUpdater.getBuildFilePaths(buildFile, getSourceFiles())
-                .mapNotNull(localFileSystem!!::findFileByPath)
+            JvmConfigurationUpdater.getBuildFiles(buildFile, getSourceFiles())
+                .mapNotNull { localFileSystem!!.findFileByPath(it.absolutePath) }
                 .partition(VirtualFile::isDirectory)
 
         return allSourceFiles.filter { file ->
