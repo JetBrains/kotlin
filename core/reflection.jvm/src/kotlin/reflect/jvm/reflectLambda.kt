@@ -80,7 +80,6 @@ internal object ReflectedLambdaFakeContainerSource : DeserializedContainerSource
     PROPERTY,
     FIELD,
     LOCAL_VARIABLE,
-    VALUE_PARAMETER,
     CONSTRUCTOR,
     FUNCTION,
     PROPERTY_GETTER,

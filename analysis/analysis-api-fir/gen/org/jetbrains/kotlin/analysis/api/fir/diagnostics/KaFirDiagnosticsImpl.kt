@@ -1697,6 +1697,12 @@ internal class OptInMarkerWithWrongTargetImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.OptInMarkerWithWrongTarget
 
+internal class OptInMarkerWithWrongTargetWarningImpl(
+    override val target: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.OptInMarkerWithWrongTargetWarning
+
 internal class OptInMarkerWithWrongRetentionImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
