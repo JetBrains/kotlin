@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.renderer.ConeAttributeRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeIdFullRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
@@ -20,37 +21,73 @@ import org.jetbrains.kotlin.fir.types.ConeAttribute
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 /**
- * **Note**: the signature doesn't contain a name. This check should be done externally.
+ * The signature of a callable declaration, used to find the declaration among the callables with the same name, e.g., to restore a
+ * symbol pointer. The name isn't a part of the signature, so it should be checked separately.
  */
 @KaImplementationDetail
 class FirCallableSignature private constructor(
     private val receiverType: String?,
-    private val contextReceiverTypes: List<String>,
-    private val parameters: List<String>?,
-    private val typeParametersCount: Int,
+    private val contextParameterTypes: List<String>,
+    private val valueParameterTypes: List<String>?,
+    /**
+     * The index of the `vararg` value parameter, if any. The type of a `vararg` parameter is its array type, so the index tells apart
+     * overloads such as:
+     *
+     * ```kotlin
+     * fun foo(vararg x: Int)
+     * fun foo(x: IntArray)
+     *
+     * fun foo(vararg x: Int, y: IntArray)
+     * fun foo(x: IntArray, vararg y: Int)
+     * ```
+     */
+    private val varargParameterIndex: Int?,
+    /**
+     * The names and bounds of the type parameters. Types render type parameters by name only, so the bounds tell apart overloads
+     * such as:
+     *
+     * ```kotlin
+     * fun <T : A> foo(x: T)
+     * fun <T : B> foo(x: T)
+     * ```
+     *
+     * The names tell apart overloads whose bounds are the same by position:
+     *
+     * ```kotlin
+     * fun <T : A, U : B> foo(x: T, y: U)
+     * fun <U : A, T : B> foo(x: T, y: U)
+     * ```
+     */
+    private val typeParameters: List<String>,
     private val returnType: String,
 ) {
-    fun hasTheSameSignature(declaration: FirCallableSymbol<*>): Boolean = hasTheSameSignature(declaration.fir)
-
+    /**
+     * Returns whether [declaration] has this signature.
+     */
     fun hasTheSameSignature(declaration: FirCallableDeclaration): Boolean {
+        val function = declaration as? FirFunction
         if ((receiverType == null) != (declaration.receiverParameter == null)) return false
-        if (contextReceiverTypes.size != declaration.contextParameters.size) return false
-        if (typeParametersCount != declaration.typeParameters.size) return false
-        if (parameters?.size != (declaration as? FirFunction)?.valueParameters?.size) return false
+        if (contextParameterTypes.size != declaration.contextParameters.size) return false
+        if (typeParameters.size != declaration.typeParameters.size) return false
+        if (valueParameterTypes?.size != function?.valueParameters?.size) return false
+        if (varargParameterIndex != function?.varargParameterIndex) return false
 
         declaration.lazyResolveToPhase(FirResolvePhase.TYPES)
         if (receiverType != declaration.receiverParameter?.typeRef?.renderType()) return false
 
-        val receivers = declaration.contextParameters
-        for ([index, parameter] in contextReceiverTypes.withIndex()) {
-            if (receivers[index].returnTypeRef.renderType() != parameter) return false
+        for ([index, contextParameter] in declaration.contextParameters.withIndex()) {
+            if (contextParameterTypes[index] != contextParameter.returnTypeRef.renderType()) return false
         }
 
-        if (declaration is FirFunction) {
-            requireNotNull(parameters)
-            for ([index, parameter] in declaration.valueParameters.withIndex()) {
-                if (parameters[index] != parameter.returnTypeRef.renderType()) return false
+        if (function != null) {
+            requireNotNull(valueParameterTypes)
+            for ([index, valueParameter] in function.valueParameters.withIndex()) {
+                if (valueParameterTypes[index] != valueParameter.returnTypeRef.renderType()) return false
             }
+        }
+
+        for ([index, typeParameter] in declaration.typeParameters.withIndex()) {
+            if (typeParameters[index] != typeParameter.renderTypeParameter()) return false
         }
 
         return returnType == declaration.symbol.resolvedReturnTypeRef.renderType()
@@ -61,46 +98,49 @@ class FirCallableSignature private constructor(
         if (other !is FirCallableSignature) return false
 
         if (receiverType != other.receiverType) return false
-        if (contextReceiverTypes != other.contextReceiverTypes) return false
-        if (parameters != other.parameters) return false
-        if (typeParametersCount != other.typeParametersCount) return false
+        if (contextParameterTypes != other.contextParameterTypes) return false
+        if (valueParameterTypes != other.valueParameterTypes) return false
+        if (varargParameterIndex != other.varargParameterIndex) return false
+        if (typeParameters != other.typeParameters) return false
         return returnType == other.returnType
-
     }
 
     override fun hashCode(): Int {
-        var result = receiverType?.hashCode() ?: 0
-        result = 31 * result + contextReceiverTypes.hashCode()
-        result = 31 * result + parameters.hashCode()
-        result = 31 * result + typeParametersCount.hashCode()
+        var result = receiverType.hashCode()
+        result = 31 * result + contextParameterTypes.hashCode()
+        result = 31 * result + valueParameterTypes.hashCode()
+        result = 31 * result + varargParameterIndex.hashCode()
+        result = 31 * result + typeParameters.hashCode()
         result = 31 * result + returnType.hashCode()
         return result
     }
 
     @KaImplementationDetail
     companion object {
-        fun createSignature(callableSymbol: FirCallableSymbol<*>): FirCallableSignature = createSignature(callableSymbol.fir)
-
-        fun createSignature(callableDeclaration: FirCallableDeclaration): FirCallableSignature {
-            callableDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
+        fun createSignature(callableSymbol: FirCallableSymbol<*>): FirCallableSignature {
+            val declaration = callableSymbol.fir
+            declaration.lazyResolveToPhase(FirResolvePhase.TYPES)
+            val function = declaration as? FirFunction
 
             return FirCallableSignature(
-                receiverType = callableDeclaration.receiverParameter?.typeRef?.renderType(),
-                contextReceiverTypes = callableDeclaration.contextParameters.map { it.returnTypeRef.renderType() },
-                parameters = if (callableDeclaration is FirFunction) {
-                    callableDeclaration.valueParameters.map { it.returnTypeRef.renderType() }
-                } else {
-                    null
-                },
-                typeParametersCount = callableDeclaration.typeParameters.size,
-                returnType = callableDeclaration.symbol.resolvedReturnTypeRef.renderType(),
+                receiverType = declaration.receiverParameter?.typeRef?.renderType(),
+                contextParameterTypes = declaration.contextParameters.map { it.returnTypeRef.renderType() },
+                valueParameterTypes = function?.valueParameters?.map { it.returnTypeRef.renderType() },
+                varargParameterIndex = function?.varargParameterIndex,
+                typeParameters = declaration.typeParameters.map { it.renderTypeParameter() },
+                returnType = callableSymbol.resolvedReturnTypeRef.renderType(),
             )
         }
     }
 }
 
-private fun FirTypeRef.renderType(builder: StringBuilder = StringBuilder()): String = FirRenderer(
-    builder = builder,
+private val FirFunction.varargParameterIndex: Int?
+    get() = valueParameters.indexOfFirst { it.isVararg }.takeIf { it >= 0 }
+
+private fun FirTypeParameterRef.renderTypeParameter(): String =
+    symbol.resolvedBounds.joinToString(prefix = "${symbol.name} : ") { it.renderType() }
+
+private fun FirTypeRef.renderType(): String = FirRenderer(
     annotationRenderer = null,
     bodyRenderer = null,
     callArgumentsRenderer = null,

@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaJavaFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirJavaFieldSymbolPointer(
@@ -22,12 +22,13 @@ internal class KaFirJavaFieldSymbolPointer(
     isStatic: Boolean,
     originalSymbol: KaJavaFieldSymbol?,
 ) : KaFirMemberSymbolPointer<KaJavaFieldSymbol>(ownerPointer, isStatic, originalSymbol) {
-    override fun KaFirSession.chooseCandidateAndCreateSymbol(
+    context(analysisSession: KaFirSession)
+    override fun chooseCandidateAndCreateSymbol(
         candidates: FirScope,
-        firSession: FirSession,
+        owner: FirClassSymbol<*>,
     ): KaJavaFieldSymbol? {
         val javaField = candidates.getProperties(fieldName).mapNotNull { it.fir as? FirJavaField }.singleOrNull() ?: return null
-        return firSymbolBuilder.variableBuilder.buildFieldSymbol(javaField.symbol)
+        return analysisSession.firSymbolBuilder.variableBuilder.buildFieldSymbol(javaField.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

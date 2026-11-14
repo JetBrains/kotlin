@@ -1,0 +1,29 @@
+fun <T : test.A> foo(x: T)
+
+fun <T : test.B> foo(x: T)
+
+fun <T : test.A, U : test.B> bar(x: T, y: U)
+
+fun <U : test.A, T : test.B> bar(x: T, y: U)
+
+val <T : test.A> T.prop: kotlin.Int
+  get()
+
+val <T : test.B> T.prop: kotlin.Int
+  get()
+
+interface A
+
+interface B
+
+class C {
+  fun <T : test.A> foo(x: T)
+
+  fun <T : test.B> foo(x: T)
+
+  val <T : test.A> T.prop: kotlin.Int
+    get()
+
+  val <T : test.B> T.prop: kotlin.Int
+    get()
+}

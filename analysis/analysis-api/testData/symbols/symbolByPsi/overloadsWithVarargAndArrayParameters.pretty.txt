@@ -1,0 +1,21 @@
+fun foo(vararg x: kotlin.Int)
+
+@kotlin.jvm.JvmName(name = "fooArray")
+fun foo(x: kotlin.IntArray)
+
+fun foo(vararg x: kotlin.Int, y: kotlin.IntArray)
+
+@kotlin.jvm.JvmName(name = "fooArrayAndVararg")
+fun foo(x: kotlin.IntArray, vararg y: kotlin.Int)
+
+class C {
+  fun foo(vararg x: kotlin.String)
+
+  @kotlin.jvm.JvmName(name = "fooArray")
+  fun foo(x: kotlin.Array<out kotlin.String>)
+
+  fun foo(vararg x: kotlin.String, y: kotlin.Array<out kotlin.String>)
+
+  @kotlin.jvm.JvmName(name = "fooArrayAndVararg")
+  fun foo(x: kotlin.Array<out kotlin.String>, vararg y: kotlin.String)
+}

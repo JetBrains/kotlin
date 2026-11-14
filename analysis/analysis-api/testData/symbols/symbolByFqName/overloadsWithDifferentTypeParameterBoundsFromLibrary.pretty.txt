@@ -1,0 +1,13 @@
+fun <T : test.A> foo(x: T)
+
+fun <T : test.B> foo(x: T)
+
+fun <T : test.A, U : test.B> foo(x: T, y: U)
+
+fun <U : test.A, T : test.B> foo(x: T, y: U)
+
+val <T : test.A> T.foo: kotlin.Int
+  get()
+
+val <T : test.B> T.foo: kotlin.Int
+  get()

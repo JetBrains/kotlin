@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirIllegalPsiException
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirCachedSymbolPointer.Companion.isCacheable
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPsiSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_DISTINCT_NON_PSI_SYMBOL_POINTERS
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_DISTINCT_SYMBOL_POINTERS
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERER_OPTION
@@ -141,6 +143,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                     }
                     .toList()
 
+                checkPointersOfDifferentSymbolsAreDistinct(pointerWithRenderedSymbol, directives, disablePsiBasedLogic)
+
                 val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
                     PointerWithRenderedSymbol(
                         pointer = safePointer(symbol),
@@ -184,6 +188,51 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         testServices.assertions.assertTrue(value = pointer.pointsToTheSameSymbolAs(pointer)) {
             "The symbol is not equal to itself: ${pointer::class}"
         }
+    }
+
+    /**
+     * Checks that no two pointers of [pointersWithRendered], which are created for different symbols, point to the same symbol,
+     * unless the test suppresses this check.
+     */
+    private fun checkPointersOfDifferentSymbolsAreDistinct(
+        pointersWithRendered: List<PointerWithRenderedSymbol>,
+        directives: RegisteredDirectives,
+        disablePsiBasedLogic: Boolean,
+    ) {
+        val directive = if (disablePsiBasedLogic) {
+            DO_NOT_REQUIRE_DISTINCT_NON_PSI_SYMBOL_POINTERS
+        } else {
+            DO_NOT_REQUIRE_DISTINCT_SYMBOL_POINTERS
+        }
+
+        val symbolsWithSamePointers = pointersWithRendered.findSymbolsWithSamePointers()
+        val isSuppressed = directive in directives
+        when {
+            symbolsWithSamePointers != null && !isSuppressed -> {
+                val [first, second] = symbolsWithSamePointers
+                fail("Pointers of different symbols point to the same symbol. Add // $directive directive.\n\n$first\n\n$second")
+            }
+
+            symbolsWithSamePointers == null && isSuppressed -> fail("'// ${directive.name}' directive has no effect on the test")
+        }
+    }
+
+    /**
+     * Returns the rendered symbols of the first two pointers that point to the same symbol, or `null` if all pointers are distinct.
+     *
+     * The pointers are compared pairwise, as they have no hash code consistent with [KaSymbolPointer.pointsToTheSameSymbolAs].
+     * A test has at most a few hundred pointers, so this is cheap.
+     */
+    private fun List<PointerWithRenderedSymbol>.findSymbolsWithSamePointers(): Pair<String, String>? {
+        val pointers = mapNotNull { (val pointer, val rendered) -> pointer?.let { it to rendered } }
+        for ([index, pointerWithRendered] in pointers.withIndex()) {
+            val [firstPointer, firstRendered] = pointerWithRendered
+            for ([secondPointer, secondRendered] in pointers.subList(index + 1, pointers.size)) {
+                if (firstPointer.pointsToTheSameSymbolAs(secondPointer)) return firstRendered to secondRendered
+            }
+        }
+
+        return null
     }
 
     context(_: KaSession)
@@ -342,6 +391,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                 }
 
                 val restored = pointer?.let { restoreSymbol(it, disablePsiBasedLogic) }
+                val actualRender = restored?.let { renderSymbolForComparison(it, directives) }
                 if (restored != null) {
                     if (psiOnly && disablePsiBasedLogic) {
                         fail(
@@ -350,12 +400,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         )
                     }
 
-                    restoredPointers += pointer
+                    // A pointer that restores another symbol is already recorded in the output, so it isn't checked like a restored one
+                    if (actualRender == expectedRender) {
+                        restoredPointers += pointer
+                    }
                 } else {
                     addNonRestoredSymbol()
                 }
-
-                val actualRender = restored?.let { renderSymbolForComparison(it, directives) }
 
                 when {
                     shouldBeRendered -> actualRender ?: expectedRender
@@ -488,6 +539,14 @@ object SymbolTestDirectives : SimpleDirectivesContainer() {
 
     val DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION by directive(
         description = "Symbol restoring w/o psi for some symbols in current test is not supported yet",
+    )
+
+    val DO_NOT_REQUIRE_DISTINCT_SYMBOL_POINTERS by directive(
+        description = "Pointers of some different symbols in current test point to the same symbol",
+    )
+
+    val DO_NOT_REQUIRE_DISTINCT_NON_PSI_SYMBOL_POINTERS by directive(
+        description = "Pointers w/o psi of some different symbols in current test point to the same symbol",
     )
 
     val PRETTY_RENDERER_OPTION by enumDirective(description = "Explicit rendering mode") { PrettyRendererOption.valueOf(it) }

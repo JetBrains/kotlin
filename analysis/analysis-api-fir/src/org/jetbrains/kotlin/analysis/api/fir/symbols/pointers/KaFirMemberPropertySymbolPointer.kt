@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirMemberPropertySymbolPointer(
@@ -23,15 +23,16 @@ internal class KaFirMemberPropertySymbolPointer(
     isStatic: Boolean,
     originalSymbol: KaKotlinPropertySymbol?,
 ) : KaFirMemberSymbolPointer<KaKotlinPropertySymbol>(ownerPointer, isStatic, originalSymbol) {
-    override fun KaFirSession.chooseCandidateAndCreateSymbol(
+    context(analysisSession: KaFirSession)
+    override fun chooseCandidateAndCreateSymbol(
         candidates: FirScope,
-        firSession: FirSession
+        owner: FirClassSymbol<*>,
     ): KaKotlinPropertySymbol? {
-        val firProperty = candidates.findDeclarationWithSignature<FirProperty>(signature) {
+        val symbol = candidates.findMemberWithSignature<FirProperty>(owner, signature) {
             processPropertiesByName(name, it)
-        } ?: return null
+        }
 
-        return firSymbolBuilder.variableBuilder.buildVariableSymbol(firProperty.symbol) as? KaKotlinPropertySymbol
+        return symbol as? KaKotlinPropertySymbol
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

@@ -188,6 +188,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("javaConstructorsWithDifferentTypeParameterBounds.kt")
+  public void testJavaConstructorsWithDifferentTypeParameterBounds() {
+    run("javaConstructorsWithDifferentTypeParameterBounds.kt");
+  }
+
+  @Test
+  @TestMetadata("javaOverloadsWithDifferentTypeParameterBounds.kt")
+  public void testJavaOverloadsWithDifferentTypeParameterBounds() {
+    run("javaOverloadsWithDifferentTypeParameterBounds.kt");
+  }
+
+  @Test
   @TestMetadata("kclass.kt")
   public void testKclass() {
     run("kclass.kt");
@@ -218,6 +230,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("memberOverloadsWithDifferentTypeParameterBoundsFromLibrary.kt")
+  public void testMemberOverloadsWithDifferentTypeParameterBoundsFromLibrary() {
+    run("memberOverloadsWithDifferentTypeParameterBoundsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     run("nestedClass.kt");
@@ -227,6 +245,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   @TestMetadata("nothing.kt")
   public void testNothing() {
     run("nothing.kt");
+  }
+
+  @Test
+  @TestMetadata("overloadsWithDifferentTypeParameterBoundsFromLibrary.kt")
+  public void testOverloadsWithDifferentTypeParameterBoundsFromLibrary() {
+    run("overloadsWithDifferentTypeParameterBoundsFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("overloadsWithVarargAndArrayParametersFromLibrary.kt")
+  public void testOverloadsWithVarargAndArrayParametersFromLibrary() {
+    run("overloadsWithVarargAndArrayParametersFromLibrary.kt");
   }
 
   @Test
@@ -311,6 +341,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   @TestMetadata("signatureEnhancementOuterClassBoundsToInner.kt")
   public void testSignatureEnhancementOuterClassBoundsToInner() {
     run("signatureEnhancementOuterClassBoundsToInner.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverridesWithSameSignature.kt")
+  public void testSubstitutionOverridesWithSameSignature() {
+    run("substitutionOverridesWithSameSignature.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverridesWithSameSignatureFromLibrary.kt")
+  public void testSubstitutionOverridesWithSameSignatureFromLibrary() {
+    run("substitutionOverridesWithSameSignatureFromLibrary.kt");
   }
 
   @Test
