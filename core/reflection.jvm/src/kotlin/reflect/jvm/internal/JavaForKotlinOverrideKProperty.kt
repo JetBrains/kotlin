@@ -66,8 +66,10 @@ internal abstract class JavaForKotlinOverrideKProperty<out V>(
     override val returnType: KType by lazy(PUBLICATION) {
         with(ReflectSignatureParts(METHOD_RETURN_TYPE, emptyList())) {
             val originalReturnType = getterMethod.returnType as AbstractKType
+            val overriddenProperties = (overriddenProperty.container as MemberContainer<*>).getPropertiesFromSupertypes(name)
+                .filter { it !is JavaFieldKProperty<*> && it.visibility != KVisibility.PRIVATE }
             val qualifiers = originalReturnType.computeIndexedQualifiers(
-                listOf(overriddenProperty.returnType as AbstractKType), null,
+                overriddenProperties.map { it.returnType as AbstractKType }, null,
             )
             substituteType(originalReturnType.enhance(qualifiers))
         }
