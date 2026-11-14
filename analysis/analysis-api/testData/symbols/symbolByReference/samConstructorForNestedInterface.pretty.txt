@@ -1,0 +1,1 @@
+Nested(function: () -> kotlin.Unit): test.Outer.Nested

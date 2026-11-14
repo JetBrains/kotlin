@@ -1,0 +1,1 @@
+FunInterface(function: () -> kotlin.Unit): test.Outer.Nested.Companion.Inner.Companion.FunInterface
