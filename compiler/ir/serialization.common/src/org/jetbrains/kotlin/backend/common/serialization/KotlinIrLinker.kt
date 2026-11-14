@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.moduleVisibilityProvider
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.ModuleVisibilityProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -36,15 +38,18 @@ import org.jetbrains.kotlin.utils.putToMultiMap
 
 abstract class KotlinIrLinker(
     val symbolTable: SymbolTable,
+    private val friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer {
     constructor(
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
+        friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
         deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     ) : this(
         symbolTable,
+        friendModules,
         errorCallback = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, it) },
         deserializedSymbolPostProcessor
     )
@@ -332,6 +337,8 @@ abstract class KotlinIrLinker(
     ): IrModuleDeserializer {
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
         moduleFragment.kotlinLibrary = kotlinLibrary
+        moduleFragment.friendLibraries = friendModules[kotlinLibrary]?.toSet().orEmpty()
+        moduleFragment.moduleVisibilityProvider = IrLinkerModuleVisibilityProvider
 
         val deserializer = maybeWrapWithBuiltIn(
             createModuleDeserializer(
@@ -489,11 +496,29 @@ fun interface DeserializationStrategyResolver {
 /**
  * This is an auxiliary attribute that is used to store [KotlinLibrary] instance for deserialized [IrModuleFragment].
  *
- * It is stamped by [KotlinIrLinker] for every module fragment created during IR linkage. Code that creates a synthetic
- * module fragment for an already deserialized library module must stamp the new fragment manually.
+ * It is stamped by [KotlinIrLinker] for every module fragment created during IR linkage.
  *
  * The attribute stays `null` for module fragments that the linker did not create: the fragment of the module being
  * compiled, fragments on backends that have no klibs at all (JVM), and the single fragment that the frontend creates
  * for all binary dependencies at once, see `DependencyListForCliModule.Builder`.
  */
-var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault = false)
+var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault = true)
+
+/**
+ * The list of friend Klibs, as specified by -Xfriend-modules.
+ *
+ * It is present only when [IrModuleFragment.kotlinLibrary] is present, i.e. in module fragments deserialized with IR linker.
+ * In practice, it's present at the 2-nd stage of compilation. Friend dependencies on the 1-st stage are tracked by frontend structures.
+ */
+internal var IrModuleFragment.friendLibraries: Set<KotlinLibrary>? by irAttribute(copyByDefault = true)
+
+private object IrLinkerModuleVisibilityProvider : ModuleVisibilityProvider {
+    override fun canSeeInternals(thisModule: IrModuleFragment, otherModule: IrModuleFragment): Boolean {
+        if (otherModule.moduleVisibilityProvider !is IrLinkerModuleVisibilityProvider) return false
+        if (thisModule == otherModule) return true
+
+        val fromModuleKlib = thisModule.kotlinLibrary ?: return false
+        val toModuleKlib = otherModule.kotlinLibrary ?: return false
+        return fromModuleKlib == toModuleKlib || thisModule.friendLibraries?.contains(toModuleKlib) == true
+    }
+}

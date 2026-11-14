@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.moduleVisibilityProvider
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -45,7 +46,10 @@ class Fir2IrComponentsStorage(
 
     val module: IrModuleFragment = IrModuleFragmentImpl(
         FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns)
-    )
+    ).also {
+        it.leafModule = it
+        it.moduleVisibilityProvider = Fir2IrModuleVisibilityProvider
+    }
 
     private val conversionScope = Fir2IrConversionScope(configuration)
 
