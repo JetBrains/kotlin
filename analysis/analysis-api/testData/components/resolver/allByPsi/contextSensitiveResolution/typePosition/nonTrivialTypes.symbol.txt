@@ -217,7 +217,7 @@ KtUserType(214,216): 'E2'
 KtNameReferenceExpression(214,216): 'E2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       E2
@@ -646,7 +646,6 @@ KtNameReferenceExpression(583,585): 'mg'
 KtOperationReferenceExpression(586,588): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(589,612): 'MyGenericSealed<String>'
@@ -826,7 +825,6 @@ KtNameReferenceExpression(804,806): 'cs'
 KtOperationReferenceExpression(807,809): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(810,833): 'MyGenericSealed<String>'

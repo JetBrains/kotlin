@@ -269,6 +269,12 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
   }
 
   @Test
+  @TestMetadata("primaryConstructorProperties.kt")
+  public void testPrimaryConstructorProperties() {
+    run("primaryConstructorProperties.kt");
+  }
+
+  @Test
   @TestMetadata("primaryConstructorVsCompanionInvoke.kt")
   public void testPrimaryConstructorVsCompanionInvoke() {
     run("primaryConstructorVsCompanionInvoke.kt");

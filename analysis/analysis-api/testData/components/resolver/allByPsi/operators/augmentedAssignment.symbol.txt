@@ -262,7 +262,6 @@ KtNameReferenceExpression(267,268): 'a'
 KtOperationReferenceExpression(269,271): '+='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.plusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
@@ -295,7 +294,6 @@ KtNameReferenceExpression(278,279): 'a'
 KtOperationReferenceExpression(280,282): '-='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.minusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
@@ -328,7 +326,6 @@ KtNameReferenceExpression(289,290): 'a'
 KtOperationReferenceExpression(291,293): '*='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.timesAssign(<dispatch receiver>: A, other: A): kotlin.Unit
@@ -361,7 +358,6 @@ KtNameReferenceExpression(300,301): 'a'
 KtOperationReferenceExpression(302,304): '/='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.divAssign(<dispatch receiver>: A, other: A): kotlin.Unit
@@ -394,7 +390,6 @@ KtNameReferenceExpression(311,312): 'a'
 KtOperationReferenceExpression(313,315): '%='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.remAssign(<dispatch receiver>: A, other: A): kotlin.Unit

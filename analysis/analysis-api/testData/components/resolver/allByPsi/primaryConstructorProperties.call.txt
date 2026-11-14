@@ -1,0 +1,173 @@
+KtFile: 'primaryConstructorProperties.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,11): 'interface I'
+  null
+
+KtNamedFunction(12,105): 'fun f(x: I) {'
+  null
+
+KtParameterList(17,23): '(x: I)'
+  null
+
+KtParameter(18,22): 'x: I'
+  null
+
+KtTypeReference(21,22): 'I'
+  null
+
+KtUserType(21,22): 'I'
+  null
+
+KtNameReferenceExpression(21,22): 'I'
+  null
+
+KtBlockExpression(24,105): '{'
+  null
+
+KtClass(30,52): 'class A(x: I) : I by x'
+  null
+
+KtPrimaryConstructor(37,43): '(x: I)'
+  null
+
+KtParameterList(37,43): '(x: I)'
+  null
+
+KtParameter(38,42): 'x: I'
+  null
+
+KtTypeReference(41,42): 'I'
+  null
+
+KtUserType(41,42): 'I'
+  null
+
+KtNameReferenceExpression(41,42): 'I'
+  null
+
+KtSuperTypeList(46,52): 'I by x'
+  null
+
+KtDelegatedSuperTypeEntry(46,52): 'I by x'
+  null
+
+KtTypeReference(46,47): 'I'
+  null
+
+KtUserType(46,47): 'I'
+  null
+
+KtNameReferenceExpression(46,47): 'I'
+  null
+
+KtNameReferenceExpression(51,52): 'x'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = I
+        symbol = x: I
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtClass(57,82): 'class B(val x: I): I by x'
+  null
+
+KtPrimaryConstructor(64,74): '(val x: I)'
+  null
+
+KtParameterList(64,74): '(val x: I)'
+  null
+
+KtParameter(65,73): 'val x: I'
+  null
+
+KtTypeReference(72,73): 'I'
+  null
+
+KtUserType(72,73): 'I'
+  null
+
+KtNameReferenceExpression(72,73): 'I'
+  null
+
+KtSuperTypeList(76,82): 'I by x'
+  null
+
+KtDelegatedSuperTypeEntry(76,82): 'I by x'
+  null
+
+KtTypeReference(76,77): 'I'
+  null
+
+KtUserType(76,77): 'I'
+  null
+
+KtNameReferenceExpression(76,77): 'I'
+  null
+
+KtNameReferenceExpression(81,82): 'x'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = I
+        symbol = x: I
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtClass(87,103): 'class C : I by x'
+  null
+
+KtSuperTypeList(97,103): 'I by x'
+  null
+
+KtDelegatedSuperTypeEntry(97,103): 'I by x'
+  null
+
+KtTypeReference(97,98): 'I'
+  null
+
+KtUserType(97,98): 'I'
+  null
+
+KtNameReferenceExpression(97,98): 'I'
+  null
+
+KtNameReferenceExpression(102,103): 'x'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = I
+        symbol = x: I
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
