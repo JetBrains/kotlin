@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPI
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinJsTypeScriptDefinitionsMetrics
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
@@ -338,6 +339,7 @@ internal constructor(
                     .withType(JsIrBinary::class.java)
                     .all { binary ->
                         if (binary.target.wasmTargetType == null && propertiesProvider.jsGenerateRichTypeScriptDeclarations) {
+                            KotlinJsTypeScriptDefinitionsMetrics.collectMetrics(project)
                             val dtsTask = registerDtsGenerationTask(binary)
 
                             val tsValidationTask = registerTypeScriptCheckTask(
