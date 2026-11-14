@@ -18,7 +18,7 @@ configurations {
 }
 
 dependencies {
-    embedded(project(":kotlinx-metadata-klib")) { isTransitive = false }
+    embedded(project(":prepare:kotlinx-metadata-klib")) { isTransitive = false }
     embedded(project(":kotlin-metadata")) { isTransitive = false }
     embedded(project(":native:kotlin-klib-commonizer-api")) { isTransitive = false }
     embedded(project(":kotlin-tooling-core")) { isTransitive = false }

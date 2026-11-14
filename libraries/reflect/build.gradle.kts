@@ -102,7 +102,7 @@ dependencies {
     compileOnly(project(":kotlin-metadata-jvm", "unshaded"))
     compileOnly(project(":kotlin-metadata"))
     bundle(project(":kotlin-metadata"))
-    bundle(project(":kotlin-metadata-jvm"))
+    bundle(project(":prepare:kotlin-metadata-jvm"))
 }
 
 if (kotlinBuildProperties.includeJava9) {

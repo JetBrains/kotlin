@@ -33,7 +33,7 @@ dependencies {
 
     testRuntimeOnly(project(":kotlin-metadata-jvm"))
 
-    shadows(project(":kotlin-metadata-jvm"))
+    shadows(project(":prepare:kotlin-metadata-jvm"))
     shadows(project(":tools:kotlinp"))
     shadows(libs.intellij.asm)
 }
