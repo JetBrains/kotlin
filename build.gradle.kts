@@ -626,6 +626,7 @@ tasks {
         dependsOn(":libraries:tools:abi-validation:abi-tools-api:check")
         dependsOn(":libraries:tools:abi-validation:abi-tools-embeddable:check")
         dependsOn(":libraries:tools:abi-validation:abi-tools-tests:check")
+        dependsOn(":build-tools:libraries:provisioning:check")
     }
 
     val examplesTest = testLifecycleTask("examplesTest", QualityGate.Master) {
