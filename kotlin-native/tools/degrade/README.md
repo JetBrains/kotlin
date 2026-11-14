@@ -7,7 +7,9 @@ without Gradle.
 Intended to be helpful in minimizing reproducers or investigating
 Kotlin/Native-related problems.
 
-Confirmed to work with Kotlin versions from 1.8.10 to 2.2.0-RC.
+Confirmed to work with Kotlin versions from 1.8.10 to 2.5.0-Beta2,
+and Gradle versions from 6.8.3 to 9.8.1
+in combinations supported by the Kotlin Gradle plugin.
 
 Probably doesn't work on Windows.
 
@@ -26,3 +28,6 @@ The tool runs Gradle build, analyses certain events during the run,
 and generates shell scripts in the `degrade` directory at the project root.
 It emits a script per Kotlin/Native task, and also `rerun-all.sh` and
 `rerun-failed.sh`.
+
+Up-to-date tasks don't run Kotlin/Native tools, so they get no scripts.
+To get scripts for all the tasks, run the build with `clean` or `--rerun-tasks`.
