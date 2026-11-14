@@ -18,12 +18,12 @@
  */
 @kotlin.Metadata()
 public final class A {
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String compBlockVal = "compBlockVal";
 
     public A() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String compBlockVal = "compBlockVal";
 
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getCompBlockVal() {
@@ -81,8 +81,6 @@ public class J {
 public final class KKt {
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String compExtVal = "compExtVal";
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String compExtValJ = "compExtValJ";
 
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getCompExtVal() {
@@ -101,6 +99,8 @@ public final class KKt {
     java.lang.String k) {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String compExtValJ = "compExtValJ";
 
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getCompExtValJ() {

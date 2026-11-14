@@ -22,8 +22,6 @@ package test;
 @kotlin.Metadata()
 public abstract @interface Anno {
 
-    public abstract java.lang.String value();
-
     /**
      * synthetic class
      */
@@ -35,6 +33,8 @@ public abstract @interface Anno {
         public static void value$annotations() {
         }
     }
+
+    public abstract java.lang.String value();
 }
 
 ////////////////////
@@ -118,7 +118,6 @@ public enum Enum {
     /*public static final*/ WHITE /* = new Enum(0) */,
     @Anno(value = "black")
     /*public static final*/ BLACK /* = new Enum(0) */;
-    private final int x = 0;
 
     @Anno(value = "enum-constructor")
     Enum(@Anno(value = "x")
@@ -133,6 +132,7 @@ public enum Enum {
     @java.lang.Deprecated()
     public static void getX$annotations() {
     }
+    private final int x = 0;
 
     @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<test.Enum> getEntries() {
@@ -179,8 +179,6 @@ package test;
  */
 @kotlin.Metadata()
 public abstract class Test {
-    @org.jetbrains.annotations.NotNull()
-    private java.lang.String v;
 
     @Anno(value = "test-constructor")
     protected Test(@Anno(value = "v-param")
@@ -205,6 +203,8 @@ public abstract class Test {
     @org.jetbrains.annotations.NotNull()
     java.lang.String p0) {
     }
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.String v;
 
     @Anno(value = "abstract-method")
     @org.jetbrains.annotations.NotNull()

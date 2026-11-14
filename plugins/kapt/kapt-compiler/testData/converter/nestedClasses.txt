@@ -21,8 +21,6 @@
  */
 @kotlin.Metadata()
 public final class A {
-    @org.jetbrains.annotations.Nullable()
-    private final A x = null;
 
     public A() {
         super();
@@ -32,6 +30,8 @@ public final class A {
     public final A getX() {
         return null;
     }
+    @org.jetbrains.annotations.Nullable()
+    private final A x = null;
 
     @org.jetbrains.annotations.Nullable()
     public final A f1(@org.jetbrains.annotations.NotNull()
@@ -62,15 +62,15 @@ public final class A {
     @kotlin.Metadata()
     public static abstract interface B {
 
-        @org.jetbrains.annotations.Nullable()
-        public abstract A.B getY();
-
         /**
          * synthetic class
          */
         @kotlin.Metadata()
         public static final class DefaultImpls {
         }
+
+        @org.jetbrains.annotations.Nullable()
+        public abstract A.B getY();
     }
 
     /**
@@ -86,12 +86,12 @@ public final class A {
      */
     @kotlin.Metadata()
     public static final class C {
-        @org.jetbrains.annotations.NotNull()
-        public static final A.C INSTANCE = null;
 
         private C() {
             super();
         }
+        @org.jetbrains.annotations.NotNull()
+        public static final A.C INSTANCE = null;
     }
 }
 
@@ -270,23 +270,6 @@ public final class Test {
     }
 
     /**
-     * public final inner class Test.Inner : kotlin/Any {
-     *
-     *   // signature: <init>(LTest;)V
-     *   public constructor()
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public final class Inner {
-
-        public Inner() {
-            super();
-        }
-    }
-
-    /**
      * public final class Test.Nested : kotlin/Any {
      *
      *   // signature: <init>()V
@@ -323,6 +306,56 @@ public final class Test {
     }
 
     /**
+     * public final inner class Test.Inner : kotlin/Any {
+     *
+     *   // signature: <init>(LTest;)V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner {
+
+        public Inner() {
+            super();
+        }
+    }
+
+    /**
+     * public final object Test.NestedObject : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class NestedObject {
+
+        private NestedObject() {
+            super();
+        }
+        @org.jetbrains.annotations.NotNull()
+        public static final Test.NestedObject INSTANCE = null;
+    }
+
+    /**
+     * public abstract interface Test.NestedInterface : kotlin/Any {
+     *
+     *   // module name: main
+     *
+     *   // has method bodies in interface
+     *
+     *   // is compiled in compatibility mode
+     * }
+     */
+    @kotlin.Metadata()
+    public static abstract interface NestedInterface {
+    }
+
+    /**
      * public final enum class Test.NestedEnum : kotlin/Enum<Test.NestedEnum> {
      *
      *   // signature: <init>(Ljava/lang/String;I)V
@@ -348,39 +381,6 @@ public final class Test {
         @org.jetbrains.annotations.NotNull()
         public static kotlin.enums.EnumEntries<Test.NestedEnum> getEntries() {
             return null;
-        }
-    }
-
-    /**
-     * public abstract interface Test.NestedInterface : kotlin/Any {
-     *
-     *   // module name: main
-     *
-     *   // has method bodies in interface
-     *
-     *   // is compiled in compatibility mode
-     * }
-     */
-    @kotlin.Metadata()
-    public static abstract interface NestedInterface {
-    }
-
-    /**
-     * public final object Test.NestedObject : kotlin/Any {
-     *
-     *   // signature: <init>()V
-     *   private constructor()
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class NestedObject {
-        @org.jetbrains.annotations.NotNull()
-        public static final Test.NestedObject INSTANCE = null;
-
-        private NestedObject() {
-            super();
         }
     }
 }

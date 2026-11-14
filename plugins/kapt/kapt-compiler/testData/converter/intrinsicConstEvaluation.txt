@@ -72,6 +72,10 @@ public class J {
  */
 @kotlin.Metadata()
 public final class KConsts {
+
+    private KConsts() {
+        super();
+    }
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String TRIMMED = "padded";
     @org.jetbrains.annotations.NotNull()
@@ -81,10 +85,6 @@ public final class KConsts {
     public static final int SECONDS_PER_DAY = 86400;
     @org.jetbrains.annotations.NotNull()
     public static final KConsts INSTANCE = null;
-
-    private KConsts() {
-        super();
-    }
 }
 
 ////////////////////
@@ -109,15 +109,15 @@ public final class KConsts {
  */
 @kotlin.Metadata()
 public final class KFromJava {
+
+    private KFromJava() {
+        super();
+    }
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String TRIMMED = "OK";
     public static final int BUMPED = 42;
     @org.jetbrains.annotations.NotNull()
     public static final KFromJava INSTANCE = null;
-
-    private KFromJava() {
-        super();
-    }
 }
 
 ////////////////////

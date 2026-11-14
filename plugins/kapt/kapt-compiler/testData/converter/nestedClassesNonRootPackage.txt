@@ -67,22 +67,6 @@ package test;
  */
 @kotlin.Metadata()
 public final class A$B {
-    @kotlin.jvm.JvmField()
-    public test.A$B.C c;
-    @kotlin.jvm.JvmField()
-    public test.A$B.D$E de;
-    @kotlin.jvm.JvmField()
-    public test.J$B.C jc;
-    @kotlin.jvm.JvmField()
-    public test.J$B.D$E jde;
-    @kotlin.jvm.JvmField()
-    public test.A$B.D$$E dee;
-    @kotlin.jvm.JvmField()
-    public test.A$B.D$$$E deee;
-    @kotlin.jvm.JvmField()
-    public test.J$B.D$$E jdee;
-    @kotlin.jvm.JvmField()
-    public test.J$B.D$$$E jdeee;
 
     public A$B() {
         super();
@@ -104,40 +88,14 @@ public final class A$B {
             super();
         }
     }
-
-    /**
-     * public final class test/A$B.D$$$E : kotlin/Any {
-     *
-     *   // signature: <init>()V
-     *   public constructor()
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class D$$$E {
-
-        public D$$$E() {
-            super();
-        }
-    }
-
-    /**
-     * public final class test/A$B.D$$E : kotlin/Any {
-     *
-     *   // signature: <init>()V
-     *   public constructor()
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class D$$E {
-
-        public D$$E() {
-            super();
-        }
-    }
+    @kotlin.jvm.JvmField()
+    public test.A$B.C c;
+    @kotlin.jvm.JvmField()
+    public test.A$B.D$E de;
+    @kotlin.jvm.JvmField()
+    public test.J$B.C jc;
+    @kotlin.jvm.JvmField()
+    public test.J$B.D$E jde;
 
     /**
      * public final class test/A$B.D$E : kotlin/Any {
@@ -178,14 +136,6 @@ public final class A$B {
      */
     @kotlin.Metadata()
     public static final class D$E {
-        @kotlin.jvm.JvmField()
-        public test.A$B.D$E.F f;
-        @kotlin.jvm.JvmField()
-        public test.A$B.D$E.F$G fg;
-        @kotlin.jvm.JvmField()
-        public test.J$B.D$E.F jf;
-        @kotlin.jvm.JvmField()
-        public test.J$B.D$E.F$G jfg;
 
         public D$E() {
             super();
@@ -224,7 +174,57 @@ public final class A$B {
                 super();
             }
         }
+        @kotlin.jvm.JvmField()
+        public test.A$B.D$E.F f;
+        @kotlin.jvm.JvmField()
+        public test.A$B.D$E.F$G fg;
+        @kotlin.jvm.JvmField()
+        public test.J$B.D$E.F jf;
+        @kotlin.jvm.JvmField()
+        public test.J$B.D$E.F$G jfg;
     }
+
+    /**
+     * public final class test/A$B.D$$E : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class D$$E {
+
+        public D$$E() {
+            super();
+        }
+    }
+
+    /**
+     * public final class test/A$B.D$$$E : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class D$$$E {
+
+        public D$$$E() {
+            super();
+        }
+    }
+    @kotlin.jvm.JvmField()
+    public test.A$B.D$$E dee;
+    @kotlin.jvm.JvmField()
+    public test.A$B.D$$$E deee;
+    @kotlin.jvm.JvmField()
+    public test.J$B.D$$E jdee;
+    @kotlin.jvm.JvmField()
+    public test.J$B.D$$$E jdeee;
 }
 
 ////////////////////
@@ -249,6 +249,20 @@ public final class Experiment {
 
     public Experiment() {
         super();
+    }
+
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    /**
+     * public final annotation class test/Experiment.Type : kotlin/Annotation {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static abstract @interface Type {
     }
 
     @test.Experiment.Type()
@@ -287,8 +301,6 @@ public final class Experiment {
      */
     @kotlin.Metadata()
     public static final class Group {
-        @org.jetbrains.annotations.NotNull()
-        private final java.lang.String s = null;
 
         public Group(@org.jetbrains.annotations.NotNull()
         java.lang.String s) {
@@ -299,6 +311,8 @@ public final class Experiment {
         public final java.lang.String getS() {
             return null;
         }
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String s = null;
 
         @org.jetbrains.annotations.NotNull()
         public final java.lang.String component1() {
@@ -327,20 +341,6 @@ public final class Experiment {
         public java.lang.String toString() {
             return null;
         }
-    }
-
-    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-    /**
-     * public final annotation class test/Experiment.Type : kotlin/Annotation {
-     *
-     *   // signature: <init>()V
-     *   public constructor()
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static abstract @interface Type {
     }
 }
 
@@ -395,12 +395,12 @@ public final class Foo {
          */
         @kotlin.Metadata()
         public static final class Zoo {
-            @org.jetbrains.annotations.NotNull()
-            public static final test.Foo.Bar.Zoo INSTANCE = null;
 
             private Zoo() {
                 super();
             }
+            @org.jetbrains.annotations.NotNull()
+            public static final test.Foo.Bar.Zoo INSTANCE = null;
         }
     }
 }
@@ -545,8 +545,6 @@ package test;
  */
 @kotlin.Metadata()
 public final class Test1 extends test.Foo.Bar implements test.IFoo.IBar, test.IFoo.IBar.IZoo {
-    @org.jetbrains.annotations.NotNull()
-    private final test.Foo.Bar.Zoo zoo = null;
 
     public Test1(@org.jetbrains.annotations.NotNull()
     test.Foo.Bar.Zoo zoo) {
@@ -557,6 +555,8 @@ public final class Test1 extends test.Foo.Bar implements test.IFoo.IBar, test.IF
     public final test.Foo.Bar.Zoo getZoo() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final test.Foo.Bar.Zoo zoo = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.Thread.State a() {

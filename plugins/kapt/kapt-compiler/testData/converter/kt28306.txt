@@ -18,9 +18,6 @@ package foo;
 @kotlin.Metadata()
 public abstract interface InterfaceWithDefaults<T extends java.lang.Object> extends Error1, Error2 {
 
-    public default void foo() {
-    }
-
     /**
      * synthetic class
      */
@@ -31,6 +28,9 @@ public abstract interface InterfaceWithDefaults<T extends java.lang.Object> exte
         public static <T extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull()
         foo.InterfaceWithDefaults<T> $this) {
         }
+    }
+
+    public default void foo() {
     }
 
     /**
@@ -49,9 +49,6 @@ public abstract interface InterfaceWithDefaults<T extends java.lang.Object> exte
     @kotlin.Metadata()
     public static abstract interface Nested<S extends java.lang.Object> extends Error1, Error2 {
 
-        public default void bar() {
-        }
-
         /**
          * synthetic class
          */
@@ -62,6 +59,9 @@ public abstract interface InterfaceWithDefaults<T extends java.lang.Object> exte
             public static <S extends java.lang.Object>void bar(@org.jetbrains.annotations.NotNull()
             foo.InterfaceWithDefaults.Nested<S> $this) {
             }
+        }
+
+        public default void bar() {
         }
     }
 }

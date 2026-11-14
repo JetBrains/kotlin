@@ -26,8 +26,6 @@ public enum E {
     /*public static final*/ E1 /* = new E() */,
     /*public static final*/ E2 /* = new E() */,
     /*public static final*/ E3 /* = new E() */;
-    @org.jetbrains.annotations.NotNull()
-    private final I i = null;
 
     E(I i) {
     }
@@ -36,6 +34,8 @@ public enum E {
     public final I getI() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final I i = null;
 
     @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<E> getEntries() {

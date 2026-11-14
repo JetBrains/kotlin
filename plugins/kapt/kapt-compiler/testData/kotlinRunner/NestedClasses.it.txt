@@ -18,8 +18,6 @@ package test;
 
 @kotlin.Metadata()
 public final class Simple {
-    @org.jetbrains.annotations.NotNull()
-    public static final test.Simple.Companion Companion = null;
 
     public Simple() {
         super();
@@ -27,22 +25,6 @@ public final class Simple {
 
     @MyAnnotation()
     public final void myMethod() {
-    }
-
-    @kotlin.Metadata()
-    public static final class Companion {
-
-        private Companion() {
-            super();
-        }
-    }
-
-    @kotlin.Metadata()
-    public final class InnerClass {
-
-        public InnerClass() {
-            super();
-        }
     }
 
     @kotlin.Metadata()
@@ -60,4 +42,22 @@ public final class Simple {
             }
         }
     }
+
+    @kotlin.Metadata()
+    public final class InnerClass {
+
+        public InnerClass() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+    }
+    @org.jetbrains.annotations.NotNull()
+    public static final test.Simple.Companion Companion = null;
 }

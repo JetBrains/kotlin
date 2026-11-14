@@ -50,12 +50,6 @@ package test;
  */
 @kotlin.Metadata()
 public final class C {
-    @org.jetbrains.annotations.NotNull()
-    private final U2 x = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<U3> y = null;
-    @org.jetbrains.annotations.NotNull()
-    private final U1<U4> z = null;
 
     public C(@org.jetbrains.annotations.NotNull()
     U2 x, @org.jetbrains.annotations.NotNull()
@@ -68,16 +62,22 @@ public final class C {
     public final U2 getX() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final U2 x = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.util.List<U3> getY() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<U3> y = null;
 
     @org.jetbrains.annotations.NotNull()
     public final U1<U4> getZ() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final U1<U4> z = null;
 
     @org.jetbrains.annotations.NotNull()
     public final U2 component1() {
