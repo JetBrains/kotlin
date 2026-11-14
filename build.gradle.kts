@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.testFederation.PlanTestFederationTask
 import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedDomainsTask
 
-val a = Unit
+val a = 1
 
 buildscript {
     /**
