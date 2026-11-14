@@ -22,6 +22,6 @@ internal open class ExcludeAnnotationFilter(private val qualifiedName: String) :
         it.hasQualifiedName(qualifiedName)
     }
 
-    internal object JvmExposeBoxed : ExcludeAnnotationFilter(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME.asString())
-    internal object JvmName : ExcludeAnnotationFilter(JvmStandardClassIds.JVM_NAME.asString())
+    internal object JvmExposeBoxed : ExcludeAnnotationFilter(JvmStandardClassIds.Annotations.JvmExposeBoxed.asFqNameString())
+    internal object JvmName : ExcludeAnnotationFilter(JvmStandardClassIds.Annotations.JvmName.asFqNameString())
 }

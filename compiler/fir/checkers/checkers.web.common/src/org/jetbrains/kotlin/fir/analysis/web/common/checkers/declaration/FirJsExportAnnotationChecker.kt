@@ -27,8 +27,8 @@ object FirJsExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        val jsExport = declaration.getAnnotationByClassId(StandardClassIds.Annotations.jsExport, context.session)
-            ?: declaration.getAnnotationByClassId(StandardClassIds.Annotations.jsExportDefault, context.session)
+        val jsExport = declaration.getAnnotationByClassId(StandardClassIds.Annotations.JsExport, context.session)
+            ?: declaration.getAnnotationByClassId(StandardClassIds.Annotations.JsExport_Default, context.session)
             ?: return
 
         if (declaration !is FirFile && !context.isTopLevel) {

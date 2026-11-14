@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -26,7 +26,7 @@ object FirOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
         val session = context.session
-        val annotation = declaration.getAnnotationByClassId(JVM_OVERLOADS_CLASS_ID, session) ?: return
+        val annotation = declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmOverloads, session) ?: return
 
         val ownerOfParametersWithDefaultValues = declaration.symbol.takeIf { !it.isActual }
             ?: declaration.symbol.getSingleMatchedExpectForActualOrNull()

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.JsStandardClassIds
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNative
 
 object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterface = true) {
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
@@ -110,11 +109,11 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
     }
 
     override fun isDefinedExternallyCallableId(callableId: CallableId?): Boolean {
-        return callableId == JsStandardClassIds.Callables.JsDefinedExternally
+        return callableId == JsStandardClassIds.Callables.definedExternally
     }
 
     override fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean {
-        return declaration.hasAnnotation(JsNative, session)
+        return declaration.hasAnnotation(JsStandardClassIds.Annotations.native, session)
     }
 
     private val KtSourceElement.allowsReporting

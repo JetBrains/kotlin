@@ -26,13 +26,11 @@ import org.jetbrains.kotlin.light.classes.symbol.utils.getContainingSymbolsWithS
 import org.jetbrains.kotlin.light.classes.symbol.utils.getRequiredNullabilityAnnotation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.StandardClassIds
 
 internal fun KaAnnotatedSymbol.hasJvmSyntheticAnnotation(): Boolean {
     if (this is KaPropertySymbol) return backingFieldSymbol?.hasJvmSyntheticAnnotation() == true
-    return JVM_SYNTHETIC_ANNOTATION_CLASS_ID in annotations
+    return JvmStandardClassIds.Annotations.JvmSynthetic in annotations
 }
 
 internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(): String? {
@@ -40,7 +38,7 @@ internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(): String? {
 }
 
 internal fun KaAnnotatedSymbol.getJvmExposeBoxedNameFromAnnotation(): String? {
-    return stringArgumentFromAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID)
+    return stringArgumentFromAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed)
 }
 
 internal fun KaAnnotatedSymbol.getIntroducedAtVersionFromAnnotation(): String? {
@@ -59,7 +57,7 @@ internal fun isHiddenByDeprecation(symbol: KaAnnotatedSymbol): Boolean {
     val deprecation = symbol.deprecation
     return deprecation?.level == KaDeprecationLevel.HIDDEN &&
             // see KT-80649
-            !symbol.annotations.contains(JvmStandardClassIds.Annotations.Java.Deprecated)
+            !symbol.annotations.contains(JvmStandardClassIds.Annotations.Deprecated_java)
 }
 
 context(_: KaSession)
@@ -73,13 +71,13 @@ internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(): Boolean = StandardClas
 
 internal fun KaAnnotatedSymbol.hasIntroducedAtAnnotation(): Boolean = StandardClassIds.Annotations.IntroducedAt in annotations
 
-internal fun KaAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = JVM_OVERLOADS_CLASS_ID in annotations
+internal fun KaAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmOverloads in annotations
 
 internal fun KaAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmName in annotations
 
 /** @see org.jetbrains.kotlin.light.classes.symbol.methods.jvmExposeBoxedMode */
 internal fun KaAnnotatedSymbol.hasJvmExposeBoxedAnnotation(): Boolean {
-    return JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID in annotations
+    return JvmStandardClassIds.Annotations.JvmExposeBoxed in annotations
 }
 
 internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmStatic in annotations
@@ -122,7 +120,7 @@ internal fun computeThrowsList(
         builder.addReference(NullPointerException::class.qualifiedName)
     }
 
-    val annoApp = symbol.findAnnotation(JvmStandardClassIds.Annotations.Throws) ?: return
+    val annoApp = symbol.findAnnotation(JvmStandardClassIds.Annotations.Throws_aliased) ?: return
 
     fun handleAnnotationValue(annotationValue: KaAnnotationValue) {
         when (annotationValue) {

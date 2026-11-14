@@ -256,7 +256,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 val constructor = classSymbol.declaredMemberScope().getDeclaredConstructors().firstOrNull { it.isPrimary }
                 constructor?.valueParameterSymbols?.elementAtOrNull(componentIndex - 1)?.name
             }
-            classSymbol.classId == StandardClassIds.MapEntry -> when (componentIndex) {
+            classSymbol.classId == StandardClassIds.Map_Entry -> when (componentIndex) {
                 1 -> StandardNames.MAP_ENTRY_KEY
                 2 -> StandardNames.MAP_ENTRY_VALUE
                 else -> null

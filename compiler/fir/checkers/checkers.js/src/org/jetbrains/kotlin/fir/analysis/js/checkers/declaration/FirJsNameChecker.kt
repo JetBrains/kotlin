@@ -35,7 +35,7 @@ object FirJsNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val jsName = declaration.getAnnotationByClassId(JsStandardClassIds.Annotations.JsName, context.session) ?: return
         val jsNameSource = jsName.source ?: declaration.source
 
-        if (declaration.symbol.getAnnotationStringParameter(JsStandardClassIds.Annotations.JsNative, context.session) != null) {
+        if (declaration.symbol.getAnnotationStringParameter(JsStandardClassIds.Annotations.native, context.session) != null) {
             reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE)
         }
 

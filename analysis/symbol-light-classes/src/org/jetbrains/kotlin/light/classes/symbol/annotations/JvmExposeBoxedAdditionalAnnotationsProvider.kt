@@ -24,7 +24,7 @@ internal object JvmExposeBoxedAdditionalAnnotationsProvider : AdditionalAnnotati
     ) {
         if (owner.parent.isJvmExposeBoxed()) {
             addSimpleAnnotationIfMissing(
-                qualifier = JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME.asString(),
+                qualifier = JvmStandardClassIds.Annotations.JvmExposeBoxed.asFqNameString(),
                 currentRawAnnotations = currentRawAnnotations,
                 foundQualifiers = foundQualifiers,
                 owner = owner,
@@ -39,7 +39,7 @@ internal object JvmExposeBoxedAdditionalAnnotationsProvider : AdditionalAnnotati
     ): PsiAnnotation? = if (owner.parent.isJvmExposeBoxed())
         createSimpleAnnotationIfMatches(
             qualifier = qualifiedName,
-            expectedQualifier = JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME.asString(),
+            expectedQualifier = JvmStandardClassIds.Annotations.JvmExposeBoxed.asFqNameString(),
             owner = owner,
         )
     else

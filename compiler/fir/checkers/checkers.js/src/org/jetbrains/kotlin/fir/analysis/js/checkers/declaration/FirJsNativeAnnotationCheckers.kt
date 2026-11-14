@@ -70,7 +70,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
     }
 }
 
-internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeGetter, "getter", 1) {
+internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.nativeGetter, "getter", 1) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 
@@ -85,7 +85,7 @@ internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsS
     }
 }
 
-internal object FirJsNativeSetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeSetter, "setter", 2) {
+internal object FirJsNativeSetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.nativeSetter, "setter", 2) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 

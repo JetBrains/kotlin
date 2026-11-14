@@ -49,7 +49,8 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
 
                 val isConstructorExcludedFromExport =
                     declaration.symbol.isExportedToJs() &&
-                            primaryConstructor?.getAnnotationByClassId(StandardClassIds.Annotations.jsExportIgnore, context.session) != null
+                            primaryConstructor
+                                ?.getAnnotationByClassId(StandardClassIds.Annotations.JsExport_Ignore, context.session) != null
 
                 val isConstructorVisibilityRespected =
                     LanguageFeature.DataClassCopyRespectsConstructorVisibility.isEnabled()

@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExternalArgument
+import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsExternalArgumentCallChecker : FirCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCall) {
         val arguments = expression.resolvedArgumentMapping ?: return
         for ([argument, parameter] in arguments) {
-            if (parameter.hasAnnotation(JsExternalArgument, context.session)) {
+            if (parameter.hasAnnotation(JsStandardClassIds.Annotations.JsExternalArgument, context.session)) {
                 val unwrappedArg = argument.unwrapArgument()
                 val type = unwrappedArg.resolvedType
                 val symbol = type.toRegularClassSymbol()

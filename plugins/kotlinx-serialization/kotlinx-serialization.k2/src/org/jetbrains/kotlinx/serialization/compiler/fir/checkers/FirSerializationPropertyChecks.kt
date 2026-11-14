@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
@@ -40,7 +40,7 @@ internal fun CheckerContext.checkCorrectTransientAnnotationIsUsed(
         if (property.transient) continue
         val incorrectTransient =
             property.propertySymbol.backingFieldSymbol?.resolvedAnnotationsWithClassIds?.getAnnotationByClassId(
-                TRANSIENT_ANNOTATION_CLASS_ID, session
+                JvmStandardClassIds.Annotations.Transient, session
             )
         if (incorrectTransient != null) {
             reporter.reportOn(

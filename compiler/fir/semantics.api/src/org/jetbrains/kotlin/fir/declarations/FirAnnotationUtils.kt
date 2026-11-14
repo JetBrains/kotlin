@@ -70,7 +70,7 @@ fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnot
         val firAnnotationClass = annotation.toAnnotationClass(session)
         firAnnotationClass != null && firAnnotationClass.symbol.resolvedAnnotationsWithClassIds.none { meta ->
             meta.toAnnotationClassId(session) == StandardClassIds.Annotations.Retention &&
-                    meta.findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue)
+                    meta.findArgumentByName(StandardClassIds.Annotations.ParameterNames.Retention_value)
                         ?.extractEnumValueArgumentInfo()?.enumEntryName == sourceName
         }
     }

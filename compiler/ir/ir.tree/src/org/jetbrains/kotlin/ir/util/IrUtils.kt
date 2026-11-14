@@ -373,7 +373,7 @@ inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: 
 
 fun IrClass.getAnnotationRetention(): KotlinRetention? {
     val retentionArgument =
-        getAnnotation(StandardNames.FqNames.retention)?.argumentMapping[StandardClassIds.Annotations.ParameterNames.retentionValue]
+        getAnnotation(StandardNames.FqNames.retention)?.argumentMapping[StandardClassIds.Annotations.ParameterNames.Retention_value]
                 as? IrGetEnumValue ?: return null
     val retentionArgumentValue = retentionArgument.symbol.owner
     return KotlinRetention.valueOf(retentionArgumentValue.name.asString())

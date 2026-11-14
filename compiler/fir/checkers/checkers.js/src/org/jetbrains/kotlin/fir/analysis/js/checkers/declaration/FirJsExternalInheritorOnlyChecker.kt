@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExternalInheritorsOnly
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
@@ -57,7 +57,7 @@ sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirCla
     override fun check(declaration: FirClass) {
         if (!declaration.symbol.isEffectivelyExternal()) {
             declaration.forEachParents() { parent ->
-                if (parent.hasAnnotation(JsExternalInheritorsOnly, context.session)) {
+                if (parent.hasAnnotation(JsStandardClassIds.Annotations.JsExternalInheritorsOnly, context.session)) {
                     reporter.reportOn(
                         declaration.source,
                         FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY,

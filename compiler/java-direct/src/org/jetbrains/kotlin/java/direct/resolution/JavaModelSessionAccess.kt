@@ -201,7 +201,7 @@ private fun FirSession.computeIsTypeUseAnnotationClass(classId: ClassId): Boolea
     val annotationClass = symbol.fir as? FirRegularClass ?: return false
     val targetAnnotation = annotationClass.annotations.find { firAnnotation ->
         val targetClassId = firAnnotation.annotationTypeRef.coneType.classId
-        targetClassId == JvmStandardClassIds.Annotations.Java.Target ||
+        targetClassId == JvmStandardClassIds.Annotations.Target_java ||
                 targetClassId == StandardClassIds.Annotations.Target
     } ?: return false
     return hasTypeUseTarget(targetAnnotation)

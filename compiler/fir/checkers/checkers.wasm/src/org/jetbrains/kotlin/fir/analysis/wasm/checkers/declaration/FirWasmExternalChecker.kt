@@ -62,7 +62,7 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInte
     }
 
     override fun isDefinedExternallyCallableId(callableId: CallableId?): Boolean =
-        callableId == WebCommonStandardClassIds.Callables.JsDefinedExternally
+        callableId == WebCommonStandardClassIds.Callables.definedExternally
 
     override fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean =
         false

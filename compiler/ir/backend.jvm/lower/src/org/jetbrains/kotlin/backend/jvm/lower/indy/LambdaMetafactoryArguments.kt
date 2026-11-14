@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type
@@ -137,7 +137,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             abiHazard = true
         }
 
-        if (implFun.annotations.hasAnnotation(JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME)) {
+        if (implFun.annotations.hasAnnotation(JvmStandardClassIds.Annotations.JvmSerializableLambda)) {
             // Lambdas annotated with @kotlin.jvm.JvmSerializableLambda are expected to generate their own class
             semanticsHazard = true
         }

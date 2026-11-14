@@ -99,7 +99,7 @@ internal fun KaCallableSymbol.jvmExposeBoxedMode(): JvmExposeBoxedMode {
     }
 
     val containingClass = containingDeclaration as? KaClassSymbol
-    if (containingClass != null && JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID in containingClass.annotations) {
+    if (containingClass != null && JvmStandardClassIds.Annotations.JvmExposeBoxed in containingClass.annotations) {
         return JvmExposeBoxedMode.IMPLICIT
     }
 

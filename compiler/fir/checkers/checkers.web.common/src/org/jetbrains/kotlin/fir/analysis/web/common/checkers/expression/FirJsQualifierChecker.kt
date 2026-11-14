@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.js.validateQualifier
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirJsQualifierChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -23,7 +23,7 @@ object FirJsQualifierChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotationCall) {
-        if (expression.toAnnotationClassId(context.session) != JsQualifier) {
+        if (expression.toAnnotationClassId(context.session) != WebCommonStandardClassIds.Annotations.JsQualifier) {
             return
         }
 

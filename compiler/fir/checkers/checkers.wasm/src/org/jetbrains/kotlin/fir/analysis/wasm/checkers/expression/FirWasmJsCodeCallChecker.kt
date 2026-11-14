@@ -34,7 +34,7 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
     override fun check(expression: FirFunctionCall) {
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
 
-        if (symbol.callableId != WebCommonStandardClassIds.Callables.Js) {
+        if (symbol.callableId != WebCommonStandardClassIds.Callables.js) {
             return
         }
 

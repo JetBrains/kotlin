@@ -49,8 +49,6 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.isValueClassCompiledAsIdentityClass
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
@@ -103,7 +101,8 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
 
 fun IrDeclaration.getJvmNameFromJvmExposeBoxedAnnotation(): String? {
     @OptIn(ExperimentalStdlibApi::class)
-    val value = getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.getConstArgument<String>(JvmExposeBoxed::jvmName.name) ?: return null
+    val value = getAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed.asSingleFqName())
+        ?.getConstArgument<String>(JvmExposeBoxed::jvmName.name) ?: return null
     return value.ifEmpty { null }
 }
 
@@ -250,17 +249,17 @@ val IrDeclaration.isStaticInlineClassReplacement: Boolean
 
 fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(context: JvmBackendContext): Boolean {
     val isPropagatedOrImplicit = propagatedOrImplicitJvmExposeBoxed(context)
-    val isExplicit = hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+    val isExplicit = hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed)
 
     if (!(isExplicit || isPropagatedOrImplicit)) return false
     if (!isFunctionWhichCanBeExposed(isPropagatedOrImplicit && !isExplicit)) return false
-    if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return false
+    if (hasAnnotation(JvmStandardClassIds.Annotations.JvmSynthetic)) return false
 
     return true
 }
 
 private fun IrDeclaration.propagatedOrImplicitJvmExposeBoxed(context: JvmBackendContext): Boolean =
-    parentClassOrNull?.getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) != null ||
+    parentClassOrNull?.getAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed.asSingleFqName()) != null ||
             context.config.implicitJvmExposeBoxed
 
 // Do not duplicate function without inline classes in parameters, since it would lead to CONFLICTING_JVM_DECLARATIONS
@@ -282,7 +281,7 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     // It is not explicitly annotated, global and returns inline class, do not expose it, since otherwise
     // it would lead to ambiguous call on Java side
     // WARNING: Do not use parentAsClass here, otherwise, it leads to ICE in some obscure cases, see KT-78551
-    return parentClassOrNull?.isFileClass == false || annotations.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+    return parentClassOrNull?.isFileClass == false || annotations.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed)
 }
 
 fun IrClass.rawType(specialAnnotations: JvmIrSpecialAnnotationSymbolProvider): IrType =
@@ -580,8 +579,8 @@ fun IrMutableAnnotationContainer.addJavaLangDeprecatedAnnotation() = copyAnnotat
 
 context(irBuilder: JvmIrBuilder)
 fun IrMutableAnnotationContainer.copyAnnotationsAndAddJavaLangDeprecated(source: IrAnnotationContainer) {
-    isJavaLangDeprecatedOnlyAddedByCompiler = !source.annotations.hasAnnotation(JvmStandardClassIds.Annotations.Java.Deprecated)
-    annotations = filterOutAnnotations(JvmStandardClassIds.Annotations.Java.Deprecated, source.annotations) +
+    isJavaLangDeprecatedOnlyAddedByCompiler = !source.annotations.hasAnnotation(JvmStandardClassIds.Annotations.Deprecated_java)
+    annotations = filterOutAnnotations(JvmStandardClassIds.Annotations.Deprecated_java, source.annotations) +
             irBuilder.irAnnotation(irBuilder.irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
 }
 

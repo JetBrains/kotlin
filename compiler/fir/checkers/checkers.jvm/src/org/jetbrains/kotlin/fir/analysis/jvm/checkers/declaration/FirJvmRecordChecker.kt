@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.java.jvmTargetProvider
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_RECORD_ANNOTATION_CLASS_ID
 
 object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -33,14 +32,15 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         declaration.superTypeRefs.firstOrNull()?.let { typeRef ->
             // compiler automatically adds java.lang.Record supertype, so we should check only for explicit type declarations
             if (typeRef.source?.kind !is KtFakeSourceElementKind.RecordSuperTypeRef &&
-                typeRef.coneType.fullyExpandedClassId(context.session) == JvmStandardClassIds.Java.Record
+                typeRef.coneType.fullyExpandedClassId(context.session) == JvmStandardClassIds.Record
             ) {
                 reporter.reportOn(typeRef.source, FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE)
                 return
             }
         }
 
-        val annotationSource = declaration.getAnnotationByClassId(JVM_RECORD_ANNOTATION_CLASS_ID, context.session)?.source ?: return
+        val annotationSource =
+            declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmRecord, context.session)?.source ?: return
 
         val currentJvmTarget = context.session.jvmTargetProvider?.jvmTarget
         if (currentJvmTarget?.areRecordsAllowed(

@@ -89,9 +89,9 @@ class JavaClassOverAst(
         if (isEnum) {
             result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
         } else if (isAnnotationType) {
-            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Annotations.Java.Annotation, memberResolutionContext))
+            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Annotation_java, memberResolutionContext))
         } else if (isRecord) {
-            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Java.Record, memberResolutionContext))
+            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Record, memberResolutionContext))
         }
 
         tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
@@ -101,7 +101,7 @@ class JavaClassOverAst(
         }
 
         if (result.isEmpty() && !isInterface) {
-            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Java.Object, memberResolutionContext))
+            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Object, memberResolutionContext))
         }
 
         tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->

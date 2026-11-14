@@ -289,7 +289,7 @@ internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperT
         }
 
         backingPsi.isData() && JvmStandardClassIds.Annotations.JvmRecord in annotations -> {
-            val jvmRecordSymbol = analysisSession.findClass(JvmStandardClassIds.Java.Record) as? KaNamedClassSymbol
+            val jvmRecordSymbol = analysisSession.findClass(JvmStandardClassIds.Record) as? KaNamedClassSymbol
             with(analysisSession) {
                 jvmRecordSymbol?.defaultType
             }

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -191,7 +191,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val isLambda = irFunctionReference.origin.isLambda
         private val isLightweightLambda = isLambda
                 && shouldGenerateLightweightLambdas
-                && !callee.hasAnnotation(JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME)
+                && !callee.hasAnnotation(JvmStandardClassIds.Annotations.JvmSerializableLambda)
         private val isHeavyweightLambda = isLambda && !isLightweightLambda
         private val isSuspend = irFunctionReference.overriddenFunctionSymbol.isSuspend
 

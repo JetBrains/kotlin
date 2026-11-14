@@ -38,9 +38,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_SHORT
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_NAME_SHORT
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_PACKAGE_NAME_SHORT
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtFile
@@ -174,15 +172,17 @@ fun getFileClassInfoFromIrFile(file: IrFile, fileName: String): JvmFileClassInfo
 }
 
 private fun parseJvmNameOnFileNoResolve(file: IrFile): ParsedJvmFileClassAnnotations? {
-    val jvmNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_NAME_SHORT)
+    val jvmNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JvmStandardClassIds.Annotations.JvmName.shortClassName.asString())
     val jvmName = jvmNameAnnotation?.getConstArgument<String>(JvmName::name.name)?.takeIf(Name::isValidIdentifier)
 
-    val jvmPackageNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_PACKAGE_NAME_SHORT)
+    val jvmPackageNameAnnotation =
+        findAnnotationEntryOnFileNoResolve(file, JvmStandardClassIds.Annotations.JvmPackageName.shortClassName.asString())
     val jvmPackageName = jvmPackageNameAnnotation?.getConstArgument<String>("name")?.let(::FqName)
 
     if (jvmName == null && jvmPackageName == null) return null
 
-    val isMultifileClass = findAnnotationEntryOnFileNoResolve(file, JVM_MULTIFILE_CLASS_SHORT) != null
+    val isMultifileClass =
+        findAnnotationEntryOnFileNoResolve(file, JvmStandardClassIds.Annotations.JvmMultifileClass.shortClassName.asString()) != null
 
     return ParsedJvmFileClassAnnotations(jvmName, jvmPackageName, isMultifileClass)
 }

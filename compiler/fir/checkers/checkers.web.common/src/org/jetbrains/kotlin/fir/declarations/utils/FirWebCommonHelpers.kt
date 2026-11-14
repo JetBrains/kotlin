@@ -58,13 +58,13 @@ fun FirCallableSymbol<*>.isEffectivelyExternalOrOverridingExternal(): Boolean =
         .any { it.isEffectivelyExternalOrOverridingExternal() }
 
 fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
-    if (hasAnnotationOrInsideAnnotatedClass(WebCommonStandardClassIds.Annotations.JsNative, session) || isEffectivelyExternal(session)) {
+    if (hasAnnotationOrInsideAnnotatedClass(WebCommonStandardClassIds.Annotations.native, session) || isEffectivelyExternal(session)) {
         return true
     }
 
     if (this is FirPropertyAccessorSymbol) {
         val property = propertySymbol
-        return property.hasAnnotationOrInsideAnnotatedClass(WebCommonStandardClassIds.Annotations.JsNative, session)
+        return property.hasAnnotationOrInsideAnnotatedClass(WebCommonStandardClassIds.Annotations.native, session)
     }
 
     return false
@@ -76,8 +76,8 @@ fun FirBasedSymbol<*>.isNativeInterface(session: FirSession): Boolean {
 
 fun FirBasedSymbol<*>.isExplicitlyMarkedAsExported(session: FirSession): Boolean {
     return when {
-        hasAnnotation(StandardClassIds.Annotations.jsExportIgnore, session) -> false
-        else -> hasAnnotation(StandardClassIds.Annotations.jsExport, session) ||
-                hasAnnotation(StandardClassIds.Annotations.jsExportDefault, session)
+        hasAnnotation(StandardClassIds.Annotations.JsExport_Ignore, session) -> false
+        else -> hasAnnotation(StandardClassIds.Annotations.JsExport, session) ||
+                hasAnnotation(StandardClassIds.Annotations.JsExport_Default, session)
     }
 }

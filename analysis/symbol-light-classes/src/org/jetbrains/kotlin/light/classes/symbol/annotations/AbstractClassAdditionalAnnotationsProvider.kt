@@ -141,7 +141,7 @@ private fun javaRetentionArguments(kotlinRetentionName: String?): List<Annotatio
         name = StandardNames.DEFAULT_VALUE_PARAMETER,
         value = AnnotationValue.EnumValue(
             callableId = CallableId(
-                JvmStandardClassIds.Annotations.Java.RetentionPolicy,
+                JvmStandardClassIds.RetentionPolicy,
                 Name.identifier(retentionMapping(kotlinRetentionName ?: AnnotationRetention.RUNTIME.name)),
             ),
             sourcePsi = null,
@@ -226,7 +226,7 @@ private fun SymbolLightJavaAnnotation.computeTargetJavaAnnotationArguments(): Li
                 values = javaTargetNames.map {
                     AnnotationValue.EnumValue(
                         callableId = CallableId(
-                            classId = JvmStandardClassIds.Annotations.Java.ElementType,
+                            classId = JvmStandardClassIds.ElementType,
                             callableName = Name.identifier(it),
                         ),
                         sourcePsi = null,

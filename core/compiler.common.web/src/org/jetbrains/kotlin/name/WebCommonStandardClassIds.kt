@@ -5,40 +5,27 @@
 
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
-
+/**
+ * Consult KDoc of [StandardClassIds] regarding naming rules when adding declarations here.
+ * Also, check if the desired id is already present there.
+ */
 object WebCommonStandardClassIds {
-    val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
-
     object Annotations {
-        @JvmField
         val JsQualifier = "JsQualifier".jsId()
-
-        @JvmField
         val JsModule = "JsModule".jsId()
-
-        @JvmField
         val JsName = "JsName".jsId()
-
-        @JvmField
         val JsExport = "JsExport".jsId()
 
-        @JvmField
-        val JsNative = "native".jsId()
-
-        @JvmField
-        val JsNativeInvoke = "nativeInvoke".jsId()
+        val native = "native".jsId()
+        val nativeInvoke = "nativeInvoke".jsId()
     }
 
     object Callables {
-        @JvmField
-        val JsDefinedExternally = "definedExternally".callableId(BASE_JS_PACKAGE)
-
-        @JvmField
-        val Js = "js".callableId(BASE_JS_PACKAGE)
+        val js = "js".callableId(StandardClassIds.BASE_JS_PACKAGE)
+        val definedExternally = "definedExternally".callableId(StandardClassIds.BASE_JS_PACKAGE)
     }
 }
 
-private fun String.jsId() = ClassId(WebCommonStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
+private fun String.jsId() = ClassId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))

@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 abstract class FirWebCommonJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     protected abstract fun FirBasedSymbol<*>.findModuleAnnotation(session: FirSession): FirAnnotation?
@@ -63,9 +62,10 @@ abstract class FirWebCommonJsModuleChecker : FirBasicDeclarationChecker(MppCheck
         }
 
         // A file qualifier is not applied consistently to a declaration that is imported from its own module.
-        val jsModuleAnnotation = declaration.symbol.resolvedAnnotationsWithClassIds.getAnnotationByClassId(JsModule, context.session)
+        val jsModuleAnnotation = declaration.symbol.resolvedAnnotationsWithClassIds
+            .getAnnotationByClassId(WebCommonStandardClassIds.Annotations.JsModule, context.session)
         if (isTopLevel && jsModuleAnnotation != null &&
-            context.containingFileSymbol?.hasAnnotation(JsQualifier, context.session) == true
+            context.containingFileSymbol?.hasAnnotation(WebCommonStandardClassIds.Annotations.JsQualifier, context.session) == true
         ) {
             reporter.reportOn(jsModuleAnnotation.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER)
         }

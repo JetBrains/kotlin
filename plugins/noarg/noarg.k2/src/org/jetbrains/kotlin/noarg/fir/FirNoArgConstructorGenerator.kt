@@ -93,14 +93,14 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
             }
 
             argumentMapping = buildAnnotationArgumentMapping {
-                mapping[StandardClassIds.Annotations.ParameterNames.deprecatedMessage] = buildLiteralExpression(
+                mapping[StandardClassIds.Annotations.ParameterNames.Deprecated_message] = buildLiteralExpression(
                     source = null,
                     kind = ConstantValueKind.String,
                     value = NO_ARG_CONSTRUCTOR_HIDDEN_DEPRECATED_MESSAGE,
                     setType = true
                 )
 
-                mapping[StandardClassIds.Annotations.ParameterNames.deprecatedLevel] = buildEnumEntryDeserializedAccessExpression {
+                mapping[StandardClassIds.Annotations.ParameterNames.Deprecated_level] = buildEnumEntryDeserializedAccessExpression {
                     enumClassId = StandardClassIds.DeprecationLevel
                     enumEntryName = Name.identifier(DeprecationLevel.HIDDEN.name)
                 }
@@ -108,12 +108,12 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
         }
 
         val isJavaDeprecationAvailable =
-            session.symbolProvider.getClassLikeSymbolByClassId(JvmStandardClassIds.Annotations.Java.Deprecated) != null
+            session.symbolProvider.getClassLikeSymbolByClassId(JvmStandardClassIds.Annotations.Deprecated_java) != null
 
         val javaDeprecationAnnotation = runIf(isJavaDeprecationAvailable) {
             buildAnnotation {
                 annotationTypeRef = buildResolvedTypeRef {
-                    coneType = JvmStandardClassIds.Annotations.Java.Deprecated.toLookupTag()
+                    coneType = JvmStandardClassIds.Annotations.Deprecated_java.toLookupTag()
                         .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
                 }
 
@@ -158,7 +158,7 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
 
     private fun FirConstructorSymbol.isZeroParameterConstructor(): Boolean {
         return valueParameterSymbols.all { it.hasDefaultValue } &&
-                (valueParameterSymbols.isEmpty() || isPrimary || hasAnnotation(JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID, session))
+                (valueParameterSymbols.isEmpty() || isPrimary || hasAnnotation(JvmStandardClassIds.Annotations.JvmOverloads, session))
     }
 }
 

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 /**
  * A representation of `@BindClassToObjCName` annotation.
@@ -26,7 +26,7 @@ class BindClassToObjCName(
 
 private val IrAnnotation.bindClassToObjCName: BindClassToObjCName?
     get() {
-        if (!isAnnotation(NativeRuntimeNames.Annotations.BindClassToObjCName.asSingleFqName())) {
+        if (!isAnnotation(NativeStandardClassIds.Annotations.BindClassToObjCName.asSingleFqName())) {
             return null
         }
         val kotlinClass = (argumentMapping[Name.identifier("kotlinClass")] as IrClassReference).classType.getClass()!!

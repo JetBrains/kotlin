@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
@@ -377,15 +377,15 @@ private fun IrFunction.fromStdlib(): Boolean {
 fun List<IrAnnotation>.withoutJvmExposeBoxedAnnotation(): List<IrAnnotation> =
     this.toMutableList().apply {
         removeAll {
-            it.isAnnotationWithEqualFqName(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+            it.isAnnotationWithEqualFqName(JvmStandardClassIds.Annotations.JvmExposeBoxed.asSingleFqName())
         }
     }
 
 
 
 fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrAnnotation> {
-    if (hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
-        val jvmExposeBoxedAnnotation = findAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+    if (hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed)) {
+        val jvmExposeBoxedAnnotation = findAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed.asSingleFqName())
         // If name is not provided, copy the name from @JvmName annotation, if the latter is present
         @OptIn(ExperimentalStdlibApi::class)
         if (jvmExposeBoxedAnnotation?.argumentMapping?.get(Name.identifier(JvmExposeBoxed::jvmName.name)) == null) {

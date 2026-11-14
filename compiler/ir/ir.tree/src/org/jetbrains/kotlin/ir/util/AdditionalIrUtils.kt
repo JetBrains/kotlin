@@ -378,7 +378,7 @@ fun IrClass.getAnnotationTargets(): Set<KotlinTarget>? {
     if (!this.isAnnotationClass) return null
 
     val valueArgument = getAnnotation(StandardNames.FqNames.target)
-        ?.argumentMapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets] as? IrVararg
+        ?.argumentMapping[StandardClassIds.Annotations.ParameterNames.Target_allowedTargets] as? IrVararg
         ?: return KotlinTarget.DEFAULT_TARGET_SET
     return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
         KotlinTarget.valueOrNull(it.symbol.owner.name.asString())

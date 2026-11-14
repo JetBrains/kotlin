@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unwrapAndFlattenArgument
-import org.jetbrains.kotlin.name.JvmStandardClassIds.Annotations.Java
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.KOTLIN_TO_JAVA_ANNOTATION_TARGETS
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.KOTLIN_TO_JAVA_ANNOTATION_TARGETS
 object FirIncompatibleAnnotationsChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        val javaTarget = declaration.getAnnotationByClassId(Java.Target, context.session) ?: return
+        val javaTarget = declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.Target_java, context.session) ?: return
         when (val kotlinTarget = declaration.getTargetAnnotation(context.session)) {
             null -> reporter.reportOn(javaTarget.source, FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA)
             else -> reportIncompatibleTargets(kotlinTarget, javaTarget)
@@ -38,7 +38,7 @@ object FirIncompatibleAnnotationsChecker : FirClassChecker(MppCheckerKind.Common
         kotlinTarget: FirAnnotation,
         javaTarget: FirAnnotation,
     ) {
-        val correspondingJavaTargets = kotlinTarget.extractArguments(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets)
+        val correspondingJavaTargets = kotlinTarget.extractArguments(StandardClassIds.Annotations.ParameterNames.Target_allowedTargets)
             .groupBy { KOTLIN_TO_JAVA_ANNOTATION_TARGETS[it] }.toMutableMap()
         // remove things which are included in the Java @Target annotation
         correspondingJavaTargets.remove(null)

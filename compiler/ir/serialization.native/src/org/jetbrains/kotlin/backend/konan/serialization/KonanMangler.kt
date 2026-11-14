@@ -19,15 +19,15 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardClassIds
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
 val ANNOTATIONS_TO_TREAT_AS_EXPORTED = listOf(
-    NativeRuntimeNames.Annotations.symbolNameClassId,
-    NativeRuntimeNames.Annotations.gcUnsafeCallClassId,
-    NativeRuntimeNames.Annotations.exportForCppRuntimeClassId,
-    NativeRuntimeNames.Annotations.cNameClassId,
-    NativeRuntimeNames.Annotations.exportForCompilerClassId,
+    NativeStandardClassIds.Annotations.SymbolName,
+    NativeStandardClassIds.Annotations.GCUnsafeCall,
+    NativeStandardClassIds.Annotations.ExportForCppRuntime,
+    NativeStandardClassIds.Annotations.CName,
+    NativeStandardClassIds.Annotations.ExportForCompiler,
 )
 
 private val ANNOTATIONS_TO_TREAT_AS_EXPORTED_FQNS = ANNOTATIONS_TO_TREAT_AS_EXPORTED.map(ClassId::asSingleFqName)

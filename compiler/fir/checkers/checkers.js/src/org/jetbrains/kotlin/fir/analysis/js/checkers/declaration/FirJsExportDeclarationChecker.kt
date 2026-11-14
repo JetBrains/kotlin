@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ConsistentCopyVisibility
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExposedCopyVisibility
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.jsExportIgnore
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JsExport_Ignore
 import org.jetbrains.kotlin.types.Variance
 
 object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
@@ -63,7 +63,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     val dataClass = declaration.getContainingClassSymbol() as? FirRegularClassSymbol ?: return
                     val constructor = dataClass.primaryConstructorIfAny(session) ?: return
 
-                    if (!constructor.visibility.isPublicAPI || constructor.hasAnnotation(jsExportIgnore, session)) {
+                    if (!constructor.visibility.isPublicAPI || constructor.hasAnnotation(JsExport_Ignore, session)) {
                         when {
                             dataClass.hasAnnotation(ExposedCopyVisibility, session) ->
                                 reporter.reportOn(
