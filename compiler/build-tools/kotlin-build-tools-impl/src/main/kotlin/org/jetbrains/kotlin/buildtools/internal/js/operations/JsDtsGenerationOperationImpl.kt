@@ -154,6 +154,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
 
         this[GRANULARITY] = when {
             compilerArguments.irPerFile -> JsDtsGranularity.PER_FILE
+            compilerArguments.irPerClass -> JsDtsGranularity.PER_CLASS
             // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
             compilerArguments.irPerModule -> JsDtsGranularity.WHOLE_PROGRAM
             else -> JsDtsGranularity.WHOLE_PROGRAM

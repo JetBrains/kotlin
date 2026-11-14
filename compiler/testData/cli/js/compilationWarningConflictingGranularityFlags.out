@@ -1,0 +1,2 @@
+warning: multiple JS output granularity flags are enabled (irPerFile, irPerClass); only the first one in the order irPerFile, irPerClass, irPerModule takes effect
+OK
