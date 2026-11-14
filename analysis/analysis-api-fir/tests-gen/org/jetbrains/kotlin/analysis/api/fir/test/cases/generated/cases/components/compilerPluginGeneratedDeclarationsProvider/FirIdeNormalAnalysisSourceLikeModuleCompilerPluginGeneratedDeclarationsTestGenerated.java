@@ -68,6 +68,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerPluginGeneratedDeclarat
   }
 
   @Test
+  @TestMetadata("topLevelFunction_importAlias.kt")
+  public void testTopLevelFunction_importAlias() {
+    run("topLevelFunction_importAlias.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelFunction_nestedPackage.kt")
   public void testTopLevelFunction_nestedPackage() {
     run("topLevelFunction_nestedPackage.kt");
