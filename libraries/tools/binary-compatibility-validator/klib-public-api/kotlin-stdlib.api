@@ -3251,6 +3251,13 @@ final class kotlin/FloatArray { // kotlin/FloatArray|null[0]
     final inline fun of(kotlin/FloatArray...): kotlin/FloatArray // kotlin/FloatArray.of|of#static(kotlin.FloatArray...){}[0]
 }
 
+final class kotlin/InitializedPropertyAssignmentException : kotlin/RuntimeException { // kotlin/InitializedPropertyAssignmentException|null[0]
+    constructor <init>() // kotlin/InitializedPropertyAssignmentException.<init>|<init>(){}[0]
+    constructor <init>(kotlin/String?) // kotlin/InitializedPropertyAssignmentException.<init>|<init>(kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Throwable?) // kotlin/InitializedPropertyAssignmentException.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0]
+    constructor <init>(kotlin/Throwable?) // kotlin/InitializedPropertyAssignmentException.<init>|<init>(kotlin.Throwable?){}[0]
+}
+
 final class kotlin/Int : kotlin/Comparable<kotlin/Int>, kotlin/Number { // kotlin/Int|null[0]
     final fun and(kotlin/Int): kotlin/Int // kotlin/Int.and|and(kotlin.Int){}[0]
     final fun compareTo(kotlin/Int): kotlin/Int // kotlin/Int.compareTo|compareTo(kotlin.Int){}[0]
