@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import kotlinx.cinterop.CValues
+import kotlinx.cinterop.cValuesOf
 import kotlinx.cinterop.toCValues
 import llvm.*
 
@@ -20,29 +22,57 @@ sealed class LlvmCallable(
     val numParams: Int by lazy { LLVMCountParamTypes(functionType) }
     val isConstant by lazy { llvmValue.isConst }
 
+    /**
+     * How calls authenticate this callable, if it is a signed function pointer.
+     */
+    open val ptrAuth: PtrAuthBundle? get() = null
+
     fun buildCall(builder: LLVMBuilderRef, args: List<LLVMValueRef>, name: String = "") =
-            LLVMBuildCall2(builder, functionType, llvmValue, args.toCValues(), args.size, name)!!.also {
+            withOperandBundles { bundles, numBundles ->
+                LLVMBuildCallWithOperandBundles(builder, functionType, llvmValue, args.toCValues(), args.size, bundles, numBundles, name)
+            }!!.also {
                 attributeProvider.addCallSiteAttributes(it)
             }
 
     fun buildInvoke(builder: LLVMBuilderRef, args: List<LLVMValueRef>, success: LLVMBasicBlockRef, catch: LLVMBasicBlockRef, name: String = "") =
-            LLVMBuildInvoke2(builder, functionType, llvmValue, args.toCValues(), args.size, success, catch, name)!!.also {
+            withOperandBundles { bundles, numBundles ->
+                LLVMBuildInvokeWithOperandBundles(
+                        builder, functionType, llvmValue, args.toCValues(), args.size, success, catch, bundles, numBundles, name
+                )
+            }!!.also {
                 attributeProvider.addCallSiteAttributes(it)
             }
+
+    private inline fun withOperandBundles(build: (CValues<LLVMOperandBundleRefVar>?, Int) -> LLVMValueRef?): LLVMValueRef? {
+        val ptrAuth = ptrAuth ?: return build(null, 0)
+        val tag = "ptrauth"
+        val bundle = LLVMCreateOperandBundle(tag, tag.length.toLong(), cValuesOf(ptrAuth.key, ptrAuth.discriminator), 2)
+        try {
+            return build(cValuesOf(bundle), 1)
+        } finally {
+            LLVMDisposeOperandBundle(bundle)
+        }
+    }
 
     internal fun toConstPointer() = constPointer(llvmValue)
 
     internal fun asCallback() = llvmValue
 }
 
+/**
+ * Operands of the `ptrauth` operand bundle, with which the backend authenticates the callee of an indirect call.
+ */
+class PtrAuthBundle(val key: LLVMValueRef, val discriminator: LLVMValueRef)
+
 class LlvmFunctionPointer(
         functionType: LLVMTypeRef,
         returnsObjectType: Boolean,
         llvmValue: LLVMValueRef,
         attributeProvider: LlvmFunctionAttributeProvider,
+        override val ptrAuth: PtrAuthBundle? = null,
 ) : LlvmCallable(functionType, returnsObjectType, llvmValue, attributeProvider) {
-    internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature) :
-            this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature)
+    internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature, ptrAuth: PtrAuthBundle? = null) :
+            this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature, ptrAuth)
 }
 
 sealed class LlvmFunction(

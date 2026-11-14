@@ -17,8 +17,11 @@ class RuntimeModulesConfig(private val config: NativeSecondStageCompilationConfi
     internal val containsDebuggingRuntime: Boolean
         get() = config.debug
 
+    private val nativesDirectory: String
+        get() = if (config.arm64e) config.distribution.arm64eNatives(config.target) else config.distribution.defaultNatives(config.target)
+
     private val RuntimeModule.absolutePath: String
-        get() = Path(config.distribution.defaultNatives(config.target)).resolve(filename).absolutePathString()
+        get() = Path(nativesDirectory).resolve(filename).absolutePathString()
 
     private val compilerInterfaceAbsolutePath by lazy {
         config.configuration.runtimeFile

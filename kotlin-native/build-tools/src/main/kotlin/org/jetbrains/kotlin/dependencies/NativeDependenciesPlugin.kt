@@ -128,10 +128,10 @@ abstract class NativeDependenciesExtension @Inject constructor(private val proje
     /**
      * Dependency on [target] platform.
      */
-    fun targetDependency(target: TargetWithSanitizer = TargetWithSanitizer.host): Buildable =
+    fun targetDependency(target: TargetVariant = TargetVariant.host): Buildable =
             nativeDependencies.incoming.artifactView {
                 attributes {
-                    attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target)
+                    attribute(TargetVariant.TARGET_ATTRIBUTE, target)
                 }
             }.files
 

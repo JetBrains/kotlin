@@ -101,8 +101,19 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         fun emitInstanceMethodList(): ConstPointer {
             if (instanceMethods.isEmpty()) return llvm.nullPointer
 
-            val methodStructs = instanceMethods.map {
-                Struct(methodType, selectors.get(it.selector), encodings.get(it.encoding), it.imp)
+            val selectorsAndEncodings = instanceMethods.map { selectors.get(it.selector) to encodings.get(it.encoding) }
+
+            // The list is created before its initializer, which uses the addresses of its fields.
+            val methodsType = LLVMArrayType(methodType, instanceMethods.size)!!
+            val methodListType = llvm.structType(llvm.int32Type, llvm.int32Type, methodsType)
+            val globalName = "\u0001l_OBJC_\$_INSTANCE_METHODS_$name"
+            val global = codegen.staticData.createGlobal(methodListType, globalName)
+
+            val methodStructs = instanceMethods.mapIndexed { index, method ->
+                val [selector, encoding] = selectorsAndEncodings[index]
+                val methodAddress = global.pointer.getElementPtr(llvm, methodListType, 2).getElementPtr(llvm, methodsType, index)
+                val imp = llvm.signedPointer(method.imp, PtrAuthKey.IA, address = methodAddress.getElementPtr(llvm, methodType, 2))
+                Struct(methodType, selector, encoding, imp)
             }
 
             val methodList = llvm.struct(
@@ -111,8 +122,8 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                     ConstArray(methodType, methodStructs)
             )
 
-            val globalName = "\u0001l_OBJC_\$_INSTANCE_METHODS_$name"
-            val global = codegen.staticData.placeGlobal(globalName, methodList).also {
+            global.setInitializer(methodList)
+            global.also {
                 it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
                 it.setAlignment(runtime.pointerAlignment)
                 it.setSection("__DATA, __objc_const")
@@ -140,20 +151,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                 size = 8
             }
 
-            val fields = mutableListOf<ConstValue>()
-
-            fields += llvm.constInt32(flags)
-            fields += llvm.constInt32(start)
-            fields += llvm.constInt32(size)
-            fields += llvm.nullPointer // ivar layout name
-            fields += classNameLiteral
-            fields += if (isMetaclass) llvm.nullPointer else emitInstanceMethodList()
-            fields += llvm.nullPointer // protocol list
-            fields += llvm.nullPointer // ivar list
-            fields += llvm.nullPointer // ivar layout
-            fields += llvm.nullPointer // prop list
-
-            val roValue = Struct(classRoType, fields)
+            val methodList = if (isMetaclass) llvm.nullPointer else emitInstanceMethodList()
 
             val roLabel = if (isMetaclass) {
                 "\u0001l_OBJC_METACLASS_RO_\$_"
@@ -161,7 +159,24 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                 "\u0001l_OBJC_CLASS_RO_\$_"
             } + name
 
-            val roGlobal = codegen.staticData.placeGlobal(roLabel, roValue).also {
+            val roGlobal = codegen.staticData.createGlobal(classRoType, roLabel)
+
+            val fields = mutableListOf<ConstValue>()
+
+            fields += llvm.constInt32(flags)
+            fields += llvm.constInt32(start)
+            fields += llvm.constInt32(size)
+            fields += llvm.nullPointer // ivar layout name
+            fields += classNameLiteral
+            val methodListAddress = roGlobal.pointer.getElementPtr(llvm, classRoType, 5)
+            fields += llvm.signedPointer(methodList, PtrAuthKey.DA, METHOD_LIST_DISCRIMINATOR, methodListAddress)
+            fields += llvm.nullPointer // protocol list
+            fields += llvm.nullPointer // ivar list
+            fields += llvm.nullPointer // ivar layout
+            fields += llvm.nullPointer // prop list
+
+            roGlobal.setInitializer(Struct(classRoType, fields))
+            roGlobal.also {
                 it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
                 it.setAlignment(runtime.pointerAlignment)
                 it.setSection("__DATA, __objc_const")
@@ -176,16 +191,18 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                 superClass: ConstPointer,
                 classRo: ConstPointer
         ): ConstPointer {
+            val classGlobal = getClassGlobal(name, isMetaclass = isMetaclass)
+            fun fieldAddress(index: Int) = classGlobal.getElementPtr(llvm, classObjectType, index)
+
             val fields = mutableListOf<ConstValue>()
 
-            fields += isa
-            fields += superClass
+            fields += llvm.signedPointer(isa, PtrAuthKey.DA, ISA_DISCRIMINATOR, fieldAddress(0))
+            fields += llvm.signedPointer(superClass, PtrAuthKey.DA, SUPERCLASS_DISCRIMINATOR, fieldAddress(1))
             fields += emptyCache
             fields += llvm.nullPointer // empty vtable
-            fields += classRo
+            fields += llvm.signedPointer(classRo, PtrAuthKey.DA, CLASS_RO_DISCRIMINATOR, fieldAddress(4))
 
             val classObjectValue = Struct(classObjectType, fields)
-            val classGlobal = getClassGlobal(name, isMetaclass = isMetaclass)
 
             LLVMSetInitializer(classGlobal.llvm, classObjectValue.llvm)
             LLVMSetSection(classGlobal.llvm, "__DATA, __objc_data")
@@ -262,6 +279,14 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         private val encodingGenerator =
                 CStringLiteralsGenerator("OBJC_METH_VAR_TYPE_", "__TEXT,__objc_methtype,cstring_literals")
+
+        // On arm64e, libobjc authenticates pointers in class data, the one to class_ro_t only if the image enforces its
+        // signing, and Clang signs them with these constants blended with their addresses.
+        // See clang/include/clang/Basic/PointerAuthOptions.h.
+        internal const val ISA_DISCRIMINATOR = 0x6AE1
+        private const val SUPERCLASS_DISCRIMINATOR = 0xB5AB
+        private const val CLASS_RO_DISCRIMINATOR = 0x61F8
+        private const val METHOD_LIST_DISCRIMINATOR = 0xC310
     }
 
     class CStringLiteralsGenerator(val label: String, val section: String) {

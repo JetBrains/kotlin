@@ -280,6 +280,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     putIfNotNull(KONAN_DATA_DIR, config.distribution.localKonanDir.absolutePath)
     putIfNotNull(BinaryOptions.minidumpLocation, config.minidumpLocation)
     putIfNotNull(BinaryOptions.macabi, config.macabi)
+    put(BinaryOptions.arm64e, config.arm64e)
     putIfNotNull(BinaryOptions.cCallMode, config.cCallMode)
     put(BinaryOptions.latin1Strings, config.latin1Strings)
     put(BinaryOptions.stackProtector, config.stackProtectorMode)

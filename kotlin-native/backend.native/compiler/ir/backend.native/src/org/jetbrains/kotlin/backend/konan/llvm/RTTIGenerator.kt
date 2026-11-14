@@ -99,7 +99,7 @@ internal class RTTIGenerator(
 
                     associatedObjects,
 
-                    processObjectInMark,
+                    processObjectInMark?.let(llvm::cFunctionPointer),
                     llvm.constInt32(requiredAlignment),
     )
 
@@ -252,7 +252,8 @@ internal class RTTIGenerator(
             if (implementation == null || implementation.isExternalObjCClassMethod() || referencedFunctions?.contains(implementation) == false) {
                 llvm.nullPointer
             } else {
-                implementation.entryPointAddress
+                // The runtime also calls the entries, and copies them into the vtables of Objective-C and Swift subclasses.
+                llvm.cFunctionPointer(implementation.entryPointAddress)
             }
         }
         return ConstArray(llvm.pointerType, vtableEntries)
@@ -332,7 +333,7 @@ internal class RTTIGenerator(
                             val impl = layoutBuilder.overridingOf(ifaceFunction)
                             if (impl == null || referencedFunctions?.contains(impl) == false)
                                 llvm.nullPointer
-                            else impl.entryPointAddress
+                            else llvm.cFunctionPointer(impl.entryPointAddress)
                         }
 
                         staticData.placeGlobalConstArray("kifacevtable:${className}_$interfaceId",
@@ -435,7 +436,7 @@ internal class RTTIGenerator(
         val associatedObjectTableRecords = associatedObjects.map { [key, value] ->
             val function = context.getObjectClassInstanceFunction(value)
 
-            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer())
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, llvm.cFunctionPointer(function.llvmFunction.toConstPointer()))
         }
 
         return staticData.placeGlobalConstArray(
@@ -499,7 +500,7 @@ internal class RTTIGenerator(
             if (layoutBuilder == null) {
                 InterfaceTableRecord(llvm.constInt32(0), llvm.constInt32(0), null)
             } else {
-                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!! }
+                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { llvm.cFunctionPointer(methodImpls[it]!!) }
                 val interfaceVTable = staticData.placeGlobalArray("", llvm.pointerType, vtableEntries)
                 val interfaceVTableType = LLVMArrayType(llvm.pointerType, vtableEntries.size)!!
                 InterfaceTableRecord(

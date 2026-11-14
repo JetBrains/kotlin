@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanJvmInteropTask
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.konan.target.TargetVariant
 import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 import org.jetbrains.kotlin.tools.NativePlugin
 import org.jetbrains.kotlin.tools.NativeToolsExtension
@@ -56,7 +56,7 @@ open class NativeInteropPlugin : Plugin<Project> {
             isCanBeResolved = true
             attributes {
                 attribute(CppUsage.USAGE_ATTRIBUTE, target.objects.named(CppUsage.LIBRARY_LINK))
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+                attribute(TargetVariant.TARGET_ATTRIBUTE, TargetVariant.host)
             }
         }
 
@@ -75,7 +75,7 @@ open class NativeInteropPlugin : Plugin<Project> {
             attributes {
                 attribute(CppUsage.USAGE_ATTRIBUTE, target.objects.named(CppUsage.LIBRARY_LINK))
                 attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, target.objects.named(LibraryElements.DYNAMIC_LIB))
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+                attribute(TargetVariant.TARGET_ATTRIBUTE, TargetVariant.host)
             }
         }
 
@@ -85,7 +85,7 @@ open class NativeInteropPlugin : Plugin<Project> {
             attributes {
                 attribute(CppUsage.USAGE_ATTRIBUTE, target.objects.named(CppUsage.LIBRARY_RUNTIME))
                 attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, target.objects.named(LibraryElements.DYNAMIC_LIB))
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+                attribute(TargetVariant.TARGET_ATTRIBUTE, TargetVariant.host)
             }
         }
 
@@ -96,7 +96,7 @@ open class NativeInteropPlugin : Plugin<Project> {
             attributes {
                 attribute(CppUsage.USAGE_ATTRIBUTE, target.objects.named(CppUsage.LIBRARY_RUNTIME))
                 attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, target.objects.named(LibraryElements.DYNAMIC_LIB))
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+                attribute(TargetVariant.TARGET_ATTRIBUTE, TargetVariant.host)
             }
         }
 

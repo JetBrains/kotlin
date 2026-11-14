@@ -109,7 +109,8 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
             val selector: String, val encoding: String, val impFunction: ConstPointer
     ) : Struct(
             runtime.objCMethodDescription,
-            impFunction,
+            // The runtime adds this implementation to the class with class_addMethod.
+            llvm.cFunctionPointer(impFunction),
             staticData.cStringLiteral(selector),
             staticData.cStringLiteral(encoding)
     )
@@ -152,7 +153,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
             ret(classDataPointer.llvm)
         }
 
-        return functionCallable.toConstPointer()
+        return llvm.cFunctionPointer(functionCallable.toConstPointer())
     }
 
     private val codegen = CodeGenerator(generationState)

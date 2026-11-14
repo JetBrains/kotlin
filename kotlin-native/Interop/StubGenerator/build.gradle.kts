@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.cpp.CppUsage
-import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.konan.target.TargetVariant
 import org.jetbrains.kotlin.nativeDistribution.asProperties
 import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
@@ -23,7 +23,7 @@ val testCppRuntime = configurations.create("testCppRuntime") {
     attributes {
         attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
-        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+        attribute(TargetVariant.TARGET_ATTRIBUTE, TargetVariant.host)
     }
 }
 

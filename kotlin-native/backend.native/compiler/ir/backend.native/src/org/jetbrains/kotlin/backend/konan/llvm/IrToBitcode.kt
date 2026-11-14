@@ -371,6 +371,10 @@ internal class CodeGeneratorVisitor(
         }
 
         appendStaticInitializers()
+
+        if (context.config.arm64e) {
+            llvm.addPtrAuthAbiVersion()
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -461,7 +465,7 @@ internal class CodeGeneratorVisitor(
     private fun createInitNode(runtimeInitializer: RuntimeInitializer): LLVMValueRef {
         val initFunction = runtimeInitializer.llvmCallable
         val nextInitNode = llvm.kNull
-        val argList = cValuesOf(initFunction.toConstPointer().llvm, nextInitNode)
+        val argList = cValuesOf(llvm.cFunctionPointer(initFunction.toConstPointer()).llvm, nextInitNode)
         // Create static object of class InitNode.
         val initNode = LLVMConstNamedStruct(kNodeInitType, argList, 2)!!
         // Create global variable with init record data.
@@ -2303,7 +2307,7 @@ internal class CodeGeneratorVisitor(
         require(function.dispatchReceiverParameter == null) {
             "Raw reference can't be for member function: ${expression.render()}"
         }
-        return codegen.functionEntryPointAddress(function)
+        return with(codegen) { llvm.cFunctionPointer(function.entryPointAddress).llvm }
     }
 
     //-------------------------------------------------------------------------//
@@ -2390,9 +2394,12 @@ internal class CodeGeneratorVisitor(
     private val IrSimpleFunction.staticInitializerTypeInfo: LLVMValueRef
         get() = (parent as? IrClass)?.let(codegen::typeInfoValue) ?: llvm.kNull
 
+    private val IrSimpleFunction.initializerPointer: LLVMValueRef
+        get() = llvm.cFunctionPointer(with(codegen) { llvmFunction.toConstPointer() }).llvm
+
     private fun evaluateFileGlobalInitializerCall(fileInitializer: IrSimpleFunction) = with(functionGenerationContext) {
         val statePtr = getGlobalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
-        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
+        val initializerPtr = fileInitializer.initializerPointer
 
         val bbInit = basicBlock("label_init", null)
         val bbExit = basicBlock("label_continue", null)
@@ -2412,7 +2419,7 @@ internal class CodeGeneratorVisitor(
         val globalStatePtr = getGlobalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val localState = getThreadLocalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val localStatePtr = localState.getAddress(functionGenerationContext)
-        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
+        val initializerPtr = fileInitializer.initializerPointer
 
         val bbInit = basicBlock("label_init", null)
         val bbCheckLocalState = basicBlock("label_check_local", null)
@@ -2438,7 +2445,7 @@ internal class CodeGeneratorVisitor(
     private fun evaluateFileStandaloneThreadLocalInitializerCall(fileInitializer: IrSimpleFunction) = with(functionGenerationContext) {
         val state = getThreadLocalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val statePtr = state.getAddress(functionGenerationContext)
-        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
+        val initializerPtr = fileInitializer.initializerPointer
 
         val bbInit = basicBlock("label_init", null)
         val bbExit = basicBlock("label_continue", null)
@@ -2705,7 +2712,10 @@ internal class CodeGeneratorVisitor(
                 val getSourceInfoFunction = LLVMGetNamedFunction(llvm.module, getSourceInfoFunctionName)
                         ?: LLVMAddFunction(llvm.module, getSourceInfoFunctionName,
                                 functionType(llvm.int32Type, false, llvm.pointerType, llvm.pointerType, llvm.int32Type))
-                overrideRuntimeGlobal(NativeRuntimeOverridableConstants.GET_SOURCE_INFO_FUNCTION, constValue(getSourceInfoFunction!!))
+                overrideRuntimeGlobal(
+                        NativeRuntimeOverridableConstants.GET_SOURCE_INFO_FUNCTION,
+                        llvm.cFunctionPointer(constPointer(getSourceInfoFunction!!))
+                )
             }
 
             overrideRuntimeGlobal(NativeRuntimeOverridableConstants.CORE_SYMBOLICATION_USE_ONLY_KOTLIN_IMAGE, context.config.coreSymbolicationUseOnlyKotlinImage.toLlvmConstInt32())

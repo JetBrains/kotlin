@@ -91,9 +91,9 @@ private fun Project.moduleCompileBitcodeElements(moduleName: String, sourceSet: 
 
 private fun Project.moduleCompileBitcodeElements(moduleName: String, sourceSet: String) = moduleCompileBitcodeElements(moduleName, sourceSet) {}
 
-private fun Configuration.targetVariant(target: TargetWithSanitizer): ConfigurationVariant = outgoing.variants.getOrCreate("$target") {
+private fun Configuration.targetVariant(target: TargetVariant): ConfigurationVariant = outgoing.variants.getOrCreate("$target") {
     attributes {
-        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target)
+        attribute(TargetVariant.TARGET_ATTRIBUTE, target)
     }
 }
 private fun Project.executorsClasspathConfiguration() = configurations.getOrCreate("executorsClasspath") {
@@ -175,7 +175,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             private val owner: CompileToBitcodeExtension,
             private val module: Module,
             private val name: String,
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) : Named {
         val target by _target::target
         val sanitizer by _target::sanitizer
@@ -225,13 +225,25 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         private val reproducibilityRootsMap: Map<File, String>
             get() = reproducibilityRootsMap(project, nativeDependencies)
 
+        // These follow the platform arguments, so this `-target` replaces the target's triple.
+        private val arm64eCompilerArgs: List<String> = if (_target.arm64e) {
+            val configurables = platformManager.platform(target).configurables as AppleConfigurables
+            val triple = configurables.arm64eTargetTriple ?: error("$target has no arm64e variant")
+            listOf("-target", triple.withOSVersion(configurables.osVersionMin).toString())
+        } else {
+            emptyList()
+        }
+
         private val allCompilerArgs = module.compilerArgs.map {
             it + when (sanitizer) {
                 null -> emptyList()
                 SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
                 SanitizerKind.THREAD -> listOf("-fsanitize=thread")
-            }
+            } + arm64eCompilerArgs
         }
+
+        // The arm64e variant uses the dependencies of its target.
+        private val dependenciesTarget = target.withSanitizer(sanitizer)
 
         /**
          * Compiles source files into bitcode files.
@@ -249,7 +261,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             this.workingDirectory.set(module.compilerWorkingDirectory)
             this.reproducibilityRootsMap.set(this@SourceSet.reproducibilityRootsMap)
             dependsOn(nativeDependencies.llvmDependency)
-            dependsOn(nativeDependencies.targetDependency(_target))
+            dependsOn(nativeDependencies.targetDependency(dependenciesTarget))
             this@SourceSet.dependencies.apply {
                 finalizeValue()
                 dependsOn(*get().toTypedArray())
@@ -274,8 +286,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                         from(this@SourceSet.headersDirs)
                     }
                     arguments.addAll(ClangFrontend.defaultCompilerFlags(headers, reproducibilityRootsMap))
-                    arguments.addAll(allCompilerArgs)
+                    // In the order of the compile task.
                     arguments.addAll(platformManager.clangArgs(target, module.compiler.get()))
+                    arguments.addAll(allCompilerArgs)
                     output.set(this@SourceSet.outputDirectory.map { it.asFile.absolutePath })
                 }
                 task.configure {
@@ -283,7 +296,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     // compdb task should also have these dependencies. This way the generated database will point to the
                     // code that actually exists.
                     dependsOn(nativeDependencies.llvmDependency)
-                    dependsOn(nativeDependencies.targetDependency(_target))
+                    dependsOn(nativeDependencies.targetDependency(dependenciesTarget))
                     this@SourceSet.dependencies.apply {
                         finalizeValue()
                         dependsOn(*get().toTypedArray())
@@ -317,7 +330,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
     abstract class Module @Inject constructor(
             private val owner: CompileToBitcodeExtension,
             private val name: String,
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) : Named {
         /**
          * A container for [SourceSet].
@@ -507,7 +520,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
     }
 
     abstract class TestsGroup @Inject constructor(
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) {
         val target by _target::target
         val sanitizer by _target::sanitizer
@@ -518,7 +531,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
     abstract class Target @Inject constructor(
             private val owner: CompileToBitcodeExtension,
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) {
         val target by _target::target
         val sanitizer by _target::sanitizer
@@ -572,6 +585,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 testTaskName: String,
                 action: Action<in TestsGroup>,
         ) {
+            // The arm64e variant only provides runtime bitcode for the distribution.
+            if (_target.arm64e) return
             val testsGroup = project.objects.newInstance(TestsGroup::class.java, _target).apply {
                 testSupportModules.set(listOf("googletest", "googlemock"))
                 testLauncherModule.convention("test_support")
@@ -626,7 +641,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 this.compilerOutputFile.set(project.layout.buildDirectory.file("obj/$target/$testName.o"))
                 val mainFileConfiguration = testLauncherConfiguration.incoming.artifactView {
                     attributes {
-                        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                        attribute(TargetVariant.TARGET_ATTRIBUTE, _target)
                     }
                 }.files
                 // TODO: Check if this is still required.
@@ -634,7 +649,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 dependsOn(mainFileConfiguration)
                 val inputFilesConfiguration = testsGroupConfiguration.incoming.artifactView {
                     attributes {
-                        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                        attribute(TargetVariant.TARGET_ATTRIBUTE, _target)
                     }
                 }.files
                 this.inputFiles.from(inputFilesConfiguration)
@@ -697,7 +712,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
  * * `{module}CompileBitcode{sourceSet}Elements` - like `compileBitcode{sourceSet}Elements` but for a single `module`.
  *
  * Each of the defined configuration has [Usage attribute][Usage] set to [CppUsage.LLVM_BITCODE].
- * Each `*Elements` configuration has variants with [TargetWithSanitizer.TARGET_ATTRIBUTE] values.
+ * Each `*Elements` configuration has variants with [TargetVariant.TARGET_ATTRIBUTE] values.
  *
  * To depend on a specific module, use [module][org.jetbrains.kotlin.cpp.module] and [moduleTestFixtures][org.jetbrains.kotlin.cpp.moduleTestFixtures].
  *
