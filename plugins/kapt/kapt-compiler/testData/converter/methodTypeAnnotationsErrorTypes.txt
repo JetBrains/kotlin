@@ -1,0 +1,155 @@
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Methods : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/util/List;)V
+ *   public constructor(value: @test/Anno kotlin/collections/List<error/NonExistentClass>)
+ *
+ *   // signature: contextual(Ljava/util/List;Ljava/util/List;)V
+ *   context(value: @test/Anno kotlin/collections/List<error/NonExistentClass>)
+ *   public final fun contextual(other: kotlin/collections/List<error/NonExistentClass>): kotlin/Unit
+ *
+ *   // signature: extension(Ljava/util/List;Ljava/util/List;)Ljava/util/List;
+ *   public final fun @test/Anno kotlin/collections/List<error/NonExistentClass>.extension(value: kotlin/collections/List<error/NonExistentClass>): @test/Anno kotlin/collections/List<error/NonExistentClass>
+ *
+ *   // signature: parameter(Ljava/util/List;)V
+ *   public final fun parameter(value: @test/Anno kotlin/collections/List<kotlin/collections/List<error/NonExistentClass>>): kotlin/Unit
+ *
+ *   // signature: result()Ljava/util/List;
+ *   public final fun result(): kotlin/collections/List<@test/Anno kotlin/collections/List<error/NonExistentClass>>
+ *
+ *   // signature: suppressedSuspending(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   @kotlin/jvm/JvmSuppressWildcards
+ *   public final suspend fun suppressedSuspending(): @test/Anno kotlin/collections/List<kotlin/collections/List<error/NonExistentClass>>
+ *
+ *   // signature: suspending(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   public final suspend fun suspending(value: @test/Anno kotlin/collections/List<error/NonExistentClass>): kotlin/collections/List<@test/Anno kotlin/collections/List<error/NonExistentClass>>
+ *
+ *   // getter: getExtensionProperty(Ljava/util/List;)Ljava/util/List;
+ *   // setter: setExtensionProperty(Ljava/util/List;Ljava/util/List;)V
+ *   public final var @test/Anno kotlin/collections/List<error/NonExistentClass>.extensionProperty: kotlin/collections/List<error/NonExistentClass>
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: kotlin/collections/List<error/NonExistentClass>)
+ *
+ *   // field: property:Ljava/util/List;
+ *   // getter: getProperty()Ljava/util/List;
+ *   // setter: setProperty(Ljava/util/List;)V
+ *   public final var property: @test/Anno kotlin/collections/List<error/NonExistentClass>
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Methods {
+    @org.jetbrains.annotations.NotNull()
+    private java.util.@Anno() @SourceAnno() List<? extends Missing> property;
+
+    public Methods(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<? extends Missing> value) {
+        super();
+    }
+
+    public final void parameter(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<? extends java.util.@SourceAnno() List<? extends Missing>> value) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.@SourceAnno() List<java.util.@Anno() List<Missing>> result() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.@Anno() List<Missing> extension(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<? extends Missing> $this$extension, @org.jetbrains.annotations.NotNull()
+    java.util.@SourceAnno() List<? extends Missing> value) {
+        return null;
+    }
+
+    public final void contextual(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<? extends Missing> value, @org.jetbrains.annotations.NotNull()
+    java.util.@SourceAnno() List<? extends Missing> other) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.@Anno() @SourceAnno() List<Missing> getProperty() {
+        return null;
+    }
+
+    public final void setProperty(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() @SourceAnno() List<? extends Missing> p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.@SourceAnno() List<Missing> getExtensionProperty(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<? extends Missing> $this$extensionProperty) {
+        return null;
+    }
+
+    public final void setExtensionProperty(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<? extends Missing> $this$extensionProperty, @org.jetbrains.annotations.NotNull()
+    java.util.@SourceAnno() List<? extends Missing> value) {
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.Object suspending(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<? extends Missing> value, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<? extends java.util.@Anno() List<? extends Missing>>> $completion) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmSuppressWildcards()
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.Object suppressedSuspending(@org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<java.util.@Anno() List<java.util.@SourceAnno() List<Missing>>> $completion) {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class test/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}

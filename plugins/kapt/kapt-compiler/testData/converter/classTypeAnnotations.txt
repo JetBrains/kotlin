@@ -1,0 +1,651 @@
+package test;
+
+/**
+ * public abstract class test/Abstract : @test/Anno test/Base, test/First {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class Abstract extends test.@Anno() Base implements test.@SourceAnno() First {
+
+    public Abstract() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_PARAMETER, java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package test;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class test/AnnotationClass : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface AnnotationClass {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public open class test/Base : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class Base {
+
+    public Base() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Bounds<@test/Anno T#0 (* T *) : @test/Anno test/Base & test/First & @test/Anno test/Second, T#1 (* U *) : @test/Anno test/First & test/Second> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Bounds<@Anno() @SourceAnno() T extends test.@Anno() Base & test.@SourceAnno() First & test.@Anno() @SourceAnno() Second, U extends test.@Anno() First & test.@SourceAnno() Second> {
+
+    public Bounds() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final data class test/Data : @test/Anno test/Base, test/First {
+ *
+ *   // signature: <init>(I)V
+ *   public constructor(value: kotlin/Int)
+ *
+ *   // signature: component1()I
+ *   public final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: copy(I)Ltest/Data;
+ *   public final (* synthesized *) fun copy(value: kotlin/Int (* = ... *)): test/Data
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:I
+ *   // getter: getValue()I
+ *   public final val value: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Data extends test.@Anno() Base implements test.@SourceAnno() First {
+    private final int value = 0;
+
+    public Data(int value) {
+        super();
+    }
+
+    public final int getValue() {
+        return 0;
+    }
+
+    public final int component1() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final test.Data copy(int value) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final data object test/DataSingleton : test/Base, @test/Anno test/Second {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class DataSingleton extends test.@SourceAnno() Base implements test.@Anno() Second {
+    @org.jetbrains.annotations.NotNull()
+    public static final test.DataSingleton INSTANCE = null;
+
+    private DataSingleton() {
+        super();
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract interface test/Derived : @test/Anno test/First, test/Second {
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Derived extends test.@Anno() First, test.@SourceAnno() Second {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final enum class test/Enum : @test/Anno test/First, test/Second, kotlin/Enum<test/Enum> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   ENTRY,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum Enum implements test.@Anno() First, test.@SourceAnno() Second {
+    /*public static final*/ ENTRY /* = new Enum() */;
+
+    Enum() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<test.Enum> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/ExplicitAny : @test/Anno kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ExplicitAny extends java.lang.@Anno() @SourceAnno() Object {
+
+    public ExplicitAny() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract interface test/First : kotlin/Any {
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface First {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract fun interface test/Functional : @test/Anno test/First {
+ *
+ *   // signature: invoke()V
+ *   public abstract fun invoke(): kotlin/Unit
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Functional extends test.@Anno() First {
+
+    public abstract void invoke();
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Generic<@test/Anno T#0 (* T *), T#1 (* U *)> : test/GenericBase<@test/Anno T#0>, @test/Anno test/GenericInterface<T#1> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Generic<@Anno() T extends java.lang.Object, @SourceAnno() U extends java.lang.Object> extends test.@SourceAnno() GenericBase<@Anno() T> implements test.@Anno() GenericInterface<@SourceAnno() U> {
+
+    public Generic() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public open class test/GenericBase<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class GenericBase<T extends java.lang.Object> {
+
+    public GenericBase() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract interface test/GenericInterface<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface GenericInterface<T extends java.lang.Object> {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/NamedCompanion : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: Named
+ *
+ *   // nested class: Named
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class NamedCompanion {
+    @org.jetbrains.annotations.NotNull()
+    public static final test.NamedCompanion.Named Named = null;
+
+    public NamedCompanion() {
+        super();
+    }
+
+    /**
+     * public final companion object test/NamedCompanion.Named : test/Base, @test/Anno test/Second {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Named extends test.@SourceAnno() Base implements test.@Anno() Second {
+
+        private Named() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Outer<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // nested class: Inner
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Outer<T extends java.lang.Object> {
+    @org.jetbrains.annotations.NotNull()
+    public static final test.Outer.Companion Companion = null;
+
+    public Outer() {
+        super();
+    }
+
+    /**
+     * public final companion object test/Outer.Companion : @test/Anno test/Base, test/First {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion extends test.@Anno() Base implements test.@SourceAnno() First {
+
+        private Companion() {
+            super();
+        }
+    }
+
+    /**
+     * public final inner class test/Outer.Inner<T#1 (* U *) : @test/Anno test/First> : test/GenericBase<T#0>, @test/Anno test/GenericInterface<T#1> {
+     *
+     *   // signature: <init>(Ltest/Outer;)V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner<@SourceAnno() U extends test.@Anno() First> extends test.@SourceAnno() GenericBase<T> implements test.@Anno() GenericInterface<U> {
+
+        public Inner() {
+            super();
+        }
+    }
+
+    /**
+     * public final class test/Outer.Nested : @test/Anno test/Base, test/First {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Nested extends test.@Anno() Base implements test.@SourceAnno() First {
+
+        public Nested() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Plain : @test/Anno test/Base, test/First, @test/Anno test/Second {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Plain extends test.@Anno() Base implements test.@SourceAnno() First, test.@Anno() @SourceAnno() Second {
+
+    public Plain() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public sealed class test/Sealed : @test/Anno test/Base, test/First {
+ *
+ *   // signature: <init>()V
+ *   protected constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class Sealed extends test.@Anno() Base implements test.@SourceAnno() First {
+
+    private Sealed() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract interface test/Second : kotlin/Any {
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Second {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final object test/Singleton : @test/Anno test/Base, test/First {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Singleton extends test.@Anno() Base implements test.@SourceAnno() First {
+    @org.jetbrains.annotations.NotNull()
+    public static final test.Singleton INSTANCE = null;
+
+    private Singleton() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_PARAMETER, java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class test/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/TVBounds<@test/Anno T#0 (* T *), T#1 (* U *) : @test/Anno T#0 & test/First, T#2 (* V *) : @test/Anno test/First & T#0> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class TVBounds<@Anno() T extends java.lang.Object, U extends @Anno() T & test.@SourceAnno() First, V extends test.@Anno() First & @SourceAnno() T> {
+
+    public TVBounds() {
+        super();
+    }
+}

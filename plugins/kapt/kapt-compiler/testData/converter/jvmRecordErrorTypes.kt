@@ -9,3 +9,13 @@ package test
 data class R(val x: Unresolved, val y: List<Unresolved2>) {
     constructor() : this(null!!, emptyList())
 }
+
+// A vararg component's written type is its bare element; the stub must still render it as vararg.
+@JvmRecord
+data class VarargRecord(vararg val xs: Unresolved)
+
+@JvmRecord
+data class VarargGenericRecord(vararg val ys: List<Unresolved2>)
+
+@JvmRecord
+data class VarargArrayRecord(vararg val xa: Array<Unresolved>)

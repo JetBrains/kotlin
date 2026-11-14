@@ -5,12 +5,30 @@
 
 package org.jetbrains.kotlin.kapt.base.stubs
 
+import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.tree.JCTree
 
 fun JCTree.JCMethodDecl.getJavacSignature(): String {
     val name = name.toString()
-    val params = parameters.joinToString { it.getType().toString() }
+    val params = parameters.joinToString { it.getType().withoutTypeAnnotations() }
     return "$name($params)"
+}
+
+// Annotations shall not be used in the lookup signatures, as they do not identify overloads and in
+// some cases Javac can reorder them, e.g. move from type to parameter modifiers
+private fun JCTree.withoutTypeAnnotations(): String = when (this) {
+    is JCTree.JCAnnotatedType -> underlyingType.withoutTypeAnnotations()
+    is JCTree.JCArrayTypeTree -> elemtype.withoutTypeAnnotations() + "[]"
+    is JCTree.JCTypeApply -> clazz.withoutTypeAnnotations() + arguments.joinToString(
+        prefix = "<", postfix = ">",
+    ) { it.withoutTypeAnnotations() }
+    is JCTree.JCFieldAccess -> selected.withoutTypeAnnotations() + "." + name
+    is JCTree.JCWildcard -> when (kind.kind!!) {
+        BoundKind.UNBOUND -> "?"
+        BoundKind.EXTENDS -> "? extends " + inner.withoutTypeAnnotations()
+        BoundKind.SUPER -> "? super " + inner.withoutTypeAnnotations()
+    }
+    else -> toString()
 }
 
 typealias LineInfoMap = MutableMap<String, KotlinPosition>
