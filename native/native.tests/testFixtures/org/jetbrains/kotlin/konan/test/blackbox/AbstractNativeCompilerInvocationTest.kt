@@ -87,16 +87,33 @@ class NativeCompilerInvocationTestArtifactBuilder(
     ) {
         require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
 
-        val srcFiles = module.sourceDir.listFiles()
-        check(srcFiles != null && srcFiles.isNotEmpty()) { "No source files could be found" }
-        val hasKtFiles = srcFiles.any { it.name.endsWith(".kt") }
-        val defFiles = srcFiles.filter { it.name.endsWith(".def") }
-        check(!hasKtFiles || defFiles.isEmpty()) { "Both .kt and .def files are specified" }
-        check(defFiles.size <= 1) { "More than one .def file is specified" }
+        val kotlinSourceFiles = mutableListOf<File>()
+        val nativeSourceFiles = mutableListOf<File>()
+        var defFile: File? = null
+        module.sourceDir.walkTopDown().forEach { sourceFile ->
+            if (sourceFile.isFile) {
+                when (sourceFile.extension) {
+                    "kt" -> kotlinSourceFiles += sourceFile
+                    "c", "cpp", "m", "mm" -> nativeSourceFiles += sourceFile
+                    "def" -> {
+                        require(defFile == null) { "More than one .def file is specified" }
+                        defFile = sourceFile
+                    }
+                    "h" -> {
+                        // Copy header files to the output directory. Dependent modules include this directory during compilation, so they
+                        // are able to reference the headers of dependencies.
+                        sourceFile.copyTo(module.outputDir.resolve(sourceFile.relativeTo(module.sourceDir)), overwrite = true)
+                    }
+                }
+            }
+        }
+
+        check(kotlinSourceFiles.isNotEmpty() || defFile != null) { "No source files could be found" }
+        check(kotlinSourceFiles.isEmpty() || defFile == null) { "Both .kt and .def files are specified" }
+        check(kotlinSourceFiles.isEmpty() || nativeSourceFiles.isEmpty()) { "Native sources are not allowed in regular Kotlin compilation" }
 
         val klibArtifact = KLIB(module.klibFile)
-
-        if (hasKtFiles) {
+        if (kotlinSourceFiles.isNotEmpty()) {
             val testCase = createTestCase(
                 moduleName = module.moduleInfo.moduleName,
                 moduleSourceDir = module.sourceDir,
@@ -114,16 +131,20 @@ class NativeCompilerInvocationTestArtifactBuilder(
             compilation.result.assertSuccess() // <-- trigger compilation
         } else {
             assumeTrue(
-                srcFiles[0].defFileIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget)
+                defFile!!.defFileIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget)
             )
 
             val compilation = CInteropCompilation(
-                settings,
-                TestCompilerArgs(compilerArguments),
-                srcFiles[0],
-                sources = srcFiles.filterNot { it == srcFiles[0] },
-                dependencies = emptyList(),
-                klibArtifact,
+                settings = settings,
+                freeCompilerArgs = TestCompilerArgs(compilerArguments),
+                defFile = defFile,
+                sources = nativeSourceFiles,
+                dependencies = createLibraryDependencies(dependencies),
+                includeDirectories = [defFile.parentFile] +
+                        dependencies.regularDependencies
+                            .filter { it.moduleName != "stdlib" }
+                            .map { it.libraryFile.parentFile },
+                expectedArtifact = klibArtifact,
             )
 
             compilation.result.assertSuccess() // <-- trigger compilation

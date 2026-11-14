@@ -1,0 +1,19 @@
+package = lib2
+language = C
+---
+#include "lib1.h"
+
+int acceptUnmodifiedStruct(UnmodifiedStruct* s, int result) {
+    return result;
+}
+int acceptRemovedStruct(RemovedStruct* s, int result) {
+    return result;
+}
+
+typedef struct RemovedStructWrapper {
+    RemovedStruct s;
+} RemovedStructWrapper;
+
+int acceptRemovedStructWrapper(RemovedStructWrapper* sw, int result) {
+    return result;
+}

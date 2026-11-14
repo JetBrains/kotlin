@@ -65,6 +65,8 @@ ignored:
  - compiler/testData/debug/localVariables/inlineScopes/newFormatToOld/README.md
  - compiler/testData/diagnostics/ReadMe.md
  - compiler/testData/diagnostics/nativeTests/specialBackendChecks/README.md
+ - compiler/testData/klib/partial-linkage/interdependentCInteropKlibs/ReadMe.md
+ - compiler/testData/klib/partial-linkage/interdependentObjCInteropKlibs/ReadMe.md
  - compiler/testData/klib/partial-linkage/referencingUnusableDeclarations/ReadMe.md
  - compiler/testData/klib/syntheticAccessors/README.md
  - compiler/util-klib-abi/ReadMe.md
