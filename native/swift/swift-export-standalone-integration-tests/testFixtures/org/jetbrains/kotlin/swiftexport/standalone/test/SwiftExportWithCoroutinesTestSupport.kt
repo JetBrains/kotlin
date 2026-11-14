@@ -36,7 +36,7 @@ class SwiftExportWithCoroutinesTestSupport : BeforeTestExecutionCallback {
                 kotlinxCoroutinesModule,
                 atomicFuModule,
             )
-            minOSVersion = "15.0"
+            minOSVersion = "13.0"
         }
     }
 }

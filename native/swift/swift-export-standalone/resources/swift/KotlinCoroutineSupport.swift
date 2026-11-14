@@ -1,7 +1,92 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinCoroutineSupportBridge
+import os
 import Synchronization
+
+/// `Synchronization.Mutex` that uses its Darwin implementation directly on OS versions that lack it.
+/// https://github.com/swiftlang/swift/blob/swift-6.4.2-RELEASE/stdlib/public/Synchronization/Mutex/DarwinImpl.swift
+///
+/// Swift's `main` branch makes `Mutex` available from macOS 10.14.4 / iOS 12.2 / tvOS 12.2 / watchOS 5.2, so this
+/// can be removed once Swift Export requires an Xcode whose Swift release includes that.
+private final class MutexCompat<Value: ~Copyable>: Sendable {
+    private let storage: Storage
+
+    init(_ initialValue: consuming sending Value) {
+        if #available(macOS 15.0, iOS 18.0, tvOS 18.0, watchOS 11.0, *) {
+            storage = MutexStorage(initialValue)
+        } else {
+            storage = UnfairLockStorage(initialValue)
+        }
+    }
+
+    func withLock<Result: ~Copyable, E: Error>(
+        _ body: (inout sending Value) throws(E) -> sending Result
+    ) throws(E) -> sending Result {
+        try storage.withLock(body)
+    }
+
+    private class Storage: @unchecked Sendable {
+        func withLock<Result: ~Copyable, E: Error>(
+            _ body: (inout sending Value) throws(E) -> sending Result
+        ) throws(E) -> sending Result {
+            fatalError("MutexCompat.Storage.withLock must be overridden")
+        }
+    }
+
+    @available(macOS 15.0, iOS 18.0, tvOS 18.0, watchOS 11.0, *)
+    private final class MutexStorage: Storage, @unchecked Sendable {
+        private let mutex: Mutex<Value>
+
+        init(_ initialValue: consuming sending Value) {
+            mutex = Mutex(initialValue)
+        }
+
+        override func withLock<Result: ~Copyable, E: Error>(
+            _ body: (inout sending Value) throws(E) -> sending Result
+        ) throws(E) -> sending Result {
+            try mutex.withLock(body)
+        }
+    }
+
+    /// An `os_unfair_lock` must never move in memory, but Swift may move a stored property, so the lock gets its own
+    /// allocation. `Mutex` gets the same guarantee from its internal `_Cell`.
+    private final class UnfairLockStorage: Storage, @unchecked Sendable {
+        private let lock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
+        private var value: Value
+
+        init(_ initialValue: consuming sending Value) {
+            lock.initialize(to: os_unfair_lock())
+            value = initialValue
+        }
+
+        deinit {
+            lock.deinitialize(count: 1)
+            lock.deallocate()
+        }
+
+        override func withLock<Result: ~Copyable, E: Error>(
+            _ body: (inout sending Value) throws(E) -> sending Result
+        ) throws(E) -> sending Result {
+            os_unfair_lock_lock(lock)
+            defer { os_unfair_lock_unlock(lock) }
+            return try body(&value)
+        }
+    }
+}
+
+/// Async `withUnsafeCurrentTask` that takes the task from the synchronous one on OS versions that lack it.
+/// The task outlives the body, so this is safe. The standard library does the same:
+/// https://github.com/swiftlang/swift/blob/swift-6.4.2-RELEASE/stdlib/public/Concurrency/Task.swift#L753-L769
+private func withUnsafeCurrentTaskCompat<T>(
+    body: (UnsafeCurrentTask?) async throws -> T
+) async rethrows -> T {
+    if #available(macOS 15.0, iOS 18.0, tvOS 18.0, watchOS 11.0, *) {
+        return try await withUnsafeCurrentTask(body: body)
+    }
+    let task = withUnsafeCurrentTask { $0 }
+    return try await body(task)
+}
 
 /// A Bridge type for Job-like class in Kotlin
 ///
@@ -12,7 +97,7 @@ import Synchronization
 @objc(KotlinTask)
 package final class KotlinTask: KotlinRuntime.KotlinBase {
 
-    private let task = Mutex<UnsafeCurrentTask?>(nil)
+    private let task = MutexCompat<UnsafeCurrentTask?>(nil)
 
     fileprivate init(_ currentTask: UnsafeCurrentTask) {
         let __kt = __root___SwiftJob_init_allocate()
@@ -53,7 +138,7 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
 package func withKotlinContinuation<T>(
     _ fn: (@escaping (T) -> Void, @escaping (Error?) -> Void, KotlinTask) -> Void
 ) async throws -> T {
-    try await withUnsafeCurrentTask { currentTask in
+    try await withUnsafeCurrentTaskCompat { currentTask in
         let cancellation = KotlinTask(currentTask!)
         defer { cancellation.clear() }
         return try await withTaskCancellationHandler {
@@ -77,7 +162,7 @@ package func withKotlinTask<T>(
     _ operation: @escaping () async throws -> T
 ) {
     Task {
-        await withUnsafeCurrentTask { currentTask in
+        await withUnsafeCurrentTaskCompat { currentTask in
             cancellation.setTask(currentTask!)
             defer { cancellation.clear() }
             await withTaskCancellationHandler {

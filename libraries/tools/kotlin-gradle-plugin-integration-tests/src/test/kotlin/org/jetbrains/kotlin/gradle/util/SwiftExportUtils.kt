@@ -50,7 +50,7 @@ internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
     archs: List<String> = listOf("arm64"),
     platform: String = "iphoneos",
-    iphoneOsDeploymentTarget: String = "18.0",
+    iphoneOsDeploymentTarget: String = "16.0",
     customVariables: Map<String, String> = emptyMap(),
 ) = EnvironmentalVariables(
     buildMap {
