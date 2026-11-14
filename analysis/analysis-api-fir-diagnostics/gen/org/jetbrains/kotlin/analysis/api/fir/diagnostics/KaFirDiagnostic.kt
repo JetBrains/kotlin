@@ -3738,15 +3738,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface CallableReferenceToContextualDeclaration : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<CallableReferenceToContextualDeclaration>
-            get() = CallableReferenceToContextualDeclaration::class
-
-        public val symbol: KaCallableSymbol
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NamedContextParameterInFunctionType : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NamedContextParameterInFunctionType>
             get() = NamedContextParameterInFunctionType::class

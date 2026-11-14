@@ -2882,13 +2882,6 @@ private fun KaDiagnosticConverterBuilder.addConversions61() {
             token,
         )
     }
-    add(FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION) { firDiagnostic ->
-        CallableReferenceToContextualDeclarationImpl(
-            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.NON_ERROR_GET_CLASS_CALL) { firDiagnostic ->
         NonErrorGetClassCallImpl(
             firDiagnostic as KtDiagnosticWithSource,

@@ -65,7 +65,7 @@ object FirCallableReferenceChecker : FirCallableReferenceAccessChecker(MppChecke
             }
 
             if (referredSymbol.hasContextParameters && LanguageFeature.ContextParameters.isEnabled() && LanguageFeature.CallableReferencesToContextual.isDisabled()) {
-                reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION, referredSymbol)
+                reporter.reportOn(source, FirErrors.UNSUPPORTED_FEATURE, LanguageFeature.CallableReferencesToContextual to context.languageVersionSettings)
             }
         }
     }
