@@ -183,6 +183,15 @@ class Strings {
     }
 
     @Sample
+    fun groupingBy() {
+        val text = "KotlinKOTLIN"
+
+        val characterCounts = text.groupingBy { it.lowercaseChar() }.eachCount()
+
+        assertPrints(characterCounts, "{k=2, o=2, t=2, l=2, i=2, n=2}")
+    }
+
+    @Sample
     fun find() {
         val text = "a1b2c3d4e5"
 

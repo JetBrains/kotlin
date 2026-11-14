@@ -622,6 +622,9 @@ object Mapping : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Grouping.groupingByEachCount")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.groupingBy")
+        }
 
         body {
             """
