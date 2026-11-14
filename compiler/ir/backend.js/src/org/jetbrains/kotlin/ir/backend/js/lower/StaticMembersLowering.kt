@@ -25,6 +25,17 @@ import org.jetbrains.kotlin.name.Name
 var IrDeclarationWithName.originalFqName: FqName? by irAttribute(copyByDefault = false)
 
 /**
+ * If this is a static declaration that was extracted to the top level by [StaticMembersLowering],
+ * contains an original declaration parent.
+ *
+ * Additionally used as a grouping key by the per-class artifact generation: a callable reference factory moved
+ * to the declaration site by [MoveCallableFactoriesToDeclarationsLowering] gets this attribute set to the class
+ * of the referenced function, so that the factory is emitted into the same artifact as that class
+ * (see `findRootExtractedContainer` in `IrModuleToJsTransformer`).
+ */
+var IrDeclaration.extractedFromContainer: IrDeclarationParent? by irAttribute(copyByDefault = false)
+
+/**
  * Moves static member declarations from classes to the top level.
  */
 class StaticMembersLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
@@ -68,6 +79,7 @@ class StaticMembersLowering(val context: JsCommonBackendContext) : DeclarationTr
                     declaration.name = Name.identifier("$prefix$${declaration.name}")
                 }
 
+                declaration.extractedFromContainer = declaration.parent
                 declaration.parent = irClass.file
                 return listOf()
             }
