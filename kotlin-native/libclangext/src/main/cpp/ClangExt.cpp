@@ -20,6 +20,7 @@
 #include <functional>
 
 #include <llvm/ADT/StringRef.h>
+#include <clang/AST/Expr.h>
 #include <clang/Basic/LLVM.h>
 #include "clang-c/ext.h"
 
@@ -44,6 +45,25 @@ namespace {
       seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
   }
 }  // namespace
+
+static const Stmt *getCursorStmt(CXCursor cursor) {
+  return static_cast<const Stmt *>(cursor.data[1]);
+}
+
+// For string macros, unwrap parentheses and implicit casts using inline
+// accessors. Calling Expr::IgnoreParenImpCasts() would pull in Clang's AST
+// libraries and their LLVM dependencies on Windows.
+static const Expr *unwrapParenImpCasts(const Expr *expression) {
+  while (true) {
+    if (const auto *implicitCast = dyn_cast<ImplicitCastExpr>(expression)) {
+      expression = implicitCast->getSubExpr();
+    } else if (const auto *paren = dyn_cast<ParenExpr>(expression)) {
+      expression = paren->getSubExpr();
+    } else {
+      return expression;
+    }
+  }
+}
 
 #if LIBCLANGEXT_ENABLE
 
@@ -246,6 +266,19 @@ extern "C" {
       }
     }
 #endif
+    return nullCString();
+  }
+
+  CString clang_Cursor_getStringLiteralValue(CXCursor cursor) {
+    if (clang_isExpression(cursor.kind)) {
+      if (const Expr *expression = dyn_cast_or_null<Expr>(getCursorStmt(cursor))) {
+        if (const StringLiteral *literal = dyn_cast<StringLiteral>(unwrapParenImpCasts(expression))) {
+          if (literal->getCharByteWidth() == 1) {
+            return createCString(literal->getBytes());
+          }
+        }
+      }
+    }
     return nullCString();
   }
 
