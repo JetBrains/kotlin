@@ -4872,6 +4872,8 @@ final object kotlin.coroutines/EmptyCoroutineContext : kotlin.coroutines/Corouti
 
 final object kotlin.internal/SyntheticConstructorMarker // kotlin.internal/SyntheticConstructorMarker|null[0]
 
+final object kotlin.properties.internal/UNINITIALIZED // kotlin.properties.internal/UNINITIALIZED|null[0]
+
 final object kotlin.properties/Delegates { // kotlin.properties/Delegates|null[0]
     final fun <#A1: kotlin/Any> notNull(): kotlin.properties/ReadWriteProperty<kotlin/Any?, #A1> // kotlin.properties/Delegates.notNull|notNull(){0§<kotlin.Any>}[0]
     final inline fun <#A1: kotlin/Any?> observable(#A1, crossinline kotlin/Function3<kotlin.reflect/KProperty<*>, #A1, #A1, kotlin/Unit>): kotlin.properties/ReadWriteProperty<kotlin/Any?, #A1> // kotlin.properties/Delegates.observable|observable(0:0;kotlin.Function3<kotlin.reflect.KProperty<*>,0:0,0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]

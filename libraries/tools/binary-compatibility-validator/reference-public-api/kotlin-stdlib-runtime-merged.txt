@@ -4815,6 +4815,10 @@ public abstract interface class kotlin/properties/ReadWriteProperty : kotlin/pro
 	public abstract fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
 }
 
+public final class kotlin/properties/internal/UNINITIALIZED : java/io/Serializable {
+	public static final field INSTANCE Lkotlin/properties/internal/UNINITIALIZED;
+}
+
 public final class kotlin/random/PlatformRandomKt {
 	public static final fun asJavaRandom (Lkotlin/random/Random;)Ljava/util/Random;
 	public static final fun asKotlinRandom (Ljava/util/Random;)Lkotlin/random/Random;
