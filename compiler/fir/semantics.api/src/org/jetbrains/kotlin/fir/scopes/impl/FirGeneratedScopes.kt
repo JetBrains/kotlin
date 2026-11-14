@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.caches.*
-import org.jetbrains.kotlin.fir.containingClassForLocalAttr
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.FirLazyValueWithContext
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.ownerGenerator
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.extensions.impl.pluginTypeResolverFactory
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
@@ -39,7 +39,10 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
             regularDeclaredScope: FirClassDeclaredMemberScope?,
             scopeForGeneratedClass: Boolean
         ): FirGeneratedClassDeclaredMemberScope? {
-            val generationContext = MemberGenerationContext(classSymbol, regularDeclaredScope)
+            @OptIn(FirExtensionApiInternals::class)
+            val typeResolver = useSiteSession.pluginTypeResolverFactory.getTypeResolver(classSymbol)
+
+            val generationContext = MemberGenerationContext(classSymbol, regularDeclaredScope, typeResolver)
 
             /*
              * Extensions can modify source classes of the same session in which they are enabled
@@ -118,7 +121,10 @@ class FirGeneratedClassNestedClassifierScope private constructor(
             classSymbol: FirClassSymbol<*>,
             regularNestedClassifierScope: FirNestedClassifierScope?,
         ): FirGeneratedClassNestedClassifierScope? {
-            val generationContext = NestedClassGenerationContext(classSymbol, regularNestedClassifierScope)
+            @OptIn(FirExtensionApiInternals::class)
+            val typeResolver = useSiteSession.pluginTypeResolverFactory.getTypeResolver(classSymbol)
+
+            val generationContext = NestedClassGenerationContext(classSymbol, regularNestedClassifierScope, typeResolver)
 
             /*
              * Extensions can modify source classes of the same session in which they are enabled

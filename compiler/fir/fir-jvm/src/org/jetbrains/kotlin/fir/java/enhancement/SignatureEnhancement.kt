@@ -1190,7 +1190,7 @@ class FirSignatureEnhancement(
     private fun FirJavaTypeRef.getClassLikeSymbolFromExtensionService(): FirClassLikeSymbol<*>? {
         val classifierQualifiedName = (type as? JavaClassifierTypeImpl)?.classifierQualifiedName?.let { FqName(it) }
             ?: return null
-        val context = DeclarationGenerationContext.Nested(owner.symbol, null)
+        val context = DeclarationGenerationContext.Nested(owner.symbol, declaredScope = null, typeResolver = null)
         val shortName = classifierQualifiedName.shortName()
         val parent = classifierQualifiedName.parent()
         var parentSymbol: FirClassSymbol<*>? = owner.symbol

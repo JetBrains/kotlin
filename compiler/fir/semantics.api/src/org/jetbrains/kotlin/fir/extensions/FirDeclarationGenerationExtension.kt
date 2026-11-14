@@ -109,6 +109,7 @@ typealias NestedClassGenerationContext = DeclarationGenerationContext.Nested
 sealed class DeclarationGenerationContext<T : FirContainingNamesAwareScope>(
     val owner: FirClassSymbol<*>,
     val declaredScope: T?,
+    val typeResolver: PluginTypeResolver?,
 ) {
     // is needed for `hashCode` implementation
     protected abstract val kind: Int
@@ -116,7 +117,8 @@ sealed class DeclarationGenerationContext<T : FirContainingNamesAwareScope>(
     class Member(
         owner: FirClassSymbol<*>,
         declaredScope: FirClassDeclaredMemberScope?,
-    ) : DeclarationGenerationContext<FirClassDeclaredMemberScope>(owner, declaredScope) {
+        typeResolver: PluginTypeResolver?,
+    ) : DeclarationGenerationContext<FirClassDeclaredMemberScope>(owner, declaredScope, typeResolver) {
         override val kind: Int
             get() = 1
     }
@@ -124,7 +126,8 @@ sealed class DeclarationGenerationContext<T : FirContainingNamesAwareScope>(
     class Nested(
         owner: FirClassSymbol<*>,
         declaredScope: FirNestedClassifierScope?,
-    ) : DeclarationGenerationContext<FirNestedClassifierScope>(owner, declaredScope) {
+        typeResolver: PluginTypeResolver?,
+    ) : DeclarationGenerationContext<FirNestedClassifierScope>(owner, declaredScope, typeResolver) {
         override val kind: Int
             get() = 2
     }

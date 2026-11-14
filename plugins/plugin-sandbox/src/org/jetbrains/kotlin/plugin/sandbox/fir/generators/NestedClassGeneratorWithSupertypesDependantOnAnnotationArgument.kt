@@ -9,25 +9,21 @@ import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.plugin.createNestedClass
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.hasResolvedType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
-import org.jetbrains.kotlin.plugin.sandbox.fir.generators.NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument.NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey
 import org.jetbrains.kotlin.plugin.sandbox.fir.generators.SupertypesDependantOnAnnotationArgumentComponent.Companion.ANNOTATION_ID
 
 /**
@@ -62,6 +58,9 @@ class NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument(session: F
                     owner, GENERATED, NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey, ClassKind.INTERFACE,
                 ) {
                     modality = Modality.ABSTRACT
+                    for (type in computeAdditionalSupertypes(owner, context.typeResolver)) {
+                        superType(type)
+                    }
                 }.symbol
             }
             else -> null
@@ -73,37 +72,25 @@ class NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument(session: F
     }
 
     data object NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey : GeneratedDeclarationKey()
-}
 
-class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSession) : FirSupertypeGenerationExtension(session) {
-    companion object {
-        private val B = Name.identifier("B")
-    }
-
-    override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {
-        return declaration.origin.key == NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey
-    }
-
-    override fun computeAdditionalSupertypes(
-        classLikeDeclaration: FirClassLikeDeclaration,
-        resolvedSupertypes: List<FirResolvedTypeRef>,
-        typeResolver: TypeResolveService,
-    ): List<ConeKotlinType> = emptyList()
-
-    @ExperimentalSupertypesGenerationApi
-    override fun computeAdditionalSupertypesForGeneratedNestedClass(
-        klass: FirRegularClass,
-        typeResolver: TypeResolveService,
+    private fun computeAdditionalSupertypes(
+        container: FirClassSymbol<*>,
+        typeResolver: PluginTypeResolver?,
     ): List<ConeKotlinType> {
-        require(klass.origin.key == NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey)
-        val container = klass.getContainingDeclaration(session) ?: return emptyList()
-        val annotation = container.annotations.getAnnotationByClassId(ANNOTATION_ID, session) as? FirAnnotationCall ?: return emptyList()
+        val annotation = container.resolvedCompilerAnnotationsWithClassIds
+            .getAnnotationByClassId(ANNOTATION_ID, session) as? FirAnnotationCall ?: return emptyList()
         val getClassCall = annotation.arguments.singleOrNull() as? FirGetClassCall ?: return emptyList()
+
+        // Type might already be resolved.
+        if (getClassCall.hasResolvedType) return listOfNotNull(getClassCall.getTargetType())
+
+        // Attempt to resolve the type based on argument.
+        if (typeResolver == null) return emptyList()
         val qualifierParts = createQualifier(getClassCall.argument) ?: return emptyList()
         return listOf(
             typeFromQualifierParts(
                 isMarkedNullable = false,
-                source = klass.source!!,
+                source = container.source!!,
                 typeResolver = typeResolver
             ) {
                 for (name in qualifierParts) {
@@ -146,6 +133,3 @@ class SupertypesDependantOnAnnotationArgumentComponent(session: FirSession) : Fi
 }
 
 private val FirSession.myComponent: SupertypesDependantOnAnnotationArgumentComponent by FirSession.sessionComponentAccessor()
-
-private val FirDeclarationOrigin.key: GeneratedDeclarationKey?
-    get() = (this as? FirDeclarationOrigin.Plugin)?.key

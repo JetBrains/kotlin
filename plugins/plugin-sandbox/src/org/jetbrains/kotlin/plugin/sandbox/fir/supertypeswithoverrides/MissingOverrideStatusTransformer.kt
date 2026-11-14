@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.typeFromQualifierParts
@@ -106,7 +107,7 @@ class SimpleAddSupertypeExtension(session: FirSession): FirSupertypeGenerationEx
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
-        typeResolver: TypeResolveService,
+        typeResolver: PluginTypeResolver,
     ): List<ConeKotlinType> {
         val annotation = classLikeDeclaration.annotations.singleOrNull() ?: return emptyList()
         val argument = annotation.findArgumentByName(StandardNames.DEFAULT_VALUE_PARAMETER) ?: return emptyList()
@@ -116,7 +117,7 @@ class SimpleAddSupertypeExtension(session: FirSession): FirSupertypeGenerationEx
     }
 
     private fun FirGetClassCall.resolvedClassArgumentTarget(
-        typeResolver: TypeResolveService
+        typeResolver: PluginTypeResolver
     ): ConeKotlinType? {
         if (hasResolvedType) {
             return (argument as? FirClassReferenceExpression?)?.classTypeRef?.coneTypeOrNull

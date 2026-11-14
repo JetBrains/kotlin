@@ -49,7 +49,6 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
 
         +::NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument
         +::NestedClassGeneratorWithLocalClassesSupport
-        +::NestedClassSupertypesDependantOnAnnotationArgumentAdder
         +::SupertypesDependantOnAnnotationArgumentComponent
 
         // Test generators for https://github.com/JetBrains/kotlin/pull/5466

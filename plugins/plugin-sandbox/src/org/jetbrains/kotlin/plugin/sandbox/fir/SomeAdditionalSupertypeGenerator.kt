@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -35,7 +36,7 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
-        typeResolver: TypeResolveService
+        typeResolver: PluginTypeResolver
     ): List<ConeKotlinType> {
         if (classLikeDeclaration !is FirRegularClass) return emptyList()
         when (classLikeDeclaration.classKind) {
