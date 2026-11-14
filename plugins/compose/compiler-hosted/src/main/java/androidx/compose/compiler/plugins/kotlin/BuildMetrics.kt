@@ -445,10 +445,7 @@ class ModuleMetricsImpl(
 
     override fun saveMetricsTo(directory: String) {
         val dir = File(directory)
-        val prefix = name
-            .replace('.', '_')
-            .replace("<", "")
-            .replace(">", "")
+        val prefix = name.toFileNamePrefix()
         File(dir, "$prefix-module.json").write {
             appendModuleJson()
         }
@@ -456,10 +453,7 @@ class ModuleMetricsImpl(
 
     override fun saveReportsTo(directory: String) {
         val dir = File(directory)
-        val prefix = name
-            .replace('.', '_')
-            .replace("<", "")
-            .replace(">", "")
+        val prefix = name.toFileNamePrefix()
         File(dir, "$prefix-composables.csv").write {
             appendComposablesCsv()
         }
@@ -615,3 +609,21 @@ class FunctionMetricsImpl(
         }
     }
 }
+
+/**
+ * Characters forbidden in Windows file names (plus '%'), the same set that is
+ * sanitized in '.kotlin_module' file names since KT-82216. Notably includes ':',
+ * which group-prefixed module names contain since Kotlin 2.4.0 and which Windows
+ * would otherwise interpret as an NTFS alternate data stream separator (KT-87355).
+ */
+private val forbiddenFileNameChars = Regex("""[:"/\\|?*%\x00-\x1F]""")
+
+/**
+ * Builds a file-name-safe prefix for the metrics/reports files from the module name.
+ * Replacing '.' and dropping '<'/'>' is the pre-existing behavior and is kept as is.
+ */
+private fun String.toFileNamePrefix(): String = this
+    .replace('.', '_')
+    .replace("<", "")
+    .replace(">", "")
+    .replace(forbiddenFileNameChars, "_")
