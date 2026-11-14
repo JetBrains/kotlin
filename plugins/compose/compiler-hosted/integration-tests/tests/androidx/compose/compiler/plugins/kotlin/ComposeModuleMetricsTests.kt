@@ -16,7 +16,10 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 
 class ComposeModuleMetricsTests : AbstractMetricsTransformTest() {
     @Test
@@ -205,4 +208,29 @@ class ComposeModuleMetricsTests : AbstractMetricsTransformTest() {
             }
         """
     )
+
+    @Test
+    fun testOutputFileNamesAreSanitized(@TempDir dir: File) {
+        // KT-87355: group-prefixed module names contain ':', which must not reach
+        // the file system (on Windows it denotes an NTFS alternate data stream).
+        val metrics = ModuleMetricsImpl(
+            name = "com.example:my<app>|x",
+            featureFlags = FeatureFlags(),
+        ) { _, _ -> error("Not expected to be called for empty metrics") }
+        metrics.log("message") // makes saveReportsTo also produce the .log file
+
+        metrics.saveReportsTo(dir.absolutePath)
+        metrics.saveMetricsTo(dir.absolutePath)
+
+        assertEquals(
+            listOf(
+                "com_example_myapp_x-classes.txt",
+                "com_example_myapp_x-composables.csv",
+                "com_example_myapp_x-composables.log",
+                "com_example_myapp_x-composables.txt",
+                "com_example_myapp_x-module.json",
+            ),
+            dir.listFiles()!!.map { it.name }.sorted(),
+        )
+    }
 }
