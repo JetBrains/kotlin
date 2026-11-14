@@ -42,7 +42,11 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
+import kotlin.io.path.relativeTo
 import kotlin.reflect.KProperty1
 
 @Tag("klib")
@@ -506,6 +510,138 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         assertTrue(expectedDiagnostic in convertLineSeparators(compilationToolCall.toolOutput)) {
             "[$expectedDiagnostic] is not contained in [${compilationToolCall.toolOutput}]"
         }
+    }
+
+    @Test
+    fun `Compiler warns about clashing declarations on 2nd phase`() {
+        /*
+         * A, B and C are three different libraries with the same package `lib`. The clashing declarations:
+         * - `lib.lib()` is declared in A, B and C
+         * - `lib.ab()` is declared in A and B
+         * - `lib.ac()` is declared in A and C
+         * - `lib.bc()` is declared in B and C
+         */
+        val libraryNameToKlibPath: Map</* name of library */ String, /* path of KLIB */ Path> = mapOf(
+            "A" to "fun ab() = 1\nfun ac() = 1",
+            "B" to "fun ab() = 2\nfun bc() = 2",
+            "C" to "fun ac() = 3\nfun bc() = 3",
+        ).mapValues { [libraryName, clashingDeclarations] ->
+            var klibPath: Path? = null
+
+            // Use separate directories to not overwrite the sources and the KLIBs of other libraries.
+            // Use different module names to make these libraries different, although they have the same package.
+            newSourceModules(customGeneratedSourcesDir = buildDir.resolve("generated-sources-$libraryName").toPath()) {
+                addRegularModule("lib") { sourceFileAddend(clashingDeclarations) }
+            }.compileToKlibsViaCli(
+                extraCliArgs = listOf("-module-name", "lib$libraryName"),
+                customGeneratedKlibsDir = buildDir.resolve("path/to/$libraryName").toPath(),
+            ) { _, successKlib ->
+                klibPath = successKlib.resultingArtifact.klibFile.toPath().absolute()
+            }
+
+            checkNotNull(klibPath)
+        }
+
+        var mainKlibPath: String? = null
+        newSourceModules {
+            addRegularModule("main") { sourceFileAddend("fun main() = Unit") }
+        }.compileToKlibsViaCli { _, successKlib ->
+            mainKlibPath = successKlib.resultingArtifact.klibFile.absolutePath
+        }
+        checkNotNull(mainKlibPath)
+
+        fun doCheck(
+            loadOrder: List</* name of library */ String>,
+            expectedWarnings: List<String>,
+        ) {
+            val compilationResult = ExecutableCompilation(
+                settings = testRunSettings,
+                freeCompilerArgs = TestCompilerArgs(
+                    buildList {
+                        for (libraryName in loadOrder) this += listOf(CLI_PARAM_LIBRARIES, libraryNameToKlibPath.getValue(libraryName).pathString)
+                        this += listOf(CLI_PARAM_LIBRARIES, mainKlibPath)
+                        this += K2NativeCompilerArguments::includes.cliArgument(mainKlibPath)
+                    }
+                ),
+                sourceModules = emptyList(),
+                extras = TestCase.NoTestRunnerExtras(entryPoint = "main.main"),
+                dependencies = emptySet(),
+                expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("kexe-${loadOrder.joinToString("")}.kexe")),
+            ).result
+
+            val compilationToolCall = (compilationResult as TestCompilationResult.ImmediateResult<*>).loggedData
+                    as LoggedData.CompilationToolCall
+            assertEquals(ExitCode.OK, compilationToolCall.exitCode) { compilationToolCall.toolOutput }
+
+            val signatureStrippingRegex = Regex("""'([^'|]+)\|[^']*'""")
+
+            val actualWarnings = compilationToolCall.toolOutput.lines()
+                .filter { it.startsWith("warning: libraries ") }
+                .map { warning ->
+                    // Library paths are machine-specific; replace them with stable relative paths before comparison.
+                    libraryNameToKlibPath.values.fold(warning) { result, path ->
+                        result.replace(
+                            path.pathString,
+                            convertLineSeparators(path.relativeTo(buildDir.toPath()).pathString),
+                        )
+                    }.replace(signatureStrippingRegex, "'$1'")
+                }
+
+            assertEquals(expectedWarnings, actualWarnings) { actualWarnings.joinToString("\n") }
+        }
+
+        // Note: The warnings are sorted lexicographically by the paths of the libraries that declare the clashing declarations.
+        doCheck(
+            loadOrder = listOf("A", "B", "C"),
+            expectedWarnings = listOf(
+                "warning: libraries path/to/A/lib and path/to/B/lib declare 1 top-level declaration with the same signature: 'lib/ab'. " +
+                        "Declarations from path/to/A/lib are used because it comes first in the load order; the duplicates from path/to/B/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+                "warning: libraries path/to/A/lib, path/to/B/lib and path/to/C/lib declare 1 top-level declaration with the same signature: 'lib/lib'. " +
+                        "Declarations from path/to/A/lib are used because it comes first in the load order; the duplicates from path/to/B/lib and path/to/C/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+                "warning: libraries path/to/A/lib and path/to/C/lib declare 1 top-level declaration with the same signature: 'lib/ac'. " +
+                        "Declarations from path/to/A/lib are used because it comes first in the load order; the duplicates from path/to/C/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+                "warning: libraries path/to/B/lib and path/to/C/lib declare 1 top-level declaration with the same signature: 'lib/bc'. " +
+                        "Declarations from path/to/B/lib are used because it comes first in the load order; the duplicates from path/to/C/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+            )
+        )
+        doCheck(
+            loadOrder = listOf("C", "B", "A"),
+            expectedWarnings = listOf(
+                "warning: libraries path/to/B/lib and path/to/A/lib declare 1 top-level declaration with the same signature: 'lib/ab'. " +
+                        "Declarations from path/to/B/lib are used because it comes first in the load order; the duplicates from path/to/A/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+                "warning: libraries path/to/C/lib and path/to/A/lib declare 1 top-level declaration with the same signature: 'lib/ac'. " +
+                        "Declarations from path/to/C/lib are used because it comes first in the load order; the duplicates from path/to/A/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+                "warning: libraries path/to/C/lib and path/to/B/lib declare 1 top-level declaration with the same signature: 'lib/bc'. " +
+                        "Declarations from path/to/C/lib are used because it comes first in the load order; the duplicates from path/to/B/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+                "warning: libraries path/to/C/lib, path/to/B/lib and path/to/A/lib declare 1 top-level declaration with the same signature: 'lib/lib'. " +
+                        "Declarations from path/to/C/lib are used because it comes first in the load order; the duplicates from path/to/B/lib and path/to/A/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+            )
+        )
+        doCheck(
+            loadOrder = listOf("B", "C", "A"),
+            expectedWarnings = listOf(
+                "warning: libraries path/to/B/lib and path/to/A/lib declare 1 top-level declaration with the same signature: 'lib/ab'. " +
+                        "Declarations from path/to/B/lib are used because it comes first in the load order; the duplicates from path/to/A/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+                "warning: libraries path/to/B/lib and path/to/C/lib declare 1 top-level declaration with the same signature: 'lib/bc'. " +
+                        "Declarations from path/to/B/lib are used because it comes first in the load order; the duplicates from path/to/C/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+                "warning: libraries path/to/B/lib, path/to/C/lib and path/to/A/lib declare 1 top-level declaration with the same signature: 'lib/lib'. " +
+                        "Declarations from path/to/B/lib are used because it comes first in the load order; the duplicates from path/to/C/lib and path/to/A/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+                "warning: libraries path/to/C/lib and path/to/A/lib declare 1 top-level declaration with the same signature: 'lib/ac'. " +
+                        "Declarations from path/to/C/lib are used because it comes first in the load order; the duplicates from path/to/A/lib are ignored. " +
+                        "To avoid ambiguity, remove the duplicate libraries from the dependencies or make sure that the library with the intended declarations is listed first.",
+            )
+        )
     }
 
     @Test
