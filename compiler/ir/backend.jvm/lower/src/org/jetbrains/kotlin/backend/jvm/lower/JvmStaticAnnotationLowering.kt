@@ -56,10 +56,6 @@ private fun IrDeclaration.isJvmStaticInCompanion(): Boolean =
 internal fun IrDeclaration.isJvmStaticInObject(): Boolean =
     isJvmStaticDeclaration() && (parent as? IrClass)?.isNonCompanionObject == true
 
-// `coerceToUnit()` is private in InsertImplicitCasts, have to reproduce it here
-private fun IrExpression.coerceToUnit(irBuiltIns: IrBuiltIns) =
-    IrTypeOperatorCallImpl(startOffset, endOffset, irBuiltIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, irBuiltIns.unitType, this)
-
 private fun IrMemberAccessExpression<*>.makeStatic(irBuiltIns: IrBuiltIns, replaceCallee: IrSimpleFunction?): IrExpression {
     val receiver = arguments.removeAt(0)
     if (replaceCallee != null) {
