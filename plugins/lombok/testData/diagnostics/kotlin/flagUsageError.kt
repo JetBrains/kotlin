@@ -65,6 +65,10 @@ class BuilderExampleError(val x: Int)
 <!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_ERROR!>@SuperBuilder<!>
 class SuperBuilderExampleError
 
+// The same for `@SuperBuilder` from the main package (since Lombok 1.18.48).
+<!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_ERROR!>@lombok.SuperBuilder<!>
+class SuperBuilderFromMainPackageExampleError
+
 // `lombok.anyConstructor.flagUsage` covers every `@XArgsConstructor`, and its `error` outranks the `warning` of
 // the annotation's own key: Lombok takes `error` from either key first and only then `warning`, preferring the
 // specific key when the two are equal.

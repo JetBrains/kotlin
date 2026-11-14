@@ -187,7 +187,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     protected abstract val builderModality: Modality
 
-    protected abstract val annotationClassId: ClassId
+    /** Locations of the builder annotation; the first one resolvable in the classpath is used. */
+    protected abstract val annotationClassIds: List<ClassId>
 
     protected abstract fun getBuilder(symbol: FirBasedSymbol<*>): T?
 
@@ -827,7 +828,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         if (classSymbol.isLocal) return null
 
         val entityClass = classSymbol.fir as? FirRegularClass ?: return null
-        val annotationSymbol = annotationClassId.toSymbol(session) as? FirRegularClassSymbol ?: return emptyList()
+        val annotationSymbol = annotationClassIds.firstNotNullOfOrNull { it.toSymbol(session) as? FirRegularClassSymbol }
+            ?: return emptyList()
         val allowedTargets = annotationSymbol.fir.getAllowedAnnotationTargets(session)
 
         fun MutableList<BuilderDescription<T>>.addAnnotatedCallables(owner: FirClassSymbol<*>) {

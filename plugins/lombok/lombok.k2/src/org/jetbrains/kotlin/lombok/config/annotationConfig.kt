@@ -92,12 +92,20 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * keeping processors' code unaware about configuration origin.
  */
 
-abstract class ConeAnnotationCompanion<T : ConeLombokAnnotation>(val classId: ClassId) {
+/**
+ * [alternativeClassIds] are other locations of the same annotation, e.g., `lombok.experimental.SuperBuilder`
+ * besides `lombok.SuperBuilder`; [classId] is looked up first.
+ */
+abstract class ConeAnnotationCompanion<T : ConeLombokAnnotation>(
+    val classId: ClassId,
+    val alternativeClassIds: List<ClassId> = emptyList(),
+) {
     abstract fun extract(annotation: FirAnnotation, session: FirSession): T
 
     fun getOrNull(symbol: FirBasedSymbol<*>, session: FirSession): T? {
-        return symbol.getCompilerRequiredAnnotationByClassId(classId)
-            ?.let { this.extract(it, session) }
+        val annotation = symbol.getCompilerRequiredAnnotationByClassId(classId)
+            ?: alternativeClassIds.firstNotNullOfOrNull { symbol.getCompilerRequiredAnnotationByClassId(it) }
+        return annotation?.let { this.extract(it, session) }
     }
 }
 
@@ -425,8 +433,10 @@ object ConeLombokAnnotations {
         val hasSpecifiedBuilderClassName: Boolean,
         annotation: FirAnnotation,
     ) : ConeLombokAnnotation(annotation) {
-        abstract class BuilderConeAnnotationCompanion<T : AbstractBuilder>(annotationName: ClassId) :
-            ConeAnnotationCompanion<T>(annotationName) {
+        abstract class BuilderConeAnnotationCompanion<T : AbstractBuilder>(
+            annotationName: ClassId,
+            alternativeAnnotationNames: List<ClassId> = emptyList(),
+        ) : ConeAnnotationCompanion<T>(annotationName, alternativeAnnotationNames) {
             protected fun getBuildMethodName(annotation: FirAnnotation): String =
                 annotation.getStringArgument(BUILD_METHOD_NAME) ?: "build"
 
@@ -536,7 +546,10 @@ object ConeLombokAnnotations {
         hasSpecifiedBuilderClassName,
         annotation,
     ) {
-        companion object : BuilderConeAnnotationCompanion<SuperBuilder>(LombokNames.SUPER_BUILDER_ID) {
+        companion object : BuilderConeAnnotationCompanion<SuperBuilder>(
+            LombokNames.SUPER_BUILDER_ID,
+            listOf(LombokNames.EXPERIMENTAL_SUPER_BUILDER_ID),
+        ) {
             override fun extract(annotation: FirAnnotation, session: FirSession): SuperBuilder {
                 return SuperBuilder(
                     builderClassName = null,
