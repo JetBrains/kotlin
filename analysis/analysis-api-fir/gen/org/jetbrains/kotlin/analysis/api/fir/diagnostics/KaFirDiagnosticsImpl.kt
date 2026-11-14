@@ -2026,6 +2026,7 @@ internal class AnonymousSuspendFunctionImpl(
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.AnonymousSuspendFunction
 
 internal class ValueClassNotTopLevelImpl(
+    override val placement: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassNotTopLevel

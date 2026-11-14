@@ -467,7 +467,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val ANONYMOUS_SUSPEND_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANONYMOUS_SUSPEND_FUNCTION", ERROR, SourceElementPositioningStrategies.SUSPEND_MODIFIER, KtDeclaration::class, getRendererFactory())
 
     // Value classes
-    val VALUE_CLASS_NOT_TOP_LEVEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_NOT_TOP_LEVEL", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, KtDeclaration::class, getRendererFactory())
+    val VALUE_CLASS_NOT_TOP_LEVEL: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("VALUE_CLASS_NOT_TOP_LEVEL", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, KtDeclaration::class, getRendererFactory())
     val VALUE_CLASS_NOT_FINAL: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("VALUE_CLASS_NOT_FINAL", ERROR, SourceElementPositioningStrategies.MODALITY_MODIFIER, KtDeclaration::class, getRendererFactory())
     val VALUE_CLASS_OPEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_OPEN", ERROR, SourceElementPositioningStrategies.MODALITY_MODIFIER, KtDeclaration::class, getRendererFactory())
     val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, KtDeclaration::class, getRendererFactory())

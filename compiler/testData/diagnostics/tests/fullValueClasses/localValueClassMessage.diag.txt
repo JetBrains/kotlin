@@ -1,0 +1,3 @@
+/localValueClassMessage.kt:7:5: error: Modifier 'value' is not applicable to 'local class'.
+
+/localValueClassMessage.kt:7:5: error: Value class cannot be local.

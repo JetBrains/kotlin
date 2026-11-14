@@ -20,5 +20,6 @@ enum class JvmFieldApplicabilityProblem(val errorMessage: String) {
     PROPERTY_WITH_EXPLICIT_FIELD("'@JvmField' cannot be applied to a property with an explicit backing field"),
     DELEGATE("'@JvmField' cannot be applied to a delegated property"),
     RETURN_TYPE_IS_VALUE_CLASS("'@JvmField' cannot be applied to a property of a value class type"),
+    RETURN_TYPE_IS_INLINE_VALUE_CLASS("'@JvmField' cannot be applied to a property of an inline value class type"),
     ANNOTATION("'@JvmField' has no effect on an annotation property"),
 }

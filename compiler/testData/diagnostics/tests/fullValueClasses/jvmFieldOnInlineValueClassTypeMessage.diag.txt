@@ -1,0 +1,1 @@
+/jvmFieldOnInlineValueClassTypeMessage.kt:12:15: error: '@JvmField' cannot be applied to a property of an inline value class type.
