@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.scripting.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest;
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/scripting/scripting-tests/testData/diagnostics/general")
 @TestDataPath("$PROJECT_ROOT")
-public class PhasedScriptingPsiTestGenerated extends AbstractPhasedJvmDiagnosticPsiTest {
+public class PhasedScriptingLightTreeTestGenerated extends AbstractPhasedJvmDiagnosticLightTreeTest {
   private void run(String fileName) {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/general/" + fileName);
   }

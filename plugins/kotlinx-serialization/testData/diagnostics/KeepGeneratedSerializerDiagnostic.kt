@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: annotation.kt
@@ -64,3 +65,7 @@ abstract class ToDoSerializer<T>(name: String): KSerializer<T> {
     open override fun deserialize(decoder: Decoder): T = TODO()
     open override fun serialize(encoder: Encoder, value: T) = TODO()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration,
+interfaceDeclaration, nullableType, objectDeclaration, override, primaryConstructor, propertyDeclaration, sealed,
+stringLiteral, typeParameter */

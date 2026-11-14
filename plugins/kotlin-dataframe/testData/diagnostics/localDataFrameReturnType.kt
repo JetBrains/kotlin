@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 package org.jetbrains.kotlinx.dataframe
 
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
@@ -14,3 +15,8 @@ class Test {
     val df1 = dataFrameOf("a" to columnOf(42))
     private val df2 = dataFrameOf("a" to columnOf(42)).cast<MySchema>()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, elvisExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline, integerLiteral, interfaceDeclaration,
+isExpression, lambdaLiteral, localClass, localProperty, nullableType, primaryConstructor, propertyDeclaration, reified,
+samConversion, sealed, smartcast, stringLiteral, thisExpression, typeParameter, whenExpression, whenWithSubject */

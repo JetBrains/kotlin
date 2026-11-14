@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 package com.example
@@ -25,3 +26,7 @@ fun box(): String {
 
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, multilineStringLiteral, objectDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral */

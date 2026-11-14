@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // ISSUE: KT-83377
 
@@ -17,3 +18,6 @@ fun testLocal() {
 
     val s: Local.Companion? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, localProperty, nullableType,
+primaryConstructor, propertyDeclaration */

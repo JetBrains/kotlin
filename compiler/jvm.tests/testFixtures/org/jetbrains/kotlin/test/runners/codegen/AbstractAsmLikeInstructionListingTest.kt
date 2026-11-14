@@ -50,6 +50,3 @@ abstract class AbstractAsmLikeInstructionListingTestBase(val parser: FirParser) 
 }
 
 open class AbstractFirLightTreeAsmLikeInstructionListingTest : AbstractAsmLikeInstructionListingTestBase(FirParser.LightTree)
-
-@FirPsiCodegenTest
-open class AbstractFirPsiAsmLikeInstructionListingTest : AbstractAsmLikeInstructionListingTestBase(FirParser.Psi)

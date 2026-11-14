@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 // MODULE: lib
@@ -41,3 +42,6 @@ data class ConflictWithCustom(<!PROTOBUF_PROTO_NUM_DUPLICATED("a; b")!>@ProtoNum
 data class SkipCheckForOneOf(@ProtoNumber(2) val a: Int, @ProtoOneOf val oneOf: OneOf)
 
 interface OneOf
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, data, integerLiteral, interfaceDeclaration,
+primaryConstructor, propertyDeclaration */

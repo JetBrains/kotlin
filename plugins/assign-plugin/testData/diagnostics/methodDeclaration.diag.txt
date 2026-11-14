@@ -1,13 +1,13 @@
-/methodDeclaration.kt:5:28: error: Function 'assign' used for '=' overload must return 'Unit'.
+/methodDeclaration.kt:6:28: error: Function 'assign' used for '=' overload must return 'Unit'.
 
-/methodDeclaration.kt:9:36: error: Function 'assign' used for '=' overload must return 'Unit'.
+/methodDeclaration.kt:10:36: error: Function 'assign' used for '=' overload must return 'Unit'.
 
-/methodDeclaration.kt:16:36: error: Function 'assign' used for '=' overload must return 'Unit'.
-
-/methodDeclaration.kt:25:16: error: Function 'assign' used for '=' overload must return 'Unit'.
+/methodDeclaration.kt:17:36: error: Function 'assign' used for '=' overload must return 'Unit'.
 
 /methodDeclaration.kt:26:16: error: Function 'assign' used for '=' overload must return 'Unit'.
 
-/methodDeclaration.kt:35:10: error: 'val' cannot be reassigned.
+/methodDeclaration.kt:27:16: error: Function 'assign' used for '=' overload must return 'Unit'.
 
-/methodDeclaration.kt:35:16: error: Assignment type mismatch: actual type is 'Int', but 'IntProperty' was expected.
+/methodDeclaration.kt:36:10: error: 'val' cannot be reassigned.
+
+/methodDeclaration.kt:36:16: error: Assignment type mismatch: actual type is 'Int', but 'IntProperty' was expected.

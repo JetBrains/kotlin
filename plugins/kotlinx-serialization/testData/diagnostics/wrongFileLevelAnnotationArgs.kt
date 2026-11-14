@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // The only K1 vs K2 difference is (ARGUMENT)_TYPE_MISMATCH diagnostic name
@@ -9,3 +10,6 @@ import kotlinx.serialization.*
 
 @Serializable
 class X(val s: Int, @Contextual val d: String)
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, primaryConstructor,
+propertyDeclaration */

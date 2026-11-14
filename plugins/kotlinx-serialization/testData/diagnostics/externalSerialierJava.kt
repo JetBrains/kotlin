@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -15,3 +16,5 @@ object DateSerializer : KSerializer<Date> {
         TODO()
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, objectDeclaration, override */

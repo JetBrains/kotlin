@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
-import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.utils.bind
@@ -58,6 +57,3 @@ open class AbstractFirLightTreeJvmIrTextTest : AbstractJvmIrTextTest(FirParser.L
         }
     }
 }
-
-@FirPsiCodegenTest
-open class AbstractFirPsiJvmIrTextTest : AbstractJvmIrTextTest(FirParser.Psi)

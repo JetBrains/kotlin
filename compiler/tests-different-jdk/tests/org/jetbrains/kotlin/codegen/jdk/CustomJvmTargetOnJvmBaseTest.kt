@@ -21,9 +21,6 @@ import org.junit.platform.suite.api.Suite
     FirLightTreeBlackBoxCodegenTestGenerated::class,
     FirLightTreeBlackBoxInlineCodegenTestGenerated::class,
 
-    FirPsiBlackBoxCodegenTestGenerated::class,
-    FirPsiBlackBoxInlineCodegenTestGenerated::class,
-
     CoreJrtFsTest::class
 )
 @IncludeClassNamePatterns(".*Test.*Generated")

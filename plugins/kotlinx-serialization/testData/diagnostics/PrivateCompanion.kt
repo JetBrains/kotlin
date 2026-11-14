@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
@@ -50,3 +51,6 @@ sealed interface SealedWithPrivateCompanion {
 data class NotSerializable(val myString: String) {
     private companion object
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, data, interfaceDeclaration, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, stringLiteral */

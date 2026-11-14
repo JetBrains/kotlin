@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -17,3 +18,6 @@ typealias KlassAlias = Klass
 
 @Serializable
 data class DataKlass(val k: KlassAlias)
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, data, functionDeclaration, getter, objectDeclaration, override,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration */

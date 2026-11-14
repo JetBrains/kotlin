@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // FULL_JDK
 
@@ -45,3 +46,5 @@ annotation class InheritableNoTarget(val value: Int)
 <!INHERITABLE_SERIALINFO_INAPPLICABLE_TARGET!>@InheritableSerialInfo<!>
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 annotation class InheritableOnProperty(val value: Int)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, primaryConstructor, propertyDeclaration */

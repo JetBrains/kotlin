@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 package org.jetbrains.kotlinx.dataframe
 
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
@@ -26,3 +27,9 @@ fun checkAny(df: DataFrame<*>) {
 fun checkEmptySchema() {
     dataFrameOf(("a" + "b") to columnOf(123)).cast<A>()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, elvisExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline, integerLiteral, interfaceDeclaration,
+isExpression, lambdaLiteral, localClass, localProperty, nullableType, primaryConstructor, propertyDeclaration, reified,
+samConversion, sealed, smartcast, starProjection, stringLiteral, thisExpression, typeParameter, whenExpression,
+whenWithSubject */

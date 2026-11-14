@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.samWithReceiver
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -12,19 +13,24 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.samWithReceiver.k2.FirSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 // ------------------------ diagnostics ------------------------
 
-abstract class AbstractFirPsiSamWithReceiverDiagnosticTest : AbstractFirPsiDiagnosticTest() {
+abstract class AbstractFirLightTreeSamWithReceiverDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with(builder) {
-            configurePlugin()
-        }
+        builder.configurePlugin()
+    }
+}
+
+abstract class AbstractLLSamWithReceiverDiagnosticTest : AbstractLLDiagnosticsTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurePlugin()
     }
 }
 

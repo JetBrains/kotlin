@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.scripting.test.repl.AbstractReplWithTestExtensionsDi
 import org.jetbrains.kotlin.scripting.test.runners.AbstractFirLightTreeCustomScriptCodegenTest
 import org.jetbrains.kotlin.scripting.test.runners.AbstractFirPsiCustomScriptCodegenTest
 import org.jetbrains.kotlin.scripting.test.runners.AbstractFirScriptCodegenTest
-import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirPsiBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -40,8 +40,8 @@ fun main(args: Array<String>) {
                 model("testData/diagnostics/scriptsWithCustomDefinitions", extension = "kts")
             }
 
-            testClass<AbstractPhasedJvmDiagnosticPsiTest>(
-                "org.jetbrains.kotlin.scripting.test.runners.PhasedScriptingPsiTestGenerated"
+            testClass<AbstractPhasedJvmDiagnosticLightTreeTest>(
+                "org.jetbrains.kotlin.scripting.test.runners.PhasedScriptingLightTreeTestGenerated"
             ) {
                 model(
                     "testData/diagnostics/general",
@@ -55,8 +55,8 @@ fun main(args: Array<String>) {
                 model("testData/codegen/scriptsWithCustomDefinitions", extension = "kts")
             }
 
-            testClass<AbstractFirPsiBlackBoxCodegenTest>(
-                "org.jetbrains.kotlin.scripting.test.runners.FirScriptingPsiBlackBoxCodegenTestGenerated"
+            testClass<AbstractFirLightTreeBlackBoxCodegenTest>(
+                "org.jetbrains.kotlin.scripting.test.runners.FirScriptingLightTreeBlackBoxCodegenTestGenerated"
             ) {
                 model("testData/codegen/regularBox")
             }

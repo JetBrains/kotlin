@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlinx.atomicfu.runners
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CustomKlibs
 import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.SMAPDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.RUN_PIPELINE_TILL
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -34,7 +33,17 @@ open class AbstractAtomicfuJvmFirLightTreeTest : AbstractFirLightTreeBlackBoxCod
     }
 }
 
-abstract class AbstractAtomicfuFirCheckerTest : AbstractFirPsiDiagnosticTest() {
+abstract class AbstractAtomicfuDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            configureForKotlinxAtomicfu()
+            useFailureSuppressors(::FirFailingTestSuppressor)
+        }
+    }
+}
+
+abstract class AbstractAtomicfuLLDiagnosticTest : AbstractLLDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

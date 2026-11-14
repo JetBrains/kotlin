@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
+import org.jetbrains.kotlin.test.coerce
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -40,52 +40,25 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.TESTED_LANGUAGE_FEATURE_DISABLED
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
-import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
-import org.jetbrains.kotlin.test.frontend.fir.*
+import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.FirSessionComponentRegistrar
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.DuplicateFileNameChecker
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.LanguageFeatureDisabledMetaConfigurator
 import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-
-/**
- * General test configuration for FIR-based diagnostic tests
- */
-fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
-    baseFirDiagnosticTestConfiguration()
-    enableLazyResolvePhaseChecking()
-    configureFirParser(parser)
-
-    useMetaTestConfigurators(::FirSpecificParserSuppressor)
-}
-
-/**
- * Adds an IR handlers step with diagnostic handler. Used for diagnostic tests which are supposed to report diagnostics
- * from the FIR2IR step
- */
-fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
-    irHandlersStep {
-        useHandlers(
-            ::IrDiagnosticsHandler
-        )
-    }
-
-    @OptIn(TestInfrastructureInternals::class)
-    useModuleStructureTransformers(DuplicateFileNameChecker)
-}
-
 
 /**
  * Setups the base configuration for diagnostic tests
@@ -100,9 +73,8 @@ fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
  * - `.ll.kt` for AA tests
  * - `.reversed.fir.kt` for reversed AA tests
  */
-fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
-    @Suppress("unused") baseDir: String = ".",
-    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade,
+fun TestConfigurationBuilder.jvmTestConfigurationWithSingleFrontendFacade(
+    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
 ) {
     globalDefaults {

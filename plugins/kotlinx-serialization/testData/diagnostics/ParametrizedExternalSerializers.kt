@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -58,3 +59,6 @@ class ExternalSerializer0_1Err<!>
 // because the checks take place at the place where the serializer is declared, and if the serializer is declared correctly, there will be no error here
 @Serializable(ExternalSerializer0_1Err::class)
 class Prop1Err<T>(val t: T)
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, classReference, nullableType, primaryConstructor,
+propertyDeclaration, secondaryConstructor, thisExpression, typeParameter */

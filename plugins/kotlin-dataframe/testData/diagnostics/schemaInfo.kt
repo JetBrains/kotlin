@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // DUMP_SCHEMAS
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
@@ -39,3 +40,9 @@ fun test() {
 
     <!FUNCTION_SCHEMA!>fun test()<!> = <!FUNCTION_CALL_SCHEMA!>dataFrameOf("a", "b")<!>(1, 2)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, elvisExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline, integerLiteral, interfaceDeclaration,
+isExpression, lambdaLiteral, localClass, localFunction, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, reified, samConversion, sealed, smartcast, starProjection, stringLiteral, thisExpression,
+typeParameter, whenExpression, whenWithSubject */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // DUMP_SCHEMAS
 //
 import org.jetbrains.kotlinx.dataframe.*
@@ -15,3 +16,9 @@ fun test() {
 
     val (<!PROPERTY_SCHEMA!>_<!>, <!PROPERTY_SCHEMA!>b<!>) = <!PROPERTY_ACCESS_SCHEMA!>df1<!>.<!FUNCTION_CALL_SCHEMA!>aggregate<!>()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, destructuringDeclaration,
+elvisExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline,
+integerLiteral, interfaceDeclaration, isExpression, lambdaLiteral, localClass, localFunction, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, reified, samConversion, sealed, smartcast, starProjection,
+stringLiteral, thisExpression, typeParameter, unnamedLocalVariable, whenExpression, whenWithSubject */

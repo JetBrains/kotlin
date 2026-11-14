@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 // WITH_STDLIB
 // FULL_JDK
@@ -17,3 +18,4 @@ annotation class JavaRepeatable(val value2: Int)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 annotation class JavaRepeatableContainer(val value: Array<JavaRepeatable>)
 
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, primaryConstructor, propertyDeclaration */

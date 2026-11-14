@@ -357,7 +357,7 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 23,
         WHILE[1355, 1393] label=null origin=FOR_LOOP_INNER_WHILE
           condition: CALL[1365, 1367] 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
             ARG <this>: GET_VAR[1365, 1367] 'val tmp_0: kotlin.collections.Iterator<kotlin.UInt> declared in <root>.sum' type=kotlin.collections.Iterator<kotlin.UInt> origin=null
-          body: BLOCK[1355, 1393] type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
+          body: BLOCK[1369, 1393] type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
             VAR[1360, 1361] FOR_LOOP_VARIABLE name:i type:kotlin.UInt [val]
               CALL[1365, 1367] 'public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator' type=kotlin.UInt origin=FOR_LOOP_NEXT
                 ARG <this>: GET_VAR[1365, 1367] 'val tmp_0: kotlin.collections.Iterator<kotlin.UInt> declared in <root>.sum' type=kotlin.collections.Iterator<kotlin.UInt> origin=null

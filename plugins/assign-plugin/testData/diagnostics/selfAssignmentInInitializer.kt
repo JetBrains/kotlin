@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-78987
 annotation class ValueContainer
 
@@ -17,3 +18,6 @@ class Task {
         member.toString()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, functionDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression */

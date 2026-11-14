@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -21,3 +22,7 @@ fun box(): String {
     if (box.t != decoded.t || box.vs != decoded.vs) return "Incorrect deserialization"
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, multilineStringLiteral, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter */

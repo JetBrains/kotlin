@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -26,3 +27,7 @@ fun test(targetString: String): String {
 fun box(): String {
     return test("""{"ctor":1,"ctorDependent":2,"body":"x","bodyDependent":3}""")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, data, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, lambdaLiteral, localProperty, multilineStringLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

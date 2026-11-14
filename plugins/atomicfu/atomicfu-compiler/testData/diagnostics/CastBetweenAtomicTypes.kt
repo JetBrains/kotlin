@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 import kotlinx.atomicfu.*
@@ -153,7 +154,7 @@ class C {
             { (<!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!>mara[0] as? AtomicRef<String?><!>)?.value },
         )
     }
-    
+
     fun isAtomicInt() {
         val expressions = listOf(
             { <!ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN!><!ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION!>mai<!> is AtomicInt<!> },
@@ -199,3 +200,6 @@ class C {
 
 
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, functionDeclaration, integerLiteral,
+intersectionType, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, stringLiteral */

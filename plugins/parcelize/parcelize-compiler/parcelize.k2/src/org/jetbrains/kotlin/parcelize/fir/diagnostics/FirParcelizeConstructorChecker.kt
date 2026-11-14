@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -76,9 +77,12 @@ object FirParcelizeConstructorChecker : FirConstructorChecker(MppCheckerKind.Pla
             val referenceFinder = ReferenceFinder(lookingFor, reporter, context)
             // check if they are referenced in the bodies, if so report error
             @OptIn(DirectDeclarationsAccess::class)
-            for (decl in containingClass.declarations) when (decl) {
-                is FirAnonymousInitializer, is FirProperty -> decl.accept(referenceFinder)
-                else -> {}
+            for (decl in containingClass.declarations) {
+                decl.symbol.lazyResolveToPhase(BODY_RESOLVE)
+                when (decl) {
+                    is FirAnonymousInitializer, is FirProperty -> decl.accept(referenceFinder)
+                    else -> {}
+                }
             }
         } else {
             for (valueParameter in notValOrVarParameters) {

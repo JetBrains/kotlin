@@ -49,7 +49,7 @@ abstract class AbstractJsTest(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix: String,
     targetBackend: TargetBackend = TargetBackend.JS_IR,
-    val parser: FirParser = FirParser.Psi,
+    val parser: FirParser = FirParser.LightTree,
 ) : AbstractJsBlackBoxCodegenTestBase(targetBackend, pathToTestDir, testGroupOutputDirPrefix) {
     override val backendFacades: JsBackendFacades
         get() = JsBackendFacades.WithRecompilation
@@ -87,12 +87,6 @@ abstract class AbstractJsTest(
         }
     }
 }
-
-abstract class AbstractPsiJsBoxTest : AbstractJsTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
-    testGroupOutputDirPrefix = "psiBox/",
-    parser = FirParser.Psi,
-)
 
 abstract class AbstractLightTreeJsBoxTest(
     testGroupOutputDirPrefix: String = "lightTreeBox/",

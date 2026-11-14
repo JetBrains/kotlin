@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // ISSUE: KT-81558
 
@@ -39,3 +40,7 @@ fun propertyRepro(propertyRepro: PropertyRepro, provider: Provider<Foo>) {
         foo = BAZ
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, enumDeclaration, enumEntry,
+funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType, outProjection,
+propertyDeclaration, typeParameter */

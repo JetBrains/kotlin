@@ -1,0 +1,33 @@
+// LL_FIR_DIVERGENCE
+// Difference in diagnostic positioning strategy
+// LL_FIR_DIVERGENCE
+// RUN_PIPELINE_TILL: FRONTEND
+annotation class ValueContainer
+
+@ValueContainer
+data class StringProperty(var v: String) {
+    fun assign(v: String) {
+        this.v = v
+    }
+    fun assign(v: StringProperty) {
+        this.v = v.get()
+    }
+    fun get(): String = v
+}
+
+data class Task(val input: StringProperty)
+
+fun `should report error if type doesn't match`() {
+    val task = Task(StringProperty("Fail"))
+    task.<!NONE_APPLICABLE!>input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> 42
+}
+
+fun `should report error if type doesn't match with apply`() {
+    val task = Task(StringProperty("Fail"))
+    task.apply {
+        <!NONE_APPLICABLE!>input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> 42
+    }
+}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, data, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */

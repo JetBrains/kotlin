@@ -115,5 +115,4 @@ abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) :
     }
 }
 
-abstract class AbstractPsiNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.Psi)
 abstract class AbstractLightTreeNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.LightTree)

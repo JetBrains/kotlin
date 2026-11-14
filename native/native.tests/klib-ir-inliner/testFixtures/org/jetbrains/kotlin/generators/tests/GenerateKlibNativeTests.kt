@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibComparisonTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibCompilationTest
 import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
-import org.jetbrains.kotlin.konan.test.irText.AbstractPsiNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentityTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
@@ -47,22 +46,10 @@ fun main(args: Array<String>) {
             testClass<AbstractLightTreeNativeIrTextTest> {
                 model()
             }
-            testClass<AbstractPsiNativeIrTextTest> {
-                model()
-            }
         }
 
         // New frontend test infrastructure tests
         testGroup(testsRoot = testsRoot, testDataRoot = "compiler/testData/diagnostics") {
-            testClass<AbstractPsiNativeDiagnosticsWithBackendTestBase>(
-                suiteTestClassName = "PsiNativeKlibDiagnosticsTestGenerated",
-                annotations = listOf(klib())
-            ) {
-                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
-                // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
-            }
-
             testClass<AbstractLightTreeNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "LightTreeNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(klib())

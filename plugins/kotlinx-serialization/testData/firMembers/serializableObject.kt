@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -13,3 +14,6 @@ fun box(): String {
     if (decoded !== FooBar) return "Incorrect object instance"
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, objectDeclaration,
+propertyDeclaration, stringLiteral */

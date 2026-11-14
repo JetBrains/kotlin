@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -38,3 +39,6 @@ object OtherSerializer : KSerializer<Other> {
     override fun serialize(encoder: Encoder, value: Other) {}
     override fun deserialize(decoder: Decoder): Other = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, data, functionDeclaration, getter,
+objectDeclaration, override, primaryConstructor, propertyDeclaration, sealed, stringLiteral */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.Serializable
@@ -8,3 +9,5 @@ class Data(val x: Int, <!INCORRECT_TRANSIENT!>@Transient<!> val y: String)
 
 @Serializable
 class Data2(val x: Int, @Transient val y: String) : JavaSerializable
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

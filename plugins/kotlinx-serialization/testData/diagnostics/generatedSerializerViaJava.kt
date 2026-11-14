@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-76414
 
@@ -23,3 +24,6 @@ import kotlinx.serialization.*
 
 @Serializable
 class MySerializableClass(val a: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, const, functionDeclaration, interfaceDeclaration, javaProperty, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, typeParameter */

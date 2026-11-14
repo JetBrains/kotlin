@@ -70,9 +70,8 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
 
 open class AbstractPhasedJvmDiagnosticKmpTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.KmpTree)
 open class AbstractPhasedJvmDiagnosticLightTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree)
-open class AbstractPhasedJvmDiagnosticPsiTest : AbstractFirPhasedDiagnosticTest(FirParser.Psi)
 
-open class AbstractPhasedJvmDiagnosticPsiWithContextSensitiveEnabledTest : AbstractFirPhasedDiagnosticTest(FirParser.Psi) {
+open class AbstractPhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
