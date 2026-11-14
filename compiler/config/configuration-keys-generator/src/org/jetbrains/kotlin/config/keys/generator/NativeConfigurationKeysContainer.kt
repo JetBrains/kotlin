@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.backend.konan.AllocationMode
+import org.jetbrains.kotlin.backend.konan.LlvmInstructionSelector
 import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
@@ -76,6 +77,7 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val PROPERTY_LAZY_INITIALIZATION by key<Boolean>()
     val EXTERNAL_DEPENDENCIES by key<String>("The file with the graph of dependencies (libraries) collected by the build system.")
     val LLVM_VARIANT by key<LlvmVariant>()
+    val INSTRUCTION_SELECTOR by key<LlvmInstructionSelector>("LLVM instruction selector used when compiling bitcode into machine code.")
     val RUNTIME_LOGS by key<String>()
     val TEST_DUMP_OUTPUT_PATH by key<String>("Path to a file to dump the list of all available tests.")
     val OMIT_FRAMEWORK_BINARY by key<Boolean>("Do not generate binary in framework.")

@@ -49,6 +49,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.lightDebugString = from.lightDebugString
     to.linkerArguments = from.linkerArguments.copyOf()
     to.listTargets = from.listTargets
+    to.llvmIsel = from.llvmIsel
     to.llvmLTOPasses = from.llvmLTOPasses
     to.llvmModulePasses = from.llvmModulePasses
     to.llvmVariant = from.llvmVariant

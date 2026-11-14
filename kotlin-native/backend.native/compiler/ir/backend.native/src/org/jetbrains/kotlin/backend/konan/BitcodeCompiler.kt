@@ -15,7 +15,7 @@ import java.io.File
 typealias ObjectFile = String
 
 internal class BitcodeCompiler(
-    private val context: NativeBackendPhaseContext,
+        private val context: NativeBackendPhaseContext,
 ) {
 
     private val config = context.config
@@ -61,6 +61,7 @@ internal class BitcodeCompiler(
                         else -> configurables.clangNooptFlags
                     })
                     addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
+                    config.instructionSelector?.let { addNonEmpty(it.translateToClangFlag()) }
                 }
         val bitcodePath = bitcodeFile.absoluteFile.normalize().path
         val objectPath = objectFile.absoluteFile.normalize().path
@@ -75,6 +76,12 @@ internal class BitcodeCompiler(
         RelocationModeFlags.Mode.PIC -> listOf("-mrelocation-model", "pic")
         RelocationModeFlags.Mode.STATIC -> listOf("-mrelocation-model", "static")
         RelocationModeFlags.Mode.DEFAULT -> emptyList()
+    }
+
+    private fun LlvmInstructionSelector.translateToClangFlag(): List<String> = when (this) {
+        LlvmInstructionSelector.SELECTION_DAG -> listOf("-mllvm", "-fast-isel=false", "-mllvm", "-global-isel=false")
+        LlvmInstructionSelector.GLOBAL_ISEL -> listOf("-mllvm", "-global-isel=true", "-mllvm", "-global-isel-abort=0")
+        LlvmInstructionSelector.FAST_ISEL -> listOf("-mllvm", "-fast-isel=true", "-mllvm", "-global-isel=false")
     }
 
     /**
