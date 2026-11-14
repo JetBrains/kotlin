@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.DefaultWasmToolsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsToolchainService
+import javax.inject.Inject
 import kotlin.reflect.KClass
 
 @ExperimentalWasmDsl
 @InternalKotlinGradlePluginApi
-class WasmToolsToolchainManagementDslImpl(
+open class WasmToolsToolchainManagementDslImpl @Inject constructor(
     private val gradle: Gradle,
 ) : WasmToolsToolchainManagementDsl {
 
