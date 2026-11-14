@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
@@ -89,6 +91,44 @@ class PsiScriptAnnotationsCollectorTest {
             File(parent, "..${File.separator}${parent.name}${File.separator}.${File.separator}${entry.name}")
         }
         PsiScriptAnnotationsCollector { regularClasspath }.collect(environment, "SimpleTestAnnotation.kts", baseConfiguration)
+    }
+
+    @Test
+    fun testAnnotationClassesAreResolvedWithRelativeClasspath() {
+        val environment = createEnvironment()
+        val workingDirectory = File("").absoluteFile.toPath()
+        val relativeClasspath = try {
+            classpathFromClass(TestAnnotation::class).orEmpty().map { entry ->
+                File(workingDirectory.relativize(entry.absoluteFile.toPath()).toString())
+            }
+        } catch (_: IllegalArgumentException) {
+            return // no relative path to another drive (Windows)
+        }
+        PsiScriptAnnotationsCollector { relativeClasspath }.collect(environment, "SimpleTestAnnotation.kts", baseConfiguration)
+    }
+
+    @Test
+    fun testAnnotationClassesAreResolvedWithSymlinkedClasspath() {
+        val environment = createEnvironment()
+        // The links point to copies of the classpath entries: the roots opened through the links stay cached process-wide, and
+        // deleting links to the original entries would make the later tests of this class find no annotation through those entries.
+        val workDirectory = Files.createTempDirectory("scriptClasspathLinks").toFile()
+        try {
+            val symlinkedClasspath = try {
+                classpathFromClass(TestAnnotation::class).orEmpty().mapIndexed { index, entry ->
+                    val copy = File(workDirectory, "copy$index${File.separator}${entry.name}")
+                    entry.copyRecursively(copy)
+                    Files.createSymbolicLink(File(workDirectory, "$index-${entry.name}").toPath(), copy.toPath()).toFile()
+                }
+            } catch (_: IOException) {
+                return // symbolic links are not supported here
+            } catch (_: UnsupportedOperationException) {
+                return
+            }
+            PsiScriptAnnotationsCollector { symlinkedClasspath }.collect(environment, "SimpleTestAnnotation.kts", baseConfiguration)
+        } finally {
+            workDirectory.deleteRecursively()
+        }
     }
 
     @Test

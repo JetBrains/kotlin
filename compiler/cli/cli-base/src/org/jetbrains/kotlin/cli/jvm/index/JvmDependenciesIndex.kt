@@ -19,9 +19,15 @@ package org.jetbrains.kotlin.cli.jvm.index
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.URLUtil.JAR_SEPARATOR
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
+import java.nio.file.InvalidPathException
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
 
 interface JvmDependenciesIndex {
@@ -34,7 +40,7 @@ interface JvmDependenciesIndex {
     val version: Int get() = 0
 
     /**
-     * Returns [VirtualFile]s that correspond to a class called [classId] in the index.
+     * Returns the files that correspond to a class called [classId] in the index, each together with the [JavaRoot] it was found in.
      *
      * For each package directory in the index, the implementation derives the relative class name from [classId] and looks up files
      * matching each extension in [acceptedExtensions]. Only extensions whose [JavaFileExtension.rootType] matches the root's type are tried
@@ -42,7 +48,7 @@ interface JvmDependenciesIndex {
      *
      * ### Multiple results for the same [classId]
      *
-     * [findClassVirtualFiles] may return multiple results for the same [classId]. This is because a [JvmDependenciesIndex] is shared
+     * [findClassFiles] may return multiple results for the same [classId]. This is because a [JvmDependenciesIndex] is shared
      * between all modules and thus takes a global view on the project. A project may have two libraries which contain a class with the same
      * name. When we have two independent modules which each depend on one library, there is no classpath issue as the libraries do not
      * overlap. In such a case, the global index must provide virtual files for both classes.
@@ -52,29 +58,36 @@ interface JvmDependenciesIndex {
      *
      * When finding only the first result, [acceptedExtensions] determines the order in which files are searched in each root.
      */
+    fun findClassFiles(
+        classId: ClassId,
+        acceptedExtensions: JavaFileExtensions,
+    ): Collection<IndexedClassFile>
+
+    /** The files of [findClassFiles], for callers which do not need the root a file was found in. */
     fun findClassVirtualFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
-    ): Collection<VirtualFile>
+    ): Collection<VirtualFile> = findClassFiles(classId, acceptedExtensions).map { it.file }
 
     /**
-     * Like [findClassVirtualFiles], but only considers results accepted by [filter].
+     * Like [findClassFiles], but only considers results accepted by [filter].
      *
-     * The default implementation filters the results using [indexedRoots]. Implementations that can search individual roots should
+     * The default implementation filters the results of [findClassFiles]. Implementations that can search individual roots should
      * override this method to continue the search when a class in a rejected root is encountered.
      */
+    fun findClassFiles(
+        classId: ClassId,
+        acceptedExtensions: JavaFileExtensions,
+        filter: ClassFileFilter,
+    ): Collection<IndexedClassFile> =
+        findClassFiles(classId, acceptedExtensions).filter { filter.accepts(it.root.file, it.file) }
+
+    /** The files of the filtered [findClassFiles], for callers which do not need the root a file was found in. */
     fun findClassVirtualFiles(
         classId: ClassId,
         acceptedExtensions: JavaFileExtensions,
         filter: ClassFileFilter,
-    ): Collection<VirtualFile> {
-        val roots = indexedRoots.mapTo(hashSetOf(), JavaRoot::file)
-
-        return findClassVirtualFiles(classId, acceptedExtensions).filter { file ->
-            val root = file.findIndexedRoot(roots) ?: return@filter false
-            filter.accepts(root, file)
-        }
-    }
+    ): Collection<VirtualFile> = findClassFiles(classId, acceptedExtensions, filter).map { it.file }
 
     /**
      * Traverses the index for all *class* [VirtualFile]s contained in directories corresponding to the [packageFqName], and calls
@@ -125,15 +138,6 @@ interface JvmDependenciesIndex {
     )
 }
 
-private fun VirtualFile.findIndexedRoot(roots: Set<VirtualFile>): VirtualFile? {
-    var file: VirtualFile? = this
-    while (file != null) {
-        if (file in roots) return file
-        file = file.parent
-    }
-    return null
-}
-
 /**
  * Filters a class-file candidate while the index is traversed.
  *
@@ -151,7 +155,37 @@ fun interface ClassFileFilter {
     fun accepts(root: VirtualFile, file: VirtualFile): Boolean
 }
 
-data class JavaRoot(val file: VirtualFile, val type: RootType, val prefixFqName: FqName? = null) {
+/** A file found by [JvmDependenciesIndex.findClassFiles] together with the root it belongs to. */
+class IndexedClassFile(val file: VirtualFile, val root: JavaRoot) {
+    override fun toString(): String = file.toString()
+}
+
+/**
+ * @param id The identity of this root for class-file attribution and Java module membership. It is derived from [file] unless
+ *  several roots share one virtual file path, as the `ct.sym` roots of `-Xjdk-release` do, in which case the creator passes a unique
+ *  synthetic id.
+ */
+data class JavaRoot(
+    val file: VirtualFile,
+    val type: RootType,
+    val prefixFqName: FqName? = null,
+    val id: JvmClasspathRootId = file.asJvmClasspathRootId(),
+) {
+    /**
+     * The library this root belongs to, as a local path: the `.jar` file, the directory, the JDK home for a `jrt://` root, or
+     * `<jdk>/lib/ct.sym` for a `ct.sym` root. `null` for roots whose path is not a local one (e.g. in-memory roots of a build system).
+     */
+    fun libraryPath(): Path? = libraryPath
+
+    // Declared in the body, so it stays out of `equals`/`hashCode`/`copy`.
+    private val libraryPath: Path? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        try {
+            Paths.get(id.id.substringBefore(JAR_SEPARATOR))
+        } catch (_: InvalidPathException) {
+            null
+        }
+    }
+
     enum class RootType {
         SOURCE,
         BINARY,

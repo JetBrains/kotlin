@@ -1,0 +1,95 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.load.kotlin
+
+import com.intellij.openapi.diagnostic.ControlFlowException
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseSideType
+import org.jetbrains.kotlin.util.tryMeasureSideTime
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.nio.file.NoSuchFileException
+
+/**
+ * A Kotlin binary class read from a [BinaryClassFileHandle]: the CLI counterpart of [VirtualFileKotlinClass], which stays
+ * for the PSI view, the Analysis API and the decompiler.
+ *
+ * The class is identified by its [classFile]; [containingLibraryPath] is the library *root* the file was found in, which is
+ * what `LibraryPathFilter` matches a library session by.
+ */
+class ClassFileHandleKotlinClass private constructor(
+    val classFile: BinaryClassFileHandle,
+    className: ClassId,
+    classVersion: Int,
+    classAccess: Int,
+    classHeader: KotlinClassHeader,
+    innerClasses: InnerClassesInfo,
+) : FileBasedKotlinClass(className, classVersion, classAccess, classHeader, innerClasses) {
+
+    override val location: String
+        get() = classFile.pathForDiagnostics
+
+    override val containingLibrary: String?
+        get() = classFile.pathForDiagnostics.split("!/").firstOrNull()
+
+    override val containingLibraryPath: PathHolder?
+        get() = classFile.rootPath?.let(::PathHolder)
+
+    override fun getFileContents(): ByteArray =
+        try {
+            classFile.readBytes()
+        } catch (e: IOException) {
+            throw fileReadingError(e, classFile)
+        }
+
+    override fun equals(other: Any?) = other is ClassFileHandleKotlinClass && other.classFile == classFile
+    override fun hashCode() = classFile.hashCode()
+    override fun toString() = "${this::class.java.simpleName}: $classFile"
+
+    companion object {
+        /**
+         * Reads [classFile], returning the Kotlin class, or the content of a
+         * class file without Kotlin metadata, or `null` for a file which cannot be read anymore (a jar deleted during the compilation).
+         */
+        fun create(
+            classFile: BinaryClassFileHandle,
+            metadataVersion: MetadataVersion,
+            perfManager: PerformanceManager?,
+        ): KotlinClassFinder.Result? {
+            return perfManager.tryMeasureSideTime(PhaseSideType.BinaryClassFromKotlinFile) {
+                try {
+                    val byteContent = classFile.readBytes()
+                    if (byteContent.isNotEmpty()) {
+                        val kotlinJvmBinaryClass =
+                            create(byteContent, metadataVersion) { name, classVersion, classAccess, header, innerClasses ->
+                                ClassFileHandleKotlinClass(classFile, name, classVersion, classAccess, header, innerClasses)
+                            }
+
+                        return@tryMeasureSideTime kotlinJvmBinaryClass?.let { KotlinClass(it, byteContent) }
+                            ?: KotlinClassFinder.Result.ClassFileContent(byteContent)
+                    }
+                } catch (_: FileNotFoundException) {
+                    // Valid situation. User can delete jar file.
+                } catch (_: NoSuchFileException) {
+                    // Same (see FL-32618 as an exception example)
+                } catch (e: Exception) {
+                    // `ControlFlowException` is a marker interface, so it cannot have a `catch` branch of its own.
+                    if (e is ControlFlowException) throw e
+                    throw fileReadingError(e, classFile)
+                }
+                null
+            }
+        }
+
+        private fun fileReadingError(e: Exception, classFile: BinaryClassFileHandle): Throwable =
+            IllegalStateException("Could not read file: ${classFile.pathForDiagnostics}", e)
+    }
+}

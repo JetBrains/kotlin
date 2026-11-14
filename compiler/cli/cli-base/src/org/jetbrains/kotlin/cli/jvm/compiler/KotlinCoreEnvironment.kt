@@ -31,7 +31,6 @@ import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.pom.java.InternalPersistentJavaLanguageLevelReaderService
 import com.intellij.psi.PsiElementFinder
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNameHelper
 import com.intellij.psi.impl.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
@@ -212,7 +211,6 @@ class KotlinCoreEnvironment private constructor(
             jdkHome,
             configuration,
             javaFileManager,
-            project,
             releaseTarget
         )
 
@@ -223,14 +221,13 @@ class KotlinCoreEnvironment private constructor(
         val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
 
         classpathRootsResolver = ClasspathRootsResolver(
-            PsiManager.getInstance(project),
             configuration,
             configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
             this::contentRootToVirtualFile,
             javaModuleFinder,
             !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
             outputDirectory?.let(this::findLocalFile),
-            javaFileManager,
+            javaFileManager::findClassOnClasspath,
             releaseTarget,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
@@ -258,12 +255,15 @@ class KotlinCoreEnvironment private constructor(
             perfManager,
         )
 
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, enableSearchInCtSym = releaseTarget != null, perfManager)
         project.registerService(
             JavaModuleResolver::class.java,
-            CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
+            CliJavaModuleResolver(
+                classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(),
+                fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
+            )
         )
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null, perfManager)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 

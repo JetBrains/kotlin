@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 
 fun JavaModule.getJavaModuleRoots(): List<JavaRoot> =
-    moduleRoots.map { (val root = file, val isBinary, val isBinarySignature) ->
+    moduleRoots.map { (val root = file, val isBinary, val isBinarySignature, val id) ->
         val type = when {
             isBinarySignature -> JavaRoot.RootType.BINARY_SIG
             isBinary -> JavaRoot.RootType.BINARY
             else -> JavaRoot.RootType.SOURCE
         }
-        JavaRoot(root, type)
+        JavaRoot(root, type, id = id)
     }
 
 /**
