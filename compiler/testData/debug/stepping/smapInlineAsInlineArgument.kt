@@ -61,14 +61,14 @@ fun fail() : String {
 // test.kt:17 box
 // test.kt:10 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:6 box
 // test.kt:21 fail
 // test.kt:8 box
 // test.kt:21 fail
 // test.kt:10 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box (14, 19, 9)
 // test.kt:17 $box (11, 4)
 // test.kt:6 $box (16)

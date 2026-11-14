@@ -36,7 +36,7 @@ suspend fun box() {
 // test.kt:8 doResume:
 // test.kt:9 doResume: dead=kotlin.Long
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:12 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (9, 9, 4)
 // test.kt:9 $foo1: $l:i64=i64, $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1, 1, 1, 1, 1)
 // coroutineHelpers.kt:9 $EmptyContinuation.<get-context>: $<this>:(ref $EmptyContinuation)=(ref $EmptyContinuation) (37, 37)

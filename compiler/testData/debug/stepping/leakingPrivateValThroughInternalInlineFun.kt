@@ -24,10 +24,10 @@ fun box(): String {
 // test.kt:9 box
 // test.kt:10 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:9 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:9 $box (11)
 // test.kt:6 $box (36, 37)
 // test.kt:9 $box (4)

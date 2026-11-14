@@ -74,7 +74,7 @@ fun box() {
 // test.kt:10 compute: gLocal="gLocal":kotlin.String, b="b":kotlin.String
 // test.kt:24 compute: gLocal="gLocal":kotlin.String, b="b":kotlin.String, g="g":kotlin.String
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:30 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
 // test.kt:18 $compute: $gLocal:(ref null $kotlin.String)=null, $b:(ref null $kotlin.String)=null, $g:(ref null $kotlin.String)=null (8)
 // test.kt:7 $compute: $gLocal:(ref null $kotlin.String)=null, $b:(ref null $kotlin.String)=null, $g:(ref null $kotlin.String)=null (21, 21, 21, 21)

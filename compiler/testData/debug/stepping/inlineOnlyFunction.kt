@@ -35,14 +35,14 @@ fun box() {
 // test.kt:11 box
 // test.kt:12 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:7 box
 // test.kt:3 foo
 // test.kt:9 box
 // test.kt:3 foo
 // test.kt:12 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:6 $box (4, 6)
 // test.kt:7 $box (8)
 // test.kt:3 $foo (12)

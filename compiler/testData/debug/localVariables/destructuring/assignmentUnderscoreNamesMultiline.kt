@@ -31,7 +31,7 @@ fun box(): String {
 // test.kt:14 box: p=kotlin.Triple, o="O":kotlin.String
 // test.kt:19 box: p=kotlin.Triple, o="O":kotlin.String, k="K":kotlin.String
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:6 $box: $p:(ref null $kotlin.Triple)=null, $o:(ref null $kotlin.String)=null, $k:(ref null $kotlin.String)=null (12, 19, 19, 19, 23, 23, 23, 27, 27, 27, 12)
 // test.kt:17 $box: $p:(ref null $kotlin.Triple)=null, $o:(ref null $kotlin.String)=null, $k:(ref null $kotlin.String)=null (8)
 // test.kt:12 $box: $p:(ref $kotlin.Triple)=(ref $kotlin.Triple), $o:(ref null $kotlin.String)=null, $k:(ref null $kotlin.String)=null (8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8)

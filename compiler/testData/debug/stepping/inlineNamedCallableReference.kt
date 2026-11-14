@@ -31,13 +31,13 @@ fun g() {}
 // test.kt:10 box
 // test.kt:6 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:12 g
 // test.kt:6 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (12)
 // test.kt:5 $box (4)
 // test.kt:9 $box (4)

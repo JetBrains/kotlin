@@ -29,13 +29,15 @@ fun box() {
 // test.kt:7 <get-compPropVal>
 // test.kt:13 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:12 box
 // test.kt:7 <init>
+// EXPECTATIONS JS_IR
 // test.kt:5 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:13 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:12 $box (19)
 // test.kt:7 $AWithCompanion$static_init (26)
 // test.kt:7 $AWithCompanion$Companion.<init> (26)

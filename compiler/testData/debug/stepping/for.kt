@@ -38,7 +38,7 @@ inline fun foo(n: Int) {}
 // test.kt:6 box
 // test.kt:7 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:4 box
 // test.kt:4 box
 // test.kt:4 box
@@ -52,7 +52,7 @@ inline fun foo(n: Int) {}
 // test.kt:4 box
 // test.kt:7 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (14, 4, 17, 4, 14)
 // test.kt:5 $box (12, 8)
 // test.kt:9 $box (25)

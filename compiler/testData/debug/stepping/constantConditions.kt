@@ -31,13 +31,13 @@ fun test(): Long {
 // test.kt:16 test
 // test.kt:7 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:6 box
 // test.kt:10 test
 // test.kt:12 test
 // test.kt:7 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:6 $box (4)
 // test.kt:11 $test (8)
 // test.kt:12 $test (15, 8)

@@ -101,7 +101,7 @@ fun box() {
 // test.kt:22 box$lambda: w=1:number, x=1:number, y=48:number, a=1:number, c=48:number, _="":kotlin.String, d=48:number, q="":kotlin.String
 // test.kt:24 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:12 $box: (8)
 // test.kt:4 $A.<init>: $<this>:(ref $A)=(ref $A), $x:(ref $kotlin.Double)=(ref $kotlin.Double), $y:(ref $kotlin.String)=(ref $kotlin.String), $z:(ref $kotlin.Char)=(ref $kotlin.Char), $$mask0:i32=7:i32, $$marker:(ref null $kotlin.wasm.internal.DefaultConstructorMarker)=null (29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 13, 13, 13, 13, 13, 13, 34, 34, 34, 54, 54, 54, 72, 72, 72, 68, 68, 68, 68)
 // test.kt:12 $box: (8)

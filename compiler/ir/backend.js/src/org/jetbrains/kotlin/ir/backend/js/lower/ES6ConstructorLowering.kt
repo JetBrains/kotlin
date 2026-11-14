@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -226,6 +226,8 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         val constructorName = "new_${irClass.constructorPostfix}"
 
         return context.irFactory.buildFun {
+            startOffset = constructor.startOffset
+            endOffset = constructor.endOffset
             name = Name.identifier(constructorName)
             visibility = constructor.visibility
             modality = Modality.FINAL
@@ -259,6 +261,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                     statements.add(JsIrBuilder.buildReturn(factory.symbol, JsIrBuilder.buildGetValue(self), context.irBuiltIns.nothingType))
                 }
             }
+            factory.originalFqName = constructor.fqNameWhenAvailable
 
             constructorFactory = factory
         }

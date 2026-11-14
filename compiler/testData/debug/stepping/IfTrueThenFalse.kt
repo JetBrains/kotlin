@@ -23,13 +23,13 @@ fun box() {
 // test.kt:9 box
 // test.kt:10 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:6 box
 // test.kt:3 cond
 // test.kt:9 box
 // test.kt:10 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:6 $box (8)
 // test.kt:3 $cond (13, 18)
 // test.kt:6 $box (8)

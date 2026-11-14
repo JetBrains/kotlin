@@ -171,7 +171,7 @@ fun box() {
 // library.kt:10 box: xFoo\24:int=1:int, $i$f$foo\24\42:int=0:int
 // test.kt:49 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:34 $box: $x1:i32=0:i32, $x2:i32=0:i32, $y1:i32=0:i32, $y2:i32=0:i32 (8, 8, 4, 4, 4)
 // library.kt:5 $box: $x1:i32=0:i32, $x2:i32=0:i32, $y1:i32=0:i32, $y2:i32=0:i32 (8, 8, 11, 11, 14, 14, 4, 4, 4, 4, 4, 4, 4)
 // library.kt:13 $box: $x1:i32=0:i32, $x2:i32=0:i32, $y1:i32=0:i32, $y2:i32=0:i32 (8, 8, 13, 13, 18, 18, 4, 4, 4, 4, 4, 4, 4)

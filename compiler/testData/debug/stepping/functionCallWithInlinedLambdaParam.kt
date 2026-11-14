@@ -49,14 +49,14 @@ inline fun foo(f: () -> Unit) {
 // test.kt:18 box
 // test.kt:13 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:16 box
 // test.kt:7 box
 // test.kt:16 box
 // test.kt:11 box
 // test.kt:13 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:6 $box (4)
 // test.kt:16 $box (12)
 // test.kt:17 $box (4)

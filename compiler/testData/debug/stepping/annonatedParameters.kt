@@ -27,11 +27,11 @@ fun box(): String =
 // test.kt:13 foo
 // test.kt:16 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:16 box
 // test.kt:12 foo
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:16 $box (8, 4)
 // test.kt:12 $foo (18, 4)
 // test.kt:16 $box (11)

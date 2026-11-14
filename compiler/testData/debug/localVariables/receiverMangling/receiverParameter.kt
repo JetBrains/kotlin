@@ -17,7 +17,7 @@ fun box() {
 // test.kt:4 test: <this>="OK":kotlin.String
 // test.kt:8 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:7 $box: (4, 9)
 // test.kt:4 $test: $<this>:(ref $kotlin.String)=(ref $kotlin.String) (1, 1)
 // test.kt:8 $box: (1)

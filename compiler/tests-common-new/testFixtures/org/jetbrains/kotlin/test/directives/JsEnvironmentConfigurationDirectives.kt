@@ -189,14 +189,13 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     // Directives for IR tests
-
-    val RUN_IR_DCE by directive(
-        description = "Enables dead code elimination on IR",
+    val ONLY_DEV by directive(
+        description = "Disable DCE build",
         applicability = DirectiveApplicability.Global
     )
 
     val ONLY_IR_DCE by directive(
-        description = "Disable non DCE build",
+        description = "Disable non-DCE build",
         applicability = DirectiveApplicability.Global
     )
 

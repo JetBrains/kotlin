@@ -30,14 +30,16 @@ fun box() {
 // test.kt:8 <get-prop>
 // test.kt:13 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:12 box
+// EXPECTATIONS JS_IR
 // test.kt:4 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:12 box
 // test.kt:7 <get-prop>
 // test.kt:13 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:12 $box (4)
 // test.kt:9 $A.<init> (1)
 // test.kt:12 $box (8)

@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JS_IR, WASM_JS
+// DONT_TARGET_EXACT_BACKEND: JS_IR, JS_IR_ES6, WASM_JS
 // ^^^ Those targets don't support exitProcess()
 // WITH_STDLIB
 

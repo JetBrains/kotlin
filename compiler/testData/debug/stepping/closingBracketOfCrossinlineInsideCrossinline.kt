@@ -53,15 +53,17 @@ fun box() {
 // test.kt:6 box
 // test.kt:16 box
 
+// EXPECTATIONS JS_IR JS_IR_ES6
+// test.kt:6 box
+// test.kt:6 box
 // EXPECTATIONS JS_IR
-// test.kt:6 box
-// test.kt:6 box
 // test.kt:6 box$lambda$lambda
 // test.kt:6 box$lambda$lambda
 // test.kt:6 box$lambda$lambda$lambda
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:16 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:10 $box (4, 8)
 // test.kt:6 $box (11, 28, 34)
 // test.kt:6 $box$lambda.invoke (11, 20, 13)

@@ -252,6 +252,10 @@ fun main(args: Array<String>) {
             testClass<AbstractJsSteppingSplitTest> {
                 model("stepping")
             }
+
+            testClass<AbstractJsES6SteppingTest> {
+                model("stepping")
+            }
         }
 
         testGroup(testsRoot, "compiler/testData/diagnostics", testRunnerMethodName = "runTest0") {

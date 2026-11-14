@@ -102,7 +102,7 @@ fun box() {
 // test.kt:20 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String, b="b":kotlin.String, h="h":kotlin.String
 // test.kt:36 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String, b="b":kotlin.String, h="h":kotlin.String, g="g":kotlin.String
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:42 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
 // test.kt:28 $compute: $a:(ref null $kotlin.String)=null, $gLocal:(ref null $kotlin.String)=null, $hLocal:(ref null $kotlin.String)=null, $b:(ref null $kotlin.String)=null, $h:(ref null $kotlin.String)=null, $g:(ref null $kotlin.String)=null (25, 25, 25, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18)
 // test.kt:29 $compute: $a:(ref $kotlin.String)=(ref $kotlin.String), $gLocal:(ref null $kotlin.String)=null, $hLocal:(ref null $kotlin.String)=null, $b:(ref null $kotlin.String)=null, $h:(ref null $kotlin.String)=null, $g:(ref null $kotlin.String)=null (12)

@@ -81,7 +81,7 @@ fun box() {
 // test.kt:17 start:
 // test.kt:23 box: foo=Foo
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:21 $box: $foo:(ref null $Foo)=null (14, 14)
 // test.kt:4 $Foo.<init>: $<this>:(ref $Foo)=(ref $Foo) (14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14)
 // test.kt:18 $Foo.<init>: $<this>:(ref $Foo)=(ref $Foo) (1, 1, 1)

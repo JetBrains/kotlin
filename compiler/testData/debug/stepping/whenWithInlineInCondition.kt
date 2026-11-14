@@ -98,7 +98,7 @@ fun nop() {}
 // test.kt:15 box
 // test.kt:18 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:4 box
 // test.kt:20 value
 // test.kt:6 box
@@ -113,7 +113,7 @@ fun nop() {}
 // test.kt:29 nop
 // test.kt:18 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:4 $box (12)
 // test.kt:20 $value (19, 20)
 // test.kt:5 $box (10)

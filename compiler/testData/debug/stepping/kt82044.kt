@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR, JS_IR_ES6
 // ^^^ Test hangs while executing the debugger.
 
 
@@ -34,7 +34,7 @@ fun box(): String {
 // test.kt:19 box
 // test.kt:21 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:17 $box (4, 8)
 // a.kt:10 $box (17, 11)
 // test.kt:18 $box (21, 26, 21)
