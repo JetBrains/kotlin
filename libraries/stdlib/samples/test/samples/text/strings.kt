@@ -202,15 +202,6 @@ class Strings {
     }
 
     @Sample
-    fun flatMap() {
-        val text = "ab"
-
-        val fragments = text.flatMap { char -> listOf("$char", "$char$char") }
-
-        assertPrints(fragments, "[a, aa, b, bb]")
-    }
-
-    @Sample
     fun zip() {
         val stringA = "abcd"
         val stringB = "zyx"
@@ -504,6 +495,25 @@ class Strings {
     fun map() {
         val string = "kotlin"
         assertPrints(string.map { it.uppercaseChar() }, "[K, O, T, L, I, N]")
+    }
+
+    @Sample
+    fun flatMap() {
+        val text = "ab"
+
+        val fragments = text.flatMap { char -> listOf("$char", "$char$char") }
+
+        assertPrints(fragments, "[a, aa, b, bb]")
+    }
+
+    @Sample
+    fun flatMapTo() {
+        val text = "ab"
+        val destination = mutableListOf<String>()
+
+        text.flatMapTo(destination) { char -> listOf("$char", "$char$char") }
+
+        assertPrints(destination, "[a, aa, b, bb]")
     }
 
     @Sample
