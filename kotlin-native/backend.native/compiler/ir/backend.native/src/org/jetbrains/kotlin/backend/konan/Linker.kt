@@ -175,7 +175,7 @@ internal class Linker(
                     kind = linkerOutput,
                     outputDsymBundle = outputFiles.symbolicInfoFile,
                     sanitizer = config.sanitizer?.toObsoleteKind(),
-                    libtoolMallocZeroOnAlloc = config.configuration.get(BinaryOptions.kt89897workaround) ?: false,
+                    useLlvmLibtoolDarwin = config.configuration.get(BinaryOptions.useLlvmLibtoolDarwin) ?: false,
             ).finalLinkCommands()
         }
     }

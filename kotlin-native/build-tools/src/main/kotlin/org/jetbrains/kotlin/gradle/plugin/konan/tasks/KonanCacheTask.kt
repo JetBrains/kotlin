@@ -107,7 +107,7 @@ open class KonanCacheTask @Inject constructor(
             )
 
     @get:Input
-    val kt89897workaround: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    val useLlvmLibtoolDarwin: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
@@ -159,8 +159,9 @@ open class KonanCacheTask @Inject constructor(
             if (useProvisionedXcode.get()) {
                 add("-Xoverride-konan-properties=useProvisionedXcode=true")
             }
-            if (kt89897workaround.get()) {
-                add("-Xbinary=kt89897workaround=true")
+            if (useLlvmLibtoolDarwin.get()) {
+                add("-Xbinary=useLlvmLibtoolDarwin=true")
+                add("-Xllvm-variant=dev")
             }
         }
         val workQueue = workerExecutor.noIsolation()

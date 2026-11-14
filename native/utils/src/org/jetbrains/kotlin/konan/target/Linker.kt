@@ -120,7 +120,7 @@ class LinkerArguments(
     val kind: LinkerOutputKind,
     val outputDsymBundle: String,
     val sanitizer: SanitizerKind? = null,
-    val libtoolMallocZeroOnAlloc: Boolean = false,
+    val useLlvmLibtoolDarwin: Boolean = false,
 )
 
 // TODO: This is for compatibility with CompileToExecutable.kt. Remove after advancing the bootstrap.
@@ -232,6 +232,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
     : LinkerFlags(targetProperties), AppleConfigurables by targetProperties {
 
     private val libtool = "$absoluteTargetToolchain/bin/libtool"
+    private val llvmLibtoolDarwin = "$absoluteLlvmHome/bin/llvm-libtool-darwin"
     private val linker = "$absoluteTargetToolchain/bin/ld"
     private val strip = "$absoluteTargetToolchain/bin/strip"
     private val dsymutil = "$absoluteTargetToolchain/bin/dsymutil"
@@ -317,13 +318,20 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             require(sanitizer == null) {
                 "Sanitizers are unsupported"
             }
-
-            // KT-89897: since Xcode 27, libtool leaves the padding of the `__.SYMDEF` name table uninitialized,
-            // which makes the produced archives not reproducible. `MallocZeroOnAlloc=1` makes libmalloc zero-fill
-            // the padding, so the output is reproducible again and identical to what Xcode 26.5 produces.
-            val environment = if (libtoolMallocZeroOnAlloc) mapOf("MallocZeroOnAlloc" to "1") else emptyMap()
-
-            return listOf(Command(listOf(libtool), environment = environment).apply {
+            val tool = if (useLlvmLibtoolDarwin) {
+                // KT-89897: Apples libtool writes random garbage bytes into `__.SYMDEF` nametable paddings
+                // making archives non-reproducible
+                if (!Path(llvmLibtoolDarwin).exists()) {
+                    error(
+                        "llvm-libtool-darwin is not found in the LLVM distribution: $llvmLibtoolDarwin. " +
+                                "The 'dev' LLVM variant is required, pass -Xllvm-variant=dev."
+                    )
+                }
+                llvmLibtoolDarwin
+            } else {
+                libtool
+            }
+            return listOf(Command(tool).apply {
                 +"-D"
                 +"-static"
                 +listOf("-o", executable)

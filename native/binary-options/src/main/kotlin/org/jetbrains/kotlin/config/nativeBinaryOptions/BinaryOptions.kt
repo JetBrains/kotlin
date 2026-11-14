@@ -150,8 +150,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val enableReleaseBinaryCache by booleanOption()
 
-    // Workaround for KT-89897: run libtool with MallocZeroOnAlloc=1
-    val kt89897workaround by booleanOption()
+    // a replacement for Apple's libtool to workaround KT-89897
+    val useLlvmLibtoolDarwin by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
