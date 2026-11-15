@@ -269,7 +269,10 @@ abstract class LlvmOptimizationPipeline(
             """.trimIndent()
         }
         if (passDescription.isEmpty()) return
-        val [errorCode, profile] = withLLVMPassesProfile(performanceManager != null || config.timePasses, pipelineName) {
+        val [errorCode, profile] = withLLVMPassesProfile(
+            config.timePasses || performanceManager?.isExtendedStatsEnabled == true,
+            pipelineName
+        ) {
             // NOTE: This call is not thread-safe in general, because it may write into global memory,
             //       when configuring CLI-defined options.
             //       See `LLVMKotlinRunPasses` declaration in the header file for the details.

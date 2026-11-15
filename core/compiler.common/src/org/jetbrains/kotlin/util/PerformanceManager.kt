@@ -63,7 +63,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private val klibElementStats: SortedMap<String, Long> = sortedMapOf()
 
     var isExtendedStatsEnabled: Boolean = false
-        private set
+        protected set
     var compilerType: CompilerType = CompilerType.K2
     var hasErrors: Boolean = false
         private set
@@ -452,6 +452,7 @@ class PerformanceManagerImpl(targetPlatform: TargetPlatform, presentableName: St
                         it.notifyPhaseFinished(PhaseType.Initialization)
                     }
                     it.compilerType = mainPerformanceManager.compilerType
+                    it.isExtendedStatsEnabled = mainPerformanceManager.isExtendedStatsEnabled
                 }
             } else {
                 null
