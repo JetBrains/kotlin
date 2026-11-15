@@ -183,6 +183,14 @@ class Strings {
     }
 
     @Sample
+    fun reduceOrNull() {
+        val string = "kotlin"
+
+        assertPrints(string.reduceOrNull { acc, char -> maxOf(acc, char) }, "t")
+        assertPrints("".reduceOrNull { acc, char -> maxOf(acc, char) }, "null")
+    }
+
+    @Sample
     fun find() {
         val text = "a1b2c3d4e5"
 

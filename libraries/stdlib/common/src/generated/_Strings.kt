@@ -1977,7 +1977,7 @@ public inline fun CharSequence.reduceIndexedOrNull(operation: (index: Int, acc: 
  * @param [operation] function that takes current accumulator value and a character,
  * and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ * @sample samples.text.Strings.reduceOrNull
  */
 @SinceKotlin("1.4")
 public inline fun CharSequence.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
@@ -2588,4 +2588,3 @@ public fun CharSequence.asSequence(): Sequence<Char> {
     if (this is String && isEmpty()) return emptySequence()
     return Sequence { this.iterator() }
 }
-
