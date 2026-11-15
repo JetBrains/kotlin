@@ -20,6 +20,7 @@ private class ExtractedWhenCondition(val condition: IrCall, val const: IrConst)
 private class ExtractedWhenBranch(val conditions: List<ExtractedWhenCondition>, val expression: IrExpression)
 
 private class ExtractedWhenBranchWithIntConditions(val intConditions: List<Int>, val expression: IrExpression)
+private class ExtractedWhenBranchWithLongConditions(val longConditions: List<Long>, val expression: IrExpression)
 
 internal fun BodyGenerator.tryGenerateOptimisedWhen(
     expression: IrWhen,
@@ -65,12 +66,15 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
     if (allConditionsReadsSameValue) return false
 
     val supportedBasicTypes = setOf(
+        IrConstKind.Byte,
+        IrConstKind.Short,
         IrConstKind.Char,
         IrConstKind.Int,
+        IrConstKind.Long,
     )
 
     // Check all kinds are the same
-    //TODO: Support all primitive types
+    // The current table switch and binary-search implementation uses signed integer comparisons.
     val validBranches = supportedBasicTypes.any { type ->
         extractedBranches.all { branch ->
             branch.conditions.all { it.const.kind.equals(type) }
@@ -80,17 +84,36 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
         return false
     }
 
-    val intBranches = extractedBranches.map { branch ->
+    val constantKind = extractedBranches.first().conditions.first().const.kind
+    val isLongSelector = constantKind == IrConstKind.Long
+    val intBranches = if (isLongSelector) null else extractedBranches.map { branch ->
         ExtractedWhenBranchWithIntConditions(
             branch.conditions.map {
                 when (val v = it.const.value) {
                     is Int -> v
                     is Char -> v.code
+                    is Byte -> v.toInt()
+                    is Short -> v.toInt()
                     else -> error("Unreachable branch")
                 }
             }, branch.expression
         )
     }
+    val longBranches = if (isLongSelector) extractedBranches.map { branch ->
+        ExtractedWhenBranchWithLongConditions(branch.conditions.map { it.const.value as Long }, branch.expression)
+    } else null
+
+    if (isLongSelector) {
+        val selectorLocal = functionContext.referenceLocal(SyntheticLocalType.TABLE_SWITCH_SELECTOR_I64)
+        generateExpression(subject)
+        val noLocation = SourceLocation.NoLocation("When's binary search infra")
+        body.buildSetLocal(selectorLocal, noLocation)
+        val resultType = wasmModuleTypeTransformer.transformBlockResultType(expression.type)
+        createLongBinaryTable(selectorLocal, longBranches!!, elseExpression, resultType, expression.type)
+        return true
+    }
+
+    val intBranches = intBranches!!
 
     val maxValue = intBranches.maxOf { branch -> branch.intConditions.maxOf { it } }
     val minValue = intBranches.minOf { branch -> branch.intConditions.minOf { it } }
@@ -146,6 +169,51 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
         )
     }
     return true
+}
+
+private fun BodyGenerator.createLongBinaryTable(
+    selectorLocal: WasmLocal,
+    branches: List<ExtractedWhenBranchWithLongConditions>,
+    elseExpression: IrExpression?,
+    resultType: WasmType?,
+    expectedType: IrType,
+) {
+    val sortedCases = branches.flatMap { branch -> branch.longConditions.map { it to branch.expression } }.sortedBy { it.first }
+    val location = SourceLocation.NoLocation("When's binary search infra")
+    body.buildBlock("when_block", resultType) { currentBlock ->
+        fun emit(from: Int, until: Int) {
+            if (from == until) return
+            val middle = from + (until - from) / 2
+            val (case, branchExpression) = sortedCases[middle]
+            body.buildGetLocal(selectorLocal, location)
+            body.buildConstI64(case, location)
+            body.buildInstr(WasmOp.I64_EQ, location)
+            body.buildIf("long_when_case", null)
+            generateWithExpectedType(branchExpression, expectedType)
+            body.buildBr(currentBlock, SourceLocation.NoLocation("Break from a when"))
+            body.buildEnd()
+            if (from < middle) {
+                body.buildGetLocal(selectorLocal, location)
+                body.buildConstI64(case, location)
+                body.buildInstr(WasmOp.I64_LT_S, location)
+                body.buildIf("long_when_left", null)
+                emit(from, middle)
+                body.buildElse()
+                emit(middle + 1, until)
+                body.buildEnd()
+            } else if (middle + 1 < until) {
+                emit(middle + 1, until)
+            }
+        }
+        emit(0, sortedCases.size)
+        if (elseExpression != null) {
+            generateWithExpectedType(elseExpression, expectedType)
+        } else if (resultType != null && expectedType.isUnit()) {
+            body.buildGetUnit()
+        } else if (resultType != null) {
+            error("'When' without else branch and non Unit type: ${expectedType.dumpKotlinLike()}")
+        }
+    }
 }
 
 /**
