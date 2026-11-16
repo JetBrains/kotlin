@@ -9,32 +9,38 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtMissingSourceElement
+import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 
 @OptIn(DiagnosticLossRisk::class)
 class SourceElementPositioningStrategy(
     private val lightTreeStrategy: LightTreePositioningStrategy,
-    private val psiStrategy: PositioningStrategy<*>,
-    private val offsetsOnlyPositioningStrategy: OffsetsOnlyPositioningStrategy = OffsetsOnlyPositioningStrategy(),
+    psiStrategy: PositioningStrategy<*>,
 ) : AbstractSourceElementPositioningStrategy() {
+    // The strategy is only applied to the elements it's registered for, so the erased element type is safe
+    @Suppress("UNCHECKED_CAST")
+    private val psiStrategy = psiStrategy as PositioningStrategy<PsiElement>
+
+    companion object {
+        private val improperTextRanges = listOf(PossiblyImproperTextRange(-1, -1))
+    }
+
     override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
         return when (val element = diagnostic.element) {
+            is KtMissingSourceElement -> improperTextRanges
+            is KtOffsetsOnlySourceElement -> listOf(PossiblyImproperTextRange(element.startOffset, element.endOffset))
             is KtPsiSourceElement -> psiStrategy.markDiagnostic(diagnostic)
             is KtLightSourceElement -> lightTreeStrategy.markKtDiagnostic(element, diagnostic)
-            else -> offsetsOnlyPositioningStrategy.markKtDiagnostic(element, diagnostic)
         }
     }
 
     override fun isValid(element: AbstractKtSourceElement): Boolean {
         return when (element) {
-            is KtPsiSourceElement -> psiStrategy.hackyIsValid(element.psi)
+            is KtMissingSourceElement -> true
+            is KtOffsetsOnlySourceElement -> true
+            is KtPsiSourceElement -> psiStrategy.isValid(element.psi)
             is KtLightSourceElement -> lightTreeStrategy.isValid(element.lighterASTNode, element.treeStructure)
-            else -> true
         }
-    }
-
-    private fun PositioningStrategy<*>.hackyIsValid(psi: PsiElement): Boolean {
-        @Suppress("UNCHECKED_CAST")
-        return (this as PositioningStrategy<PsiElement>).isValid(psi)
     }
 }
