@@ -250,7 +250,7 @@ internal fun <C : ConeKotlinType, T : KaType> createTypePointer(
     builder: KaSymbolByFirBuilder,
     typeFactory: (C, KaSymbolByFirBuilder) -> T?,
 ): KaTypePointer<T> {
-    val coneTypePointer = coneType.createPointer(builder)
+    val coneTypePointer = coneType.createPointer(builder, ConeTypeRecursionGuard())
     return KaGenericTypePointer(coneTypePointer, typeFactory)
 }
 
@@ -261,7 +261,7 @@ private class KaGenericTypePointer<C : ConeKotlinType, T : KaType>(
     override fun restore(session: KaSession): T? {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(analysisSession = session) ?: return null
+        val coneType = coneTypePointer.restore(analysisSession = session, guard = ConeTypeRecursionGuard()) ?: return null
         return typeFactory(coneType, session.firSymbolBuilder)
     }
 }
