@@ -281,12 +281,11 @@ class AnnotationImplementationMemberGenerator(
     forbidDirectFieldAccess = forbidDirectFieldAccess,
     generateBodies = true,
 ) {
-
-    override fun getProperty(irValueParameter: IrValueParameter?): IrProperty {
-        error("This API shouldn't be used in lowerings")
+    override fun getHashCodeFunctionInfo(property: IrProperty): HashCodeFunctionInfo {
+        return getHashCodeFunctionInfo(property.type)
     }
 
-    override fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo {
+    private fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo {
         val symbol = if (type.isArray() || type.isPrimitiveArray()) {
             context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
         } else {

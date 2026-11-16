@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.HASH_CODE
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
@@ -254,14 +253,16 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     EQUALS -> irDataClassMembersGenerator.generateEqualsMethod(irFunction, properties)
                     DATA_CLASS_COPY -> {
                         irFunction.origin = GENERATED_DATA_CLASS_MEMBER
-                        irDataClassMembersGenerator.generateCopyFunction(irFunction, irClass.primaryConstructor!!.symbol)
+                        irDataClassMembersGenerator.generateCopyFunction(irFunction, irClass.primaryConstructor!!.symbol) {
+                            getProperty(it)
+                        }
                     }
                     else -> {
                         require(DataClassResolver.isComponentLike(name)) { "Unknown data class member: $name" }
                         irFunction.origin = GENERATED_DATA_CLASS_MEMBER
                         val index = DataClassResolver.getComponentIndex(irFunction.name.asString())
                         val valueParameter = constructorParameters[index - 1]
-                        val irProperty = irDataClassMembersGenerator.getProperty(valueParameter)
+                        val irProperty = getProperty(valueParameter)
                         irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
                     }
                 }
@@ -279,6 +280,14 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             }
         }
 
+        private fun getProperty(irValueParameter: IrValueParameter): IrProperty {
+            // `irClass` is a source class and definitely is not a lazy class
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            return irClass.properties.first { irProperty ->
+                irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
+            }
+        }
+
         private val irDataClassMembersGenerator = object : DataClassLikeMembersBodyGenerator(
             IrGeneratorContextBase(irBuiltins),
             irClass,
@@ -286,14 +295,6 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             forbidDirectFieldAccess = false,
             generateBodies = !configuration.skipBodies,
         ) {
-            override fun getProperty(irValueParameter: IrValueParameter?): IrProperty {
-                requireNotNull(irValueParameter)
-                // `irClass` is a source class and definitely is not a lazy class
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                return irClass.properties.first { irProperty ->
-                    irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
-                }
-            }
 
             inner class Fir2IrHashCodeFunctionInfo(
                 override val symbol: IrSimpleFunctionSymbol,
@@ -336,10 +337,6 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                         else -> error("unknown supertype kind ${firstSuper?.render()}")
                     }
                 }
-
-            override fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo {
-                shouldNotBeCalled()
-            }
 
             override fun getHashCodeFunctionInfo(property: IrProperty): HashCodeFunctionInfo {
                 val firProperty = klass.symbol.declaredScope()
