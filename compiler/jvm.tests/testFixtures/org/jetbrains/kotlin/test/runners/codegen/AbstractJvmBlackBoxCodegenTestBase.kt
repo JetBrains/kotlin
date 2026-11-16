@@ -68,5 +68,12 @@ abstract class AbstractJvmBlackBoxCodegenTestBase(val parser: FirParser) : Abstr
 
 open class AbstractFirLightTreeBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.LightTree)
 
+/*
+ * PSI codegen tests are left here despite the fact that PSI mode is removed from the CLI compiler
+ * to test the compiler in IDE debugger environment. Yes, there are tests for debugger in AA modules,
+ * but their coverage is much less than `compiler/testData/codegen`.
+ *
+ * Later this test could be moved to AA tests.
+ */
 @FirPsiCodegenTest
 open class AbstractFirPsiBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.Psi)

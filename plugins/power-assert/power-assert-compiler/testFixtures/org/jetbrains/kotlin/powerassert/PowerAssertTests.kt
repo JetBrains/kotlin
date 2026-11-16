@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -61,7 +61,7 @@ open class AbstractPowerAssertMissingRuntimeBlackBoxCodegenTest : AbstractFirLig
     }
 }
 
-abstract class AbstractPowerAssertPluginFirPsiDiagnosticTest : AbstractPhasedJvmDiagnosticPsiTest() {
+abstract class AbstractPowerAssertPluginFirPsiDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurePlugin()

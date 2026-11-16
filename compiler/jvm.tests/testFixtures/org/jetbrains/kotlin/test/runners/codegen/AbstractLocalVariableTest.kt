@@ -40,6 +40,3 @@ abstract class AbstractLocalVariableTestBase(val parser: FirParser) : AbstractKo
 }
 
 open class AbstractFirLightTreeLocalVariableTest : AbstractLocalVariableTestBase(FirParser.LightTree)
-
-@FirPsiCodegenTest
-open class AbstractFirPsiLocalVariableTest : AbstractLocalVariableTestBase(FirParser.Psi)
