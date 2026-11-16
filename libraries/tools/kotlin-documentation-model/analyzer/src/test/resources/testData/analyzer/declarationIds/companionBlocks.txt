@@ -1,27 +1,27 @@
 sample
 sample/Outer
-function:sample/Outer#sameName#typeParameters=[]; context=[]; parameters=[kotlin/Int];
-property:sample/Outer#CONSTANT#typeParameters=[]; context=[]; parameters=[]; companion;
-getter:sample/Outer#CONSTANT#typeParameters=[]; context=[]; parameters=[]; companion;
-property:sample/Outer#mutable#typeParameters=[]; context=[]; parameters=[]; companion;
-getter:sample/Outer#mutable#typeParameters=[]; context=[]; parameters=[]; companion;
-setter:sample/Outer#mutable#typeParameters=[]; context=[]; parameters=[]; companion;
-function:sample/Outer#sameName#typeParameters=[]; context=[]; parameters=[]; companion;
+function:sample/Outer#sameName#parameters=[kotlin/Int];
+property:sample/Outer#CONSTANT#companion;
+getter:sample/Outer#CONSTANT#companion;
+property:sample/Outer#mutable#companion;
+getter:sample/Outer#mutable#companion;
+setter:sample/Outer#mutable#companion;
+function:sample/Outer#sameName#companion;
 function:sample/Outer#genericMember#typeParameters=[<T1_0>: ]; context=[]; parameters=[<T1_0>]; companion;
-constructor:sample/Outer#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+constructor:sample/Outer#%3Cinit%3E#
 sample/Named
-function:sample/Named#namedMember#typeParameters=[]; context=[]; parameters=[]; companion;
-constructor:sample/Named#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+function:sample/Named#namedMember#companion;
+constructor:sample/Named#%3Cinit%3E#
 sample/TwoBlocks
-property:sample/TwoBlocks#Zero#typeParameters=[]; context=[]; parameters=[]; companion;
-getter:sample/TwoBlocks#Zero#typeParameters=[]; context=[]; parameters=[]; companion;
-function:sample/TwoBlocks#normalize#typeParameters=[]; context=[]; parameters=[];
-property:sample/TwoBlocks#Dimensions#typeParameters=[]; context=[]; parameters=[]; companion;
-getter:sample/TwoBlocks#Dimensions#typeParameters=[]; context=[]; parameters=[]; companion;
-constructor:sample/TwoBlocks#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+property:sample/TwoBlocks#Zero#companion;
+getter:sample/TwoBlocks#Zero#companion;
+function:sample/TwoBlocks#normalize#
+property:sample/TwoBlocks#Dimensions#companion;
+getter:sample/TwoBlocks#Dimensions#companion;
+constructor:sample/TwoBlocks#%3Cinit%3E#
 sample/WithCompanion
-function:sample/WithCompanion#interfaceCompanionMember#typeParameters=[]; context=[]; parameters=[]; companion;
-function:sample#topLevelExtension#typeParameters=[]; context=[]; receiver=sample/Outer; parameters=[]; companion;
-property:sample#topLevelExtensionProperty#typeParameters=[]; context=[]; receiver=sample/Outer; parameters=[]; companion;
-getter:sample#topLevelExtensionProperty#typeParameters=[]; context=[]; receiver=sample/Outer; parameters=[]; companion;
-function:sample#extensionOnNamed#typeParameters=[]; context=[]; receiver=sample/Named; parameters=[]; companion;
+function:sample/WithCompanion#interfaceCompanionMember#companion;
+function:sample#topLevelExtension#receiver=sample/Outercompanion;
+property:sample#topLevelExtensionProperty#receiver=sample/Outercompanion;
+getter:sample#topLevelExtensionProperty#receiver=sample/Outercompanion;
+function:sample#extensionOnNamed#receiver=sample/Namedcompanion;
