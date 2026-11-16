@@ -27,6 +27,7 @@ tasks.withType<Test>().configureEach {
 
 tasks.register("checkBuild") {
     dependsOn("test")
+    dependsOn("functionalTest")
 }
 
 /* The one test class that drives builds of the repository; everything else here is a unit test. */
@@ -63,10 +64,6 @@ val functionalTest = tasks.register<Test>("functionalTest") {
     environment("GRADLE_USER_HOME", gradle.gradleUserHomeDir.absolutePath)
 
     shouldRunAfter(tasks.test)
-}
-
-tasks.check {
-    dependsOn(functionalTest)
 }
 
 dependencies {
