@@ -52,6 +52,10 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
         notYetImplemented()
     }
 
+    override fun KtSourceElement.hasUnwrappableAsAssignmentLhs(): Boolean {
+        notYetImplemented()
+    }
+
     override fun KtSourceElement.findParameterNameSource(name: Name): KtSourceElement? {
         notYetImplemented()
     }

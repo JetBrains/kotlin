@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsAssignmentLhs
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 
 object FirParenthesizedLhsVariableAssignmentChecker : FirVariableAssignmentChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -24,10 +24,9 @@ object FirParenthesizedLhsVariableAssignmentChecker : FirVariableAssignmentCheck
         // - `(x) += ""` where `x: String`
         // - `(getInt()) += 343`
         // - `(a?.w)++` where `a: A?` with `var w: Int` - note: such cases are red code already as `VARIABLE_EXPECTED` or something else.
-        val isLhsParenthesized = expression.source.hasUnwrappableAsAssignmentLhs()
-
-        if (isLhsParenthesized) {
-            reporter.reportOn(expression.source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT)
+        val source = expression.source ?: return
+        if (withSyntax { source.hasUnwrappableAsAssignmentLhs() }) {
+            reporter.reportOn(source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT)
         }
     }
 }

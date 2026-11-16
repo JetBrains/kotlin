@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxId
@@ -77,6 +78,10 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
 
     override fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement? {
         return unwrap().psi.getExplicitReceiverOfDotQualified()?.toKtPsiSourceElement()
+    }
+
+    override fun KtSourceElement.hasUnwrappableAsAssignmentLhs(): Boolean {
+        return unwrap().psi.getAssignmentLhsIfUnwrappable() != null
     }
 
     override fun KtSourceElement.findParameterNameSource(name: Name): KtSourceElement? {

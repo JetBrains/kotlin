@@ -97,6 +97,15 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
 
     abstract fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement?
 
+    /**
+     * Returns whether the operand of this assignment is parenthesized, labeled or annotated.
+     *
+     * The operand is the left-hand side of an assignment or augmented-assignment operator call (`(x) = ...`, `(x) += ...`), the base of a
+     * postfix increment or decrement (`(x)++`), or the operand of a prefix increment or decrement (`++(x)`).
+     * This should only be called for a source element corresponding to one of those constructs.
+     */
+    abstract fun KtSourceElement.hasUnwrappableAsAssignmentLhs(): Boolean
+
     abstract fun KtSourceElement.findParameterNameSource(name: Name): KtSourceElement?
 
     abstract fun KtSourceElement.getContainingStringTemplateEntriesCount(): Int?

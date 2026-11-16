@@ -10,7 +10,11 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtNodeTypes.PREFIX_EXPRESSION
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
+import org.jetbrains.kotlin.util.getChildren
 
 /**
  * Returns the first direct child of [node] with the given [type], or `null` if there is none.
@@ -59,3 +63,17 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.valOrVarKeyword(node: LighterA
  */
 fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IDENTIFIER)
+
+/**
+ * This function should only be called for a source element corresponding to
+ * an assignment/assignment operator call/increment or a decrement operator.
+ */
+fun LighterASTNode.getAssignmentLhsIfUnwrappable(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? =
+    when {
+        // In `++(x)` the LHS source `(x)` is the last child
+        tokenType == PREFIX_EXPRESSION -> getChildren(tree).lastOrNull()
+        // In `(x)++` or `(x) = ...` the LHS source is the first child
+        else -> getChildren(tree).firstOrNull()
+    }.takeIf {
+        it?.tokenType in @OptIn(KtImplementationDetail::class) UNWRAPPABLE_TOKEN_TYPES
+    }
