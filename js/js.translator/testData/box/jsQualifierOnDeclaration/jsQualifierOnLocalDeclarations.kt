@@ -1,6 +1,7 @@
+// LANGUAGE: -ProhibitJsQualifierOnMembersAndNonExternals
+// ^^^ Pre-KT-82785 behavior is not broken.
 // MODULE: main
 // FILE: main.kt
-// Should become red when KT-82785 is fixed
 external class C {
     @JsQualifier("a")
     fun o(): String
