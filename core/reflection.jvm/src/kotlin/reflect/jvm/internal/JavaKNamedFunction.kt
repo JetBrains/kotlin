@@ -58,7 +58,7 @@ internal class JavaKNamedFunction(
     override fun computeOverriddenFunctionsForEnhancement(): Collection<ReflectKFunction> {
         if (Modifier.isStatic(jMethod.modifiers)) return emptyList()
         val signature = toEquatableCallableSignature(EqualityMode.KotlinSignature)
-        return computeOverriddenFunctions(container as MemberContainer<*>, signature, substituted = true)
+        return computeOverriddenCallables(container as MemberContainer<*>, signature, true)
     }
 
     val jMethod: Method get() = member as Method
@@ -90,7 +90,7 @@ internal class JavaKNamedFunction(
     override val isPrimaryConstructor: Boolean get() = false
 
     override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {
-        computeOverriddenFunctions(this)
+        computeOverriddenCallables(this)
     }
 
     override val allParameters: List<KParameter>

@@ -64,7 +64,7 @@ internal class KotlinKNamedFunction(
         get() = container is MemberContainer<*> && kmFunction.isCompanionBlockMember
 
     override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {
-        computeOverriddenFunctions(this)
+        computeOverriddenCallables(this)
     }
 
     @ExperimentalCompanionExtensions
