@@ -624,7 +624,7 @@ internal class StubBasedFirMemberDeserializer(
             )
 
             property.contextReceivers.mapTo(contextParameters) {
-                local.memberDeserializer.loadContextReceiver(it, symbol)
+                local.memberDeserializer.loadLegacyContextReceiver(it, it.typeReference(), symbol)
             }
 
             property.contextParameters.mapTo(contextParameters) {
@@ -677,15 +677,22 @@ internal class StubBasedFirMemberDeserializer(
         setSpecialFlags(modifierListOwner.modifierList)
     }
 
-    private fun loadContextReceiver(contextReceiver: KtContextReceiver, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
+    /**
+     * Loads a legacy context receiver from [element], which is a [KtContextReceiver] or a context parameter without a name.
+     */
+    private fun loadLegacyContextReceiver(
+        element: KtElement,
+        typeReference: KtTypeReference?,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): FirValueParameter {
         return buildValueParameter {
-            this.source = KtRealPsiSourceElement(contextReceiver)
+            this.source = KtRealPsiSourceElement(element)
             this.moduleData = c.moduleData
             this.origin = initialOrigin
             this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
             this.symbol = FirValueParameterSymbol()
-            this.returnTypeRef = contextReceiver.typeReference()?.toTypeRef(c) ?: errorWithAttachment("KtParameter doesn't have type") {
-                withPsiEntry("contextReceiver", contextReceiver)
+            this.returnTypeRef = typeReference?.toTypeRef(c) ?: errorWithAttachment("Legacy context receiver doesn't have type") {
+                withPsiEntry("element", element)
                 withFirSymbolEntry("functionSymbol", containingDeclarationSymbol)
             }
             this.containingDeclarationSymbol = containingDeclarationSymbol
@@ -697,29 +704,42 @@ internal class StubBasedFirMemberDeserializer(
     private fun loadContextParameter(
         parameter: KtParameter,
         containingDeclarationSymbol: FirCallableSymbol<*>,
-    ): FirValueParameter = loadValueParameter(
-        parameter = parameter,
-        containingSymbol = containingDeclarationSymbol,
-        kind = FirValueParameterKind.ContextParameter,
-    )
+    ): FirValueParameter = if (parameter.name != null) {
+        loadValueParameter(
+            parameter = parameter,
+            containingSymbol = containingDeclarationSymbol,
+            kind = FirValueParameterKind.ContextParameter,
+        )
+    } else {
+        loadLegacyContextReceiver(parameter, parameter.typeReference, containingDeclarationSymbol)
+    }
 
     internal fun createContextReceiversForClass(
         classOrObject: KtClassOrObject,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ): List<FirValueParameter> {
-        return classOrObject.contextReceivers.mapNotNull { it.typeReference() }.map {
-            buildValueParameter {
-                this.source = KtRealPsiSourceElement(it)
-                this.moduleData = c.moduleData
-                this.origin = initialOrigin
-                this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                this.symbol = FirValueParameterSymbol()
-                this.returnTypeRef = it.toTypeRef(c)
-                this.containingDeclarationSymbol = containingDeclarationSymbol
-                this.valueParameterKind = FirValueParameterKind.ContextParameter
-                this.resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            }
+        val contextParameters = classOrObject.modifierList?.contextParameterList?.contextParameters.orEmpty()
+        return classOrObject.contextReceivers.mapNotNull { contextReceiver ->
+            contextReceiver.typeReference()?.let { loadContextReceiverOfClass(it, it, containingDeclarationSymbol) }
+        } + contextParameters.mapNotNull { parameter ->
+            parameter.typeReference?.let { loadContextReceiverOfClass(parameter, it, containingDeclarationSymbol) }
         }
+    }
+
+    private fun loadContextReceiverOfClass(
+        source: KtElement,
+        typeReference: KtTypeReference,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): FirValueParameter = buildValueParameter {
+        this.source = KtRealPsiSourceElement(source)
+        this.moduleData = c.moduleData
+        this.origin = initialOrigin
+        this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        this.symbol = FirValueParameterSymbol()
+        this.returnTypeRef = typeReference.toTypeRef(c)
+        this.containingDeclarationSymbol = containingDeclarationSymbol
+        this.valueParameterKind = FirValueParameterKind.ContextParameter
+        this.resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
     }
 
     private fun loadReceiverParameter(
@@ -791,7 +811,7 @@ internal class StubBasedFirMemberDeserializer(
             this.containerSource = c.containerSource
 
             function.contextReceivers.mapTo(contextParameters) {
-                local.memberDeserializer.loadContextReceiver(it, symbol)
+                local.memberDeserializer.loadLegacyContextReceiver(it, it.typeReference(), symbol)
             }
 
             function.contextParameters.mapTo(contextParameters) {
