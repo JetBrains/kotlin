@@ -13,6 +13,8 @@ public final class neg/Delegator {
     private synthetic final field $$delegate_0: neg.Greeter
     public method <init>(@org.jetbrains.annotations.NotNull p0: neg.Greeter): void
     public @neg.ArrayMarker(value=[A]) method arrayWithMissingEntry(): java.lang.String
+    public @neg.DefaultedJavaAnnotation method javaAnnotationWithDefault(): java.lang.String
+    public @neg.RequiredJavaAnnotation method javaAnnotationWithoutDefault(): java.lang.String
     public @neg.Marker method missingEntry(): java.lang.String
     public @neg.Marker method missingPackage(): java.lang.String
     public @neg.Marker method missingQualifier(): java.lang.String
@@ -26,6 +28,8 @@ public final class neg/GreeterImpl {
     // source: 'main.kt'
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method arrayWithMissingEntry(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method javaAnnotationWithDefault(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method javaAnnotationWithoutDefault(): java.lang.String
     public @org.jetbrains.annotations.NotNull method missingEntry(): java.lang.String
     public @org.jetbrains.annotations.NotNull method missingPackage(): java.lang.String
     public @org.jetbrains.annotations.NotNull method missingQualifier(): java.lang.String

@@ -23,6 +23,24 @@ annotation class Marker(val value: Scope) {
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ArrayMarker(vararg val value: Marker.Scope)
 
+// FILE: neg/RequiredJavaAnnotation.java
+package neg;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RequiredJavaAnnotation {
+    int value();
+}
+
+// FILE: neg/DefaultedJavaAnnotation.java
+package neg;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DefaultedJavaAnnotation {
+    int value() default 7;
+}
+
 // FILE: neg/Greeter.java
 package neg;
 
@@ -46,6 +64,13 @@ public interface Greeter {
 
     @Marker(Marker.Holder.VALUE)
     String objectProperty();
+
+    @DefaultedJavaAnnotation
+    String javaAnnotationWithDefault();
+
+    // The pre-fix IR keeps this annotation even though its required value is missing.
+    @RequiredJavaAnnotation
+    String javaAnnotationWithoutDefault();
 }
 
 // FILE: neg/main.kt
@@ -58,6 +83,8 @@ class GreeterImpl : Greeter {
     override fun missingPackage(): String = "missingPackage"
     override fun nonEnumNestedField(): String = "nonEnumNestedField"
     override fun objectProperty(): String = "objectProperty"
+    override fun javaAnnotationWithDefault(): String = "javaAnnotationWithDefault"
+    override fun javaAnnotationWithoutDefault(): String = "javaAnnotationWithoutDefault"
 }
 
 class Delegator(delegate: Greeter) : Greeter by delegate
