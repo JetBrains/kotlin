@@ -12,8 +12,6 @@ declare namespace JS_TESTS {
             readonly y: boolean;
             z(z: number): void;
         }
-    }
-    namespace foo {
         const fifth: (foo.Third<boolean> & foo.IA & foo.IG<boolean>)/* foo.Fifth<boolean> */;
         abstract class AC implements foo.I2 {
             constructor();
