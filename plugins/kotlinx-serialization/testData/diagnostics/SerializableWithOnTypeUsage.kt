@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -49,3 +50,6 @@ typealias NestedInAlias = List<@Serializable(with = ClassASerializer::class) Cla
 
 @Serializable
 class UsesAliases(val a: ClassAAlias, val list: NestedInAlias)
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, getter, localProperty, objectDeclaration,
+override, primaryConstructor, propertyDeclaration, typeAliasDeclaration */

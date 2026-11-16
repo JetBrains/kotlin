@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: annotation.kt
@@ -36,3 +37,6 @@ class Foo(val foo: <!SERIALIZER_NULLABILITY_INCOMPATIBLE("NopeNullableSerializer
 @Serializable(FooKeptSerializer::class)
 @KeepGeneratedSerializer
 class FooKept(val foo: <!SERIALIZER_NULLABILITY_INCOMPATIBLE("NopeNullableSerializer; Nope")!>Nope<!>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, getter,
+nullableType, objectDeclaration, override, primaryConstructor, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 /**
@@ -35,3 +36,7 @@ fun test(targetString: String): String {
 fun box(): String {
     return test("""{"ctor":42,"body":"42"}""")
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, multilineStringLiteral, primaryConstructor, propertyDeclaration,
+stringLiteral, thisExpression */

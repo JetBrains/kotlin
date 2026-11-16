@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // This test enshures that analysis ends up without compiler exceptions
 
 import kotlinx.serialization.*
@@ -7,3 +8,5 @@ class Digest() {
     @Serializer(forClass = Digest::class)
     companion object : KSerializer<Digest> {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, objectDeclaration, primaryConstructor */

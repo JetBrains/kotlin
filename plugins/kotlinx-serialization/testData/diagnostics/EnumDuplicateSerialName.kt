@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 import kotlinx.serialization.*
 
@@ -37,3 +38,4 @@ enum class WithConstants {
     THIRD
 }
 
+/* GENERATED_FIR_TAGS: additiveExpression, const, enumDeclaration, enumEntry, propertyDeclaration, stringLiteral */

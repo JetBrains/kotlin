@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 package com.example
@@ -109,3 +110,8 @@ private fun <T> encodeAndDecode(serializer: KSerializer<T>, value: T, expectedEn
     if (decoded != (expectedDecoded ?: value)) return "DECODED=${decoded.toString()}"
     return null
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, break, checkNotNullCall, classDeclaration, classReference,
+companionObject, data, elvisExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, multilineStringLiteral, nullableType, objectDeclaration, override, primaryConstructor,
+propertyDeclaration, safeCall, stringLiteral, typeParameter, whenExpression, whenWithSubject, whileLoop */

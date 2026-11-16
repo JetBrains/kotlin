@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -49,3 +50,7 @@ fun testKinds(): String {
 fun box(): String {
     return testData(testKinds())
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, classReference, equalityExpression, functionDeclaration,
+ifExpression, interfaceDeclaration, lambdaLiteral, localProperty, multilineStringLiteral, propertyDeclaration, sealed,
+stringLiteral */

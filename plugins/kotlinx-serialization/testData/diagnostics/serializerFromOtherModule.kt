@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // ISSUE: KT-57083
 
@@ -17,3 +18,5 @@ import kotlinx.serialization.json.*
 
 @Serializable
 class Usage(val access: Access)
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: annotation.kt
@@ -35,3 +36,6 @@ data class WithTransientsKept(<!TRANSIENT_MISSING_INITIALIZER!>@Transient val mi
     @Transient
     lateinit var allowTransientLateinitWithoutInitializer: String
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, data, getter, integerLiteral, lateinit,
+objectDeclaration, primaryConstructor, propertyDeclaration */

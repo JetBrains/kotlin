@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 // MODULE: lib
@@ -63,3 +64,6 @@ data class SessionKept(
     @Serializable(MyDateSerializer::class) val s: <!SERIALIZER_TYPE_INCOMPATIBLE("String; MyDateSerializer; Date")!>String<!>,
 val sl: List<<!SERIALIZER_TYPE_INCOMPATIBLE("String; MyDateSerializer; Date")!>@Serializable(MyDateSerializer::class) String<!>>
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, data, functionDeclaration, javaFunction,
+objectDeclaration, override, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration */
