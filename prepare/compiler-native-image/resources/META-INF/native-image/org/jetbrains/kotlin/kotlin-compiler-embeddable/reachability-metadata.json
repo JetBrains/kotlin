@@ -26,6 +26,10 @@
       "type": "gnu.trove.TObjectHashingStrategy"
     },
     {
+      "type": "java.io.File",
+      "serializable": true
+    },
+    {
       "type": "java.io.IOException",
       "allDeclaredFields": true,
       "serializable": true
@@ -82,6 +86,17 @@
         {
           "name": "getPlatformClassLoader",
           "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.ClassNotFoundException",
+      "fields": [
+        {
+          "name": "serialPersistentFields"
+        },
+        {
+          "name": "serialVersionUID"
         }
       ]
     },
@@ -279,14 +294,38 @@
       "serializable": true
     },
     {
+      "type": "java.util.Arrays$ArrayList",
+      "serializable": true
+    },
+    {
       "type": "java.util.Collection"
+    },
+    {
+      "type": "java.util.CollSer",
+      "serializable": true
     },
     {
       "type": "java.util.Collections$EmptyList",
       "serializable": true
     },
     {
+      "type": "java.util.Collections$SingletonList",
+      "serializable": true
+    },
+    {
+      "type": "java.util.EnumMap",
+      "serializable": true
+    },
+    {
+      "type": "java.util.HashMap",
+      "serializable": true
+    },
+    {
       "type": "java.util.Iterator"
+    },
+    {
+      "type": "java.util.LinkedHashMap",
+      "serializable": true
     },
     {
       "type": "java.util.List"
@@ -346,6 +385,15 @@
     },
     {
       "type": "jdk.internal.jrtfs.JrtFileSystemProvider"
+    },
+    {
+      "type": "jdk.internal.vm.VMSupport",
+      "methods": [
+        {
+          "name": "getAgentProperties",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "kotlin.Any"
@@ -981,6 +1029,550 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.build.report.events.IcEventImpl",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.events.IcEventImpl$CompilationStarted",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.events.IcEventImpl$CompileIteration",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.ANALYSIS_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BACKEND",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BACKEND_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BACKUP_OUTPUT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BUNDLE_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BuildAttribute",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BuildAttributeKind",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BuildAttributes",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BuildMetrics",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetrics",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.BuildTimes",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CACHE_DIRECTORY_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CALCULATE_OUTPUT_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CALL_KOTLIN_DAEMON",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CALL_WORKER",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CLASSPATH_ENTRY_COUNT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CLASSPATH_SNAPSHOT_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CLEAN_BACKUP_STASH",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CLEAR_JAR_CACHE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CLEAR_OUTPUT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CLEAR_OUTPUT_ON_REBUILD",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CODE_ANALYSIS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CODE_GENERATION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CODE_GENERATION_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPILATION_ROUND",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPILER_INITIALIZATION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPILER_PERFORMANCE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPUTE_CHANGED_AND_IMPACTED_SET",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPUTE_CLASSPATH_CHANGES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPUTE_CLASS_CHANGES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPUTE_IMPACTED_SET",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPUTE_JAVA_CLASS_CHANGES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.COMPUTE_KOTLIN_CLASS_CHANGES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CONNECT_TO_DAEMON",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.DAEMON_INCREASED_MEMORY",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.DAEMON_MEMORY_USAGE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.DIRECTORY_CLASSPATH_ENTRY_SNAPSHOT_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.FIND_REFERENCED_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.FIND_TRANSITIVELY_REFERENCED_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.FINISH_KOTLIN_DAEMON_EXECUTION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.GET_LOOKUP_SYMBOLS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.GRADLE_CONFIGURATION_TIME",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.GRADLE_TASK",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.GRADLE_TASK_ACTION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.GRADLE_TASK_PREPARATION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.GcMetric",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.GcMetrics",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_CHANGES_IN_ANDROID_LAYOUTS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_CHANGES_IN_DEPENDENCIES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_CHANGES_IN_JAVA_SOURCES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_HISTORY_FILES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_JAR_FILES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_CALCULATE_INITIAL_DIRTY_SET",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_COMPILE_ITERATION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_DETECT_REMOVED_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_FIND_HISTORY_FILES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_GEN_COMPILER_REF_INDEX",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_UPDATE_CACHES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IC_WRITE_HISTORY_FILE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.INCREMENTAL_COMPILATION_DAEMON",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.INCREMENTAL_LOAD_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AGAINST_PREVIOUS_LOOKUPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.INCREMENTAL_REMOVE_DUPLICATE_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IR_LINKING",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IR_LINKING_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IR_LOWERING",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IR_LOWERING_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IR_PRE_LOWERING",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IR_PRE_LOWERING_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IR_SERIALIZATION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.IR_SERIALIZATION_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.JAR_CLASSPATH_ENTRY_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.JAR_CLASSPATH_ENTRY_SNAPSHOT_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.JAR_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.KLIB_METADATA_WRITING",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.KLIB_METADATA_WRITING_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.KLIB_WRITING",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.KLIB_WRITING_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSES_PATHS_ONLY",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.LOAD_CONTENTS_OF_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.LOAD_CURRENT_CLASSPATH_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.LOOKUP_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.NATIVE_IN_EXECUTOR",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.NATIVE_IN_PROCESS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.NON_INCREMENTAL_COMPILATION_DAEMON",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.NON_INCREMENTAL_COMPILATION_IN_PROCESS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.NON_INCREMENTAL_REMOVE_DUPLICATE_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.OUT_OF_WORKER_TASK_ACTION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.PRECISE_BACKUP_OUTPUT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.REMOVE_DUPLICATE_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.RESTORE_OUTPUT_FROM_BACKUP",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.RUN_COMPILATION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.RUN_COMPILATION_IN_WORKER",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.RUN_ENTRY_POINT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.RUN_WORKER_DELAY",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SAVE_CLASSPATH_ENTRY_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SHRINK_CURRENT_CLASSPATH_SNAPSHOT",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SHRUNK_CLASSPATH_SNAPSHOT_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SNAPSHOT_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SNAPSHOT_INLINED_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SNAPSHOT_JAVA_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SNAPSHOT_KOTLIN_CLASSES",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SNAPSHOT_SIZE",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.SOURCE_LINES_NUMBER",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.START_KOTLIN_DAEMON_EXECUTION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.START_TASK_ACTION_EXECUTION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.START_WORKER_EXECUTION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.STORE_BUILD_INFO",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.TASK_FINISH_LISTENER_NOTIFICATION",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.TRANSLATION_TO_IR",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.TRANSLATION_TO_IR_LPS",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.build.report.metrics.ValueType",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.buildtools.api.SourcesChanges$Known",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.buildtools.api.SourcesChanges$ToBeCalculated",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.buildtools.api.SourcesChanges$Unknown",
+      "serializable": true
+    },
+    {
       "type": "org.jetbrains.kotlin.cli.CliDiagnosticReportingKt",
       "methods": [
         {
@@ -1090,6 +1682,9 @@
       "type": "org.jetbrains.kotlin.com.intellij.java.syntax.JavaSyntaxBundle"
     },
     {
+      "type": "org.jetbrains.kotlin.com.intellij.lang.MetaLanguage"
+    },
+    {
       "type": "org.jetbrains.kotlin.com.intellij.lang.jvm.facade.JvmElementProvider"
     },
     {
@@ -1097,6 +1692,25 @@
       "fields": [
         {
           "name": "ourApplication"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.openapi.editor.event.DocumentListener[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.openapi.editor.impl.LockFreeCOWSortedArray",
+      "fields": [
+        {
+          "name": "array"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.openapi.editor.impl.RedBlackTree",
+      "fields": [
+        {
+          "name": "modCount"
         }
       ]
     },
@@ -1127,7 +1741,31 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.com.intellij.openapi.vfs.transformer.TextPresentationTransformers",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.LanguageSubstitutors",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.com.intellij.psi.PsiElementFinder"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.SingleRootFileViewProvider"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.augment.PsiAugmentProvider"
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.psi.compiled.ClassFileDecompilers",
@@ -1152,6 +1790,9 @@
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.psi.impl.source.JavaFileElementType"
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.CompositeElement"
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.psi.stubs.StubRegistryExtension"
@@ -1260,7 +1901,19 @@
       "type": "org.jetbrains.kotlin.daemon.CompileServiceImpl_Stub"
     },
     {
+      "type": "org.jetbrains.kotlin.daemon.common.BuildMetricsValue",
+      "serializable": true
+    },
+    {
       "type": "org.jetbrains.kotlin.daemon.common.CompilationOptions",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompilationPerformanceMetrics",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.CompileIterationResult",
       "serializable": true
     },
     {
@@ -1292,6 +1945,10 @@
       "serializable": true
     },
     {
+      "type": "org.jetbrains.kotlin.daemon.common.CompilerId",
+      "serializable": true
+    },
+    {
       "type": "org.jetbrains.kotlin.daemon.common.CompilerMessageAttachment",
       "serializable": true
     },
@@ -1308,11 +1965,23 @@
       "serializable": true
     },
     {
+      "type": "org.jetbrains.kotlin.daemon.common.DaemonOptions",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions",
+      "serializable": true
+    },
+    {
       "type": "org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface$AbstractClientLoopbackSocketFactory",
       "serializable": true
     },
     {
       "type": "org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface$ClientLoopbackSocketFactory",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.MultiModuleICSettings",
       "serializable": true
     },
     {
@@ -1414,6 +2083,74 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathChanges",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathChanges$ClasspathSnapshotDisabled",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathChanges$ClasspathSnapshotEnabled",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathChanges$ClasspathSnapshotEnabled$IncrementalRun",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathChanges$ClasspathSnapshotEnabled$IncrementalRun$NoChanges",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathChanges$ClasspathSnapshotEnabled$IncrementalRun$ToBeComputedByIncrementalCompiler",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathChanges$ClasspathSnapshotEnabled$NotAvailableDueToMissingClasspathSnapshot",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathChanges$ClasspathSnapshotEnabled$NotAvailableForNonIncrementalRun",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathChanges$NotAvailableForJSCompiler",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.ConfigurationInputs",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.IncrementalModuleEntry",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.IncrementalModuleInfo",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.LookupInfo",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.Position",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.incremental.components.ScopeKind",
+      "serializable": true
+    },
+    {
       "type": "org.jetbrains.kotlin.io.opentelemetry.api.incubator.trace.ExtendedDefaultTracerProvider"
     },
     {
@@ -1472,6 +2209,42 @@
           "parameterTypes": [
             "java.lang.String"
           ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.net.jpountz.lz4.LZ4HCJavaSafeCompressor",
+      "allDeclaredConstructors": true,
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.net.jpountz.lz4.LZ4JavaSafeCompressor",
+      "allDeclaredConstructors": true,
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.net.jpountz.lz4.LZ4JavaSafeFastDecompressor",
+      "allDeclaredConstructors": true,
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.net.jpountz.lz4.LZ4JavaSafeSafeDecompressor",
+      "allDeclaredConstructors": true,
+      "fields": [
+        {
+          "name": "INSTANCE"
         }
       ]
     },

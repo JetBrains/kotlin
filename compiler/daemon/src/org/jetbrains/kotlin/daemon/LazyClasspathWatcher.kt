@@ -42,7 +42,8 @@ val DEFAULT_CLASSPATH_DIGEST_WATCH_PERIOD_MS = 300000L // 5 min
  */
 class LazyClasspathWatcher(classpath: Iterable<String>,
                            val checkPeriod: Long = DEFAULT_CLASSPATH_WATCH_PERIOD_MS,
-                           val digestCheckPeriod: Long = DEFAULT_CLASSPATH_DIGEST_WATCH_PERIOD_MS) {
+                           val digestCheckPeriod: Long = DEFAULT_CLASSPATH_DIGEST_WATCH_PERIOD_MS,
+                           private val isNativeImage: Boolean = false) {
 
     private data class FileId(val file: File, val lastModified: Long, val digest: ByteArray)
 
@@ -61,7 +62,7 @@ class LazyClasspathWatcher(classpath: Iterable<String>,
                 fileIds = classpath
                         .map(::File)
                         .asSequence()
-                        .flatMap { it.walk().filter(::isClasspathFile) }
+                        .flatMap { if (isNativeImage) sequenceOf(it) else it.walk().filter(::isClasspathFile) }
                         .map { FileId(it, it.lastModified(), it.md5Digest()) }
                         .toList()
                 val nowMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime())

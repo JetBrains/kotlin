@@ -290,6 +290,22 @@ data class DaemonOptions(
 val DaemonOptions.runFilesPathOrDefault: String
     get() = if (runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else runFilesPath
 
+fun makeRunFileDigest(javaLanguageVersion: JavaLanguageVersion, compilerId: CompilerId): String {
+    if (compilerId.isNativeImage) {
+        // The executable identifies the image. The compiler version keeps daemons started from an older version of
+        // a distribution that was rebuilt in place apart from the newer ones, and java.home is passed to the daemon
+        // by its first client and determines the JDK the compilations run against, so include both in the digest.
+        val entries = buildList {
+            add("native-image")
+            add("compilerVersion=${compilerId.compilerVersion}")
+            add("javaHome=${CompilerSystemProperties.JAVA_HOME.value}")
+            addAll(compilerId.compilerClasspath.distinct().sorted())
+        }
+        return entries.digest().toHexString()
+    }
+    return makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { File(it).toPath() })
+}
+
 fun makeRunFileDigest(javaLanguageVersion: JavaLanguageVersion, compilerClasspath: List<Path>): String {
     val entries: List<String> = buildList {
         add("jvm")
@@ -309,6 +325,7 @@ private fun ByteArray.toHexString(): String = joinToString("", transform = { "%0
 data class CompilerId(
     var compilerClasspath: List<String> = listOf(),
     var compilerVersion: String = "",
+    var isNativeImage: Boolean = false,
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
@@ -317,10 +334,20 @@ data class CompilerId(
                 this,
                 CompilerId::compilerClasspath,
                 toString = { it.joinToString(File.pathSeparator) },
-                fromString = { it.trimQuotes().split(File.pathSeparator) }), StringPropMapper(this, CompilerId::compilerVersion)
+                fromString = { it.trimQuotes().split(File.pathSeparator) }),
+            StringPropMapper(this, CompilerId::compilerVersion),
+            BoolPropMapper(this, CompilerId::isNativeImage),
         )
 
     companion object {
+        @JvmStatic
+        fun makeNativeImageCompilerId(executable: File, compilerVersion: String): CompilerId =
+            CompilerId(
+                compilerClasspath = listOf(executable.absolutePath),
+                compilerVersion = compilerVersion,
+                isNativeImage = true,
+            )
+
         @JvmStatic
         fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
 

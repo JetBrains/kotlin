@@ -29,10 +29,14 @@ import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNot
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
+import org.jetbrains.kotlin.compilerRunner.CompilerOutputParser
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
@@ -44,8 +48,10 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import java.nio.file.Files
 import java.nio.file.Path
 
 @kotlinx.serialization.Serializable
@@ -185,7 +191,13 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             InProcessExecutionPolicyImpl -> {
                 compileInProcess(kotlinLogger, messageCollector, executionContext)
             }
+            is NativeImageProcessExecutionPolicyImpl -> {
+                compileInNativeImageProcess(executionPolicy, kotlinLogger, messageCollector, executionContext)
+            }
             is DaemonExecutionPolicyImpl -> {
+                compileWithDaemon(executionPolicy, kotlinLogger, messageCollector, executionContext)
+            }
+            is NativeImageDaemonExecutionPolicyImpl -> {
                 compileWithDaemon(executionPolicy, kotlinLogger, messageCollector, executionContext)
             }
             else -> {
@@ -262,7 +274,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 
     private fun compileWithDaemon(
-        executionPolicy: DaemonExecutionPolicyImpl,
+        executionPolicy: DaemonBasedExecutionPolicy,
         logger: KotlinLogger,
         messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
@@ -352,6 +364,80 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             compileIncrementallyInProcess(arguments, logger, messageCollector, executionContext)
         } else {
             compileInProcessWithoutIc(arguments, logger, messageCollector, executionContext)
+        }
+    }
+
+    private fun compileInNativeImageProcess(
+        executionPolicy: NativeImageProcessExecutionPolicyImpl,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
+        @Suppress("unused") executionContext: ExecutionContext,
+    ): CompilationResult {
+        logger.debug("Compiling using the native image process strategy")
+        if (targetPlatform != CompileService.TargetPlatform.JVM) {
+            logger.error("The native image process strategy only supports JVM compilation.")
+            return COMPILATION_ERROR
+        }
+        if (lookupTracker != null) {
+            logger.error("Lookup tracking is not supported by the native image process strategy.")
+            return COMPILATION_ERROR
+        }
+
+        val arguments = createAndPrepareCompilerArguments()
+        if (shouldCompileIncrementally()) {
+            logger.error("Incremental compilation is not supported by the native image process strategy.")
+            return COMPILATION_ERROR
+        }
+        arguments.addSources()
+        logCompilerArguments(logger, arguments, compilerArgumentsLogLevel)
+
+        cancellationHandle.checkCanceled()
+        val workingDirectory = Files.createTempDirectory("kotlin-native-image-")
+        try {
+            val argumentsFile = workingDirectory.resolve("arguments")
+            Files.newBufferedWriter(argumentsFile).use { writer ->
+                for (argument in arguments.toArgumentStrings(allowArgFileInValues = false)) {
+                    writer.appendLine("\"${argument.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
+                }
+            }
+            val standardOutput = workingDirectory.resolve("stdout").toFile()
+            val process = ProcessBuilder(
+                executionPolicy.dist.compilerExecutable.toString(),
+                "-Djava.home=${CompilerSystemProperties.JAVA_HOME.safeValue}",
+                "-Dkotlin.home=${executionPolicy.dist.home.toAbsolutePath()}",
+                "-D${MessageRenderer.PROPERTY_KEY}=${MessageRenderer.XML.name}",
+                "@${argumentsFile.toAbsolutePath()}",
+            ).redirectOutput(standardOutput).start()
+
+            val result = try {
+                onCancel { process.destroyForcibly() }
+                cancellationHandle.checkCanceled()
+                CompilerOutputParser.parseCompilerMessagesFromReader(
+                    messageCollector,
+                    process.errorStream.bufferedReader(),
+                    OutputItemsCollectorImpl(),
+                )
+                val exitCode = process.waitFor()
+                when (val compilerExitCode = ExitCode.entries.find { it.code == exitCode } ?: ExitCode.INTERNAL_ERROR) {
+                    ExitCode.OK if messageCollector.hasErrors() -> COMPILATION_ERROR
+                    ExitCode.SCRIPT_EXECUTION_ERROR -> COMPILATION_ERROR
+                    else -> compilerExitCode.asCompilationResult
+                }
+            } finally {
+                if (process.isAlive) process.destroyForcibly().waitFor()
+                process.outputStream.close()
+                standardOutput.forEachLine { logger.lifecycle(it) }
+            }
+
+            val metricsReporter = getMetricsReporter()
+            metricsReporter.addMetric(COMPILE_ITERATION, 1)
+            populateMetricsCollector(metricsReporter)
+            return result
+        } catch (e: IOException) {
+            logger.error("Failed to run the native image compiler.", e)
+            return CompilationResult.COMPILER_INTERNAL_ERROR
+        } finally {
+            workingDirectory.toFile().deleteRecursively()
         }
     }
 
