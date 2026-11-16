@@ -41,6 +41,15 @@ import org.jetbrains.kotlin.library.metadata.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 
 internal object DataFlowIR {
+    // Public types and functions, as well as fields, are identified across modules by 64-bit hashes
+    // (see [SymbolTable.mapClassReferenceType], [SymbolTable.mapFunction] and [SymbolTable.mapField]).
+    // The names are saved along with the hashes and serve as an independent witness:
+    // whenever two entities have clashing hashes, their names must be the same.
+    fun checkNoHashCollision(kind: String, hash: Long, name: String?, otherName: String?) {
+        if (name != null && otherName != null && name != otherName)
+            error("Hash collision between $kind '$name' and '$otherName': $hash")
+    }
+
     abstract class Type(
             val index: Int,
             val isFinal: Boolean,
@@ -524,6 +533,16 @@ internal object DataFlowIR {
         val classMap = mutableMapOf<IrClass, Type>()
         val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
         val fieldMap = mutableMapOf<IrField, Field>()
+
+        // The names of all the [FunctionSymbol.External]s by hash - these symbols are created by every
+        // module referencing the function and are unified solely by hash.
+        private val externalFunctionNames = mutableMapOf<Long, String>()
+
+        fun checkExternalFunction(hash: Long, name: String?) {
+            if (name != null)
+                checkNoHashCollision("external functions", hash, externalFunctionNames.getOrPut(hash) { name }, name)
+        }
+
         val typeHierarchy by lazy {
             require(sealed) { "The symbol table has been sealed" }
 
@@ -600,15 +619,21 @@ internal object DataFlowIR {
                 if (!irClass.isExported) return Type.Virtual
 
                 // Attach the IR declaration to the deserialized type - the analyses might still need it.
-                return externalPublicTypes[computeHash()]
-                        ?.also { it.irClass = irClass }
+                val hash = computeHash()
+                return externalPublicTypes[hash]
+                        ?.also {
+                            checkNoHashCollision("types", hash, it.name, name)
+                            it.irClass = irClass
+                        }
                         ?: error("Class ${irClass.render()} is not found")
             }
 
             // A cached library referencing a link-once class has published its own copy of the class -
             // reuse it instead of duplicating.
             if (isLinkOnce && irClass.isExported) {
-                externalPublicTypes[computeHash()]?.takeIf { it.isLinkOnce }?.let {
+                val hash = computeHash()
+                externalPublicTypes[hash]?.takeIf { it.isLinkOnce }?.let {
+                    checkNoHashCollision("types", hash, it.name, name)
                     it.irClass = irClass
                     classMap[irClass] = it
                     return it
@@ -714,8 +739,10 @@ internal object DataFlowIR {
             // functions - just in every module referencing them.
             val isLinkOnce = it.moduleFragment.kotlinLibrary.let { library -> library == null || library.isCInteropLibrary() }
             if (!it.isExternal && !it.isBuiltInOperator && !isLinkOnce
-                    && !llvmModuleSpecification.containsDeclaration(function)) {
-                return externalPublicFunctions[computePublicHash()]
+                    && !llvmModuleSpecification.containsDeclaration(it)) {
+                val hash = computePublicHash()
+                return externalPublicFunctions[hash]
+                        ?.also { symbol -> checkNoHashCollision("functions", hash, symbol.name, name) }
                         ?: error("Function ${function.render()} is not found")
             }
 
@@ -723,7 +750,9 @@ internal object DataFlowIR {
 
             // Same as for link-once classes (see [mapClassReferenceType]): reuse the copy published by a cached library, if any.
             if (isLinkOnce && it.isExported && !it.isExternal && !it.isBuiltInOperator) {
-                externalPublicFunctions[computePublicHash()]?.takeIf { symbol -> symbol.isLinkOnce }?.let { symbol ->
+                val hash = computePublicHash()
+                externalPublicFunctions[hash]?.takeIf { symbol -> symbol.isLinkOnce }?.let { symbol ->
+                    checkNoHashCollision("functions", hash, symbol.name, name)
                     symbol.irDeclaration = it
                     functionMap[it] = symbol
                     return symbol
@@ -759,7 +788,7 @@ internal object DataFlowIR {
                         it.isExported,
                         it.escapes,
                         it.pointsTo
-                )
+                ).also { symbol -> checkExternalFunction(symbol.hash, symbol.name) }
 
                 else -> {
                     val bridgeTarget = it.bridgeTarget

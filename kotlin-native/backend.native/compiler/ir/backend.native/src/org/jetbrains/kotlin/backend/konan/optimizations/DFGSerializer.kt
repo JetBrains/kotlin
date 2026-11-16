@@ -976,7 +976,9 @@ internal object DFGSerializer {
                         serializedType.virtual -> DataFlowIR.Type.Virtual
                         primitiveBinaryType != null -> symbolTable.primitiveTypes[primitiveBinaryType.ordinal]
                         external != null ->
-                            publicTypesMap[external.hash] ?: error("External type ${external.base.name} : ${external.hash} is not found")
+                            publicTypesMap[external.hash]
+                                    ?.also { DataFlowIR.checkNoHashCollision("types", external.hash, it.name, external.base.name) }
+                                    ?: error("External type ${external.base.name} : ${external.hash} is not found")
                         public != null -> {
                             val prevType = publicTypesMap[public.hash]
                             when {
@@ -989,6 +991,7 @@ internal object DFGSerializer {
                                         symbolTable.typesList += it
                                     }
                                 public.isLinkOnce && prevType.isLinkOnce -> {
+                                    DataFlowIR.checkNoHashCollision("types", public.hash, prevType.name, public.intestines.base.name)
                                     deduplicatedTypes += index
                                     prevType
                                 }
@@ -1020,11 +1023,14 @@ internal object DFGSerializer {
                                         external.escapes?.let { Escapes(it) },
                                         external.pointsTo?.let { PointsTo(it) }
                                 ).also {
+                                    symbolTable.checkExternalFunction(it.hash, it.name)
                                     symbolTable.functionsList += it
                                 }
                             }
                             else -> {
-                                publicFunctionsMap[external.hash] ?: error("External function ${external.name} : ${external.hash} is not found")
+                                publicFunctionsMap[external.hash]
+                                        ?.also { DataFlowIR.checkNoHashCollision("functions", external.hash, it.name, external.name) }
+                                        ?: error("External function ${external.name} : ${external.hash} is not found")
                             }
                         }
                         public != null -> {
@@ -1038,6 +1044,7 @@ internal object DFGSerializer {
                                         symbolTable.functionsList += it
                                     }
                                 public.isLinkOnce && prevSymbol.isLinkOnce -> {
+                                    DataFlowIR.checkNoHashCollision("functions", public.hash, prevSymbol.name, public.name)
                                     deduplicatedFunctions += index
                                     prevSymbol
                                 }
