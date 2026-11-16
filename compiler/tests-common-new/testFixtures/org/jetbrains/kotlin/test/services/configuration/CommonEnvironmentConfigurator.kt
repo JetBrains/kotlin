@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
+import org.jetbrains.kotlin.fir.session.FirAbstractSessionFactory
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isMultiplatformWeb
 import org.jetbrains.kotlin.test.FirParser
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.frontend.fir.firSessionComponentRegistrar
 import org.jetbrains.kotlin.test.model.DependencyRelation.*
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -70,6 +72,10 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         }
 
         setupK2CliConfiguration(module, configuration)
+
+        configuration.put(FirAbstractSessionFactory.TEST_ONLY_SESSION_COMPONENT_CALLBACK) {
+            testServices.firSessionComponentRegistrar?.registerAdditionalComponent(it)
+        }
     }
 
     private fun setupK2CliConfiguration(
