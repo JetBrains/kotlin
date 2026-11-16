@@ -1,10 +1,10 @@
-context(A, b@B)
+context(A, B)
 fun foo() {}
 
-context(A, b@B)
+context(A, B)
 val x: Int get() = 1
 
-context(A, b@B)
+context(A, B)
 class C
 
 fun bar1(x: context(A, B)() -> Unit) {}

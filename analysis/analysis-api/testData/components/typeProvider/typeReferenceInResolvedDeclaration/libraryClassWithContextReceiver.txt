@@ -1,0 +1,7 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+context(lib.A)
+//      ^A(use)
+public final class Foo public constructor() {
+}

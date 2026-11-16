@@ -2458,6 +2458,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("labelInDeclarationContext.kt")
+    public void testLabelInDeclarationContext() {
+      run("labelInDeclarationContext.kt");
+    }
+
+    @Test
     @TestMetadata("labelInFunctionTypeContext.kt")
     public void testLabelInFunctionTypeContext() {
       run("labelInFunctionTypeContext.kt");
