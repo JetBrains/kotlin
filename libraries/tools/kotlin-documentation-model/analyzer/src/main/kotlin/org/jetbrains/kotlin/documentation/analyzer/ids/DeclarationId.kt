@@ -34,7 +34,7 @@ import java.util.Base64
  *   e.g. `function:kotlin.text#repeat#<hash>` or `constructor:kotlin.collections/ArrayList#%3Cinit%3E#<hash>`.
  *
  * By default, [hashSignature] replaces the readable signature with an unpadded URL-safe Base64 encoding
- * of the first [SIGNATURE_HASH_BYTES] bytes of its SHA-256 digest.
+ * of the full FNV-1 64-bit hash of it.
  * Set it to false to inspect the signature used to calculate the digest, e.g.
  * `function:kotlin.text#repeat#typeParameters=[]; context=[]; receiver=kotlin/String; parameters=[kotlin/Int];`
  * for `fun String.repeat(n: Int): String`. Package and classifier IDs are unaffected.
@@ -176,11 +176,22 @@ private fun callableSignature(declaration: KaCallableSymbol): String {
 }
 
 
-/** Unpadded URL-safe Base64 encoding of the leading bytes of the SHA-256 digest. */
-private fun String.shortHash(): String =
-    MessageDigest.getInstance("SHA-256").digest(toByteArray(Charsets.UTF_8))
-        .copyOf(SIGNATURE_HASH_BYTES)
-        .let(Base64.getUrlEncoder().withoutPadding()::encodeToString)
+/** Unpadded URL-safe Base64 encoding of the big-endian bytes of the full FNV-1 64-bit hash. */
+private fun String.shortHash(): String {
+    val hash = fnv1Hash64()
+    return Base64.getUrlEncoder().withoutPadding()
+        .encodeToString(ByteArray(Long.SIZE_BYTES) { (hash shr (8 * (Long.SIZE_BYTES - 1 - it))).toByte() })
+}
+
+/** FNV-1 64-bit hash (offset basis 14695981039346656037, prime 1099511628211) of the UTF-8 bytes. */
+private fun String.fnv1Hash64(): ULong {
+    var hash = 0xcbf29ce484222325UL
+    for (byte in toByteArray(Charsets.UTF_8)) {
+        hash = (hash * 0x100000001b3UL) and 0xffffffffffffffffUL
+        hash = hash xor (byte.toULong() and 0xffUL)
+    }
+    return hash
+}
 
 /**
  * Whether the callable is imported from ObjC: the Kotlin/Native cinterop stub generator marks every
@@ -278,6 +289,3 @@ private val idTypeRenderer: KaTypeRenderer =
     }
 
 private const val CONSTRUCTOR_NAME = "<init>"
-
-/** Leading digest bytes kept in the encoded signature hash. */
-internal const val SIGNATURE_HASH_BYTES = 8
