@@ -22,6 +22,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.irGenerateInlineAnonymousFunctions = from.irGenerateInlineAnonymousFunctions
     to.irKeep = from.irKeep
     to.irMinimizedMemberNames = from.irMinimizedMemberNames
+    to.irPerClass = from.irPerClass
     to.irPerFile = from.irPerFile
     to.irPerModule = from.irPerModule
     to.irSafeExternalBoolean = from.irSafeExternalBoolean

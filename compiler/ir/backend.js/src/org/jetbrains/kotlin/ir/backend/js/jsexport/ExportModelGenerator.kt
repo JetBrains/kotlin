@@ -19,26 +19,25 @@ import org.jetbrains.kotlin.ir.backend.js.utils.couldBeConvertedToExplicitExport
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExportDefault
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespacesForPackages: Boolean) {
-    fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
-        val namespaceFqName = file.packageFqName
-        val exports = file.declarations.memoryOptimizedMapNotNull { declaration ->
-            declaration.takeIf { it.couldBeConvertedToExplicitExport() != true }?.let(::exportDeclaration)
-        }
-
-        return when {
-            exports.isEmpty() -> emptyList()
-            !generateNamespacesForPackages || namespaceFqName.isRoot -> exports
-            else -> namespaceFqName.pathSegments().asReversed()
-                .fold(exports) { members, segment ->
-                    listOf(ExportedNamespace(segment.identifier, members))
-                }
-        }
+    fun wrapInNamespaces(packageFqName: FqName, exports: List<ExportedDeclaration>): List<ExportedDeclaration> = when {
+        exports.isEmpty() -> emptyList()
+        !generateNamespacesForPackages || packageFqName.isRoot -> exports
+        else -> packageFqName.pathSegments().asReversed()
+            .fold(exports) { members, segment -> listOf(ExportedNamespace(segment.identifier, members)) }
     }
+
+    fun generateExports(file: IrPackageFragment): Map<IrDeclaration, List<ExportedDeclaration>> =
+        file.declarations.memoryOptimizedMapNotNull { declaration ->
+            declaration.takeIf { it.couldBeConvertedToExplicitExport() != true }
+                ?.let(::exportDeclaration)
+                ?.let { declaration to listOf(it) }
+        }.toMap()
 
     private fun exportDeclaration(declaration: IrDeclaration): ExportedDeclaration? {
         val candidate = getExportCandidate(declaration) ?: return null

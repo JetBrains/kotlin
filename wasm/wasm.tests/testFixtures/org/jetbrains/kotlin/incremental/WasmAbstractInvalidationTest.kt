@@ -261,6 +261,7 @@ abstract class WasmAbstractInvalidationTest(
                     configuration,
                     isPerModule = false,
                     isPerFile = false,
+                    isPerClass = false,
                     generateDts = false
                 )!!,
             )
