@@ -538,6 +538,9 @@ internal object DataFlowIR {
         val externalPublicTypes = mutableMapOf<Long, Type.Public>()
         val externalPublicFunctions = mutableMapOf<Long, FunctionSymbol.Public>()
 
+        // The other modules' additional roots (functions the runtime invokes with no DFG call edge, see [ModuleDFGBuilder.build]).
+        val deserializedAdditionalRoots = mutableListOf<FunctionSymbol>()
+
         private var sealed = false
         val typesList = mutableListOf<Type>()
         val functionsList = mutableListOf<FunctionSymbol>()

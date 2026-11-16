@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.actualCallee
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
+import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.lower.visibleVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.volatileField
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -789,8 +791,13 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
     }
 }
 
+/**
+ * [additionalRoots] are the functions invoked by the runtime with no DFG call edge
+ * (see the discovering walk in [ModuleDFGBuilder.build]) - a mandatory part of any root set.
+ */
 internal class ModuleDFG(val functions: MutableMap<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                         val symbolTable: DataFlowIR.SymbolTable)
+                         val symbolTable: DataFlowIR.SymbolTable,
+                         val additionalRoots: List<DataFlowIR.FunctionSymbol> = emptyList())
 
 internal class ModuleDFGBuilder(
         val generationState: NativeGenerationState,
@@ -841,6 +848,37 @@ internal class ModuleDFGBuilder(
             }
         }, data = null)
 
+        // Collect the functions the runtime can invoke with no call edge in the DFG: associated object getters and the function
+        // references leaking to the native world. Each module discovers its own here and the list is serialized along with the DFG.
+        // (see [DevirtualizationAnalysis.computeRootSet] for usage)
+        val additionalRoots = mutableListOf<DataFlowIR.FunctionSymbol>()
+        irModule.acceptChildrenVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                declaration.acceptChildrenVoid(this)
+
+                // Conservatively assume each associated object could be called. Its final type will be
+                // added to instantiating classes through the constructor's additional <this> parameter.
+                context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
+                    assert(it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
+                    additionalRoots.add(symbolTable.mapFunction(context.getObjectClassInstanceFunction(it)))
+                }
+            }
+
+            // At this point all function references are lowered except those leaking to the native world.
+            // Conservatively assume them belonging to the root set.
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference) {
+                expression.acceptChildrenVoid(this)
+
+                val function = expression.symbol.owner
+                require(function is IrSimpleFunction) { "All constructors should've been lowered: ${expression.render()}" }
+                additionalRoots.add(symbolTable.mapFunction(function))
+            }
+        })
+
         // Note: the seal happens after building all the function DFGs rather than right after [DataFlowIR.SymbolTable.populateWith]:
         // link-once types are only discovered when a function body references them.
         symbolTable.seal()
@@ -859,6 +897,6 @@ internal class ModuleDFGBuilder(
             }
         }
 
-        return ModuleDFG(functions, symbolTable)
+        return ModuleDFG(functions, symbolTable, additionalRoots.distinct())
     }
 }

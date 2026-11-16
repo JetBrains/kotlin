@@ -224,7 +224,7 @@ internal class CallGraphBuilder(
     }
 
     fun build(): CallGraph {
-        val rootSet = DevirtualizationAnalysis.computeRootSet(context, irModule, moduleDFG)
+        val rootSet = DevirtualizationAnalysis.computeRootSet(context, moduleDFG)
         rootSet.forEach { handleRoot(it) }
 
         functionStack.process()

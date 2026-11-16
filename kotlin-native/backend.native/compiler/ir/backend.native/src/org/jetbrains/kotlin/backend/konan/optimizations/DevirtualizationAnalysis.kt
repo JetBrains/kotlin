@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.lower.getLoweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
-import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
 import org.jetbrains.kotlin.backend.konan.util.LongArrayList
 import org.jetbrains.kotlin.backend.konan.util.LongHashSet
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -32,8 +30,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
@@ -108,7 +104,7 @@ internal object DevirtualizationAnalysis {
         return roots
     }
 
-    fun computeRootSet(context: NativeBackendContext, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
+    fun computeRootSet(context: NativeBackendContext, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
         val entryPoint = context.symbols.entryPoint?.owner?.let { moduleDFG.symbolTable.mapFunction(it) }
         val roots = collectSymbolTableRoots(
                 entryPoint,
@@ -117,32 +113,8 @@ internal object DevirtualizationAnalysis {
                 moduleDFG.functions.keys,
         )
 
-        irModule.acceptChildrenVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                declaration.acceptChildrenVoid(this)
-
-                // Conservatively assume each associated object could be called. Its final type will be
-                // added to instantiating classes through the constructor's additional <this> parameter.
-                context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
-                    assert(it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
-                    roots.add(moduleDFG.symbolTable.mapFunction(context.getObjectClassInstanceFunction(it)))
-                }
-            }
-
-            // At this point all function references are lowered except those leaking to the native world.
-            // Conservatively assume them belonging of the root set.
-            override fun visitRawFunctionReference(expression: IrRawFunctionReference) {
-                expression.acceptChildrenVoid(this)
-
-                val function = expression.symbol.owner
-                require(function is IrSimpleFunction) { "All constructors should've been lowered: ${expression.render()}" }
-                roots.add(moduleDFG.symbolTable.mapFunction(function))
-            }
-        })
+        roots.addAll(moduleDFG.additionalRoots)
+        roots.addAll(moduleDFG.symbolTable.deserializedAdditionalRoots)
 
         return roots.toList()
     }
@@ -780,7 +752,7 @@ internal object DevirtualizationAnalysis {
             }
             val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
             val allTypes = typeHierarchy.allTypes
-            val rootSet = computeRootSet(context, irModule, moduleDFG)
+            val rootSet = computeRootSet(context, moduleDFG)
 
             val (instantiatingClasses, directEdges, reversedEdges) = buildConstraintGraph(functions, rootSet)
 

@@ -633,12 +633,13 @@ internal object DFGSerializer {
         }
     }
 
-    class Module(val symbolTable: SymbolTable, val functions: Array<Function>) {
-        constructor(data: ByteArrayStream) : this(SymbolTable(data), data.readArray { Function(this) })
+    class Module(val symbolTable: SymbolTable, val functions: Array<Function>, val additionalRoots: IntArray) {
+        constructor(data: ByteArrayStream) : this(SymbolTable(data), data.readArray { Function(this) }, data.readIntArray())
 
         fun write(result: ByteArrayStream) {
             symbolTable.write(result)
             result.writeArray(functions) { it.write(this) }
+            result.writeIntArray(additionalRoots)
         }
     }
 
@@ -795,6 +796,7 @@ internal object DFGSerializer {
                     )
                 }
                 .toTypedArray()
+        val additionalRoots = moduleDFG.additionalRoots.map { registrar.mapFunctionSymbol(it) }.toIntArray()
         // Now that every type and function symbol referenced by the bodies has been registered,
         // the maps are complete and can be serialized into the symbol table.
         val types = typeMap.entries
@@ -914,7 +916,7 @@ internal object DFGSerializer {
                     "FUNCTION TABLE SIZE: ${symbolTable.privateFunIndex}"
             )
         }
-        val module = Module(SymbolTable(types, functionSymbols), functions)
+        val module = Module(SymbolTable(types, functionSymbols), functions, additionalRoots)
         val writer = ByteArrayStream()
         module.write(writer)
         return writer.toByteArray()
@@ -1304,6 +1306,8 @@ internal object DFGSerializer {
                     )
                     functions[symbol] = function
                 }
+
+                moduleDataFlowGraph.additionalRoots.mapTo(symbolTable.deserializedAdditionalRoots) { functionSymbols[it] }
             }
         }
 
