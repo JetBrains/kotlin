@@ -35,13 +35,7 @@ abstract class AbstractElementDumpGoldenTest : AbstractKdmGoldenTest() {
                     for ((id, element) in elements) {
                         val values = selectValues(element)
                         if (values.isEmpty()) continue
-                        val signature = when (element) {
-                            is KdModule -> "module ${element.name}"
-                            is KdPackage -> "package ${element.name.ifEmpty { "<root>" }}"
-                            is KdRefinedElement -> "KdRefinedElement"
-                            is KdInheritedMember -> "KdInheritedMember"
-                            is KdClass, is KdConstructor, is KdFunction, is KdProperty, is KdTypealias -> element.signatureOrNull()
-                        }
+                        val signature = element.compactSignature()
                         val prefix = if (mapName == "embeddedElements") "$mapName: " else ""
                         for ((path, value) in values) {
                             appendLine("$prefix$signature [${id.value}]$path:")
