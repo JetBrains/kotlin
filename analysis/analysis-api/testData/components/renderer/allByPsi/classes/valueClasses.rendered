@@ -1,5 +1,5 @@
 @JvmInline
-inline class InlineValueClass(value: Int) {
+inline value class InlineValueClass(value: Int) {
   val value: Int
 }
 

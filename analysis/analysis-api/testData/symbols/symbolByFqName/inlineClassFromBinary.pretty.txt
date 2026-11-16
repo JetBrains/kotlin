@@ -1,2 +1,2 @@
 @kotlin.jvm.JvmInline
-inline class InlineClassFromBinary(value: kotlin.Int)
+inline value class InlineClassFromBinary(value: kotlin.Int)

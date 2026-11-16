@@ -1,10 +1,10 @@
 @JvmInline
-inline class Meters(value: Double) {
+inline value class Meters(value: Double) {
   val value: Double
 }
 
 @JvmInline
-inline class Wrapper(text: String) {
+inline value class Wrapper(text: String) {
   fun describe(): String
 
   val text: String

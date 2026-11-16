@@ -1,12 +1,12 @@
-inline class ExplicitInlineValueClass(value: Int) {
+inline value class ExplicitInlineValueClass(value: Int) {
   val value: Int
 }
 
-inline class ReversedModifiers(value: String) {
+inline value class ReversedModifiers(value: String) {
   val value: String
 }
 
 @JvmInline
-inline class AnnotatedExplicitInlineValueClass(value: Long) {
+inline value class AnnotatedExplicitInlineValueClass(value: Long) {
   val value: Long
 }
