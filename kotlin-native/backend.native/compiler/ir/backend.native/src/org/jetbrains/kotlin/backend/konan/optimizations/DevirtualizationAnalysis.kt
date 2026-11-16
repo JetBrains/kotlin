@@ -66,37 +66,41 @@ internal object DevirtualizationAnalysis {
 
     private fun collectSymbolTableRoots(
             entryPoint: DataFlowIR.FunctionSymbol?,
-            functionSymbols: Collection<DataFlowIR.FunctionSymbol>,
+            localFunctionSymbols: Collection<DataFlowIR.FunctionSymbol>, // From current module.
             types: Collection<DataFlowIR.Type>,
-            functionsWithBodies: Set<DataFlowIR.FunctionSymbol>,
+            allFunctionsWithBodies: Set<DataFlowIR.FunctionSymbol>, // From all modules including the cached ones.
     ): MutableSet<DataFlowIR.FunctionSymbol> {
         val roots = mutableSetOf<DataFlowIR.FunctionSymbol>()
         if (entryPoint != null) {
             roots.add(entryPoint)
         } else {
             // In a library every public function and every function accessible via virtual call belongs to the rootset.
-            for (function in functionSymbols) {
+            for (function in localFunctionSymbols) {
                 if (function is DataFlowIR.FunctionSymbol.Public || (function as? DataFlowIR.FunctionSymbol.External)?.isExported == true)
                     roots.add(function)
             }
             for (type in types) {
                 for (function in type.vtable) {
-                    if (function is DataFlowIR.FunctionSymbol.Declared && function in functionsWithBodies)
+                    if (function is DataFlowIR.FunctionSymbol.Declared && function in allFunctionsWithBodies)
                         roots.add(function)
                 }
                 for (methods in type.itable.values) {
                     for (function in methods) {
-                        if (function is DataFlowIR.FunctionSymbol.Declared && function in functionsWithBodies)
+                        if (function is DataFlowIR.FunctionSymbol.Declared && function in allFunctionsWithBodies)
                             roots.add(function)
                     }
                 }
             }
         }
-        for (function in functionSymbols) {
-            if (function.isStaticFieldInitializer || function.isEagerStaticInitializer)
+        // The cached modules' initializers and exported functions aren't in the local symbol table,
+        // and nothing in the DFG calls them explicitly - the root set is what makes them reachable.
+        for (function in allFunctionsWithBodies) {
+            if (function.isStaticFieldInitializer || function.isEagerStaticInitializer || function.explicitlyExported)
                 roots.add(function)
         }
-        for (function in functionSymbols) {
+        // The bodiless ones (e.g. external @ExportForCppRuntime functions) are only in the local symbol table;
+        // as roots they are kept by the DCE in a whole-world build.
+        for (function in localFunctionSymbols) {
             if (function.explicitlyExported)
                 roots.add(function)
         }
@@ -1254,7 +1258,14 @@ internal object DevirtualizationAnalysis {
             }
 
             private fun createFunctionConstraintGraph(symbol: DataFlowIR.FunctionSymbol, isRoot: Boolean): Function? {
-                if (symbol is DataFlowIR.FunctionSymbol.External) return null
+                if (symbol is DataFlowIR.FunctionSymbol.External
+                        // A declared function might have no body here: e.g. a function from a cinterop library, whose cache
+                        // carries no DFG. Nothing is known about what it returns, so its callers must treat it as an external one.
+                        || (!isRoot && symbol !in functions)
+                ) {
+                    return null
+                }
+
                 constraintGraph.functions[symbol]?.let { return it }
 
                 val parameters = Array(symbol.parameters.size) { ordinaryNode { "Param#$it\$$symbol" } }
