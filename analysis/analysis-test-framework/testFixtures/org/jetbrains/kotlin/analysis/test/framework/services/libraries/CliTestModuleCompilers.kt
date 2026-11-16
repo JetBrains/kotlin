@@ -94,7 +94,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
     }
 
     override fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path {
-        val tmpDir = KtTestUtil.tmpDir("testSourcesToCompile").toPath()
+        val tmpDir = createTemporaryDirectory(testServices)
         val librarySourcesPath = tmpDir / "${module.name}-sources.jar"
         val manifest = Manifest().apply { mainAttributes[Attributes.Name.MANIFEST_VERSION] = "1.0" }
         JarOutputStream(librarySourcesPath.outputStream(), manifest).use { jarOutputStream ->
