@@ -176,9 +176,8 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         val javaClass = parseFirstClass(source)
         val field = javaClass.fields.single { it.name.asString() == "DEFAULT_SIZE" }
 
-        // The current-class member context fixes this false result in the next commit.
-        assertFalse(field.hasConstantNotNullInitializer)
-        assertEquals(null, field.initializerValue)
+        assertTrue(field.hasConstantNotNullInitializer)
+        assertEquals(1, field.initializerValue)
     }
 
     private fun findReferenceExpression(tree: LightSyntaxTree, node: LightNode, text: String): LightNode? {
