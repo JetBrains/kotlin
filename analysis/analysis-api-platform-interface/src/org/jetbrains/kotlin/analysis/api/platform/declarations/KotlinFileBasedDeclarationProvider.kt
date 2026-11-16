@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 @KaPlatformInterface
@@ -109,18 +110,15 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
     }
 
     override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> {
-        return buildSet {
-            getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
-            getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
-        }
+        return getTopLevelCallables<KtCallableDeclaration>(callableId).ifNotEmpty { listOf(kotlinFile) }.orEmpty()
     }
 
     override fun getTopLevelFunctionFiles(callableId: CallableId): Collection<KtFile> {
-        return getTopLevelFunctions(callableId).mapTo(mutableSetOf()) { it.containingKtFile }
+        return getTopLevelFunctions(callableId).ifNotEmpty { listOf(kotlinFile) }.orEmpty()
     }
 
     override fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> {
-        return getTopLevelProperties(callableId).mapTo(mutableSetOf()) { it.containingKtFile }
+        return getTopLevelProperties(callableId).ifNotEmpty { listOf(kotlinFile) }.orEmpty()
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
