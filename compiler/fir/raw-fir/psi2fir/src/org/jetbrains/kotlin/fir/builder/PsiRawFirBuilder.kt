@@ -1845,11 +1845,20 @@ open class PsiRawFirBuilder(
         ) {
             for (contextList in contextLists) {
                 contextList.contextParameters.mapTo(this) { contextParameterElement ->
-                    contextParameterElement.toFirValueParameter(
-                        defaultTypeRef = null,
-                        containingDeclarationSymbol = containingDeclarationSymbol,
-                        valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER,
-                    )
+                    if (contextParameterElement.name != null) {
+                        contextParameterElement.toFirValueParameter(
+                            defaultTypeRef = null,
+                            containingDeclarationSymbol = containingDeclarationSymbol,
+                            valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER,
+                        )
+                    } else {
+                        buildLegacyContextReceiver(
+                            element = contextParameterElement,
+                            typeReference = contextParameterElement.typeReference,
+                            customLabelName = null,
+                            containingDeclarationSymbol = containingDeclarationSymbol,
+                        )
+                    }
                 }
 
                 contextList.contextReceivers().mapTo(this) { contextReceiverElement ->
@@ -1863,6 +1872,9 @@ open class PsiRawFirBuilder(
             }
         }
 
+        /**
+         * Builds a legacy context receiver from [element], which is a [KtContextReceiver] or a context parameter without a name.
+         */
         private fun buildLegacyContextReceiver(
             element: KtElement,
             typeReference: KtTypeReference?,

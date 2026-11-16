@@ -3076,11 +3076,15 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         if (contextLists == null) return
         for (contextList in contextLists) {
             contextList.getChildNodesByTokenId(KotlinSyntaxNodeTypeIds.VALUE_PARAMETER).mapTo(this) { contextParameterElement ->
-                convertValueParameter(
-                    valueParameter = contextParameterElement,
-                    containingDeclarationSymbol = containingDeclarationSymbol,
-                    valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER
-                ).firValueParameter
+                if (contextParameterElement.getChildNodeByTokenId(KotlinSyntaxTokenIds.IDENTIFIER) != null) {
+                    convertValueParameter(
+                        valueParameter = contextParameterElement,
+                        containingDeclarationSymbol = containingDeclarationSymbol,
+                        valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER
+                    ).firValueParameter
+                } else {
+                    buildLegacyContextReceiver(contextParameterElement, customLabelName = null, containingDeclarationSymbol)
+                }
             }
 
             // Legacy context receivers
@@ -3097,6 +3101,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
+    /**
+     * Builds a legacy context receiver from [element], which is a `CONTEXT_RECEIVER` or a context parameter without a name.
+     */
     private fun buildLegacyContextReceiver(
         element: Node,
         customLabelName: Name?,
