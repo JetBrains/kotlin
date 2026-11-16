@@ -23,12 +23,28 @@ internal class KirAsKotlinSourcesPrinter private constructor(
                 SmartPrinter(StringBuilder()),
                 emptyBodyStub = emptyBodyStub,
             )
+            val bridges = module.functionBridges()
             val declarationsString = with(printer) {
+                printBridgesHeader(bridges)
                 module.printChildren()
+                printBridges(bridges)
                 toString().trimIndent()
             }
             return declarationsString
         }
+    }
+
+    private fun printBridgesHeader(bridges: List<KirFunctionBridge>) {
+        if (bridges.isEmpty()) return
+        println("@file:kotlin.Suppress(\"DEPRECATION_ERROR\")")
+        println()
+        bridges.flatMap { it.kotlinFunctionBridge.packageDependencies }.distinct().forEach { println("import $it") }
+        println()
+    }
+
+    private fun printBridges(bridges: List<KirFunctionBridge>) = bridges.forEach { bridge ->
+        println()
+        bridge.kotlinFunctionBridge.lines.forEach { println(it) }
     }
 
     private fun KirDeclarationContainer.printChildren() = this.declarations.forEach {

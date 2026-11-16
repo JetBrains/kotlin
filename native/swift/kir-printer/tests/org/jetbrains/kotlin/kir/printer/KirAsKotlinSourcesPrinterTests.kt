@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.kir.printer
 
+import org.jetbrains.kotlin.kir.CFunctionBridge
 import org.jetbrains.kotlin.kir.KirFunctionBody
+import org.jetbrains.kotlin.kir.KirFunctionBridge
 import org.jetbrains.kotlin.kir.KirModule
+import org.jetbrains.kotlin.kir.KotlinFunctionBridge
+import org.jetbrains.kotlin.kir.SwiftFunctionBridge
 import org.jetbrains.kotlin.kir.builder.buildFunction
 import org.jetbrains.kotlin.kir.builder.buildModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -52,9 +57,75 @@ class KirAsKotlinSourcesPrinterTests {
         runTest(module, "testData/function_with_body")
     }
 
+    @Test
+    fun `should print function with bridge`() {
+        val module = moduleWithBridgedFunction()
+
+        runTest(module, "testData/function_with_bridge")
+    }
+
+    @Test
+    fun `should print swift part of bridges`() {
+        val actual = KirPrinter().printSwiftBridges(moduleWithBridgedFunction())
+
+        assertEqualsToFile("testData/function_with_bridge.golden.swift", actual)
+    }
+
+    @Test
+    fun `should print c part of bridges`() {
+        val actual = KirPrinter().printCDeclarations(moduleWithBridgedFunction())
+
+        assertEqualsToFile("testData/function_with_bridge.golden.h", actual)
+    }
+
+    @Test
+    fun `should print nothing for swift and c parts of module without bridges`() {
+        val module = buildModule {
+            declarations.add(buildFunction { name = "foo" })
+        }
+
+        assertEquals("", KirPrinter().printSwiftBridges(module))
+        assertEquals("", KirPrinter().printCDeclarations(module))
+    }
+
+    private fun moduleWithBridgedFunction(): KirModule {
+        val bridge = KirFunctionBridge(
+            name = "Lib_foo",
+            kotlinFunctionBridge = KotlinFunctionBridge(
+                lines = listOf(
+                    "@ImportedBridge(\"Lib_foo\")",
+                    "internal external fun Lib_foo(): Unit",
+                ),
+                packageDependencies = listOf("kotlin.native.internal.ImportedBridge", "kotlinx.cinterop.*"),
+            ),
+            swiftFunctionBridge = SwiftFunctionBridge(
+                lines = listOf(
+                    "@_cdecl(\"Lib_foo\")",
+                    "package func Lib_foo() -> Void {",
+                    "    Lib.foo()",
+                    "}",
+                ),
+            ),
+            cDeclarationBridge = CFunctionBridge(
+                lines = listOf("void Lib_foo();"),
+                headerDependencies = listOf("Foundation/Foundation.h", "stdint.h"),
+            ),
+        )
+        return buildModule {
+            declarations.add(buildFunction {
+                name = "foo"
+                bridges.add(bridge)
+                body = KirFunctionBody(listOf("Lib_foo()"))
+            })
+        }
+    }
+
     private fun runTest(module: KirModule, goldenDataFile: String) {
-        val expected = File(KtTestUtil.getHomeDirectory()).resolve("$goldenDataFile.golden.kt")
-        val actual = KirPrinter().print(module)
+        assertEqualsToFile("$goldenDataFile.golden.kt", KirPrinter().print(module))
+    }
+
+    private fun assertEqualsToFile(path: String, actual: String) {
+        val expected = File(KtTestUtil.getHomeDirectory()).resolve(path)
         JUnit5Assertions.assertEqualsToFile(expected, actual)
     }
 }
