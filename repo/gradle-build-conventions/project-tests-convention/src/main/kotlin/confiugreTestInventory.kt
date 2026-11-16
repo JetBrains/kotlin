@@ -58,14 +58,13 @@ private fun Project.testBuildCacheTeamCityCompatibilityExecutions(): MapProperty
                 // Subscribing isolates the parameters, freezing the map, so it has to wait until
                 // every project has added its test tasks. On a configuration cache hit this never
                 // runs: the subscription stored with the entry, isolated map and all, replays there.
+                //
+                // The graph itself is not read: with Isolated Projects enabled a project cannot
+                // look at other projects' tasks in it. Nothing is lost by leaving the map alone:
+                // only a *scheduled* task is delivered to the listener as a finish event, so an
+                // entry for a task that was configured but never scheduled is one no event will
+                // ever name.
                 val compatibility = sharedServices.testBuildCacheTeamCityCompatibilityRegistration
-
-                // Test tasks configured without being scheduled are dropped: the map the build
-                // carries, into its configuration cache entry among other places, is this run's own.
-                val scheduled = graph.allTasks.mapTo(HashSet()) { it.path }
-                val executionsFiles = compatibility.parameters.executionsFiles
-                executionsFiles.set(executionsFiles.get().filterKeys { it in scheduled })
-
                 listenerRegistry.onTaskCompletion(compatibility.service)
             }
         }
@@ -79,6 +78,10 @@ private fun Project.testBuildCacheTeamCityCompatibilityExecutions(): MapProperty
 /**
  * The registration of the build's [TestBuildCacheTeamCityCompatibilityService], typed: it carries
  * both halves needed here, the parameters to fill and the service to subscribe.
+ *
+ * 'findByName' rather than 'getByName': with Isolated Projects enabled, Gradle forbids the eager
+ * lookup on the registrations and allows this one. The registration is always there by the time
+ * this runs, having been made by [testBuildCacheTeamCityCompatibilityExecutions] just before.
  */
 private val BuildServiceRegistry.testBuildCacheTeamCityCompatibilityRegistration:
         BuildServiceRegistration<
@@ -86,8 +89,9 @@ private val BuildServiceRegistry.testBuildCacheTeamCityCompatibilityRegistration
                 TestBuildCacheTeamCityCompatibilityService.Parameters>
     get() {
         @Suppress("UNCHECKED_CAST")
-        return registrations.getByName(COMPATIBILITY_SERVICE_NAME)
+        return registrations.findByName(COMPATIBILITY_SERVICE_NAME)
                 as BuildServiceRegistration<
                         TestBuildCacheTeamCityCompatibilityService,
-                        TestBuildCacheTeamCityCompatibilityService.Parameters>
+                        TestBuildCacheTeamCityCompatibilityService.Parameters>?
+                ?: error("'$COMPATIBILITY_SERVICE_NAME' was not registered")
     }
