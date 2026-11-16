@@ -280,16 +280,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
                     }
                 }
                 is KtFunctionType -> {
-                    withSuffix(" ") {
-                        appendCollection(
-                            typeElement.contextReceiversTypeReferences,
-                            prefix = "context(",
-                            postfix = ")",
-                            skipIfEmpty = true
-                        ) {
-                            printTypeReference(it, position = TypeReferencePosition.CONTEXT_RECEIVER)
-                        }
-                    }
+                    withSuffix(" ") { process(typeElement.contextParameterList) }
 
                     withSuffix(".") {
                         typeElement.receiverTypeReference?.let {
@@ -524,9 +515,18 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
                 withSuffix(" ") { process(parameter.modifierList) }
             }
 
-            append(parameter.name?.quoteIfNeeded())
-            append(": ")
-            parameter.typeReference?.accept(this)
+            val name = parameter.name
+            if (name != null) {
+                append(name.quoteIfNeeded())
+                append(": ")
+                parameter.typeReference?.accept(this)
+            } else {
+                // A context parameter without a name is printed as its type
+                parameter.typeReference?.let {
+                    printTypeReference(it, position = TypeReferencePosition.CONTEXT_RECEIVER)
+                }
+            }
+
             if (parameter.hasDefaultValue()) {
                 withPrefix(" = ") { process(parameter.defaultValue) }
             }
