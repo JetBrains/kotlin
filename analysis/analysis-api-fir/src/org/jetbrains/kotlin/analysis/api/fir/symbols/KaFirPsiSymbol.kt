@@ -387,17 +387,10 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaContextParamet
         val lists = psi.modifierList
             ?.contextParameterLists
             ?.takeIf { it.isNotEmpty() }
-            ?: return emptyList() // no context receivers/parameters
+            ?: return emptyList() // no context parameters
 
         with(analysisSession) {
-            lists.flatMap { list ->
-                val contextParameters = list.contextParameters
-                if (contextParameters.isNotEmpty()) {
-                    contextParameters.map { it.symbol as KaContextParameterSymbol }
-                } else {
-                    list.contextReceivers().map { it.symbol }
-                }
-            }
+            lists.flatMap { list -> list.contextParameters.map { it.symbol as KaContextParameterSymbol } }
         }
     }
 

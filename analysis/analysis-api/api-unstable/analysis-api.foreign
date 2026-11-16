@@ -39,7 +39,6 @@ org/jetbrains/kotlin/psi/KtConstructor
 org/jetbrains/kotlin/psi/KtConstructorCalleeExpression
 org/jetbrains/kotlin/psi/KtConstructorDelegationCall
 org/jetbrains/kotlin/psi/KtConstructorDelegationReferenceExpression
-org/jetbrains/kotlin/psi/KtContextReceiver
 org/jetbrains/kotlin/psi/KtDeclaration
 org/jetbrains/kotlin/psi/KtDeclarationWithReturnType
 org/jetbrains/kotlin/psi/KtDelegatedSuperTypeEntry

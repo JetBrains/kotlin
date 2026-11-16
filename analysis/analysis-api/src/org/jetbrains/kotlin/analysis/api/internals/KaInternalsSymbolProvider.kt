@@ -55,8 +55,6 @@ public interface KaInternalsSymbolProvider {
 
     public fun symbol(script: KtScript): KaScriptSymbol
 
-    public fun symbol(contextReceiver: KtContextReceiver): KaContextParameterSymbol
-
     public fun findPackage(fqName: FqName): KaPackageSymbol?
 
     public fun findClass(classId: ClassId): KaNamedClassSymbol?

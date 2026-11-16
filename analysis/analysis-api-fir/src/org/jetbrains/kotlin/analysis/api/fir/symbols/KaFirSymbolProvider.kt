@@ -185,11 +185,6 @@ internal class KaFirSymbolProvider(
             KaFirDestructuringDeclarationSymbol(destructuringDeclaration, analysisSession)
         }
 
-    override fun symbol(contextReceiver: KtContextReceiver): KaContextParameterSymbol =
-        withPsiValidityAssertion(contextReceiver) {
-            KaFirContextReceiverBasedContextParameterSymbol(contextReceiver, analysisSession)
-        }
-
     override fun findClass(classId: ClassId): KaNamedClassSymbol? = withValidityAssertion {
         val symbol = firSymbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
         firSymbolBuilder.classifierBuilder.buildNamedClassSymbol(symbol)
