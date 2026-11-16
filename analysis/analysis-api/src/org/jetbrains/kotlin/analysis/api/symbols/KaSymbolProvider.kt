@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail
 import org.jetbrains.kotlin.name.ClassId
@@ -160,16 +159,6 @@ public interface KaSymbolProvider : KaSessionComponent {
      * A [KaScriptSymbol] for a [KtScript].
      */
     public val KtScript.symbol: KaScriptSymbol
-
-    /**
-     * Represents [KtContextReceiver] as a [KaContextParameterSymbol].
-     *
-     * This is a temporary API for simplicity during the transition from context receivers to context parameters.
-     *
-     * **Note**: context receivers inside [KtFunctionType] are not supported.
-     */
-    @KaExperimentalApi
-    public val KtContextReceiver.symbol: KaContextParameterSymbol
 
     /**
      * Returns a [KaPackageSymbol] corresponding to the given [fqName] if that package exists and is visible from the current use site, or
