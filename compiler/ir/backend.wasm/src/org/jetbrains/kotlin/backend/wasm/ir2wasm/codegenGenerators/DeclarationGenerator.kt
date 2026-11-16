@@ -387,11 +387,17 @@ class DeclarationGenerator(
         val symbol = klass.symbol
         val superType = klass.getSuperClass(irBuiltIns)?.symbol
 
+        // Classes generated for lambdas, callable references, and merged suspend lambdas are named
+        // by a deduplication key (e.g. Function1, KFunction1R, SuspendFunction0) with no source
+        // counterpart, so they must not be exposed by reflection, just like on the JVM.
+        val isSyntheticFunctionImplementationClass =
+            klass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL ||
+                klass.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS
+
         // For callable reference and merged suspend lambda classes, do not use the FQN to ensure
         // deterministic names across files during link-time deduplication.
         val fqnShouldBeEmitted = (backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass) &&
-                                      klass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL &&
-                                      klass.origin != WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS)
+                                      !isSyntheticFunctionImplementationClass)
         val originalFqName = klass.originalFqName
         val qualifier =
             if (fqnShouldBeEmitted) {
@@ -424,7 +430,8 @@ class DeclarationGenerator(
 
             buildConstI64(linkerDataContext.referenceTypeId(symbol), location)
 
-            val isAnonymousFlag = if (klass.isAnonymousObject) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
+            val isAnonymousFlag =
+                if (klass.isAnonymousObject || isSyntheticFunctionImplementationClass) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
             val isLocalFlag = if (klass.isOriginallyLocalDeclaration) TYPE_INFO_FLAG_LOCAL_CLASS else 0
             buildConstI32(isAnonymousFlag or isLocalFlag, location)
 
