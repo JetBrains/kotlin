@@ -1730,6 +1730,15 @@ internal object EscapeAnalysis {
                     if (lifetime == Lifetime.STACK && isAllocOfFinalizedClass)
                         lifetime = Lifetime.GLOBAL
 
+                    // A stack allocation needs the class' body layout, which is not computable for every class (e.g. for
+                    // a non-exported class of a cached library, whose fields are not serialized into the cache) - keep such
+                    // allocations on the heap.
+                    // Note: this does not concern stack arrays - their layout is built from the builtin element types.
+                    val notStackAllocatable = node is DataFlowIR.Node.AllocInstance
+                            && node.type.irClass?.let { context.getLayoutBuilder(it).isBodyLayoutComputable } != true
+                    if (lifetime == Lifetime.STACK && notStackAllocatable)
+                        lifetime = Lifetime.GLOBAL
+
                     if (lifetime != computedLifetime) {
                         if (node is DataFlowIR.Node.Alloc && (propagateExiledToHeapObjects || isAllocOfFinalizedClass)) {
                             context.log { "Forcing node ${nodeToString(node)} to escape" }

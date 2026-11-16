@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.objcinterop.canObjCClassMethodBeCalledVirtually
 import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
+import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClassMethod
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -295,6 +296,19 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: NativeBacke
         val isConst = correspondingPropertySymbol?.owner?.isConst ?: false
         require(!isConst || initializer?.expression is IrConst) { "A const val field ${render()} must have constant initializer" }
         return FieldInfo(name.asString(), type, isConst, symbol, requiredAlignment(llvm))
+    }
+
+    val isBodyLayoutComputable: Boolean by lazy {
+        when {
+            irClass.isObjCClass() -> false
+            else -> {
+                val ownFieldsAvailable = context.moduleDeserializerProvider.getDeserializerOrNull(irClass)?.let {
+                    ClassFieldsDeserializer(context.config.cachedLibraries, context.irBuiltIns, it).hasClassFields(irClass)
+                } ?: true  // a class of the module being compiled: fields come from IR
+                ownFieldsAvailable &&
+                        irClass.getSuperClassNotAny()?.let { context.getLayoutBuilder(it).isBodyLayoutComputable } != false
+            }
+        }
     }
 
     val vtableEntries: List<OverriddenFunctionInfo> by lazy {

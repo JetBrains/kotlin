@@ -209,6 +209,13 @@ internal class ClassFieldsDeserializer(
 ) {
     private val lock = Any()
 
+    // The cache only carries the fields of the exported classes (see [CacheInfoBuilder]).
+    fun hasClassFields(irClass: IrClass): Boolean = synchronized(lock) {
+        val signature = irClass.symbol.signature ?: return false
+        if (cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true) == null) return false
+        classesFields[signature] != null
+    }
+
     fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: ClassLayoutBuilder.FieldInfo?): List<ClassLayoutBuilder.FieldInfo> = synchronized(lock) {
         val signature = irClass.symbol.signature
                 ?: error("No signature for ${irClass.render()}")
