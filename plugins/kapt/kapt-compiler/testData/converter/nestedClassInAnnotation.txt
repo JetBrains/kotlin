@@ -42,9 +42,9 @@ package test;
  */
 @kotlin.Metadata()
 public final class Klass {
-    private error.NonExistentClass x;
 
     public Klass() {
         super();
     }
+    private error.NonExistentClass x;
 }

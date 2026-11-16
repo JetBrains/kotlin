@@ -48,10 +48,10 @@ package test;
  */
 @kotlin.Metadata()
 public final class O {
-    @org.jetbrains.annotations.NotNull()
-    public static final test.O INSTANCE = null;
 
     private O() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    public static final test.O INSTANCE = null;
 }

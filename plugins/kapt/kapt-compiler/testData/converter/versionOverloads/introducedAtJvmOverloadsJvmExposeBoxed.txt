@@ -31,9 +31,6 @@
  */
 @kotlin.Metadata()
 public final class EverythingC {
-    private final int a = 0;
-    private final int a1 = 0;
-    private final boolean b = false;
 
     @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_constructor")
     @java.lang.Deprecated()
@@ -68,10 +65,13 @@ public final class EverythingC {
     boolean b) {
         super();
     }
+    private final int a = 0;
 
     public final int getA() {
         return 0;
     }
+    private final int a1 = 0;
+    private final boolean b = false;
 
     public final boolean getB() {
         return false;

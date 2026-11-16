@@ -42,11 +42,11 @@ public abstract interface Callback {
 @kotlin.Metadata()
 public enum Foo {
     /*public static final*/ FOO /* = new Foo(null) */;
-    @org.jetbrains.annotations.NotNull()
-    private final Callback callback = null;
 
     Foo(Callback callback) {
     }
+    @org.jetbrains.annotations.NotNull()
+    private final Callback callback = null;
 
     @org.jetbrains.annotations.NotNull()
     public final Callback getCallback() {

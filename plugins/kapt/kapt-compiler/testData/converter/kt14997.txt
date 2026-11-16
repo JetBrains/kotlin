@@ -13,12 +13,12 @@
  */
 @kotlin.Metadata()
 public class CrashMe {
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.Runnable notReally = null;
 
     public CrashMe() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.Runnable notReally = null;
 }
 
 ////////////////////

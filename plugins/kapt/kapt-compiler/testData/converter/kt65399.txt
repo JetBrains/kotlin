@@ -29,11 +29,11 @@ public final class C {
      */
     @kotlin.Metadata()
     public static final class $serializer {
-        @org.jetbrains.annotations.NotNull()
-        public static final org.jetbrains.C.$serializer INSTANCE = null;
 
         private $serializer() {
             super();
         }
+        @org.jetbrains.annotations.NotNull()
+        public static final org.jetbrains.C.$serializer INSTANCE = null;
     }
 }

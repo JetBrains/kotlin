@@ -87,6 +87,10 @@ package javadoc;
 @kotlin.Metadata()
 public final class B {
 
+    public B() {
+        super();
+    }
+
     /**
      * Nested
      * member
@@ -94,44 +98,6 @@ public final class B {
      */
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = "";
-
-    /**
-     * Mixed
-     * tabs/spaces
-     */
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String b = "";
-
-    /**
-     * List:
-     * * first item
-     * * second item
-     */
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String c = "";
-
-    /**
-     * Without
-     * stars
-     */
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String d = "";
-
-    /**
-     * A mutable property
-     */
-    @org.jetbrains.annotations.NotNull()
-    private java.lang.String e = "";
-
-    /**
-     * A property with a backing field and an explicit setter
-     */
-    @org.jetbrains.annotations.NotNull()
-    private java.lang.String g;
-
-    public B() {
-        super();
-    }
 
     /**
      * Nested
@@ -148,9 +114,24 @@ public final class B {
      * tabs/spaces
      */
     @org.jetbrains.annotations.NotNull()
+    private final java.lang.String b = "";
+
+    /**
+     * Mixed
+     * tabs/spaces
+     */
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getB() {
         return null;
     }
+
+    /**
+     * List:
+     * * first item
+     * * second item
+     */
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String c = "";
 
     /**
      * List:
@@ -167,9 +148,22 @@ public final class B {
      * stars
      */
     @org.jetbrains.annotations.NotNull()
+    private final java.lang.String d = "";
+
+    /**
+     * Without
+     * stars
+     */
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getD() {
         return null;
     }
+
+    /**
+     * A mutable property
+     */
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.String e = "";
 
     /**
      * A mutable property
@@ -194,6 +188,12 @@ public final class B {
     public final void setF(@org.jetbrains.annotations.NotNull()
     java.lang.String value) {
     }
+
+    /**
+     * A property with a backing field and an explicit setter
+     */
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.String g;
 
     /**
      * A property with a backing field and an explicit setter

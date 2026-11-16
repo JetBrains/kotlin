@@ -338,15 +338,15 @@ public final class Plain {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class PrivateComponent {
-    private final int x = 0;
-    private final int y = 0;
 
     public PrivateComponent(int x, int y) {
     }
+    private final int x = 0;
 
     public final int y() {
         return 0;
     }
+    private final int y = 0;
 
     public PrivateComponent() {
     }
@@ -420,7 +420,6 @@ public final class PrivateComponent {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class PrivateConstructor {
-    private final int i = 0;
 
     private PrivateConstructor(int i) {
     }
@@ -428,6 +427,7 @@ public final class PrivateConstructor {
     public final int i() {
         return 0;
     }
+    private final int i = 0;
 
     public final int component1() {
         return 0;
@@ -1209,9 +1209,6 @@ public final record WithCompanion(@F()
 java.lang.String s, @org.jetbrains.annotations.NotNull()
 java.util.List<java.lang.String> list, @org.jetbrains.annotations.NotNull()
 int[] array) {
-    public static final int C = 1;
-    @org.jetbrains.annotations.NotNull()
-    public static final WithCompanion.Companion Companion = null;
 
     public WithCompanion(@org.jetbrains.annotations.Nullable()
     java.lang.String s, @org.jetbrains.annotations.NotNull()
@@ -1235,92 +1232,6 @@ int[] array) {
     @org.jetbrains.annotations.NotNull()
     public final int[] array() {
         return null;
-    }
-
-    @org.jetbrains.annotations.Nullable()
-    public final java.lang.String component1() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.List<java.lang.String> component2() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final int[] component3() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final WithCompanion copy(@org.jetbrains.annotations.Nullable()
-    java.lang.String s, @org.jetbrains.annotations.NotNull()
-    java.util.List<java.lang.String> list, @org.jetbrains.annotations.NotNull()
-    int[] array) {
-        return null;
-    }
-
-    @java.lang.Override()
-    public boolean equals(@org.jetbrains.annotations.Nullable()
-    java.lang.Object other) {
-        return false;
-    }
-
-    @java.lang.Override()
-    public int hashCode() {
-        return 0;
-    }
-
-    @java.lang.Override()
-    @org.jetbrains.annotations.NotNull()
-    public java.lang.String toString() {
-        return null;
-    }
-
-    /**
-     * public final companion object WithCompanion.Companion : kotlin/Any {
-     *
-     *   // signature: <init>()V
-     *   private constructor()
-     *
-     *   // field: C:I
-     *   public final const val C: kotlin/Int (* = ... *)
-     *     public final get
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class Companion {
-
-        private Companion() {
-            super();
-        }
-    }
-
-    /**
-     * public final inner class WithCompanion.Inner : kotlin/Any {
-     *
-     *   // signature: <init>(LWithCompanion;)V
-     *   public constructor()
-     *
-     *   // signature: s()Ljava/lang/String;
-     *   public final fun s(): kotlin/String?
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public final class Inner {
-
-        public Inner() {
-            super();
-        }
-
-        @org.jetbrains.annotations.Nullable()
-        public final java.lang.String s() {
-            return null;
-        }
     }
 
     /**
@@ -1392,5 +1303,94 @@ int[] array) {
         public java.lang.String toString() {
             return null;
         }
+    }
+
+    /**
+     * public final inner class WithCompanion.Inner : kotlin/Any {
+     *
+     *   // signature: <init>(LWithCompanion;)V
+     *   public constructor()
+     *
+     *   // signature: s()Ljava/lang/String;
+     *   public final fun s(): kotlin/String?
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner {
+
+        public Inner() {
+            super();
+        }
+
+        @org.jetbrains.annotations.Nullable()
+        public final java.lang.String s() {
+            return null;
+        }
+    }
+
+    /**
+     * public final companion object WithCompanion.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: C:I
+     *   public final const val C: kotlin/Int (* = ... *)
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+    }
+    public static final int C = 1;
+    @org.jetbrains.annotations.NotNull()
+    public static final WithCompanion.Companion Companion = null;
+
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.String component1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.String> component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final int[] component3() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final WithCompanion copy(@org.jetbrains.annotations.Nullable()
+    java.lang.String s, @org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> list, @org.jetbrains.annotations.NotNull()
+    int[] array) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
     }
 }

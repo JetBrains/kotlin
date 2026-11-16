@@ -17,14 +17,12 @@
  */
 @kotlin.Metadata()
 public final class Test {
-    @org.jetbrains.annotations.NotNull()
-    private final Test.Companion.Example foo;
-    @org.jetbrains.annotations.NotNull()
-    public static final Test.Companion Companion = null;
 
     public Test() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final Test.Companion.Example foo;
 
     /**
      * public final companion object Test.Companion : kotlin/Any {
@@ -70,6 +68,8 @@ public final class Test {
             }
         }
     }
+    @org.jetbrains.annotations.NotNull()
+    public static final Test.Companion Companion = null;
 }
 
 ////////////////////
@@ -94,14 +94,12 @@ public final class Test {
  */
 @kotlin.Metadata()
 public final class Test2 {
-    @org.jetbrains.annotations.NotNull()
-    private final Test2.Amigo.Example foo;
-    @org.jetbrains.annotations.NotNull()
-    public static final Test2.Amigo Amigo = null;
 
     public Test2() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final Test2.Amigo.Example foo;
 
     /**
      * public final companion object Test2.Amigo : kotlin/Any {
@@ -147,6 +145,8 @@ public final class Test2 {
             }
         }
     }
+    @org.jetbrains.annotations.NotNull()
+    public static final Test2.Amigo Amigo = null;
 }
 
 ////////////////////
@@ -169,12 +169,12 @@ public final class Test2 {
  */
 @kotlin.Metadata()
 public final class Test3 {
-    @org.jetbrains.annotations.NotNull()
-    private final Test3.Amigo.Example foo = Test3.Amigo.Example.FOO;
 
     public Test3() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final Test3.Amigo.Example foo = Test3.Amigo.Example.FOO;
 
     /**
      * public final object Test3.Amigo : kotlin/Any {
@@ -189,8 +189,6 @@ public final class Test3 {
      */
     @kotlin.Metadata()
     public static final class Amigo {
-        @org.jetbrains.annotations.NotNull()
-        public static final Test3.Amigo INSTANCE = null;
 
         private Amigo() {
             super();
@@ -221,6 +219,8 @@ public final class Test3 {
                 return null;
             }
         }
+        @org.jetbrains.annotations.NotNull()
+        public static final Test3.Amigo INSTANCE = null;
     }
 }
 
@@ -246,13 +246,11 @@ public final class Test3 {
  */
 @kotlin.Metadata()
 public final class Test4 {
-    private final int foo = 1;
-    @org.jetbrains.annotations.NotNull()
-    public static final Test4.Companion Companion = null;
 
     public Test4() {
         super();
     }
+    private final int foo = 1;
 
     /**
      * public final companion object Test4.Companion : kotlin/Any {
@@ -287,15 +285,17 @@ public final class Test4 {
          */
         @kotlin.Metadata()
         public static final class Foo {
-            public static final int constProperty = 1;
-            @org.jetbrains.annotations.NotNull()
-            public static final Test4.Companion.Foo INSTANCE = null;
 
             private Foo() {
                 super();
             }
+            public static final int constProperty = 1;
+            @org.jetbrains.annotations.NotNull()
+            public static final Test4.Companion.Foo INSTANCE = null;
         }
     }
+    @org.jetbrains.annotations.NotNull()
+    public static final Test4.Companion Companion = null;
 }
 
 ////////////////////
@@ -318,12 +318,12 @@ public final class Test4 {
  */
 @kotlin.Metadata()
 public final class Test5 {
-    @org.jetbrains.annotations.NotNull()
-    private final Test5.Amigos.Companion.Goo.Example foo;
 
     public Test5() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final Test5.Amigos.Companion.Goo.Example foo;
 
     /**
      * public final class Test5.Amigos : kotlin/Any {
@@ -340,8 +340,6 @@ public final class Test5 {
      */
     @kotlin.Metadata()
     public static final class Amigos {
-        @org.jetbrains.annotations.NotNull()
-        public static final Test5.Amigos.Companion Companion = null;
 
         public Amigos() {
             super();
@@ -410,5 +408,7 @@ public final class Test5 {
                 }
             }
         }
+        @org.jetbrains.annotations.NotNull()
+        public static final Test5.Amigos.Companion Companion = null;
     }
 }

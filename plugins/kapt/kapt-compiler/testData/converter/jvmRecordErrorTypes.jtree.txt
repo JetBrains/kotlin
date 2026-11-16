@@ -46,10 +46,6 @@ package test;
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class R {
-    @org.jetbrains.annotations.NotNull()
-    private final Unresolved x = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<Unresolved2> y = null;
 
     public R(@org.jetbrains.annotations.NotNull()
     Unresolved x, @org.jetbrains.annotations.NotNull()
@@ -60,11 +56,15 @@ public final class R {
     public final Unresolved x() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final Unresolved x = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.util.List<Unresolved2> y() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<Unresolved2> y = null;
 
     public R() {
     }

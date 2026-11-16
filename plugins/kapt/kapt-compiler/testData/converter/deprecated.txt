@@ -54,8 +54,6 @@ package deprecated;
 @kotlin.Metadata()
 @java.lang.Deprecated()
 public final class Foo {
-    @java.lang.Deprecated()
-    private final int prop = 0;
 
     public Foo() {
         super();
@@ -73,6 +71,8 @@ public final class Foo {
     @java.lang.Deprecated()
     public static void getProp$annotations() {
     }
+    @java.lang.Deprecated()
+    private final int prop = 0;
 
     @java.lang.Deprecated()
     public final int getFoo() {

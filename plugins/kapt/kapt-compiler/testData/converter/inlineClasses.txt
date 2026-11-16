@@ -71,11 +71,11 @@ public final class Derived extends Base {
  */
 @kotlin.Metadata()
 public final class Id {
-    private final int value = 0;
 
     public final int getValue() {
         return 0;
     }
+    private final int value = 0;
 
     @java.lang.Override()
     public boolean equals(java.lang.Object other) {

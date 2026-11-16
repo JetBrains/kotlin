@@ -69,10 +69,10 @@ public final class Kt79133_typeAliasClassLiteralKt {
  */
 @kotlin.Metadata()
 public final class O {
-    @org.jetbrains.annotations.NotNull()
-    public static final O INSTANCE = null;
 
     private O() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    public static final O INSTANCE = null;
 }
