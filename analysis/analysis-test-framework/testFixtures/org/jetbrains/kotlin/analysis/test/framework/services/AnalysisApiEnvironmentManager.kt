@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.Standal
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironmentBase
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -34,7 +34,7 @@ abstract class AnalysisApiEnvironmentManager : TestService {
         getApplicationEnvironment().application
 
     abstract fun initializeProjectStructure()
-    abstract fun getProjectEnvironment(): KotlinCoreProjectEnvironment
+    abstract fun getProjectEnvironment(): KotlinCoreProjectEnvironmentBase
     abstract fun getApplicationEnvironment(): KotlinCoreApplicationEnvironment
 }
 
@@ -42,7 +42,7 @@ class AnalysisApiEnvironmentManagerImpl(
     override val testServices: TestServices,
     override val testRootDisposable: Disposable,
 ) : AnalysisApiEnvironmentManager() {
-    private val _projectEnvironment: KotlinCoreProjectEnvironment by lazy {
+    private val _projectEnvironment: KotlinCoreProjectEnvironmentBase by lazy {
         StandaloneProjectFactory.createProjectEnvironment(
             testRootDisposable,
             unitTestMode = true
@@ -92,7 +92,7 @@ class AnalysisApiEnvironmentManagerImpl(
         testServices.compilerConfigurationProvider.configureProject(project, useSiteModule, useSiteCompilerConfiguration)
     }
 
-    override fun getProjectEnvironment(): KotlinCoreProjectEnvironment =
+    override fun getProjectEnvironment(): KotlinCoreProjectEnvironmentBase =
         _projectEnvironment
 
     override fun getApplicationEnvironment(): KotlinCoreApplicationEnvironment =

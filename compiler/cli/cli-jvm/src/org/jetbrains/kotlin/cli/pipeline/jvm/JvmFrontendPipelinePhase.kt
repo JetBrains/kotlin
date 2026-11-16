@@ -486,7 +486,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         @OptIn(CoreEnvironmentDeprecation::class)
         val appEnv = KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(parentDisposable)
         // TODO: get rid of projEnv too - seems that all needed components could be easily extracted
-        val projectEnvironment = KotlinCoreEnvironment.ProjectEnvironment(parentDisposable, appEnv, configuration)
+        val projectEnvironment = KotlinCoreProjectEnvironment(parentDisposable, appEnv, configuration)
 
         @OptIn(CoreEnvironmentDeprecation::class)
         projectEnvironment.configureProjectEnvironment(configuration)
@@ -579,7 +579,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         getPackagePartProviderFn: (JvmClasspath) -> PackagePartProvider,
         initialRoots: List<JavaRoot>,
         val configuration: CompilerConfiguration,
-        val projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
+        val projectEnvironment: KotlinCoreProjectEnvironment,
         val classpathRootsResolver: ClasspathRootsResolver,
         val rootsIndex: JvmDependenciesDynamicCompoundIndex
     ) : VfsBasedProjectEnvironment(project, knownFileSystems, getPackagePartProviderFn) {

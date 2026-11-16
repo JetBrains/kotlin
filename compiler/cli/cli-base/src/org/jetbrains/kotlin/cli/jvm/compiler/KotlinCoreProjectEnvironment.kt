@@ -14,16 +14,152 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.codeInsight.ExternalAnnotationsManager
+import com.intellij.codeInsight.InferredAnnotationsManager
+import com.intellij.core.CoreApplicationEnvironment.registerExtensionPoint
+import com.intellij.core.CoreJavaFileManager
 import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.extensions.ExtensionsArea
+import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiElementFinderImpl
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import com.intellij.psi.impl.file.impl.JavaFileManager
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.cli.CliDiagnostics.INITIALIZATION_WARNING
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.jetbrains.kotlin.cli.extensionsStorage
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportInfo
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
+import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK
+import org.jetbrains.kotlin.compiler.plugin.registerInProject
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.useFastJarFileSystem
+import org.jetbrains.kotlin.config.usePsiClassFilesReading
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 
-open class KotlinCoreProjectEnvironment(
+abstract class KotlinCoreProjectEnvironmentBase(
     disposable: Disposable,
     applicationEnvironment: KotlinCoreApplicationEnvironment
 ) : JavaCoreProjectEnvironment(disposable, applicationEnvironment) {
     override fun createCoreFileManager(): KotlinCliJavaFileManager = KotlinCliJavaFileManagerImpl(PsiManager.getInstance(project))
+}
+
+class KotlinCoreProjectEnvironment(
+    disposable: Disposable,
+    applicationEnvironment: KotlinCoreApplicationEnvironment,
+    configuration: CompilerConfiguration
+) : KotlinCoreProjectEnvironmentBase(disposable, applicationEnvironment) {
+
+    val jarFileSystem: VirtualFileSystem
+
+    init {
+        setIdeaIoUseFallback()
+
+        val useFastJarFS: Boolean = configuration.useFastJarFileSystem
+        if (!useFastJarFS) {
+            configuration.reportInfo("Using outdated version of JAR FS: it might make your build slower")
+        }
+
+        jarFileSystem = when {
+            configuration.usePsiClassFilesReading -> applicationEnvironment.jarFileSystem
+            useFastJarFS -> {
+                val fastJarFs = applicationEnvironment.fastJarFileSystem
+                if (fastJarFs == null) {
+                    configuration.report(
+                        INITIALIZATION_WARNING,
+                        "Your JDK doesn't seem to support mapped buffer unmapping, so the slower (old) version of JAR FS will be used"
+                    )
+                    applicationEnvironment.jarFileSystem
+                } else {
+                    val outputJar = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
+                    if (outputJar == null) {
+                        fastJarFs
+                    } else {
+                        val contentRoots = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS)
+                        if (contentRoots?.any { it is JvmClasspathRoot && it.file.path == outputJar.path } == true) {
+                            // See KT-61883
+                            configuration.report(
+                                INITIALIZATION_WARNING,
+                                "JAR from the classpath ${outputJar.path} is reused as output JAR, so the slower (old) version of JAR FS will be used"
+                            )
+                            applicationEnvironment.jarFileSystem
+                        } else {
+                            fastJarFs
+                        }
+                    }
+                }
+            }
+
+            else -> applicationEnvironment.jarFileSystem
+        }
+    }
+
+    private var extensionRegistered = false
+
+    @OptIn(CoreEnvironmentDeprecation::class)
+    override fun preregisterServices() {
+        KotlinCoreEnvironment.registerProjectExtensionPoints(project.extensionArea)
+    }
+
+    fun registerExtensionsFromPlugins(configuration: CompilerConfiguration) {
+        if (!extensionRegistered) {
+            fun createErrorMessage(extension: Any): String {
+                return "The provided plugin ${extension.javaClass.name} is not compatible with this version of compiler"
+            }
+
+            val extensionStorage = configuration.extensionsStorage ?: return
+            for (registrar in configuration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
+                with(registrar) { extensionStorage.registerExtensions(configuration) }
+            }
+            configuration[TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK]?.invoke(extensionStorage)
+            configuration[TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK]?.invoke(project)
+            extensionStorage.registerInProject(project) { createErrorMessage(it) }
+            extensionRegistered = true
+        }
+    }
+
+    override fun registerJavaPsiFacade() {
+        with(project) {
+            registerService(
+                CoreJavaFileManager::class.java,
+                this.getService(JavaFileManager::class.java) as CoreJavaFileManager
+            )
+
+            // We don't pass Disposable because in some tests, we manually unregister these extensions, and that leads to LOG.error
+            // exception from `ExtensionPointImpl.doRegisterExtension`, because the registered extension can no longer be found
+            // when the project is being disposed.
+            // For example, see the `unregisterExtension` call in `GenerationUtils.compileFilesUsingFrontendIR`.
+            // TODO: refactor this to avoid registering unneeded extensions in the first place, and avoid using deprecated API. (KT-64296)
+            @Suppress("DEPRECATION")
+            PsiElementFinder.EP.getPoint(project).registerExtension(PsiElementFinderImpl(this))
+
+            registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
+            registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
+        }
+
+        super.registerJavaPsiFacade()
+    }
+
+    companion object {
+        @JvmStatic
+        @CoreEnvironmentDeprecation
+        fun registerProjectExtensionPoints(area: ExtensionsArea) {
+            registerExtensionPoint(area, PsiTreeChangePreprocessor.EP.name, PsiTreeChangePreprocessor::class.java)
+            registerExtensionPoint(area, PsiElementFinder.EP.name, PsiElementFinder::class.java)
+            registerExtensionPoint(area, JvmElementProvider.EP_NAME, JvmElementProvider::class.java)
+        }
+    }
 }

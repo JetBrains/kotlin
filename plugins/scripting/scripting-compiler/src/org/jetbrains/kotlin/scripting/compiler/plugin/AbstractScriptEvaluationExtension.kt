@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.freeArgsForScript
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.scriptMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.cli.report
@@ -41,7 +42,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
     @K1Deprecation
     abstract fun createEnvironment(
-        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
+        projectEnvironment: KotlinCoreProjectEnvironment,
         configuration: CompilerConfiguration
     ): KotlinCoreEnvironment
 
@@ -59,7 +60,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
     override fun eval(
         arguments: CommonCompilerArguments,
         configuration: CompilerConfiguration,
-        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment
+        projectEnvironment: KotlinCoreProjectEnvironment
     ): ExitCode {
         val jvmArgs = arguments as? K2JVMCompilerArguments
         return eval(
@@ -74,7 +75,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
     override fun eval(
         configuration: CompilerConfiguration,
-        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
+        projectEnvironment: KotlinCoreProjectEnvironment,
     ): ExitCode {
         return eval(
             configuration,
@@ -88,7 +89,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
     private fun eval(
         configuration: CompilerConfiguration,
-        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
+        projectEnvironment: KotlinCoreProjectEnvironment,
         defaultScriptExtensionFromArguments: String?,
         expressionToEvaluate: String?,
         scriptMode: Boolean,

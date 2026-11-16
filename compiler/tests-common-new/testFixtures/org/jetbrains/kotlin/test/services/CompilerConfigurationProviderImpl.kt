@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
@@ -67,7 +68,7 @@ open class CompilerConfigurationProviderImpl(
         @OptIn(CoreEnvironmentDeprecation::class)
         val applicationEnvironment = KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(testRootDisposable)
         val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
-        val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
+        val projectEnv = KotlinCoreProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
 
         @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.create(projectEnv, configuration).also {
