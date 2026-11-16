@@ -272,7 +272,7 @@ class AnnotationImplementationMemberGenerator(
     val nameForToString: String,
     forbidDirectFieldAccess: Boolean,
     val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression
-) : LoweringDataClassMemberGenerator(loweringContext, irClass, ANNOTATION_IMPLEMENTATION, forbidDirectFieldAccess) {
+) : LoweringDataClassMemberGenerator(loweringContext, irClass, forbidDirectFieldAccess) {
 
     override fun IrClass.classNameForToString(): String = nameForToString
 

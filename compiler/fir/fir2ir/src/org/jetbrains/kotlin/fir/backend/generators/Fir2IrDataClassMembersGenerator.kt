@@ -138,7 +138,7 @@ class Fir2IrDataClassMembersGenerator(
             }
 
             generatedDataValueClassSyntheticFunctionsStorage[irClass] = DataValueClassGeneratedMembersInfo(
-                c, klass, origin, generatedIrFunctions
+                c, klass, generatedIrFunctions
             )
 
             return result
@@ -230,8 +230,8 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
         members: Map<IrClass, DataValueClassGeneratedMembersInfo>,
     ) {
         for ([irClass, info] in members) {
-            (val c = components, val firClass, val origin, val functions = generatedFunctions) = info
-            MyDataClassMethodsGenerator(c, irClass, firClass, origin).generateBodies(functions)
+            (val c = components, val firClass, val functions = generatedFunctions) = info
+            MyDataClassMethodsGenerator(c, irClass, firClass).generateBodies(functions)
         }
     }
 
@@ -239,7 +239,6 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
         val c: Fir2IrComponents,
         val irClass: IrClass,
         val klass: FirRegularClass,
-        val origin: IrDeclarationOrigin,
     ) : Fir2IrComponents by c {
         // `irClass` is a source class and definitely is not a lazy class
         @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -284,7 +283,6 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             IrGeneratorContextBase(irBuiltins),
             irClass,
             irClass.kotlinFqName,
-            origin,
             forbidDirectFieldAccess = false,
             generateBodies = !configuration.skipBodies,
         ) {

@@ -48,13 +48,11 @@ class MethodsFromAnyGeneratorForLowerings(val context: LoweringContext, val irCl
 open class LoweringDataClassMemberGenerator(
     val loweringContext: LoweringContext,
     irClass: IrClass,
-    origin: IrDeclarationOrigin,
     forbidDirectFieldAccess: Boolean = false
 ) : IrBasedDataClassMembersGenerator(
     IrGeneratorContextBase(loweringContext.irBuiltIns),
     irClass,
     irClass.kotlinFqName,
-    origin,
     forbidDirectFieldAccess,
     generateBodies = true,
 ) {
