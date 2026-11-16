@@ -278,7 +278,7 @@ internal class StubBasedFirTypeDeserializer(
 
     private fun ConeAttributes.withContextParametersFunctionTypeIfNeeded(typeElement: KtTypeElement): ConeAttributes {
         if (typeElement !is KtFunctionType) return this
-        val contextParametersCount = typeElement.contextParameterList?.contextReceivers()?.size ?: 0
+        val contextParametersCount = typeElement.contextParameterList?.let { it.contextReceivers().size + it.contextParameters.size } ?: 0
         if (contextParametersCount <= 0) return this
 
         return add(CompilerConeAttributes.ContextFunctionTypeParams(contextParametersCount))

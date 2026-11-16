@@ -694,19 +694,44 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
+    /**
+     * Loads a legacy context receiver from a context parameter without a name.
+     */
+    private fun loadLegacyContextReceiver(parameter: KtParameter, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
+        return buildValueParameter {
+            this.source = KtRealPsiSourceElement(parameter)
+            this.moduleData = c.moduleData
+            this.origin = initialOrigin
+            this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            this.symbol = FirValueParameterSymbol()
+            this.returnTypeRef = parameter.typeReference?.toTypeRef(c) ?: errorWithAttachment("KtParameter doesn't have type") {
+                withPsiEntry("parameter", parameter)
+                withFirSymbolEntry("functionSymbol", containingDeclarationSymbol)
+            }
+            this.containingDeclarationSymbol = containingDeclarationSymbol
+            this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
+            this.resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+        }
+    }
+
     private fun loadContextParameter(
         parameter: KtParameter,
         containingDeclarationSymbol: FirCallableSymbol<*>,
-    ): FirValueParameter = loadValueParameter(
-        parameter = parameter,
-        containingSymbol = containingDeclarationSymbol,
-        kind = FirValueParameterKind.ContextParameter,
-    )
+    ): FirValueParameter = if (parameter.name != null) {
+        loadValueParameter(
+            parameter = parameter,
+            containingSymbol = containingDeclarationSymbol,
+            kind = FirValueParameterKind.ContextParameter,
+        )
+    } else {
+        loadLegacyContextReceiver(parameter, containingDeclarationSymbol)
+    }
 
     internal fun createContextReceiversForClass(
         classOrObject: KtClassOrObject,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ): List<FirValueParameter> {
+        val contextParameters = classOrObject.modifierList?.contextParameterList?.contextParameters.orEmpty()
         return classOrObject.contextReceivers.mapNotNull { it.typeReference() }.map {
             buildValueParameter {
                 this.source = KtRealPsiSourceElement(it)
@@ -718,6 +743,20 @@ internal class StubBasedFirMemberDeserializer(
                 this.containingDeclarationSymbol = containingDeclarationSymbol
                 this.valueParameterKind = FirValueParameterKind.ContextParameter
                 this.resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            }
+        } + contextParameters.mapNotNull { parameter ->
+            parameter.typeReference?.let { typeReference ->
+                buildValueParameter {
+                    this.source = KtRealPsiSourceElement(parameter)
+                    this.moduleData = c.moduleData
+                    this.origin = initialOrigin
+                    this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                    this.symbol = FirValueParameterSymbol()
+                    this.returnTypeRef = typeReference.toTypeRef(c)
+                    this.containingDeclarationSymbol = containingDeclarationSymbol
+                    this.valueParameterKind = FirValueParameterKind.ContextParameter
+                    this.resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                }
             }
         }
     }
