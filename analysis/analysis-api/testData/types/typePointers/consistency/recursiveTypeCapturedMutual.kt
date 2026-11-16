@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// Restoration fails with "Unhandled recursive pointer restoration"
-
 interface Pair<A, B>
 
 class Example<L : Pair<R?, L>, R : Pair<L?, R>> {

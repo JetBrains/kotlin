@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// Restoration fails with "Unhandled recursive pointer restoration"
-
 interface Node<T>
 
 class Example<R : Node<List<R?>>> {
