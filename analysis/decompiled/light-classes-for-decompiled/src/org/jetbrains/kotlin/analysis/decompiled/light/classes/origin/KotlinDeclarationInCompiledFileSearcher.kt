@@ -289,7 +289,8 @@ class KotlinDeclarationInCompiledFileSearcher {
 
     private fun KtCallableDeclaration.extractContextParameterNames(to: MutableList<String>) {
         modifierList?.contextParameterList?.let { contextParameterList ->
-            contextParameterList.contextParameters.forEach { to.add(it.name!!) }
+            // A legacy context receiver is a context parameter without a name
+            contextParameterList.contextParameters.forEach { parameter -> parameter.name?.let(to::add) }
         }
 
         @OptIn(KtExperimentalApi::class)
