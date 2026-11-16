@@ -62,7 +62,7 @@ fun main(args: Array<String>) {
             "plugins/atomicfu/atomicfu-compiler/testData",
             testRunnerMethodName = "runTest0"
         ) {
-            testClass<AbstractAtomicfuFirCheckerTest> {
+            testClass<AbstractAtomicfuDiagnosticTest> {
                 model("diagnostics/")
             }
 

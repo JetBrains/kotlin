@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 @file:Suppress("NOTHING_TO_INLINE")
@@ -16,3 +17,6 @@ fun whyWouldYouDoThat() {
    val inc2 = a::<!ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN!>inc<!>
    callAndPrint(inc)
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, callableReference, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, integerLiteral, localProperty, propertyDeclaration, stringLiteral, thisExpression */

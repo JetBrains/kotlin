@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73508
 // FULL_JDK
 // RENDER_DIAGNOSTICS_FULL_TEXT
@@ -25,3 +25,6 @@ fun testTypealiased() {
 fun testArray(<!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>a<!>: AtomicArray<Int>) {
     <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a[0].compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>1<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>2<!>)<!> // A call on `AtomicRef<Int?>`
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

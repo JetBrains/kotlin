@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 import kotlinx.atomicfu.*
@@ -26,3 +27,5 @@ class Holder {
     private <!ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD!>val<!> aba: AtomicBooleanArray get() = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>AtomicBooleanArray(1)<!>
     private <!ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD!>val<!> ara: AtomicArray<Any?> get() = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomicArrayOfNulls(1)<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, nullableType, propertyDeclaration, stringLiteral */

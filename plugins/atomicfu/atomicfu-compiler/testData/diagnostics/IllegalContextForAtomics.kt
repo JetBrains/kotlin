@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 import kotlinx.atomicfu.*
@@ -64,3 +65,6 @@ fun propertyInsideLocalClass() {
         private val a = atomic(0)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, localClass,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate, stringLiteral */

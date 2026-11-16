@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlinx.atomicfu.*
 import kotlin.test.*
 
@@ -51,3 +52,6 @@ fun box(): String {
     aClass.update(true) { i -> assertFalse(i) }
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral,
+localProperty, nestedClass, propertyDeclaration, stringLiteral */
