@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_S
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractNonJvmIrTextTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
@@ -74,6 +73,3 @@ abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
 }
 
 open class AbstractLightTreeNativeIrTextTest : AbstractNativeIrTextTestBase(FirParser.LightTree)
-
-@FirPsiCodegenTest
-open class AbstractPsiNativeIrTextTest : AbstractNativeIrTextTestBase(FirParser.Psi)
