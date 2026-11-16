@@ -468,16 +468,13 @@ internal fun KtDeclaration.isImplicitlyActualDeclaration(): Boolean = when (this
 internal fun KtClass.allowsImplicitlyActualConstructor() = isAnnotation() || isValue() || isInline()
 
 /**
- * Returns `true` if this callable, class, or object declares at least one legacy context receiver. Named context parameters are ignored.
+ * Returns `false`: context receivers are parsed as context parameters without names.
  */
-fun KtElement.isContextualDeclaration(): Boolean {
-    val contextReceivers = when (this) {
-        is KtCallableDeclaration -> contextReceivers
-        is KtClassOrObject -> contextReceivers
-        else -> emptyList()
-    }
-    return contextReceivers.isNotEmpty()
-}
+@Deprecated(
+    message = "Context receivers are parsed as context parameters without names, so the result is always 'false'.",
+    level = DeprecationLevel.WARNING,
+)
+fun KtElement.isContextualDeclaration(): Boolean = false
 
 /** Returns `true` if this is the body of an object literal (`object : Foo { ... }`). */
 fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && isObjectLiteral()

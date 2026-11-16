@@ -58,25 +58,21 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
     KtTypeReference getReceiverTypeReference();
 
     /**
-     * Returns the unnamed context receivers declared in the {@code context(...)} clause of this callable, or an empty list if there are
-     * none. This is the legacy context-receiver API; named context parameters are available from {@link #getContextParameters()}.
+     * Returns an empty list: context receivers are parsed as context parameters without names, which
+     * {@link #getContextParameters()} returns.
      *
      * @see KtContextReceiver
      * @see KtModifierList#getContextParameterList()
+     * @deprecated Use {@link #getContextParameters()} instead. Context receivers are parsed as context parameters without names.
      */
+    @kotlin.Deprecated(
+            message = "Use 'getContextParameters()' instead. Context receivers are parsed as context parameters without names.",
+            level = DeprecationLevel.WARNING
+    )
+    @Deprecated
     @NotNull
     default List<KtContextReceiver> getContextReceivers() {
-        KtModifierList modifierList = getModifierList();
-        if (modifierList == null) {
-            return Collections.emptyList();
-        }
-
-        KtContextParameterList contextParameterList = modifierList.getContextParameterList();
-        if (contextParameterList == null) {
-            return Collections.emptyList();
-        }
-
-        return contextParameterList.contextReceivers();
+        return Collections.emptyList();
     }
 
     /**

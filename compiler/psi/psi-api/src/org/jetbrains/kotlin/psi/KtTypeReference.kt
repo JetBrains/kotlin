@@ -104,10 +104,16 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
     }
 
     /**
-     * Returns the short name to use as an implicit label for a receiver of this type (the simple name of the user type), or `null` if the
-     * type is not a user type.
+     * Returns the short name of this type if it is a user type, as `C` for `a.b.C<T>`, or `null` otherwise, e.g., for a nullable type.
+     *
+     * The short name was the implicit label of a context receiver of this type, as in `this@Logger` for `context(Logger)`.
      */
-    fun nameForReceiverLabel() = (typeElement as? KtUserType)?.referencedName
+    @Deprecated(
+        message = "Use the short name of the user type instead: context receivers are parsed as context parameters without names.",
+        replaceWith = ReplaceWith("(typeElement as? KtUserType)?.referencedName", "org.jetbrains.kotlin.psi.KtUserType"),
+        level = DeprecationLevel.WARNING,
+    )
+    fun nameForReceiverLabel(): String? = (typeElement as? KtUserType)?.referencedName
 
     /**
      * Returns fully qualified presentable text for the underlying type based on stubs when provided.
@@ -152,9 +158,11 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
                 if (hasModifier(KtTokens.SUSPEND_KEYWORD)) {
                     append("suspend ")
                 }
-                val contextReceivers = typeElement.contextReceiversTypeReferences
-                if (contextReceivers.isNotEmpty()) {
-                    append(contextReceivers.joinToString(", ", "context(", ")") { getTypeText(it.typeElement, nameFunction) ?: "" })
+                val contextParameters = typeElement.contextParameterList?.contextParameters.orEmpty()
+                if (contextParameters.isNotEmpty()) {
+                    append(contextParameters.joinToString(", ", "context(", ")") { param ->
+                        getTypeText(param.typeReference?.typeElement, nameFunction).orEmpty()
+                    })
                 }
                 typeElement.receiverTypeReference?.let { append(getTypeText(it.typeElement, nameFunction)) }
                 append(typeElement.parameters.joinToString(", ", "(", ")") { param ->

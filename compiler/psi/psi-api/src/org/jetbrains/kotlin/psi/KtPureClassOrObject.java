@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi;
 
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,9 +74,16 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
     List<KtSecondaryConstructor> getSecondaryConstructors();
 
     /**
-     * Returns the unnamed context receivers declared on this class or object, or an empty list if there are none. This is the legacy
-     * context-receiver API; named context parameters are exposed by {@link KtContextParameterList}.
+     * Returns an empty list: context receivers are parsed as context parameters without names.
+     *
+     * @deprecated Use {@link KtModifierList#getContextParameterList()} instead. Context receivers are parsed as context
+     * parameters without names.
      */
+    @kotlin.Deprecated(
+            message = "Use 'KtModifierList.getContextParameterList()' instead. Context receivers are parsed as context parameters without names.",
+            level = DeprecationLevel.WARNING
+    )
+    @Deprecated
     @NotNull
     List<KtContextReceiver> getContextReceivers();
 
