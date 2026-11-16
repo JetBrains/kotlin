@@ -246,7 +246,7 @@ var CompilerConfiguration.usePsiClassFilesReading: Boolean
     set(value) { put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, value) }
 
 var CompilerConfiguration.useFastJarFileSystem: Boolean
-    get() = getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)
+    get() = get(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, true)
     set(value) { put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, value) }
 
 var CompilerConfiguration.additionalJavaModules: List<String>
