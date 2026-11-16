@@ -4147,20 +4147,30 @@ class ComposableFunctionBodyTransformer(
             val isComposable = composerParameter != null
 
             val allTrackedParams = buildList {
-                var parameterCount = realValueParamCount
+                // The leading parameters of a composable reference's `invokeFunction` receive its
+                // bound values. The `$changed` read by such an `invokeFunction` comes unmodified
+                // from the caller of the reference, which knows nothing about the bound values, so
+                // these leading parameters are left untracked here, and the remaining parameters
+                // are numbered the way the caller sees them. The leading parameters are left
+                // untracked, but they are still counted by `slotCount`, because `slotCount` has to
+                // stay consistent with the number of `$changed` parameters added by
+                // `ComposerParamTransformer`.
+                val composableReferenceBoundParameters = function.parameters.take(function.composableReferenceBoundParameterCount ?: 0)
+                val parameters = function.parameters.drop(composableReferenceBoundParameters.size)
+                var parameterCount = realValueParamCount - composableReferenceBoundParameters.count { it.kind == IrParameterKind.Regular }
                 // reorder to match $changed: [context, extension, value, dispatch]
-                function.parameters.fastForEach {
+                parameters.fastForEach {
                     if (it.kind == IrParameterKind.Context || it.kind == IrParameterKind.ExtensionReceiver) {
                         add(it)
                     }
                 }
-                function.parameters.fastForEach {
+                parameters.fastForEach {
                     if (parameterCount > 0 && it.kind == IrParameterKind.Regular) {
                         parameterCount--
                         add(it)
                     }
                 }
-                function.parameters.fastForEach {
+                parameters.fastForEach {
                     if (it.kind == IrParameterKind.DispatchReceiver) {
                         add(it)
                     }

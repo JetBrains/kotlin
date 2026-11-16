@@ -195,6 +195,7 @@ class ComposerParamTransformer(
         } else {
             expression.invokeFunction.isComposableReferenceInvoke = true
         }
+        expression.invokeFunction.composableReferenceBoundParameterCount = expression.boundValues.size
 
         return super.visitRichFunctionReference(expression)
     }

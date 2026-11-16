@@ -26,6 +26,12 @@ internal var IrFunction.isComposableReferenceAdapter: Boolean by irFlag(copyByDe
 
 internal var IrFunction.isComposableReferenceInvoke: Boolean by irFlag(copyByDefault = true)
 
+/**
+ * The number of leading parameters of a composable reference's `invokeFunction` that are bound
+ * values (bound receiver / bound context arguments).
+ */
+internal var IrFunction.composableReferenceBoundParameterCount: Int? by irAttribute(copyByDefault = true)
+
 internal var IrExpression.isStaticFunctionExpression: Boolean by irFlag(copyByDefault = true)
 
 internal var IrExpression.isStaticExpression: Boolean by irFlag(copyByDefault = true)
