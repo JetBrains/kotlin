@@ -370,7 +370,7 @@ abstract class IrBasedDataClassMembersGenerator(
         buildMember(irFunction) {
             generateHashCodeMethodBody(
                 properties,
-                if (irClass.kind == ClassKind.OBJECT && irClass.isData) fqName.hashCode() else 0
+                if (irClass.kind == ClassKind.OBJECT && (irClass.isData || irClass.isValue)) fqName.hashCode() else 0
             )
         }
     }

@@ -286,7 +286,7 @@ MODULE_FRAGMENT
           public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Result
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Empty'
-            CONST Int type=kotlin.Int value=0
+            CONST Int type=kotlin.Int value=67081517
       FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Empty
         overridden:
