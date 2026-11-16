@@ -35,13 +35,14 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  *
  * Generating synthetic members of inline class can use this as well, in particular, members from Any: equals, hashCode, and toString.
  */
-abstract class DataClassMembersGenerator(
+abstract class IrBasedDataClassMembersGenerator(
     val context: IrGeneratorContext,
     val symbolTable: ReferenceSymbolTable,
     val irClass: IrClass,
     val fqName: FqName?,
     val origin: IrDeclarationOrigin,
     val forbidDirectFieldAccess: Boolean = false,
+    private val generateBodies: Boolean,
 ) {
     inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
@@ -330,19 +331,6 @@ abstract class DataClassMembersGenerator(
 
     open fun IrClass.classNameForToString(): String = irClass.name.asString()
 
-    protected abstract fun IrSimpleFunctionSymbol.hasDispatchReceiver(): Boolean
-    protected abstract fun IrConstructorSymbol.typesOfTypeParameters(): List<IrType>
-}
-
-abstract class IrBasedDataClassMembersGenerator(
-    context: IrGeneratorContext,
-    symbolTable: ReferenceSymbolTable,
-    irClass: IrClass,
-    fqName: FqName?,
-    origin: IrDeclarationOrigin,
-    forbidDirectFieldAccess: Boolean,
-    private val generateBodies: Boolean,
-) : DataClassMembersGenerator(context, symbolTable, irClass, fqName, origin, forbidDirectFieldAccess) {
     fun generateComponentFunction(irFunction: IrFunction, irProperty: IrProperty) {
         buildMember(irFunction) {
             generateComponentFunction(irProperty)
@@ -400,11 +388,11 @@ abstract class IrBasedDataClassMembersGenerator(
 
     abstract fun getProperty(irValueParameter: IrValueParameter?): IrProperty
 
-    override fun IrSimpleFunctionSymbol.hasDispatchReceiver(): Boolean {
+    private fun IrSimpleFunctionSymbol.hasDispatchReceiver(): Boolean {
         return owner.dispatchReceiverParameter != null
     }
 
-    override fun IrConstructorSymbol.typesOfTypeParameters(): List<IrType> {
+    private fun IrConstructorSymbol.typesOfTypeParameters(): List<IrType> {
         val allParameters = owner.constructedClass.typeParameters + owner.typeParameters
         return allParameters.map { it.defaultType }
     }
