@@ -48,3 +48,16 @@ FILE: /__GENERATED__CALLABLES__.kt
         @R|kotlin/jvm/JvmName|(name = String(Person_Name_lastName)) public get(): R|kotlin/String|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person.Name>|.lastName: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
         @R|kotlin/jvm/JvmName|(name = String(Person_Name_lastName)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+FILE: /__GENERATED__CALLABLES__.kt
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.name: R|org/jetbrains/kotlinx/dataframe/DataRow<Person.Name>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<Person.Name>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.name: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<Person.Name>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_name)) public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<Person.Name>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person.Name>|.firstName: R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(Person_Name_firstName)) public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person.Name>|.firstName: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_Name_firstName)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person.Name>|.lastName: R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(Person_Name_lastName)) public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person.Name>|.lastName: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_Name_lastName)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|

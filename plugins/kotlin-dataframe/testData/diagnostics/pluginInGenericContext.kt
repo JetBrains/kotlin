@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 package org.jetbrains.kotlinx.dataframe.annotations
 
 import org.jetbrains.kotlinx.dataframe.*
@@ -22,3 +23,9 @@ fun box(): String {
     val df = create(listOf(1, 2, 3))
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, annotationDeclaration, classDeclaration, data, elvisExpression,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline, integerLiteral,
+interfaceDeclaration, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+reified, samConversion, sealed, smartcast, starProjection, stringLiteral, thisExpression, typeParameter, whenExpression,
+whenWithSubject */

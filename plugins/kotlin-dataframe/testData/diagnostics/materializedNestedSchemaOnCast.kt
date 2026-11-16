@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // RENDER_DIAGNOSTIC_ARGUMENTS
 
 import org.jetbrains.kotlinx.dataframe.*
@@ -19,3 +20,8 @@ class Context {
     @DataSchema
     class MySchema
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, elvisExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline, interfaceDeclaration, isExpression,
+lambdaLiteral, localClass, localProperty, nestedClass, nullableType, primaryConstructor, propertyDeclaration, reified,
+samConversion, sealed, smartcast, stringLiteral, thisExpression, typeParameter, whenExpression, whenWithSubject */

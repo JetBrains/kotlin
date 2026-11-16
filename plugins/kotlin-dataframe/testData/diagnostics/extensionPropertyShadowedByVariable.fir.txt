@@ -68,3 +68,8 @@ FILE: /__GENERATED__CALLABLES__.kt
         @R|kotlin/jvm/JvmName|(name = String(MySchema_a)) public get(): R|kotlin/Int|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<MySchema>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
         @R|kotlin/jvm/JvmName|(name = String(MySchema_a)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+FILE: /__GENERATED__CALLABLES__.kt
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|.a: R|kotlin/Int|
+        @R|kotlin/jvm/JvmName|(name = String(MySchema_a)) public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<MySchema>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(MySchema_a)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|

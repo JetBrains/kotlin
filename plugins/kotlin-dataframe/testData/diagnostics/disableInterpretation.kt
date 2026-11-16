@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 package org.jetbrains.kotlinx.dataframe
 
 import org.jetbrains.kotlinx.dataframe.annotations.DisableInterpretation
@@ -9,3 +10,8 @@ fun box(): String {
     val df = @DisableInterpretation DataFrame.readCsv("wowah_data_100K.csv")
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, elvisExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline, interfaceDeclaration, isExpression,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, reified, samConversion, sealed,
+smartcast, starProjection, stringLiteral, thisExpression, typeParameter, whenExpression, whenWithSubject */
