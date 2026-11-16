@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: annotation.kt
@@ -30,3 +31,6 @@ object TestKeptSerializer: KSerializer<TestKept> {
 <!PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY!>@Serializable(TestKeptSerializer::class)<!>
 @KeepGeneratedSerializer
 class TestKept(val someData: String, cantBeDeserialized: Int)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, objectDeclaration,
+override, primaryConstructor, propertyDeclaration, stringLiteral */

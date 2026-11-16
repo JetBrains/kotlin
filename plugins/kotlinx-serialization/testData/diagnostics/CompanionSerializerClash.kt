@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
@@ -94,3 +95,7 @@ data class SerializerFunctionWithDifferentSignature(val x: Int) {
         <!SERIALIZER_FUNCTION_CLASH_IN_COMPANION!>fun serializer(): Double = 0.1<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, data, funWithExtensionReceiver,
+functionDeclaration, getter, nullableType, objectDeclaration, override, primaryConstructor, propertyDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

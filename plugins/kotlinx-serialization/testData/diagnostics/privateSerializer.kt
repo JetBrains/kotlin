@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: A.kt
@@ -67,3 +68,6 @@ private typealias PrivateForPrivateAlias = PrivateForPrivate
 
 @Serializable(with = PrivateForPrivateAlias::class)
 private class PrivateBoth
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, getter, interfaceDeclaration,
+objectDeclaration, override, propertyDeclaration, typeAliasDeclaration */

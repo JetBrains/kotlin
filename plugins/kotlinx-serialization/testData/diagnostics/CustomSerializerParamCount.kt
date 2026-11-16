@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -59,3 +60,6 @@ class ExternallySerializable<T>(val t: T)
 class ExternalWithSecondaryCtor<T>(private val a: KSerializer<T>, private val b: KSerializer<T>) {
     constructor(inner: KSerializer<T>) : this(inner, inner)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, data, nullableType, primaryConstructor, propertyDeclaration,
+secondaryConstructor, typeConstraint, typeParameter */

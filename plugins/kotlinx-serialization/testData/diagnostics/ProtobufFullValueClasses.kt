@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
 
@@ -58,3 +59,6 @@ class IdCollections(
     <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val multiFieldValues: Map<String, MultiFieldId>,
     <!PROTOBUF_ANNOTATION_INAPPLICABLE_TYPE!>@ProtoType(ProtoIntegerType.FIXED)<!> val regularValues: Map<String, RegularId>,
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, objectDeclaration,
+primaryConstructor, propertyDeclaration, value */

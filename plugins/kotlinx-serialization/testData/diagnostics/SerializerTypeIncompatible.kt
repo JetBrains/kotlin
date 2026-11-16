@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: annotation.kt
@@ -118,3 +119,6 @@ class Foo9<T>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOM
 @Serializable(Foo9KeptSerializer::class)
 @KeepGeneratedSerializer
 class Foo9Kept<T>(@Serializable(BarSerializer::class) val b: <!SERIALIZER_TYPE_INCOMPATIBLE("T (of class Foo9Kept<T>); BarSerializer; Bar")!>T<!>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, nullableType, objectDeclaration,
+primaryConstructor, propertyDeclaration, starProjection, stringLiteral, typeConstraint, typeParameter */

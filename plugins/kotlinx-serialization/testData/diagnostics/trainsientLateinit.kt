@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-73961
 
 class Bar {
@@ -8,3 +9,5 @@ class Bar {
         this.foo = foo
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, lateinit, propertyDeclaration, secondaryConstructor, thisExpression */

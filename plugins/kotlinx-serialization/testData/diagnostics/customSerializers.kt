@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FILE: test.kt
 import kotlinx.serialization.*
@@ -132,3 +133,6 @@ abstract class ToDoSerializer<T: Any>: KSerializer<T> {
     override fun deserialize(decoder: Decoder): T = TODO()
     override fun serialize(encoder: Encoder, value: T) = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, nullableType, objectDeclaration, override,
+primaryConstructor, propertyDeclaration, starProjection, stringLiteral, typeConstraint, typeParameter */

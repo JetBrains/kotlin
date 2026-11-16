@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -34,3 +35,6 @@ class TestCase2(@Serializable(BoxSerializerArgless::class) val box: Box<NonSeria
 
 @Serializable
 class TestCase3(@Serializable(BoxSerializer::class) val box: Box<List<<!SERIALIZER_NOT_FOUND!>NonSerializable<!>>>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, getter, nullableType, override,
+primaryConstructor, propertyDeclaration, typeParameter */

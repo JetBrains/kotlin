@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -42,3 +43,7 @@ fun testSerialization(previous: String): String {
 fun box(): String {
     return testSerialization(testSerializers())
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, classReference, enumDeclaration, enumEntry, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, localProperty, multilineStringLiteral, primaryConstructor,
+propertyDeclaration, starProjection, stringLiteral */

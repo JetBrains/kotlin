@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -18,3 +19,6 @@ class MetaSerializableNestedTest {
     @JsonComment("class_comment")
     data class IntDataCommented(val i: Int)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, data, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

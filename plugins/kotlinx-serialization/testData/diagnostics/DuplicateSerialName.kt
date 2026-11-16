@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FILE: test.kt
 import kotlinx.serialization.*
@@ -22,3 +23,6 @@ class WithConstEval(
     @SerialName(X + Y) val x: Int,
     @SerialName(X + Y) val y: Int
 )
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, const, override, primaryConstructor, propertyDeclaration,
+stringLiteral */

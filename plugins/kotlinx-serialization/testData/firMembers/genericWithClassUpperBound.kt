@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // DUMP_IR
 // ISSUE: KT-89275
@@ -22,3 +23,6 @@ fun box(): String {
     if (encoded != target) return "Incorrect serialization: $encoded"
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, localProperty,
+multilineStringLiteral, primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

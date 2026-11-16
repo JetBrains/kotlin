@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -15,3 +16,5 @@ class Foo1(@Polymorphic val i: Baz)
 
 @Serializable
 class Foo2(val li: MutableList<@Serializable(with = BazSerializer::class) Baz>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, objectDeclaration, primaryConstructor, propertyDeclaration */
