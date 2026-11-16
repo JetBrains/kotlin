@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -47,7 +48,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         for (superTypeRef in getClassSuperTypeReferencesWithInitializers(declaration)) {
             reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS)
         }
-        for (propertyParameter in getConstructorProhibitedPropertyParameters(declaration, lastClass)) {
+        for (propertyParameter in withSyntax { getConstructorProhibitedPropertyParameters(declaration, lastClass) }) {
             reporter.reportOn(propertyParameter.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER)
         }
         if (isProhibitedEnumConstructor(declaration, lastClass)) {
@@ -69,6 +70,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         }
     }
 
+    context(syntax: FirSyntaxComponent<*>)
     private fun getConstructorProhibitedPropertyParameters(
         declaration: FirMemberDeclaration,
         containingClass: FirClassSymbol<*>?,
