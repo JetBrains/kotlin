@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.ir.ExecutableWasmWasi
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
@@ -312,8 +313,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
             )
 
             buildAndFail(":compileDevelopmentExecutableKotlinWasmWasiComponentize") {
-                assertOutputContains("main.*function".toRegex(RegexOption.IGNORE_CASE))
-                assertOutputContains("reactor".toRegex(RegexOption.IGNORE_CASE))
+                assertHasDiagnostic(KotlinToolingDiagnostics.WasiCommandComponentWithoutMainFunction)
             }
         }
     }

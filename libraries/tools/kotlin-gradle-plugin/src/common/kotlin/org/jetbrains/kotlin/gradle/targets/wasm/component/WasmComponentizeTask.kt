@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterRequest
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsRequest
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.KOTLIN_WASM_WIT_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.requestDefaultWasiAdapter
@@ -57,7 +59,8 @@ abstract class WasmComponentizeTask
 internal constructor() :
     DefaultTask(),
     UsesWasmToolsToolchainService,
-    UsesWasiAdapterToolchainService {
+    UsesWasiAdapterToolchainService,
+    UsesKotlinToolingDiagnostics {
     @get:Inject
     internal abstract val execOperations: ExecOperations
 
@@ -175,7 +178,7 @@ internal constructor() :
         val componentDirectory = outputDirectory.getFile()
         componentDirectory.mkdirs()
         val component = componentDirectory.resolve(inputModule.name)
-        val result = execOperations.exec {
+        val componentNewOut = providerFactory.exec {
             it.executable = wasmTools
             it.args = listOf(
                 "component",
@@ -188,13 +191,18 @@ internal constructor() :
                     listOf("-o", component.absolutePath)
             it.isIgnoreExitValue = true
         }
+        val result = componentNewOut.result.get()
+
+        logger.info(componentNewOut.standardOutput.asText.get())
 
         // if `wasm-tools component new` failed, sanity check that there is a _start export
         if (result.exitValue != 0 &&
             adapter.flavor.get() == WasiAdapterFlavor.COMMAND &&
             !hasStartExport(wasmTools, inputModule)
         ) {
-            logger.error(MISSING_MAIN_FUNCTION_MESSAGE)
+            reportDiagnostic(KotlinToolingDiagnostics.WasiCommandComponentWithoutMainFunction(componentNewOut.standardError.asText.get()))
+        } else {
+            logger.error(componentNewOut.standardError.asText.get())
         }
         result.assertNormalExitValue()
     }
@@ -237,22 +245,6 @@ internal constructor() :
         private const val EMBED_DIRECTORY_NAME = "embed"
 
         private const val START_EXPORT_PREFIX = "(export \"_start\""
-
-        // NOTE: leading newline is intentional
-        private val MISSING_MAIN_FUNCTION_MESSAGE = """
-            
-            It seems like the Wasm module has no main function, so `wasm-tools` can't make a WASI command component from it.
-            
-            You probably want to add a main function. 
-            
-            Otherwise, if you either don't want to run the program,
-            or want to export a custom entry point, change the WASI preview 1 adapter flavor
-            to the reactor adapter (which does not require a main function) in the build script, like this:
-            
-                tasks.withType<WasmComponentizeTask>().configureEach {
-                    wasiAdapterRequest.get().flavor.set(WasiAdapterFlavor.REACTOR)
-                }
-        """.trimIndent()
 
         internal fun register(
             compilation: KotlinJsIrCompilation,
