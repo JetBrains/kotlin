@@ -29,8 +29,6 @@
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class TypeHook {
-    @org.jetbrains.annotations.NotNull()
-    public static final TypeHook.Companion Companion = null;
 
     public TypeHook() {
         super();
@@ -95,4 +93,6 @@ public final class TypeHook {
         UnknownType value) {
         }
     }
+    @org.jetbrains.annotations.NotNull()
+    public static final TypeHook.Companion Companion = null;
 }

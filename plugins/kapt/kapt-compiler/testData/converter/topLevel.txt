@@ -64,8 +64,6 @@ package test.another;
  */
 @kotlin.Metadata()
 public final class TopLevelKt {
-    private static final int topLevelProperty = 2;
-    public static final int topLevelConstProperty = 2;
 
     @org.jetbrains.annotations.Nullable()
     public static final java.lang.String topLevelFunction() {
@@ -80,6 +78,8 @@ public final class TopLevelKt {
     public static final int getTopLevelProperty() {
         return 0;
     }
+    private static final int topLevelProperty = 2;
+    public static final int topLevelConstProperty = 2;
 
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getTopLevelProperty2() {

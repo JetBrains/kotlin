@@ -210,10 +210,8 @@ class KaptStubDirectConverter(
         genericType: SignatureParser.ClassGenericSignature<String, String>,
         superTypes: ClassSupertypes<String>,
         enumValues: List<String>,
-        sortedConvertedFields: List<String>,
-        sortedConvertedMethods: List<String>,
-        nestedClasses: List<String>,
-        recordComponents: List<String>?,
+        members: List<ClassMember<String>>,
+        recordComponents: List<String>?
     ): String {
         val isEnum = clazz.isEnum()
         val isAnnotation = clazz.isAnnotation()
@@ -255,12 +253,8 @@ class KaptStubDirectConverter(
                     append(enumValue)
                 append(";\n")
             }
-            for (field in sortedConvertedFields)
-                append(field).append("\n")
-            for (method in sortedConvertedMethods)
-                append(method).append("\n")
-            for (nestedClass in nestedClasses)
-                append(nestedClass).append("\n")
+            for (member in members)
+                append(member.element).append("\n")
             append("}\n")
         }
 

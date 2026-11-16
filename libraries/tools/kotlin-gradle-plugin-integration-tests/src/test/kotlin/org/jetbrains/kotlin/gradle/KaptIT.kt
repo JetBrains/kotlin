@@ -745,7 +745,7 @@ open class KaptIT : KaptBaseIT() {
             buildAndFail("build") {
                 val actual = getErrorMessages()
                 assertEquals(
-                    expected = genJavaErrorString(7, 19),
+                    expected = genJavaErrorString(11, 19),
                     actual = actual
                 )
             }

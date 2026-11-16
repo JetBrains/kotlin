@@ -59,6 +59,25 @@ public final class Test {
     }
 
     /**
+     * public final object kapt/Test.NestedObject : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class NestedObject {
+
+        private NestedObject() {
+            super();
+        }
+        @org.jetbrains.annotations.NotNull()
+        public static final kapt.Test.NestedObject INSTANCE = null;
+    }
+
+    /**
      * public final enum class kapt/Test.NestedEnum : kotlin/Enum<kapt/Test.NestedEnum> {
      *
      *   // signature: <init>(Ljava/lang/String;I)V
@@ -84,25 +103,6 @@ public final class Test {
         @org.jetbrains.annotations.NotNull()
         public static kotlin.enums.EnumEntries<kapt.Test.NestedEnum> getEntries() {
             return null;
-        }
-    }
-
-    /**
-     * public final object kapt/Test.NestedObject : kotlin/Any {
-     *
-     *   // signature: <init>()V
-     *   private constructor()
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class NestedObject {
-        @org.jetbrains.annotations.NotNull()
-        public static final kapt.Test.NestedObject INSTANCE = null;
-
-        private NestedObject() {
-            super();
         }
     }
 }

@@ -15,8 +15,6 @@ import kotlin.reflect.KProperty;
  */
 @kotlin.Metadata()
 public final class AnonymousDelegateKt {
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.Object delegate$delegate = null;
 
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.Object getDelegate() {
@@ -26,6 +24,8 @@ public final class AnonymousDelegateKt {
     public static final void setDelegate(@org.jetbrains.annotations.NotNull()
     java.lang.Object p0) {
     }
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.Object delegate$delegate = null;
 }
 
 ////////////////////
@@ -99,14 +99,6 @@ import kotlin.reflect.KProperty;
  */
 @kotlin.Metadata()
 public final class Test {
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.Object broken$delegate = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.io.Serializable overridden$delegate = null;
-    @org.jetbrains.annotations.NotNull()
-    private final kotlin.Lazy lazyProp$delegate = null;
-    @org.jetbrains.annotations.NotNull()
-    private final ConcreteDelegate concreteDelegate$delegate = null;
 
     public Test() {
         super();
@@ -120,6 +112,8 @@ public final class Test {
     public final void setBroken(@org.jetbrains.annotations.NotNull()
     java.lang.Object p0) {
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.Object broken$delegate = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.Object getOverridden() {
@@ -129,12 +123,18 @@ public final class Test {
     public final void setOverridden(@org.jetbrains.annotations.NotNull()
     java.lang.Object p0) {
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.io.Serializable overridden$delegate = null;
 
     private final java.lang.Runnable getLazyProp() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.Lazy lazyProp$delegate = null;
 
     public final int getConcreteDelegate() {
         return 0;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final ConcreteDelegate concreteDelegate$delegate = null;
 }

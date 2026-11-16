@@ -26,21 +26,6 @@
 @kotlin.Metadata()
 public abstract interface Foo {
 
-    public default void foo() {
-    }
-
-    public default void foo2(int a) {
-    }
-
-    public abstract void bar();
-
-    public default void privateMethod() {
-    }
-
-    public default void privateDefaultMethod(@org.jetbrains.annotations.Nullable()
-    java.lang.String x) {
-    }
-
     /**
      * synthetic class
      */
@@ -56,5 +41,20 @@ public abstract interface Foo {
         public static void foo2(@org.jetbrains.annotations.NotNull()
         Foo $this, int a) {
         }
+    }
+
+    public default void foo() {
+    }
+
+    public default void foo2(int a) {
+    }
+
+    public abstract void bar();
+
+    public default void privateMethod() {
+    }
+
+    public default void privateDefaultMethod(@org.jetbrains.annotations.Nullable()
+    java.lang.String x) {
     }
 }

@@ -350,6 +350,11 @@ abstract class ParameterizedKaptStubConverter<
         }
     }
 
+    protected data class ClassMember<E>(
+        val element: E,
+        val data: MemberData,
+    )
+
     protected fun convertClass(clazz: ClassNode, lineMappings: KaptLineMappingCollector, packageFqName: String): Pair<String, ClassDecl>? {
         if (isSynthetic(clazz.access)) return null
         if (!checkIfValidTypeName(clazz, Type.getObjectType(clazz.name))) return null
@@ -427,41 +432,64 @@ abstract class ParameterizedKaptStubConverter<
             )
         }
 
-        val convertedFieldsWithNode: List<Pair<FieldNode, VariableDecl>> =
-            // Instance fields of a record are its components
-            clazz.fields.filter { !it.isEnumValue() && (recordInfo == null || isStatic(it.access)) }.mapNotNull { fieldNode ->
-                convertField(fieldNode, clazz, lineMappings, packageFqName)?.let { fieldNode to it }
-            }
-        val sortedConvertedFields: List<VariableDecl> = sortClassMembers(convertedFieldsWithNode, classPosition) {
-            val fieldNode = it.first
-            MemberData(fieldNode.name, fieldNode.desc, lineMappings.getPosition(clazz, fieldNode))
-        }.map { it.second }
+        val classMembers = mutableListOf<ClassMember<Element>>()
+        // Instance fields of a record are its components
+        clazz.fields.filter { !it.isEnumValue() && (recordInfo == null || isStatic(it.access)) }.forEach { fieldNode ->
+            val convertedField = convertField(fieldNode, clazz, lineMappings, packageFqName) ?: return@forEach
+            classMembers.add(
+                ClassMember(
+                    convertedField,
+                    MemberData(
+                        fieldNode.name,
+                        fieldNode.desc,
+                        lineMappings.getPosition(clazz, fieldNode),
+                    ),
+                )
+            )
+        }
 
         fun MethodNode.isImplicitEnumMethod() = isEnum && (
                 name == "values" && desc == "()[L${clazz.name};" ||
                         name == "valueOf" && desc == "(Ljava/lang/String;)L${clazz.name};")
 
-        val convertedMethodsWithNode: List<Pair<MethodNode, MethodDecl>> =
-            clazz.methods.filter { !it.isImplicitEnumMethod() }.mapNotNull { methodNode ->
-                convertMethod(methodNode, clazz, lineMappings, packageFqName, declaration, recordInfo)?.let { methodNode to it }
-            }
-        val sortedConvertedMethods: List<MethodDecl> = sortClassMembers(convertedMethodsWithNode, classPosition) {
-            val methodNode = it.first
-            MemberData(methodNode.name, methodNode.desc, lineMappings.getPosition(clazz, methodNode))
-        }.map { it.second }
-
-        val nestedClasses: List<ClassDecl> = clazz.innerClasses.mapNotNull { innerClass ->
-            if (enumValuesData.any { it.innerClass == innerClass }) return@mapNotNull null
-            if (innerClass.outerName != clazz.name) return@mapNotNull null
-            val innerClassNode = compiledClassByName[innerClass.name] ?: return@mapNotNull null
-            convertClass(innerClassNode, lineMappings, packageFqName)?.second
+        clazz.methods.filter { !it.isImplicitEnumMethod() }.forEach { methodNode ->
+            val convertedMethod =
+                convertMethod(methodNode, clazz, lineMappings, packageFqName, declaration, recordInfo)
+                    ?: return@forEach
+            classMembers.add(
+                ClassMember(
+                    convertedMethod,
+                    MemberData(
+                        methodNode.name,
+                        methodNode.desc,
+                        lineMappings.getPosition(clazz, methodNode),
+                    ),
+                )
+            )
         }
 
+        clazz.innerClasses.forEach { innerClass ->
+            if (enumValuesData.any { it.innerClass == innerClass }) return@forEach
+            if (innerClass.outerName != clazz.name) return@forEach
+            val innerClassNode = compiledClassByName[innerClass.name] ?: return@forEach
+            val convertedClass = convertClass(innerClassNode, lineMappings, packageFqName)?.second ?: return@forEach
+            classMembers.add(
+                ClassMember(
+                    convertedClass,
+                    MemberData(
+                        innerClass.name,
+                        Type.getObjectType(innerClassNode.name).descriptor,
+                        lineMappings.getPosition(innerClassNode),
+                    ),
+                )
+            )
+        }
+        val sortedMembers =
+            sortClassMembers(classMembers, classPosition) { it.data }
         val superTypes = calculateSuperTypes(clazz, genericType, declaration).let {
             // A record that cannot be written as one becomes a plain class, which cannot extend java.lang.Record
             if (supportsRecords && clazz.isRecord()) ClassSupertypes(null, it.interfaces) else it
         }
-
         return simpleName to makeClassDecl(
             clazz,
             simpleName,
@@ -469,9 +497,7 @@ abstract class ParameterizedKaptStubConverter<
             genericType,
             superTypes,
             enumValues,
-            sortedConvertedFields,
-            sortedConvertedMethods,
-            nestedClasses,
+            sortedMembers,
             recordInfo?.components,
         )
     }
@@ -1729,9 +1755,7 @@ abstract class ParameterizedKaptStubConverter<
         genericType: ClassGenericSignature<Expression, TypeParameter>,
         superTypes: ClassSupertypes<Expression>,
         enumValues: List<VariableDecl>,
-        sortedConvertedFields: List<VariableDecl>,
-        sortedConvertedMethods: List<MethodDecl>,
-        nestedClasses: List<ClassDecl>,
+        members: List<ClassMember<Element>>,
         recordComponents: List<VariableDecl>?,
     ): ClassDecl
 

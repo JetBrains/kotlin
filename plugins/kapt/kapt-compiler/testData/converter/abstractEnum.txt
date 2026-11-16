@@ -36,9 +36,23 @@ public enum E {
     public final void b() {
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<E> getEntries() {
-        return null;
+    /**
+     * public final object E.Obj : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Obj {
+
+        private Obj() {
+            super();
+        }
+        @org.jetbrains.annotations.NotNull()
+        public static final E.Obj INSTANCE = null;
     }
 
     /**
@@ -58,23 +72,9 @@ public enum E {
         }
     }
 
-    /**
-     * public final object E.Obj : kotlin/Any {
-     *
-     *   // signature: <init>()V
-     *   private constructor()
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class Obj {
-        @org.jetbrains.annotations.NotNull()
-        public static final E.Obj INSTANCE = null;
-
-        private Obj() {
-            super();
-        }
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<E> getEntries() {
+        return null;
     }
 }
 
@@ -148,11 +148,11 @@ public enum E2 {
 public enum E3 {
     /*public static final*/ X /* = new E3(null) */,
     /*public static final*/ Y /* = new E3(null) */;
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a = null;
 
     E3(java.lang.String a) {
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
@@ -204,27 +204,27 @@ public enum E3 {
 @kotlin.Metadata()
 public enum E4 {
     /*public static final*/ X /* = new E4(null, 0, 0L, false) */;
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a = null;
-    private final int b = 0;
-    private final long c = 0L;
-    private final boolean d = false;
 
     E4(java.lang.String a, int b, long c, boolean d) {
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
         return null;
     }
+    private final int b = 0;
 
     public final int getB() {
         return 0;
     }
+    private final long c = 0L;
 
     public final long getC() {
         return 0L;
     }
+    private final boolean d = false;
 
     public final boolean getD() {
         return false;

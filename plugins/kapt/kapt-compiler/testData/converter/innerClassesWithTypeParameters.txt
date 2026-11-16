@@ -16,12 +16,12 @@
  */
 @kotlin.Metadata()
 public final class Test {
-    @org.jetbrains.annotations.NotNull()
-    private Test.FilterValueDelegate<java.lang.Float> a;
 
     public Test() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private Test.FilterValueDelegate<java.lang.Float> a;
 
     /**
      * private final inner class Test.FilterValueDelegate<T#0 (* T *)> : kotlin/Any {
@@ -80,12 +80,12 @@ public final class Test2 {
      */
     @kotlin.Metadata()
     public final class FilterValueDelegate<T extends java.lang.Object> {
-        @org.jetbrains.annotations.NotNull()
-        private Test2.FilterValueDelegate<T>.Filter2<java.lang.String> a;
 
         public FilterValueDelegate() {
             super();
         }
+        @org.jetbrains.annotations.NotNull()
+        private Test2.FilterValueDelegate<T>.Filter2<java.lang.String> a;
 
         /**
          * public final inner class Test2.FilterValueDelegate.Filter2<T#1 (* X *)> : kotlin/Any {
@@ -127,12 +127,12 @@ public final class Test2 {
  */
 @kotlin.Metadata()
 public final class Test3 {
-    @org.jetbrains.annotations.NotNull()
-    private Test3.FilterValueDelegate<java.lang.Float> a;
 
     public Test3() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private Test3.FilterValueDelegate<java.lang.Float> a;
 
     /**
      * private final class Test3.FilterValueDelegate<T#0 (* T *)> : kotlin/Any {

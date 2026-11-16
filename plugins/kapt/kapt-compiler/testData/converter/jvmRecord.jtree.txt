@@ -119,11 +119,6 @@ public abstract interface I {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class Narrow extends java.lang.Record {
-    private final byte b = 0;
-    private final short s = 0;
-    private final char c = '\u0000';
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String name = null;
 
     public Narrow(byte b, short s, char c, @org.jetbrains.annotations.NotNull()
     java.lang.String name) {
@@ -132,19 +127,24 @@ public final class Narrow extends java.lang.Record {
     public final byte b() {
         return 0;
     }
+    private final byte b = 0;
 
     public final short s() {
         return 0;
     }
+    private final short s = 0;
 
     public final char c() {
         return '\u0000';
     }
+    private final char c = '\u0000';
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String name() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String name = null;
 
     public Narrow(@org.jetbrains.annotations.NotNull()
     java.lang.String name) {
@@ -247,8 +247,6 @@ public final class Plain {
     @kotlin.Metadata()
     @kotlin.jvm.JvmRecord()
     public static final class NestedRecord extends java.lang.Record {
-        @org.jetbrains.annotations.NotNull()
-        private final java.lang.String s = null;
 
         public NestedRecord(@org.jetbrains.annotations.NotNull()
         java.lang.String s) {
@@ -258,6 +256,8 @@ public final class Plain {
         public final java.lang.String s() {
             return null;
         }
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String s = null;
 
         @org.jetbrains.annotations.NotNull()
         public final java.lang.String component1() {
@@ -337,15 +337,15 @@ public final class Plain {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class PrivateComponent extends java.lang.Record {
-    private final int x = 0;
-    private final int y = 0;
 
     public PrivateComponent(int x, int y) {
     }
+    private final int x = 0;
 
     public final int y() {
         return 0;
     }
+    private final int y = 0;
 
     public PrivateComponent() {
     }
@@ -419,7 +419,6 @@ public final class PrivateComponent extends java.lang.Record {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class PrivateConstructor extends java.lang.Record {
-    private final int i = 0;
 
     private PrivateConstructor(int i) {
     }
@@ -427,6 +426,7 @@ public final class PrivateConstructor extends java.lang.Record {
     public final int i() {
         return 0;
     }
+    private final int i = 0;
 
     public final int component1() {
         return 0;
@@ -511,8 +511,6 @@ public final class PrivateConstructor extends java.lang.Record {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class R<T extends java.lang.Object> extends java.lang.Record implements I {
-    private final int x = 0;
-    private final T y = null;
 
     public R(@A()
     int x, T y) {
@@ -521,10 +519,12 @@ public final class R<T extends java.lang.Object> extends java.lang.Record implem
     public final int x() {
         return 0;
     }
+    private final int x = 0;
 
     public final T y() {
         return null;
     }
+    private final T y = null;
 
     public R(T y) {
     }
@@ -609,7 +609,6 @@ public final class R<T extends java.lang.Object> extends java.lang.Record implem
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class RecordNamed extends java.lang.Record {
-    private final int record = 0;
 
     public RecordNamed(int record) {
     }
@@ -617,6 +616,7 @@ public final class RecordNamed extends java.lang.Record {
     public final int record() {
         return 0;
     }
+    private final int record = 0;
 
     public final int component1() {
         return 0;
@@ -758,7 +758,6 @@ public final class SpaceNamed extends java.lang.Record {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class Throwing extends java.lang.Record {
-    private final int i = 0;
 
     @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class})
     public Throwing(int i) throws java.io.IOException {
@@ -768,6 +767,7 @@ public final class Throwing extends java.lang.Record {
     public final int i() throws java.io.IOException {
         return 0;
     }
+    private final int i = 0;
 
     @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class})
     public Throwing() throws java.io.IOException {
@@ -851,9 +851,6 @@ public final class Throwing extends java.lang.Record {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class Varargs extends java.lang.Record {
-    private final int i = 0;
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String[] xs = null;
 
     public Varargs(int i, @org.jetbrains.annotations.NotNull()
     java.lang.String... xs) {
@@ -862,11 +859,14 @@ public final class Varargs extends java.lang.Record {
     public final int i() {
         return 0;
     }
+    private final int i = 0;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String[] xs() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String[] xs = null;
 
     public final int component1() {
         return 0;
@@ -950,10 +950,6 @@ public final class Varargs extends java.lang.Record {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class Variance extends java.lang.Record {
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<java.lang.Number> numbers = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<java.lang.String> strings = null;
 
     public Variance(@org.jetbrains.annotations.NotNull()
     java.util.List<? extends java.lang.Number> numbers, @org.jetbrains.annotations.NotNull()
@@ -964,11 +960,15 @@ public final class Variance extends java.lang.Record {
     public final java.util.List<java.lang.Number> numbers() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.Number> numbers = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.util.List<java.lang.String> strings() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.String> strings = null;
 
     public Variance() {
     }
@@ -1065,12 +1065,6 @@ public final class Variance extends java.lang.Record {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class Wildcards extends java.lang.Record {
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<? extends java.lang.Number> wild = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<java.lang.Number> suppressed = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.Map<java.lang.String, java.util.List<java.lang.Number>> nested = null;
 
     public Wildcards(@org.jetbrains.annotations.NotNull()
     java.util.List<? extends java.lang.Number> wild, @org.jetbrains.annotations.NotNull()
@@ -1082,16 +1076,22 @@ public final class Wildcards extends java.lang.Record {
     public final java.util.List<? extends java.lang.Number> wild() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<? extends java.lang.Number> wild = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.util.List<java.lang.Number> suppressed() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.Number> suppressed = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.util.Map<java.lang.String, java.util.List<java.lang.Number>> nested() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.Map<java.lang.String, java.util.List<java.lang.Number>> nested = null;
 
     public Wildcards() {
     }
@@ -1200,16 +1200,6 @@ public final class Wildcards extends java.lang.Record {
 @kotlin.Metadata()
 @kotlin.jvm.JvmRecord()
 public final class WithCompanion extends java.lang.Record {
-    @F()
-    @org.jetbrains.annotations.Nullable()
-    private final java.lang.String s = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<java.lang.String> list = null;
-    @org.jetbrains.annotations.NotNull()
-    private final int[] array = null;
-    public static final int C = 1;
-    @org.jetbrains.annotations.NotNull()
-    public static final WithCompanion.Companion Companion = null;
 
     public WithCompanion(@org.jetbrains.annotations.Nullable()
     java.lang.String s, @org.jetbrains.annotations.NotNull()
@@ -1221,16 +1211,143 @@ public final class WithCompanion extends java.lang.Record {
     public final java.lang.String s() {
         return null;
     }
+    @F()
+    @org.jetbrains.annotations.Nullable()
+    private final java.lang.String s = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.util.List<java.lang.String> list() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<java.lang.String> list = null;
 
     @org.jetbrains.annotations.NotNull()
     public final int[] array() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final int[] array = null;
+
+    /**
+     * public final data class WithCompanion.Nested : java/lang/Record {
+     *
+     *   // signature: <init>(J)V
+     *   public constructor(i: kotlin/Long)
+     *
+     *   // signature: component1()J
+     *   public final (* synthesized *) operator fun component1(): kotlin/Long
+     *
+     *   // signature: copy(J)LWithCompanion$Nested;
+     *   public final (* synthesized *) fun copy(i: kotlin/Long (* = ... *)): WithCompanion.Nested
+     *
+     *   // signature: equals(Ljava/lang/Object;)Z
+     *   // must-use return value
+     *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+     *
+     *   // signature: hashCode()I
+     *   // must-use return value
+     *   public open (* synthesized *) fun hashCode(): kotlin/Int
+     *
+     *   // signature: toString()Ljava/lang/String;
+     *   // must-use return value
+     *   public open (* synthesized *) fun toString(): kotlin/String
+     *
+     *   // field: i:J
+     *   // getter: i()J
+     *   public final val i: kotlin/Long
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    @kotlin.jvm.JvmRecord()
+    public static final class Nested extends java.lang.Record {
+
+        public Nested(long i) {
+        }
+
+        public final long i() {
+            return 0L;
+        }
+        private final long i = 0L;
+
+        public final long component1() {
+            return 0L;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final WithCompanion.Nested copy(long i) {
+            return null;
+        }
+
+        @java.lang.Override()
+        public boolean equals(@org.jetbrains.annotations.Nullable()
+        java.lang.Object other) {
+            return false;
+        }
+
+        @java.lang.Override()
+        public int hashCode() {
+            return 0;
+        }
+
+        @java.lang.Override()
+        @org.jetbrains.annotations.NotNull()
+        public java.lang.String toString() {
+            return null;
+        }
+    }
+
+    /**
+     * public final inner class WithCompanion.Inner : kotlin/Any {
+     *
+     *   // signature: <init>(LWithCompanion;)V
+     *   public constructor()
+     *
+     *   // signature: s()Ljava/lang/String;
+     *   public final fun s(): kotlin/String?
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner {
+
+        public Inner() {
+            super();
+        }
+
+        @org.jetbrains.annotations.Nullable()
+        public final java.lang.String s() {
+            return null;
+        }
+    }
+
+    /**
+     * public final companion object WithCompanion.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: C:I
+     *   public final const val C: kotlin/Int (* = ... *)
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+    }
+    public static final int C = 1;
+    @org.jetbrains.annotations.NotNull()
+    public static final WithCompanion.Companion Companion = null;
 
     @org.jetbrains.annotations.Nullable()
     public final java.lang.String component1() {
@@ -1270,122 +1387,5 @@ public final class WithCompanion extends java.lang.Record {
     @org.jetbrains.annotations.NotNull()
     public java.lang.String toString() {
         return null;
-    }
-
-    /**
-     * public final companion object WithCompanion.Companion : kotlin/Any {
-     *
-     *   // signature: <init>()V
-     *   private constructor()
-     *
-     *   // field: C:I
-     *   public final const val C: kotlin/Int (* = ... *)
-     *     public final get
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class Companion {
-
-        private Companion() {
-            super();
-        }
-    }
-
-    /**
-     * public final inner class WithCompanion.Inner : kotlin/Any {
-     *
-     *   // signature: <init>(LWithCompanion;)V
-     *   public constructor()
-     *
-     *   // signature: s()Ljava/lang/String;
-     *   public final fun s(): kotlin/String?
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public final class Inner {
-
-        public Inner() {
-            super();
-        }
-
-        @org.jetbrains.annotations.Nullable()
-        public final java.lang.String s() {
-            return null;
-        }
-    }
-
-    /**
-     * public final data class WithCompanion.Nested : java/lang/Record {
-     *
-     *   // signature: <init>(J)V
-     *   public constructor(i: kotlin/Long)
-     *
-     *   // signature: component1()J
-     *   public final (* synthesized *) operator fun component1(): kotlin/Long
-     *
-     *   // signature: copy(J)LWithCompanion$Nested;
-     *   public final (* synthesized *) fun copy(i: kotlin/Long (* = ... *)): WithCompanion.Nested
-     *
-     *   // signature: equals(Ljava/lang/Object;)Z
-     *   // must-use return value
-     *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
-     *
-     *   // signature: hashCode()I
-     *   // must-use return value
-     *   public open (* synthesized *) fun hashCode(): kotlin/Int
-     *
-     *   // signature: toString()Ljava/lang/String;
-     *   // must-use return value
-     *   public open (* synthesized *) fun toString(): kotlin/String
-     *
-     *   // field: i:J
-     *   // getter: i()J
-     *   public final val i: kotlin/Long
-     *     public final get
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    @kotlin.jvm.JvmRecord()
-    public static final class Nested extends java.lang.Record {
-        private final long i = 0L;
-
-        public Nested(long i) {
-        }
-
-        public final long i() {
-            return 0L;
-        }
-
-        public final long component1() {
-            return 0L;
-        }
-
-        @org.jetbrains.annotations.NotNull()
-        public final WithCompanion.Nested copy(long i) {
-            return null;
-        }
-
-        @java.lang.Override()
-        public boolean equals(@org.jetbrains.annotations.Nullable()
-        java.lang.Object other) {
-            return false;
-        }
-
-        @java.lang.Override()
-        public int hashCode() {
-            return 0;
-        }
-
-        @java.lang.Override()
-        @org.jetbrains.annotations.NotNull()
-        public java.lang.String toString() {
-            return null;
-        }
     }
 }
