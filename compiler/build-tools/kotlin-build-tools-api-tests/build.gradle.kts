@@ -154,7 +154,7 @@ val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(2, 4, 0, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 4, 10, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 4, 21, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 5, 0, "Beta2")),
+    BuildToolsVersion(KotlinToolingVersion(2, 5, 0, "RC")),
 )
 
 val compatibilityTestsExcludedVersions = listOf(
