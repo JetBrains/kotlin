@@ -8,6 +8,7 @@ val firCommonCompilerModules: Array<String> = CompilerModules.firCommonCompilerM
 val jvmCompilerModules: Array<String> = CompilerModules.jvmCompilerModules
 
 val additionalK1Modules = listOf(
+    ":core:deserialization",
     ":core:descriptors.jvm",
 )
 
