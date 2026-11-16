@@ -241,14 +241,14 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -299,14 +299,14 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -345,14 +345,14 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -382,14 +382,14 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -729,7 +729,7 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -765,7 +765,7 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -776,7 +776,7 @@ KtFile: FunctionTypes.kt
                   PsiElement(IDENTIFIER)('T')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -820,7 +820,7 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -842,7 +842,7 @@ KtFile: FunctionTypes.kt
                   PsiElement(GT)('>')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -944,7 +944,7 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -992,7 +992,7 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -1003,7 +1003,7 @@ KtFile: FunctionTypes.kt
                   PsiElement(IDENTIFIER)('T')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -1059,7 +1059,7 @@ KtFile: FunctionTypes.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -1081,7 +1081,7 @@ KtFile: FunctionTypes.kt
                   PsiElement(GT)('>')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE

@@ -45,7 +45,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -66,7 +66,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                     STRING_TEMPLATE
                       LITERAL_STRING_TEMPLATE_ENTRY[text=2]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -84,7 +84,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Other]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -103,7 +103,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Other]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -117,7 +117,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -130,7 +130,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -143,7 +143,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -152,7 +152,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
       PROPERTY[fqName=InsideList.inside, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inside]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -165,7 +165,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
       PROPERTY[fqName=InsideList.insideUnresolved, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=insideUnresolved]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -184,7 +184,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Other]
@@ -194,7 +194,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                           REFERENCE_EXPRESSION[referencedName=Other]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
@@ -238,7 +238,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -253,7 +253,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -268,7 +268,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -287,7 +287,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
             CONTEXT_PARAMETER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
@@ -295,7 +295,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
         TYPE_REFERENCE
           NULLABLE_TYPE
             CONTEXT_PARAMETER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
@@ -309,7 +309,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
             CONTEXT_PARAMETER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
@@ -325,7 +325,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
             CONTEXT_PARAMETER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
@@ -344,7 +344,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Anno]
               CONTEXT_PARAMETER_LIST
-                CONTEXT_RECEIVER[label=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
@@ -357,7 +357,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -369,7 +369,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Other]
             CONTEXT_PARAMETER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Long]
@@ -385,7 +385,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -405,7 +405,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Anno]
                   CONTEXT_PARAMETER_LIST
-                    CONTEXT_RECEIVER[label=null]
+                    VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Int]
@@ -422,7 +422,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Anno]
                   CONTEXT_PARAMETER_LIST
-                    CONTEXT_RECEIVER[label=null]
+                    VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Int]
@@ -441,7 +441,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Anno]
               CONTEXT_PARAMETER_LIST
-                CONTEXT_RECEIVER[label=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
@@ -454,7 +454,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
       CONTEXT_PARAMETER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
@@ -470,7 +470,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -484,7 +484,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
       CONTEXT_PARAMETER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
@@ -502,7 +502,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -522,7 +522,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -535,7 +535,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
       CONTEXT_PARAMETER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
@@ -550,7 +550,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -568,7 +568,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
             CONTEXT_PARAMETER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
@@ -590,7 +590,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Anno]
                 CONTEXT_PARAMETER_LIST
-                  CONTEXT_RECEIVER[label=null]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Int]

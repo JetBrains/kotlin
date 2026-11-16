@@ -4,7 +4,7 @@ KaNamedFunctionSymbol:
   callableId: /foo
   contextParameters: [
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -18,10 +18,10 @@ KaNamedFunctionSymbol:
       isVal: true
       location: LOCAL
       modality: FINAL
-      name: String
+      name: <no name provided>
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -35,7 +35,7 @@ KaNamedFunctionSymbol:
       deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -49,10 +49,10 @@ KaNamedFunctionSymbol:
       isVal: true
       location: LOCAL
       modality: FINAL
-      name: List
+      name: <no name provided>
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -76,13 +76,13 @@ KaNamedFunctionSymbol:
   ]
   contextReceivers: [
     KaContextReceiver:
-      label: String
+      label: <no name provided>
       type: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
     KaContextReceiver:
-      label: List
+      label: <no name provided>
       type: KaUsualClassType:
         annotations: []
         typeArguments: [

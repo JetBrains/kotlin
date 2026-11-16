@@ -1,4 +1,4 @@
-context(Int@kotlin.Int, String@kotlin.String)
+context(`<no name provided>`@kotlin.Int, `<no name provided>`@kotlin.String)
 class A {
   constructor(int: kotlin.Int)
 }

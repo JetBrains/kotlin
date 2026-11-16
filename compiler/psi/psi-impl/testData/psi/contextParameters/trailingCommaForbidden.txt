@@ -19,7 +19,7 @@ KtFile: trailingCommaForbidden.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
         PsiElement(COMMA)(',')
-        CONTEXT_RECEIVER
+        VALUE_PARAMETER
           TYPE_REFERENCE
             PsiErrorElement:Type expected
               <empty list>
@@ -52,7 +52,7 @@ KtFile: trailingCommaForbidden.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
         PsiElement(COMMA)(',')
-        CONTEXT_RECEIVER
+        VALUE_PARAMETER
           TYPE_REFERENCE
             PsiErrorElement:Type expected
               <empty list>
@@ -87,7 +87,7 @@ KtFile: trailingCommaForbidden.kt
                 PsiElement(IDENTIFIER)('String')
         PsiWhiteSpace('\n')
         PsiElement(COMMA)(',')
-        CONTEXT_RECEIVER
+        VALUE_PARAMETER
           TYPE_REFERENCE
             PsiErrorElement:Type expected
               <empty list>
@@ -111,7 +111,7 @@ KtFile: trailingCommaForbidden.kt
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
-        CONTEXT_RECEIVER
+        VALUE_PARAMETER
           TYPE_REFERENCE
             PsiErrorElement:Type expected
               <empty list>
@@ -134,7 +134,7 @@ KtFile: trailingCommaForbidden.kt
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
-        CONTEXT_RECEIVER
+        VALUE_PARAMETER
           TYPE_REFERENCE
             PsiErrorElement:Type expected
               <empty list>

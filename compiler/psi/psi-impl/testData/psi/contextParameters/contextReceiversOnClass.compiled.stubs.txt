@@ -55,12 +55,12 @@ ContextReceiversOnClass.class:
                 REFERENCE_EXPRESSION[referencedName=MyAnnotation]
                   isClassRef: true
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=A]
                   isClassRef: true
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]

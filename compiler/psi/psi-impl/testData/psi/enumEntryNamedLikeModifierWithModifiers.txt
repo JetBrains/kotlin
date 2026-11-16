@@ -128,7 +128,7 @@ KtFile: enumEntryNamedLikeModifierWithModifiers.kt
         CONTEXT_PARAMETER_LIST
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               PsiErrorElement:Type expected
                 PsiElement(OPEN_QUOTE)('"')

@@ -100,11 +100,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
     TYPE_REFERENCE
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=X]
@@ -127,11 +127,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
     TYPE_REFERENCE
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=X]
@@ -147,11 +147,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
     TYPE_REFERENCE
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=X]
@@ -163,11 +163,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
     TYPE_REFERENCE
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=X]
@@ -318,7 +318,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
     TYPE_REFERENCE
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
@@ -334,13 +334,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
     TYPE_REFERENCE
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=T]
                 REFERENCE_EXPRESSION[referencedName=T]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -360,7 +360,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
     TYPE_REFERENCE
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
@@ -373,7 +373,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=B]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -428,7 +428,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
                   REFERENCE_EXPRESSION[referencedName=a]
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
@@ -451,13 +451,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
                   REFERENCE_EXPRESSION[referencedName=a]
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=T]
                 REFERENCE_EXPRESSION[referencedName=T]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -484,7 +484,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
                   REFERENCE_EXPRESSION[referencedName=a]
       FUNCTION_TYPE
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
@@ -497,7 +497,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=B]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE

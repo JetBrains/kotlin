@@ -10,8 +10,8 @@ fun useInt() {}
 
 context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>, <!CONTEXT_PARAMETER_WITHOUT_NAME!>Int<!>)
 fun legacyContextReceiverSyntax() {
-    <!NO_CONTEXT_ARGUMENT!>useString<!>()
-    <!NO_CONTEXT_ARGUMENT!>useInt<!>()
+    useString()
+    useInt()
 }
 
 context(<!SYNTAX!><!>: String)
@@ -24,7 +24,7 @@ fun colonInType() {}
 
 private class Private
 
-context(<!CONTEXT_PARAMETER_WITHOUT_NAME, EXPOSED_RECEIVER_TYPE!>Private<!>)
+context(<!CONTEXT_PARAMETER_WITHOUT_NAME, EXPOSED_PARAMETER_TYPE!>Private<!>)
 fun exposedType() {}
 
 interface Base {
@@ -33,7 +33,7 @@ interface Base {
 }
 
 class Derived : Base {
-    context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)
+    context(<!CONTEXT_PARAMETER_WITHOUT_NAME, PARAMETER_NAME_CHANGED_ON_OVERRIDE!>String<!>)
     override fun foo() {}
 }
 

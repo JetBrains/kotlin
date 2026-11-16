@@ -614,7 +614,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
             else if (at(CONTEXT_KEYWORD) && annotationParsingMode.allowContextList && lookahead(1) == LPAR) {
                 PsiBuilder.Marker contextMarker = mark();
-                if (!parseContextParameterOrReceiverList(false) && localDeclaration) {
+                if (!parseContextParameterList(false) && localDeclaration) {
                     // Rollback the entire context declaration to make it possible to prevent parsing of potential local declarations
                     // that in fact are not declarations (we are trying to parse declarations at first and statements as second).
                     contextMarker.rollbackTo();
@@ -692,15 +692,15 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     /**
-     * contextReceiverList
-     *   : "context" "(" (contextReceiver{","})+ ")"
+     * contextParameterList
+     *   : "context" "(" (contextParameter{","})+ ")"
      *
-     * @return <tt>true</tt> if it parsed a context with value parameters
-     * Otherwise returns <tt>false</tt> if it parsed a context with type refs (that work as receivers) or encountered a syntax error during parsing.
+     * @return <tt>false</tt> if it encountered a syntax error or a context parameter without a name on a declaration,
+     * as in {@code context(String) fun foo()}, and <tt>true</tt> otherwise.
      */
-    private boolean parseContextParameterOrReceiverList(boolean inFunctionType) {
+    private boolean parseContextParameterList(boolean inFunctionType) {
         assert _at(CONTEXT_KEYWORD);
-        PsiBuilder.Marker valueParameterOrTypeRefList = mark();
+        PsiBuilder.Marker contextParameterList = mark();
         advance(); // CONTEXT_KEYWORD
 
         assert _at(LPAR);
@@ -714,33 +714,32 @@ public class KotlinParsing extends AbstractKotlinParsing {
             noError = false;
         }
         else {
-            // Treat parsing of context receivers (deprecated syntax) as an error,
+            // Treat a context parameter without a name on a declaration (the syntax of legacy context receivers) as an error,
             // But an outer caller decides if the entire list should be dropped:
             // If we're trying to parse a local declaration, we should drop it to prevent unexpected parsing of ahead declarations
-            noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, () -> parseValueParameterOrTypeRef(inFunctionType));
+            noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, () -> parseContextParameter(inFunctionType));
         }
 
-        valueParameterOrTypeRefList.done(CONTEXT_PARAMETER_LIST);
+        contextParameterList.done(CONTEXT_PARAMETER_LIST);
         return noError;
     }
 
     /**
-     * contextReceiver
-     *   : label? typeReference
+     * contextParameter
+     *   : functionParameter
+     *   : typeReference
+     *   ;
      *
-     * @return <tt>true</tt> if it parsed a value parameter or type ref in the correct position (in function type) and <tt>false</tt> otherwise.
+     * @return <tt>false</tt> if it parsed a context parameter without a name on a declaration, and <tt>true</tt> otherwise.
      */
-    private boolean parseValueParameterOrTypeRef(boolean inFunctionType) {
+    private boolean parseContextParameter(boolean inFunctionType) {
         if (tryParseValueParameter(true)) {
             return true;
         }
 
-        PsiBuilder.Marker contextReceiver = mark();
-        if (!inFunctionType && myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier()) {
-            myExpressionParsing.parseLabelDefinition();
-        }
+        PsiBuilder.Marker contextParameter = mark();
         parseTypeRef();
-        contextReceiver.done(CONTEXT_RECEIVER);
+        closeDeclarationWithCommentBinders(contextParameter, VALUE_PARAMETER, false);
         return inFunctionType;
     }
 
@@ -2266,7 +2265,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker contextReceiversStart = mark();
 
         if (withContextReceiver) {
-            parseContextParameterOrReceiverList(true);
+            parseContextParameterList(true);
         }
 
         PsiBuilder.Marker typeElementMarker = mark();

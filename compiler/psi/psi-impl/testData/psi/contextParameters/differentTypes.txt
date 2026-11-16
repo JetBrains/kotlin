@@ -407,7 +407,7 @@ KtFile: differentTypes.kt
                   CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
-                    CONTEXT_RECEIVER
+                    VALUE_PARAMETER
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
@@ -438,7 +438,7 @@ KtFile: differentTypes.kt
                   CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
-                    CONTEXT_RECEIVER
+                    VALUE_PARAMETER
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
@@ -506,7 +506,7 @@ KtFile: differentTypes.kt
                   CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
-                    CONTEXT_RECEIVER
+                    VALUE_PARAMETER
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
@@ -537,7 +537,7 @@ KtFile: differentTypes.kt
                   CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
-                    CONTEXT_RECEIVER
+                    VALUE_PARAMETER
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
@@ -589,7 +589,7 @@ KtFile: differentTypes.kt
             CONTEXT_PARAMETER_LIST
               PsiElement(context)('context')
               PsiElement(LPAR)('(')
-              CONTEXT_RECEIVER
+              VALUE_PARAMETER
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION

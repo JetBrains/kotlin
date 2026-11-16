@@ -26,28 +26,28 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
       PROPERTY[fqName=Properties.ctx1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx1]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=Properties.ctx2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx2]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=Properties.ctx3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx3]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=Properties.ctx4, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx4]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -56,7 +56,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
       PROPERTY[fqName=Properties.ctx4Nullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx4Nullable]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -66,7 +66,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
       PROPERTY[fqName=Properties.ctx5, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx5]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -76,7 +76,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
       PROPERTY[fqName=Properties.ctx5Parenthesized, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ctx5Parenthesized]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -94,18 +94,18 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
       PROPERTY[fqName=Properties.severalEntries, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=severalEntries]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=String]
       PROPERTY[fqName=Properties.annotated, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotated]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
@@ -127,7 +127,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
         TYPE_REFERENCE
           MODIFIER_LIST[suspend]
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -139,7 +139,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   CONTEXT_PARAMETER_LIST
-                    CONTEXT_RECEIVER[label=null]
+                    VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Int]
@@ -147,7 +147,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       CONTEXT_PARAMETER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
@@ -159,7 +159,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
@@ -173,7 +173,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextInFunctionTyp
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]

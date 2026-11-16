@@ -69,7 +69,7 @@ fun contextReceiverSyntax() {}
 @Target(AnnotationTarget.TYPE)
 annotation class Anno
 
-context(<!CONTEXT_PARAMETER_WITHOUT_NAME!><!SYNTAX!>@<!>Anno<!><!SYNTAX!><!> <!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)
+context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>@Anno String<!>)
 fun annotatedContextReceiverSyntax() {}
 
 context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>, _: Int)

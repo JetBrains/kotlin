@@ -1,5 +1,11 @@
 element: e
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = Context
+    symbol = KaContextParameterSymbol:
+      <no name provided>: Context
+
 scopes:
   LocalScope, index = 0
     packages: 0
@@ -7,19 +13,20 @@ scopes:
     callables: 0
     constructors: 0
 
-  LocalScope, index = 1
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 1
+      `<no name provided>`: Context
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 3
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 2
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
-
-  PackageMemberScope, index = 3
+  PackageMemberScope, index = 4
     packages: 6
       META-INF
       java
@@ -30,19 +37,18 @@ scopes:
     classifiers: 1
       class Context
     callables: 1
-      context(Context@Context)
+      context(`<no name provided>`@Context)
       fun test()
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 4
-
   DefaultSimpleImportingScope, index = 5
 
-  ExplicitStarImportingScope, index = 6
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 7
-
+  DefaultStarImportingScope, index = 8

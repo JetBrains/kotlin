@@ -31,4 +31,4 @@ KtCallExpression(81,86): 'foo()'
         typeArgumentsMapping = {}
         valueArgumentMapping = {}
     ]
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'int: Int' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'string: String' found.>

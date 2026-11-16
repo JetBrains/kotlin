@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.tokenName
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
@@ -21,7 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.syntax.withSyntax
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.KotlinModifierHelpers.allowedInContextParameters
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
@@ -87,7 +90,10 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
 
         if (contextParametersEnabled) {
             for (parameter in contextParameters) {
-                if (parameter.isLegacyContextReceiver()) {
+                // The parser reports a missing name before a colon, as in `context(: String)`
+                if (parameter.name == SpecialNames.NO_NAME_PROVIDED &&
+                    withSyntax { parameter.source?.getChild(KotlinSyntaxTokenIds.COLON, depth = 1) } == null
+                ) {
                     reporter.reportOn(parameter.source, FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME)
                 }
 

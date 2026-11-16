@@ -5,22 +5,25 @@ KtFile: labelInDeclarationContext.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUNCTION
-    MODIFIER_LIST
-      CONTEXT_PARAMETER_LIST
-        PsiElement(context)('context')
-        PsiElement(LPAR)('(')
-        CONTEXT_RECEIVER
-          LABEL_QUALIFIER
-            LABEL
+  MODIFIER_LIST
+    CONTEXT_PARAMETER_LIST
+      PsiElement(context)('context')
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('label')
-              PsiElement(AT)('@')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('String')
-        PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
+      PsiErrorElement:Expecting comma or ')'
+        <empty list>
+      PsiErrorElement:Expecting ')'
+        PsiElement(AT)('@')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('String')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -37,18 +40,17 @@ KtFile: labelInDeclarationContext.kt
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
-        CONTEXT_RECEIVER
-          PsiErrorElement:Expecting identifier before '@' in label definition
-            PsiElement(AT)('@')
+        VALUE_PARAMETER
           TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Anno')
-        PsiErrorElement:Expecting comma or ')'
-          <empty list>
-        PsiWhiteSpace(' ')
-        CONTEXT_RECEIVER
-          TYPE_REFERENCE
+            MODIFIER_LIST
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Anno')
+            PsiWhiteSpace(' ')
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
