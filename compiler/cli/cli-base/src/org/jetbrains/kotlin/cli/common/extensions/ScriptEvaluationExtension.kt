@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.cli.common.extensions
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 
@@ -22,11 +22,11 @@ interface ScriptEvaluationExtension {
     fun eval(
         arguments: CommonCompilerArguments,
         configuration: CompilerConfiguration,
-        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment
+        projectEnvironment: KotlinCoreProjectEnvironment
     ): ExitCode
 
     fun eval(
         configuration: CompilerConfiguration,
-        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment
+        projectEnvironment: KotlinCoreProjectEnvironment
     ): ExitCode
 }
