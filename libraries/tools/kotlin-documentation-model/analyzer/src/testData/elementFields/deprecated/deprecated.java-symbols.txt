@@ -1,76 +1,86 @@
 fragment main
 constructor() [sample/OldClass/OldClass/#/PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = WARNING
-  replaceWith = null
-  since = null
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }
 
 fun oldFunction(): Unit [sample/OldClass/oldFunction/#/PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = WARNING
-  replaceWith = null
-  since = null
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }
 
 val oldProperty: String [sample/OldClass/oldProperty/#/PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = WARNING
-  replaceWith = null
-  since = null
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }
 
 fun getAccessors(): String [sample/OldClass/getAccessors/#/PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = WARNING
-  replaceWith = null
-  since = null
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }
 
 fun setAccessors(value: String): Unit [sample/OldClass/setAccessors/#kotlin.String/PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = WARNING
-  replaceWith = null
-  since = null
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }
 
 class OldClass [sample/OldClass///PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = ERROR
-  replaceWith = KdReplaceWith {
-    expression = KdExpression {
-      links = []
-      text = "NewClass"
+{
+  "since": null,
+  "message": {},
+  "level": "ERROR",
+  "replaceWith": {
+    "imports": [],
+    "expression": {
+      "text": "NewClass",
+      "links": []
     }
-    imports = []
   }
-  since = null
 }
 
 constructor() [sample/OldJava/OldJava/#/PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = WARNING
-  replaceWith = null
-  since = null
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }
 
 fun oldMethod(): Unit [sample/OldJava/oldMethod/#/PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = WARNING
-  replaceWith = null
-  since = null
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }
 
 class OldJava [sample/OldJava///PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = WARNING
-  replaceWith = null
-  since = null
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }
 
 typealias OldAlias = String [sample/OldAlias///PointingToDeclaration/].deprecated:
-KdDeprecated {
-  level = WARNING
-  replaceWith = null
-  since = null
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }

@@ -1,7 +1,7 @@
 fragment main
 fun transform(value: String): String [sample/Base/transform/#kotlin.String/PointingToDeclaration/].overridens:
 [
-  "sample/First/transform/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/"
+  "sample/First/transform/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/",
   "sample/Second/transform/#kotlin.String/PointingToDeclaration/"
 ]
 
@@ -12,7 +12,7 @@ fun toString(): String [sample/Base/toString/#/PointingToDeclaration/].overriden
 
 var text: String [sample/Base/text/#/PointingToDeclaration/].overridens:
 [
-  "sample/First/text/#/PointingToDeclaration/"
+  "sample/First/text/#/PointingToDeclaration/",
   "sample/Second/text/#/PointingToDeclaration/"
 ]
 
