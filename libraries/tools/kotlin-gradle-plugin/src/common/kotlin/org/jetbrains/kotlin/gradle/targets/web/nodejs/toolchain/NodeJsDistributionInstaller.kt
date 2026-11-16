@@ -18,7 +18,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import java.security.MessageDigest
 
 /**
  * Installs Node.js distributions into a shared, machine-wide location.
@@ -73,10 +72,12 @@ internal class NodeJsDistributionInstaller(
             // Another process may have completed the installation while the lock was being acquired.
             if (isCompleteInstallation(distributionPath, platform)) return@withLock
 
+            // The directory exists, but is not a complete installation (e.g. it was damaged or is from a broken
+            // install). Remove it, otherwise it would block moving the fresh installation into place.
             if (distributionPath.exists()) {
-                logger.info("'$distributionPath' is exist")
+                logger.info("Removing the incomplete Node.js installation '$distributionPath'")
+                distributionPath.deleteRecursively()
             }
-            //TODO should we clean the directory at some point?
 
             val tempDir = File("${distributionPath.path}$TEMP_DIR_SUFFIX")
 
@@ -97,7 +98,7 @@ internal class NodeJsDistributionInstaller(
                 try {
                     Files.move(unpacked.toPath(), distributionPath.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
                 } catch (e: Exception) {
-                    throw IllegalStateException("The Node.js can nott be installed in the '$distributionPath' directory", e)
+                    throw IllegalStateException("The Node.js cannot be installed in the '$distributionPath' directory", e)
                 }
             } finally {
                 tempDir.deleteRecursively()
@@ -121,12 +122,12 @@ internal class NodeJsDistributionInstaller(
         val versionUrl = "${downloadBaseUrl.trimEnd('/')}/v${version.normalized}"
         val archiveUrl = "$versionUrl/${target.name}"
 
-        //TODO use
         logger.lifecycle("Downloading Node.js $version for $platform from $archiveUrl")
         downloadFile(archiveUrl, target)
     }
 
-    //TODO reuse org/jetbrains/kotlin/konan/util/DependencyDownloader.kt
+    // A small dedicated downloader is used on purpose: KGP does not depend on the Kotlin/Native utils
+    // that contain 'DependencyDownloader', and this is the only download KGP needs here.
     private fun downloadFile(url: String, target: File) {
         target.parentFile.mkdirs()
 
@@ -146,8 +147,6 @@ internal class NodeJsDistributionInstaller(
         throw IOException("Cannot download $url", lastFailure)
     }
 
-    private fun readText(url: String): String = openConnection(url).use { it.reader().readText() }
-
     private fun openConnection(url: String) =
         (URL(url).openConnection() as HttpURLConnection).run {
             connectTimeout = CONNECT_TIMEOUT_MS
@@ -160,19 +159,6 @@ internal class NodeJsDistributionInstaller(
             }
             inputStream
         }
-
-    private fun File.sha256(): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        inputStream().use { input ->
-            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-            while (true) {
-                val read = input.read(buffer)
-                if (read < 0) break
-                digest.update(buffer, 0, read)
-            }
-        }
-        return digest.digest().joinToString("") { "%02x".format(it) }
-    }
 
     private companion object {
         private const val TEMP_DIR_SUFFIX = ".tmp"
