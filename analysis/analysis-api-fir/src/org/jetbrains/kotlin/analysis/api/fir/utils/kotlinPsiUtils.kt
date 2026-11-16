@@ -47,3 +47,13 @@ internal fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
 
     return CallableId(packageName = containingKtFile.packageFqName, callableName = callableName)
 }
+
+/**
+ * Whether this is a context parameter of a function type, as in `context(String) () -> Unit`, or of a dangling context parameter list,
+ * as in `context(String) Int`. FIR has no element for such a parameter, only for its type.
+ */
+internal val KtDeclaration.isContextParameterOfType: Boolean
+    get() = this is KtParameter && when (val parameterList = parent) {
+        is KtContextParameterList -> parameterList.parent !is KtModifierList
+        else -> false
+    }

@@ -1,2 +1,5 @@
 take@(1,1) : kotlin.Unit (by PSI)
   action@(1,10) : ERROR
+takeNamed@(2,1) : kotlin.Unit (by PSI)
+  action@(2,15) : ERROR
+    s@(2,31) : kotlin.String

@@ -17,3 +17,6 @@ f7@(7,1) : () -> kotlin.Unit
 f8@(8,1) : context(kotlin.String) kotlin.Int.(kotlin.Boolean) -> kotlin.Unit
   KtParameter@(8,30) : kotlin.Boolean
   <anonymous>@(8,49) : kotlin.Unit
+f9@(9,1) : context(kotlin.String) () -> kotlin.Unit
+  s@(9,17) : kotlin.String
+  <anonymous>@(9,41) : kotlin.Unit
