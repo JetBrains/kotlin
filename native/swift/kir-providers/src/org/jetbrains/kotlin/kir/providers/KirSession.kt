@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.kir.providers
 
 import org.jetbrains.kotlin.kir.KirAvailability
+import org.jetbrains.kotlin.kir.KirClass
+import org.jetbrains.kotlin.kir.KirConstructor
 import org.jetbrains.kotlin.kir.KirDeclaration
 import org.jetbrains.kotlin.kir.KirDeclarationParent
 import org.jetbrains.kotlin.kir.KirFunction
@@ -71,13 +73,26 @@ public fun SirDeclaration.kirDeclarationName(): String = with(kir) { kirDeclarat
 
 public sealed interface KirTranslationResult {
     public val allDeclarations: List<KirDeclaration>
+    public val primaryDeclaration: KirDeclaration?
 
     public data class Untranslatable(public val origin: SirDeclaration) : KirTranslationResult {
         override val allDeclarations: List<KirDeclaration> get() = emptyList()
+        override val primaryDeclaration: KirDeclaration? get() = null
+    }
+
+    public data class RegularClass(public val declaration: KirClass) : KirTranslationResult {
+        override val allDeclarations: List<KirDeclaration> = listOf(declaration)
+        override val primaryDeclaration: KirDeclaration get() = declaration
+    }
+
+    public data class Constructor(public val declaration: KirConstructor) : KirTranslationResult {
+        override val allDeclarations: List<KirDeclaration> = listOf(declaration)
+        override val primaryDeclaration: KirDeclaration get() = declaration
     }
 
     public data class RegularFunction(public val declaration: KirFunction) : KirTranslationResult {
         override val allDeclarations: List<KirDeclaration> = listOf(declaration)
+        override val primaryDeclaration: KirDeclaration get() = declaration
     }
 }
 
@@ -94,7 +109,8 @@ public fun SirDeclaration.toKir(): KirTranslationResult = with(kir) { toKir() }
 /**
  * Given [SirDeclaration] will produce [KirDeclarationParent], representing the parent for corresponding KIR node.
  *
- * For example, given the top level function - will return the [KirModule] that should declare that function.
+ * For example, given the top level function - will return the [KirModule] that should declare that function,
+ * and given the method - will return the [KirClass] that should declare that method.
  */
 public interface KirParentProvider {
     public fun SirDeclaration.getKirParent(): KirDeclarationParent

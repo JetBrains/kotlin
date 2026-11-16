@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.kir.KirDeclarationParent
 import org.jetbrains.kotlin.kir.providers.KirParentProvider
 import org.jetbrains.kotlin.kir.providers.KirSession
 import org.jetbrains.kotlin.kir.providers.kirModule
+import org.jetbrains.kotlin.kir.providers.toKir
 import org.jetbrains.kotlin.kir.providers.withSession
+import org.jetbrains.kotlin.sir.SirClass
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirModule
 
@@ -17,7 +19,10 @@ public class KirParentProviderImpl(private val kirSession: KirSession) : KirPare
     override fun SirDeclaration.getKirParent(): KirDeclarationParent = kirSession.withSession {
         when (val sirParent = this@getKirParent.parent) {
             is SirModule -> sirParent.kirModule()
+            is SirClass -> sirParent.toKir().primaryDeclaration as? KirDeclarationParent
+                ?: error("Parent declaration does not produce suitable KIR: $sirParent")
             else -> error("Tried to calculate a KIR parent for a declaration with an unsupported parent: $sirParent")
         }
     }
 }
+

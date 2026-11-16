@@ -8,26 +8,23 @@ package org.jetbrains.kir.lightclasses.nodes
 import org.jetbrains.kir.lightclasses.KirFromSirDeclaration
 import org.jetbrains.kir.lightclasses.extensions.lazyWithSession
 import org.jetbrains.kir.lightclasses.extensions.withSession
-import org.jetbrains.kotlin.kir.CFunctionBridge
+import org.jetbrains.kir.lightclasses.utils.reverseBridgeName
+import org.jetbrains.kir.lightclasses.utils.toKirBridge
 import org.jetbrains.kotlin.kir.KirBridge
 import org.jetbrains.kotlin.kir.KirDeclarationParent
 import org.jetbrains.kotlin.kir.KirFunction
-import org.jetbrains.kotlin.kir.KirFunctionBridge
 import org.jetbrains.kotlin.kir.KirFunctionBody
+import org.jetbrains.kotlin.kir.KirModality
 import org.jetbrains.kotlin.kir.KirOrigin
 import org.jetbrains.kotlin.kir.KirVisibility
-import org.jetbrains.kotlin.kir.KotlinFunctionBridge
-import org.jetbrains.kotlin.kir.SwiftFunctionBridge
 import org.jetbrains.kotlin.kir.providers.KirSession
 import org.jetbrains.kotlin.kir.providers.getKirParent
 import org.jetbrains.kotlin.kir.providers.kirDeclarationName
 import org.jetbrains.kotlin.kir.providers.source.SirSource
+import org.jetbrains.kotlin.kir.providers.utils.toKirModality
 import org.jetbrains.kotlin.kir.providers.utils.toKirVisibility
-import org.jetbrains.kotlin.sir.SirBridge
+import org.jetbrains.kotlin.sir.SirClass
 import org.jetbrains.kotlin.sir.SirFunction
-import org.jetbrains.kotlin.sir.SirFunctionBridge
-import org.jetbrains.kotlin.sir.SirReverseFunctionBridge
-import org.jetbrains.kotlin.sir.SirTypeBindingBridge
 
 internal class KirFunctionFromSirFunction(
     override val sirDeclaration: SirFunction,
@@ -51,32 +48,22 @@ internal class KirFunctionFromSirFunction(
         }
         set(_) = Unit
 
+    override val isOverride: Boolean get() = sirDeclaration.isOverride
+
+    override val isInstance: Boolean get() = sirDeclaration.isInstance
+
+    override val modality: KirModality get() = sirDeclaration.modality.toKirModality()
+
     override val bridges: List<KirBridge> by lazy {
         sirDeclaration.bridges.map { it.toKirBridge() }
     }
 
     /**
-     * Calls the bridge that is bound to the Swift function.
-     * Parameters and return values are not supported yet, so the call is just the invocation of the bridge.
+     * Calls the bridge that is bound to the Swift function. A method passes the Swift object it is called on as `self`.
+     * Other parameters and return values are not supported yet.
      */
-    override var body: KirFunctionBody? = sirDeclaration.bridges
-        .filterIsInstance<SirReverseFunctionBridge>()
-        .singleOrNull()
-        ?.let { KirFunctionBody(listOf("${it.name}()")) }
-}
-
-private fun SirBridge.toKirBridge(): KirBridge = when (this) {
-    is SirReverseFunctionBridge -> KirFunctionBridge(
-        name = name,
-        kotlinFunctionBridge = KotlinFunctionBridge(
-            lines = kotlinFunctionBridge.lines,
-            packageDependencies = kotlinFunctionBridge.packageDependencies,
-        ),
-        swiftFunctionBridge = SwiftFunctionBridge(lines = swiftFunctionBridge.lines),
-        cDeclarationBridge = CFunctionBridge(
-            lines = cDeclarationBridge.lines,
-            headerDependencies = cDeclarationBridge.headerDependencies,
-        ),
-    )
-    is SirFunctionBridge, is SirTypeBindingBridge -> error("Bridge '$name' is not supported in Swift import yet")
+    override var body: KirFunctionBody? = sirDeclaration.reverseBridgeName?.let { bridgeName ->
+        val selfArgument = if (sirDeclaration.isInstance && sirDeclaration.parent is SirClass) "__ptr()" else ""
+        KirFunctionBody(listOf("$bridgeName($selfArgument)"))
+    }
 }

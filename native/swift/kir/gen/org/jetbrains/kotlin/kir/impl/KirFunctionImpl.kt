@@ -18,6 +18,9 @@ internal class KirFunctionImpl(
     override val documentation: String?,
     override val bridges: MutableList<KirBridge>,
     override var body: KirFunctionBody?,
+    override val isOverride: Boolean,
+    override val isInstance: Boolean,
+    override val modality: KirModality,
     override val name: String,
 ) : KirFunction() {
     override lateinit var parent: KirDeclarationParent

@@ -11,12 +11,15 @@ package org.jetbrains.kotlin.kir
 /**
  * Generated from: [org.jetbrains.kotlin.kir.tree.generator.KirTree.function]
  */
-abstract class KirFunction : KirCallable(), KirElement {
+abstract class KirFunction : KirClassMemberDeclaration(), KirCallable {
     abstract override val origin: KirOrigin
     abstract override val visibility: KirVisibility
     abstract override val documentation: String?
     abstract override var parent: KirDeclarationParent
     abstract override val bridges: List<KirBridge>
     abstract override var body: KirFunctionBody?
+    abstract override val isOverride: Boolean
+    abstract override val isInstance: Boolean
+    abstract override val modality: KirModality
     abstract val name: String
 }

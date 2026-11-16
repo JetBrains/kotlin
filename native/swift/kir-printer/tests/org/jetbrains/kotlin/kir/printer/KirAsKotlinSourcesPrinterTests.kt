@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.kir.printer
 import org.jetbrains.kotlin.kir.CFunctionBridge
 import org.jetbrains.kotlin.kir.KirFunctionBody
 import org.jetbrains.kotlin.kir.KirFunctionBridge
+import org.jetbrains.kotlin.kir.KirModality
 import org.jetbrains.kotlin.kir.KirModule
 import org.jetbrains.kotlin.kir.KotlinFunctionBridge
 import org.jetbrains.kotlin.kir.SwiftFunctionBridge
+import org.jetbrains.kotlin.kir.builder.buildClass
+import org.jetbrains.kotlin.kir.builder.buildConstructor
 import org.jetbrains.kotlin.kir.builder.buildFunction
 import org.jetbrains.kotlin.kir.builder.buildModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
@@ -62,6 +65,20 @@ class KirAsKotlinSourcesPrinterTests {
         val module = moduleWithBridgedFunction()
 
         runTest(module, "testData/function_with_bridge")
+    }
+
+    @Test
+    fun `should print class with constructor and method`() {
+        val module = moduleWithBridgedClass()
+
+        runTest(module, "testData/class_with_members")
+    }
+
+    @Test
+    fun `should print bridges of class members`() {
+        val actual = KirPrinter().printSwiftBridges(moduleWithBridgedClass())
+
+        assertEqualsToFile("testData/class_with_members.golden.swift", actual)
     }
 
     @Test
@@ -120,6 +137,39 @@ class KirAsKotlinSourcesPrinterTests {
         }
     }
 
+    private fun moduleWithBridgedClass(): KirModule {
+        fun bridge(name: String, kotlinSignature: String, swiftBody: String) = KirFunctionBridge(
+            name = name,
+            kotlinFunctionBridge = KotlinFunctionBridge(
+                lines = listOf("@ImportedBridge(\"$name\")", "internal external fun $kotlinSignature"),
+                packageDependencies = listOf("kotlin.native.internal.ImportedBridge"),
+            ),
+            swiftFunctionBridge = SwiftFunctionBridge(
+                lines = listOf("@_cdecl(\"$name\")", "package func $name() {", "    $swiftBody", "}"),
+            ),
+            cDeclarationBridge = CFunctionBridge(
+                lines = listOf("void $name();"),
+                headerDependencies = listOf("Foundation/Foundation.h"),
+            ),
+        )
+        return buildModule {
+            declarations.add(buildClass {
+                name = "Foo"
+                modality = KirModality.FINAL
+                declarations.add(buildConstructor {
+                    bridges.add(bridge("Lib_Foo_init", "Lib_Foo_init(): NativePtr", "Lib.Foo()"))
+                    delegationCallArguments = KirFunctionBody(listOf("kotlinx.cinterop.interpretObjCPointer<platform.darwin.NSObject>(Lib_Foo_init())"))
+                    body = KirFunctionBody(listOf())
+                })
+                declarations.add(buildFunction {
+                    name = "bar"
+                    bridges.add(bridge("Lib_Foo_bar", "Lib_Foo_bar(self: NativePtr): Boolean", "Lib.Foo.bar()"))
+                    body = KirFunctionBody(listOf("Lib_Foo_bar(__ptr())"))
+                })
+            })
+        }
+    }
+
     private fun runTest(module: KirModule, goldenDataFile: String) {
         assertEqualsToFile("$goldenDataFile.golden.kt", KirPrinter().print(module))
     }
@@ -129,3 +179,4 @@ class KirAsKotlinSourcesPrinterTests {
         JUnit5Assertions.assertEqualsToFile(expected, actual)
     }
 }
+

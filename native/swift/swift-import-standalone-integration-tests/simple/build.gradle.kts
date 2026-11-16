@@ -44,6 +44,7 @@ projectTests {
 
     nativeTestTask(
         "test",
+        requirePlatformLibs = true, // Imported Swift classes are wrapped into `platform.darwin.NSObject`.
         allowUnsafe = true, // KT-85212
     ) {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.swiftimport.standalone.translation.toKirModule
 
 /**
  * Translates a single Swift module to KIR.
- * Only top-level functions are supported.
  *
  * @param module The Swift module to import.
  * @param config The configuration object specifying the behavior of Swift import.
