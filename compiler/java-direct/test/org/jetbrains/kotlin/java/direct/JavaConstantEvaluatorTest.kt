@@ -195,9 +195,8 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         val javaClass = parseFirstClass("class Foo { static final String TEXT = $textBlock; }")
         val field = javaClass.fields.first { it.name.asString() == "TEXT" }
 
-        // Text blocks are not evaluated until the fix in the next commit.
-        assertFalse(field.hasConstantNotNullInitializer)
-        assertEquals(null, field.initializerValue)
+        assertTrue(field.hasConstantNotNullInitializer)
+        assertEquals("first\nsecond \nthird  fourth\n", field.initializerValue)
     }
 
     private fun findReferenceExpression(tree: LightSyntaxTree, node: LightNode, text: String): LightNode? {

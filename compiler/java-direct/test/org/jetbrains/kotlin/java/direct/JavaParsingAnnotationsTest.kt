@@ -77,10 +77,9 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     fun testTextBlockAnnotationArgument() {
         val textBlock = "\"\"\"\n        first\n        second\n        \"\"\""
         val javaClass = parseFirstClass("@Tag($textBlock) class Foo {}")
-        val argument = javaClass.annotations.single().arguments.singleOrNull()
+        val argument = javaClass.annotations.single().arguments.single() as JavaLiteralAnnotationArgument
 
-        // Text block annotation values are not literals until the fix in the next commit.
-        assertFalse(argument is JavaLiteralAnnotationArgument)
+        assertEquals("first\nsecond\n", argument.value)
     }
 
     @Test
