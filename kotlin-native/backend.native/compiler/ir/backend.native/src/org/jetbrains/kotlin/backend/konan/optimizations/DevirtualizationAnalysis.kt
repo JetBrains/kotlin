@@ -989,7 +989,10 @@ internal object DevirtualizationAnalysis {
                                 DevirtualizedCallee(possibleReceiverType, callee)
                             })
                     result[virtualCall] = devirtualizedCallSite to function.symbol
-                    virtualCall.irCallSite?.devirtualizedCallSite = devirtualizedCallSite
+                    if (virtualCall.irCallSite != null)
+                        virtualCall.irCallSite.devirtualizedCallSite = devirtualizedCallSite
+                    else
+                        virtualCall.devirtualizedCallSite = devirtualizedCallSite
                 }
             }
 

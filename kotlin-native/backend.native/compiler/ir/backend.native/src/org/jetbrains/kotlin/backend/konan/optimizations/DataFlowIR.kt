@@ -290,7 +290,10 @@ internal object DataFlowIR {
 
         sealed class VirtualCall(callee: FunctionSymbol, arguments: List<Edge>,
                                  val receiverType: Type, returnType: Type, irCallSite: IrCall?)
-            : Call(callee, arguments, returnType, irCallSite)
+            : Call(callee, arguments, returnType, irCallSite) {
+            // Cache calls have no IR node to carry this temporary analysis result.
+            var devirtualizedCallSite: DevirtualizationAnalysis.DevirtualizedCallSite? = null
+        }
 
         class VtableCall(callee: FunctionSymbol, receiverType: Type, val calleeVtableIndex: Int,
                          arguments: List<Edge>, returnType: Type, irCallSite: IrCall?)

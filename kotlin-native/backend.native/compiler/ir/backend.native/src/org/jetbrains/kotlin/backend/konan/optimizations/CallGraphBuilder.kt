@@ -305,7 +305,9 @@ internal class CallGraphBuilder(
     private fun handleFunction(symbol: DataFlowIR.FunctionSymbol.Declared, function: DataFlowIR.Function) {
         val body = function.body
         body.forEachCallSite { call, node ->
-            val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.irCallSite?.devirtualizedCallSite
+            val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.let {
+                it.irCallSite?.devirtualizedCallSite ?: it.devirtualizedCallSite
+            }
             when {
                 call !is DataFlowIR.Node.VirtualCall -> staticCall(symbol, CallGraphNode.CallSite.Static.Single(call, node, call.callee))
 
