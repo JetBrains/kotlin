@@ -2664,7 +2664,7 @@ internal class MultipleContextListsImpl(
 internal class ContextParameterWithoutNameImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContextParameterWithoutName
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.ContextParameterWithoutName
 
 internal class ContextParametersWithBackingFieldImpl(
     firDiagnostic: KtDiagnosticWithSource,
