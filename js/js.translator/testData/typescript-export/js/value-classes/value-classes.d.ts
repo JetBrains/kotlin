@@ -87,8 +87,6 @@ declare namespace JS_TESTS {
             readonly promiseOfStringValue: Promise<foo.StringValueClass>;
             acceptLambda(cb: (p0: foo.IntValueClass) => void): void;
         }
-    }
-    namespace foo {
         class IntValueClass {
             constructor(value: number);
             get value(): number;
