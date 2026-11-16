@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
+import org.jetbrains.kotlin.java.direct.util.childrenWithoutCommentsAndWhitespace
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
 import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
 import org.jetbrains.kotlin.kmp.tree.LightNode
@@ -163,7 +164,7 @@ class JavaFieldOverAst(
      * The initializer expression node, if present.
      */
     private val initializerNode: LightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         val eqIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.EQ }
         if (eqIndex < 0) null
         else children.drop(eqIndex + 1).firstOrNull {
@@ -293,7 +294,7 @@ class JavaMethodOverAst(
 
             tree.findChildByType(node, JavaSyntaxTokenType.DEFAULT_KEYWORD) ?: return null
 
-            val children = tree.getChildren(node)
+            val children = tree.childrenWithoutCommentsAndWhitespace(node)
             val defaultIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.DEFAULT_KEYWORD }
             if (defaultIndex < 0) return null
 

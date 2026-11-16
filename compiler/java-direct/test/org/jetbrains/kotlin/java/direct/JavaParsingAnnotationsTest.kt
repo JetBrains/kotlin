@@ -629,8 +629,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         """.trimIndent()
         val annotation = parseFirstClass(argumentSource).methods.single().annotations.single()
-        // The comment prevents a literal argument from being produced until the next commit.
-        assertFalse(annotation.arguments.singleOrNull() is JavaLiteralAnnotationArgument)
+        assertEquals(3, (annotation.arguments.single() as JavaLiteralAnnotationArgument).value)
 
         val defaultSource = """
             @interface Anno {
@@ -638,8 +637,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         """.trimIndent()
         val default = parseFirstClass(defaultSource).methods.single().annotationParameterDefaultValue
-        // The comment prevents a literal default from being produced until the next commit.
-        assertFalse(default is JavaLiteralAnnotationArgument)
+        assertEquals(7, (default as JavaLiteralAnnotationArgument).value)
     }
 
     @Test

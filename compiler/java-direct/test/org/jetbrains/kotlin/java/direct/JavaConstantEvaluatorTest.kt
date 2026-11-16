@@ -126,12 +126,11 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         val fields = parseFirstClass(source).fields.associateBy { it.name.asString() }
         val add = fields.getValue("ADD")
         assertTrue(add.hasConstantNotNullInitializer)
-        assertEquals(null, add.initializerValue)
+        assertEquals(3, add.initializerValue)
 
         val initializer = fields.getValue("INITIALIZER")
-        // The comment is mistaken for the initializer until the fix in the next commit.
-        assertFalse(initializer.hasConstantNotNullInitializer)
-        assertEquals(null, initializer.initializerValue)
+        assertTrue(initializer.hasConstantNotNullInitializer)
+        assertEquals(10, initializer.initializerValue)
     }
 
     @Test

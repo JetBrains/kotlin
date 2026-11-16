@@ -167,16 +167,16 @@ class ConstantEvaluator private constructor(
     internal fun isConstantExpression(node: LightNode): Boolean = when (tree.getType(node)) {
         JavaSyntaxElementType.LITERAL_EXPRESSION -> evaluateLiteral(node) != null
         JavaSyntaxElementType.BINARY_EXPRESSION -> {
-            val children = constantExpressionChildren(node)
+            val children = tree.childrenWithoutCommentsAndWhitespace(node)
             children.size == 3 && isConstantBinaryOperator(tree.getType(children[1])) &&
                     isConstantExpression(children[0]) && isConstantExpression(children[2])
         }
         JavaSyntaxElementType.PREFIX_EXPRESSION -> {
-            val children = constantExpressionChildren(node)
+            val children = tree.childrenWithoutCommentsAndWhitespace(node)
             children.size == 2 && isConstantPrefixOperator(tree.getType(children[0])) && isConstantExpression(children[1])
         }
         JavaSyntaxElementType.PARENTH_EXPRESSION -> {
-            val children = constantExpressionChildren(node)
+            val children = tree.childrenWithoutCommentsAndWhitespace(node)
             val expression = children.firstOrNull {
                 tree.getType(it) != JavaSyntaxTokenType.LPARENTH && tree.getType(it) != JavaSyntaxTokenType.RPARENTH
             }
@@ -184,7 +184,7 @@ class ConstantEvaluator private constructor(
         }
         JavaSyntaxElementType.REFERENCE_EXPRESSION -> resolveReference(node) is MemberResolutionResult.Constant
         JavaSyntaxElementType.POLYADIC_EXPRESSION -> {
-            val children = constantExpressionChildren(node)
+            val children = tree.childrenWithoutCommentsAndWhitespace(node)
             children.size >= 3 && children.size % 2 == 1 &&
                     children.indices.filter { it % 2 == 0 }.all { isConstantExpression(children[it]) } &&
                     children.indices.filter { it % 2 == 1 }.all { isConstantBinaryOperator(tree.getType(children[it])) }
@@ -192,11 +192,6 @@ class ConstantEvaluator private constructor(
         JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> isConstantTypeCastExpression(node)
         else -> false
     }
-
-    private fun constantExpressionChildren(node: LightNode): List<LightNode> =
-        tree.getChildren(node).filter {
-            tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE && tree.getType(it) !in JavaSyntaxDefinition.comments
-        }
 
     private fun isConstantPrefixOperator(operator: SyntaxElementType): Boolean = when (operator) {
         JavaSyntaxTokenType.MINUS, JavaSyntaxTokenType.PLUS, JavaSyntaxTokenType.TILDE, JavaSyntaxTokenType.EXCL -> true
@@ -228,7 +223,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun isConstantTypeCastExpression(node: LightNode): Boolean {
-        val children = constantExpressionChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         val typeNode = children.firstOrNull { tree.getType(it) == JavaSyntaxElementType.TYPE } ?: return false
         val castType = createJavaType(typeNode, tree, resolutionContext)
         val classifierType = castType as? JavaClassifierType
@@ -263,7 +258,7 @@ class ConstantEvaluator private constructor(
         JavaLiteralParser.evaluateLiteral(node, tree)
 
     private fun evaluateBinaryExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         if (children.size < 3) return null
 
         val lhs = evaluate(children[0]) ?: return null
@@ -274,7 +269,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluatePolyadicExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         if (children.size < 3) return null
 
         var result = evaluate(children[0]) ?: return null
@@ -329,7 +324,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluatePrefixExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         if (children.size < 2) return null
 
         val operator = tree.getType(children[0])
@@ -357,7 +352,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluateParensExpression(node: LightNode): Any? {
-        val innerExpr = tree.getChildren(node).firstOrNull {
+        val innerExpr = tree.childrenWithoutCommentsAndWhitespace(node).firstOrNull {
             val t = tree.getType(it)
             t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
         } ?: return null
@@ -365,7 +360,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluateTypeCastExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         val typeNode = children.firstOrNull { tree.getType(it) == JavaSyntaxElementType.TYPE } ?: return null
         val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
         if (rparenthIndex < 0) return null
@@ -388,8 +383,13 @@ class ConstantEvaluator private constructor(
         if (nameParts.size == 1) return resolveSimpleName(nameParts.single())
         val reference = resolveQualifiedMemberReference(nameParts, resolutionContext)
 
-        // Resolve the qualifier as a class name before invoking the cross-language resolver; its KDoc
-        // documents the qualified-name classification.
+        // Resolve the class qualifier as a type name (via the unit's imports + same-package + java.lang
+        // probes, JLS 6.5.5) before passing it to the cross-language resolver. Without this,
+        // `SdkConstants.R_CLASS` — written under `import com.android.SdkConstants;` in a Java source —
+        // could only be interpreted as either a current-package class or a `<root>.SdkConstants`
+        // top-level class — neither of which exists. A qualified name like `p.X.Y` is classified left
+        // to right (JLS 6.5.4.2): it is the nested class `p.X.Y` if `p.X` is a class, never a class `Y`
+        // of a package `p.X`, which splitting the string at its last dot would suggest.
         val resolvedClassId = reference.qualifierClassId
         if (resolvedClassId != null) {
             val javaClass = classifierAdapterFor(resolvedClassId, c = resolutionContext)
