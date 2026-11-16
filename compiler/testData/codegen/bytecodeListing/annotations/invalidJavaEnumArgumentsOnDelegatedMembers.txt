@@ -14,12 +14,12 @@ public final class neg/Delegator {
     public method <init>(@org.jetbrains.annotations.NotNull p0: neg.Greeter): void
     public @neg.ArrayMarker(value=[A]) method arrayWithMissingEntry(): java.lang.String
     public @neg.DefaultedJavaAnnotation method javaAnnotationWithDefault(): java.lang.String
-    public @neg.RequiredJavaAnnotation method javaAnnotationWithoutDefault(): java.lang.String
-    public @neg.Marker method missingEntry(): java.lang.String
-    public @neg.Marker method missingPackage(): java.lang.String
-    public @neg.Marker method missingQualifier(): java.lang.String
+    public method javaAnnotationWithoutDefault(): java.lang.String
+    public method missingEntry(): java.lang.String
+    public method missingPackage(): java.lang.String
+    public method missingQualifier(): java.lang.String
     public @neg.Marker(value=1) method nonEnumNestedField(): java.lang.String
-    public @neg.Marker method objectProperty(): java.lang.String
+    public method objectProperty(): java.lang.String
     public final inner class neg/Marker$Scope
 }
 

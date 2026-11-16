@@ -68,7 +68,7 @@ public interface Greeter {
     @DefaultedJavaAnnotation
     String javaAnnotationWithDefault();
 
-    // The pre-fix IR keeps this annotation even though its required value is missing.
+    // The required value is missing, so this annotation is dropped from the delegated member.
     @RequiredJavaAnnotation
     String javaAnnotationWithoutDefault();
 }
