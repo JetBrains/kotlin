@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.assignment.plugin
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.assignment.plugin.AssignmentDirectives.ENABLE_ASSIGNMENT
 import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -24,6 +25,14 @@ import org.jetbrains.kotlin.test.services.TestServices
 // ------------------------ diagnostics ------------------------
 
 abstract class AbstractFirAssignmentPluginDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurePlugin()
+        builder.configureDiagnostics()
+    }
+}
+
+abstract class AbstractLLAssignmentPluginDiagnosticTest : AbstractLLDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurePlugin()
