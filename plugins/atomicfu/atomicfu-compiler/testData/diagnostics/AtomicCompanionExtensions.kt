@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CompanionExtensions
 
 import kotlinx.atomicfu.*
@@ -32,3 +33,6 @@ private companion <!ATOMIC_PROPERTIES_SHOULD_BE_VAL!>var<!> PrivateClass.volatil
 fun box(): String {
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration,
+propertyWithExtensionReceiver, stringLiteral */
