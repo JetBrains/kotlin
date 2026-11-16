@@ -40,8 +40,8 @@ fun main() {
     foo(Parent.MyClass.<!OVERLOAD_RESOLUTION_AMBIGUITY!>barAmbiguous<!>)
     foo(<!UNRESOLVED_REFERENCE!>barAmbiguous<!>)
 
-    upperAmbiguous(bar)
-    lowerAndUpperAmbiguous(Parent.MyClass(), bar)
+    <!CANNOT_INFER_PARAMETER_TYPE!>upperAmbiguous<!>(<!UNRESOLVED_REFERENCE!>bar<!>)
+    lowerAndUpperAmbiguous(Parent.MyClass(), <!UNRESOLVED_REFERENCE!>bar<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, getter, interfaceDeclaration, nestedClass,

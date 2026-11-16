@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsed
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsedInsteadOfImport
 import org.jetbrains.kotlin.fir.resolve.inference.ExpectedTypeAsStaticReceiverStrategy
+import org.jetbrains.kotlin.fir.resolve.inference.ReceiverSuitability
 import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
@@ -46,12 +47,38 @@ object ContextSensitiveResolutionReceiverStrategy : ExpectedTypeAsStaticReceiver
     }
 
     context(resolutionContext: ResolutionContext)
-    override fun isSuitableReceiver(atom: ConeSimpleNameForContextSensitiveResolution, classSymbol: FirRegularClassSymbol): Boolean {
+    override fun getReceiverSuitability(
+        atom: ConeSimpleNameForContextSensitiveResolution,
+        classSymbol: FirRegularClassSymbol,
+    ): ReceiverSuitability {
         // TODO: potentially might have performance cost (KT-89496)
-        return resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForSimpleName(
+        val result = resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForSimpleNameInClass(
             atom.expression, atom.name, classSymbol
-        ) != null
+        )
+        return when (result) {
+            is Resolved -> SUITABLE
+            NotFound -> NOT_SUITABLE
+            Blocked -> BLOCKING
+        }
     }
+}
+
+/**
+ * The result of the context-sensitive resolution of a simple name against a single contextual class.
+ */
+private sealed class ContextSensitiveResolutionResult {
+    class Resolved(val expression: FirExpression) : ContextSensitiveResolutionResult()
+
+    /**
+     * Neither the class nor its sealed parents provide a declaration for the name, so other contextual classes may be tried.
+     */
+    object NotFound : ContextSensitiveResolutionResult()
+
+    /**
+     * The regular resolution of the name against the class has met some candidate, but it has either failed
+     * or resolved to a declaration that is not eligible for CSR, thus the whole context-sensitive resolution should fail.
+     */
+    object Blocked : ContextSensitiveResolutionResult()
 }
 
 /**
@@ -109,12 +136,12 @@ fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
     expectedType: ConeKotlinType,
 ): FirExpression? {
     val representativeClass = expectedType.getClassRepresentativeForResolutionByExpectedType(session) ?: return null
-    return runContextSensitiveResolutionForSimpleName(originalExpression, name, representativeClass)
+    return runContextSensitiveResolutionForSimpleName(originalExpression, name, listOf(representativeClass))
 }
 
 /**
  * @return not-nullable value when resolution against at least one of the classes was successful,
- * and all the successful results refer to the same declaration.
+ * all the successful results refer to the same declaration, and none of the classes blocks the resolution.
  */
 private fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
     originalExpression: FirExpression,
@@ -123,7 +150,12 @@ private fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
 ): FirExpression? {
     var result: FirExpression? = null
     for (representativeClass in representativeClasses) {
-        val newExpression = runContextSensitiveResolutionForSimpleName(originalExpression, name, representativeClass) ?: continue
+        val newExpression =
+            when (val classResult = runContextSensitiveResolutionForSimpleNameInClass(originalExpression, name, representativeClass)) {
+                is Resolved -> classResult.expression
+                NotFound -> continue
+                Blocked -> return null
+            }
         if (result == null) {
             result = newExpression
         } else if (result.obtainSymbol() != newExpression.obtainSymbol()) {
@@ -142,13 +174,12 @@ private fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
  * @param originalExpression the result of the regular resolution of the simple name: either a property access or a qualifier.
  *   Its source, annotations and type arguments are used for a new synthetic property access expression.
  * @param name the simple name as it's written in the source
- * @return not-nullable value when resolution was successful
  */
-fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
+private fun BodyResolveComponents.runContextSensitiveResolutionForSimpleNameInClass(
     originalExpression: FirExpression,
     name: Name,
     representativeClass: FirRegularClassSymbol,
-): FirExpression? {
+): ContextSensitiveResolutionResult {
     for (classToLookAt in representativeClass.getParentChainForContextSensitiveResolution(session, onlySealed = false)) {
         val additionalQualifier = classToLookAt.toImplicitResolvedQualifierReceiver(
             this,
@@ -188,34 +219,41 @@ fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
         when (newExpression) {
             is FirPropertyAccessExpression -> {
                 val newCalleeReference = newExpression.calleeReference
-                // Let's imagine like super & containing classes would be the next tower levels
-                if (newCalleeReference.extraTowerLevelsMightTurnItToSuccess) continue
+                when {
+                    // Let's imagine like super & containing classes would be the next tower levels
+                    newCalleeReference.extraTowerLevelsMightTurnItToSuccess -> continue
 
-                if (!newExpression.isEligibleForContextSensitiveResolution(newCalleeReference, additionalQualifier, classToLookAt)) {
-                    return null
+                    !newExpression.isEligibleForContextSensitiveResolution(
+                        newCalleeReference, additionalQualifier, classToLookAt
+                    ) ->
+                        return ContextSensitiveResolutionResult.Blocked
+
+                    else -> {
+                        newCalleeReference.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
+                        return ContextSensitiveResolutionResult.Resolved(newExpression)
+                    }
                 }
-                newCalleeReference.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
-                return newExpression
             }
 
             is FirResolvedQualifier -> {
                 if (newExpression.extraTowerLevelsMightTurnItToSuccess) continue
                 newExpression.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
-                return newExpression
+                return ContextSensitiveResolutionResult.Resolved(newExpression)
             }
 
-            // Non-trivial FIR element
-            else -> {}
+            // Non-trivial FIR element, usually that should not happen for x.y qualified expression,
+            // but I'm not ready yet to add an assertion here.
+            else -> return ContextSensitiveResolutionResult.Blocked
         }
     }
 
-    return null
+    return ContextSensitiveResolutionResult.NotFound
 }
 
 /**
  * @receiver resolved expression with set synthetic receiver (MyExpectedClass.simpleName)
  * @return true when we should accept the resolved expression as a successful CSR candidate.
- * @return false when the resolved expression is not eligible for CSR, so the lookup in the class fails (TODO: review)
+ * @return false when the resolved expression is not eligible for CSR _and_ we should prevent context-sensitive resolution at all.
  */
 @OptIn(ExperimentalContracts::class)
 context(components: BodyResolveComponents)
