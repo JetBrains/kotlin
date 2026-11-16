@@ -17,7 +17,15 @@
 package org.jetbrains.kotlin.asJava
 
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
+import org.jetbrains.kotlin.psi.KtNonPublicApi
 
+/**
+ * Marks a Java PSI class that represents a Kotlin declaration.
+ */
+@KtNonPublicApi
 interface KtLightClassMarker {
+    /**
+     * Whether the Kotlin declaration comes from a source file or from a compiled library.
+     */
     val originKind: LightClassOriginKind
 }

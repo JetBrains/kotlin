@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
 class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassifierImpl<PsiClass>(psiClassSource), VirtualFileBoundJavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
@@ -157,7 +158,10 @@ class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassi
         get() = JavaElementUtil.getVisibility(this)
 
     override val lightClassOriginKind: LightClassOriginKind?
-        get() = (psi as? KtLightClassMarker)?.originKind
+        get() {
+            @OptIn(KtNonPublicApi::class)
+            return (psi as? KtLightClassMarker)?.originKind
+        }
 
     override val virtualFile: VirtualFile?
         get() =  psi.containingFile?.virtualFile
@@ -168,6 +172,8 @@ class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassi
 
     private fun assertNotLightClass() {
         val psiClass = psi
+
+        @OptIn(KtNonPublicApi::class)
         if (psiClass !is KtLightClassMarker) return
 
         val message = "Querying members of JavaClass created for $psiClass of type ${psiClass::class.java} defined in file ${psiClass.containingFile?.virtualFile?.canonicalPath}"

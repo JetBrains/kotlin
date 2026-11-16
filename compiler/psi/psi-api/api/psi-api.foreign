@@ -48,6 +48,7 @@ com/intellij/psi/tree/TokenSet
 com/intellij/util/ArrayFactory
 com/intellij/util/IncorrectOperationException
 org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget
+org/jetbrains/kotlin/load/java/structure/LightClassOriginKind
 org/jetbrains/kotlin/name/ClassId
 org/jetbrains/kotlin/name/FqName
 org/jetbrains/kotlin/name/Name

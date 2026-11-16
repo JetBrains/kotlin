@@ -159,6 +159,10 @@ public final class org/jetbrains/kotlin/analysis/decompiler/psi/KotlinBuiltInFil
 	public fun isReadOnly ()Z
 }
 
+public abstract interface class org/jetbrains/kotlin/asJava/KtLightClassMarker {
+	public abstract fun getOriginKind ()Lorg/jetbrains/kotlin/load/java/structure/LightClassOriginKind;
+}
+
 public class org/jetbrains/kotlin/diagnostics/PsiDiagnosticUtils {
 	public fun <init> ()V
 	public static fun atLocation (Lcom/intellij/lang/ASTNode;)Ljava/lang/String;

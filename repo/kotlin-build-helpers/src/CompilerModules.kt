@@ -262,6 +262,13 @@ object CompilerModules {
     )
 
     /**
+     * The array of modules shipped in the 'kotlin-analysis-api-implementation-light-classes' artifact.
+     */
+    val analysisApiImplementationLightClassesModules = arrayOf(
+        ":analysis:light-classes-surface",
+    )
+
+    /**
      * The array of modules shipped in the 'kotlin-analysis-api-scripting-support' artifact.
      */
     val analysisApiScriptingSupportModules = arrayOf(
@@ -277,6 +284,7 @@ object CompilerModules {
         *analysisApiPlatformInterfaceModules,
         *analysisApiStandaloneModules,
         *analysisApiScriptingSupportModules,
+        *analysisApiImplementationLightClassesModules,
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-internal-utils",
@@ -306,6 +314,7 @@ object CompilerModules {
         ":prepare:analysis-api:kotlin-analysis-api-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-scripting-support",
         ":prepare:analysis-api:kotlin-analysis-api-implementation-cli-options",
+        ":prepare:analysis-api:kotlin-analysis-api-implementation-light-classes",
         ":prepare:analysis-api:kotlin-analysis-api-syntax-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
         ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",

@@ -14,6 +14,7 @@ val analysisApiPlatformInterfaceModules: Array<String> = CompilerModules.analysi
 val analysisApiStandaloneModules: Array<String> = CompilerModules.analysisApiStandaloneModules
 val analysisApiScriptingSupportModules: Array<String> = CompilerModules.analysisApiScriptingSupportModules
 val analysisApiImplementationCliOptionsModules: Array<String> = CompilerModules.analysisApiImplementationCliOptionsModules
+val analysisApiImplementationLightClassesModules: Array<String> = CompilerModules.analysisApiImplementationLightClassesModules
 val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
 val additionalCompilerProjects = listOf(
@@ -60,6 +61,7 @@ dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-surface"))
     api(project(":prepare:analysis-api:kotlin-analysis-api-platform-interface"))
     api(project(":prepare:analysis-api:kotlin-analysis-api-implementation-cli-options"))
+    api(project(":prepare:analysis-api:kotlin-analysis-api-implementation-light-classes"))
 
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components"))
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-syntax-implementation"))
@@ -104,6 +106,9 @@ analysisApiArtifact {
 
             // The compiler arguments are shipped by the dedicated artifact
             removeAll(analysisApiImplementationCliOptionsModules)
+
+            // The legacy light class API is shipped by the dedicated artifact
+            removeAll(analysisApiImplementationLightClassesModules)
 
             // Avoid copying content of 'kotlin-analysis-api-fir-diagnostics'
             remove(":analysis:analysis-api-fir-diagnostics")
