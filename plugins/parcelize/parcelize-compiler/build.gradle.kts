@@ -65,7 +65,7 @@ dependencies {
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.cli")) { isTransitive = false }
 
     testFixturesApi(platform(libs.junit.bom))
-    testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testFixturesApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
@@ -75,6 +75,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
