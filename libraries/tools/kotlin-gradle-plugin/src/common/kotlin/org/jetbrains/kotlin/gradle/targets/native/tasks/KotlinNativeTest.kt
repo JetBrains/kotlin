@@ -16,7 +16,6 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeAppleSimulatorTCServiceMessagesTestExecutionSpec
@@ -28,6 +27,28 @@ import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companio
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Base class for tasks running Kotlin/Native tests by launching a test
+ * executable.
+ *
+ * Task inputs and outputs are tracked so that the task can participate in
+ * up-to-date checks and (for cacheable subclasses) in the build cache. The
+ * correctness contract for a restored-from-cache run is:
+ *
+ *  - The test executable is the primary input (its content, plus the task
+ *    dependencies carried by the `FileCollection` it comes from).
+ *  - Only environment variables explicitly registered with the
+ *    `environment(name, value)` function (tracked by default) or
+ *    [trackEnvironment] are part of the task inputs. The test process still
+ *    inherits the whole environment of the Gradle process, so tests must be
+ *    hermetic with respect to any variable they read but do not track.
+ *  - The working directory is tracked relative to the project directory (see
+ *    [workingDir]). Files *in* the working directory are not inputs: tests
+ *    reading files relative to it must ensure those files are hermetic.
+ *  - State of the machine running the tests (OS version, architecture of the
+ *    host, Rosetta translation mode) is not part of the inputs. Reusing cache
+ *    entries across machines assumes the machines are equivalent.
+ */
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class KotlinNativeTest
 @Inject
@@ -42,12 +63,17 @@ internal constructor(
         environment.putAll(this@KotlinNativeTest.providers.getAllEnvironmentVariables())
     }
 
+    /**
+     * Captured at configuration time: the deprecated `Task.project` must not
+     * be used at execution time when Gradle snapshots task inputs.
+     */
+    private val projectDirectory: File = project.projectDir
+
     @get:Internal
     abstract val executableProperty: Property<FileCollection>
 
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
     @get:InputFiles // use FileCollection & @InputFiles rather than @InputFile to allow for task dependencies built-into this FileCollection
     @get:SkipWhenEmpty
     @Suppress("UNUSED") // Gradle input
@@ -72,13 +98,40 @@ internal constructor(
             executableProperty.set(project.files(value))
         }
 
-    @get:Input
+    /**
+     * The working directory for the test process.
+     *
+     * The absolute path is intentionally not a task input: what matters for
+     * the correctness of up-to-date checks and the build cache is the
+     * *content* of the working directory, not its absolute location.
+     * [relativizedWorkingDir] is tracked instead, so that inputs do not leak
+     * this machine's checkout path.
+     */
+    @get:Internal
     var workingDir: String
         get() = processOptions.workingDir.get().asFile.absolutePath
         set(value) {
             processOptions.workingDir.set(File(value))
         }
 
+    /**
+     * [workingDir] relativized against the project directory when located
+     * inside it (as configured by default), or the absolute path otherwise.
+     */
+    @get:Input
+    @Suppress("UNUSED") // Gradle input
+    internal val relativizedWorkingDir: String
+        get() = processOptions.workingDir.get().asFile.relativeToOrSelf(projectDirectory).path
+
+    /**
+     * Environment variables to pass to the test process, replacing the
+     * default inheritance of the Gradle process' environment.
+     *
+     * Variables assigned through this property are NOT tracked as task
+     * inputs. Use the `environment(name, value)` function (tracked by
+     * default) or [trackEnvironment] to make a variable participate in
+     * up-to-date checks and the build cache key.
+     */
     @get:Internal
     var environment: Map<String, Any>
         get() = processOptions.environment.get()
@@ -90,7 +143,12 @@ internal constructor(
 
     private val trackedEnvironmentVariablesKeys = mutableSetOf<String>()
 
-
+    /**
+     * The environment variables that participate in the up-to-date check and
+     * the build cache key: the ones assigned with the `environment(name,
+     * value)` function (tracked by default) or explicitly registered with
+     * [trackEnvironment].
+     */
     @Suppress("unused")
     @get:Input
     val trackedEnvironment: Map<String, Any>
@@ -120,6 +178,11 @@ internal constructor(
         executableProperty.set(project.provider(provider).map { project.files(it) })
     }
 
+    /**
+     * Adds an environment variable for the test process. Unless
+     * `tracked = false` is passed, the variable participates in the
+     * up-to-date check and the build cache key.
+     */
     @JvmOverloads
     fun environment(name: String, value: Any, tracked: Boolean = true) {
         processOptions.environment.put(name, providers.provider { value.toString() })
@@ -128,6 +191,15 @@ internal constructor(
         }
     }
 
+    /**
+     * Registers an environment variable (e.g. one inherited by the test
+     * process from the Gradle process' environment) as a task input, so that
+     * changing its value invalidates up-to-date checks and the build cache.
+     *
+     * Tests reading environment variables they do not track are not
+     * hermetic: a run restored from cache may have been produced under a
+     * different value of such a variable.
+     */
     @JvmOverloads
     fun trackEnvironment(name: String, tracked: Boolean = true) {
         if (tracked) {
