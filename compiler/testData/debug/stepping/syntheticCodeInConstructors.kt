@@ -112,16 +112,16 @@ fun box() {
 // test.kt:10 <init>
 // test.kt:12 <init>
 // test.kt:34 box
-// test.kt:19 C_init_$Init$
+// test.kt:19 <init>
 // test.kt:10 <init>
-// test.kt:18 C_init_$Init$
-// test.kt:22 C_init_$Init$
+// test.kt:18 <init>
+// test.kt:22 <init>
 // test.kt:35 box
-// test.kt:26 C_init_$Init$
-// test.kt:19 C_init_$Init$
+// test.kt:26 <init>
+// test.kt:19 <init>
 // test.kt:10 <init>
-// test.kt:18 C_init_$Init$
-// test.kt:22 C_init_$Init$
+// test.kt:18 <init>
+// test.kt:22 <init>
 // test.kt:36 box
 
 // EXPECTATIONS JS_IR_ES6
