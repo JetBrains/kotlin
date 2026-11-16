@@ -128,23 +128,19 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
 
         val resolvedValues = mutableMapOf<IrValueSymbol, IrValueSymbol>()
         val processedNames = mutableSetOf<Name>()
+        // Code for constructor parameters: generate values ...
         for (parameter in regularParameters) {
-            val field = builderClass.findBuilderField(parameter.name) ?: continue
-            val fieldRead = irGetField(irGet(thisParameter), field)
-            val value = when {
-                parameter.name in singularFieldNames ->
-                    buildSingularResult(field, thisParameter, parameter.type, build.useGuavaForSingular)
-                else -> builderClass.defaultFlagField(parameter.name)?.let { flagField ->
-                    buildDefaultOrSetValue(
-                        declaration, parameter.defaultValue, parameter.type, flagField, thisParameter, fieldRead, resolvedValues
-                    )
-                } ?: fieldRead
-            }
+            val value = buildSingularOrRegularValue(
+                builderClass, declaration, thisParameter,
+                parameter.name, parameter.type, parameter.defaultValue,
+                singularFieldNames, build.useGuavaForSingular, resolvedValues
+            ) ?: continue
             val temp = irTemporary(value, nameHint = parameter.name.identifier)
             resolvedValues[parameter.symbol] = temp.symbol
             processedNames.add(parameter.name)
         }
 
+        // ... call constructor or factory method
         val call = irInvokeEntityCallable(declaration, builderClass, entityClass, callable)
         callable.parameters.forEachIndexed { index, parameter ->
             if (parameter.kind != IrParameterKind.Regular) return@forEachIndexed
@@ -155,22 +151,21 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val builderProperties = builderClass.declarations.filterIsInstance<IrProperty>()
         val entityProperties = entityClass.declarations.filterIsInstance<IrProperty>()
         val entityPropertyValues = mutableMapOf<IrProperty, IrExpression>()
+        // Code for regular properties: generate values ...
         for (builderProperty in builderProperties) {
             if (builderProperty.name in processedNames) continue
-            val field = builderProperty.backingField ?: continue
             val entityProperty = entityProperties.firstOrNull { it.name == builderProperty.name } ?: continue
             if (!entityProperty.isVar) continue
-            val fieldRead = irGetField(irGet(thisParameter), field)
-            val value = builderClass.defaultFlagField(entityProperty.name)?.let { flagField ->
-                buildDefaultOrSetValue(
-                    declaration,
-                    entityProperty.backingField?.initializer,
-                    entityProperty.backingField?.type ?: entityProperty.getter!!.returnType,
-                    flagField, thisParameter, fieldRead, resolvedValues
-                )
-            } ?: fieldRead
+            val value = buildSingularOrRegularValue(
+                builderClass, declaration, thisParameter,
+                builderProperty.name,
+                entityProperty.backingField?.type ?: entityProperty.getter!!.returnType,
+                entityProperty.backingField?.initializer,
+                singularFieldNames, build.useGuavaForSingular, resolvedValues
+            ) ?: continue
             entityPropertyValues[entityProperty] = value
         }
+        // ... call setters for properties
         if (entityPropertyValues.isNotEmpty()) {
             val tempInstance = irTemporary(call, nameHint = builderClass.name.asString().decapitalize())
             for ([entityProperty, value] in entityPropertyValues.entries) {
@@ -185,7 +180,41 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         }
     }
 
-    /** `if ($set) field else <default expression, with earlier-parameter references resolved to their temps>`. */
+    /**
+     * Generate a value for a builder item (it can be a parameter or a property).
+     *
+     * Depending on presence of `@Singular` annotation, we either call [buildSingularResult] or [buildDefaultOrSetValue]
+     */
+    private fun IrBlockBodyBuilder.buildSingularOrRegularValue(
+        builderClass: IrClass,
+        declaration: IrSimpleFunction,
+        thisParameter: IrValueParameter,
+        itemName: Name,
+        itemType: IrType,
+        itemDefaultValue: IrExpressionBody?,
+        singularFieldNames: Set<Name>,
+        useGuavaForSingular: Boolean,
+        resolvedValues: Map<IrValueSymbol, IrValueSymbol>,
+    ): IrExpression? {
+        val field = builderClass.findBuilderField(itemName) ?: return null
+        val fieldRead = irGetField(irGet(thisParameter), field)
+        return when {
+            itemName in singularFieldNames ->
+                buildSingularResult(field, thisParameter, itemType, useGuavaForSingular)
+            else -> builderClass.defaultFlagField(itemName)?.let { flagField ->
+                buildDefaultOrSetValue(
+                    declaration, itemDefaultValue, itemType, flagField, thisParameter, fieldRead, resolvedValues
+                )
+            } ?: fieldRead
+        }
+    }
+
+    /**
+     * Generate a value for a non-singular builder item.
+     *
+     * The generated code looks as follows:
+     * `if ($set) field else <default expression, with earlier-item references resolved to their temps>`.
+     */
     private fun IrBlockBodyBuilder.buildDefaultOrSetValue(
         declaration: IrSimpleFunction,
         defaultValue: IrExpressionBody?,

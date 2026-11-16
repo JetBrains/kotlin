@@ -1,5 +1,4 @@
 // ISSUE: KT-90709
-// IGNORE_BACKEND: JVM
 // DUMP_KT_IR
 
 import lombok.Builder
