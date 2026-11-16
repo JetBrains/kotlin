@@ -260,6 +260,54 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypePointerConsistencyTestGener
   }
 
   @Test
+  @TestMetadata("recursiveTypeCapturedAnnotated.kt")
+  public void testRecursiveTypeCapturedAnnotated() {
+    run("recursiveTypeCapturedAnnotated.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveTypeCapturedContravariant.kt")
+  public void testRecursiveTypeCapturedContravariant() {
+    run("recursiveTypeCapturedContravariant.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveTypeCapturedFunctionType.kt")
+  public void testRecursiveTypeCapturedFunctionType() {
+    run("recursiveTypeCapturedFunctionType.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveTypeCapturedMultipleBounds.kt")
+  public void testRecursiveTypeCapturedMultipleBounds() {
+    run("recursiveTypeCapturedMultipleBounds.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveTypeCapturedMutual.kt")
+  public void testRecursiveTypeCapturedMutual() {
+    run("recursiveTypeCapturedMutual.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveTypeCapturedNestedArgument.kt")
+  public void testRecursiveTypeCapturedNestedArgument() {
+    run("recursiveTypeCapturedNestedArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveTypeCapturedNullable.kt")
+  public void testRecursiveTypeCapturedNullable() {
+    run("recursiveTypeCapturedNullable.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveTypeCapturedNullableArgument.kt")
+  public void testRecursiveTypeCapturedNullableArgument() {
+    run("recursiveTypeCapturedNullableArgument.kt");
+  }
+
+  @Test
   @TestMetadata("symbolNotFound.kt")
   public void testSymbolNotFound() {
     run("symbolNotFound.kt");
