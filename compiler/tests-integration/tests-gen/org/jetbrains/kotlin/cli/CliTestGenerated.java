@@ -2333,6 +2333,18 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("compilationErrorPerClassPlainModuleKind.args")
+    public void testCompilationErrorPerClassPlainModuleKind() {
+      run("compilationErrorPerClassPlainModuleKind.args");
+    }
+
+    @Test
+    @TestMetadata("compilationWarningConflictingGranularityFlags.args")
+    public void testCompilationWarningConflictingGranularityFlags() {
+      run("compilationWarningConflictingGranularityFlags.args");
+    }
+
+    @Test
     @TestMetadata("compilationWarningPublicAccessorExplicitAPIMode.args")
     public void testCompilationWarningPublicAccessorExplicitAPIMode() {
       run("compilationWarningPublicAccessorExplicitAPIMode.args");
