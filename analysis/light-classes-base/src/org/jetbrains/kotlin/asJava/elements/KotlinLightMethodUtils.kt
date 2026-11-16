@@ -37,10 +37,10 @@ fun KtLightMethod.isAccessor(getter: Boolean): Boolean {
 
 /**
  * The number of parameters before the value parameters in the JVM methods of this callable:
- * its context parameters, context receivers and extension receiver.
+ * its context parameters and extension receiver.
  */
 internal val KtCallableDeclaration.leadingJvmParameterCount: Int
-    get() = contextParameters.size + contextReceivers.size + (if (hasReceiverParameter()) 1 else 0)
+    get() = contextParameters.size + (if (hasReceiverParameter()) 1 else 0)
 
 /**
  * Whether the JVM methods of this callable have a receiver parameter.
