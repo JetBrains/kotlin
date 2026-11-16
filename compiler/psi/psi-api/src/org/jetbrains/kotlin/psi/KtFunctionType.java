@@ -167,7 +167,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
         int count = 0;
         KtContextParameterList contextReceiverList = getContextParameterList();
         if (contextReceiverList != null) {
-            count += contextReceiverList.contextReceivers().size();
+            count += contextReceiverList.getContextParameters().size();
         }
 
         KtFunctionTypeReceiver receiverDeclaration = getReceiver();

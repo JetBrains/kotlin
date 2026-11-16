@@ -8,11 +8,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnTopLevelCa
   FUNCTION[fqName=function, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=function]
     MODIFIER_LIST[private]
       CONTEXT_PARAMETER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=A]
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
@@ -35,11 +35,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnTopLevelCa
   PROPERTY[fqName=property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
     MODIFIER_LIST[private]
       CONTEXT_PARAMETER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=A]
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
@@ -63,11 +63,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnTopLevelCa
   PROPERTY[fqName=propertyWithSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
     MODIFIER_LIST[private]
       CONTEXT_PARAMETER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=A]
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]

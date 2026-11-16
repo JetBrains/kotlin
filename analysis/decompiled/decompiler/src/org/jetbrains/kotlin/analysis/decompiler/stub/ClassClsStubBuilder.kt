@@ -107,7 +107,7 @@ private class ClassClsStubBuilder(
         val classOrObjectStub = doCreateClassOrObjectStub()
         val modifierList = createModifierListForClass(classOrObjectStub)
         createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
-        typeStubBuilder.createContextReceiverStubs(modifierList, classProto.contextReceiverTypes(c.typeTable))
+        typeStubBuilder.createContextParameterStubsWithoutNames(modifierList, classProto.contextReceiverTypes(c.typeTable))
         return classOrObjectStub
     }
 

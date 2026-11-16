@@ -212,7 +212,7 @@ abstract class CallableClsStubBuilder(
         val contextParameters = contextParameters
         if (contextParameters.isEmpty()) {
             // Fallback for old metadata where context parameters don't exist (KT-74546)
-            return typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
+            return typeStubBuilder.createContextParameterStubsWithoutNames(modifierListStub, contextReceiverTypes)
         }
 
         val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(

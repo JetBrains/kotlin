@@ -21,11 +21,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnFunctionTy
         TYPE_REFERENCE
           FUNCTION_TYPE
             CONTEXT_PARAMETER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=B]
@@ -53,11 +53,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnFunctionTy
                     REFERENCE_EXPRESSION[referencedName=MyAnnotation]
           FUNCTION_TYPE
             CONTEXT_PARAMETER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=B]
@@ -80,11 +80,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnFunctionTy
           NULLABLE_TYPE
             FUNCTION_TYPE
               CONTEXT_PARAMETER_LIST
-                CONTEXT_RECEIVER[label=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=A]
-                CONTEXT_RECEIVER[label=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=B]
@@ -107,11 +107,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnFunctionTy
           MODIFIER_LIST[suspend]
           FUNCTION_TYPE
             CONTEXT_PARAMETER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=B]
