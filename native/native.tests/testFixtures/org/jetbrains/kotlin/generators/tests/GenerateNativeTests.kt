@@ -178,6 +178,7 @@ fun main(args: Array<String>) {
                     provider<UseExtTestCaseGroupProvider>(),
                     forceDebugMode(),
                     forceHostTarget(),
+                    forceNoThreadStateChecker(), // KT-91635
                 )
             ) {
                 model()
@@ -275,6 +276,12 @@ private fun forceDebugMode() = annotation(
 )
 
 fun forceHostTarget() = annotation(EnforcedHostTarget::class.java)
+
+fun forceNoThreadStateChecker() = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.USE_THREAD_STATE_CHECKER,
+    "propertyValue" to "false"
+)
 
 // The concrete tests disabled in one-stage mode.
 @Suppress("SameParameterValue")
