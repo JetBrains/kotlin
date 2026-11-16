@@ -131,8 +131,8 @@ abstract class AbstractForeignAnnotationsTestBase(
     }
 }
 
-abstract class AbstractFirPsiForeignAnnotationsSourceJavaTest :
-    AbstractForeignAnnotationsTestBase(ForeignAnnotationsTestKind.SOURCE, FirParser.Psi) {
+abstract class AbstractFirLightTreeForeignAnnotationsSourceJavaTest :
+    AbstractForeignAnnotationsTestBase(ForeignAnnotationsTestKind.SOURCE, FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
 
@@ -145,8 +145,8 @@ abstract class AbstractFirPsiForeignAnnotationsSourceJavaTest :
     }
 }
 
-abstract class AbstractFirPsiForeignAnnotationsCompiledJavaTest :
-    AbstractForeignAnnotationsTestBase(ForeignAnnotationsTestKind.COMPILED_JAVA, FirParser.Psi)
+abstract class AbstractFirLightTreeForeignAnnotationsCompiledJavaTest :
+    AbstractForeignAnnotationsTestBase(ForeignAnnotationsTestKind.COMPILED_JAVA, FirParser.LightTree)
 
-abstract class AbstractFirPsiForeignAnnotationsCompiledJavaWithPsiClassReadingTest :
-    AbstractForeignAnnotationsTestBase(ForeignAnnotationsTestKind.COMPILED_JAVA_WITH_PSI_CLASS_LOADING, FirParser.Psi)
+abstract class AbstractFirLightTreeForeignAnnotationsCompiledJavaWithPsiClassReadingTest :
+    AbstractForeignAnnotationsTestBase(ForeignAnnotationsTestKind.COMPILED_JAVA_WITH_PSI_CLASS_LOADING, FirParser.LightTree)

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.scripting.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirPsiBlackBoxCodegenTest;
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/scripting/scripting-tests/testData/codegen/regularBox")
 @TestDataPath("$PROJECT_ROOT")
-public class FirScriptingPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCodegenTest {
+public class FirScriptingLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTreeBlackBoxCodegenTest {
   private void run(String fileName) {
     runTest("plugins/scripting/scripting-tests/testData/codegen/regularBox/" + fileName);
   }
