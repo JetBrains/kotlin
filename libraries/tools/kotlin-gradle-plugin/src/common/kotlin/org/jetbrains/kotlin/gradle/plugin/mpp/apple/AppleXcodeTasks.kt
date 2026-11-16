@@ -12,7 +12,6 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
@@ -583,7 +583,7 @@ private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(
     ) { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Check that the synthetic linkage project is correctly integrated into the Xcode project"
-        val execOps = project.serviceOf<ExecOperations>()
+        val execOps = project.getExecOperations()
         val gradleProjectPath = project.path
         val rootProjectDir = rootProject.projectDir
         val collector = project.kotlinToolingDiagnosticsCollectorProvider
