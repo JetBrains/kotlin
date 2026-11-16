@@ -243,9 +243,9 @@ object CompilerModules {
     )
 
     /**
-     * The array of modules shipped in the 'kotlin-analysis-api-implementation-scripting' artifact.
+     * The array of modules shipped in the 'kotlin-analysis-api-scripting-support' artifact.
      */
-    val analysisApiImplementationScriptingModules = arrayOf(
+    val analysisApiScriptingSupportModules = arrayOf(
         ":analysis:low-level-api-fir-scripting",
     )
 
@@ -257,7 +257,7 @@ object CompilerModules {
         *analysisApiSurfaceModules,
         *analysisApiPlatformInterfaceModules,
         *analysisApiStandaloneModules,
-        *analysisApiImplementationScriptingModules,
+        *analysisApiScriptingSupportModules,
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-internal-utils",
@@ -285,7 +285,7 @@ object CompilerModules {
         ":prepare:analysis-api:kotlin-analysis-api-syntax-surface",
         ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
         ":prepare:analysis-api:kotlin-analysis-api-implementation",
-        ":prepare:analysis-api:kotlin-analysis-api-implementation-scripting",
+        ":prepare:analysis-api:kotlin-analysis-api-scripting-support",
         ":prepare:analysis-api:kotlin-analysis-api-syntax-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
         ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",

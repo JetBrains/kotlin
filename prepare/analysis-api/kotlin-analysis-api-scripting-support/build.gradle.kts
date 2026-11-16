@@ -5,7 +5,7 @@ plugins {
     id("analysis-api-artifact")
 }
 
-val analysisApiImplementationScriptingModules: Array<String> = CompilerModules.analysisApiImplementationScriptingModules
+val analysisApiScriptingSupportModules: Array<String> = CompilerModules.analysisApiScriptingSupportModules
 
 dependencies {
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-implementation"))
@@ -20,11 +20,11 @@ dependencies {
 
 analysisApiArtifact {
     content {
-        projects(analysisApiImplementationScriptingModules.asIterable())
+        projects(analysisApiScriptingSupportModules.asIterable())
     }
 
     validateClasspath(
-        proguardConfiguration = file("analysis-api-implementation-scripting.pro"),
-        permittedDuplicatesFile = file("api/analysis-api-implementation-scripting.permitted-duplicates"),
+        proguardConfiguration = file("analysis-api-scripting-support.pro"),
+        permittedDuplicatesFile = file("api/analysis-api-scripting-support.permitted-duplicates"),
     )
 }

@@ -11,7 +11,7 @@ val analysisApiStandaloneModules: Array<String> = CompilerModules.analysisApiSta
 dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-standalone-surface"))
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-implementation"))
-    implementation(project(":prepare:analysis-api:kotlin-analysis-api-implementation-scripting"))
+    implementation(project(":prepare:analysis-api:kotlin-analysis-api-scripting-support"))
 }
 
 analysisApiArtifact {

@@ -41,7 +41,7 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-analysis-api-implementation-scripting</artifactId>
+      <artifactId>kotlin-analysis-api-scripting-support</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>

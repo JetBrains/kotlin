@@ -3,10 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>kotlin-analysis-api-implementation-scripting</artifactId>
+  <artifactId>kotlin-analysis-api-scripting-support</artifactId>
   <version>ArtifactsTest.version</version>
-  <name>Kotlin Analysis Api Implementation Scripting</name>
-  <description>Kotlin Analysis Api Implementation Scripting</description>
+  <name>Kotlin Analysis Api Scripting Support</name>
+  <description>Kotlin Analysis Api Scripting Support</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>

@@ -12,7 +12,7 @@ val analysisApiSyntaxSurfaceModules: Array<String> = CompilerModules.analysisApi
 val analysisApiSyntaxImplementationModules: Array<String> = CompilerModules.analysisApiSyntaxImplementationModules
 val analysisApiPlatformInterfaceModules: Array<String> = CompilerModules.analysisApiPlatformInterfaceModules
 val analysisApiStandaloneModules: Array<String> = CompilerModules.analysisApiStandaloneModules
-val analysisApiImplementationScriptingModules: Array<String> = CompilerModules.analysisApiImplementationScriptingModules
+val analysisApiScriptingSupportModules: Array<String> = CompilerModules.analysisApiScriptingSupportModules
 val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
 val additionalCompilerProjects = listOf(
@@ -98,7 +98,7 @@ analysisApiArtifact {
             removeAll(analysisApiStandaloneModules)
 
             // Scripting support is shipped by the dedicated artifact
-            removeAll(analysisApiImplementationScriptingModules)
+            removeAll(analysisApiScriptingSupportModules)
 
             // Avoid copying content of 'kotlin-analysis-api-fir-diagnostics'
             remove(":analysis:analysis-api-fir-diagnostics")
