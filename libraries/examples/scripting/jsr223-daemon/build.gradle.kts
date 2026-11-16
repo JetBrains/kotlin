@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     kotlin("jvm")
     id("project-tests-convention")
     id("test-inputs-check")
