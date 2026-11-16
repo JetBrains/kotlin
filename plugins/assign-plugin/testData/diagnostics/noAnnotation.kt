@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data class StringProperty(var v: String) {
     fun assign(v: String) {
         this.v = v
@@ -27,3 +28,6 @@ fun `should not work with assignment when there is no annotation on a type`() {
         <!VAL_REASSIGNMENT!>input<!> <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 42
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, data, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */

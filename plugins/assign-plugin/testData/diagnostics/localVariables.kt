@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
 annotation class ValueContainer
@@ -42,3 +43,6 @@ fun `should not work with method parameters`() {
         <!VAL_REASSIGNMENT!>property<!> = StringProperty("Fail")
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, data, functionDeclaration, localFunction,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */
