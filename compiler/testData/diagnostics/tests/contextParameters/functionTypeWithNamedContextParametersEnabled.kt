@@ -9,6 +9,6 @@ fun foo(
 
 fun bar(f: context(<!NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE!>_: String<!>) () -> Unit) {}
 
-fun baz(f: context(<!NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE!><!SYNTAX!><!>: String<!>) () -> Unit) {}
+fun baz(f: context(<!SYNTAX!><!>: String) () -> Unit) {}
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, typeWithContext */
