@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.typescript.KotlinJsDtsGenerationTask
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
@@ -74,6 +77,20 @@ internal constructor(
     @InternalKotlinGradlePluginApi
     override val doesPlatformKlibRequireUnpacking: Boolean
         get() = true
+
+    @InternalKotlinGradlePluginApi
+    override fun configureExtractedPlatformKlibAttributes(from: AttributeContainer, to: AttributeContainer) {
+        /**
+         * Per-module Wasm linking compiles each dependency klib with a transform, which selects klibs by these attributes.
+         * See [org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryTransformRegisteringSetupAction] for details
+         */
+        if (wasmTargetType?.toCompilerTarget().supportsPerKlibCompilation() && propertiesProvider.wasmCompilationMode.isOpenWorld()) {
+            // The archive does not have these attributes, so 'from' matches it with any value, but we need to set them, as Gradle
+            // requires all attributes in to also be in from.
+            WasmBinaryAttribute.setInitialKlibArtifactAttributes(from)
+            WasmBinaryAttribute.setInitialKlibArtifactAttributes(to)
+        }
+    }
 
     @Deprecated(
         "Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.",

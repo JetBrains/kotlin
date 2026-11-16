@@ -13,6 +13,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
@@ -323,6 +324,34 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
             expectedImportedNodeModules.prettyPrinted,
             importedNodeModules.prettyPrinted,
         )
+    }
+
+    @GradleTest
+    @DisplayName("A wasmJs executable in the multimodule open world mode runs with a library in the Kotlin Archive format")
+    fun consumptionByWasmJsExecutableInMultimoduleOpenWorldMode(gradleVersion: GradleVersion) {
+        val producer = kotlinArchiveProducer(gradleVersion, withAppleTargets = false, withNodeJs = true)
+        val publishedProject = producer.publish()
+
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets = false)
+        consumer.addSourceFile("wasmJsMain", "fun main() {\n    commonMain()\n}", fileName = "main.kt")
+        consumer.buildScriptInjection {
+            project.applyMultiplatform {
+                wasmJs {
+                    nodejs()
+                    binaries.executable()
+                }
+            }
+        }
+
+        consumer.build(
+            ":wasmJsNodeDevelopmentRun",
+            buildOptions = defaultBuildOptions.copy(
+                wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_OPEN_WORLD)
+            )
+        ) {
+            assertTasksExecuted(":wasmJsNodeDevelopmentRun")
+            assertFileExists(consumer.projectPath.resolve("build/wasm/packages/consumer/kotlin/producer.mjs"))
+        }
     }
 
     private fun TestProject.resolvedResources(): List<String> {
