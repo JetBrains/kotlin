@@ -307,11 +307,7 @@ abstract class DataClassLikeMembersBodyGenerator(
         fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>)
     }
 
-    open fun getHashCodeFunctionInfo(property: IrProperty): HashCodeFunctionInfo {
-        return getHashCodeFunctionInfo(property.type)
-    }
-
-    abstract fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo
+    abstract fun getHashCodeFunctionInfo(property: IrProperty): HashCodeFunctionInfo
 
     open fun IrClass.classNameForToString(): String = irClass.name.asString()
 
@@ -321,7 +317,7 @@ abstract class DataClassLikeMembersBodyGenerator(
         }
     }
 
-    fun generateCopyFunction(irFunction: IrFunction, constructorSymbol: IrConstructorSymbol) {
+    fun generateCopyFunction(irFunction: IrFunction, constructorSymbol: IrConstructorSymbol, getProperty: (IrValueParameter) -> IrProperty) {
         buildMember(irFunction) {
             irFunction.parameters
                 .filter { it.kind == IrParameterKind.Regular }
@@ -366,8 +362,6 @@ abstract class DataClassLikeMembersBodyGenerator(
             }
         }
     }
-
-    abstract fun getProperty(irValueParameter: IrValueParameter?): IrProperty
 
     private fun IrSimpleFunctionSymbol.hasDispatchReceiver(): Boolean {
         return owner.dispatchReceiverParameter != null
