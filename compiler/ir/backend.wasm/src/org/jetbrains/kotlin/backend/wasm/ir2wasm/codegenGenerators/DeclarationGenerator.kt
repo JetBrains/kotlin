@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSuspendLambdaMergingLowering
+import org.jetbrains.kotlin.backend.wasm.lower.propertyReferenceImplClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
@@ -394,6 +395,10 @@ class DeclarationGenerator(
             klass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL ||
                 klass.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS
 
+        // Property references are implemented by dedicated stdlib classes, but similarly, only the
+        // compiler instantiates them as runtime carriers for `::property` references.
+        val isPropertyImplementationClass = klass.symbol in backendContext.wasmSymbols.propertyReferenceImplClasses
+
         // For callable reference and merged suspend lambda classes, do not use the FQN to ensure
         // deterministic names across files during link-time deduplication.
         val fqnShouldBeEmitted = (backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass) &&
@@ -431,7 +436,8 @@ class DeclarationGenerator(
             buildConstI64(linkerDataContext.referenceTypeId(symbol), location)
 
             val isAnonymousFlag =
-                if (klass.isAnonymousObject || isSyntheticFunctionImplementationClass) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
+                if (klass.isAnonymousObject || isSyntheticFunctionImplementationClass || isPropertyImplementationClass)
+                    TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
             val isLocalFlag = if (klass.isOriginallyLocalDeclaration) TYPE_INFO_FLAG_LOCAL_CLASS else 0
             buildConstI32(isAnonymousFlag or isLocalFlag, location)
 
