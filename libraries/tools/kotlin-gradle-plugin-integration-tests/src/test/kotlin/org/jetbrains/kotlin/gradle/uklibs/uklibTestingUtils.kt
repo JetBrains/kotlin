@@ -381,6 +381,13 @@ fun Project.computeTransformedLibraryChecksum(enable: Boolean = false) {
     )
 }
 
+fun Project.computeTransformedLibraryVersionChecksum(enable: Boolean = false) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_VERSION_CHECKSUM,
+        enable.toString(),
+    )
+}
+
 @kotlinx.serialization.Serializable
 data class GradleMetadata(
     val variants: Set<Variant>,

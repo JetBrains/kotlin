@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.native.internal.inferCommonizerTarget
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import kotlin.test.BeforeTest
@@ -36,7 +37,7 @@ class SourceSetCommonizerTargetTest {
     }
 
     @Test
-    fun `linux macos`() {
+    fun `linux macos`() = project.runLifecycleAwareTest {
         kotlin.linuxX64("linux")
         kotlin.macosArm64("macos")
 
@@ -51,14 +52,12 @@ class SourceSetCommonizerTargetTest {
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
         assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosMain))
         assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosTest))
-
-        project.evaluate()
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonMain))
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonTest))
     }
 
     @Test
-    fun `nativeMain linux macos`() {
+    fun `nativeMain linux macos`() = project.runLifecycleAwareTest {
         kotlin.linuxX64("linux")
         kotlin.macosArm64("macos")
 
@@ -82,13 +81,12 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(nativeMain))
 
-        project.evaluate()
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonMain))
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonTest))
     }
 
     @Test
-    fun `nativeMain linuxX64-a linuxX64-b`() {
+    fun `nativeMain linuxX64-a linuxX64-b`() = project.runLifecycleAwareTest {
         kotlin.linuxX64("linuxA")
         kotlin.linuxX64("linuxB")
 
@@ -111,13 +109,12 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(LeafCommonizerTarget(LINUX_X64), inferCommonizerTarget(nativeMain))
 
-        project.evaluate()
         assertEquals(LeafCommonizerTarget(LINUX_X64), inferCommonizerTarget(commonMain))
         assertEquals(LeafCommonizerTarget(LINUX_X64), inferCommonizerTarget(commonTest))
     }
 
     @Test
-    fun `nativeMain iosMain linux macos iosX64 iosArm64`() {
+    fun `nativeMain iosMain linux macos iosX64 iosArm64`() = project.runLifecycleAwareTest {
         kotlin.linuxX64("linux")
         kotlin.macosArm64("macos")
         // fixme: KT-89587 Clean up tests after iosX64 target deprecation
@@ -159,8 +156,6 @@ class SourceSetCommonizerTargetTest {
             inferCommonizerTarget(nativeMain)
         )
 
-        project.evaluate()
-
         assertEquals(
             CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_ARM64, LINUX_X64),
             inferCommonizerTarget(commonMain)
@@ -173,7 +168,7 @@ class SourceSetCommonizerTargetTest {
     }
 
     @Test
-    fun `nativeMain linux macos jvm`() {
+    fun `nativeMain linux macos jvm`() = project.runLifecycleAwareTest {
         kotlin.linuxX64("linux")
         kotlin.macosArm64("macos")
         kotlin.jvm("jvm")
@@ -201,13 +196,12 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(nativeMain))
 
-        project.evaluate()
         assertNull(inferCommonizerTarget(commonMain), "Expected commonMain to have no commonizer target")
         assertNull(inferCommonizerTarget(commonTest), "Expected commonTest to have no commonizer target")
     }
 
     @Test
-    fun `nativeMain with non hmpp workaround`() {
+    fun `nativeMain with non hmpp workaround`() = project.runLifecycleAwareTest {
         val linux1 = kotlin.linuxX64("linux1")
         val linux2 = kotlin.linuxArm64("linux2")
 
@@ -224,7 +218,7 @@ class SourceSetCommonizerTargetTest {
     }
 
     @Test
-    fun `orphan source sets are ignored`() {
+    fun `orphan source sets are ignored`() = project.runLifecycleAwareTest {
         val linux1 = kotlin.linuxX64("linux1")
         val linux2 = kotlin.linuxArm64("linux2")
         val nativeMain = kotlin.sourceSets.create("nativeMain")
@@ -240,7 +234,7 @@ class SourceSetCommonizerTargetTest {
     }
 
     @Test
-    fun `orphan source sets only`() {
+    fun `orphan source sets only`() = project.runLifecycleAwareTest {
         val nativeMain = kotlin.sourceSets.create("nativeMain")
         val orphan1 = kotlin.sourceSets.create("orphan1")
         val orphan2 = kotlin.sourceSets.create("orphan2")

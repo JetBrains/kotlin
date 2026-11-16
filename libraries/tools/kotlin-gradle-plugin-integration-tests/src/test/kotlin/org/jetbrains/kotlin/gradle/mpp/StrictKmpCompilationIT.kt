@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.computeTransformedLibraryChecksum
+import org.jetbrains.kotlin.gradle.uklibs.computeTransformedLibraryVersionChecksum
 import org.jetbrains.kotlin.gradle.uklibs.enableSeparateKmpCompilation
 import org.jetbrains.kotlin.gradle.uklibs.enableStrictKmpCompilation
 import org.jetbrains.kotlin.gradle.uklibs.publish
@@ -36,6 +37,7 @@ import kotlin.test.assertNotNull
 @MppGradlePluginTests
 class StrictKmpCompilationIT : KGPBaseTest() {
 
+    // FIXME: Metadata and -Xfragment-dependency previously formed classpaths through different execution paths; add some tests to make sure these are in sync
     @GradleTest
     fun `strict kmp compilation - coroutines and platform native libraries transform - in a project with 2 native targets`(version: GradleVersion) {
         val transformMap = projectWith2NativeTargets(
@@ -319,6 +321,7 @@ class StrictKmpCompilationIT : KGPBaseTest() {
     ) = project("empty", version) {
         buildScriptInjection {
             project.computeTransformedLibraryChecksum(false)
+            project.computeTransformedLibraryVersionChecksum(false)
             if (enableStrictKmpCompilation) {
                 project.enableStrictKmpCompilation(true)
             } else {
@@ -346,6 +349,7 @@ class StrictKmpCompilationIT : KGPBaseTest() {
     ) = project("empty", version) {
         buildScriptInjection {
             project.computeTransformedLibraryChecksum(false)
+            project.computeTransformedLibraryVersionChecksum(false)
             if (enableStrictKmpCompilation) {
                 project.enableStrictKmpCompilation()
             } else {
@@ -383,6 +387,7 @@ class StrictKmpCompilationIT : KGPBaseTest() {
     ) = project("empty", version) {
         buildScriptInjection {
             project.computeTransformedLibraryChecksum(false)
+            project.computeTransformedLibraryVersionChecksum(false)
             if (enableStrictKmpCompilation) {
                 project.enableStrictKmpCompilation()
             } else {

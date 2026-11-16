@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.allLeaves
+import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -32,7 +33,8 @@ internal val KotlinSourceSet.commonizerTarget: Future<CommonizerTarget?> by extr
         if (names.isEmpty()) {
             null
         } else {
-            CommonizerTarget(names.map { KonanTarget.predefinedTargets[it]!! })
+            val actualTargets = inferCommonizerTarget(internal.awaitPlatformCompilations())!!.konanTargets
+            CommonizerTarget(names.map { KonanTarget.predefinedTargets[it]!! } + actualTargets)
         }
     } else {
         inferCommonizerTarget(internal.awaitPlatformCompilations())
@@ -49,14 +51,9 @@ internal val KotlinCompilation<*>.commonizerTarget: Future<CommonizerTarget?> by
 }
 
 @UnsafeApi("Use sourceSet.commonizerTarget instead")
-internal fun inferCommonizerTarget(sourceSet: KotlinSourceSet): CommonizerTarget? {
-    val platformCompilations = sourceSet.internal.compilations
-        .filter { compilation -> compilation !is KotlinMetadataCompilation }
-    return inferCommonizerTarget(platformCompilations)
-}
+internal suspend fun inferCommonizerTarget(sourceSet: KotlinSourceSet): CommonizerTarget? = sourceSet.commonizerTarget.await()
 
-
-private fun inferCommonizerTarget(compilations: Iterable<KotlinCompilation<*>>): CommonizerTarget? {
+private suspend fun inferCommonizerTarget(compilations: Iterable<KotlinCompilation<*>>): CommonizerTarget? {
     @OptIn(UnsafeApi::class)
     val allCompilationLeafTargets = compilations
         .filter { compilation -> compilation !is KotlinMetadataCompilation }
@@ -71,7 +68,7 @@ private fun inferCommonizerTarget(compilations: Iterable<KotlinCompilation<*>>):
 }
 
 @UnsafeApi("Use compilation.commonizerTarget instead")
-internal fun inferCommonizerTarget(compilation: KotlinCompilation<*>): CommonizerTarget? {
+internal suspend fun inferCommonizerTarget(compilation: KotlinCompilation<*>): CommonizerTarget? {
     if (compilation is KotlinNativeCompilation) {
         return LeafCommonizerTarget(compilation.konanTarget)
     }
