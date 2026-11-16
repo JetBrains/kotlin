@@ -2,7 +2,7 @@ ERR:
 noReflect.kt:5:23: warning: call uses reflection API which is not found in the compilation classpath. Make sure you have kotlin-reflect.jar in the classpath.
         String::class.annotations
                       ^^^^^^^^^^^
-noReflect.kt:5:23: warning: unused return value of 'annotations'.
+noReflect.kt:5:23: warning: unused return value of 'annotations'. If this is intentional, use 'val _ = ' to ignore the value explicitly.
         String::class.annotations
                       ^^^^^^^^^^^
 
