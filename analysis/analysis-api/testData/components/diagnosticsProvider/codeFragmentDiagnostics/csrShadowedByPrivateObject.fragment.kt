@@ -1,0 +1,2 @@
+takeColor(Red)
+takeColor(Green)

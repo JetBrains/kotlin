@@ -50,6 +50,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCodeFragmentCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("csrShadowedByPrivateObject.kt")
+  public void testCsrShadowedByPrivateObject() {
+    run("csrShadowedByPrivateObject.kt");
+  }
+
+  @Test
   @TestMetadata("evalJvm.kt")
   public void testEvalJvm() {
     run("evalJvm.kt");

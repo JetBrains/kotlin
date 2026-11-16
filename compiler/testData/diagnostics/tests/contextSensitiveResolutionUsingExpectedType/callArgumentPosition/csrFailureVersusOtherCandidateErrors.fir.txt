@@ -1,0 +1,59 @@
+FILE: other.kt
+    package ppp
+
+    private final fun invisibleOrCsrFailure(u: R|ppp/Unrelated|): R|ppp/Unrelated| {
+        ^invisibleOrCsrFailure R|<local>/u|
+    }
+FILE: main.kt
+    package ppp
+
+    public final enum class Color : R|kotlin/Enum<ppp/Color>| {
+        private constructor(): R|ppp/Color| {
+            super<R|kotlin/Enum<ppp/Color>|>()
+        }
+
+        public final static enum entry Red: R|ppp/Color|
+        public final static fun values(): R|kotlin/Array<ppp/Color>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|ppp/Color| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<ppp/Color>|
+            public static get(): R|kotlin/enums/EnumEntries<ppp/Color>|
+
+    }
+    public final class Unrelated : R|kotlin/Any| {
+        public constructor(): R|ppp/Unrelated| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun invisibleOrCsrFailure(c: R|ppp/Color|): R|ppp/Color| {
+        ^invisibleOrCsrFailure R|<local>/c|
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|ppp/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final fun member(u: R|ppp/Unrelated|): R|ppp/Unrelated| {
+            ^member R|<local>/u|
+        }
+
+        public final fun member(c: R|ppp/Color|): R|ppp/Color| {
+            ^member R|<local>/c|
+        }
+
+    }
+    public final fun R|kotlin/String|.unsafeOrCsrFailure(u: R|ppp/Unrelated|): R|ppp/Unrelated| {
+        ^unsafeOrCsrFailure R|<local>/u|
+    }
+    public final fun R|kotlin/String?|.unsafeOrCsrFailure(c: R|ppp/Color|): R|ppp/Color| {
+        ^unsafeOrCsrFailure R|<local>/c|
+    }
+    public final fun test(a: R|ppp/A|, s: R|kotlin/String?|): R|kotlin/Unit| {
+        lval x: <ERROR TYPE REF: Ambiguity: invisibleOrCsrFailure, [ppp/invisibleOrCsrFailure, ppp/invisibleOrCsrFailure]> = <Ambiguity: invisibleOrCsrFailure, [ppp/invisibleOrCsrFailure, ppp/invisibleOrCsrFailure]>#(<Unresolved name: Blue>#)
+        lval y: <ERROR TYPE REF: Ambiguity: member, [ppp/A.member, ppp/A.member]> = R|<local>/a|.<Ambiguity: member, [ppp/A.member, ppp/A.member]>#(<Unresolved name: Blue>#)
+        lval z: <ERROR TYPE REF: Ambiguity: unsafeOrCsrFailure, [ppp/unsafeOrCsrFailure, ppp/unsafeOrCsrFailure]> = R|<local>/s|.<Ambiguity: unsafeOrCsrFailure, [ppp/unsafeOrCsrFailure, ppp/unsafeOrCsrFailure]>#(<Unresolved name: Blue>#)
+    }
