@@ -1,0 +1,175 @@
+{
+    "schemaVersion": "2.5.255",
+    "fragments": [
+        {
+            "name": "main",
+            "elements": {
+                "example/Transformer/convert/#T#R/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "convert",
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "typeParameter",
+                        "name": "R",
+                        "containerElementId": "example/Transformer/convert/#T#R/PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [
+                        {
+                            "name": "R",
+                            "isReified": false,
+                            "upperBounds": [],
+                            "variance": null,
+                            "annotations": []
+                        }
+                    ],
+                    "valueParameters": [
+                        {
+                            "name": "value",
+                            "type": {
+                                "kind": "typeParameter",
+                                "name": "T",
+                                "containerElementId": "example/Transformer///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        },
+                        {
+                            "name": "fallback",
+                            "type": {
+                                "kind": "typeParameter",
+                                "name": "R",
+                                "containerElementId": "example/Transformer/convert/#T#R/PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        }
+                    ],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "ABSTRACT",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "example/Transformer/transform/#T/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "transform",
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "typeParameter",
+                        "name": "T",
+                        "containerElementId": "example/Transformer///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "valueParameters": [
+                        {
+                            "name": "value",
+                            "type": {
+                                "kind": "typeParameter",
+                                "name": "T",
+                                "containerElementId": "example/Transformer///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        }
+                    ],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "ABSTRACT",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "example/Transformer///PointingToDeclaration/": {
+                    "kind": "class",
+                    "name": "Transformer",
+                    "classKind": "INTERFACE",
+                    "isCompanion": false,
+                    "isData": false,
+                    "isValue": false,
+                    "isFun": false,
+                    "isInner": false,
+                    "isExternal": false,
+                    "isError": false,
+                    "mappedTo": null,
+                    "typeParameters": [
+                        {
+                            "name": "T",
+                            "isReified": false,
+                            "upperBounds": [],
+                            "variance": null,
+                            "annotations": []
+                        }
+                    ],
+                    "superTypes": [],
+                    "declarations": [
+                        "example/Transformer/convert/#T#R/PointingToDeclaration/",
+                        "example/Transformer/transform/#T/PointingToDeclaration/"
+                    ],
+                    "visibility": "PUBLIC",
+                    "modality": "OPEN",
+                    "since": null,
+                    "deprecated": null,
+                    "annotations": []
+                },
+                "example////PointingToDeclaration/": {
+                    "kind": "package",
+                    "name": "example",
+                    "declarations": [
+                        "example/Transformer///PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                },
+                "////PointingToDeclaration/": {
+                    "kind": "module",
+                    "name": "Transformer",
+                    "packages": [
+                        "example////PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                }
+            },
+            "embeddedElements": {}
+        }
+    ],
+    "expectActualMappings": []
+}

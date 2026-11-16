@@ -1,0 +1,5 @@
+main:
+  class AbstractCounter (declared)
+    constructor() (declared)
+    fun count(): int (declared)
+    fun reset(): Unit (declared)

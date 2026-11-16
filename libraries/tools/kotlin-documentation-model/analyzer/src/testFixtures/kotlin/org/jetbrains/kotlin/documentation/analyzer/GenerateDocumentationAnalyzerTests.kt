@@ -37,9 +37,6 @@ fun main(args: Array<String>) {
             testClass<AbstractKdmKotlinSourceRoundTripTest> {
                 model("roundTrip")
             }
-            testClass<AbstractKdmJavaSourceRoundTripTest> {
-                model("roundTrip", extension = "java")
-            }
         }
     }
 }
