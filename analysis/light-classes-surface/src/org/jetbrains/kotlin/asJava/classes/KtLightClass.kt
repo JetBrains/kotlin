@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtNonPublicApi
 
+@OptIn(KtNonPublicApi::class)
 interface KtLightClass : PsiClass, KtLightDeclaration<KtClassOrObject, PsiClass>, KtLightClassMarker
 
 interface KtExtensibleLightClass : KtLightClass, PsiExtensibleClass {

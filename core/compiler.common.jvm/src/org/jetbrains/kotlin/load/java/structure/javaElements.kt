@@ -112,10 +112,6 @@ interface JavaClass : JavaClassifier, JavaTypeParameterListOwner, JavaModifierLi
 val JavaClass.classId: ClassId?
     get() = outerClass?.classId?.createNestedClassId(name) ?: fqName?.let(ClassId::topLevel)
 
-enum class LightClassOriginKind {
-    SOURCE, BINARY
-}
-
 interface JavaMember : JavaModifierListOwner, JavaAnnotationOwner, JavaNamedElement {
     val containingClass: JavaClass
 }

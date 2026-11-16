@@ -9,6 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
@@ -31,6 +32,7 @@ fun KtLightMethod.isTraitFakeOverride(): Boolean {
 fun KtLightMethod.isAccessor(getter: Boolean): Boolean {
     val origin = kotlinOrigin as? KtCallableDeclaration ?: return false
     if (origin !is KtProperty && origin !is KtParameter) return false
+    @OptIn(KtImplementationDetail::class)
     val expectedParametersCount = (if (getter) 0 else 1) + origin.leadingJvmParameterCount
     return parameterList.parametersCount == expectedParametersCount
 }
@@ -39,7 +41,8 @@ fun KtLightMethod.isAccessor(getter: Boolean): Boolean {
  * The number of parameters before the value parameters in the JVM methods of this callable:
  * its context parameters, context receivers and extension receiver.
  */
-internal val KtCallableDeclaration.leadingJvmParameterCount: Int
+@KtImplementationDetail
+val KtCallableDeclaration.leadingJvmParameterCount: Int
     get() = contextParameters.size + contextReceivers.size + (if (hasReceiverParameter()) 1 else 0)
 
 /**

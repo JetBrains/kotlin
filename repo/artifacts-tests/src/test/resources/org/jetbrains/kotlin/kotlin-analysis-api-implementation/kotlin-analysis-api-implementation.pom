@@ -47,6 +47,12 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-analysis-api-implementation-light-classes</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-intellij-implementation-components</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
