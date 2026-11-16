@@ -74,6 +74,16 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testTextBlockAnnotationArgument() {
+        val textBlock = "\"\"\"\n        first\n        second\n        \"\"\""
+        val javaClass = parseFirstClass("@Tag($textBlock) class Foo {}")
+        val argument = javaClass.annotations.single().arguments.singleOrNull()
+
+        // Text block annotation values are not literals until the fix in the next commit.
+        assertFalse(argument is JavaLiteralAnnotationArgument)
+    }
+
+    @Test
     fun testRecordComponentTypeKeepsTypeUseAnnotations() {
         val source = """
             import org.jetbrains.annotations.Nullable;
