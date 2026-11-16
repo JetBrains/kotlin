@@ -90,6 +90,8 @@ internal class KaSymbolProviderBridge(
     override val KtScript.symbol: KaScriptSymbol
         get() = context(analysisSession) { symbolEndpoint }
 
+    @Deprecated("Context receivers are no longer parsed, so there is no 'KtContextReceiver' to pass. Use 'KtParameter.symbol' instead.")
+    @Suppress("DEPRECATION")
     @KaExperimentalApi
     override val KtContextReceiver.symbol: KaContextParameterSymbol
         get() = context(analysisSession) { symbolEndpoint }

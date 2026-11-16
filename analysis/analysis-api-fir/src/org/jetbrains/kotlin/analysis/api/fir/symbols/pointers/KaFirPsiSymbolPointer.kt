@@ -38,7 +38,6 @@ internal class KaFirPsiSymbolPointer<S : KaSymbol> private constructor(
             when (psi) {
                 is KtDeclaration -> psi.symbol
                 is KtFile -> psi.symbol
-                is KtContextReceiver -> psi.symbol
                 else -> errorWithAttachment("Unexpected declaration to restore: ${psi::class.simpleName}") {
                     withPsiEntry("psi", psi)
                 }
@@ -75,7 +74,7 @@ internal class KaFirPsiSymbolPointer<S : KaSymbol> private constructor(
             if (symbol.origin != KaSymbolOrigin.SOURCE) return null
 
             val psi = when (val psi = symbol.psi) {
-                is KtDeclaration, is KtFile, is KtContextReceiver -> psi
+                is KtDeclaration, is KtFile -> psi
                 is KtObjectLiteralExpression -> psi.objectDeclaration
                 else -> return null
             }
