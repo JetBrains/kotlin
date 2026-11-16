@@ -18,7 +18,6 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
@@ -26,6 +25,8 @@ dependencies {
     testFixturesApi(project(":compiler:fir:plugin.api"))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     dataframeRuntimeClasspath(libs.dataframe.core.dev)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // RENDER_DIAGNOSTIC_ARGUMENTS
 
 import org.jetbrains.kotlinx.dataframe.*
@@ -29,3 +30,8 @@ class B
 interface I
 
 class NotDataSchema
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, elvisExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, inline, integerLiteral, interfaceDeclaration,
+isExpression, lambdaLiteral, localClass, localProperty, nullableType, primaryConstructor, propertyDeclaration, reified,
+samConversion, sealed, smartcast, stringLiteral, thisExpression, typeParameter, whenExpression, whenWithSubject */
