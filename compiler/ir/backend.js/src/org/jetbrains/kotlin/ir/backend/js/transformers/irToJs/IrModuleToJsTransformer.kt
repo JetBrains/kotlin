@@ -172,9 +172,7 @@ class IrModuleToJsTransformer(
 
     private val moduleFragmentToNameMapper = ModuleFragmentToExternalName(moduleToName)
 
-    private val jsExportModelGenerator by lazy {
-        JsExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
-    }
+    private val jsExportModelGenerator = JsExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
 
     private class IrFileExports(
         val file: IrFile,
