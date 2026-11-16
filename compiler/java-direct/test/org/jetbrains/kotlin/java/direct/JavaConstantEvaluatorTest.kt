@@ -160,6 +160,27 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         assertEquals(null, field.initializerValue)
     }
 
+
+    @Test
+    fun testNestedTypeInFieldInitializerUsesCurrentClassContext() {
+        val source = """
+            package p;
+            class Outer {
+                static class Defaults {
+                    static final int SIZE = 1;
+                }
+                static final int DEFAULT_SIZE = Defaults.SIZE;
+            }
+        """.trimIndent()
+
+        val javaClass = parseFirstClass(source)
+        val field = javaClass.fields.single { it.name.asString() == "DEFAULT_SIZE" }
+
+        // The current-class member context fixes this false result in the next commit.
+        assertFalse(field.hasConstantNotNullInitializer)
+        assertEquals(null, field.initializerValue)
+    }
+
     private fun findReferenceExpression(tree: LightSyntaxTree, node: LightNode, text: String): LightNode? {
         if (tree.getType(node) == JavaSyntaxElementType.REFERENCE_EXPRESSION && tree.getText(node).toString() == text) {
             return node
