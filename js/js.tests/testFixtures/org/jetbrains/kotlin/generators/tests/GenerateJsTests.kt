@@ -94,10 +94,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testsRoot, "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
-            testClass<AbstractPsiJsBoxTest> {
-                model(pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = listOf("es6classes"))
-            }
-
             testClass<AbstractLightTreeJsBoxTest> {
                 model(pattern = KT_WITHOUT_UNDERSCORE_PREFIX, excludeDirs = listOf("es6classes"))
             }
@@ -255,24 +251,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testsRoot, "compiler/testData/diagnostics", testRunnerMethodName = "runTest0") {
-            testClass<AbstractPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "PsiJsKlibDiagnosticsTestGenerated") {
-                model(
-                    relativeRootPath = "klibSerializationTests",
-                    pattern = KT_WITHOUT_UNDERSCORE_PREFIX,
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-                model(
-                    relativeRootPath = "testsWithJsStdLib",
-                    pattern = KT_WITHOUT_UNDERSCORE_PREFIX,
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-                )
-                model(
-                    relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
-                    pattern = KT_WITHOUT_UNDERSCORE_PREFIX,
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-            }
-
             testClass<AbstractLightTreeJsDiagnosticWithBackendTest>(suiteTestClassName = "LightTreeJsKlibDiagnosticsTestGenerated") {
                 model(
                     relativeRootPath = "klibSerializationTests",
@@ -304,12 +282,6 @@ fun main(args: Array<String>) {
 
         testGroup(testsRoot, "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
             testClass<AbstractLightTreeJsIrTextTest> {
-                model(
-                    excludeDirs = listOf("declarations/multiplatform/k1")
-                )
-            }
-
-            testClass<AbstractPsiJsIrTextTest> {
                 model(
                     excludeDirs = listOf("declarations/multiplatform/k1")
                 )
