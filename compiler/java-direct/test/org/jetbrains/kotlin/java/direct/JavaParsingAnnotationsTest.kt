@@ -621,6 +621,28 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testCommentsInConstantAnnotationArgumentsAreIgnored() {
+        val argumentSource = """
+            class Holder {
+                @Anno(value = /* before */ 1 /* around plus */ + 2 /* after */)
+                void annotated() {}
+            }
+        """.trimIndent()
+        val annotation = parseFirstClass(argumentSource).methods.single().annotations.single()
+        // The comment prevents a literal argument from being produced until the next commit.
+        assertFalse(annotation.arguments.singleOrNull() is JavaLiteralAnnotationArgument)
+
+        val defaultSource = """
+            @interface Anno {
+                int value() default /* default */ 7;
+            }
+        """.trimIndent()
+        val default = parseFirstClass(defaultSource).methods.single().annotationParameterDefaultValue
+        // The comment prevents a literal default from being produced until the next commit.
+        assertFalse(default is JavaLiteralAnnotationArgument)
+    }
+
+    @Test
     fun testConstantExpressionAnnotationMethodDefault() {
         // The default value of an annotation method is a constant expression too, and FIR turns it
         // into the default value of the corresponding value parameter.

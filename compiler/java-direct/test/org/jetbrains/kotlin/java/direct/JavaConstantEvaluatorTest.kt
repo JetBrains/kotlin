@@ -115,6 +115,26 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testCommentsInFieldInitializersAreIgnored() {
+        val source = """
+            class Consts {
+                static final int ADD = 1 /* one */ + 2;
+                static final int INITIALIZER = /* comment */ 10;
+            }
+        """.trimIndent()
+
+        val fields = parseFirstClass(source).fields.associateBy { it.name.asString() }
+        val add = fields.getValue("ADD")
+        assertTrue(add.hasConstantNotNullInitializer)
+        assertEquals(null, add.initializerValue)
+
+        val initializer = fields.getValue("INITIALIZER")
+        // The comment is mistaken for the initializer until the fix in the next commit.
+        assertFalse(initializer.hasConstantNotNullInitializer)
+        assertEquals(null, initializer.initializerValue)
+    }
+
+    @Test
     fun testConstantExpressionClassificationRejectsUnsupportedOperatorsAndCastTypes() {
         val source = """
             class Consts {
