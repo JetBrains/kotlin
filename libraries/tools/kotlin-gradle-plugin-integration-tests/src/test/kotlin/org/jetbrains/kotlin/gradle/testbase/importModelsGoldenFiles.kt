@@ -41,9 +41,38 @@ internal fun assertImportModelsGolden(projectPath: Path, projectName: String, mo
         goldenFile.writeText(actual)
         return
     }
+    assertMatchesGoldenFile(
+        goldenFile,
+        actual,
+        "run with -Pkotlin.test.update.test.data=true to generate it",
+    )
+}
+
+/**
+ * Compares the normalized TextFormat of a `Result` served through the Tooling API with the
+ * checked-in golden file for [projectName]. No update mode: the dump task owns the goldens.
+ */
+internal fun assertImportModelsGoldenResult(
+    resultBytes: ByteArray,
+    projectPath: Path,
+    projectName: String,
+    goldenFileName: String,
+) {
+    val actual = normalizeImportModelsResultText(
+        Result.parseFrom(resultBytes),
+        projectPath.toRealPath().toString(),
+    ).trimTrailingWhitespacesAndAddNewlineAtEOF()
+    assertMatchesGoldenFile(
+        GOLDEN_FILES_ROOT / projectName / goldenFileName,
+        actual,
+        "add the model to KotlinImportModelsDumpIT and run that test with -Pkotlin.test.update.test.data=true",
+    )
+}
+
+private fun assertMatchesGoldenFile(goldenFile: Path, actual: String, missingGoldenHint: String) {
     if (!goldenFile.isRegularFile()) {
         throw AssertionError(
-            "Missing golden file $goldenFile: run with -Pkotlin.test.update.test.data=true to generate it",
+            "Missing golden file $goldenFile: $missingGoldenHint",
         )
     }
     // An IDE save that adds or strips the golden's final newline cannot fail the comparison
