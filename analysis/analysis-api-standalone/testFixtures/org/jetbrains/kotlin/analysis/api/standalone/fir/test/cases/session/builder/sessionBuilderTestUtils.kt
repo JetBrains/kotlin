@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions
 import java.io.InputStream
 import java.io.OutputStream
@@ -28,6 +27,7 @@ import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.createTempDirectory
 import kotlin.io.path.extension
 import kotlin.streams.asSequence
 
@@ -60,9 +60,9 @@ fun KtCallExpression.assertIsCallOf(
     }
 }
 
-internal fun compileCommonKlib(kLibSourcesRoot: Path): Path {
+internal fun compileCommonKlib(kLibSourcesRoot: Path, outputParentDirectory: Path): Path {
     val ktFiles = Files.walk(kLibSourcesRoot).use { paths -> paths.asSequence().filter { it.extension == "kt" }.toList() }
-    val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib").toPath()
+    val testKlib = createTempDirectory(outputParentDirectory, "testLibrary").resolve("library.klib")
 
     val arguments = buildList {
         ktFiles.mapTo(this) { it.absolutePathString() }
@@ -76,9 +76,9 @@ internal fun compileCommonKlib(kLibSourcesRoot: Path): Path {
     return testKlib
 }
 
-internal fun compileToJar(sourceRoot: Path): Path {
+internal fun compileToJar(sourceRoot: Path, outputParentDirectory: Path): Path {
     val ktFiles = Files.walk(sourceRoot).use { paths -> paths.asSequence().filter { it.extension == "kt" }.toList() }
-    val testJar = KtTestUtil.tmpDir("testLibrary").resolve("library.jar").toPath()
+    val testJar = createTempDirectory(outputParentDirectory, "testLibrary").resolve("library.jar")
 
     val arguments = buildList {
         ktFiles.mapTo(this) { it.absolutePathString() }
