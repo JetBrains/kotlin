@@ -360,6 +360,8 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY,
                 FirCachingCompositeSymbolProvider(this, providersListWithoutSources)
             )
+
+            configuration[TEST_ONLY_SESSION_COMPONENT_CALLBACK]?.invoke(this)
         }
     }
 
@@ -561,4 +563,15 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             else -> FirCachingCompositeSymbolProvider(session, providers)
         }
     }
+
+    companion object {
+        /**
+         * This configuration key is used to provide a way to programmatically register additional session components.
+         *
+         * This key is allowed to be used ONLY in tests.
+         */
+        val TEST_ONLY_SESSION_COMPONENT_CALLBACK: CompilerConfigurationKey<(FirSession) -> Unit> =
+            CompilerConfigurationKey.create("TEST_ONLY_SESSION_COMPONENT_CALLBACK")
+    }
 }
+

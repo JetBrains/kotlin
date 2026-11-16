@@ -33,6 +33,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
 
         setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser)
         configureCommonDiagnosticTestPaths()
+        enableLazyResolvePhaseChecking()
 
         configureFirHandlersStep {
             setupHandlersForDiagnosticTest()
