@@ -1,76 +1,88 @@
 fragment main
 fun annotated(): Unit [sample//annotated/#/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "sample/FirstException///PointingToDeclaration/"
-  }
-  KdThrows {
-    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  {
+    "classLikeId": "sample/FirstException///PointingToDeclaration/",
+    "documentation": {}
+  },
+  {
+    "classLikeId": "sample/SecondException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
 
 fun externalException(): Unit [sample//externalException/#/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "java.io/IOException///PointingToDeclaration/"
+  {
+    "classLikeId": "java.io/IOException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
 
 fun getDocumentedProperty(): String [sample//getDocumentedProperty/#/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  {
+    "classLikeId": "sample/SecondException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
 
 val documentedProperty: String [sample//documentedProperty/#/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  {
+    "classLikeId": "sample/SecondException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
 
 fun getAccessors(): String [sample//getAccessors/#/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "sample/FirstException///PointingToDeclaration/"
+  {
+    "classLikeId": "sample/FirstException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
 
 fun setAccessors(value: String): Unit [sample//setAccessors/#kotlin.String/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  {
+    "classLikeId": "sample/SecondException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
 
 constructor() [sample/Constructed/Constructed/#/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "sample/FirstException///PointingToDeclaration/"
+  {
+    "classLikeId": "sample/FirstException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
 
 constructor() [sample/JavaDeclarations/JavaDeclarations/#/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "sample/FirstException///PointingToDeclaration/"
+  {
+    "classLikeId": "sample/FirstException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
 
 fun declared(): Unit [sample/JavaDeclarations/declared/#/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "sample/FirstException///PointingToDeclaration/"
-  }
-  KdThrows {
-    classLikeId = "sample/SecondException///PointingToDeclaration/"
+  {
+    "classLikeId": "sample/FirstException///PointingToDeclaration/",
+    "documentation": {}
+  },
+  {
+    "classLikeId": "sample/SecondException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
 
 fun externalException(): Unit [sample/JavaDeclarations/externalException/#/PointingToDeclaration/].throws:
 [
-  KdThrows {
-    classLikeId = "java.io/IOException///PointingToDeclaration/"
+  {
+    "classLikeId": "java.io/IOException///PointingToDeclaration/",
+    "documentation": {}
   }
 ]
