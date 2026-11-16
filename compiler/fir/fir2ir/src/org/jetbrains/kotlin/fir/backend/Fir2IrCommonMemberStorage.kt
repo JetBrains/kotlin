@@ -103,7 +103,6 @@ class Fir2IrCommonMemberStorage {
     data class DataValueClassGeneratedMembersInfo(
         val components: Fir2IrComponents,
         val firClass: FirRegularClass,
-        val origin: IrDeclarationOrigin,
         val generatedFunctions: MutableList<IrSimpleFunction>
     )
 }

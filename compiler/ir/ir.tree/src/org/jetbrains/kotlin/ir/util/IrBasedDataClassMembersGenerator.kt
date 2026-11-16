@@ -38,7 +38,6 @@ abstract class IrBasedDataClassMembersGenerator(
     val context: IrGeneratorContext,
     val irClass: IrClass,
     val fqName: FqName?,
-    val origin: IrDeclarationOrigin,
     val forbidDirectFieldAccess: Boolean = false,
     private val generateBodies: Boolean,
 ) {
