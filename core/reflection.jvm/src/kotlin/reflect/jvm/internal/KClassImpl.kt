@@ -73,7 +73,7 @@ internal class KClassImpl<T : Any>(
 ) : MemberContainer<T>(), KotlinGenericDeclaration {
     inner class Data : KDeclarationContainerImpl.Data() {
         val kmClass: KmClass? by lazy(PUBLICATION) {
-            if (loadMetadataDirectly) {
+            if (!useK1Implementation && !isComplicatedBuiltinSubclass) {
                 val metadata = jClass.getAnnotation(Metadata::class.java)
                 if (metadata != null && classId.outerClassId !in CompanionObjectMapping.classIds) {
                     val metadata = KotlinClassMetadata.readLenient(metadata)
