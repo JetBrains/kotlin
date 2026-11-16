@@ -18,12 +18,14 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
@@ -267,12 +269,36 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
 }
 
 class AnnotationImplementationMemberGenerator(
-    loweringContext: LoweringContext,
+    private val loweringContext: LoweringContext,
     irClass: IrClass,
     val nameForToString: String,
     forbidDirectFieldAccess: Boolean,
     val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression
-) : LoweringDataClassMemberGenerator(loweringContext, irClass, forbidDirectFieldAccess) {
+) : IrBasedDataClassMembersGenerator(
+    context = IrGeneratorContextBase(loweringContext.irBuiltIns),
+    irClass = irClass,
+    fqName = irClass.kotlinFqName,
+    forbidDirectFieldAccess = forbidDirectFieldAccess,
+    generateBodies = true,
+) {
+
+    override fun getProperty(irValueParameter: IrValueParameter?): IrProperty {
+        error("This API shouldn't be used in lowerings")
+    }
+
+    override fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo {
+        val symbol = if (type.isArray() || type.isPrimitiveArray()) {
+            context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
+        } else {
+            type.classOrNull?.functions?.singleOrNull { it.owner.isHashCode() }
+                ?: context.irBuiltIns.anyClass.functions.single { it.owner.name.asString() == "hashCode" }
+        }
+        return object : HashCodeFunctionInfo {
+            override val symbol: IrSimpleFunctionSymbol = symbol
+
+            override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>) {}
+        }
+    }
 
     override fun IrClass.classNameForToString(): String = nameForToString
 
