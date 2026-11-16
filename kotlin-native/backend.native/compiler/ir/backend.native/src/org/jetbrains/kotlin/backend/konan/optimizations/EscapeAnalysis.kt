@@ -1684,14 +1684,27 @@ internal object EscapeAnalysis {
                 val allowedToAlloc = 65536
                 val stackArrayCandidates = mutableListOf<ArrayStaticAllocation>()
                 for ([node, ptgNode] in nodes) {
-                    if (node.ir == null) continue
-
                     val computedLifetime = lifetimeOf(node)
                     var lifetime = computedLifetime
 
                     if (lifetime != Lifetime.STACK) {
                         // TODO: Support other lifetimes - requires arenas.
                         lifetime = Lifetime.GLOBAL
+                    }
+
+                    if (node.ir == null) {
+                        // The node belongs to a module deserialized from a cache. That module's own analysis has already decided where
+                        // this allocation lives, and it may well be the heap even when the current analysis proves the node local.
+                        // The decision cannot be influenced from here, so treat every such allocation as potentially exiled to the heap:
+                        // whatever is stored into it must not end up on the stack.
+                        if (computedLifetime != Lifetime.GLOBAL &&
+                                node is DataFlowIR.Node.Alloc &&
+                                (propagateExiledToHeapObjects || node.type.hasFinalizer)
+                        ) {
+                            escapeOrigins += ptgNode
+                            propagateEscapeOrigin(ptgNode)
+                        }
+                        continue
                     }
 
                     if (lifetime == Lifetime.STACK && node is DataFlowIR.Node.AllocArray) {
