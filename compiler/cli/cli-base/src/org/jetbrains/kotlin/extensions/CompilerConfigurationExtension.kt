@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 @K1Deprecation
 interface CompilerConfigurationExtension {
 
-    companion object : ProjectExtensionDescriptor<CompilerConfigurationExtension>(
+    companion object : ExtensionPointDescriptor<CompilerConfigurationExtension>(
         "org.jetbrains.kotlin.compilerConfigurationExtension",
         CompilerConfigurationExtension::class.java
     )

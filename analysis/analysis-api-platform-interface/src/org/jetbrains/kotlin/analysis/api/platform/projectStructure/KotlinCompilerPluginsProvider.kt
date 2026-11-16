@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
 /**
  * [KotlinCompilerPluginsProvider] provides information about registered compiler plugins.
@@ -31,8 +30,6 @@ public interface KotlinCompilerPluginsProvider : KotlinOptionalPlatformComponent
 
     /**
      * Returns a possibly empty list of extensions of a base [extensionType] that compiler plugins have registered for [module].
-     *
-     * These extensions are used in addition to those provided by the extension descriptor's [ProjectExtensionDescriptor.getInstances].
      */
     public fun <T : Any> getRegisteredExtensions(module: KaModule, extensionType: ExtensionPointDescriptor<T>): List<T>
 
