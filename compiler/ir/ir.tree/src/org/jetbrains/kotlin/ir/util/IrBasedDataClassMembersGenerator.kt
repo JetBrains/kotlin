@@ -293,8 +293,6 @@ abstract class IrBasedDataClassMembersGenerator(
     val IrClassifierSymbol?.isArrayOrPrimitiveArray: Boolean
         get() = isArrayOrPrimitiveArray(context.irBuiltIns)
 
-    abstract fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction)
-
     interface HashCodeFunctionInfo {
         val symbol: IrSimpleFunctionSymbol
 
@@ -361,7 +359,6 @@ abstract class IrBasedDataClassMembersGenerator(
         body: MemberFunctionBuilder.(IrFunction) -> Unit
     ) {
         MemberFunctionBuilder(startOffset, endOffset, irFunction).build { function ->
-            generateSyntheticFunctionParameterDeclarations(function)
             if (generateBodies) {
                 body(function)
             }
