@@ -1104,7 +1104,7 @@ internal object DFGSerializer {
                                 irCallSite = null
                         )
 
-                fun deserializeField(field: Field) = DataFlowIR.Field(types[field.type], field.hash, field.name)
+                fun deserializeField(field: Field) = symbolTable.internField(field.hash, types[field.type], field.name)
 
                 fun deserializeBody(body: FunctionBody): DataFlowIR.FunctionBody {
                     val nodes = body.nodes.map { node ->

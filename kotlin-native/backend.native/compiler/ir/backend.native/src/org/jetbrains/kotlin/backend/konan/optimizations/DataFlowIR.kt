@@ -244,6 +244,17 @@ internal object DataFlowIR {
     }
 
     class Field(val type: Type, val hash: Long, val name: String? = null) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Field) return false
+
+            return hash == other.hash
+        }
+
+        override fun hashCode(): Int {
+            return hash.hashCode()
+        }
+
         override fun toString() = "Field(type=$type, hash=$hash, name=$name)"
     }
 
@@ -534,9 +545,16 @@ internal object DataFlowIR {
         val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
         val fieldMap = mutableMapOf<IrField, Field>()
 
+        // All the fields, both mapped from IR and deserialized from caches, by hash.
+        private val fieldsByHash = mutableMapOf<Long, Field>()
+
         // The names of all the [FunctionSymbol.External]s by hash - these symbols are created by every
         // module referencing the function and are unified solely by hash.
         private val externalFunctionNames = mutableMapOf<Long, String>()
+
+        fun internField(hash: Long, type: Type, name: String?): Field =
+                fieldsByHash.getOrPut(hash) { Field(type, hash, name) }
+                        .also { checkNoHashCollision("fields", hash, it.name, name) }
 
         fun checkExternalFunction(hash: Long, name: String?) {
             if (name != null)
@@ -583,13 +601,17 @@ internal object DataFlowIR {
             sealed = true
         }
 
-        fun mapField(field: IrField): Field = fieldMap.getOrPut(field) {
-            val name = field.name.asString()
-            Field(
-                    mapType(field.type),
-                    localHash("${field.fqNameForIrSerialization}.$name".toByteArray()),
-                    takeName { name }
-            )
+        fun mapField(field: IrField): Field {
+            fieldMap[field]?.let { return it }
+
+            // The field's symbol name is only unique if the field's container is exported. If it's not, such fields are
+            // additionally qualified with the file, the same way as [computePrivateSymbolName] does.
+            val symbolName = field.computeSymbolName()
+            val isContainerExported = (field.parent as? IrClass)?.isExported
+                    ?: (field.correspondingPropertySymbol?.owner?.isExported == true)
+            val name = if (isContainerExported) symbolName else "$symbolName|${field.fileOrNull?.path}"
+            return internField(localHash(name.toByteArray()), mapType(field.type), takeName { name })
+                    .also { fieldMap[field] = it }
         }
 
         fun mapClassReferenceType(irClass: IrClass): Type {
