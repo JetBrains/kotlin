@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class ValueContainer
 
 @ValueContainer
@@ -34,3 +35,7 @@ fun `should not report an error for assign return type for unannotated class`() 
     val task = IntTask(IntProperty(42))
     task.<!VAL_REASSIGNMENT!>input<!> <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 42
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, data, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, localClass, localFunction, localProperty, primaryConstructor, propertyDeclaration,
+stringLiteral, thisExpression */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class ValueContainer
 
 @ValueContainer
@@ -15,7 +16,7 @@ data class Task(val input: StringProperty)
 
 fun `should report error if type doesn't match`() {
     val task = Task(StringProperty("Fail"))
-    task.<!NONE_APPLICABLE!>input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> 42
+    <!NONE_APPLICABLE!>task.input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> 42
 }
 
 fun `should report error if type doesn't match with apply`() {
@@ -24,3 +25,6 @@ fun `should report error if type doesn't match with apply`() {
         <!NONE_APPLICABLE!>input<!> <!NO_APPLICABLE_ASSIGN_METHOD!>=<!> 42
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, data, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */

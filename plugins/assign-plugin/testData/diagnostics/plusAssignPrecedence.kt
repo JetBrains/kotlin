@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 annotation class ValueContainer
 
 abstract class AbstractStringProperty(protected var v: String) {
@@ -102,3 +103,6 @@ fun box(): String {
 
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, classDeclaration, data,
+functionDeclaration, localProperty, operator, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */
