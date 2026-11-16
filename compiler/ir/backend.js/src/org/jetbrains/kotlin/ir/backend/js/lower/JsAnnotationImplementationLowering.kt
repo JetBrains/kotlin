@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.*
  */
 // JS PIR (and IC) requires DeclarationTransformer instead of FileLoweringPass
 class JsCommonAnnotationImplementationTransformer(context: JsCommonBackendContext) :
-    AnnotationImplementationTransformer(context, context.symbolTable, null),
+    AnnotationImplementationTransformer(context, null),
     DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
@@ -47,7 +47,7 @@ class JsCommonAnnotationImplementationTransformer(context: JsCommonBackendContex
         if (!declaration.isAnnotationClass) return declaration
 
         val generator = AnnotationImplementationMemberGenerator(
-            context, symbolTable, declaration,
+            context, declaration,
             nameForToString = "@" + declaration.fqNameWhenAvailable!!.asString(),
             forbidDirectFieldAccess = forbidDirectFieldAccessInMethods
         ) { type, a, b ->

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.addArgument
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -37,19 +36,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  */
 abstract class IrBasedDataClassMembersGenerator(
     val context: IrGeneratorContext,
-    val symbolTable: ReferenceSymbolTable,
     val irClass: IrClass,
     val fqName: FqName?,
     val origin: IrDeclarationOrigin,
     val forbidDirectFieldAccess: Boolean = false,
     private val generateBodies: Boolean,
 ) {
-    inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
-        also { irDeclaration ->
-            symbolTable.withReferenceScope(irDeclaration) {
-                builder(irDeclaration)
-            }
-        }
 
     protected val IrProperty.type
         get() = this.backingField?.type ?: this.getter?.returnType ?: error("Can't find type of ${this.render()}")
@@ -59,17 +51,10 @@ abstract class IrBasedDataClassMembersGenerator(
         endOffset: Int = SYNTHETIC_OFFSET,
         val irFunction: IrFunction
     ) : IrBlockBodyBuilder(context, Scope(irFunction.symbol), startOffset, endOffset) {
-        inline fun addToClass(builder: MemberFunctionBuilder.(IrFunction) -> Unit): IrFunction {
-            build(builder)
-            irClass.declarations.add(irFunction)
-            return irFunction
-        }
 
         inline fun build(builder: MemberFunctionBuilder.(IrFunction) -> Unit) {
-            irFunction.buildWithScope {
-                builder(irFunction)
-                irFunction.body = doBuild()
-            }
+            builder(irFunction)
+            irFunction.body = doBuild()
         }
 
         fun irThis(): IrExpression {
@@ -168,7 +153,7 @@ abstract class IrBasedDataClassMembersGenerator(
                         hasDispatchReceiver = true,
                         hasExtensionReceiver = false,
                         origin = IrStatementOrigin.EXCLEQ,
-                    ).apply<IrCallImpl> {
+                    ).apply {
                         arguments[0] = this@MemberFunctionBuilder.irEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ)
                     }
                 )
@@ -377,11 +362,9 @@ abstract class IrBasedDataClassMembersGenerator(
         body: MemberFunctionBuilder.(IrFunction) -> Unit
     ) {
         MemberFunctionBuilder(startOffset, endOffset, irFunction).build { function ->
-            function.buildWithScope {
-                generateSyntheticFunctionParameterDeclarations(function)
-                if (generateBodies) {
-                    body(function)
-                }
+            generateSyntheticFunctionParameterDeclarations(function)
+            if (generateBodies) {
+                body(function)
             }
         }
     }
