@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-89779
 // LANGUAGE: +ContextParameters
 
@@ -38,9 +38,9 @@ package ppp
 fun takesC(c: C) {}
 
 fun test() {
-    takesC(<!NO_CONTEXT_ARGUMENT!>onlyInapplicable<!>)
+    takesC(onlyInapplicable)
     takesC(inapplicableAndInvisible)
-    takesC(<!NO_CONTEXT_ARGUMENT!>invisibleInapplicable<!>)
+    takesC(invisibleInapplicable)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, getter, nullableType, objectDeclaration,

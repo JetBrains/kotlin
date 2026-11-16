@@ -19,10 +19,10 @@ class A {
     val prop = 1
     constructor(x: Int)
     constructor(x: Int, y: Int) : this(single(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!>))
-    constructor(x: Int, y: Int, z: Int) : this(intOrString(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!>))
+    constructor(x: Int, y: Int, z: Int) : this(<!NONE_APPLICABLE!>intOrString<!>(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!>))
     constructor(x: Int, y: Int, z: Int, w: Int) : this(intOrAny(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!>))
-    constructor(x: Int, y: Int, z: Int, w: Int, v: Int) : this(x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!>)
-    constructor(x: Int, y: Int, z: Int, w: Int, v: Int, u: Int = x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!>) : this(x)
+    constructor(x: Int, y: Int, z: Int, w: Int, v: Int) : this(x <!NONE_APPLICABLE!>+<!> <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!>)
+    constructor(x: Int, y: Int, z: Int, w: Int, v: Int, u: Int = x <!NONE_APPLICABLE!>+<!> <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!>) : this(x)
 }
 
 fun test() {

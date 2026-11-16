@@ -34,18 +34,18 @@ private val invisibleInapplicable: String get() = ""
 package ppp
 
 fun test() {
-    foo(<!ARGUMENT_TYPE_MISMATCH, NO_CONTEXT_ARGUMENT!>onlyInapplicable<!>)
+    foo(onlyInapplicable)
     foo(inapplicableAndInvisible)
-    foo(<!ARGUMENT_TYPE_MISMATCH, NO_CONTEXT_ARGUMENT!>invisibleInapplicable<!>)
+    foo(invisibleInapplicable)
 
-    val a: C = <!INITIALIZER_TYPE_MISMATCH, NO_CONTEXT_ARGUMENT!>onlyInapplicable<!>
+    val a: C = onlyInapplicable
     val b: C = inapplicableAndInvisible
-    val c: C = <!INITIALIZER_TYPE_MISMATCH, NO_CONTEXT_ARGUMENT!>invisibleInapplicable<!>
+    val c: C = invisibleInapplicable
 }
 
 context(_: Context<String>)
 fun testWrongContext() {
-    foo(<!ARGUMENT_TYPE_MISMATCH, NO_CONTEXT_ARGUMENT!>onlyInapplicable<!>)
+    foo(onlyInapplicable)
 }
 
 context(_: Context<Int>)
@@ -54,8 +54,8 @@ fun testMatchingContext() {
 }
 
 fun String?.testUnsafeCall() {
-    foo(<!ARGUMENT_TYPE_MISMATCH, UNSAFE_CALL!>length<!>)
-    val c: C = <!INITIALIZER_TYPE_MISMATCH, UNSAFE_CALL!>length<!>
+    foo(length)
+    val c: C = length
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration,

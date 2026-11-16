@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-89822, KT-89779
 // FILE: a.kt
 package a
@@ -41,7 +41,7 @@ fun main() {
     foo(barWrongReceivers)
     foo(barWrongReceiversExplicitImport)
     foo(barWrongReceiverAndHidden)
-    foo(barApplicableHiders)
+    foo(<!UNRESOLVED_REFERENCE!>barApplicableHiders<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, getter, nestedClass, objectDeclaration,

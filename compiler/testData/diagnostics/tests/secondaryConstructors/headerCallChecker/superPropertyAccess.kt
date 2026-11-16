@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 open class B(val prop: Int)
 class A : B {

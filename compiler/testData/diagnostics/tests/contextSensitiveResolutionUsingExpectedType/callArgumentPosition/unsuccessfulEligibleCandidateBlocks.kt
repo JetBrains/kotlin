@@ -38,7 +38,7 @@ fun <T : Ambiguous> lowerAndUpperAmbiguous(a: T, b: T) {}
 
 fun main() {
     foo(Parent.MyClass.<!OVERLOAD_RESOLUTION_AMBIGUITY!>barAmbiguous<!>)
-    foo(barAmbiguous)
+    foo(<!UNRESOLVED_REFERENCE!>barAmbiguous<!>)
 
     upperAmbiguous(bar)
     lowerAndUpperAmbiguous(Parent.MyClass(), bar)

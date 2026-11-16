@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-89779
 
 class MyClass {
@@ -15,7 +15,7 @@ class A {
     val MyClass.Companion.barbaz: MyClass get() = MyClass()
 
     fun main() {
-        foo(<!NONE_APPLICABLE!>bar<!>)
+        foo(bar)
         foo(baz)
         foo(barbaz)
     }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-89779
 // LANGUAGE: +ContextParameters
 
@@ -36,9 +36,9 @@ private val invisibleInapplicable: C
 package ppp
 
 fun test() {
-    val a: C = <!NO_CONTEXT_ARGUMENT!>onlyInapplicable<!>
+    val a: C = onlyInapplicable
     val b: C = inapplicableAndInvisible
-    val c: C = <!NO_CONTEXT_ARGUMENT!>invisibleInapplicable<!>
+    val c: C = invisibleInapplicable
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, getter, localProperty, nullableType,
