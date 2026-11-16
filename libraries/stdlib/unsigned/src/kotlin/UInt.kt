@@ -9,11 +9,9 @@
 package kotlin
 
 import kotlin.experimental.*
-import kotlin.jvm.*
 
 @SinceKotlin("1.5")
-@JvmInline
-public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Int) : Comparable<UInt> {
+public inline value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Int) : Comparable<UInt> {
 
     public companion object {
         /**

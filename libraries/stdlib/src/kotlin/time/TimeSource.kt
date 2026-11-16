@@ -5,8 +5,6 @@
 
 package kotlin.time
 
-import kotlin.jvm.JvmInline
-
 /**
  * A source of time for measuring time intervals.
  *
@@ -66,8 +64,7 @@ public interface TimeSource {
          */
         @SinceKotlin("1.9")
         @WasExperimental(ExperimentalTime::class)
-        @JvmInline
-        public value class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : ComparableTimeMark {
+        public inline value class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : ComparableTimeMark {
             /**
              * Returns the amount of time passed from this mark measured with the time source from which this mark was taken.
              *

@@ -60,8 +60,7 @@ private const val MIN_SUPPLEMENTARY_CODE_POINT_VALUE: Int = 0x10000
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
-@kotlin.jvm.JvmInline
-public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
+public inline value class CodePoint(public val code: Int) : Comparable<CodePoint> {
 
     init {
         // TODO: Investigate how to remove this check in a non-validating constructor

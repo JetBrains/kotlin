@@ -8,12 +8,10 @@
 
 package kotlin
 
-import kotlin.jvm.*
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@JvmInline
-public value class ULongArray
+public inline value class ULongArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: LongArray) : Collection<ULong> {
 

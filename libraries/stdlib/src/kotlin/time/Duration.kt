@@ -6,7 +6,6 @@
 package kotlin.time
 
 import kotlin.contracts.*
-import kotlin.jvm.JvmInline
 import kotlin.math.*
 
 /**
@@ -30,8 +29,7 @@ import kotlin.math.*
  * or the properties [inWholeHours], [inWholeMinutes], [inWholeSeconds], [inWholeNanoseconds], and so on.
  */
 @SinceKotlin("1.6")
-@JvmInline
-public value class Duration
+public inline value class Duration
 // A temporary workaround for KT-81995, the constructor has to be private once the issue is resolved.
 @Deprecated("Don't call this constructor directly.", level = DeprecationLevel.ERROR)
 internal constructor(private val rawValue: Long) :

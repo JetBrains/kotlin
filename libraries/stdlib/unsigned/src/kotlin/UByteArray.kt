@@ -8,12 +8,10 @@
 
 package kotlin
 
-import kotlin.jvm.*
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@JvmInline
-public value class UByteArray
+public inline value class UByteArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: ByteArray) : Collection<UByte> {
 
