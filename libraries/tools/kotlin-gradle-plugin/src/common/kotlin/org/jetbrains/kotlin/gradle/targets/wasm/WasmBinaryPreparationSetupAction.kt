@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.usesPlatformKlibsOf
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
@@ -83,7 +84,7 @@ private fun createWasmBinaryResolvableConfiguration(
         attributes.attribute(WasmBinaryAttribute.attribute, attributeValue)
         attributes.attribute(WasmBinaryAttribute.compilationNameAttribute, compilation.name)
 
-        usesPlatformOf(target)
+        usesPlatformKlibsOf(target)
     }
 
     runtimeDependencyConfiguration?.let { wasmBinaryConfiguration.extendsFrom(it) }

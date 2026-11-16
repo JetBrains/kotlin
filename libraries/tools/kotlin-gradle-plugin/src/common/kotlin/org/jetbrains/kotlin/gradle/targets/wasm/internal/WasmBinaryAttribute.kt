@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.internal
 
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 
 internal object WasmBinaryAttribute {
@@ -25,16 +26,20 @@ internal object WasmBinaryAttribute {
         }
 
         project.dependencies.artifactTypes.maybeCreate(KLIB_ARTIFACT).also { artifactType ->
-            artifactType.attributes.attribute(
-                attribute,
-                KLIB_ATTRIBUTE_VALUE
-            )
-
-            artifactType.attributes.attribute(
-                compilationNameAttribute,
-                KLIB_ATTRIBUTE_VALUE
-            )
+            setInitialKlibArtifactAttributes(artifactType.attributes)
         }
+    }
+
+    fun setInitialKlibArtifactAttributes(attributes: AttributeContainer) {
+        attributes.attribute(
+            attribute,
+            KLIB_ATTRIBUTE_VALUE
+        )
+
+        attributes.attribute(
+            compilationNameAttribute,
+            KLIB_ATTRIBUTE_VALUE
+        )
     }
 
     fun modeToAttribute(mode: KotlinJsBinaryMode) = when (mode) {
