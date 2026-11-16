@@ -282,14 +282,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             "p/Outer.class", $$"p/Outer$Inner.class"
         )
         for (javaDirect in listOf(true, false)) {
-            val [_, exitCode] = compileKotlin(
+            compileKotlin(
                 "source.kt", tmpdir, listOf(library),
                 additionalOptions = listOf(K2JVMCompilerArguments::javaDirect.cliArgument(javaDirect.toString())),
                 additionalSources = listOf("p/Outer.java"),
-                expectedFileName = null,
             )
-            // KT-87507: java-direct fails to resolve the nested class until the fix in the next commit.
-            assertEquals(if (javaDirect) ExitCode.COMPILATION_ERROR else ExitCode.OK, exitCode)
         }
     }
 

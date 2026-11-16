@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -233,9 +232,9 @@ class JKlibJavaInteropIntegrationTest {
         val disposable = Disposer.newDisposable()
         try {
             val artifact = compiler.compileToIr(args, messageCollector, disposable)
-            // KT-87507: nested ClassIds cannot be resolved from the class file until the next commit.
-            assertTrue(artifact == null)
-            assertTrue(messageCollector.messages.joinToString("\n").contains("Cannot access 'test.Outer.Inner'"))
+            if (artifact == null) {
+                error("compileToIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+            }
         } finally {
             disposeRootInWriteAction(disposable)
         }
