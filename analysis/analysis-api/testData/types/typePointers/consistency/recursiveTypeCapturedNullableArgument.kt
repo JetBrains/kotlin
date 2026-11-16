@@ -1,0 +1,18 @@
+// IGNORE_FIR
+// Restoration fails with "Unhandled recursive pointer restoration"
+
+interface Recursive<R : Recursive<R>>
+
+class Example<R : Recursive<R>> {
+    fun nested() : NestedExample<R?> = TODO()
+}
+
+class NestedExample<R> {
+    fun function(param: String) : Unit = TODO()
+}
+
+val example: Example<*> = TODO()
+
+fun main() {
+    <expr>example.nested()</expr>.function(1)
+}
