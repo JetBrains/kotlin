@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// Restoration fails with "Unhandled recursive pointer restoration"
-
 interface Recursive<R : Recursive<R>>
 
 class Example<R : Recursive<R>> {
