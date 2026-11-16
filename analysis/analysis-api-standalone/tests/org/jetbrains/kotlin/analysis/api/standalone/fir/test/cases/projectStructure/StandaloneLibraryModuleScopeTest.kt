@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryMod
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -29,10 +30,13 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
     override val suiteName: Path
         get() = Paths.get("projectStructure", "libraryModuleScope")
 
+    @TempDir
+    lateinit var tempDir: Path
+
     @Test
     fun testLibraryModuleScopeUsesParentTraversalByDefault() {
-        val libraryJar = compileToJar(testDataPath("library"))
-        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"))
+        val libraryJar = compileToJar(testDataPath("library"), tempDir)
+        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"), tempDir)
 
         lateinit var libraryModule: KaLibraryModule
 
@@ -51,8 +55,8 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
 
     @Test
     fun testLibraryModuleScopeRespectsProviderDefaultAndModuleOverride() {
-        val libraryJar = compileToJar(testDataPath("library"))
-        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"))
+        val libraryJar = compileToJar(testDataPath("library"), tempDir)
+        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"), tempDir)
 
         lateinit var inheritedModule: KaLibraryModule
         lateinit var parentTraversalModule: KaLibraryModule

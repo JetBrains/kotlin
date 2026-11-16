@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.nameWithoutExtension
@@ -67,6 +68,9 @@ import kotlin.test.assertTrue
 class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     override val suiteName: Path
         get() = Paths.get("sessionBuilder")
+
+    @TempDir
+    lateinit var tempDir: Path
 
     @Test
     fun testJdkSessionBuilder() {
@@ -213,7 +217,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val kLib = addModule(
                     buildKtLibraryModule {
-                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"))
+                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"), tempDir)
                         addBinaryRoot(compiledKLibRoot)
                         platform = CommonPlatforms.defaultCommonPlatform
                         libraryName = "klib"
@@ -245,7 +249,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val kLib = addModule(
                     buildKtLibraryModule {
-                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"))
+                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"), tempDir)
                         addBinaryRoot(compiledKLibRoot)
                         platform = CommonPlatforms.defaultCommonPlatform
                         libraryName = "klib"
@@ -357,7 +361,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
-                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"))
+                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"), tempDir)
                 val dep = addModule(
                     buildKtLibraryModule {
                         // addBinaryRoot(compiledJar)
@@ -389,7 +393,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
-                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"))
+                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"), tempDir)
                 val dep = addModule(
                     buildKtLibraryModule {
                         // addBinaryRoot(compiledJar)
@@ -677,7 +681,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     @Test
     fun testJvmLightClassesWithKotlinLibrarySupertypes() {
         val root = testDataPath("lightClassesWithKotlinLibrarySupertypes")
-        val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath(), compileToJar(root.resolve("library")))
+        val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath(), compileToJar(root.resolve("library"), tempDir))
 
         testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), libraryRoots, withJdk = true) {
             val itemList = findLightClass("org.test.ItemList")!!
@@ -695,7 +699,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     @Test
     fun testJvmJavaReferencesToKotlinLibraryClasses() {
         val root = testDataPath("lightClassesWithKotlinLibrarySupertypes")
-        val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath(), compileToJar(root.resolve("library")))
+        val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath(), compileToJar(root.resolve("library"), tempDir))
 
         testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), libraryRoots, withJdk = true) {
             val javaClass = JavaPsiFacade.getInstance(project).findClass("org.test.JavaClass", GlobalSearchScope.projectScope(project))!!
