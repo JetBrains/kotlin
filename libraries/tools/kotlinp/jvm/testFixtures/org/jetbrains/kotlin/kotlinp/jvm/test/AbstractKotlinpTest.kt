@@ -34,8 +34,7 @@ abstract class AbstractKotlinpTest : AbstractKotlinCompilerTest() {
 
         builder.useDirectives(KotlinpTestDirectives)
 
-        // We need PSI at least until scripts are supported in the LightTree (KT-60127).
-        setupJvmPipelineSteps(FirParser.Psi)
+        setupJvmPipelineSteps(FirParser.LightTree)
 
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()
