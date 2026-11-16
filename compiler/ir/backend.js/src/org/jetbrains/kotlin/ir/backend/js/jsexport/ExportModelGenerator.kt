@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.keysToMap
-import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespacesForPackages: Boolean) {
     fun wrapInNamespaces(packageFqName: FqName, exports: List<ExportedDeclaration>): List<ExportedDeclaration> = when {
@@ -33,7 +32,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
     fun generateExports(file: IrPackageFragment): Map<IrDeclaration, List<ExportedDeclaration>> =
-        file.declarations.memoryOptimizedMapNotNull { declaration ->
+        file.declarations.mapNotNull { declaration ->
             declaration.takeIf { it.couldBeConvertedToExplicitExport() != true }
                 ?.let(::exportDeclaration)
                 ?.let { declaration to listOf(it) }

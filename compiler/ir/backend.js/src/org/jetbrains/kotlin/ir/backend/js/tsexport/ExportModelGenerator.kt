@@ -76,7 +76,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     }
 
     fun generateExports(file: IrPackageFragment): Map<IrDeclaration, List<ExportedDeclaration>> =
-        file.declarations.memoryOptimizedMapNotNull { declaration ->
+        file.declarations.mapNotNull { declaration ->
             declaration.takeIf { it.couldBeConvertedToExplicitExport() != true }
                 ?.let { exportDeclaration(it).takeIf(List<*>::isNotEmpty) }   // drop "not exported"
                 ?.let { declaration to it }
