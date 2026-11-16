@@ -24,7 +24,6 @@ internal val WitTransformRegisteringSetupAction = KotlinTargetSideEffect { targe
 }
 
 /**
- * Artifact type of a directory with WIT declarations,
- * either extracted from a klib or exposed by a project as is.
+ * Artifact type of a directory with WIT declarations extracted from a klib.
  */
 internal const val KOTLIN_WASM_WIT_ARTIFACT_TYPE = "kotlin-wasm-wit"
