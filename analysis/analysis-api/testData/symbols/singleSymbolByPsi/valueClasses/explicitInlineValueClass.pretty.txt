@@ -1,1 +1,1 @@
-inline class ExplicitInlineValueClass(value: kotlin.String)
+inline value class ExplicitInlineValueClass(value: kotlin.String)

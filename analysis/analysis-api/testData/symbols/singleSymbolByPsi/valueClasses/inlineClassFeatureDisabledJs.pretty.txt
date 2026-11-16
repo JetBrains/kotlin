@@ -1,1 +1,1 @@
-inline class ValueClassFeatureDisabled(value: kotlin.Int)
+inline value class ValueClassFeatureDisabled(value: kotlin.Int)

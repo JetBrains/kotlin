@@ -1,1 +1,1 @@
-expect inline class ExpectInlineValueClassWithNoConstructorFromCommonBinary
+expect inline value class ExpectInlineValueClassWithNoConstructorFromCommonBinary

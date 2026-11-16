@@ -1,2 +1,2 @@
 @kotlin.jvm.JvmInline
-inline class ValueClassJvmInlineJsWasm(value: kotlin.Int)
+inline value class ValueClassJvmInlineJsWasm(value: kotlin.Int)
