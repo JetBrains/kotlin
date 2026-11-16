@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.atomicfu.runners
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CustomKlibs
 import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
@@ -33,6 +34,16 @@ open class AbstractAtomicfuJvmFirLightTreeTest : AbstractFirLightTreeBlackBoxCod
 }
 
 abstract class AbstractAtomicfuDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            configureForKotlinxAtomicfu()
+            useFailureSuppressors(::FirFailingTestSuppressor)
+        }
+    }
+}
+
+abstract class AbstractAtomicfuLLDiagnosticTest : AbstractLLDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

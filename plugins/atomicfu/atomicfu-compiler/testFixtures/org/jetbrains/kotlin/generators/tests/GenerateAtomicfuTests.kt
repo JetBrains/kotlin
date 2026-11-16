@@ -65,6 +65,9 @@ fun main(args: Array<String>) {
             testClass<AbstractAtomicfuDiagnosticTest> {
                 model("diagnostics/")
             }
+            testClass<AbstractAtomicfuLLDiagnosticTest> {
+                model("diagnostics/")
+            }
 
             testClass<AbstractAtomicfuJvmFirLightTreeTest> {
                 model("box/")
