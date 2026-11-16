@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.newCompanionInitializationEnabled
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -122,6 +123,11 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
         }.symbol
     }
 
+    // KT-91549: stdlib superclasses with nothing to initialize, so their subclasses don't get non-empty initializers just for triggering them.
+    // TODO(KT-91670): eliminate empty superclass initializers in general instead.
+    private fun IrClass.isKnownToHaveNoStaticInitialization(): Boolean =
+            symbol == context.irBuiltIns.numberClass || hasEqualFqName(FqName("kotlin.collections.AbstractCollection"))
+
     private fun IrStatement.isConst(): Boolean = when (this) {
         is IrConst, is IrConstantValue -> true
         is IrBlock -> {
@@ -161,7 +167,9 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
 
             val superClassesToInitialize = buildList {
                 // TODO(KT-90390): consider running `+initialize` if the superclass is an ObjC class.
-                container.getSuperClassNotAny()?.takeIf { !it.isExternalObjCClass() }?.let { add(it) }
+                container.getSuperClassNotAny()
+                        ?.takeIf { !it.isExternalObjCClass() && !it.isKnownToHaveNoStaticInitialization() }
+                        ?.let { add(it) }
                 fun IrDeclaration.triggersInterfaceInitialization(): Boolean {
                     if (this !is IrOverridableDeclaration<*>) return false
                     if (isFakeOverride) return false
