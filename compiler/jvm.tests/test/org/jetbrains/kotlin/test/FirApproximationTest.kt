@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsTest
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
@@ -28,7 +27,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 
-class FirApproximationTest : AbstractFirLightTreeDiagnosticsTest() {
+class FirApproximationTest {
     @Test
     @OptIn(DelicateIntersectionConstructor::class)
     fun `approximation of intersection type with upper bound`() {
