@@ -34,8 +34,14 @@ fun box(): String {
     } catch (t: Throwable) {
         log("caught")
     }
+    try {
+        foo()
+        return "Fail: foo() must throw again"
+    } catch (t: Throwable) {
+        log("caught")
+    }
     log("E")
 
-    if (l != "S;prop;caught;E;") return l
+    if (l != "S;prop;caught;caught;E;") return l
     return "OK"
 }

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: WASM
 // ^^ KT-83093
-// ISSUE: KT-89484
+// ISSUE: KT-89484, KT-89487
 // MODULE: main
 // FILE: main.kt
 
@@ -59,6 +59,9 @@ fun defaultReferencesDefault(b: JsAny = nextObject(), c: JsAny = b): Boolean = b
 @JsExport
 fun getDefaultEvaluations(): Int = defaultEvaluations
 
+@JsExport
+fun getInitOrderLog(): String = initOrderLog
+
 fun box(): String {
     if (appendWithDefault() != "OK") return "Fail: appendWithDefault from Kotlin"
     if (intWithDefault() != 42) return "Fail: intWithDefault from Kotlin"
@@ -66,6 +69,24 @@ fun box(): String {
     if (dependentDefaults(1, c = "c") != "1,2,c") return "Fail: dependentDefaults with named argument from Kotlin"
     if (lambdaWithDefault(1) != 2) return "Fail: lambdaWithDefault from Kotlin"
     return "OK"
+}
+
+// FILE: initOrder.kt
+
+private val initOrderProp = run {
+    initOrderLog += "prop;"
+}
+
+@JsExport
+fun initOrderDefault(value: String = initOrderSideEffect()): String = value
+
+// FILE: util.kt
+
+var initOrderLog = ""
+
+fun initOrderSideEffect(): String {
+    initOrderLog += "default;"
+    return "default"
 }
 
 // FILE: entry.mjs
@@ -86,6 +107,8 @@ import {
     lambdaWithDefault,
     defaultReferencesDefault,
     getDefaultEvaluations,
+    initOrderDefault,
+    getInitOrderLog,
 } from "./index.mjs"
 
 function check(actual, expected, message) {
@@ -144,3 +167,8 @@ check(lambdaWithDefault(1), 2, "lambdaWithDefault omitted");
 const evaluationsBefore = getDefaultEvaluations();
 check(defaultReferencesDefault(), true, "defaultReferencesDefault omitted");
 check(getDefaultEvaluations() - evaluationsBefore, 1, "defaultReferencesDefault evaluates default once");
+
+check(initOrderDefault(), "default", "initOrderDefault omitted");
+check(getInitOrderLog(), "prop;default;", "file init runs before omitted default");
+check(initOrderDefault("explicit"), "explicit", "initOrderDefault explicit");
+check(getInitOrderLog(), "prop;default;", "explicit call keeps file init exactly once");
