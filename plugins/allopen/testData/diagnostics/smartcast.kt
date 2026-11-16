@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-58049
 
@@ -22,3 +23,6 @@ class Test(
         println(privateProp.length)
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, smartcast */

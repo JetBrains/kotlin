@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-86985
 // WITH_STDLIB
 
@@ -17,3 +18,6 @@ class MyEntity(
     @get:JvmName("getSuperD")
     final val d: String = "OK"
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, classDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral */

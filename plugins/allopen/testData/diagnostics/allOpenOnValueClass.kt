@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-89973
 // WITH_STDLIB
 // LANGUAGE: +FullValueClasses
@@ -30,3 +31,6 @@ value object Leaf : Sealed()
 class Identity : Abstract() {
     override val x: Int get() = 0
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, getter, integerLiteral,
+objectDeclaration, override, primaryConstructor, propertyDeclaration, sealed, value */
