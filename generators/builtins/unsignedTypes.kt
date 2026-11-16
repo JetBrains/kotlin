@@ -62,14 +62,11 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     override fun generateBody() {
-
         out.println("import kotlin.experimental.*")
-        out.println("import kotlin.jvm.*")
         out.println()
 
         out.println("@SinceKotlin(\"1.5\")")
-        out.println("@JvmInline")
-        out.println("public value class $className @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
+        out.println("public inline value class $className @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
         out.println()
         out.println("""    public companion object {
         /**
@@ -475,13 +472,11 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     private val storageElementType = type.asSigned.capitalized
     private val storageArrayType = storageElementType + "Array"
     override fun generateBody() {
-        out.println("import kotlin.jvm.*")
         out.println()
 
         out.println("@SinceKotlin(\"1.3\")")
         out.println("@ExperimentalUnsignedTypes")
-        out.println("@JvmInline")
-        out.println("public value class $arrayType")
+        out.println("public inline value class $arrayType")
         out.println("@PublishedApi")
         out.println("internal constructor(@PublishedApi internal val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
