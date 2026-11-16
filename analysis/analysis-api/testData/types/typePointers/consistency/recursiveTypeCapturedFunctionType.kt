@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// Restoration fails with "Unhandled recursive pointer restoration"
-
 class Example<R : Comparable<(R?) -> R>> {
     fun nested() : NestedExample<R> = TODO()
 }
