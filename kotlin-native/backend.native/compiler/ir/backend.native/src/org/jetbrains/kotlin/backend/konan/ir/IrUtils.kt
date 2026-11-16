@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -274,4 +274,4 @@ private val IrFunction.longName: String
 val IrFunction.isBuiltInOperator get() = origin == IrBuiltIns.BUILTIN_OPERATOR
 
 internal val IrClass.hasFinalizer: Boolean
-    get() = this.hasAnnotation(NativeRuntimeNames.Annotations.HasFinalizer)
+    get() = this.hasAnnotation(NativeStandardClassIds.Annotations.HasFinalizer)

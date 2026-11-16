@@ -138,7 +138,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
         // Only @JvmExposeBoxed targets consult this set, so skip building it in the common case.
         val bridgeTargetFunctions: Set<IrSimpleFunction> =
-            if (bridgeTargets.any { it.function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) })
+            if (bridgeTargets.any { it.function.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) })
                 bridgeTargets.mapTo(hashSetOf()) { it.function }
             else
                 emptySet()
@@ -232,7 +232,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         //
         // However, if the exposed methods have separate signature to bridges, we need to generate bridges.
         // For example, when the bridge is using Any?, but the exposed method uses String.
-        if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
+        if (irFunction.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) &&
             irClass.hasNonExposedBridgeTargetCounterpart(irFunction, bridgeTargetFunctions)
         ) {
             return
@@ -403,7 +403,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             it !== irFunction &&
                     it in bridgeTargetFunctions &&
                     it.attributeOwnerId == irFunction.attributeOwnerId &&
-                    !it.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+                    !it.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed)
         }
 
     private fun IrSimpleFunction.isClashingWithPotentialBridge(name: Name, signature: Method): Boolean =
@@ -636,13 +636,13 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         }
 
         val kotlinIgnoredMethodAnnotations = setOf(
-            JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME,
-            JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME,
-            JvmStandardClassIds.JVM_NAME,
+            JvmStandardClassIds.Annotations.Strictfp.asSingleFqName(),
+            JvmStandardClassIds.Annotations.Synchronized.asSingleFqName(),
+            JvmStandardClassIds.Annotations.JvmName.asSingleFqName(),
             // copying of the following annotations is just useless for bridges, although it breaks nothing
-            JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME,
-            JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME,
-            JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME,
+            JvmStandardClassIds.Annotations.JvmExposeBoxed.asSingleFqName(),
+            JvmStandardClassIds.Annotations.JvmSuppressWildcards.asSingleFqName(),
+            JvmStandardClassIds.Annotations.JvmOverloads.asSingleFqName(),
         )
         val ignoredMethodAnnotationNames = userIgnoredAnnotations + kotlinIgnoredMethodAnnotations.map { it.toString() }
         ignoredMethodAnnotationsFilter = when {
@@ -660,7 +660,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME,
         JvmSymbols.FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME,
         JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME,
-        JvmStandardClassIds.JVM_WILDCARD_ANNOTATION_FQ_NAME,
+        JvmStandardClassIds.Annotations.JvmWildcard.asSingleFqName(),
         NO_INFER_ANNOTATION_FQ_NAME,
         EXACT_ANNOTATION_FQ_NAME,
     )
@@ -669,7 +669,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         classId.asSingleFqName() in kotlinSpecialTypeAnnotations
 
     fun IrAnnotation.isThrowsAnnotation() =
-        classId.asSingleFqName() == JvmStandardClassIds.THROWS_ANNOTATION_FQ_NAME
+        classId == JvmStandardClassIds.Annotations.Throws_aliased
 
     // Copies annotations from the bridge target to the bridge function
     // Similarly to JVM, the following annotations are copied:

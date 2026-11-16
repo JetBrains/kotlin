@@ -83,7 +83,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
 
     private class DelegatedConstructorCallTransformer(private val session: FirSession) : FirTransformer<ScopeSession>() {
         companion object {
-            val recordType = JvmStandardClassIds.Java.Record.constructClassLikeType()
+            val recordType = JvmStandardClassIds.Record.constructClassLikeType()
         }
 
         override fun <E : FirElement> transformElement(element: E, data: ScopeSession): E {
@@ -130,7 +130,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
 
             if (recordConstructorSymbol != null) {
                 val newReference = buildResolvedNamedReference {
-                    name = JvmStandardClassIds.Java.Record.shortClassName
+                    name = JvmStandardClassIds.Record.shortClassName
                     resolvedSymbol = recordConstructorSymbol
                 }
                 delegatedConstructorCall.replaceCalleeReference(newReference)

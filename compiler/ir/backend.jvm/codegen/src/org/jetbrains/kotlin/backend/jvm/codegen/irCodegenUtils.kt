@@ -289,7 +289,7 @@ val IrDeclaration.isAnnotatedWithDeprecated: Boolean
     get() = annotations.hasAnnotation(FqNames.deprecated)
 
 val IrDeclaration.isAnnotatedWithJavaLangDeprecated: Boolean
-    get() = annotations.hasAnnotation(JvmStandardClassIds.Annotations.Java.Deprecated)
+    get() = annotations.hasAnnotation(JvmStandardClassIds.Annotations.Deprecated_java)
 
 internal fun IrDeclaration.isDeprecatedCallable(context: JvmBackendContext): Boolean =
     isAnnotatedWithDeprecated ||

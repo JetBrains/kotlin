@@ -68,7 +68,7 @@ fun ConeKotlinType.withParameterNameAnnotation(name: Name, element: KtSourceElem
                 )
             }
         argumentMapping = buildAnnotationArgumentMapping {
-            mapping[StandardClassIds.Annotations.ParameterNames.parameterNameName] =
+            mapping[StandardClassIds.Annotations.ParameterNames.ParameterName_name] =
                 buildLiteralExpression(fakeSource, ConstantValueKind.String, name.asString(), setType = true)
         }
     }

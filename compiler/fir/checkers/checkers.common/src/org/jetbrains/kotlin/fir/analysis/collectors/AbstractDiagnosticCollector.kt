@@ -62,7 +62,7 @@ abstract class AbstractDiagnosticCollector(
                 val type = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: continue
                 if (type.lookupTag.classId != StandardClassIds.Annotations.Suppress) continue
                 val argumentValues =
-                    annotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.suppressNames)?.unwrapVarargValue()
+                    annotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.Suppress_names)?.unwrapVarargValue()
                         ?: continue
 
                 for (argumentValue in argumentValues) {

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullabilit
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleArrayElementVariance
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleMutability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.RawTypeAnnotation
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.RawType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import kotlin.apply
 
@@ -42,7 +42,7 @@ class JvmIrSpecialAnnotationSymbolProvider(builtInsModule: IrModuleFragment) : I
     private val enhancedNullabilityAnnotationInfo: AnnotationInfo = EnhancedNullability.getAnnotationInfo(kotlinJvmInternalPackage)
     private val flexibleNullabilityAnnotationInfo: AnnotationInfo = FlexibleNullability.getAnnotationInfo(kotlinInternalIrPackage)
     private val flexibleMutabilityAnnotationInfo: AnnotationInfo = FlexibleMutability.getAnnotationInfo(kotlinInternalIrPackage)
-    private val rawTypeAnnotationInfo: AnnotationInfo = RawTypeAnnotation.getAnnotationInfo(kotlinInternalIrPackage)
+    private val rawTypeAnnotationInfo: AnnotationInfo = RawType.getAnnotationInfo(kotlinInternalIrPackage)
     private val flexibleArrayElementVarianceAnnotationInfo: AnnotationInfo = FlexibleArrayElementVariance.getAnnotationInfo(kotlinInternalIrPackage)
 
     override fun generateEnhancedNullabilityAnnotation(): IrAnnotation = enhancedNullabilityAnnotationInfo.toAnnotation()

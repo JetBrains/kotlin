@@ -73,14 +73,14 @@ object FirCommonAtomicReferenceToPrimitiveCallChecker :
     AbstractAtomicReferenceToPrimitiveCallChecker(
         StandardClassIds.atomicByPrimitive,
         MppCheckerKind.Platform,
-        StandardClassIds.Callables.atomicReferenceCompareAndSet,
-        StandardClassIds.Callables.atomicReferenceCompareAndExchange,
+        StandardClassIds.Callables.AtomicReference_compareAndSet,
+        StandardClassIds.Callables.AtomicReference_compareAndExchange,
     )
 
 object FirCommonAtomicArrayToPrimitiveCallChecker :
     AbstractAtomicReferenceToPrimitiveCallChecker(
         StandardClassIds.atomicArrayByPrimitive,
         MppCheckerKind.Platform,
-        StandardClassIds.Callables.atomicArrayCompareAndSetAt,
-        StandardClassIds.Callables.atomicArrayCompareAndExchangeAt,
+        StandardClassIds.Callables.AtomicArray_compareAndSetAt,
+        StandardClassIds.Callables.AtomicArray_compareAndExchangeAt,
     )

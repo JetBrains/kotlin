@@ -13,17 +13,17 @@ import org.jetbrains.kotlin.name.Name
 
 object FirJvmAtomicReferenceToPrimitiveCallChecker :
     AbstractAtomicReferenceToPrimitiveCallChecker(
-        JvmStandardClassIds.atomicByPrimitive,
+        JvmStandardClassIds.atomicByPrimitive_java,
         MppCheckerKind.Platform,
-        JvmStandardClassIds.Callables.atomicReferenceCompareAndSet,
-        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSet,
-        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetAcquire,
-        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetRelease,
-        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetPlain,
-        JvmStandardClassIds.Callables.atomicReferenceWeakCompareAndSetVolatile,
-        JvmStandardClassIds.Callables.atomicReferenceCompareAndExchange,
-        JvmStandardClassIds.Callables.atomicReferenceCompareAndExchangeAcquire,
-        JvmStandardClassIds.Callables.atomicReferenceCompareAndExchangeRelease,
+        JvmStandardClassIds.Callables.AtomicReference_compareAndSet_java,
+        JvmStandardClassIds.Callables.AtomicReference_weakCompareAndSet_java,
+        JvmStandardClassIds.Callables.AtomicReference_weakCompareAndSetAcquire_java,
+        JvmStandardClassIds.Callables.AtomicReference_weakCompareAndSetRelease_java,
+        JvmStandardClassIds.Callables.AtomicReference_weakCompareAndSetPlain_java,
+        JvmStandardClassIds.Callables.AtomicReference_weakCompareAndSetVolatile_java,
+        JvmStandardClassIds.Callables.AtomicReference_compareAndExchange_java,
+        JvmStandardClassIds.Callables.AtomicReference_compareAndExchangeAcquire_java,
+        JvmStandardClassIds.Callables.AtomicReference_compareAndExchangeRelease_java,
     ) {
     override fun isDangerousAtomicCallParameterNameWithin(function: FirFunctionSymbol<*>, name: Name): Boolean =
         super.isDangerousAtomicCallParameterNameWithin(function, name)
@@ -32,17 +32,17 @@ object FirJvmAtomicReferenceToPrimitiveCallChecker :
 
 object FirJvmAtomicReferenceArrayToPrimitiveCallChecker :
     AbstractAtomicReferenceToPrimitiveCallChecker(
-        JvmStandardClassIds.atomicArrayByPrimitive,
+        JvmStandardClassIds.atomicArrayByPrimitive_java,
         MppCheckerKind.Platform,
-        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndSet,
-        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSet,
-        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetAcquire,
-        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetRelease,
-        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetPlain,
-        JvmStandardClassIds.Callables.atomicReferenceArrayWeakCompareAndSetVolatile,
-        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchange,
-        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchangeAcquire,
-        JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchangeRelease,
+        JvmStandardClassIds.Callables.AtomicReferenceArray_compareAndSet,
+        JvmStandardClassIds.Callables.AtomicReferenceArray_weakCompareAndSet,
+        JvmStandardClassIds.Callables.AtomicReferenceArray_weakCompareAndSetAcquire,
+        JvmStandardClassIds.Callables.AtomicReferenceArray_weakCompareAndSetRelease,
+        JvmStandardClassIds.Callables.AtomicReferenceArray_weakCompareAndSetPlain,
+        JvmStandardClassIds.Callables.AtomicReferenceArray_weakCompareAndSetVolatile,
+        JvmStandardClassIds.Callables.AtomicReferenceArray_compareAndExchange,
+        JvmStandardClassIds.Callables.AtomicReferenceArray_compareAndExchangeAcquire,
+        JvmStandardClassIds.Callables.AtomicReferenceArray_compareAndExchangeRelease,
     ) {
     override fun isDangerousAtomicCallParameterNameWithin(function: FirFunctionSymbol<*>, name: Name): Boolean =
         super.isDangerousAtomicCallParameterNameWithin(function, name)

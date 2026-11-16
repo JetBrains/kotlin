@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 /**
  * A representation of `@BindReverseBridgeToMethod` annotation.
@@ -32,7 +32,7 @@ class BindReverseBridgeToMethod(
 )
 
 private fun IrAnnotation.bindReverseBridgeToMethod(bridgeFunction: IrSimpleFunction): BindReverseBridgeToMethod? {
-    if (!isAnnotation(NativeRuntimeNames.Annotations.BindReverseBridgeToMethod.asSingleFqName())) {
+    if (!isAnnotation(NativeStandardClassIds.Annotations.BindReverseBridgeToMethod.asSingleFqName())) {
         return null
     }
     val targetClass = (argumentMapping[Name.identifier("targetClass")] as IrClassReference).classType.getClass()!!

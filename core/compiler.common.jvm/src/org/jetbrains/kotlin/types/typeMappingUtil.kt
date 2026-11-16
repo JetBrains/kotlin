@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 fun TypeMappingMode.updateArgumentModeFromAnnotations(
@@ -27,7 +26,7 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
         )
     }
 
-    if (with(typeSystem) { type.hasAnnotation(JvmStandardClassIds.JVM_WILDCARD_ANNOTATION_FQ_NAME) }) {
+    if (with(typeSystem) { type.hasAnnotation(JvmStandardClassIds.Annotations.JvmWildcard.asSingleFqName()) }) {
         return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
             skipDeclarationSiteWildcards = false,
             isForAnnotationParameter = isForAnnotationParameter,
@@ -58,7 +57,7 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
 
 fun KotlinTypeMarker.suppressWildcardsMode(typeSystem: TypeSystemCommonBackendContext): Boolean? =
     with(typeSystem) {
-        if (hasAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME))
-            getAnnotationFirstArgumentValue(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME) as? Boolean ?: true
+        if (hasAnnotation(JvmStandardClassIds.Annotations.JvmSuppressWildcards.asSingleFqName()))
+            getAnnotationFirstArgumentValue(JvmStandardClassIds.Annotations.JvmSuppressWildcards.asSingleFqName()) as? Boolean ?: true
         else null
     }

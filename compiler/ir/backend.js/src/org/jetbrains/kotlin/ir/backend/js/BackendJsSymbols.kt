@@ -486,7 +486,7 @@ class BackendJsSymbols(
     val jsStaticAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsStatic.classSymbol()
     val jsExportAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsExport.classSymbol()
 
-    val jsExportIgnoreAnnotationSymbol = JsStandardClassIds.Annotations.JsExportIgnore.classSymbol()
+    val jsExportIgnoreAnnotationSymbol = JsStandardClassIds.Annotations.JsExport_Ignore.classSymbol()
 
     val jsImplicitExportAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsImplicitExport.classSymbol()
 
@@ -545,7 +545,7 @@ class BackendJsSymbols(
 }
 
 private object ClassIds {
-    private val String.jsClassId get() = ClassId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
+    private val String.jsClassId get() = ClassId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
     val FunctionAdapter = "FunctionAdapter".jsClassId
     val DefaultConstructorMarker = "DefaultConstructorMarker".jsClassId
     val EagerInitialization = "EagerInitialization".jsClassId
@@ -564,7 +564,7 @@ private object ClassIds {
     val StringBuilder = ClassId(StandardClassIds.BASE_TEXT_PACKAGE, Name.identifier("StringBuilder"))
 }
 
-private val String.jsCallableId get() = CallableId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
+private val String.jsCallableId get() = CallableId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
 
 private object CallableIds {
     // Kotlin functions
@@ -725,8 +725,9 @@ private object CallableIds {
     val constructCallableReference = "constructCallableReference".jsCallableId
 
     // JS Long functions
-    private val String.jsBoxedLongId get() = CallableId(JsStandardClassIds.BOXED_LONG_PACKAGE, Name.identifier(this))
-    private val String.jsLongAsBigIntId get() = CallableId(JsStandardClassIds.LONG_AS_BIGINT_PACKAGE, Name.identifier(this))
+    private val String.jsBoxedLongId get() = CallableId(JsStandardClassIds.BASE_JS_INTERNAL_BOXEDLONG_PACKAGE, Name.identifier(this))
+    private val String.jsLongAsBigIntId
+        get() = CallableId(JsStandardClassIds.BASE_JS_INTERNAL_LONGASBIGINT_PACKAGE, Name.identifier(this))
     private fun String.jsLongId(compileLongAsBigint: Boolean) = if (compileLongAsBigint) this.jsLongAsBigIntId else this.jsBoxedLongId
 
     val longBoxedOne = "ONE".jsBoxedLongId

@@ -300,7 +300,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     ) {
         if (context.languageVersionSettings.getFlag(AnalysisFlags.dontWarnOnErrorSuppression)) return
         if (annotationClassId != StandardClassIds.Annotations.Suppress) return
-        val nameExpressions = argumentMapping[StandardClassIds.Annotations.ParameterNames.suppressNames]?.unwrapVarargValue() ?: return
+        val nameExpressions = argumentMapping[StandardClassIds.Annotations.ParameterNames.Suppress_names]?.unwrapVarargValue() ?: return
         for (nameExpression in nameExpressions) {
             val name = (nameExpression as? FirLiteralExpression)?.value as? String ?: continue
             val parameter = when (name) {

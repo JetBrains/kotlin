@@ -76,7 +76,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         }
 
         if (declaration is FirRegularClass) {
-            val javaRepeatable = annotations.getAnnotationByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session)
+            val javaRepeatable = annotations.getAnnotationByClassId(JvmStandardClassIds.Annotations.Repeatable_java, session)
             if (javaRepeatable != null) {
                 checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration)
             } else {
@@ -90,7 +90,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
 
     private fun FirClassLikeSymbol<*>.resolveContainerAnnotation(session: FirSession): ClassId? {
         val repeatableAnnotation = getAnnotationWithResolvedArgumentsByClassId(StandardClassIds.Annotations.Repeatable, session)
-            ?: getAnnotationWithResolvedArgumentsByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session)
+            ?: getAnnotationWithResolvedArgumentsByClassId(JvmStandardClassIds.Annotations.Repeatable_java, session)
             ?: return null
         return repeatableAnnotation.resolveContainerAnnotation()
     }

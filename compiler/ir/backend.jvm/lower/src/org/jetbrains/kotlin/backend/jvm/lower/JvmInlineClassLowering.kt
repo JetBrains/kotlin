@@ -401,7 +401,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         if (original.parameters.any { it.defaultValue == null }) return null
 
         // If there is @JvmOverloads, it covers no-arg constructor for us.
-        if (original.hasAnnotation(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)) return null
+        if (original.hasAnnotation(JvmStandardClassIds.Annotations.JvmOverloads)) return null
 
         // As well as @IntroducedAt
         if (original.parameters.all { it.annotations.hasAnnotation(StandardNames.FqNames.introducedAt) })
@@ -1012,7 +1012,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
 
         val bridgeFunction = createBridgeFunction(function, replacement, false)
         val boxedVarargBridgeFunction = if (
-            function.hasUnsignedVararg && bridgeFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
+            function.hasUnsignedVararg && bridgeFunction.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) &&
             !(bridgeFunction.isFakeOverride && bridgeFunction.parentAsClass.isInlineClass)
         ) {
             createBridgeFunction(function, replacement, true).apply {

@@ -21,7 +21,7 @@ internal fun IrAnnotationContainer.isJsExportDeclaration(): Boolean {
 }
 
 internal fun IrAnnotationContainer.isJsExportIgnoreDeclaration(): Boolean {
-    return annotations.hasAnnotation(JsStandardClassIds.Annotations.JsExportIgnore.asSingleFqName())
+    return annotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport_Ignore.asSingleFqName())
 }
 
 internal val IrDeclarationWithName.exportedJsExportName: String

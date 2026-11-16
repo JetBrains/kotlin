@@ -30,7 +30,7 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
                 declaration.classKind == ClassKind.CLASS &&
                         !declaration.isValue &&
                         session.allOpenPredicateMatcher.isAnnotated(declaration.symbol) &&
-                        !declaration.hasAnnotationSafe(JvmStandardClassIds.JVM_RECORD_ANNOTATION_CLASS_ID, session)
+                        !declaration.hasAnnotationSafe(JvmStandardClassIds.Annotations.JvmRecord, session)
             }
             is FirCallableDeclaration -> {
                 val parentClassSymbol = declaration.symbol.getContainingClassSymbol() as? FirRegularClassSymbol ?: return false

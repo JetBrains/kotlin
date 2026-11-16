@@ -5,32 +5,27 @@
 
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
-
+/**
+ * Consult KDoc of [StandardClassIds] regarding naming rules when adding declarations here.
+ * Also, check if the desired id is already present there.
+ */
 object WasmStandardClassIds {
-    val BASE_WASM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("wasm"))
+    val BASE_WASM_PACKAGE = StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier("wasm"))
     val BASE_WASM_INTERNAL_PACKAGE = BASE_WASM_PACKAGE.child(Name.identifier("internal"))
 
     object Annotations {
-        @JvmField
         val WasmImport = "WasmImport".wasmId()
-
-        @JvmField
         val WasmExport = "WasmExport".wasmId()
 
-        @JvmField
         val JsFun = "JsFun".baseId()
-
-        @JvmField
         val EagerInitialization = "EagerInitialization".baseId()
 
-        @JvmField
-        val annotationsRequiringExternal = setOf(JsModule, JsQualifier)
+        val annotationsRequiringExternal = setOf(
+            WebCommonStandardClassIds.Annotations.JsModule,
+            WebCommonStandardClassIds.Annotations.JsQualifier,
+        )
     }
 }
 
-private fun String.baseId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
-
+private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))
 private fun String.wasmId() = ClassId(WasmStandardClassIds.BASE_WASM_PACKAGE, Name.identifier(this))

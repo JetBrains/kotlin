@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isAnnotation
-import org.jetbrains.kotlin.name.NativeRuntimeNames
+import org.jetbrains.kotlin.name.NativeStandardClassIds
 
 /**
  * The non-empty value of the `nonVirtualTargetMethod` argument of the `@ExportedBridge` annotation on
@@ -23,4 +23,4 @@ val IrSimpleFunction.exportedBridgeNonVirtualTargetMethod: String?
         ?.takeIf { it.isNotEmpty() }
 
 private fun IrAnnotation.isExportedBridge(): Boolean =
-    isAnnotation(NativeRuntimeNames.Annotations.exportedBridgeClassId.asSingleFqName())
+    isAnnotation(NativeStandardClassIds.Annotations.ExportedBridge.asSingleFqName())

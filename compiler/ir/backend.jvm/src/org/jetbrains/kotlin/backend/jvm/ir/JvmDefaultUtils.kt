@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 fun IrFunction.isSimpleFunctionCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
     return (this as? IrSimpleFunction)?.isCompiledToJvmDefault(jvmDefaultMode) == true
@@ -25,7 +25,7 @@ fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boo
         "`isCompiledToJvmDefault` should be called on non-fakeoverrides and non-abstract methods from interfaces ${ir2string(this)}"
     }
     if (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return false
-    if (propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)) return true
+    if (propertyIfAccessor.hasAnnotation(JvmStandardClassIds.Annotations.JvmDefault)) return true
     return (parent as? IrLazyClassBase)?.isNewPlaceForBodyGeneration ?: jvmDefaultMode.isEnabled
 }
 

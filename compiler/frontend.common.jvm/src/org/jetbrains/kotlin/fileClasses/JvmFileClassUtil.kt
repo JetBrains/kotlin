@@ -10,8 +10,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_SHORT
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_PACKAGE_NAME_SHORT
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.MULTIFILE_PART_NAME_DELIMITER
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -55,7 +54,8 @@ object JvmFileClassUtil {
         val jvmNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_NAME_SHORT)
         val jvmName = jvmNameAnnotation?.let(this::getLiteralStringFromAnnotation)?.takeIf(Name::isValidIdentifier)
 
-        val jvmPackageNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_PACKAGE_NAME_SHORT)
+        val jvmPackageNameAnnotation =
+            findAnnotationEntryOnFileNoResolve(file, JvmStandardClassIds.Annotations.JvmPackageName.shortClassName.asString())
         val jvmPackageName = jvmPackageNameAnnotation?.let(this::getLiteralStringFromAnnotation)?.let(::FqName)
 
         if (jvmName == null && jvmPackageName == null) return null
@@ -113,7 +113,9 @@ val KtFile.javaFileFacadeFqName: FqName
     }
 
 val KtFile.isJvmMultifileClassFile: Boolean
-    get() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(this, JVM_MULTIFILE_CLASS_SHORT) != null
+    get() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(
+        this, JvmStandardClassIds.Annotations.JvmMultifileClass.shortClassName.asString()
+    ) != null
 
 private val LOG = Logger.getInstance("JvmFileClassUtil")
 

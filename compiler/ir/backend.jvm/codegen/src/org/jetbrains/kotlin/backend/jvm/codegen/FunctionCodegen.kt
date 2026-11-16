@@ -29,9 +29,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
@@ -145,7 +142,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     }
 
     private fun IrFunction.needsGenericSignature(isSynthetic: Boolean): Boolean {
-        if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
+        if (irFunction.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) &&
             typeParameters.any { it.erasedUpperBound.isClassWithFqName(StandardNames.RESULT_FQ_NAME) }
         ) {
             // Starting from JDK 11, javac reports ambiguity when there are two functions with the same generic signature.
@@ -231,12 +228,13 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 }
             }
         val isSynthetic = origin.isSynthetic ||
-                hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
+                hasAnnotation(JvmStandardClassIds.Annotations.JvmSynthetic) ||
                 isReifiable() ||
                 isDeprecatedHidden()
 
-        val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME) && origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
-        val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME) && origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
+        val isOverloadsWrapper = origin == JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
+        val isStrict = hasAnnotation(JvmStandardClassIds.Annotations.Strictfp) && !isOverloadsWrapper
+        val isSynchronized = hasAnnotation(JvmStandardClassIds.Annotations.Synchronized) && !isOverloadsWrapper
 
         return getVisibilityAccessFlag() or modalityFlag or
                 (if (isDeprecatedFunction(context)) Opcodes.ACC_DEPRECATED else 0) or
@@ -262,14 +260,14 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 ?.findAnnotation(StandardNames.FqNames.deprecatedSinceKotlin)
         if (deprecatedSinceKotlin != null) {
             val hiddenSinceArgument =
-                deprecatedSinceKotlin.argumentMapping[StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinHiddenSince]
+                deprecatedSinceKotlin.argumentMapping[StandardClassIds.Annotations.ParameterNames.DeprecatedSinceKotlin_hiddenSince]
                     ?: return false
             val hiddenSince = ((hiddenSinceArgument as? IrConst)?.value as? String)?.let(ApiVersion.Companion::parse)
             if (hiddenSince != null) {
                 return context.config.languageVersionSettings.apiVersion >= hiddenSince
             }
         }
-        val level = deprecated.argumentMapping[StandardClassIds.Annotations.ParameterNames.deprecatedLevel]
+        val level = deprecated.argumentMapping[StandardClassIds.Annotations.ParameterNames.Deprecated_level]
         return level is IrGetEnumValue && level.symbol.owner.name.asString() == DeprecationLevel.HIDDEN.name
     }
 
@@ -390,7 +388,7 @@ private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
 
 // `@JvmExposeBoxed` exposes boxed inline classes, so they occupy Object slot.
 internal fun isBoxedParameterOfExposedFunction(function: IrFunction, parameter: IrValueParameter): Boolean =
-    function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && parameter.type.isInlineClassType()
+    function.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) && parameter.type.isInlineClassType()
 
 internal fun wrapInlineClassesForExposedFunctions(function: IrFunction, parameter: IrValueParameter): TypeMappingMode =
     if (isBoxedParameterOfExposedFunction(function, parameter))

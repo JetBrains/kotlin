@@ -53,7 +53,7 @@ object FirJsExportedActualMatchExpectChecker : FirBasicDeclarationChecker(MppChe
 
         if (!correspondingActualDeclaration.isReachableOutsideOfKotlin()) {
             val isExportIgnored = correspondingActualDeclaration.hasAnnotationOrInsideAnnotatedClass(
-                StandardClassIds.Annotations.jsExportIgnore, context.session
+                StandardClassIds.Annotations.JsExport_Ignore, context.session
             )
             val fixSuggestion = if (isExportIgnored) {
                 "remove the '@JsExport.Ignore' annotation"

@@ -447,7 +447,7 @@ open class FirTypeResolveTransformer(
 
     private fun FirValueParameter.setEqualityBoundType() {
         val equalityBoundAnnotation = annotations.getAnnotationByClassId(StandardClassIds.Annotations.EqualityBound, session) ?: return
-        val boundArgument = equalityBoundAnnotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.equalityBound)
+        val boundArgument = equalityBoundAnnotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.EqualityBound_bound)
         val resolvedType = (boundArgument as? FirGetClassCall)?.argument?.let { getClassLhs ->
             val configuration = TypeResolutionConfiguration(
                 scopes.asReversed(),

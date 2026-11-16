@@ -5,127 +5,66 @@
 
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
-import org.jetbrains.kotlin.name.StandardClassIds.BASE_REFLECT_PACKAGE
-
+/**
+ * Consult KDoc of [StandardClassIds] regarding naming rules when adding declarations here.
+ * Also, check if the desired id is already present there.
+ */
 object JsStandardClassIds {
-    val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
-    val BASE_JS_INTERNAL_PACKAGE = BASE_JS_PACKAGE.child(Name.identifier("internal"))
-    val BASE_REFLECT_JS_INTERNAL_PACKAGE = BASE_REFLECT_PACKAGE.child(Name.identifier("js")).child(Name.identifier("internal"))
-    val BOXED_LONG_PACKAGE = BASE_JS_INTERNAL_PACKAGE.child(Name.identifier("boxedLong"))
-    val LONG_AS_BIGINT_PACKAGE = BASE_JS_INTERNAL_PACKAGE.child(Name.identifier("longAsBigInt"))
+    val BASE_JS_INTERNAL_PACKAGE = StandardClassIds.BASE_JS_PACKAGE.child(Name.identifier("internal"))
+    val BASE_JS_INTERNAL_BOXEDLONG_PACKAGE = BASE_JS_INTERNAL_PACKAGE.child(Name.identifier("boxedLong"))
+    val BASE_JS_INTERNAL_LONGASBIGINT_PACKAGE = BASE_JS_INTERNAL_PACKAGE.child(Name.identifier("longAsBigInt"))
+    val BASE_REFLECT_JS_INTERNAL_PACKAGE =
+        StandardClassIds.BASE_REFLECT_PACKAGE.child(Name.identifier("js")).child(Name.identifier("internal"))
 
-    @JvmField
     val Promise = "Promise".jsId()
-
-    @JvmField
     val JsObject = "JsObject".jsId()
-
-    @JvmField
     val Date = "Date".jsId()
-
-    @JvmField
     val JsAny = "JsAny".jsId()
-
-    @JvmField
     val JsReference = "JsReference".jsId()
 
     object Annotations {
-        @JvmField
         val JsQualifier = "JsQualifier".jsId()
-
-        @JvmField
         val JsModule = "JsModule".jsId()
-
-        @JvmField
         val JsNonModule = "JsNonModule".jsId()
 
-        @JvmField
-        val JsNative = "native".jsId()
+        val native = "native".jsId()
+        val library = "library".jsId()
+        val nativeInvoke = "nativeInvoke".jsId()
+        val nativeGetter = "nativeGetter".jsId()
+        val nativeSetter = "nativeSetter".jsId()
 
-        @JvmField
-        val JsLibrary = "library".jsId()
-
-        @JvmField
-        val JsNativeInvoke = "nativeInvoke".jsId()
-
-        @JvmField
-        val JsNativeGetter = "nativeGetter".jsId()
-
-        @JvmField
-        val JsNativeSetter = "nativeSetter".jsId()
-
-        @JvmField
         val JsName = "JsName".jsId()
-
-        @JvmField
         val JsSymbol = "JsSymbol".jsId()
 
-        @JvmField
         val JsExport = "JsExport".jsId()
-
-        @JvmField
+        val JsExport_Ignore = JsExport.createNestedClassId(Name.identifier("Ignore"))
+        val JsExport_Default = JsExport.createNestedClassId(Name.identifier("Default"))
         val JsImplicitExport = "JsImplicitExport".jsId()
-
-        @JvmField
         val JsDontExportDefaultImplementation = "JsDontExportDefaultImplementation".jsId()
 
-        @JvmField
         val JsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()
-
-        @JvmField
         val JsStatic = "JsStatic".jsId()
-
-        @JvmField
         val JsExternalInheritorsOnly = "JsExternalInheritorsOnly".jsId()
-
-        @JvmField
         val JsExternalArgument = "JsExternalArgument".jsId()
-
-        @JvmField
         val EagerInitialization = "EagerInitialization".jsId()
-
-        @JvmField
-        val JsExportIgnore = JsExport.createNestedClassId(Name.identifier("Ignore"))
-
-        @JvmField
-        val JsExportDefault = JsExport.createNestedClassId(Name.identifier("Default"))
-
-        @JvmField
-        val JsFun = "JsFun".id()
-
-        @JvmField
+        val JsFun = "JsFun".baseId()
         val JsOutlinedFunction = "JsOutlinedFunction".jsId()
-
-        @JvmField
         val DoNotIntrinsify = "DoNotIntrinsify".jsId()
-
-        @JvmField
-        val annotationsRequiringExternal = setOf(JsModule, JsQualifier)
-
-        @JvmField
-        val nativeAnnotations = setOf(JsNative, JsNativeInvoke, JsNativeGetter, JsNativeSetter)
-
-        @JvmField
         val JsNoLifting = "JsNoLifting".jsId()
-
-        @JvmField
         val JsNoRuntime = "JsNoRuntime".jsId()
-
-        @JvmField
         val JsFileName = "JsFileName".jsId()
+
+        val annotationsRequiringExternal = setOf(JsModule, JsQualifier)
+        val nativeAnnotations = setOf(native, nativeInvoke, nativeGetter, nativeSetter)
     }
 
     object Callables {
-        @JvmField
-        val JsCode = "js".callableId(BASE_JS_PACKAGE)
-
-        @JvmField
-        val JsDefinedExternally = "definedExternally".callableId(BASE_JS_PACKAGE)
+        val js = "js".callableId(StandardClassIds.BASE_JS_PACKAGE)
+        val definedExternally = "definedExternally".callableId(StandardClassIds.BASE_JS_PACKAGE)
     }
 }
 
-private fun String.jsId() = ClassId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
-private fun String.id() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
+private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))
+private fun String.jsId() = ClassId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))

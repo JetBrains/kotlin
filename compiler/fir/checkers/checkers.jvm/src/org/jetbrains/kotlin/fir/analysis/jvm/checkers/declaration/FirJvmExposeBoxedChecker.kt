@@ -41,7 +41,7 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         val jvmExposeBoxedAnnotation =
-            declaration.getAnnotationByClassId(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID, context.session)
+            declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmExposeBoxed, context.session)
 
         if (jvmExposeBoxedAnnotation != null) {
             checkJvmExposeBoxedAnnotation(jvmExposeBoxedAnnotation, declaration)
@@ -53,7 +53,7 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
         jvmExposeBoxedAnnotation: FirAnnotation,
         declaration: FirDeclaration,
     ) {
-        val name = jvmExposeBoxedAnnotation.findArgumentByName(JvmStandardClassIds.Annotations.ParameterNames.jvmExposeBoxedName)
+        val name = jvmExposeBoxedAnnotation.findArgumentByName(JvmStandardClassIds.Annotations.ParameterNames.JvmExposeBoxed_jvmName)
 
         if (name != null) {
             if (declaration.cannotRename()) {
@@ -117,7 +117,7 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
      */
     context(context: CheckerContext)
     private fun cannotExposeErrors(declaration: FirCallableDeclaration): List<KtDiagnosticFactory0> = buildList {
-        if (declaration.hasAnnotation(JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CLASS_ID, context.session)) {
+        if (declaration.hasAnnotation(JvmStandardClassIds.Annotations.JvmSynthetic, context.session)) {
             add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC)
         }
 

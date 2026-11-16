@@ -37,7 +37,7 @@ class FirJvmDelegatedMembersFilter(private val session: FirSession) : FirDelegat
     }
 
     private fun FirCallableSymbol<*>.hasJvmDefaultAnnotation(): Boolean {
-        return annotations.hasAnnotation(JvmStandardClassIds.JVM_DEFAULT_CLASS_ID, session)
+        return annotations.hasAnnotation(JvmStandardClassIds.Annotations.JvmDefault, session)
     }
 
     private fun FirCallableSymbol<*>.isBuiltInMemberMappedToJavaDefault(): Boolean {

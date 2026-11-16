@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 
 object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatformSpecificSupportComponent() {
     override val requiredAnnotationsWithArguments: CompilerRequiredParametersMap = buildMap {
-        this[JvmStandardClassIds.Annotations.Java.Target] = [
+        this[JvmStandardClassIds.Annotations.Target_java] = [
             FirCompilerRequiredParameterDescription(
                 name = StandardNames.DEFAULT_VALUE_PARAMETER,
-                kind = FirCraParameterKind.EnumParameter(JvmStandardClassIds.Annotations.Java.ElementType, isVararg = true),
+                kind = FirCraParameterKind.EnumParameter(JvmStandardClassIds.ElementType, isVararg = true),
                 position = null,
             )
         ]
@@ -40,17 +40,17 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
     }
 
     override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments.keys + setOf(
-        JvmStandardClassIds.Annotations.Java.Deprecated,
+        JvmStandardClassIds.Annotations.Deprecated_java,
         JvmStandardClassIds.Annotations.JvmRecord,
         StandardClassIds.Annotations.JvmInline,
     )
 
     override val volatileAnnotations: Set<ClassId> = setOf(
-        JvmStandardClassIds.Annotations.JvmVolatile,
+        JvmStandardClassIds.Annotations.Volatile,
     )
 
     override val repeatableAnnotations: Set<ClassId> = setOf(
-        JvmStandardClassIds.Annotations.Java.Repeatable,
+        JvmStandardClassIds.Annotations.Repeatable_java,
         JvmStandardClassIds.Annotations.JvmRepeatable,
     )
 
@@ -58,7 +58,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
     override val hasJvmInlineAnnotation: Boolean = true
 
     override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
-        JvmStandardClassIds.Annotations.Java.Deprecated to false,
+        JvmStandardClassIds.Annotations.Deprecated_java to false,
     )
 
     override fun extractBackingFieldAnnotationsFromProperty(
@@ -70,7 +70,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         if (propertyAnnotations.isEmpty() || property.backingField == null) return null
 
         val [newBackingFieldAnnotations, newPropertyAnnotations] = propertyAnnotations.partition {
-            it.toAnnotationClassIdSafe(session) == JvmStandardClassIds.Annotations.Java.Deprecated
+            it.toAnnotationClassIdSafe(session) == JvmStandardClassIds.Annotations.Deprecated_java
         }
 
         if (newBackingFieldAnnotations.isEmpty()) return null

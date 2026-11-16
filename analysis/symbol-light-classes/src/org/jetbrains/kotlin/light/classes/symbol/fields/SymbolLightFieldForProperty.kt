@@ -34,8 +34,7 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.utils.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.structure.impl.NotEvaluatedConstAware
-import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
@@ -197,7 +196,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
         PsiModifier.VOLATILE -> withPropertySymbol { propertySymbol ->
             val hasAnnotation = propertySymbol.backingFieldSymbol?.annotations?.contains(
-                VOLATILE_ANNOTATION_CLASS_ID,
+                JvmStandardClassIds.Annotations.Volatile,
             ) == true
 
             mapOf(modifier to hasAnnotation)
@@ -205,7 +204,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
         PsiModifier.TRANSIENT -> withPropertySymbol { propertySymbol ->
             val hasAnnotation = propertySymbol.backingFieldSymbol?.annotations?.contains(
-                TRANSIENT_ANNOTATION_CLASS_ID,
+                JvmStandardClassIds.Annotations.Transient,
             ) == true
 
             mapOf(modifier to hasAnnotation)

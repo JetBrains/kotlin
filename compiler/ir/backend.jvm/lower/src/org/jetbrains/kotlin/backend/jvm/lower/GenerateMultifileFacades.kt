@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
@@ -122,15 +121,18 @@ private fun generateMultifileFacades(
                 }
             }
 
-            val nonJvmSyntheticParts = partClasses.filterNot { it.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) }
+            val nonJvmSyntheticParts = partClasses.filterNot { it.hasAnnotation(JvmStandardClassIds.Annotations.JvmSynthetic) }
             if (nonJvmSyntheticParts.isEmpty()) {
-                annotations = annotations + partClasses.first().getAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)!!.deepCopyWithSymbols()
+                val jvmSynthetic = partClasses.first().getAnnotation(JvmStandardClassIds.Annotations.JvmSynthetic.asSingleFqName())!!
+                annotations = annotations + jvmSynthetic.deepCopyWithSymbols()
             } else if (nonJvmSyntheticParts.size < partClasses.size) {
                 for (part in nonJvmSyntheticParts) {
                     val partFile = part.fileParent
                     // If at least one of parts is annotated with @JvmSynthetic, then all other parts should also be annotated.
                     // We report this error on the `@JvmMultifileClass` annotation of each non-@JvmSynthetic part.
-                    val annotation = partFile.annotations.singleOrNull { it.isAnnotationWithEqualFqName(JvmStandardClassIds.JVM_MULTIFILE_CLASS) }
+                    val annotation = partFile.annotations.singleOrNull {
+                        it.isAnnotation(JvmStandardClassIds.Annotations.JvmMultifileClass)
+                    }
                     context.diagnosticReporter.at(annotation ?: partFile, partFile).report(
                         JvmBackendErrors.NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC
                     )

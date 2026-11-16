@@ -118,7 +118,7 @@ class PowerAssertBuiltIns private constructor(
     val listOfFunction = finder.findFunctions(CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("listOf")))
         .singleOrNull { it.owner.parameters.firstOrNull()?.isVararg == true } ?: dependencyError()
 
-    val jvmSyntheticAnnotation = finder.findConstructors(JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CLASS_ID)
+    val jvmSyntheticAnnotation = finder.findConstructors(JvmStandardClassIds.Annotations.JvmSynthetic)
         .single()
 
     val function0invoke = irBuiltIns.functionN(0).invokeFun ?: dependencyError()

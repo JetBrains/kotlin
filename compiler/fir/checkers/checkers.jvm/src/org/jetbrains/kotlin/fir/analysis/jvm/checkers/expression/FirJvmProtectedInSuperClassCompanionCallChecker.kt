@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 // TODO: consider what to do with it
@@ -56,7 +55,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
             if (resolvedSymbol.isConst) return
 
             val backingField = resolvedSymbol.backingFieldSymbol
-            if (backingField != null && backingField.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID, context.session)) return
+            if (backingField != null && backingField.hasAnnotation(JvmStandardClassIds.Annotations.JvmField, context.session)) return
         }
 
         val visibility = if (resolvedSymbol is FirPropertySymbol) {
@@ -68,7 +67,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
             resolvedSymbol.visibility
         }
         if (visibility != Visibilities.Protected) return
-        if (resolvedSymbol.hasAnnotation(StandardClassIds.Annotations.jvmStatic, context.session)) return
+        if (resolvedSymbol.hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic, context.session)) return
         if (!dispatchClassSymbol.isCompanion) return
         val companionContainingClassSymbol =
             dispatchClassSymbol.getContainingDeclaration(context.session) as? FirRegularClassSymbol ?: return

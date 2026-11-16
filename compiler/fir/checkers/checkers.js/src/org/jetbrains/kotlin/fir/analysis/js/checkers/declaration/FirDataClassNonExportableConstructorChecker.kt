@@ -32,7 +32,7 @@ object FirDataClassNonExportableConstructorChecker : FirRegularClassChecker(MppC
             return
         }
         val primaryConstructor = declaration.primaryConstructorIfAny(context.session) ?: return
-        if (primaryConstructor.getAnnotationByClassId(StandardClassIds.Annotations.jsExportIgnore, context.session) == null) {
+        if (primaryConstructor.getAnnotationByClassId(StandardClassIds.Annotations.JsExport_Ignore, context.session) == null) {
             return
         }
         val isAlreadyAnnotated = declaration.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, context.session) ||

@@ -62,7 +62,7 @@ class JvmFir2IrExtensions : Fir2IrExtensions {
         }
 
         fun IrOverridableDeclaration<*>.hasJvmDefaultAnnotation(): Boolean {
-            return annotations.hasAnnotation(JvmStandardClassIds.JVM_DEFAULT_CLASS_ID)
+            return annotations.hasAnnotation(JvmStandardClassIds.Annotations.JvmDefault)
         }
 
         fun IrOverridableDeclaration<*>.isBuiltInMemberMappedToJavaDefault(): Boolean {

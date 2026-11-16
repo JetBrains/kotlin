@@ -461,7 +461,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
             if (originalFunc.isTopLevel) {
                 if (!exportAnnotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport)
-                    && !exportAnnotations.hasAnnotation(JsStandardClassIds.Annotations.JsExportDefault)
+                    && !exportAnnotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport_Default)
                 ) {
                     addJsExport()
                 }

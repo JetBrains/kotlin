@@ -39,10 +39,10 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
 
     private val javaToKotlinNameMap: Map<ClassId, ClassId> =
         mapOf(
-            JvmStandardClassIds.Annotations.Java.Target to Annotations.Target,
-            JvmStandardClassIds.Annotations.Java.Retention to Annotations.Retention,
-            JvmStandardClassIds.Annotations.Java.Deprecated to Annotations.Deprecated,
-            JvmStandardClassIds.Annotations.Java.Documented to Annotations.MustBeDocumented,
+            JvmStandardClassIds.Annotations.Target_java to Annotations.Target,
+            JvmStandardClassIds.Annotations.Retention_java to Annotations.Retention,
+            JvmStandardClassIds.Annotations.Deprecated_java to Annotations.Deprecated,
+            JvmStandardClassIds.Annotations.Documented to Annotations.MustBeDocumented,
         )
 
     private val allowedSourceKinds = setOf(KtRealSourceElementKind, KtFakeSourceElementKind.FromUseSiteTarget)
@@ -59,7 +59,7 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
         // Java's 'since' and 'forRemoval' cannot be represented by 'kotlin.Deprecated'.
         // In particular, dropping 'forRemoval = true' changes the javac lint category
         // for Java callers from '[removal]' to '[deprecation]'.
-        val hasJavaSpecificArguments = classId == JvmStandardClassIds.Annotations.Java.Deprecated &&
+        val hasJavaSpecificArguments = classId == JvmStandardClassIds.Annotations.Deprecated_java &&
                 expression.argumentMapping.mapping.isNotEmpty()
         if (!hasJavaSpecificArguments) {
             javaToKotlinNameMap[classId]?.let { betterName ->

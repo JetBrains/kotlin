@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsModule
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNonModule
+import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsModuleChecker : FirWebCommonJsModuleChecker() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -27,8 +26,8 @@ object FirJsModuleChecker : FirWebCommonJsModuleChecker() {
     }
 
     override fun FirBasedSymbol<*>.findModuleAnnotation(session: FirSession): FirAnnotation? =
-        resolvedAnnotationsWithClassIds.getAnnotationByClassId(JsModule, session)
-            ?: resolvedAnnotationsWithClassIds.getAnnotationByClassId(JsNonModule, session)
+        resolvedAnnotationsWithClassIds.getAnnotationByClassId(JsStandardClassIds.Annotations.JsModule, session)
+            ?: resolvedAnnotationsWithClassIds.getAnnotationByClassId(JsStandardClassIds.Annotations.JsNonModule, session)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkSuperClass(declaration: FirDeclaration) {

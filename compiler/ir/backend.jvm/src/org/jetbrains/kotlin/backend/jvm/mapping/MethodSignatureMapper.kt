@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
@@ -185,7 +184,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     // See also: KotlinTypeMapper.forceBoxedReturnType
     private fun forceBoxedReturnType(function: IrFunction): Boolean =
-        (function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && function.returnType.isInlineClassType()) ||
+        (function.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) && function.returnType.isInlineClassType()) ||
                 isBoxMethodForInlineClass(function) ||
                 forceFoxedReturnTypeOnOverride(function) ||
                 forceBoxedReturnTypeOnDefaultImplFun(function) ||
@@ -329,7 +328,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             }.firstOrNull()
 
         private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
-            getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
+            getAnnotation(JvmStandardClassIds.Annotations.JvmSuppressWildcards.asSingleFqName())?.run {
                 if (argumentMapping.isNotEmpty()) getConstArgument<Boolean>(JvmSuppressWildcards::suppress.name) ?: true else null
             }
     }
@@ -361,7 +360,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     }
 
     private fun IrDeclaration.wrapInlineClassForExposeFunction(mode: TypeMappingMode, type: IrType): TypeMappingMode {
-        if (hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && type.isInlineClassType()) {
+        if (hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed) && type.isInlineClassType()) {
             return mode.wrapInlineClassesMode()
         }
         return mode

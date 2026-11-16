@@ -33,7 +33,7 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrFunction &&
             declaration !is IrConstructor &&
-            declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+            declaration.hasAnnotation(JvmStandardClassIds.Annotations.JvmExposeBoxed)
         ) return null
         return super.transformFlat(declaration)
     }

@@ -26,7 +26,7 @@ object FirWasmDefinedExternallyCallChecker : FirBasicExpressionChecker(MppChecke
     override fun check(expression: FirStatement) {
         val symbol = expression.toReference(context.session)?.toResolvedCallableSymbol() ?: return
 
-        if (symbol.callableId != WebCommonStandardClassIds.Callables.JsDefinedExternally) {
+        if (symbol.callableId != WebCommonStandardClassIds.Callables.definedExternally) {
             return
         }
 

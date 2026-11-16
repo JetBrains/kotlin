@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.js.parser.JsParser
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object JsKlibJsCodeCallChecker : JsKlibCallChecker {
-    private val jsCodeFqName = JsStandardClassIds.Callables.JsCode.asSingleFqName()
+    private val jsCodeFqName = JsStandardClassIds.Callables.js.asSingleFqName()
 
     private fun IrCall.isJsFunCall(): Boolean {
         return if (this.symbol.isBound) {

@@ -1367,7 +1367,7 @@ abstract class FirDataFlowAnalyzer(
             else -> null
         } ?: return
 
-        if (callee.symbol.callableId == StandardClassIds.Callables.not) {
+        if (callee.symbol.callableId == StandardClassIds.Callables.Boolean_not) {
             // Special hardcoded contract for Boolean.not():
             //   returns(true) implies (this == false)
             //   returns(false) implies (this == true)

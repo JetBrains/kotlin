@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSuspendOrKSuspendFunctionType
-import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -34,7 +34,7 @@ object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Comm
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
         val session = context.session
-        val annotation = declaration.getAnnotationByClassId(SYNCHRONIZED_ANNOTATION_CLASS_ID, session) ?: return
+        val annotation = declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.Synchronized, session) ?: return
 
         if (declaration.isInline) {
             reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_INLINE)

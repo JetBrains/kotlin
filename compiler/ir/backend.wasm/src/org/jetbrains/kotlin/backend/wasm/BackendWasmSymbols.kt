@@ -465,7 +465,7 @@ private object ClassIds {
     val Void = "Void".wasmClassId
 
     // JS class
-    private val String.jsClassId get() = ClassId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
+    private val String.jsClassId get() = ClassId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
     val JsExport = "JsExport".jsClassId
     val JsName = "JsName".jsClassId
     val JsReference = "JsReference".jsClassId
@@ -668,7 +668,7 @@ private object CallableIds {
     val enumEntriesIntrinsic = CallableId(StandardClassIds.BASE_ENUMS_PACKAGE, Name.identifier("enumEntriesIntrinsic"))
     val throwIrLinkageError = CallableId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier("throwIrLinkageError"))
     val createString = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("createString"))
-    val js = CallableId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier("js"))
+    val js = CallableId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier("js"))
     val registerRootSuiteBlock = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("registerRootSuiteBlock"))
     val runRootSuites = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("runRootSuites"))
     val staticInitializationFailureWithClassName = "staticInitializationFailureWithClassName".wasmCallableId

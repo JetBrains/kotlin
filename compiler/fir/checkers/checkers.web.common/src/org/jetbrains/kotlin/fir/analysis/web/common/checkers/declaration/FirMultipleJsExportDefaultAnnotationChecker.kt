@@ -27,7 +27,7 @@ object FirMultipleJsExportDefaultAnnotationChecker : FirFileChecker(MppCheckerKi
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFile) {
         val declarationsWithJsExportDefault = declaration.declarations.filter {
-            it.getAnnotationByClassId(StandardClassIds.Annotations.jsExportDefault, context.session) != null
+            it.getAnnotationByClassId(StandardClassIds.Annotations.JsExport_Default, context.session) != null
         }
 
         if (declarationsWithJsExportDefault.size > 1) {

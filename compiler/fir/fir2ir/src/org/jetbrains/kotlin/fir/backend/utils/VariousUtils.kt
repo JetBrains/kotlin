@@ -181,7 +181,7 @@ fun FirCallableSymbol<*>.isPotentialInlineClassProperty(session: FirSession): Bo
 }
 
 fun FirBasedSymbol<*>.shouldHaveReceiver(session: FirSession): Boolean =
-    !fir.hasAnnotation(StandardClassIds.Annotations.jsNoDispatchReceiver, session)
+    !fir.hasAnnotation(StandardClassIds.Annotations.JsNoDispatchReceiver, session)
 
 fun FirQualifiedAccessExpression.isConstructorCallOnTypealiasWithInnerRhs(): Boolean {
     return (calleeReference.symbol as? FirConstructorSymbol)?.let {

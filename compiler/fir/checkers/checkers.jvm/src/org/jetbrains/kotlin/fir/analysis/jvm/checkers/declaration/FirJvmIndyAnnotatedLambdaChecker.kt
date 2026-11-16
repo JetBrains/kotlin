@@ -43,7 +43,7 @@ object FirJvmIndyAnnotatedLambdaChecker : FirAnonymousFunctionChecker(MppChecker
         if (isSuspend) return
 
         // '@JvmSerializableLambda' forces the class generation scheme, so the annotations are retained.
-        if (declaration.hasAnnotation(JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_CLASS_ID, context.session)) return
+        if (declaration.hasAnnotation(JvmStandardClassIds.Annotations.JvmSerializableLambda, context.session)) return
 
         for (annotation in declaration.annotations) {
             val annotationClassSymbol = annotation.toAnnotationClassLikeSymbol(context.session) ?: continue

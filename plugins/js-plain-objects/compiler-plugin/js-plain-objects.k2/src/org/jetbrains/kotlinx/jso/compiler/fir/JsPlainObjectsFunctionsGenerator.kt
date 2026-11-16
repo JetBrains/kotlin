@@ -146,7 +146,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             }
             name = classId.shortClassName
             symbol = FirRegularClassSymbol(classId)
-            annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
+            annotateWith(JsStandardClassIds.Annotations.JsExport_Ignore)
             source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
             superTypeRefs += session.builtinTypes.anyType
         }.symbol
@@ -252,7 +252,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             }
             isLocal = parent.isLocal
 
-            annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
+            annotateWith(JsStandardClassIds.Annotations.JsExport_Ignore)
 
             if (jsPlainObjectInterface.typeParameterSymbols.isNotEmpty()) {
                 jsPlainObjectInterface.typeParameterSymbols.mapTo(typeParameters) {

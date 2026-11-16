@@ -27,7 +27,7 @@ object FirJsDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerK
     override fun check(expression: FirStatement) {
         val symbol = expression.toReference(context.session)?.toResolvedCallableSymbol() ?: return
 
-        if (symbol.callableId != JsStandardClassIds.Callables.JsDefinedExternally) {
+        if (symbol.callableId != JsStandardClassIds.Callables.definedExternally) {
             return
         }
 

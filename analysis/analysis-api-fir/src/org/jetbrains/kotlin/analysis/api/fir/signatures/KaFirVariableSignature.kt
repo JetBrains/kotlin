@@ -45,7 +45,7 @@ internal sealed class KaFirVariableSignature<out S : KaVariableSymbol> : KaVaria
     private fun getValueFromParameterNameAnnotation(): Name? {
         val resultingAnnotation = findParameterNameAnnotation() ?: return null
         val parameterNameArgument = resultingAnnotation.arguments
-            .singleOrNull { it.name == StandardClassIds.Annotations.ParameterNames.parameterNameName }
+            .singleOrNull { it.name == StandardClassIds.Annotations.ParameterNames.ParameterName_name }
 
         val constantArgumentValue = parameterNameArgument?.expression as? KaAnnotationValue.ConstantValue ?: return null
 

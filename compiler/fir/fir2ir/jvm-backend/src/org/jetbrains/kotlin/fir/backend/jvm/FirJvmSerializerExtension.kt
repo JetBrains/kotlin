@@ -36,8 +36,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_CLASS_ID
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.serialization.VersionRequirementUtils
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
@@ -123,8 +122,10 @@ open class FirJvmSerializerExtension(
     }
 
     private fun isInCompatibilityMode(klass: FirRegularClass): Boolean =
-        (jvmDefaultMode == JvmDefaultMode.ENABLE && !klass.hasAnnotation(JVM_DEFAULT_WITHOUT_COMPATIBILITY_CLASS_ID, session)) ||
-                (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY && klass.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID, session))
+        (jvmDefaultMode == JvmDefaultMode.ENABLE &&
+                !klass.hasAnnotation(JvmStandardClassIds.Annotations.JvmDefaultWithoutCompatibility, session)) ||
+                (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY &&
+                        klass.hasAnnotation(JvmStandardClassIds.Annotations.JvmDefaultWithCompatibility, session))
 
     override fun serializeScript(
         script: FirScript,

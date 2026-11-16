@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.contains
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FunctionN
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirBadInheritedJavaSignaturesChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        fun containsFunctionN(type: ConeKotlinType) = type.classId == FunctionN
+        fun containsFunctionN(type: ConeKotlinType) = type.classId == StandardClassIds.FunctionN
 
         declaration.unsubstitutedScope().processAllCallables { symbol ->
             if (!symbol.isJavaOrEnhancement) {

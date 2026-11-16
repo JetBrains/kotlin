@@ -641,7 +641,7 @@ internal fun createInnerClasses(
     if (containingClass is SymbolLightClassForAnnotationClass &&
         declarationContainer is KaNamedClassSymbol &&
         StandardClassIds.Annotations.Repeatable in declarationContainer.annotations &&
-        JvmStandardClassIds.Annotations.Java.Repeatable !in declarationContainer.annotations
+        JvmStandardClassIds.Annotations.Repeatable_java !in declarationContainer.annotations
     ) {
         result.add(SymbolLightClassForRepeatableAnnotationContainer(containingClass))
     }

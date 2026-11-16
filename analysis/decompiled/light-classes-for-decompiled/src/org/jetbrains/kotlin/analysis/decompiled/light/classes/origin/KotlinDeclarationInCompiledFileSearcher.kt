@@ -235,7 +235,8 @@ class KotlinDeclarationInCompiledFileSearcher {
     private fun getJvmName(declaration: KtDeclaration?): String? {
         if (declaration == null) return null
         val annotationEntry = declaration.annotationEntries.firstOrNull {
-            it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == JvmStandardClassIds.JVM_NAME_SHORT
+            it.calleeExpression?.constructorReferenceExpression?.getReferencedName() ==
+                    JvmStandardClassIds.Annotations.JvmName.shortClassName.asString()
         }
         if (annotationEntry != null) {
             // Decompiled stubs have value arguments,
@@ -372,8 +373,8 @@ class KotlinDeclarationInCompiledFileSearcher {
 
         val valueParameters = ktNamedFunction.valueParameters
         val isJvmOverloads = ktNamedFunction.annotationEntries.any {
-            it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME.shortName()
-                .asString()
+            it.calleeExpression?.constructorReferenceExpression?.getReferencedName() ==
+                    JvmStandardClassIds.Annotations.JvmOverloads.shortClassName.asString()
         }
         val firstDefaultParametersToPass = if (isJvmOverloads) {
             val totalNumberOfParametersWithDefaultValues = valueParameters.filter { it.hasDefaultValue() }.size

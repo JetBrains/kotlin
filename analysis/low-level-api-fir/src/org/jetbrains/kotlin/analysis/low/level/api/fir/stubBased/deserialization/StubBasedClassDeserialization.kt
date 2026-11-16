@@ -375,7 +375,7 @@ private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(
     }
 
     val anyLookupId = StandardClassIds.Any.toLookupTag()
-    val cloneCallableId = StandardClassIds.Callables.clone
+    val cloneCallableId = StandardClassIds.Callables.Cloneable_clone
 
     val sourceElement = classSourceElement.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.CloneFunction)
 

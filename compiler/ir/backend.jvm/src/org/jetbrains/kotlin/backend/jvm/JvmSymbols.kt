@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
@@ -518,17 +517,18 @@ class JvmSymbols(
         }
     }
 
-    val jvmExposeBoxedAnnotation: IrClassSymbol = createClass(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME, ClassKind.ANNOTATION_CLASS).apply {
-        val constructor = owner.addConstructor {
-            isPrimary = true
+    val jvmExposeBoxedAnnotation: IrClassSymbol =
+        createClass(JvmStandardClassIds.Annotations.JvmExposeBoxed.asSingleFqName(), ClassKind.ANNOTATION_CLASS).apply {
+            val constructor = owner.addConstructor {
+                isPrimary = true
+            }
+            constructor.addValueParameter {
+                name = Name.identifier("jvmName")
+                type = irBuiltIns.stringType
+            }
         }
-        constructor.addValueParameter {
-            name = Name.identifier("jvmName")
-            type = irBuiltIns.stringType
-        }
-    }
 
-    val boxingConstructorMarkerClass: IrClassSymbol = createClass(JvmStandardClassIds.JVM_EXPOSE_BOXED_NON_EXPOSED_CONSTRUCTOR_MARKER_FQ_NAME)
+    val boxingConstructorMarkerClass: IrClassSymbol = createClass(JvmStandardClassIds.BoxingConstructorMarker.asSingleFqName())
 
     private data class PropertyReferenceKey(
         val mutable: Boolean,
@@ -1227,7 +1227,7 @@ class JvmSymbols(
             StandardClassIds.Annotations.FlexibleMutability.asSingleFqName()
 
         val RAW_TYPE_ANNOTATION_FQ_NAME: FqName =
-            StandardClassIds.Annotations.RawTypeAnnotation.asSingleFqName()
+            StandardClassIds.Annotations.RawType.asSingleFqName()
 
         val FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME: FqName =
             StandardClassIds.Annotations.FlexibleArrayElementVariance.asSingleFqName()

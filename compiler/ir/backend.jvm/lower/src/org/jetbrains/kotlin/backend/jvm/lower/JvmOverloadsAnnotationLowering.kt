@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
@@ -36,7 +36,7 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
 
     override fun lower(irClass: IrClass) {
         val functions = irClass.declarations.filterIsInstance<IrFunction>().filter {
-            it.hasAnnotation(JVM_OVERLOADS_FQ_NAME)
+            it.hasAnnotation(JvmStandardClassIds.Annotations.JvmOverloads)
         }
 
         functions.forEach {

@@ -49,7 +49,7 @@ abstract class FirWebCommonAbstractNativeAnnotationChecker(
 }
 
 object FirWebCommonNativeInvokeChecker : FirWebCommonAbstractNativeAnnotationChecker(
-    WebCommonStandardClassIds.Annotations.JsNativeInvoke,
+    WebCommonStandardClassIds.Annotations.nativeInvoke,
 ) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true

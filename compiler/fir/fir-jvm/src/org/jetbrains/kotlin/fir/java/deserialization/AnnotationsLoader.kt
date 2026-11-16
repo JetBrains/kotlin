@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
-import org.jetbrains.kotlin.name.JvmStandardClassIds.THROWS_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
@@ -255,7 +255,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 }
             }
 
-            annotationTypeRef = THROWS_ANNOTATION_CLASS_ID.toLookupTag().toDefaultResolvedTypeRef()
+            annotationTypeRef = JvmStandardClassIds.Annotations.Throws_aliased.toLookupTag().toDefaultResolvedTypeRef()
             argumentMapping = buildAnnotationArgumentMapping {
                 mapping[Name.identifier("exceptionClasses")] = exceptionClassesArray
             }
