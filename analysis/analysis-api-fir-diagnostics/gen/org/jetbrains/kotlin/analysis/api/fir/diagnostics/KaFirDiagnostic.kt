@@ -3751,7 +3751,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface ContextParameterWithoutName : KaFirDiagnostic<KtElement> {
+    public interface ContextParameterWithoutName : KaFirDiagnostic<KtParameter> {
         override val diagnosticClass: KClass<ContextParameterWithoutName>
             get() = ContextParameterWithoutName::class
     }
