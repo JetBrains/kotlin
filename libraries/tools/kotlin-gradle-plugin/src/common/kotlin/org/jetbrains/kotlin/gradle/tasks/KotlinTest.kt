@@ -47,6 +47,20 @@ internal constructor(
     @Internal
     var ignoreRunFailures: Boolean = false
 
+    init {
+        // Never cache executions in which test failures do not fail the task.
+        // KotlinTestReport suppresses the failures of individual test tasks
+        // (sets both ignoreFailures and ignoreRunFailures) whenever an
+        // aggregated test report task is in the task graph, so such
+        // executions succeed despite failing tests. Caching them would let
+        // later builds restore a green run for failing tests, which the
+        // aggregate could not notice either: its failure detection relies on
+        // test listeners that do not run for tasks loaded from the cache.
+        outputs.doNotCacheIf("test failures are ignored by this task") {
+            ignoreFailures || ignoreRunFailures
+        }
+    }
+
     fun addRunListener(listener: KotlinTestRunnerListener) {
         runListeners.add(listener)
     }
