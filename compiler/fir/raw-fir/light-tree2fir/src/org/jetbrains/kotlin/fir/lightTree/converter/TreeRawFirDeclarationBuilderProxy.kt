@@ -2977,7 +2977,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     private fun Node.convertContextParameterTypesTo(destination: MutableList<FirTypeRef>) {
         forEachChildren {
             when (it.toTokenId()) {
-                KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER, KotlinSyntaxNodeTypeIds.VALUE_PARAMETER -> {
+                KotlinSyntaxNodeTypeIds.VALUE_PARAMETER -> {
                     val typeReference = it.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.TYPE_REFERENCE)
 
                     destination += typeReference?.let(::convertType)
@@ -3137,49 +3137,32 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER
                     ).firValueParameter
                 } else {
-                    buildLegacyContextReceiver(
-                        element = contextParameterElement,
-                        customLabelName = null,
-                        containingDeclarationSymbol = containingDeclarationSymbol,
-                    )
+                    buildLegacyContextReceiver(contextParameterElement, containingDeclarationSymbol)
                 }
-            }
-
-            // Legacy context receivers
-            contextList.getChildNodesByTokenId(KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER).mapTo(this) { contextReceiverElement ->
-                val customLabelName =
-                    contextReceiverElement
-                        .getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.LABEL_QUALIFIER)
-                        ?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.LABEL)
-                        ?.getChildNodeByTokenId(KotlinSyntaxTokenIds.IDENTIFIER)
-                        ?.getReferencedNameAsName()
-
-                buildLegacyContextReceiver(contextReceiverElement, customLabelName, containingDeclarationSymbol)
             }
         }
     }
 
     /**
-     * Builds a legacy context receiver from [element], which is a `CONTEXT_RECEIVER` or a context parameter without a name.
+     * Builds a legacy context receiver from a context parameter without a name.
      */
     private fun buildLegacyContextReceiver(
-        element: Node,
-        customLabelName: Name?,
+        parameter: Node,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ): FirValueParameter = buildValueParameter {
-        this.source = element.toFirSourceElement()
+        this.source = parameter.toFirSourceElement()
         this.moduleData = baseModuleData
         this.origin = FirDeclarationOrigin.Source
 
-        val typeReference = element.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.TYPE_REFERENCE)
+        val typeReference = parameter.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.TYPE_REFERENCE)
 
-        val labelNameFromTypeRef = typeReference?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.USER_TYPE)
+        val nameFromTypeRef = typeReference?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.USER_TYPE)
             ?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION)
             ?.getReferencedNameAsName()
 
-        // We're abusing the value parameter name for the label/type name of legacy context receivers.
+        // We're abusing the value parameter name for the type name of legacy context receivers.
         // Luckily, legacy context receivers are getting removed soon.
-        this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        this.name = nameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 
         this.symbol = FirValueParameterSymbol()
         context.withContainerSymbol(this.symbol) {

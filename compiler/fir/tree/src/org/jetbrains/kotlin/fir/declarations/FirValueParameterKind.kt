@@ -9,9 +9,11 @@ enum class FirValueParameterKind {
     Regular,
     ContextParameter,
 
-    // In K2, we don't support context receivers in resolution anymore,
-    // but we keep them in the FIR as long as we support parsing them
-    // (which is at least as long as K1 is supported).
+    // In K2, we don't support context receivers in resolution anymore, but we keep them in the FIR
+    // for a context parameter without a name in the sources (the former syntax of context receivers)
+    // and for a context receiver in the metadata that has no context parameters: the metadata of a class,
+    // or of a callable compiled by K1 or before Kotlin 2.2.0. K2 writes context parameters to the metadata
+    // of callables since 2.2.0 (KT-74546).
     LegacyContextReceiver,
 }
 
