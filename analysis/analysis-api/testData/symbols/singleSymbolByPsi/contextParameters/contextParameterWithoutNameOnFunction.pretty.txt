@@ -1,1 +1,1 @@
-`<no name provided>`: kotlin.String
+String: kotlin.String

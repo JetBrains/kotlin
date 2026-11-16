@@ -112,6 +112,10 @@ internal val KtDestructuringDeclaration.hasNonLocalEntries: Boolean
         else -> container?.parent is KtScript
     }
 
+/**
+ * The name that FIR gives to this parameter, or [SpecialNames.NO_NAME_PROVIDED] for a context parameter without a name, which is
+ * a legacy context receiver that has a name only in FIR.
+ */
 internal val KtParameter.parameterName: Name
     get() = when {
         destructuringDeclaration != null -> SpecialNames.DESTRUCT

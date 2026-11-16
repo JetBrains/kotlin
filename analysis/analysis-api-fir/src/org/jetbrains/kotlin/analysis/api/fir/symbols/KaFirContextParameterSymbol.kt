@@ -39,7 +39,10 @@ internal class KaFirContextParameterSymbol private constructor(
     )
 
     override val name: Name
-        get() = withValidityAssertion { backingPsi?.parameterName ?: firSymbol.name }
+        get() = withValidityAssertion {
+            // A context parameter without a name is a legacy context receiver, which has a name only in FIR
+            backingPsi?.takeIf { it.name != null }?.parameterName ?: firSymbol.name
+        }
 
     override val returnType: KaType
         get() = withValidityAssertion { firSymbol.returnType(builder) }

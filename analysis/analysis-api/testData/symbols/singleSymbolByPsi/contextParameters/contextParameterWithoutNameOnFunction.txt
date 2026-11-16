@@ -13,7 +13,7 @@ KaContextParameterSymbol:
   isVal: true
   location: LOCAL
   modality: FINAL
-  name: <no name provided>
+  name: String
   origin: SOURCE
   psi: KtParameter
   realPsi: KtParameter
