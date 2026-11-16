@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.isNodeJsToolchainDisabled
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
@@ -73,7 +75,12 @@ internal class NodeJsPluginApplier(
                     }
                 )
             )
-            download.convention(true)
+            // When a Node.js toolchain service provisions Node.js, the old setup must not download anything:
+            // it would add a project repository, which is forbidden by `RepositoriesMode.FAIL_ON_PROJECT_REPOS` (KT-55620).
+            download.convention(
+                @OptIn(ExperimentalNodeJsToolchainDsl::class)
+                registerNodeJsToolchainServiceIfAbsent(this@createNodeJsEnvSpec).map { it.isNodeJsToolchainDisabled() }
+            )
             // set instead of convention because it is possible to have null value https://github.com/gradle/gradle/issues/14768
             downloadBaseUrl.set("https://nodejs.org/dist")
             allowInsecureProtocol.convention(false)
