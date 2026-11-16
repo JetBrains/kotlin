@@ -3085,38 +3085,44 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
             // Legacy context receivers
             contextList.getChildNodesByTokenId(KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER).mapTo(this) { contextReceiverElement ->
-                buildValueParameter {
-                    this.source = contextReceiverElement.toFirSourceElement()
-                    this.moduleData = baseModuleData
-                    this.origin = FirDeclarationOrigin.Source
-
-                    val customLabelName =
-                        contextReceiverElement
-                            .getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.LABEL_QUALIFIER)
-                            ?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.LABEL)
-                            ?.getChildNodeByTokenId(KotlinSyntaxTokenIds.IDENTIFIER)
-                            ?.getReferencedNameAsName()
-
-                    val typeReference = contextReceiverElement.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.TYPE_REFERENCE)
-
-                    val labelNameFromTypeRef = typeReference?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.USER_TYPE)
-                        ?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION)
+                val customLabelName =
+                    contextReceiverElement
+                        .getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.LABEL_QUALIFIER)
+                        ?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.LABEL)
+                        ?.getChildNodeByTokenId(KotlinSyntaxTokenIds.IDENTIFIER)
                         ?.getReferencedNameAsName()
 
-                    // We're abusing the value parameter name for the label/type name of legacy context receivers.
-                    // Luckily, legacy context receivers are getting removed soon.
-                    this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-
-                    this.symbol = FirValueParameterSymbol()
-                    context.withContainerSymbol(this.symbol) {
-                        this.returnTypeRef = typeReference?.let { convertType(it) }
-                            ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
-                    }
-                    this.containingDeclarationSymbol = containingDeclarationSymbol
-                    this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
-                }
+                buildLegacyContextReceiver(contextReceiverElement, customLabelName, containingDeclarationSymbol)
             }
         }
+    }
+
+    private fun buildLegacyContextReceiver(
+        element: Node,
+        customLabelName: Name?,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): FirValueParameter = buildValueParameter {
+        this.source = element.toFirSourceElement()
+        this.moduleData = baseModuleData
+        this.origin = FirDeclarationOrigin.Source
+
+        val typeReference = element.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.TYPE_REFERENCE)
+
+        val labelNameFromTypeRef = typeReference?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.USER_TYPE)
+            ?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION)
+            ?.getReferencedNameAsName()
+
+        // We're abusing the value parameter name for the label/type name of legacy context receivers.
+        // Luckily, legacy context receivers are getting removed soon.
+        this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+
+        this.symbol = FirValueParameterSymbol()
+        context.withContainerSymbol(this.symbol) {
+            this.returnTypeRef = typeReference?.let { convertType(it) }
+                ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
+        }
+        this.containingDeclarationSymbol = containingDeclarationSymbol
+        this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
     }
 
     private fun Node.getReferencedNameAsName(): Name {

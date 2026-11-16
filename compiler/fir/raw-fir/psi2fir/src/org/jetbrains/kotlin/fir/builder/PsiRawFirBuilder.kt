@@ -1853,26 +1853,37 @@ open class PsiRawFirBuilder(
                 }
 
                 contextList.contextReceivers().mapTo(this) { contextReceiverElement ->
-                    buildValueParameter {
-                        this.source = contextReceiverElement.toFirSourceElement()
-                        this.moduleData = baseModuleData
-                        this.origin = FirDeclarationOrigin.Source
-
-                        val customLabelName = contextReceiverElement.labelNameAsName()
-                        val labelNameFromTypeRef = contextReceiverElement.typeReference()?.nameForReceiverLabel()?.let(Name::identifier)
-
-                        // We're abusing the value parameter name for the label/type name of legacy context receivers.
-                        // Luckily, legacy context receivers are getting removed soon.
-                        this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                        this.symbol = FirValueParameterSymbol()
-                        this@PsiRawFirBuilder.context.withContainerSymbol(this.symbol) {
-                            this.returnTypeRef = contextReceiverElement.typeReference().toFirOrErrorType()
-                        }
-                        this.containingDeclarationSymbol = containingDeclarationSymbol
-                        this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
-                    }
+                    buildLegacyContextReceiver(
+                        element = contextReceiverElement,
+                        typeReference = contextReceiverElement.typeReference(),
+                        customLabelName = contextReceiverElement.labelNameAsName(),
+                        containingDeclarationSymbol = containingDeclarationSymbol,
+                    )
                 }
             }
+        }
+
+        private fun buildLegacyContextReceiver(
+            element: KtElement,
+            typeReference: KtTypeReference?,
+            customLabelName: Name?,
+            containingDeclarationSymbol: FirBasedSymbol<*>,
+        ): FirValueParameter = buildValueParameter {
+            this.source = element.toFirSourceElement()
+            this.moduleData = baseModuleData
+            this.origin = FirDeclarationOrigin.Source
+
+            val labelNameFromTypeRef = typeReference?.nameForReceiverLabel()?.let(Name::identifier)
+
+            // We're abusing the value parameter name for the label/type name of legacy context receivers.
+            // Luckily, legacy context receivers are getting removed soon.
+            this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            this.symbol = FirValueParameterSymbol()
+            this@PsiRawFirBuilder.context.withContainerSymbol(this.symbol) {
+                this.returnTypeRef = typeReference.toFirOrErrorType()
+            }
+            this.containingDeclarationSymbol = containingDeclarationSymbol
+            this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
         }
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject, data: FirElement?): FirElement {
