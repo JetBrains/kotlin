@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_EXTRA_CHECKERS
 // ISSUE: KT-54496
 
@@ -9,3 +10,5 @@ class Some {
     <!REDUNDANT_MODALITY_MODIFIER!>open<!> fun meaninglessOpen() {}
     final fun meaningfullFinal() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration */
