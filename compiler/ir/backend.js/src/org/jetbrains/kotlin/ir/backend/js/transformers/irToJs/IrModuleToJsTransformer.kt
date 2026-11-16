@@ -211,11 +211,10 @@ class IrModuleToJsTransformer(
         JsExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
     }
 
-    private val tsExportModelGenerator by lazy {
+    private val tsExportModelGenerator =
         runIf(shouldGenerateTypeScriptDefinitions) {
             TsExportModelGenerator(backendContext, isEsModules = isEsModules)
         }
-    }
 
     private class IrFileExports(
         val file: IrFile,
