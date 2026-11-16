@@ -125,6 +125,42 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         assertEquals(44.toByte(), constantOf("OF_EXPRESSION"))
     }
 
+    @Test
+    fun testConstantExpressionClassificationRejectsUnsupportedOperatorsAndCastTypes() {
+        val source = """
+            class Consts {
+                static int mutable;
+                static final String STRING_CAST = (String) "value";
+                static final Object OBJECT_CAST = (Object) "value";
+                static final int PREFIX_INCREMENT = ++mutable;
+            }
+        """.trimIndent()
+
+        val javaClass = parseFirstClass(source)
+        val fields = javaClass.fields.associateBy { it.name.asString() }
+
+        assertTrue(fields.getValue("STRING_CAST").hasConstantNotNullInitializer)
+        assertEquals("value", fields.getValue("STRING_CAST").initializerValue)
+        assertFalse(fields.getValue("OBJECT_CAST").hasConstantNotNullInitializer)
+        assertFalse(fields.getValue("PREFIX_INCREMENT").hasConstantNotNullInitializer)
+    }
+
+    @Test
+    fun testQualifiedNonConstantFieldReferenceIsNotConstant() {
+        val source = """
+            class Consts {
+                static String NAME;
+                static final String VALUE = Consts.NAME;
+            }
+        """.trimIndent()
+
+        val field = parseFirstClass(source).fields.single { it.name.asString() == "VALUE" }
+
+        // The syntax-only check currently treats a qualified field reference as constant.
+        assertTrue(field.hasConstantNotNullInitializer)
+        assertEquals(null, field.initializerValue)
+    }
+
     private fun findReferenceExpression(tree: LightSyntaxTree, node: LightNode, text: String): LightNode? {
         if (tree.getType(node) == JavaSyntaxElementType.REFERENCE_EXPRESSION && tree.getText(node).toString() == text) {
             return node
