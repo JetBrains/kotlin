@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.documentation.analyzer
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.documentation.*
-import kotlin.reflect.KProperty1
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.hasAnnotation
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonArray
 
 /**
  * Golden tests printing selected parts of every [KdElement] in every fragment, including embedded declarations.
- * Each entry is printed as `signature [element ID]<path>:` followed by a [KdDumper] dump of the value.
+ * Each entry is printed as `signature [element ID]<path>:` followed by a JSON dump of the value.
  * Expected output is stored beside the fixture, with variants where Java analysis modes differ.
  */
 abstract class AbstractElementDumpGoldenTest : AbstractKdmGoldenTest() {
@@ -42,8 +45,7 @@ abstract class AbstractElementDumpGoldenTest : AbstractKdmGoldenTest() {
                         val prefix = if (mapName == "embeddedElements") "$mapName: " else ""
                         for ((path, value) in values) {
                             appendLine("$prefix$signature [${id.value}]$path:")
-                            KdDumper.dump(value, this)
-                            appendLine()
+                            appendLine(encodeValue(value))
                         }
                         appendLine()
                     }
@@ -52,6 +54,31 @@ abstract class AbstractElementDumpGoldenTest : AbstractKdmGoldenTest() {
         }
         assertMatchesGoldenTextFile(actual, file, extension)
     }
+}
+private val json = Json(from = KdJson) {
+    prettyPrint = true
+    @OptIn(ExperimentalSerializationApi::class)
+    prettyPrintIndent = "  "
+    encodeDefaults = true
+}
+
+/**
+ * Encodes [value] as JSON. Model types are encoded via their own serializers; [KdType]s are encoded polymorphically,
+ * so their `kind` is visible. Lists are built element-by-element into a [JsonArray].
+ */
+private fun encodeValue(value: Any?): String =
+    json.encodeToString(JsonElement.serializer(), jsonElement(value))
+
+private fun jsonElement(value: Any?): JsonElement = when (value) {
+    null -> JsonNull
+    is String -> JsonPrimitive(value)
+    is KdType -> json.encodeToJsonElement(KdType.serializer(), value)
+    is KdAnnotation -> json.encodeToJsonElement(KdAnnotation.serializer(), value)
+    is KdDeprecated -> json.encodeToJsonElement(KdDeprecated.serializer(), value)
+    is KdThrows -> json.encodeToJsonElement(KdThrows.serializer(), value)
+    is KdElementId -> json.encodeToJsonElement(KdElementId.serializer(), value)
+    is List<*> -> JsonArray(value.map(::jsonElement))
+    else -> error("Unsupported golden-dump value: $value")
 }
 
 /** Prints one [KdElement] field; absent fields, null values, and empty lists are omitted. */
@@ -167,89 +194,5 @@ abstract class AbstractKdmTypesGoldenTest : AbstractElementDumpGoldenTest() {
             }
             is KdModule, is KdPackage, is KdRefinedElement, is KdInheritedMember -> {}
         }
-    }
-}
-
-/**
- * Text dump of KDM values: `Name { field = value }` blocks, indented lists, and quoted strings.
- * Model objects are dumped with their public properties, sorted by name, via Kotlin reflection (like `KaDebugSymbolRenderer.renderByPropertyNames`);
- * empty [KdDocumentation] fields are omitted, since they carry no content yet.
- */
-class KdDumper private constructor(private val out: StringBuilder) {
-    private var indent = ""
-
-    private fun value(value: Any?) {
-        when (value) {
-            null -> out.append("null")
-            is String -> out.append('"').append(value.escape()).append('"')
-            is KdElementId -> value(value.value)
-            is Enum<*> -> out.append(value.name)
-            is List<*> -> list(value)
-            is Map<*, *> -> list(value.entries.map { (key, item) -> MapEntry(key.toString(), item) })
-            is MapEntry -> fields(value.key, listOf("value" to value.value))
-            else -> obj(value)
-        }
-    }
-
-    private class MapEntry(val key: String, val value: Any?)
-
-    private fun obj(value: Any) {
-        val kClass = value::class
-        if (kClass.java.`package`?.name != MODEL_PACKAGE) {
-            out.append(value)
-            return
-        }
-        val fields = kClass.members
-            .asSequence()
-            .filterIsInstance<KProperty1<Any, *>>()
-            .filter { it.visibility == KVisibility.PUBLIC && !it.hasAnnotation<Deprecated>() }
-            .sortedBy { it.name }
-            .map { it.name to it.get(value) }
-            .filterNot { it.second is KdDocumentation }
-            .toList()
-        val name = kClass.simpleName!!
-        if (fields.isEmpty()) out.append(name) else fields(name, fields)
-    }
-
-    private fun fields(name: String, fields: List<Pair<String, Any?>>) {
-        out.append(name).append(" {\n")
-        val outer = indent
-        indent = "$outer  "
-        for ((fieldName, value) in fields) {
-            out.append(indent).append(fieldName).append(" = ")
-            value(value)
-            out.append('\n')
-        }
-        indent = outer
-        out.append(indent).append('}')
-    }
-
-    private fun list(items: List<*>) {
-        if (items.isEmpty()) {
-            out.append("[]")
-            return
-        }
-        out.append("[\n")
-        val outer = indent
-        indent = "$outer  "
-        for (item in items) {
-            out.append(indent)
-            value(item)
-            out.append('\n')
-        }
-        indent = outer
-        out.append(indent).append(']')
-    }
-
-    companion object {
-        private const val MODEL_PACKAGE = "org.jetbrains.kotlin.documentation"
-
-        /** Appends the dump of [value] to [out]. */
-        fun dump(value: Any?, out: StringBuilder) {
-            KdDumper(out).value(value)
-        }
-
-        private fun String.escape(): String =
-            replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
     }
 }
