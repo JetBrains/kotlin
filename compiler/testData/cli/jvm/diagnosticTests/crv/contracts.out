@@ -1,5 +1,5 @@
 warning: the argument '-Xallow-returns-result-of' is redundant for the current language version 2.5.
-compiler/testData/cli/jvm/diagnosticTests/crv/contracts.kt:18:8: warning: unused return value of 'fooS'.
+compiler/testData/cli/jvm/diagnosticTests/crv/contracts.kt:18:8: warning: unused return value of 'fooS'. If this is intentional, use 'val _ = ' to ignore the value explicitly.
     s?.myLet { fooS() }
        ^^^^^
 OK
