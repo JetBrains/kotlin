@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
-import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -48,7 +46,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeMismatch
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.processAllCallables
@@ -187,9 +184,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     protected abstract val builderModality: Modality
 
-    /** Locations of the builder annotation; the first one resolvable in the classpath is used. */
-    protected abstract val annotationClassIds: List<ClassId>
-
     protected abstract fun getBuilder(symbol: FirBasedSymbol<*>): T?
 
     protected abstract fun getExtraTypeArguments(): List<ConeTypeProjection>
@@ -312,7 +306,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
-    private fun calculateBuilderItems(
+    protected fun calculateBuilderItems(
         entityClass: FirRegularClass,
         declaration: FirDeclaration,
         promotedProperties: Map<Name, FirPropertySymbol>,
@@ -800,7 +794,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * both a class-level annotation and one written on a constructor come down to. See
      * [canHostClassLevelBuilder] for the two shapes that fail and why.
      */
-    private val FirClassSymbol<*>.canBeInstantiatedByBuilder: Boolean
+    protected val FirClassSymbol<*>.canBeInstantiatedByBuilder: Boolean
         get() = !isInner &&
                 (builderModality == Modality.ABSTRACT || rawStatus.modality.let { it != Modality.ABSTRACT && it != Modality.SEALED })
 
@@ -812,7 +806,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      *
      * Lightweight enough to be called as early as SUPER_TYPES.
      */
-    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
+    @OptIn(SymbolInternals::class)
     private fun extractBuilderDescriptions(classSymbol: FirClassSymbol<*>): List<BuilderDescription<T>>? {
         // A companion object is never an entity in its own right: the Builder class always nests under the
         // containing entity class, never under its companion, so the companion's own `@Builder`-annotated
@@ -826,35 +820,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         // its callables were generated (KT-88848). Java has no
         // `@Builder` on a local class either, a builder requiring a static class.
         if (classSymbol.isLocal) return null
-
-        val entityClass = classSymbol.fir as? FirRegularClass ?: return null
-        val annotationSymbol = annotationClassIds.firstNotNullOfOrNull { it.toSymbol(session) as? FirRegularClassSymbol }
-            ?: return emptyList()
-        val allowedTargets = annotationSymbol.fir.getAllowedAnnotationTargets(session)
-
-        fun MutableList<BuilderDescription<T>>.addAnnotatedCallables(owner: FirClassSymbol<*>) {
-            for (declarationSymbol in owner.declarationSymbols) {
-                if (declarationSymbol is FirConstructorSymbol && allowedTargets.contains(KotlinTarget.CONSTRUCTOR) ||
-                    declarationSymbol is FirFunctionSymbol<*> && allowedTargets.contains(KotlinTarget.FUNCTION)
-                ) {
-                    // Left alone; `FirLombokBuilderChecker` reports it as
-                    // `BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS`.
-                    if (declarationSymbol.hasReceiverOrContextParameters) continue
-                    // A constructor builder instantiates the very class the constructor belongs to, so it is
-                    // dropped wherever the class-level one is. A function builder is untouched: it builds
-                    // whatever the function returns, which need not be this class.
-                    if (declarationSymbol is FirConstructorSymbol && !owner.canBeInstantiatedByBuilder) continue
-                    getBuilder(declarationSymbol)?.let { builder ->
-                        val declaration = declarationSymbol.fir
-                        val items = calculateBuilderItems(entityClass, declaration, emptyMap())
-                        add(BuilderDescription(builder, declaration, items))
-                    }
-                }
-            }
-        }
+        if (classSymbol !is FirRegularClassSymbol) return null
+        val entityClass = classSymbol.fir
 
         return buildList {
-            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.canHostClassLevelBuilder) {
+            if (classSymbol.canHostClassLevelBuilder) {
                 getBuilder(classSymbol)?.let { builder ->
                     add(
                         BuilderDescription(
@@ -874,9 +844,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             // FIR's lazy-resolve contract forbids (`FirLazyResolveContractViolationException`). An explicitly
             // source-declared companion (the only kind relevant here — we never generate one) already has its
             // raw symbol populated well before this phase, so the fast path suffices.
-            (classSymbol as? FirRegularClassSymbol)?.companionObjectSymbol?.let { addAnnotatedCallables(it) }
+            classSymbol.companionObjectSymbol?.let { addAnnotatedCallables(it) }
         }.takeIf { it.isNotEmpty() }
     }
+
+    protected abstract fun MutableList<BuilderDescription<T>>.addAnnotatedCallables(owner: FirRegularClassSymbol)
 
     /**
      * The [BuilderDescription]s of the entity containing [this] class, whose builder class [this] is.
@@ -898,7 +870,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * There is one description per annotated declaration, so several of them may populate the same builder class,
      * e.g. for `@Builder` on several constructors of a class.
      */
-    private data class BuilderDescription<T : AbstractBuilder>(
+    protected data class BuilderDescription<T : AbstractBuilder>(
         val builder: T,
         val ownerDeclaration: FirDeclaration,
         val items: List<BuilderItem>,
@@ -907,7 +879,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     /**
      * Just a description of an item (parameter/property/field) that a builder can set
      */
-    private class BuilderItem(val variable: FirVariable, val singular: Singular?, val hasBuilderDefault: Boolean) {
+    protected class BuilderItem(val variable: FirVariable, val singular: Singular?, val hasBuilderDefault: Boolean) {
         val name: Name get() = variable.name
 
         fun hasDefaultField(builderSymbol: FirClassSymbol<*>): Boolean =

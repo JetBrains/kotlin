@@ -57,7 +57,6 @@ object LombokNames {
     val BUILDER_DEFAULT_ID = BUILDER_ID.createNestedClassId(Name.identifier("Default"))
     val SUPER_BUILDER_ID = ClassId.topLevel(SUPER_BUILDER)
     val EXPERIMENTAL_SUPER_BUILDER_ID = ClassId.topLevel(EXPERIMENTAL_SUPER_BUILDER)
-    val SUPER_BUILDER_IDS = listOf(SUPER_BUILDER_ID, EXPERIMENTAL_SUPER_BUILDER_ID)
     val SINGULAR_ID = ClassId.topLevel(SINGULAR)
     val NO_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(NO_ARGS_CONSTRUCTOR)
     val ALL_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(ALL_ARGS_CONSTRUCTOR)
