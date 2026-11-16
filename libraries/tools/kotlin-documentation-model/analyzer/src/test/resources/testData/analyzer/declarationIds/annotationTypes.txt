@@ -1,32 +1,32 @@
 sample
 sample/Marker
-constructor:sample/Marker#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+constructor:sample/Marker#%3Cinit%3E#
 sample/Levelled
-constructor:sample/Levelled#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[kotlin/Int];
-property:sample/Levelled#level#typeParameters=[]; context=[]; parameters=[];
-getter:sample/Levelled#level#typeParameters=[]; context=[]; parameters=[];
+constructor:sample/Levelled#%3Cinit%3E#parameters=[kotlin/Int];
+property:sample/Levelled#level#
+getter:sample/Levelled#level#
 sample/Composed
-constructor:sample/Composed#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[sample/Levelled, kotlin/String];
-property:sample/Composed#first#typeParameters=[]; context=[]; parameters=[];
-getter:sample/Composed#first#typeParameters=[]; context=[]; parameters=[];
-property:sample/Composed#message#typeParameters=[]; context=[]; parameters=[];
-getter:sample/Composed#message#typeParameters=[]; context=[]; parameters=[];
-function:sample#marked#typeParameters=[]; context=[]; parameters=[];
-function:sample#heavilyAnnotated#typeParameters=[]; context=[]; parameters=[kotlin/String];
-function:sample#markerParameter#typeParameters=[]; context=[]; parameters=[sample/Marker];
-function:sample#levelledParameter#typeParameters=[]; context=[]; parameters=[sample/Levelled];
-function:sample#nullableMarkerParameter#typeParameters=[]; context=[]; parameters=[sample/Marker?];
-function:sample#annotationList#typeParameters=[]; context=[]; parameters=[kotlin.collections/List<sample/Levelled>];
+constructor:sample/Composed#%3Cinit%3E#parameters=[sample/Levelled, kotlin/String];
+property:sample/Composed#first#
+getter:sample/Composed#first#
+property:sample/Composed#message#
+getter:sample/Composed#message#
+function:sample#marked#
+function:sample#heavilyAnnotated#parameters=[kotlin/String];
+function:sample#markerParameter#parameters=[sample/Marker];
+function:sample#levelledParameter#parameters=[sample/Levelled];
+function:sample#nullableMarkerParameter#parameters=[sample/Marker?];
+function:sample#annotationList#parameters=[kotlin.collections/List<sample/Levelled>];
 sample/MarkerAlias
-function:sample#viaAlias#typeParameters=[]; context=[]; parameters=[sample/MarkerAlias];
-property:sample#annotatedGetter#typeParameters=[]; context=[]; parameters=[];
-getter:sample#annotatedGetter#typeParameters=[]; context=[]; parameters=[];
-property:sample#annotatedAccessors#typeParameters=[]; context=[]; parameters=[];
-getter:sample#annotatedAccessors#typeParameters=[]; context=[]; parameters=[];
-setter:sample#annotatedAccessors#typeParameters=[]; context=[]; parameters=[];
-function:sample#annotatedReceiver#typeParameters=[]; context=[]; receiver=sample/Marker; parameters=[];
+function:sample#viaAlias#parameters=[sample/MarkerAlias];
+property:sample#annotatedGetter#
+getter:sample#annotatedGetter#
+property:sample#annotatedAccessors#
+getter:sample#annotatedAccessors#
+setter:sample#annotatedAccessors#
+function:sample#annotatedReceiver#receiver=sample/Marker
 sample/Carrying
-constructor:sample/Carrying#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[kotlin/Int];
-function:sample/Carrying#method#typeParameters=[]; context=[]; parameters=[];
-property:sample/Carrying#value#typeParameters=[]; context=[]; parameters=[];
-getter:sample/Carrying#value#typeParameters=[]; context=[]; parameters=[];
+constructor:sample/Carrying#%3Cinit%3E#parameters=[kotlin/Int];
+function:sample/Carrying#method#
+property:sample/Carrying#value#
+getter:sample/Carrying#value#

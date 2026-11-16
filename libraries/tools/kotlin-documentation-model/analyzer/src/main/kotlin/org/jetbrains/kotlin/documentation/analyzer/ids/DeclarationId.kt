@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import java.net.URLEncoder
-import java.security.MessageDigest
 import java.util.Base64
 
 /**
@@ -63,6 +62,7 @@ internal fun generateDeclarationId(
     is KaCallableSymbol -> generateCallableId(symbol, typeAliasClassId, hashSignature)
     else -> throw IllegalArgumentException("Unknown symbol kind: $symbol")
 }
+
 context(session: KaSession)
 private fun generateCallableId(
     symbol: KaCallableSymbol,
@@ -90,7 +90,6 @@ private fun callableKind(symbol: KaCallableSymbol): String? = when (symbol) {
     else -> null
 }
 
-context(_: KaSession)
 private fun callableIdPrefix(declaration: KaCallableSymbol, kind: String, typeAliasClassId: ClassId?): String? {
     require(typeAliasClassId?.isLocalClassId != true) { "Type alias class ID cannot be local" }
 
@@ -137,33 +136,41 @@ private fun callableSignature(declaration: KaCallableSymbol): String {
         @OptIn(KaExperimentalApi::class) type.render(idTypeRenderer, Variance.INVARIANT)
 
     return buildString {
-        append("typeParameters=")
-        append(declaration.typeParameters.joinToString(prefix = "[", postfix = "]") { parameter ->
-            val bounds = parameter.upperBounds.map { render(it) }.sorted().joinToString(" & ")
-            "${typeParameterIdName(parameter)}: $bounds"
-        })
+        if (declaration.typeParameters.isNotEmpty()) {
+            append("typeParameters=")
+            declaration.typeParameters.joinTo(this, prefix = "[", postfix = "]") { parameter ->
+                val bounds = parameter.upperBounds.map { render(it) }.sorted().joinToString(" & ")
+                "${typeParameterIdName(parameter)}: $bounds"
+            }
+            append("; ")
+        }
 
-        append("; context=")
-        append(declaration.contextParameters.joinToString(prefix = "[", postfix = "]") { render(it.returnType) })
+        if (declaration.typeParameters.isNotEmpty()) {
+            append("context=")
+            declaration.contextParameters.joinTo(this, prefix = "[", postfix = "]") { render(it.returnType) }
+            append("; ")
+        }
 
-        declaration.receiverType?.let { append("; receiver=").append(render(it)) }
+        declaration.receiverType?.let { append("receiver=").append(render(it)) }
 
         val parameters = (declaration as? KaFunctionSymbol)?.valueParameters.orEmpty()
+        if (parameters.isNotEmpty()) {
+            append("parameters=")
+            parameters.joinTo(this, prefix = "[", postfix = "]") {
+                (if (it.isVararg) "vararg " else "") + render(it.returnType)
+            }
+            append("; ")
+        }
 
-        append("; parameters=")
-        append(parameters.joinToString(prefix = "[", postfix = "]") {
-            (if (it.isVararg) "vararg " else "") + render(it.returnType)
-        })
-        append(";")
         if ((declaration as? KaNamedFunctionSymbol)?.isSuspend == true) append(" suspend;")
         @OptIn(KaExperimentalApi::class)
-        if (declaration.isCompanion) append(" companion;")
+        if (declaration.isCompanion) append("companion; ")
 
         // ObjC overload resolution is selector-based, so two overloads can differ only in parameter
         // names (unlike ordinary Kotlin overloads, where names never affect binary compatibility).
         if (declaration is KaFunctionSymbol && hasObjCSelectorNames(declaration)) {
             append("objcParameterNames=")
-            append(parameters.joinToString(prefix = "[", postfix = "]") { it.name.asString().escapeName() })
+            parameters.joinTo(this, prefix = "[", postfix = "]") { it.name.asString().escapeName() }
         }
     }
 }
@@ -234,8 +241,8 @@ private val idTypeRenderer: KaTypeRenderer =
                 typeRenderer: KaTypeRenderer,
                 printer: PrettyPrinter,
             ) {
-                printer.append(with(analysisSession) { typeParameterIdName(type.symbol) }) // e.g. renders as <T0_0>
                 with(analysisSession) {
+                    printer.append(typeParameterIdName(type.symbol)) // e.g. renders as <T0_0>
                     if (type.isMarkedNullable) printer.append('?')
                 }
             }

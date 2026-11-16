@@ -1,35 +1,35 @@
 sample
 sample/Outer
 sample/Outer.Nested
-constructor:sample/Outer.Nested#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+constructor:sample/Outer.Nested#%3Cinit%3E#
 sample/Outer.Alias
-property:sample/Outer#value#typeParameters=[]; context=[]; parameters=[];
-getter:sample/Outer#value#typeParameters=[]; context=[]; parameters=[];
-setter:sample/Outer#value#typeParameters=[]; context=[]; parameters=[];
-function:sample/Outer#value#typeParameters=[]; context=[]; parameters=[];
+property:sample/Outer#value#
+getter:sample/Outer#value#
+setter:sample/Outer#value#
+function:sample/Outer#value#
 sample/Outer.Companion
-function:sample/Outer.Companion#member#typeParameters=[]; context=[]; parameters=[];
-constructor:sample/Outer.Companion#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
-constructor:sample/Outer#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+function:sample/Outer.Companion#member#
+constructor:sample/Outer.Companion#%3Cinit%3E#
+constructor:sample/Outer#%3Cinit%3E#
 sample/Alias
 sample/Choice
-enum-entry:sample/Choice#ENTRY#typeParameters=[]; context=[]; parameters=[]; companion;
-function:sample/Choice#values#typeParameters=[]; context=[]; parameters=[]; companion;
-function:sample/Choice#valueOf#typeParameters=[]; context=[]; parameters=[kotlin/String]; companion;
-property:sample/Choice#entries#typeParameters=[]; context=[]; parameters=[]; companion;
-getter:sample/Choice#entries#typeParameters=[]; context=[]; parameters=[]; companion;
-constructor:sample/Choice#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
-function:sample#top#typeParameters=[]; context=[]; parameters=[];
-property:sample#top#typeParameters=[]; context=[]; parameters=[];
-getter:sample#top#typeParameters=[]; context=[]; parameters=[];
+enum-entry:sample/Choice#ENTRY#companion;
+function:sample/Choice#values#companion;
+function:sample/Choice#valueOf#parameters=[kotlin/String]; companion;
+property:sample/Choice#entries#companion;
+getter:sample/Choice#entries#companion;
+constructor:sample/Choice#%3Cinit%3E#
+function:sample#top#
+property:sample#top#
+getter:sample#top#
 sample/JavaClass
-field:sample/JavaClass#field#typeParameters=[]; context=[]; parameters=[];
-field:sample/JavaClass#staticField#typeParameters=[]; context=[]; parameters=[]; companion;
-function:sample/JavaClass#method#typeParameters=[]; context=[]; parameters=[];
-function:sample/JavaClass#staticMethod#typeParameters=[]; context=[]; parameters=[]; companion;
-function:sample/JavaClass#getText#typeParameters=[]; context=[]; parameters=[];
-constructor:sample/JavaClass#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
-synthetic-property:sample/JavaClass#text#typeParameters=[]; context=[]; parameters=[];
+field:sample/JavaClass#field#
+field:sample/JavaClass#staticField#companion;
+function:sample/JavaClass#method#
+function:sample/JavaClass#staticMethod#companion;
+function:sample/JavaClass#getText#
+constructor:sample/JavaClass#%3Cinit%3E#
+synthetic-property:sample/JavaClass#text#
 /
 /RootClass
-constructor:/RootClass#%3Cinit%3E#typeParameters=[]; context=[]; parameters=[];
+constructor:/RootClass#%3Cinit%3E#
