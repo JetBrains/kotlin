@@ -27,14 +27,13 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.SuperBuilder
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -50,8 +49,6 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         session.firCachesFactory.createCache { true }
 
     override val builderModality: Modality = Modality.ABSTRACT
-
-    override val annotationClassIds: List<ClassId> = LombokNames.SUPER_BUILDER_IDS
 
     override fun getBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? {
         // There is also a build impl class, but it's private, and it's used only for internal purposes. Not relevant for API.
@@ -198,5 +195,11 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         }
 
         superTypeRefs += superTypeRef ?: session.builtinTypes.anyType
+    }
+
+    override fun MutableList<BuilderDescription<SuperBuilder>>.addAnnotatedCallables(
+        owner: FirRegularClassSymbol,
+    ) {
+        // do nothing. @SuperBuilder does not support callables
     }
 }
