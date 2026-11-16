@@ -57,7 +57,6 @@ class KotlinCoreEnvironment private constructor(
     val projectEnvironment: ProjectEnvironment,
     val configuration: CompilerConfiguration
 ) {
-
     class ProjectEnvironment(
         disposable: Disposable,
         applicationEnvironment: KotlinCoreApplicationEnvironment,
@@ -69,30 +68,13 @@ class KotlinCoreEnvironment private constructor(
         init {
             setIdeaIoUseFallback()
 
-            val useFastJarFSFlag: Boolean? = configuration.get(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)
-            val useK2 =
-                configuration.getBoolean(CommonConfigurationKeys.USE_FIR) || configuration.languageVersionSettings.languageVersion.usesK2
-
-            when {
-                useFastJarFSFlag == true && !useK2 -> {
-                    configuration.report(
-                        INITIALIZATION_WARNING,
-                        "Using new faster version of JAR FS: it should make your build faster, " +
-                                "but the new implementation is not thoroughly tested with language versions below 2.0"
-                    )
-                }
-                useFastJarFSFlag == false && useK2 -> {
-                    configuration.reportInfo("Using outdated version of JAR FS: it might make your build slower")
-                }
+            val useFastJarFS: Boolean = configuration.useFastJarFileSystem
+            if (!useFastJarFS) {
+                configuration.reportInfo("Using outdated version of JAR FS: it might make your build slower")
             }
 
-            // We enable FastJarFS by default since K2
-            val useFastJarFS = useFastJarFSFlag ?: useK2
-
             jarFileSystem = when {
-                configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING) -> {
-                    applicationEnvironment.jarFileSystem
-                }
+                configuration.usePsiClassFilesReading -> applicationEnvironment.jarFileSystem
                 useFastJarFS -> {
                     val fastJarFs = applicationEnvironment.fastJarFileSystem
                     if (fastJarFs == null) {
@@ -175,38 +157,31 @@ class KotlinCoreEnvironment private constructor(
 
         val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
-        val jdkHome = configuration.get(JVMConfigurationKeys.JDK_HOME)
-        val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
-        val javaModuleFinder = CliJavaModuleFinder(
-            jdkHome,
-            configuration,
-            javaFileManager,
-            releaseTarget
-        )
+        val jdkHome = configuration.jdkHome
+        val releaseTarget = configuration.jdkRelease
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome, configuration, javaFileManager, releaseTarget)
 
-        val outputDirectory =
-            configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
-                ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
-
-        val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+        val outputDirectory = configuration.modules.singleOrNull()?.getOutputDirectory() ?: configuration.outputDirectory?.absolutePath
+        val contentRoots = configuration.contentRoots
 
         classpathRootsResolver = ClasspathRootsResolver(
             configuration,
-            configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
+            additionalModules = configuration.additionalJavaModules,
             this::contentRootToVirtualFile,
             javaModuleFinder,
-            !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
+            requireStdlibModule = !configuration.allowKotlinPackage,
             outputDirectory?.let(this::findLocalFile),
             javaFileManager::findClassOnClasspath,
-            releaseTarget,
+            jdkRelease = releaseTarget,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
 
         (val initialRoots = roots, val javaModules = modules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
         this.initialRoots.addAll(initialRoots)
 
-        val [roots, singleJavaFileRoots] =
-            initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+        val [roots, singleJavaFileRoots] = initialRoots.partition { (file) ->
+            file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION
+        }
 
         // REPL updates classpath dynamically
         rootsIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true).apply {
@@ -220,7 +195,7 @@ class KotlinCoreEnvironment private constructor(
             rootsIndex,
             packagePartProviders,
             SingleJavaFileRootsIndex(singleJavaFileRoots),
-            configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
+            configuration.usePsiClassFilesReading,
             javaModuleFinder,
             perfManager,
         )
@@ -236,11 +211,6 @@ class KotlinCoreEnvironment private constructor(
 
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
-
-        project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, fun(roots: List<File>) {
-            updateClasspath(roots.map { JavaSourceRoot(it, null) })
-        })
-
         project.setupHighestLanguageLevel()
     }
 
@@ -290,15 +260,15 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        configuration.addAll(CLIConfigurationKeys.CONTENT_ROOTS, contentRoots - configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
+        configuration.addAll(CLIConfigurationKeys.CONTENT_ROOTS, contentRoots - configuration.contentRoots)
 
         return newIndex.indexedRoots.map { (file) ->
             VfsUtilCore.virtualToIoFile(VfsUtilCore.getVirtualFileForJar(file) ?: file)
         }.toList()
     }
 
-    private fun contentRootToVirtualFile(root: JvmContentRootBase): VirtualFile? =
-        when (root) {
+    private fun contentRootToVirtualFile(root: JvmContentRootBase): VirtualFile? {
+        return when (root) {
             is JvmClasspathRoot ->
                 if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Classpath entry")
             is JvmModulePathRoot ->
@@ -309,9 +279,11 @@ class KotlinCoreEnvironment private constructor(
             else ->
                 throw IllegalStateException("Unexpected root: $root")
         }
+    }
 
-    fun findLocalFile(path: String): VirtualFile? =
-        applicationEnvironment.localFileSystem.findFileByPath(path)
+    private fun findLocalFile(path: String): VirtualFile? {
+        return applicationEnvironment.localFileSystem.findFileByPath(path)
+    }
 
     private fun findExistingRoot(root: JvmContentRoot, rootDescription: String): VirtualFile? {
         return findLocalFile(root.file.absolutePath).also {
@@ -321,8 +293,9 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    private fun findJarRoot(file: File): VirtualFile? =
-        projectEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
+    private fun findJarRoot(file: File): VirtualFile? {
+        return projectEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
+    }
 
     companion object {
         @JvmStatic
