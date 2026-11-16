@@ -47,20 +47,17 @@ class MethodsFromAnyGeneratorForLowerings(val context: LoweringContext, val irCl
 
 open class LoweringDataClassMemberGenerator(
     val loweringContext: LoweringContext,
-    symbolTable: ReferenceSymbolTable,
     irClass: IrClass,
     origin: IrDeclarationOrigin,
     forbidDirectFieldAccess: Boolean = false
-) :
-    IrBasedDataClassMembersGenerator(
-        IrGeneratorContextBase(loweringContext.irBuiltIns),
-        symbolTable,
-        irClass,
-        irClass.kotlinFqName,
-        origin,
-        forbidDirectFieldAccess,
-        generateBodies = true,
-    ) {
+) : IrBasedDataClassMembersGenerator(
+    IrGeneratorContextBase(loweringContext.irBuiltIns),
+    irClass,
+    irClass.kotlinFqName,
+    origin,
+    forbidDirectFieldAccess,
+    generateBodies = true,
+) {
 
     override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
         // no-op — irFunction from lowering should already have necessary parameters

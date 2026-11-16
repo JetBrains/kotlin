@@ -312,7 +312,7 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.generateSyntheticBodiesOfDataValueMembers() {
         Fir2IrDataClassGeneratedMemberBodyGenerator(irBuiltIns)
-            .generateBodiesForClassesWithSyntheticDataClassMembers(generatedDataValueClassSyntheticFunctions, symbolTable)
+            .generateBodiesForClassesWithSyntheticDataClassMembers(generatedDataValueClassSyntheticFunctions)
     }
 
     private fun Fir2IrConversionResult.createFakeOverrideBuilder(

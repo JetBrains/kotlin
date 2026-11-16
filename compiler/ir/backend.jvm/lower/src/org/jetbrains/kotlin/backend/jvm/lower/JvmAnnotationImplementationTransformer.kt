@@ -33,7 +33,7 @@ internal class JvmAnnotationImplementationLowering(context: JvmBackendContext) :
 )
 
 class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendContext, file: IrFile) :
-    AnnotationImplementationTransformer(jvmContext, jvmContext.symbolTable, file) {
+    AnnotationImplementationTransformer(jvmContext, file) {
     private val publicAnnotationImplementationClasses = mutableSetOf<IrClassSymbol>()
 
     // FIXME: Copied from JvmSingleAbstractMethodLowering
