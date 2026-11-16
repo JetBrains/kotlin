@@ -101,7 +101,7 @@ internal object DataFlowIR {
         val IS_EAGER_STATIC_INITIALIZER = 32
     }
 
-    class FunctionParameter(val type: Type, val boxFunction: FunctionSymbol?, val unboxFunction: FunctionSymbol?)
+    class FunctionParameter(val type: Type)
 
     abstract class FunctionSymbol(val attributes: Int, val irDeclaration: IrDeclaration?, val name: String?) {
         init {
@@ -600,12 +600,6 @@ internal object DataFlowIR {
             is BinaryType.Reference -> mapClassReferenceType(choosePrimary(binaryType.types.toList()))
         }
 
-        private fun mapTypeToFunctionParameter(type: IrType) =
-                type.getInlinedClassNative().let { inlinedClass ->
-                    FunctionParameter(mapType(type), inlinedClass?.let { mapFunction(context.getBoxFunction(it)) },
-                            inlinedClass?.let { mapFunction(context.getUnboxFunction(it)) })
-                }
-
         fun mapFunction(declaration: IrDeclaration): FunctionSymbol = when (declaration) {
             is IrSimpleFunction -> mapFunction(declaration)
             is IrField -> mapPropertyInitializer(declaration)
@@ -666,9 +660,9 @@ internal object DataFlowIR {
             functionMap[it] = symbol
 
             symbol.parameters = function.parameters.map { it.type }
-                    .map { mapTypeToFunctionParameter(it) }
+                    .map { FunctionParameter(mapType(it)) }
                     .toTypedArray()
-            symbol.returnParameter = mapTypeToFunctionParameter(function.returnType)
+            symbol.returnParameter = FunctionParameter(mapType(function.returnType))
 
             return symbol
         }
@@ -683,7 +677,7 @@ internal object DataFlowIR {
             functionMap[irField] = symbol
 
             symbol.parameters = emptyArray()
-            symbol.returnParameter = mapTypeToFunctionParameter(context.irBuiltIns.unitType)
+            symbol.returnParameter = FunctionParameter(mapType(context.irBuiltIns.unitType))
             return symbol
         }
     }

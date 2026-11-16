@@ -1636,9 +1636,6 @@ internal object DevirtualizationAnalysis {
                 arguments[0] = value
             }
 
-    private fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: DataFlowIR.FunctionSymbol.Declared?) =
-            irCoerce(value, coercion?.let { it.irFunction?.symbol!! })
-
     sealed class PossiblyCoercedValue(private val coercion: IrFunctionSymbol?) {
         abstract fun getValue(irBuilder: IrBuilderWithScope): IrExpression
         fun getFullValue(irBuilder: IrBuilderWithScope): IrExpression = irBuilder.run { irCoerce(getValue(this), coercion) }
@@ -1702,19 +1699,6 @@ internal object DevirtualizationAnalysis {
                     else PossiblyCoercedValue.OverExpression(expression, null)
                 }
 
-        fun getTypeConversion(actualType: DataFlowIR.FunctionParameter,
-                              targetType: DataFlowIR.FunctionParameter): DataFlowIR.FunctionSymbol.Declared? {
-            if (actualType.boxFunction == null && targetType.boxFunction == null) return null
-            if (actualType.boxFunction != null && targetType.boxFunction != null) {
-                assert(actualType.type == targetType.type)
-                { "Inconsistent types: ${actualType.type} and ${targetType.type}" }
-                return null
-            }
-            if (actualType.boxFunction == null)
-                return targetType.unboxFunction as DataFlowIR.FunctionSymbol.Declared
-            return actualType.boxFunction as DataFlowIR.FunctionSymbol.Declared
-        }
-
         fun irDevirtualizedCall(callSite: IrCall,
                                 actualType: IrType,
                                 actualCallee: IrSimpleFunction,
@@ -1745,14 +1729,16 @@ internal object DevirtualizationAnalysis {
                             arguments.map { it.getFullValue(this@irDevirtualizedCall) }
                     )
                 else {
+                    val actualCalleeIr = actualCallee.irFunction!!
+                    val bridgeTargetIr = bridgeTarget.irFunction!!
                     val callResult = irDevirtualizedCall(callSite, actualType,
-                            bridgeTarget.irFunction!!,
+                            bridgeTargetIr,
                             arguments.mapIndexed { index, value ->
-                                val coercion = getTypeConversion(actualCallee.parameters[index], bridgeTarget.parameters[index])
+                                val coercion = context.getTypeConversion(actualCalleeIr.parameters[index].type, bridgeTargetIr.parameters[index].type)
                                 val fullValue = value.getFullValue(this@irDevirtualizedCall)
                                 coercion?.let { irCoerce(fullValue, coercion) } ?: fullValue
                             })
-                    val returnCoercion = getTypeConversion(bridgeTarget.returnParameter, actualCallee.returnParameter)
+                    val returnCoercion = context.getTypeConversion(bridgeTargetIr.returnType, actualCalleeIr.returnType)
                     irCoerce(callResult, returnCoercion)
                 }
             }
