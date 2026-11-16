@@ -7,14 +7,10 @@ plugins {
     kotlin("jvm")
 }
 
-dependencies {
-    compileOnly(libs.intellij.asm)
-}
-
 sourceSets {
     "main" {
         java {
-            srcDirs( "src", "instrumentation/src")
+            srcDirs("src")
         }
     }
     "test" {}
