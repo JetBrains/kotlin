@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputFileContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
@@ -81,17 +82,27 @@ class JsDtsGenerationTest : BaseCompilationTest() {
             val module = module("js-ts-generation-no-export")
             module.compile()
 
-            val outputDirectory = module.buildDirectory.resolve("dts")
-            outputDirectory.createDirectories()
-            module.generateDts(outputDirectory = outputDirectory)
-
-            val declarationFiles = outputDirectory.walk().filter { it.isRegularFile() }.toList()
-            assertEquals(setOf("js-ts-generation-no-export.d.ts"), declarationFiles.map { it.fileName.toString() }.toSet()) {
-                "Unexpected declaration files: $declarationFiles"
+            module.generateDts(
+                outputDirectory = module.buildDirectory.resolve("merged"),
+                compilationConfigAction = {
+                    it[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY] = JsDtsCompilationStrategy.MERGED
+                }
+            ) {
+                assertOutputs("js-ts-generation-no-export.d.ts")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "KtSingleton")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "export as namespace")
             }
-            val declarations = declarationFiles.single().readText()
-            assertTrue(declarations.contains("KtSingleton"))
-            assertTrue(declarations.contains("export as namespace"))
+
+            module.generateDts(
+                outputDirectory = module.buildDirectory.resolve("merged"),
+                compilationConfigAction = {
+                    it[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY] = JsDtsCompilationStrategy.EACH_FILE
+                }
+            ) {
+                assertOutputs("js-ts-generation-no-export.d.ts")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "KtSingleton")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "export as namespace")
+            }
         }
     }
 
