@@ -281,8 +281,14 @@ internal constructor(
 
 /**
  * A task running Kotlin/Native tests on a host machine.
+ *
+ * Caching is enabled for this task type: with the build cache enabled, a
+ * restored-from-cache run replays previously recorded test results instead
+ * of executing the tests. See [KotlinNativeTest] for the correctness
+ * contract of the task inputs, and [KotlinTest] for why runs with ignored
+ * test failures are never stored.
  */
-@DisableCachingByDefault
+@CacheableTask
 abstract class KotlinNativeHostTest
 @Inject
 internal constructor(
