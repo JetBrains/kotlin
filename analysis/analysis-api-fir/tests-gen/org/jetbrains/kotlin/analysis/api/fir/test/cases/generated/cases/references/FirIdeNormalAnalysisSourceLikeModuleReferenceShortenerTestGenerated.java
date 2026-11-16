@@ -249,9 +249,21 @@ public class FirIdeNormalAnalysisSourceLikeModuleReferenceShortenerTestGenerated
   }
 
   @Test
+  @TestMetadata("danglingContextInFunctionTypeContextParameterPosition.kt")
+  public void testDanglingContextInFunctionTypeContextParameterPosition() {
+    run("danglingContextInFunctionTypeContextParameterPosition.kt");
+  }
+
+  @Test
   @TestMetadata("danglingContextInFunctionTypeNamed.kt")
   public void testDanglingContextInFunctionTypeNamed() {
     run("danglingContextInFunctionTypeNamed.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeNamedContextParameterPosition.kt")
+  public void testDanglingContextInFunctionTypeNamedContextParameterPosition() {
+    run("danglingContextInFunctionTypeNamedContextParameterPosition.kt");
   }
 
   @Test
@@ -348,6 +360,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleReferenceShortenerTestGenerated
   @TestMetadata("extensionProperty_objectReceiverWithOtherThisInScope.kt")
   public void testExtensionProperty_objectReceiverWithOtherThisInScope() {
     run("extensionProperty_objectReceiverWithOtherThisInScope.kt");
+  }
+
+  @Test
+  @TestMetadata("functionalType_contextParameterPosition.kt")
+  public void testFunctionalType_contextParameterPosition() {
+    run("functionalType_contextParameterPosition.kt");
+  }
+
+  @Test
+  @TestMetadata("functionalType_namedContextParameterPosition.kt")
+  public void testFunctionalType_namedContextParameterPosition() {
+    run("functionalType_namedContextParameterPosition.kt");
   }
 
   @Test

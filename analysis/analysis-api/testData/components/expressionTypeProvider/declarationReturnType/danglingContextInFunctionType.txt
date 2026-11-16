@@ -1,0 +1,2 @@
+take@(1,1) : kotlin.Unit (by PSI)
+  action@(1,10) : ERROR

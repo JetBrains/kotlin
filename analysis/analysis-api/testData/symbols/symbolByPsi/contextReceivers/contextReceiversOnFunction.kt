@@ -1,2 +1,2 @@
-context(Int, s@String)
+context(Int, String)
 fun y(){}

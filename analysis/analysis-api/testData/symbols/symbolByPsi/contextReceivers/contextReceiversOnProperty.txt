@@ -82,7 +82,7 @@ KaKotlinPropertySymbol:
       isVal: true
       location: LOCAL
       modality: FINAL
-      name: s
+      name: String
       origin: SOURCE
       psi: KtContextReceiver
       realPsi: KtContextReceiver
@@ -107,7 +107,7 @@ KaKotlinPropertySymbol:
         typeArguments: []
         type: kotlin/Int
     KaContextReceiver:
-      label: s
+      label: String
       type: KaUsualClassType:
         annotations: []
         typeArguments: []
