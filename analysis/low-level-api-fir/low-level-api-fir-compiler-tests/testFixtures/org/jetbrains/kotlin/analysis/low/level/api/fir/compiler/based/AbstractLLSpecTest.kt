@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLLCompilerBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.jvmTestConfigurationWithSingleFrontendFacade
 import org.jetbrains.kotlin.test.runners.baseFirSpecDiagnosticTestConfiguration
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractLLSpecTest : AbstractLLCompilerBasedTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
-            baseFirDiagnosticTestConfiguration(
+            jvmTestConfigurationWithSingleFrontendFacade(
                 frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve),
             )
 
