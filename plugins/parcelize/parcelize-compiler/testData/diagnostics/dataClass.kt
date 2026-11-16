@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 @file:OptIn(kotlinx.parcelize.Experimental::class)
 
