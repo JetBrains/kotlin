@@ -38,7 +38,7 @@ private fun AnnotationParameterValue.toKdAnnotationArgumentValue(): KdAnnotation
     is BooleanValue -> Const(KdConstExpression(KdConstValue.Boolean(value), expression = null))
     is StringValue -> Const(KdConstExpression(KdConstValue.String(value), expression = null))
     is NullValue -> Const(KdConstExpression(Null, expression = null))
-    // TODO new annotation const values: [UInt], [Chat], [Byte] and so on
+    // TODO KT-91717 new annotation const values: [UInt], [Chat], [Byte] and so on
     is LiteralValue -> Const(KdConstExpression(Null, expression = KdExpression(text(), emptyList())))
 }
 
@@ -56,7 +56,7 @@ internal fun <C : AnnotationTarget> PropertyContainer<C>.annotationsIn(sourceSet
 
 // region Types
 
-// TODO [FlexibleType] is not present in Documentable model
+// TODO KT-91717 [FlexibleType] is not present in Documentable model
 internal fun Bound.toKdType(sourceSet: DokkaSourceSet): KdType = when (this) {
     is Nullable -> inner.toKdType(sourceSet).withNullable(true)
     is DefinitelyNonNullable -> KdDefinitelyNotNullType(inner.toKdType(sourceSet))
@@ -129,7 +129,7 @@ private fun toClassLikeType(
             KdClassTypeQualifier(
                 simpleName,
                 projections.map { it.toKdTypeProjection(sourceSet) })
-        ), // TODO type qualifiers for "nested" declarations in Documentable model
+        ), // TODO KT-91717 type qualifiers for "nested" declarations in Documentable model
         classLikeId = dri.toKdElementId(),
         isMarkedNullable = false,
         annotations = annotations,
