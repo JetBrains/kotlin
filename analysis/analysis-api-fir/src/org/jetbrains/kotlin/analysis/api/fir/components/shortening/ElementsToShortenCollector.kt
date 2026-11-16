@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import java.util.TreeMap
 
 internal class ElementsToShortenCollector(
     private val shortenOptions: ShortenOptions,
@@ -61,8 +62,10 @@ internal class ElementsToShortenCollector(
     private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
     private val resolutionFacade: LLResolutionFacade,
 ) {
-    val typesToShorten: MutableList<ShortenType> = mutableListOf()
-    val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()
+    val typesToShorten: Set<ShortenType>
+        field = LinkedHashSet<ShortenType>()
+    val qualifiersToShorten: Set<ShortenQualifier>
+        field = LinkedHashSet<ShortenQualifier>()
     val labelsToShorten: MutableList<ShortenThisLabel> = mutableListOf()
 
     private val contextSensitiveResolutionIsEnabled: Boolean
@@ -953,36 +956,29 @@ internal class ElementsToShortenCollector(
         }
     }
 
-    private fun KtElement.isInsideOf(another: KtElement): Boolean = another.textRange.contains(textRange)
-
-    /**
-     * Remove entries from [typesToShorten] and [qualifiersToShorten] if their qualifiers will be shortened
-     * when we shorten [qualifier].
-     */
-    private fun removeRedundantElements(qualifier: KtElement) {
-        typesToShorten.removeAll { it.element.qualifier?.isInsideOf(qualifier) == true }
-        qualifiersToShorten.removeAll { it.element.receiverExpression.isInsideOf(qualifier) }
-    }
-
-    private fun KtElement.isAlreadyCollected(): Boolean {
-        val thisElement = this
-        return typesToShorten.any { shortenType ->
-            shortenType.element.qualifier?.let { thisElement.isInsideOf(it) } == true
-        } || qualifiersToShorten.any { shortenQualifier ->
-            thisElement.isInsideOf(shortenQualifier.element.receiverExpression)
-        }
-    }
+    private val collectedQualifiers: CollectedQualifiers = CollectedQualifiers()
 
     private fun addElementToShorten(elementInfoToShorten: ElementToShorten) {
-        val qualifier = elementInfoToShorten.element.getQualifier() ?: return
-        if (!qualifier.isAlreadyCollected()) {
-            removeRedundantElements(qualifier)
-            when (elementInfoToShorten) {
-                is ShortenType -> typesToShorten.add(elementInfoToShorten)
-                is ShortenQualifier -> qualifiersToShorten.add(elementInfoToShorten)
-                is ShortenThisLabel -> labelsToShorten.add(elementInfoToShorten)
+        val range = elementInfoToShorten.element.getQualifier()?.textRange ?: return
+        if (collectedQualifiers.hasQualifierContaining(range)) return
+
+        collectedQualifiers.removeQualifiersInside(range) { redundant ->
+            when (redundant) {
+                is ShortenType -> typesToShorten.remove(redundant)
+                is ShortenQualifier -> qualifiersToShorten.remove(redundant)
+                is ShortenThisLabel -> {}
             }
         }
+
+        when (elementInfoToShorten) {
+            is ShortenType -> typesToShorten.add(elementInfoToShorten)
+            is ShortenQualifier -> qualifiersToShorten.add(elementInfoToShorten)
+            is ShortenThisLabel -> {
+                labelsToShorten.add(elementInfoToShorten)
+                return
+            }
+        }
+        collectedQualifiers.add(range, elementInfoToShorten)
     }
 
     private val KtElement.inSelection: Boolean
@@ -1083,3 +1079,36 @@ private fun KtElement.getQualifier(): KtElement? = when (this) {
  * how far it is from the element.
  */
 private fun KtElement.findClassOrObjectParent(): KtClassOrObject? = parentOfType()
+
+/**
+ * The qualifiers of the collected types and qualifiers by their start offset.
+ * No collected qualifier contains another, so their ranges never overlap.
+ */
+private class CollectedQualifiers {
+    private class CollectedQualifier(val range: TextRange, val element: ElementToShorten)
+
+    private val qualifiersByStartOffset: TreeMap<Int, CollectedQualifier> = TreeMap()
+
+    /**
+     * Only the qualifier that starts at or before [range] can contain it.
+     */
+    fun hasQualifierContaining(range: TextRange): Boolean {
+        val enclosing = qualifiersByStartOffset.floorEntry(range.startOffset)?.value ?: return false
+        return enclosing.range.contains(range)
+    }
+
+    /**
+     * Each qualifier that starts inside [range] lies inside it.
+     */
+    fun removeQualifiersInside(range: TextRange, onRemove: (ElementToShorten) -> Unit) {
+        val inside = qualifiersByStartOffset.subMap(range.startOffset, range.endOffset)
+        for (qualifier in inside.values) {
+            onRemove(qualifier.element)
+        }
+        inside.clear()
+    }
+
+    fun add(range: TextRange, element: ElementToShorten) {
+        qualifiersByStartOffset[range.startOffset] = CollectedQualifier(range, element)
+    }
+}
