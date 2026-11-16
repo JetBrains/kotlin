@@ -14,26 +14,34 @@ import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 
-internal class FirQualifierPartPointer(qualifierPart: FirQualifierPart, builder: KaSymbolByFirBuilder) {
+internal class FirQualifierPartPointer(
+    qualifierPart: FirQualifierPart,
+    builder: KaSymbolByFirBuilder,
+    guard: ConeTypeRecursionGuard,
+) {
     private val name = qualifierPart.name
-    private val typeArgumentListPointer = FirTypeArgumentListPointer(qualifierPart.typeArgumentList, builder)
+    private val typeArgumentListPointer = FirTypeArgumentListPointer(qualifierPart.typeArgumentList, builder, guard)
 
     context(analysisSession: KaFirSession)
-    fun restore(): FirQualifierPart? {
-        val firTypeArgumentList = typeArgumentListPointer.restore() ?: return null
+    fun restore(guard: ConeTypeRecursionGuard): FirQualifierPart? {
+        val firTypeArgumentList = typeArgumentListPointer.restore(guard) ?: return null
         return FirQualifierPartImpl(source = null, name, firTypeArgumentList)
     }
 }
 
-private class FirTypeArgumentListPointer(typeArgumentList: FirTypeArgumentList, builder: KaSymbolByFirBuilder) {
+private class FirTypeArgumentListPointer(
+    typeArgumentList: FirTypeArgumentList,
+    builder: KaSymbolByFirBuilder,
+    guard: ConeTypeRecursionGuard,
+) {
     private val typeArgumentPointers = typeArgumentList.typeArguments
-        .map { ConeTypeProjectionPointer(it.toConeTypeProjection(), builder) }
+        .map { ConeTypeProjectionPointer(it.toConeTypeProjection(), builder, guard) }
 
     context(analysisSession: KaFirSession)
-    fun restore(): FirTypeArgumentList? {
+    fun restore(guard: ConeTypeRecursionGuard): FirTypeArgumentList? {
         return FirTypeArgumentListImpl(source = null).apply {
             for (typeArgumentPointer in typeArgumentPointers) {
-                val coneTypeArgument = typeArgumentPointer.restore() ?: return null
+                val coneTypeArgument = typeArgumentPointer.restore(guard) ?: return null
 
                 val typeArgument = when (coneTypeArgument) {
                     ConeStarProjection -> buildStarProjection()

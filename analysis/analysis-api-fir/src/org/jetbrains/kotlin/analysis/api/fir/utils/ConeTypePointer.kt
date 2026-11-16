@@ -153,9 +153,13 @@ internal class ConeTypeRecursionGuard {
     }
 }
 
+/**
+ * Creates a pointer for this type. A nested pointer must be created with the [guard] of the enclosing pointer, as the guard shares
+ * captured and type variable constructors within the whole type. A top-level pointer is created with a fresh guard.
+ */
 internal fun <T : ConeKotlinType> T.createPointer(
     builder: KaSymbolByFirBuilder,
-    guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard(),
+    guard: ConeTypeRecursionGuard,
 ): ConeTypePointer<T> {
     return guard.createPointer(coneType = this) { coneType ->
         @Suppress("UNCHECKED_CAST")
@@ -185,11 +189,13 @@ internal fun <T : ConeKotlinType> T.createPointer(
  */
 internal interface ConeTypePointer<out T : ConeKotlinType> {
     /**
-     * Restores the original type when possible, using a recursion guard to handle recursive types.
-     * Returns `null` if restoration is impossible.
+     * Restores the original type when possible, and returns `null` otherwise.
+     *
+     * A nested pointer must be restored with the [guard] of the enclosing pointer, as cycles through captured type constructor
+     * supertypes end at the constructors registered in the guard. A top-level pointer is restored with a fresh guard.
      */
     context(analysisSession: KaFirSession)
-    fun restore(guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard()): T?
+    fun restore(guard: ConeTypeRecursionGuard): T?
 }
 
 private class ConeClassLikeTypePointer(
@@ -455,14 +461,14 @@ private class ConeErrorTypePointer(
     guard: ConeTypeRecursionGuard,
 ) : ConeTypePointer<ConeErrorType> {
     private val isUninferredParameter = coneType.isUninferredParameter
-    private val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneType.diagnostic, builder)
+    private val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneType.diagnostic, builder, guard)
     private val delegatedTypePointer = coneType.delegatedType?.createPointer(builder, guard)
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder, guard) }
     private val nullable = coneType.nullable
 
     context(analysisSession: KaFirSession)
     override fun restore(guard: ConeTypeRecursionGuard): ConeErrorType? {
-        val coneDiagnostic = coneDiagnosticPointer.restore() ?: return null
+        val coneDiagnostic = coneDiagnosticPointer.restore(guard) ?: return null
         val delegatedConeType = delegatedTypePointer?.let { guard.restorePointer(it) ?: return null }
         val typeArguments = typeArgumentPointers.restore(guard) ?: return null
 
@@ -493,13 +499,13 @@ private object ConeNeverRestoringTypePointer : ConeTypePointer<ConeKotlinType> {
 internal class ConeTypeProjectionPointer(
     projection: ConeTypeProjection,
     builder: KaSymbolByFirBuilder,
-    guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard(),
+    guard: ConeTypeRecursionGuard,
 ) {
     private val kind = projection.kind
     private val typePointer: ConeTypePointer<*>? = projection.type?.createPointer(builder, guard)
 
     context(analysisSession: KaFirSession)
-    fun restore(guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard()): ConeTypeProjection? {
+    fun restore(guard: ConeTypeRecursionGuard): ConeTypeProjection? {
         if (kind == STAR) {
             return ConeStarProjection
         }
