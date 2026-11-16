@@ -395,13 +395,13 @@ private class ConeErrorTypePointer(
     guard: ConeTypeRecursionGuard,
 ) : ConeTypePointer<ConeErrorType> {
     private val isUninferredParameter = coneType.isUninferredParameter
-    private val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneType.diagnostic, builder)
+    private val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneType.diagnostic, builder, guard)
     private val delegatedTypePointer = coneType.delegatedType?.createPointer(builder, guard)
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder, guard) }
     private val nullable = coneType.nullable
 
     override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeErrorType? {
-        val coneDiagnostic = coneDiagnosticPointer.restore(session) ?: return null
+        val coneDiagnostic = coneDiagnosticPointer.restore(session, guard) ?: return null
         val delegatedConeType = delegatedTypePointer?.let { guard.restorePointer(it, session) ?: return null }
         val typeArguments = typeArgumentPointers.restore(session, guard) ?: return null
 
@@ -430,12 +430,12 @@ private object ConeNeverRestoringTypePointer : ConeTypePointer<ConeKotlinType> {
 internal class ConeTypeProjectionPointer(
     projection: ConeTypeProjection,
     builder: KaSymbolByFirBuilder,
-    guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard(),
+    guard: ConeTypeRecursionGuard,
 ) {
     private val kind = projection.kind
     private val typePointer: ConeTypePointer<*>? = projection.type?.createPointer(builder, guard)
 
-    fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard()): ConeTypeProjection? {
+    fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeTypeProjection? {
         if (kind == STAR) {
             return ConeStarProjection
         }

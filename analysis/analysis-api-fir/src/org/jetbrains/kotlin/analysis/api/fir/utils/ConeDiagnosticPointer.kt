@@ -16,14 +16,18 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 
 internal interface ConeDiagnosticPointer {
     companion object {
-        fun create(coneDiagnostic: ConeDiagnostic, builder: KaSymbolByFirBuilder): ConeDiagnosticPointer {
+        fun create(
+            coneDiagnostic: ConeDiagnostic,
+            builder: KaSymbolByFirBuilder,
+            guard: ConeTypeRecursionGuard,
+        ): ConeDiagnosticPointer {
             return when (coneDiagnostic) {
-                is ConeTypeVariableTypeIsNotInferred -> ConeTypeVariableTypeIsNotInferredDiagnosticPointer(coneDiagnostic, builder)
+                is ConeTypeVariableTypeIsNotInferred -> ConeTypeVariableTypeIsNotInferredDiagnosticPointer(coneDiagnostic, builder, guard)
                 is ConeCannotInferTypeParameterType -> ConeCannotInferTypeParameterTypeDiagnosticPointer(coneDiagnostic, builder)
                 is ConeUnresolvedReferenceError -> ConeUnresolvedReferenceErrorDiagnosticPointer(coneDiagnostic)
                 is ConeUnresolvedSymbolError -> ConeUnresolvedSymbolErrorDiagnosticPointer(coneDiagnostic)
                 is ConeUnresolvedNameError -> ConeUnresolvedNameErrorDiagnosticPointer(coneDiagnostic)
-                is ConeUnresolvedTypeQualifierError -> ConeUnresolvedTypeQualifierErrorDiagnosticPointer(coneDiagnostic, builder)
+                is ConeUnresolvedTypeQualifierError -> ConeUnresolvedTypeQualifierErrorDiagnosticPointer(coneDiagnostic, builder, guard)
                 is ConeNoTypeArgumentsOnRhsError -> ConeNoTypeArgumentsOnRhsErrorDiagnosticPointer(coneDiagnostic, builder)
                 is ConeWrongNumberOfTypeArgumentsError -> ConeWrongNumberOfTypeArgumentsErrorDiagnosticPointer(coneDiagnostic, builder)
                 else -> ConeGenericDiagnosticPointer(coneDiagnostic)
@@ -31,7 +35,7 @@ internal interface ConeDiagnosticPointer {
         }
     }
 
-    fun restore(@Suppress("unused") session: KaFirSession): ConeDiagnostic?
+    fun restore(@Suppress("unused") session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic?
 }
 
 private class ConeCannotInferTypeParameterTypeDiagnosticPointer(
@@ -41,7 +45,7 @@ private class ConeCannotInferTypeParameterTypeDiagnosticPointer(
     private val typeParameterPointer = builder.classifierBuilder.buildTypeParameterSymbol(coneDiagnostic.typeParameter).createPointer()
     private val reason = coneDiagnostic.reason
 
-    override fun restore(session: KaFirSession): ConeDiagnostic? {
+    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic? {
         val typeParameterSymbol = with(session) { typeParameterPointer.restoreSymbol() } as? KaFirTypeParameterSymbolBase<*> ?: return null
         return ConeCannotInferTypeParameterType(typeParameterSymbol.firSymbol, reason)
     }
@@ -49,13 +53,14 @@ private class ConeCannotInferTypeParameterTypeDiagnosticPointer(
 
 private class ConeTypeVariableTypeIsNotInferredDiagnosticPointer(
     coneDiagnostic: ConeTypeVariableTypeIsNotInferred,
-    builder: KaSymbolByFirBuilder
+    builder: KaSymbolByFirBuilder,
+    guard: ConeTypeRecursionGuard,
 ) : ConeDiagnosticPointer {
-    private val typePointer = coneDiagnostic.typeVariableType.createPointer(builder)
+    private val typePointer = coneDiagnostic.typeVariableType.createPointer(builder, guard)
     private val reason = coneDiagnostic.reason
 
-    override fun restore(session: KaFirSession): ConeDiagnostic? {
-        val typeVariableType = typePointer.restore(session) ?: return null
+    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic? {
+        val typeVariableType = guard.restorePointer(typePointer, session) ?: return null
         return ConeTypeVariableTypeIsNotInferred(typeVariableType, reason)
     }
 }
@@ -63,7 +68,7 @@ private class ConeTypeVariableTypeIsNotInferredDiagnosticPointer(
 private class ConeUnresolvedReferenceErrorDiagnosticPointer(coneDiagnostic: ConeUnresolvedReferenceError) : ConeDiagnosticPointer {
     private val name = coneDiagnostic.name
 
-    override fun restore(session: KaFirSession): ConeDiagnostic? {
+    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic? {
         return ConeUnresolvedReferenceError(name)
     }
 }
@@ -71,21 +76,22 @@ private class ConeUnresolvedReferenceErrorDiagnosticPointer(coneDiagnostic: Cone
 private class ConeUnresolvedSymbolErrorDiagnosticPointer(coneDiagnostic: ConeUnresolvedSymbolError) : ConeDiagnosticPointer {
     private val classId = coneDiagnostic.classId
 
-    override fun restore(session: KaFirSession): ConeDiagnostic? {
+    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic? {
         return ConeUnresolvedSymbolError(classId)
     }
 }
 
 private class ConeUnresolvedTypeQualifierErrorDiagnosticPointer(
     coneDiagnostic: ConeUnresolvedTypeQualifierError,
-    builder: KaSymbolByFirBuilder
+    builder: KaSymbolByFirBuilder,
+    guard: ConeTypeRecursionGuard,
 ) : ConeDiagnosticPointer {
-    private val qualifierPointers = coneDiagnostic.qualifiers.map { FirQualifierPartPointer(it, builder) }
+    private val qualifierPointers = coneDiagnostic.qualifiers.map { FirQualifierPartPointer(it, builder, guard) }
 
-    override fun restore(session: KaFirSession): ConeDiagnostic? {
+    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic? {
         val qualifiers = buildList {
             for (qualifierPointer in qualifierPointers) {
-                val qualifier = qualifierPointer.restore(session) ?: return null
+                val qualifier = qualifierPointer.restore(session, guard) ?: return null
                 add(qualifier)
             }
         }
@@ -98,7 +104,7 @@ private class ConeUnresolvedNameErrorDiagnosticPointer(coneDiagnostic: ConeUnres
     private val name = coneDiagnostic.name
     private val operatorToken = coneDiagnostic.operatorToken
 
-    override fun restore(session: KaFirSession): ConeDiagnostic? {
+    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic? {
         return ConeUnresolvedNameError(name, operatorToken)
     }
 }
@@ -110,7 +116,7 @@ private class ConeNoTypeArgumentsOnRhsErrorDiagnosticPointer(
     private val desiredCount = coneDiagnostic.desiredCount
     private val symbolPointer = builder.classifierBuilder.buildClassLikeSymbol(coneDiagnostic.symbol).createPointer()
 
-    override fun restore(session: KaFirSession): ConeDiagnostic? {
+    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic? {
         val symbol = with(session) { symbolPointer.restoreSymbol() } ?: return null
         return ConeNoTypeArgumentsOnRhsError(desiredCount, symbol.firSymbol)
     }
@@ -125,7 +131,7 @@ private class ConeWrongNumberOfTypeArgumentsErrorDiagnosticPointer(
     private val sourcePointer = coneDiagnostic.source.createPointer()
     private val forDeprecation = coneDiagnostic.isDeprecationErrorForCallableReferenceLhs
 
-    override fun restore(session: KaFirSession): ConeDiagnostic? {
+    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic? {
         val symbol = with(session) { symbolPointer.restoreSymbol() } ?: return null
         val source = sourcePointer.restore() ?: return null
         return ConeWrongNumberOfTypeArgumentsError(desiredCount, symbol.firSymbol, source, forDeprecation)
@@ -135,7 +141,7 @@ private class ConeWrongNumberOfTypeArgumentsErrorDiagnosticPointer(
 private class ConeGenericDiagnosticPointer(coneDiagnostic: ConeDiagnostic) : ConeDiagnosticPointer {
     private val reason = coneDiagnostic.reason
 
-    override fun restore(session: KaFirSession): ConeDiagnostic? {
+    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDiagnostic? {
         return ConeSimpleDiagnostic(reason)
     }
 }
