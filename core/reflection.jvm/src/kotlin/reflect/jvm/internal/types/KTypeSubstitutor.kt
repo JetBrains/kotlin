@@ -153,7 +153,11 @@ internal class KTypeSubstitutor(
 
     private fun AbstractKType.combineNullability(other: AbstractKType): KType {
         check(other.lowerBoundIfFlexible() == null) { "'$other' must be non flexible" }
-        if (isNullabilityFlexible() && !other.isMarkedNullable) return this
+        if (isNullabilityFlexible() && !other.isMarkedNullable) {
+            // Substituting DNN type `T & Any` by `T -> X!` should result in DNN type `X & Any`.
+            // Also, substituting `T & Any` by `T -> String!` should result in non-null type `String`.
+            return if (other.isDefinitelyNotNullType) makeDefinitelyNotNullAsSpecified(true) else this
+        }
         return makeNullableAsSpecified(other.isMarkedNullable || isMarkedNullable)
             .makeDefinitelyNotNullAsSpecified(other.isDefinitelyNotNullType || (isDefinitelyNotNullType && !other.isMarkedNullable))
     }
