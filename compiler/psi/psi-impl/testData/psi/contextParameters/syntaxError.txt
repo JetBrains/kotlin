@@ -153,7 +153,7 @@ KtFile: syntaxError.kt
           PsiElement(context)('context')
           PsiElement(LPAR)('(')
           PsiWhiteSpace('\n    ')
-          CONTEXT_RECEIVER
+          VALUE_PARAMETER
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -218,7 +218,7 @@ KtFile: syntaxError.kt
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
-        CONTEXT_RECEIVER
+        VALUE_PARAMETER
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION

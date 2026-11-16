@@ -15,6 +15,7 @@ f6@(6,1) : () -> kotlin.Unit
 f7@(7,1) : () -> kotlin.Unit
   KtNamedFunction@(7,22) : kotlin.Unit (by PSI)
 f8@(8,1) : context(kotlin.String) kotlin.Int.(kotlin.Boolean) -> kotlin.Unit
+  KtParameter@(8,17) : kotlin.String
   KtParameter@(8,30) : kotlin.Boolean
   <anonymous>@(8,49) : kotlin.Unit
 f9@(9,1) : context(kotlin.String) () -> kotlin.Unit

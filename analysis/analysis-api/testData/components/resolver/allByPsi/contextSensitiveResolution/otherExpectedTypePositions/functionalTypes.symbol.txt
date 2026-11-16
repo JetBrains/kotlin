@@ -843,7 +843,7 @@ KtFunctionType(941,966): 'context(MyEnum)() -> Unit'
 KtContextReceiverList(941,956): 'context(MyEnum)'
   null
 
-KtContextReceiver(949,955): 'MyEnum'
+KtParameter(949,955): 'MyEnum'
   null
 
 KtTypeReference(949,955): 'MyEnum'

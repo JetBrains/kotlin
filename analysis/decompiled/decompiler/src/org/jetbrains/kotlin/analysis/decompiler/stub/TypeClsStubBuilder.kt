@@ -282,7 +282,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         var processedTypes = 0
 
         if (numContextReceivers != 0) {
-            createContextReceiverStubs(
+            createContextParameterStubsWithoutNames(
                 functionType,
                 typeArgumentList.subList(
                     processedTypes,
@@ -641,16 +641,34 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 this.nullable
     }
 
-    fun createContextReceiverStubs(parent: StubElement<*>, contextReceiverTypes: List<Type>) {
-        if (contextReceiverTypes.isEmpty()) return
-        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
+    /**
+     * Creates a context parameter list with a parameter without a name for each of the [contextParameterTypes].
+     *
+     * Used for the context parameters of function types, which never have names, and for legacy context receivers: those
+     * of classes, and those of callables in old metadata without context parameters.
+     */
+    fun createContextParameterStubsWithoutNames(parent: StubElement<*>, contextParameterTypes: List<Type>) {
+        if (contextParameterTypes.isEmpty()) return
+        val contextParameterListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
             parent = parent,
             elementType = KtNodeTypes.CONTEXT_PARAMETER_LIST,
         )
 
-        for (contextReceiverType in contextReceiverTypes) {
-            val contextReceiverStub = KotlinContextReceiverStubImpl(contextReceiverListStub, labelRef = null)
-            createTypeReferenceStub(contextReceiverStub, contextReceiverType)
+        for (contextParameterType in contextParameterTypes) {
+            val contextParameterStub = KotlinParameterStubImpl(
+                parent = contextParameterListStub,
+                fqNameRef = null,
+                name = null,
+                isMutable = false,
+                hasValOrVar = false,
+                hasDefaultValue = false,
+                functionTypeParameterName = null,
+                equalityBoundType = null,
+                kdocText = null,
+                constantInitializer = null,
+            )
+
+            createTypeReferenceStub(contextParameterStub, contextParameterType)
         }
     }
 }

@@ -486,7 +486,7 @@ KtNameReferenceExpression(149,153): 'Anno'
 KtContextReceiverList(154,166): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(162,165): 'Int'
+KtParameter(162,165): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(162,165): 'Int'
@@ -594,7 +594,7 @@ KtNameReferenceExpression(191,195): 'Anno'
 KtContextReceiverList(196,208): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(204,207): 'Int'
+KtParameter(204,207): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(204,207): 'Int'
@@ -633,7 +633,7 @@ KtTypeReference(235,247): 'context(Int)'
 KtContextReceiverList(235,247): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(243,246): 'Int'
+KtParameter(243,246): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(243,246): 'Int'
@@ -666,7 +666,7 @@ KtTypeReference(284,296): 'context(Int)'
 KtContextReceiverList(284,296): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(292,295): 'Int'
+KtParameter(292,295): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(292,295): 'Int'
@@ -699,7 +699,7 @@ KtTypeReference(327,339): 'context(Int)'
 KtContextReceiverList(327,339): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(335,338): 'Int'
+KtParameter(335,338): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(335,338): 'Int'
@@ -732,7 +732,7 @@ KtTypeReference(373,392): 'context(Int) String'
 KtContextReceiverList(373,385): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(381,384): 'Int'
+KtParameter(381,384): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(381,384): 'Int'
@@ -858,7 +858,7 @@ KtNameReferenceExpression(432,436): 'Anno'
 KtContextReceiverList(437,449): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(445,448): 'Int'
+KtParameter(445,448): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(445,448): 'Int'
@@ -978,7 +978,7 @@ KtNameReferenceExpression(493,497): 'Anno'
 KtContextReceiverList(498,517): 'context(@Other Int)'
   NO_CANDIDATES
 
-KtContextReceiver(506,516): '@Other Int'
+KtParameter(506,516): '@Other Int'
   NO_CANDIDATES
 
 KtTypeReference(506,516): '@Other Int'
@@ -1080,7 +1080,7 @@ KtTypeReference(562,584): 'context(Int) (String).'
 KtContextReceiverList(562,574): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(570,573): 'Int'
+KtParameter(570,573): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(570,573): 'Int'
@@ -1215,7 +1215,7 @@ KtNameReferenceExpression(624,628): 'Anno'
 KtContextReceiverList(629,641): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(637,640): 'Int'
+KtParameter(637,640): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(637,640): 'Int'
@@ -1257,7 +1257,7 @@ KtTypeReference(679,691): 'context(Int)'
 KtContextReceiverList(679,691): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(687,690): 'Int'
+KtParameter(687,690): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(687,690): 'Int'
@@ -1371,7 +1371,7 @@ KtNameReferenceExpression(729,733): 'Anno'
 KtContextReceiverList(734,746): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(742,745): 'Int'
+KtParameter(742,745): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(742,745): 'Int'
@@ -1595,7 +1595,7 @@ KtLiteralStringTemplateEntry(783,784): '2'
 KtContextReceiverList(787,799): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(795,798): 'Int'
+KtParameter(795,798): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(795,798): 'Int'
@@ -1763,7 +1763,7 @@ KtNameReferenceExpression(824,829): 'Other'
 KtContextReceiverList(830,842): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(838,841): 'Int'
+KtParameter(838,841): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(838,841): 'Int'
@@ -1934,7 +1934,7 @@ KtNameReferenceExpression(869,874): 'Other'
 KtContextReceiverList(876,888): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(884,887): 'Int'
+KtParameter(884,887): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(884,887): 'Int'
@@ -2045,7 +2045,7 @@ KtNameReferenceExpression(922,926): 'Anno'
 KtContextReceiverList(927,939): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(935,938): 'Int'
+KtParameter(935,938): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(935,938): 'Int'
@@ -2153,7 +2153,7 @@ KtNameReferenceExpression(963,967): 'Anno'
 KtContextReceiverList(976,988): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(984,987): 'Int'
+KtParameter(984,987): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(984,987): 'Int'
@@ -2261,7 +2261,7 @@ KtNameReferenceExpression(1021,1025): 'Anno'
 KtContextReceiverList(1026,1038): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1034,1037): 'Int'
+KtParameter(1034,1037): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1034,1037): 'Int'
@@ -2288,7 +2288,7 @@ KtTypeReference(1081,1099): 'context(@Anno Int)'
 KtContextReceiverList(1081,1099): 'context(@Anno Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1089,1098): '@Anno Int'
+KtParameter(1089,1098): '@Anno Int'
   NO_CANDIDATES
 
 KtTypeReference(1089,1098): '@Anno Int'
@@ -2396,7 +2396,7 @@ KtTypeReference(1126,1151): 'context(@Anno Unresolved)'
 KtContextReceiverList(1126,1151): 'context(@Anno Unresolved)'
   NO_CANDIDATES
 
-KtContextReceiver(1134,1150): '@Anno Unresolved'
+KtParameter(1134,1150): '@Anno Unresolved'
   NO_CANDIDATES
 
 KtTypeReference(1134,1150): '@Anno Unresolved'
@@ -2591,7 +2591,7 @@ KtNameReferenceExpression(1172,1176): 'Anno'
 KtContextReceiverList(1177,1215): 'context(@Other Int, @Anno("x") String)'
   NO_CANDIDATES
 
-KtContextReceiver(1185,1195): '@Other Int'
+KtParameter(1185,1195): '@Other Int'
   NO_CANDIDATES
 
 KtTypeReference(1185,1195): '@Other Int'
@@ -2666,7 +2666,7 @@ KtUserType(1192,1195): 'Int'
 KtNameReferenceExpression(1192,1195): 'Int'
   NO_CANDIDATES
 
-KtContextReceiver(1197,1214): '@Anno("x") String'
+KtParameter(1197,1214): '@Anno("x") String'
   NO_CANDIDATES
 
 KtTypeReference(1197,1214): '@Anno("x") String'
@@ -3074,7 +3074,7 @@ KtNameReferenceExpression(1304,1308): 'Anno'
 KtContextReceiverList(1309,1321): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1317,1320): 'Int'
+KtParameter(1317,1320): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1317,1320): 'Int'
@@ -3188,7 +3188,7 @@ KtNameReferenceExpression(1354,1358): 'Anno'
 KtContextReceiverList(1359,1371): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1367,1370): 'Int'
+KtParameter(1367,1370): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1367,1370): 'Int'
@@ -3302,7 +3302,7 @@ KtNameReferenceExpression(1406,1410): 'Anno'
 KtContextReceiverList(1411,1423): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1419,1422): 'Int'
+KtParameter(1419,1422): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1419,1422): 'Int'
@@ -3428,7 +3428,7 @@ KtNameReferenceExpression(1492,1496): 'Anno'
 KtContextReceiverList(1497,1509): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1505,1508): 'Int'
+KtParameter(1505,1508): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1505,1508): 'Int'
@@ -3452,7 +3452,7 @@ KtNullableType(1547,1562): '(context(Int))?'
 KtContextReceiverList(1548,1560): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1556,1559): 'Int'
+KtParameter(1556,1559): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1556,1559): 'Int'
@@ -3563,7 +3563,7 @@ KtNameReferenceExpression(1591,1595): 'Anno'
 KtContextReceiverList(1596,1608): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1604,1607): 'Int'
+KtParameter(1604,1607): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1604,1607): 'Int'
@@ -3680,7 +3680,7 @@ KtNameReferenceExpression(1650,1654): 'Anno'
 KtContextReceiverList(1655,1667): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1663,1666): 'Int'
+KtParameter(1663,1666): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1663,1666): 'Int'
@@ -3806,7 +3806,7 @@ KtNameReferenceExpression(1707,1711): 'Anno'
 KtContextReceiverList(1712,1724): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1720,1723): 'Int'
+KtParameter(1720,1723): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1720,1723): 'Int'
@@ -3914,7 +3914,7 @@ KtNameReferenceExpression(1762,1766): 'Anno'
 KtContextReceiverList(1767,1779): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1775,1778): 'Int'
+KtParameter(1775,1778): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1775,1778): 'Int'
@@ -3995,7 +3995,7 @@ KtNameReferenceExpression(1782,1787): 'Other'
 KtContextReceiverList(1788,1801): 'context(Long)'
   NO_CANDIDATES
 
-KtContextReceiver(1796,1800): 'Long'
+KtParameter(1796,1800): 'Long'
   NO_CANDIDATES
 
 KtTypeReference(1796,1800): 'Long'
@@ -4028,7 +4028,7 @@ KtNullableType(1869,1891): '(context(@Other Int))?'
 KtContextReceiverList(1870,1889): 'context(@Other Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1878,1888): '@Other Int'
+KtParameter(1878,1888): '@Other Int'
   NO_CANDIDATES
 
 KtTypeReference(1878,1888): '@Other Int'
@@ -4115,7 +4115,7 @@ KtNullableType(1922,1945): '(context(Int) String?)?'
 KtContextReceiverList(1923,1935): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1931,1934): 'Int'
+KtParameter(1931,1934): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1931,1934): 'Int'
@@ -4151,7 +4151,7 @@ KtDeclarationModifierList(1972,1979): 'suspend'
 KtContextReceiverList(1980,1992): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(1988,1991): 'Int'
+KtParameter(1988,1991): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(1988,1991): 'Int'
@@ -4172,7 +4172,7 @@ KtTypeReference(2026,2063): 'context(Int) (suspend context(Long))?'
 KtContextReceiverList(2026,2038): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2034,2037): 'Int'
+KtParameter(2034,2037): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2034,2037): 'Int'
@@ -4193,7 +4193,7 @@ KtDeclarationModifierList(2040,2047): 'suspend'
 KtContextReceiverList(2048,2061): 'context(Long)'
   NO_CANDIDATES
 
-KtContextReceiver(2056,2060): 'Long'
+KtParameter(2056,2060): 'Long'
   NO_CANDIDATES
 
 KtTypeReference(2056,2060): 'Long'
@@ -4217,7 +4217,7 @@ KtDeclarationModifierList(2096,2103): 'suspend'
 KtContextReceiverList(2104,2116): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2112,2115): 'Int'
+KtParameter(2112,2115): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2112,2115): 'Int'
@@ -4235,7 +4235,7 @@ KtNullableType(2117,2133): '(context(Long))?'
 KtContextReceiverList(2118,2131): 'context(Long)'
   NO_CANDIDATES
 
-KtContextReceiver(2126,2130): 'Long'
+KtParameter(2126,2130): 'Long'
   NO_CANDIDATES
 
 KtTypeReference(2126,2130): 'Long'
@@ -4343,7 +4343,7 @@ KtNameReferenceExpression(2159,2163): 'Anno'
 KtContextReceiverList(2164,2176): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2172,2175): 'Int'
+KtParameter(2172,2175): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2172,2175): 'Int'
@@ -4472,7 +4472,7 @@ KtNameReferenceExpression(2228,2232): 'Anno'
 KtContextReceiverList(2233,2245): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2241,2244): 'Int'
+KtParameter(2241,2244): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2241,2244): 'Int'
@@ -4592,7 +4592,7 @@ KtNameReferenceExpression(2280,2284): 'Anno'
 KtContextReceiverList(2285,2297): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2293,2296): 'Int'
+KtParameter(2293,2296): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2293,2296): 'Int'
@@ -4718,7 +4718,7 @@ KtNameReferenceExpression(2342,2346): 'Anno'
 KtContextReceiverList(2347,2359): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2355,2358): 'Int'
+KtParameter(2355,2358): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2355,2358): 'Int'
@@ -4826,7 +4826,7 @@ KtNameReferenceExpression(2369,2373): 'Anno'
 KtContextReceiverList(2374,2386): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2382,2385): 'Int'
+KtParameter(2382,2385): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2382,2385): 'Int'
@@ -4946,7 +4946,7 @@ KtNameReferenceExpression(2421,2425): 'Anno'
 KtContextReceiverList(2426,2438): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2434,2437): 'Int'
+KtParameter(2434,2437): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2434,2437): 'Int'
@@ -5060,7 +5060,7 @@ KtNameReferenceExpression(2463,2467): 'Anno'
 KtContextReceiverList(2468,2480): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2476,2479): 'Int'
+KtParameter(2476,2479): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2476,2479): 'Int'
@@ -5265,7 +5265,7 @@ KtNameReferenceExpression(2501,2505): 'Anno'
 KtContextReceiverList(2506,2518): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2514,2517): 'Int'
+KtParameter(2514,2517): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2514,2517): 'Int'
@@ -5397,7 +5397,7 @@ KtNameReferenceExpression(2569,2573): 'Anno'
 KtContextReceiverList(2574,2586): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2582,2585): 'Int'
+KtParameter(2582,2585): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2582,2585): 'Int'
@@ -5508,7 +5508,7 @@ KtNameReferenceExpression(2610,2614): 'Anno'
 KtContextReceiverList(2615,2627): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2623,2626): 'Int'
+KtParameter(2623,2626): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2623,2626): 'Int'
@@ -5622,7 +5622,7 @@ KtNameReferenceExpression(2652,2656): 'Anno'
 KtContextReceiverList(2657,2669): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2665,2668): 'Int'
+KtParameter(2665,2668): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2665,2668): 'Int'
@@ -5745,7 +5745,7 @@ KtNameReferenceExpression(2707,2711): 'Anno'
 KtContextReceiverList(2712,2724): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2720,2723): 'Int'
+KtParameter(2720,2723): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2720,2723): 'Int'
@@ -5880,7 +5880,7 @@ KtNameReferenceExpression(2781,2785): 'Anno'
 KtContextReceiverList(2786,2798): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2794,2797): 'Int'
+KtParameter(2794,2797): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2794,2797): 'Int'
@@ -6012,7 +6012,7 @@ KtNameReferenceExpression(2841,2845): 'Anno'
 KtContextReceiverList(2846,2858): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2854,2857): 'Int'
+KtParameter(2854,2857): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2854,2857): 'Int'
@@ -6223,7 +6223,7 @@ KtNameReferenceExpression(2891,2895): 'Anno'
 KtContextReceiverList(2896,2908): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2904,2907): 'Int'
+KtParameter(2904,2907): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2904,2907): 'Int'
@@ -6343,7 +6343,7 @@ KtNameReferenceExpression(2950,2954): 'Anno'
 KtContextReceiverList(2955,2967): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(2963,2966): 'Int'
+KtParameter(2963,2966): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(2963,2966): 'Int'
@@ -6481,7 +6481,7 @@ KtNameReferenceExpression(2998,3002): 'Anno'
 KtContextReceiverList(3003,3015): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(3011,3014): 'Int'
+KtParameter(3011,3014): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(3011,3014): 'Int'
@@ -6616,7 +6616,7 @@ KtNameReferenceExpression(3043,3047): 'Anno'
 KtContextReceiverList(3048,3060): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(3056,3059): 'Int'
+KtParameter(3056,3059): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(3056,3059): 'Int'
@@ -6736,7 +6736,7 @@ KtNameReferenceExpression(3084,3088): 'Anno'
 KtContextReceiverList(3089,3101): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(3097,3100): 'Int'
+KtParameter(3097,3100): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(3097,3100): 'Int'

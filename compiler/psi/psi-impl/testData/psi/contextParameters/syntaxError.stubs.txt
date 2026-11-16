@@ -43,7 +43,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SyntaxErrorKt]]
     CLASS_BODY
       MODIFIER_LIST[]
         CONTEXT_PARAMETER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=constructor]
@@ -63,7 +63,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SyntaxErrorKt]]
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=c]

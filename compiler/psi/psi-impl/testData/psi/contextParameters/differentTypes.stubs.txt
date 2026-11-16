@@ -199,7 +199,7 @@ Foo.kt:
                             REFERENCE_EXPRESSION[referencedName=Anno]
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
-                      CONTEXT_RECEIVER[label=null]
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Int]
@@ -212,7 +212,7 @@ Foo.kt:
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
-                      CONTEXT_RECEIVER[label=null]
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=String]
@@ -242,7 +242,7 @@ Foo.kt:
                             REFERENCE_EXPRESSION[referencedName=Anno]
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
-                      CONTEXT_RECEIVER[label=null]
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Int]
@@ -255,7 +255,7 @@ Foo.kt:
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
-                      CONTEXT_RECEIVER[label=null]
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=String]
@@ -274,7 +274,7 @@ Foo.kt:
                       REFERENCE_EXPRESSION[referencedName=Anno]
             FUNCTION_TYPE
               CONTEXT_PARAMETER_LIST
-                CONTEXT_RECEIVER[label=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]

@@ -1,2 +1,2 @@
-context(`<unused var>`@kotlin.Int, String@kotlin.String)
+context(String@kotlin.String, `<unused var>`@kotlin.Int)
 fun foo()

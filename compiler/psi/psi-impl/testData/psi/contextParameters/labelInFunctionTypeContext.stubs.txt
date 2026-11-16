@@ -8,7 +8,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=LabelInFunctionTypeContextKt
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
         TYPE_REFERENCE
           CONTEXT_PARAMETER_LIST
-            CONTEXT_RECEIVER[label=null]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=label]

@@ -1,82 +1,31 @@
-KaNamedFunctionSymbol:
-  anchorPsi: KtNamedFunction
+KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
-  callableId: /foo
-  contextParameters: [
-    KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
-      annotations: []
-      callableId: null
-      contextParameters: []
-      contextReceivers: []
-      isActual: false
-      isCompanion: false
-      isDelegated: false
-      isExpect: false
-      isExtension: false
-      isExternal: false
-      isVal: true
-      location: LOCAL
-      modality: FINAL
-      name: String
-      origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
-      receiverParameter: null
-      returnType: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: kotlin/String
-      typeParameters: []
-      visibility: PUBLIC
-      getContainingFileSymbol: KaFileSymbol(contextReceiverOnFunction.kt)
-      getContainingJvmClassName: ContextReceiverOnFunctionKt
-      getContainingModule: KaSourceModule "Sources of main"
-      deprecation: null
-      importableFqName: null
-  ]
-  contextReceivers: [
-    KaContextReceiver:
-      label: String
-      type: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: kotlin/String
-  ]
-  contractEffects: []
-  hasStableParameterNames: true
+  callableId: null
+  contextParameters: []
+  contextReceivers: []
   isActual: false
-  isBuiltinFunctionInvoke: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: TOP_LEVEL
+  isVal: true
+  location: LOCAL
   modality: FINAL
-  name: foo
+  name: String
   origin: SOURCE
-  psi: KtNamedFunction
-  realPsi: KtNamedFunction
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/Unit
+    type: kotlin/String
   typeParameters: []
-  valueParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextReceiverOnFunction.kt)
   getContainingJvmClassName: ContextReceiverOnFunctionKt
-  canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  returnValueStatus: Unspecified
-  javaMethodName: foo
-  importableFqName: foo
+  importableFqName: null

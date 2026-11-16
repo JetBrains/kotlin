@@ -778,7 +778,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 }
             } else if (atWithRemap(KtTokens.CONTEXT_KEYWORD) && annotationParsingMode.allowContextList && lookahead(1) === KtTokens.LPAR) {
                 val contextMarker = mark()
-                if (!parseContextParameterOrReceiverList(false) && localDeclaration) {
+                if (!parseContextParameterList(false) && localDeclaration) {
                     // Rollback the entire context declaration to make it possible to prevent parsing of potential local declarations
                     // that in fact are not declarations (we are trying to parse declarations at first and statements as second).
                     contextMarker.rollbackTo()
@@ -852,16 +852,16 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
     /**
      * ```
-     * contextReceiverList
-     *   : "context" "(" (contextReceiver{","})+ ")"
+     * contextParameterList
+     *   : "context" "(" (contextParameter{","})+ ")"
      * ```
      *
-     * @return `true` if it parsed a context with value parameters
-     * Otherwise returns `false` if it parsed a context with type refs (that work as receivers) or encountered a syntax error during parsing.
+     * @return `false` if it encountered a syntax error or a context parameter without a name on a declaration,
+     * as in `context(String) fun foo()`, and `true` otherwise.
      */
-    private fun parseContextParameterOrReceiverList(inFunctionType: Boolean): Boolean {
+    private fun parseContextParameterList(inFunctionType: Boolean): Boolean {
         require(atWithRemap(KtTokens.CONTEXT_KEYWORD))
-        val contextReceiverList = mark()
+        val contextParameterList = mark()
         advance() // CONTEXT_KEYWORD
 
         require(at(KtTokens.LPAR))
@@ -874,35 +874,34 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             advance() // RPAR
             noError = false
         } else {
-            // Treat parsing of context receivers (deprecated syntax) as an error,
+            // Treat a context parameter without a name on a declaration (the syntax of legacy context receivers) as an error,
             // But an outer caller decides if the entire list should be dropped:
             // If we're trying to parse a local declaration, we should drop it to prevent unexpected parsing of ahead declarations
-            noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET) { parseValueParameterOrTypeRef(inFunctionType) }
+            noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET) { parseContextParameter(inFunctionType) }
         }
 
-        contextReceiverList.done(KtNodeTypes.CONTEXT_PARAMETER_LIST)
+        contextParameterList.done(KtNodeTypes.CONTEXT_PARAMETER_LIST)
         return noError
     }
 
     /**
      * ```
-     * contextReceiver
-     *   : label? typeReference
+     * contextParameter
+     *   : functionParameter
+     *   : typeReference
+     *   ;
      * ```
      *
-     * @return `true` if it parsed a value parameter or type ref in the correct position (in function type) and `false` otherwise.
+     * @return `false` if it parsed a context parameter without a name on a declaration, and `true` otherwise.
      */
-    private fun parseValueParameterOrTypeRef(inFunctionType: Boolean): Boolean {
+    private fun parseContextParameter(inFunctionType: Boolean): Boolean {
         if (tryParseValueParameter(true)) {
             return true
         }
 
-        val contextReceiver = mark()
-        if (!inFunctionType && expressionParsing.isAtLabelDefinitionOrMissingIdentifier) {
-            expressionParsing.parseLabelDefinition()
-        }
+        val contextParameter = mark()
         parseTypeRef()
-        contextReceiver.done(KtNodeTypes.CONTEXT_RECEIVER)
+        closeDeclarationWithCommentBinders(contextParameter, KtNodeTypes.VALUE_PARAMETER, false)
         return inFunctionType
     }
 
@@ -2411,7 +2410,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val contextReceiversStart = mark()
 
         if (withContextReceiver) {
-            parseContextParameterOrReceiverList(true)
+            parseContextParameterList(true)
         }
 
         var typeElementMarker = mark()

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
- * The class representing a context parameter list in a declaration or functional type.
+ * The class representing a context parameter list in a declaration or function type.
  *
  * ### Example
  * ```kotlin
@@ -19,10 +19,13 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  * context(c: Context) // named context parameter
  * fun withNamedContext() {}
  *
- * context(_: Context) // unnamed context parameter
- * fun withUnnamedContext() {}
+ * context(_: Context) // anonymous context parameter
+ * fun withAnonymousContext() {}
  *
- * val myAction: context(Context) () -> Unit = {} // context parameter on a functional type doesn't have names
+ * val myAction: context(Context) () -> Unit = {} // context parameter on a function type doesn't have a name
+ *
+ * context(Context) // error: context parameter without a name (the syntax of legacy context receivers)
+ * fun withLegacyContextReceiver() {}
  * ```
  *
  * [KEEP-367](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0367-context-parameters.md)
@@ -41,8 +44,6 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
 
     /**
      * Returns the context parameters within the list.
-     *
-     * Note that [KtFunctionType] still uses [contextReceivers] for compatibility with K1.
      */
     @Deprecated(
         message = "Use 'contextParameters' instead",
@@ -53,17 +54,12 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
 
     /**
      * Returns the context parameters within the list.
-     *
-     * Note that [KtFunctionType] still uses [contextReceivers] for compatibility with K1.
      */
     val contextParameters: List<KtParameter>
         get() = getStubOrPsiChildren(KtNodeTypes.VALUE_PARAMETER, KtParameter.EMPTY_ARRAY).asList()
 
     /**
-     * Returns the context receivers within the list.
-     *
-     * This API is obsolete for declarations ([contextParameters] has to be used instead), but it is still used for [KtFunctionType] for
-     * compatibility with K1.
+     * Returns an empty list: context receivers are parsed as context parameters without names, which [contextParameters] returns.
      *
      * This API will be removed in the future (together with [KtContextReceiver]).
      *
@@ -73,20 +69,15 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
         getStubOrPsiChildren(KtNodeTypes.CONTEXT_RECEIVER, KtContextReceiver.EMPTY_ARRAY).asList()
 
     /**
-     * Returns the list of type references from context receivers.
+     * Returns the type references of the [contextParameters].
      *
-     * This API is obsolete for declarations ([contextParameters] has to be used instead), but it is still used for [KtFunctionType] for
-     * compatibility with K1.
-     *
-     * This API will be removed in the future (together with [KtContextReceiver]).
-     *
-     * @see contextReceivers
+     * @see contextParameters
      */
-    fun typeReferences(): List<KtTypeReference> = contextReceivers().mapNotNull { it.typeReference() }
+    fun typeReferences(): List<KtTypeReference> = contextParameters.mapNotNull { it.typeReference }
 
     /**
      * Returns the owner declaration of the context parameter list.
-     * The owner would be null in the case of context parameter on a functional type.
+     * The owner would be null in the case of context parameter on a function type.
      * ```kotlin
      * fun foo(action: context(Int) () -> Unit
      * ```

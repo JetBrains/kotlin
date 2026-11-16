@@ -103,7 +103,7 @@ FILE: unsupportedContextParameters.kt
     context(R|kotlin/String|)
     public final fun contextReceiverSyntax(): R|kotlin/Unit| {
     }
-    context(<unused var>: R|kotlin/Int|, R|kotlin/String|)
+    context(R|kotlin/String|, <unused var>: R|kotlin/Int|)
     public final fun mixedSyntax(): R|kotlin/Unit| {
     }
     context(R|kotlin/String|)

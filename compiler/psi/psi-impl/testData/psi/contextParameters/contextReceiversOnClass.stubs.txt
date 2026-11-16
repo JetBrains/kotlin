@@ -6,11 +6,11 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/ContextReceiversOnClass, fqName=ContextReceiversOnClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ContextReceiversOnClass, superNames=[]]
     MODIFIER_LIST[private open]
       CONTEXT_PARAMETER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=A]
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]

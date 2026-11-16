@@ -18,6 +18,37 @@ KaNamedFunctionSymbol:
       isVal: true
       location: LOCAL
       modality: FINAL
+      name: String
+      origin: SOURCE
+      psi: KtParameter
+      realPsi: KtParameter
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(functionWithMixedContextList.kt)
+      getContainingJvmClassName: FunctionWithMixedContextListKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+    KaContextParameterSymbol:
+      anchorPsi: KtParameter
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      isActual: false
+      isCompanion: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
       name: <unused var>
       origin: SOURCE
       psi: KtParameter
@@ -37,17 +68,17 @@ KaNamedFunctionSymbol:
   ]
   contextReceivers: [
     KaContextReceiver:
-      label: <unused var>
-      type: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: kotlin/Int
-    KaContextReceiver:
       label: String
       type: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
+    KaContextReceiver:
+      label: <unused var>
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
   ]
   contractEffects: []
   hasStableParameterNames: true

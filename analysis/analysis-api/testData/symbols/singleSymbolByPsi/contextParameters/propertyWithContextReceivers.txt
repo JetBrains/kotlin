@@ -37,7 +37,7 @@ KaKotlinPropertySymbol:
   callableId: /foo
   contextParameters: [
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -53,8 +53,8 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: String
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -68,7 +68,7 @@ KaKotlinPropertySymbol:
       deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -84,8 +84,8 @@ KaKotlinPropertySymbol:
       modality: FINAL
       name: List
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
