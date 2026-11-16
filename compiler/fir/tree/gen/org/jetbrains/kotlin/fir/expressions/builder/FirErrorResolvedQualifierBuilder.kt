@@ -48,6 +48,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override var originalNameForContextSensitiveResolution: Name? = null
     override val typeArguments: MutableList<FirTypeProjection> = []
     lateinit var diagnostic: ConeDiagnostic
+    var wasResolutionTowerExhausted: Boolean = false
 
     override fun build(): FirErrorResolvedQualifier {
         return FirErrorResolvedQualifierImpl(
@@ -68,6 +69,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             originalNameForContextSensitiveResolution,
             typeArguments.toMutableOrEmpty(),
             diagnostic,
+            wasResolutionTowerExhausted,
         )
     }
 

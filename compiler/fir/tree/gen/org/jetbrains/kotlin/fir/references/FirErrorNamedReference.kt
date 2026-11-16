@@ -23,6 +23,12 @@ abstract class FirErrorNamedReference : FirNamedReference(), FirDiagnosticHolder
     abstract override val source: KtSourceElement?
     abstract override val name: Name
     abstract override val diagnostic: ConeDiagnostic
+    /**
+     * Whether all tower levels/scopes were processed when trying to resolve the reference.
+     * In other words, it means "if there would be another tower level with a successful candidate, would it be chosen".
+     * Currently, it's used only to understand if we need to run context-sensitive resolution for the reference.
+     */
+    abstract val wasResolutionTowerExhausted: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitErrorNamedReference(this, data)

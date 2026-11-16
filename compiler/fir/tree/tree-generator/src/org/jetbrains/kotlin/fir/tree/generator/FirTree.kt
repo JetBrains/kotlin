@@ -1461,6 +1461,14 @@ object FirTree : AbstractFirTreeBuilder() {
     val errorResolvedQualifier: Element by element(Expression) {
         parent(resolvedQualifier)
         parent(diagnosticHolder)
+
+        +field("wasResolutionTowerExhausted", boolean) {
+            kDoc = """
+                Whether all tower levels/scopes were processed when trying to resolve the qualifier.
+                In other words, it means "if there would be another tower level with a successful candidate, would it be chosen".
+                Currently, it's used only to understand if we need to run context-sensitive resolution for the qualifiers.
+            """.trimIndent()
+        }
     }
 
     val resolvedReifiedParameterReference: Element by element(Expression) {
@@ -1646,11 +1654,27 @@ object FirTree : AbstractFirTreeBuilder() {
 
         parent(resolvedNamedReference)
         parent(diagnosticHolder)
+
+        +field("wasResolutionTowerExhausted", boolean) {
+            kDoc = """
+                Whether all tower levels/scopes were processed when trying to resolve the reference.
+                In other words, it means "if there would be another tower level with a successful candidate, would it be chosen".
+                Currently, it's used only to understand if we need to run context-sensitive resolution for the reference.
+            """.trimIndent()
+        }
     }
 
     val errorNamedReference: Element by element(Reference) {
         parent(namedReference)
         parent(diagnosticHolder)
+
+        +field("wasResolutionTowerExhausted", boolean) {
+            kDoc = """
+                Whether all tower levels/scopes were processed when trying to resolve the reference.
+                In other words, it means "if there would be another tower level with a successful candidate, would it be chosen".
+                Currently, it's used only to understand if we need to run context-sensitive resolution for the reference.
+            """.trimIndent()
+        }
     }
 
     val errorSuperReference: Element by element(Reference) {

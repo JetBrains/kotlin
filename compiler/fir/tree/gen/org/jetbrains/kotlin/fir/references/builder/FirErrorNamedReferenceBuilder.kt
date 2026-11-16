@@ -23,12 +23,14 @@ class FirErrorNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var diagnostic: ConeDiagnostic
+    var wasResolutionTowerExhausted: Boolean = false
 
     fun build(): FirErrorNamedReference {
         return FirErrorNamedReferenceImpl(
             source,
             name,
             diagnostic,
+            wasResolutionTowerExhausted,
         )
     }
 

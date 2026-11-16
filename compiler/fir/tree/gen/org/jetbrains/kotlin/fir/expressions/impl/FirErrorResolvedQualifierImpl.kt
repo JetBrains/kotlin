@@ -48,6 +48,7 @@ internal class FirErrorResolvedQualifierImpl(
     override var originalNameForContextSensitiveResolution: Name?,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override val diagnostic: ConeDiagnostic,
+    override val wasResolutionTowerExhausted: Boolean,
 ) : FirErrorResolvedQualifier() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

@@ -321,6 +321,11 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(resolvedErrorReference) {
             defaultNull("resolvedSymbolOrigin")
+            default("wasResolutionTowerExhausted", "false")
+        }
+
+        builder(errorNamedReference) {
+            default("wasResolutionTowerExhausted", "false")
         }
 
         builder(resolvedCallableReference) {
@@ -444,6 +449,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(errorResolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
             defaultFalse("isNullableLhsForCallableReference")
+            defaultFalse("wasResolutionTowerExhausted")
             defaultNull("resolvedSymbolOrigin")
         }
 

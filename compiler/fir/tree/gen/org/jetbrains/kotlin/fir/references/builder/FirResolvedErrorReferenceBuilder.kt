@@ -27,6 +27,7 @@ class FirResolvedErrorReferenceBuilder {
     lateinit var resolvedSymbol: FirBasedSymbol<*>
     var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
     lateinit var diagnostic: ConeDiagnostic
+    var wasResolutionTowerExhausted: Boolean = false
 
     fun build(): FirResolvedErrorReference {
         return FirResolvedErrorReferenceImpl(
@@ -35,6 +36,7 @@ class FirResolvedErrorReferenceBuilder {
             resolvedSymbol,
             resolvedSymbolOrigin,
             diagnostic,
+            wasResolutionTowerExhausted,
         )
     }
 
