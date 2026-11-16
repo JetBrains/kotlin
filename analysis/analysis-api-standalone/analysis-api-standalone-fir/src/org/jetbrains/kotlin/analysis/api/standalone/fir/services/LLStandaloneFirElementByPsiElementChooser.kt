@@ -139,7 +139,9 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
         }
 
         firParameters.forEachZipped(psiParameters) { expectedParameter, candidateParameter ->
-            if (expectedParameter.name.toString() != candidateParameter.name) return false
+            // A context parameter without a name is a legacy context receiver, which gets its name in FIR
+            val candidateName = candidateParameter.name
+            if (candidateName != null && expectedParameter.name.toString() != candidateName) return false
             if (expectedParameter.isVararg != candidateParameter.isVarArg) return false
             val candidateParameterType = candidateParameter.typeReference ?: return false
             if (!isTheSameTypes(candidateParameterType, expectedParameter.returnTypeRef, isVararg = expectedParameter.isVararg)) {
