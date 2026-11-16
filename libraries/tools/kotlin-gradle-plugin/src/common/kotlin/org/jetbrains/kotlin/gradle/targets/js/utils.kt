@@ -33,10 +33,10 @@ const val META_JS = "meta.js"
 const val HTML = "html"
 
 // The K/Wasm compiler exports the unit test runner under these names; the all lowercase WASI name is required by the Wasm component model
-internal const val WASM_JS_START_UNIT_TESTS_EXPORT = "startUnitTests"
 internal const val WASM_WASI_START_UNIT_TESTS_EXPORT = "startunittests"
+internal const val WASM_JS_START_UNIT_TESTS_EXPORT = "startUnitTests"
 
-internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File, startUnitTestsExport: String): File {
+internal fun writeWasmJsUnitTestRunner(workingDir: File, compiledFile: File): File {
     val static = workingDir.resolve("static").also {
         it.mkdirs()
     }
@@ -45,7 +45,7 @@ internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File, start
     testRunnerFile.writeText(
         """
         import * as exports from './${compiledFile.relativeTo(static).invariantSeparatorsPath}';
-        exports["startUnitTests"]?.();
+        exports["$WASM_JS_START_UNIT_TESTS_EXPORT"]?.();
         """.trimIndent()
     )
     return testRunnerFile

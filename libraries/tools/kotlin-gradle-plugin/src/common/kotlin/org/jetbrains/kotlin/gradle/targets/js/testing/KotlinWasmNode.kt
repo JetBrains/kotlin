@@ -51,10 +51,9 @@ internal class KotlinWasmNode(
         nodeJsArgs: MutableList<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
-        val testRunnerFile = writeWasmUnitTestRunner(
+        val testRunnerFile = writeWasmJsUnitTestRunner(
             workingDir = launchOpts.workingDir.getFile(),
             compiledFile = task.inputFileProperty.get().asFile,
-            startUnitTestsExport = WASM_JS_START_UNIT_TESTS_EXPORT,
         )
 
         val clientSettings = TCServiceMessagesClientSettings(
