@@ -32,10 +32,12 @@ class JsPlainObjectsRuntimeClasspathProvider(testServices: TestServices) : Runti
     }
 }
 
-fun TestConfigurationBuilder.configureForKotlinxJsPlainObjects() {
+fun TestConfigurationBuilder.configureForKotlinxJsPlainObjects(addNoFirCompilationErrorsHandler: Boolean) {
     useConfigurators(::JsPlainObjectsEnvironmentConfigurator)
     useCustomRuntimeClasspathProviders(::JsPlainObjectsRuntimeClasspathProvider)
     configureFirHandlersStep {
-        useHandlers(::NoFirCompilationErrorsHandler)
+        if (addNoFirCompilationErrorsHandler) {
+            useHandlers(::NoFirCompilationErrorsHandler)
+        }
     }
 }
