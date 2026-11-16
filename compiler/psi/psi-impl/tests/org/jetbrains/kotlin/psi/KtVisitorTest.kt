@@ -88,6 +88,7 @@ class KtVisitorTest : KotlinTestWithEnvironment() {
                 contextParameterListVisited = true
             }
 
+            @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
             override fun visitContextReceiverList(contextReceiverList: KtContextReceiverList) {
                 contextReceiverListVisited = true
             }

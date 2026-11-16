@@ -135,8 +135,15 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType CONSTRUCTOR_CALLEE = new KtNodeType("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression::new);
 
+    /**
+     * @deprecated This element type is obsolete: context receivers are parsed as {@link #VALUE_PARAMETER} elements without names.
+     */
+    @Deprecated
     @NotNull KtNodeType CONTEXT_RECEIVER = new KtNodeType("CONTEXT_RECEIVER", KtContextReceiver::new);
 
+    // `KtContextReceiverList` is deprecated, but every context parameter list is still created as one until KT-91991,
+    // so the hidden `getContextReceiverList()` accessors and `visitContextReceiverList` overrides keep working
+    @SuppressWarnings("deprecation")
     @NotNull KtNodeType CONTEXT_PARAMETER_LIST = new KtNodeType("CONTEXT_PARAMETER_LIST", KtContextReceiverList::new);
 
     @NotNull KtNodeType NULL               = new KtNodeType("NULL", KtConstantExpression::new);

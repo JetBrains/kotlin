@@ -1873,7 +1873,8 @@ open class PsiRawFirBuilder(
 
             // We're abusing the value parameter name for the type name of legacy context receivers.
             // Luckily, legacy context receivers are getting removed soon.
-            this.name = typeReference?.nameForReceiverLabel()?.let(Name::identifier) ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            this.name = (typeReference?.typeElement as? KtUserType)?.referencedName?.let(Name::identifier)
+                ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
             this.symbol = FirValueParameterSymbol()
             this@PsiRawFirBuilder.context.withContainerSymbol(this.symbol) {
                 this.returnTypeRef = typeReference.toFirOrErrorType()

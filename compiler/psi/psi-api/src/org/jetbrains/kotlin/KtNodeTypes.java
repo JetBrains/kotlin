@@ -33,8 +33,13 @@ public interface KtNodeTypes {
     @NotNull IElementType SCRIPT_INITIALIZER     = KtStubBasedElementTypes.SCRIPT_INITIALIZER;
     @NotNull IElementType SECONDARY_CONSTRUCTOR  = KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR;
     @NotNull IElementType PRIMARY_CONSTRUCTOR    = KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR;
-    @NotNull IElementType CONTEXT_RECEIVER       = KtStubBasedElementTypes.CONTEXT_RECEIVER;
     @NotNull IElementType CONTEXT_PARAMETER_LIST = KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST;
+
+    /**
+     * @deprecated This element type is obsolete: context receivers are parsed as {@link #VALUE_PARAMETER} elements without names.
+     */
+    @Deprecated
+    @NotNull IElementType CONTEXT_RECEIVER = KtStubBasedElementTypes.CONTEXT_RECEIVER;
 
     /**
      * @deprecated Use {@link #CONTEXT_PARAMETER_LIST} instead.

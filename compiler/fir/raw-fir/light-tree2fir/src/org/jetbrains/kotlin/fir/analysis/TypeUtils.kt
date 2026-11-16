@@ -15,7 +15,6 @@ fun SyntaxId.isExpression(): Boolean = when (this) {
     KotlinSyntaxNodeTypeIds.INITIALIZER_LIST,
     KotlinSyntaxNodeTypeIds.VALUE_PARAMETER_LIST,
     KotlinSyntaxNodeTypeIds.CONTEXT_PARAMETER_LIST,
-    KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER,
     KotlinSyntaxNodeTypeIds.TYPE_PARAMETER_LIST,
     KotlinSyntaxNodeTypeIds.TYPE_CONSTRAINT_LIST,
     KotlinSyntaxNodeTypeIds.TYPE_CONSTRAINT,

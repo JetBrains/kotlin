@@ -50,10 +50,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
     @Override
     public List<KtTypeReference> getTypeArgumentsAsTypes() {
         List<KtTypeReference> result = new ArrayList<>();
-        List<KtTypeReference> contextReceiversTypeRefs = getContextReceiversTypeReferences();
-        if (contextReceiversTypeRefs != null) {
-            result.addAll(contextReceiversTypeRefs);
-        }
+        result.addAll(getContextParameterTypeReferences());
         KtTypeReference receiverTypeRef = getReceiverTypeReference();
         if (receiverTypeRef != null) {
             result.add(receiverTypeRef);
@@ -143,14 +140,41 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
         return getStubOrPsiChild(KtNodeTypes.CONTEXT_PARAMETER_LIST, KtContextParameterList.class);
     }
 
-    /** Returns the type references of the context receivers declared for this function type, or an empty list if there are none. */
+    /**
+     * Returns the type references of the context parameters declared for this function type, or an empty list if there are none.
+     *
+     * @deprecated Use {@link #getContextParameterList()} instead. This method is named after context receivers, which are parsed
+     * as context parameters without names.
+     */
+    @kotlin.Deprecated(
+            message = "Use 'getContextParameterList()' instead. This method is named after context receivers, which are parsed as context parameters without names.",
+            replaceWith = @ReplaceWith(
+                    expression = "contextParameterList?.contextParameters?.mapNotNull { it.typeReference }.orEmpty()",
+                    imports = {}
+            ),
+            level = DeprecationLevel.WARNING
+    )
+    @Deprecated
     public List<KtTypeReference> getContextReceiversTypeReferences() {
+        return getContextParameterTypeReferences();
+    }
+
+    @NotNull
+    private List<KtTypeReference> getContextParameterTypeReferences() {
         KtContextParameterList contextParameterList = getContextParameterList();
-        if (contextParameterList != null) {
-            return contextParameterList.typeReferences();
-        } else {
+        if (contextParameterList == null) {
             return Collections.emptyList();
         }
+
+        List<KtTypeReference> result = new ArrayList<>();
+        for (KtParameter contextParameter : contextParameterList.getContextParameters()) {
+            KtTypeReference typeReference = contextParameter.getTypeReference();
+            if (typeReference != null) {
+                result.add(typeReference);
+            }
+        }
+
+        return result;
     }
 
     /** Returns the return type reference (the part after {@code ->}), or {@code null} if it is absent in incomplete code. */

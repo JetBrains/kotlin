@@ -65,14 +65,23 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
      *
      * @see contextParameters
      */
-    fun contextReceivers(): List<KtContextReceiver> =
-        getStubOrPsiChildren(KtNodeTypes.CONTEXT_RECEIVER, KtContextReceiver.EMPTY_ARRAY).asList()
+    @Deprecated(
+        message = "Use 'contextParameters' instead. Context receivers are parsed as context parameters without names.",
+        level = DeprecationLevel.WARNING,
+    )
+    @Suppress("DEPRECATION")
+    fun contextReceivers(): List<KtContextReceiver> = emptyList()
 
     /**
      * Returns the type references of the [contextParameters].
      *
      * @see contextParameters
      */
+    @Deprecated(
+        message = "Use 'contextParameters' instead.",
+        replaceWith = ReplaceWith("contextParameters.mapNotNull { it.typeReference }"),
+        level = DeprecationLevel.WARNING,
+    )
     fun typeReferences(): List<KtTypeReference> = contextParameters.mapNotNull { it.typeReference }
 
     /**

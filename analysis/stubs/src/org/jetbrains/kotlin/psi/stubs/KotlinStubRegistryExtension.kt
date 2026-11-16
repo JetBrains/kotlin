@@ -356,6 +356,9 @@ internal object KtStubElementFactories {
             psiFactory = ::KtConstructorCalleeExpression,
         )
 
+        // `KtContextReceiverList` is deprecated, but every context parameter list is still created as one until KT-91991,
+        // so the hidden `getContextReceiverList()` accessors and `visitContextReceiverList` overrides keep working
+        @Suppress("DEPRECATION")
         registerPlaceHolderFactory(
             type = KtStubElementTypes.CONTEXT_PARAMETER_LIST,
             psiFactory = ::KtContextReceiverList,
