@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.documentation.analyzer
 
-import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.documentation.*
 import kotlin.test.assertEquals
@@ -52,7 +51,14 @@ abstract class AbstractKdmKotlinSourceRoundTripTest {
             val resolved = fragment.copy(elements = fragment.elements.mapValues { entry ->
                 when (val element = resolve(module.name, entry.key)) {
                     is KdPackage -> element.copy(declarations = element.declarations.filter { it in declaredIds })
-                    else -> element
+                    is KdModule -> element
+                    is KdClass -> element
+                    is KdFunction -> element
+                    is KdConstructor -> element
+                    is KdProperty -> element
+                    is KdTypealias -> element
+                    is KdRefinedElement -> element
+                    is KdInheritedMember -> element
                 }
             })
             val declarationModifiers = modifiers.entries.associate { entry -> resolved.elements.getValue(entry.key) to entry.value }
@@ -65,74 +71,21 @@ abstract class AbstractKdmKotlinSourceRoundTripTest {
     }
 }
 
-private fun KdAnnotation.renderSource(): String =
-    classLikeId.value.split('/')[1] + if (arguments.isEmpty()) "" else
-        arguments.entries.joinToString(", ", "(", ")") { entry -> "${entry.key} = ${entry.value.renderSource()}" }
-
-private fun KdAnnotationArgumentValue.renderSource(): String = when (this) {
-    is KdAnnotationArgumentValue.Annotation -> annotation.renderSource()
-    is KdAnnotationArgumentValue.Array -> elements.joinToString(", ", "[", "]") { it.renderSource() }
-    is KdAnnotationArgumentValue.Classlike -> classLikeId.value.split('/')[1] + "::class"
-    is KdAnnotationArgumentValue.EnumEntry -> enumEntryId.value.split('/').let { parts ->
-        parts[1] + parts[2].takeIf(String::isNotEmpty)?.let { name -> ".$name" }.orEmpty()
-    }
-    is KdAnnotationArgumentValue.Const -> when (val value = expression.value) {
-        is KdConstValue.String -> JsonPrimitive(value.value).toString()
-        is KdConstValue.Boolean -> value.value.toString()
-        is KdConstValue.Int -> value.value.toString()
-        is KdConstValue.Long -> "${value.value}L"
-        is KdConstValue.Float -> "${value.value}f"
-        is KdConstValue.Double -> value.value.toString()
-        else -> error("Unsupported annotation constant: $value")
-    }
-}
-
 /** Canonical declaration-only source used by the round-trip fixtures. */
 private fun KdFragment.renderKotlinSource(declarationModifiers: Map<KdElement, String>): String = buildString {
-    fun typeParameters(parameters: List<KdTypeParameter>): String =
-        if (parameters.isEmpty()) "" else parameters.joinToString(", ", "<", ">") { parameter ->
-            val variance = parameter.variance?.name?.lowercase()?.plus(" ").orEmpty()
-            val bounds = parameter.upperBounds.filterNot { it.render() == "Any?" }
-            require(bounds.size <= 1) { "Multiple bounds need a where clause" }
-            (if (parameter.isReified) "reified " else "") + variance + parameter.name +
-                    bounds.singleOrNull()?.let { " : ${it.render()}" }.orEmpty()
-        }
-
-    fun receiver(parameter: KdExtensionReceiverParameter?): String =
-        parameter?.let { "${it.type.render()}." }.orEmpty()
-
     fun name(element: KdElement): String = when (element) {
         is KdClass -> element.name
         is KdFunction -> element.name
         is KdProperty -> element.name
         is KdTypealias -> element.name
-        else -> error("Unsupported source declaration: $element")
+        is KdConstructor, is KdPackage, is KdModule, is KdRefinedElement, is KdInheritedMember ->
+            error("Unsupported source declaration: $element")
     }
 
     fun sourceDeclarations(ids: List<KdElementId>): List<KdElement> =
         ids.map { elements.getValue(it) }.filterNot {
             it is KdInheritedMember || it is KdConstructor && it.isPrimary || it is KdProperty && it.isFromPrimaryConstructor
         }.sortedBy { name(it).lowercase() }
-
-    fun valueParameter(parameter: KdValueParameter): String {
-        val defaultValue = when (val expression = parameter.defaultValueExpression) {
-            null -> ""
-            is KdDefaultValueExpression.Defined -> " = ${expression.expression.text}"
-            is KdDefaultValueExpression.Inherited -> error("Inherited defaults must not be rendered as explicit defaults")
-        }
-        return parameter.annotations.joinToString("") { "@${it.renderSource()} " } +
-                (if (parameter.isNoinline) "noinline " else "") +
-                (if (parameter.isCrossinline) "crossinline " else "") +
-                (if (parameter.isVararg) "vararg " else "") + "${parameter.name}: ${parameter.type.render()}" + defaultValue
-    }
-
-    fun appendContextParameters(parameters: List<KdContextParameter>, indent: String) {
-        if (parameters.isEmpty()) return
-        append(parameters.joinToString(", ", "context(", ")\n") { parameter ->
-            "${parameter.name ?: "_"}: ${parameter.type.render()}"
-        })
-        append(indent)
-    }
 
     fun appendDeclarations(ids: List<KdElementId>, indent: String, inClass: Boolean = false, inExpectClass: Boolean = false) {
         // Inherited declarations are not source declarations.
@@ -145,33 +98,14 @@ private fun KdFragment.renderKotlinSource(declarationModifiers: Map<KdElement, S
                 is KdFunction -> element.annotations
                 is KdProperty -> element.annotations
                 is KdTypealias -> element.annotations
-                else -> emptyList()
+                is KdConstructor, is KdPackage, is KdModule, is KdRefinedElement, is KdInheritedMember -> emptyList()
             }
             annotations.forEach { append('@').append(it.renderSource()).append('\n').append(indent) }
             val modifier = declarationModifiers[element].orEmpty()
             if (!inExpectClass || modifier != "expect ") append(modifier)
             when (element) {
                 is KdClass -> {
-                    when (element.classKind) {
-                        KdClassKind.INTERFACE -> append("interface ")
-                        KdClassKind.ANNOTATION_CLASS -> append("annotation class ")
-                        KdClassKind.ENUM_CLASS -> append("enum class ")
-                        KdClassKind.OBJECT -> append(if (element.isCompanion) "companion object" else "object")
-                        KdClassKind.CLASS -> {
-                            when (element.modality) {
-                                KdModality.ABSTRACT -> append("abstract ")
-                                KdModality.OPEN -> append("open ")
-                                KdModality.SEALED -> append("sealed ")
-                                KdModality.FINAL -> Unit
-                            }
-                            append("class ")
-                        }
-                    }
-                    if (element.classKind == KdClassKind.OBJECT) {
-                        if (!element.isCompanion || element.name != "Companion") append(' ').append(element.name)
-                    } else {
-                        append(element.name).append(typeParameters(element.typeParameters))
-                    }
+                    appendSignature(element, elements, indent)
                     val members = element.declarations.map { elements.getValue(it) }
                     val enumEntries = if (element.classKind == KdClassKind.ENUM_CLASS) {
                         members.filterIsInstance<KdProperty>().filter {
@@ -185,24 +119,14 @@ private fun KdFragment.renderKotlinSource(declarationModifiers: Map<KdElement, S
                             is KdProperty -> member.name == "entries"
                             is KdFunction -> member.name == "values" && member.valueParameters.isEmpty() ||
                                     member.name == "valueOf" && member.valueParameters.singleOrNull()?.type?.render() == "String"
-                            else -> false
+                            is KdClass -> false
+                            is KdConstructor -> false
+                            is KdTypealias -> false
+                            is KdPackage -> false
+                            is KdModule -> false
+                            is KdRefinedElement -> false
+                            is KdInheritedMember -> false
                         })
-                    }
-                    val primaryConstructor = members.filterIsInstance<KdConstructor>().singleOrNull { it.isPrimary }
-                    if (primaryConstructor != null && primaryConstructor.valueParameters.isNotEmpty()) {
-                        val properties = members.filterIsInstance<KdProperty>()
-                            .filter { it.isFromPrimaryConstructor }.associateBy { it.name }
-                        append(primaryConstructor.valueParameters.joinToString(", ", "(", ")") { parameter ->
-                            val property = properties[parameter.name]
-                            (property?.let { if (it.isMutable) "var " else "val " }.orEmpty()) + valueParameter(parameter)
-                        })
-                    }
-                    val superTypes = element.superTypes.filterNot {
-                        element.classKind == KdClassKind.ENUM_CLASS &&
-                                (it as? KdClassLikeType)?.classLikeId?.value == "kotlin/Enum///PointingToDeclaration/"
-                    }
-                    if (superTypes.isNotEmpty()) {
-                        append(superTypes.joinToString(", ", " : ") { it.render() })
                     }
                     if (enumEntries.isEmpty() && sourceDeclarations(declarationIds).isEmpty()) {
                         append('\n')
@@ -221,48 +145,16 @@ private fun KdFragment.renderKotlinSource(declarationModifiers: Map<KdElement, S
                         append(indent).append("}\n")
                     }
                 }
-                is KdFunction -> {
-                    appendContextParameters(element.contextParameters, indent)
-                    if (inClass && element.modality == KdModality.ABSTRACT) append("abstract ")
-                    if (inClass && element.modality == KdModality.OPEN) append("open ")
-                    if (inClass && element.overridens.isNotEmpty() && element.modality == KdModality.FINAL) append("final ")
-                    if (element.overridens.isNotEmpty()) append("override ")
-                    if (element.isExternal) append("external ")
-                    if (element.isInline) append("inline ")
-                    if (element.isTailRec) append("tailrec ")
-                    if (element.isSuspend) append("suspend ")
-                    if (element.isOperator) append("operator ")
-                    if (element.isInfix) append("infix ")
-                    append("fun ")
-                    val parameters = typeParameters(element.typeParameters)
-                    if (parameters.isNotEmpty()) append(parameters).append(' ')
-                    append(receiver(element.extensionReceiverParameter)).append(element.name)
-                    append(element.valueParameters.joinToString(", ", "(", ")", transform = ::valueParameter))
-                    append(": ").append(element.returnType.render()).append('\n')
-                }
-                is KdProperty -> {
-                    appendContextParameters(element.contextParameters, indent)
-                    if (inClass && element.modality == KdModality.ABSTRACT) append("abstract ")
-                    if (inClass && element.modality == KdModality.OPEN) append("open ")
-                    if (inClass && element.overridens.isNotEmpty() && element.modality == KdModality.FINAL) append("final ")
-                    if (element.overridens.isNotEmpty()) append("override ")
-                    if (element.isExternal) append("external ")
-                    if (element.isInline) append("inline ")
-                    if (element.isLateinit) append("lateinit ")
-                    if (element.constExpression != null) append("const ")
-                    append(if (element.isMutable) "var " else "val ")
-                    val parameters = typeParameters(element.typeParameters)
-                    if (parameters.isNotEmpty()) append(parameters).append(' ')
-                    append(receiver(element.extensionReceiverParameter)).append(element.name)
-                    append(": ").append(element.type.render())
-                    element.constExpression?.let { append(" = ").append(requireNotNull(it.expression).text) }
+                is KdFunction, is KdProperty -> {
+                    appendSignature(element, elements, indent, inClass)
                     append('\n')
                 }
                 is KdTypealias -> {
-                    append("typealias ").append(element.name).append(typeParameters(element.typeParameters))
-                    append(" = ").append(element.underlyingType.render()).append('\n')
+                    appendSignature(element, elements, indent)
+                    append('\n')
                 }
-                else -> error("Unsupported source declaration: $element")
+                is KdConstructor, is KdPackage, is KdModule, is KdRefinedElement, is KdInheritedMember ->
+                    error("Unsupported source declaration: $element")
             }
         }
     }

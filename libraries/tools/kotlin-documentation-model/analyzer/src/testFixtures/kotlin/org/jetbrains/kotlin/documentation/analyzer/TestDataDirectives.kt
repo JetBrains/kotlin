@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.documentation.analyzer
 
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.documentation.KdBundle
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
