@@ -15,6 +15,7 @@ import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.model.JavaPrimitiveTypeOverAst
+import org.jetbrains.kotlin.java.direct.model.createJavaType
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.java.direct.resolution.resolveImportedClassName
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -39,7 +41,15 @@ internal data class StaticMemberReference(
 
 internal sealed interface MemberResolutionResult {
     data class EnumEntry(val enumClassId: ClassId, val entryName: Name) : MemberResolutionResult
-    data class Constant(val value: Any) : MemberResolutionResult
+
+    /**
+     * A constant variable (JLS 4.12.4). Its [value] is computed on first access, so a caller that only
+     * classifies an expression can check for [Constant] without evaluating the initializer. The value is
+     * `null` if evaluation fails.
+     */
+    class Constant(compute: () -> Any?) : MemberResolutionResult {
+        val value: Any? by lazy(LazyThreadSafetyMode.PUBLICATION, compute)
+    }
 
     /** A field that is found but is not a constant variable; it still shadows later scopes (JLS 6.4.1). */
     data object NonConstantField : MemberResolutionResult
@@ -165,6 +175,93 @@ class ConstantEvaluator private constructor(
         resolutionContext: JavaResolutionContext,
         customExternalConstantResolver: ExternalConstantResolver? = null,
     ) : this(tree, resolutionContext, resolutionContext.scopeContext.containingClass as? JavaClassOverAst, customExternalConstantResolver)
+
+    /**
+     * Checks whether [node] is a constant expression without evaluating references.
+     *
+     * It must accept exactly the forms [evaluate] handles. A separate value-free pass is needed
+     * because FIR queries `JavaField.hasConstantNotNullInitializer` during Java class
+     * enhancement, before the bodies of referenced Kotlin `const val`s are resolved. Evaluating them
+     * there would force premature body resolution or run into resolution cycles. References are
+     * resolved as in [evaluate], but the lazy [MemberResolutionResult.Constant] value is never read.
+     */
+    internal fun isConstantExpression(node: LightNode): Boolean = when (tree.getType(node)) {
+        JavaSyntaxElementType.LITERAL_EXPRESSION -> evaluateLiteral(node) != null
+        JavaSyntaxElementType.BINARY_EXPRESSION -> {
+            val children = constantExpressionChildren(node)
+            children.size == 3 && isConstantBinaryOperator(tree.getType(children[1])) &&
+                    isConstantExpression(children[0]) && isConstantExpression(children[2])
+        }
+        JavaSyntaxElementType.PREFIX_EXPRESSION -> {
+            val children = constantExpressionChildren(node)
+            children.size == 2 && isConstantPrefixOperator(tree.getType(children[0])) && isConstantExpression(children[1])
+        }
+        JavaSyntaxElementType.PARENTH_EXPRESSION -> {
+            val children = constantExpressionChildren(node)
+            val expression = children.firstOrNull {
+                tree.getType(it) != JavaSyntaxTokenType.LPARENTH && tree.getType(it) != JavaSyntaxTokenType.RPARENTH
+            }
+            expression != null && isConstantExpression(expression)
+        }
+        JavaSyntaxElementType.REFERENCE_EXPRESSION -> resolveReference(node) is MemberResolutionResult.Constant
+        JavaSyntaxElementType.POLYADIC_EXPRESSION -> {
+            val children = constantExpressionChildren(node)
+            children.size >= 3 && children.size % 2 == 1 &&
+                    children.indices.filter { it % 2 == 0 }.all { isConstantExpression(children[it]) } &&
+                    children.indices.filter { it % 2 == 1 }.all { isConstantBinaryOperator(tree.getType(children[it])) }
+        }
+        JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> isConstantTypeCastExpression(node)
+        else -> false
+    }
+
+    private fun constantExpressionChildren(node: LightNode): List<LightNode> =
+        tree.getChildren(node).filter {
+            tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE && tree.getType(it) !in JavaSyntaxDefinition.comments
+        }
+
+    private fun isConstantPrefixOperator(operator: SyntaxElementType): Boolean = when (operator) {
+        JavaSyntaxTokenType.MINUS, JavaSyntaxTokenType.PLUS, JavaSyntaxTokenType.TILDE, JavaSyntaxTokenType.EXCL -> true
+        else -> false
+    }
+
+    private fun isConstantBinaryOperator(operator: SyntaxElementType): Boolean = when (operator) {
+        JavaSyntaxTokenType.PLUS,
+        JavaSyntaxTokenType.MINUS,
+        JavaSyntaxTokenType.ASTERISK,
+        JavaSyntaxTokenType.DIV,
+        JavaSyntaxTokenType.PERC,
+        JavaSyntaxTokenType.GTGT,
+        JavaSyntaxTokenType.LTLT,
+        JavaSyntaxTokenType.GTGTGT,
+        JavaSyntaxTokenType.AND,
+        JavaSyntaxTokenType.OR,
+        JavaSyntaxTokenType.XOR,
+        JavaSyntaxTokenType.EQEQ,
+        JavaSyntaxTokenType.NE,
+        JavaSyntaxTokenType.LT,
+        JavaSyntaxTokenType.LE,
+        JavaSyntaxTokenType.GT,
+        JavaSyntaxTokenType.GE,
+        JavaSyntaxTokenType.ANDAND,
+        JavaSyntaxTokenType.OROR
+            -> true
+        else -> false
+    }
+
+    private fun isConstantTypeCastExpression(node: LightNode): Boolean {
+        val children = constantExpressionChildren(node)
+        val typeNode = children.firstOrNull { tree.getType(it) == JavaSyntaxElementType.TYPE } ?: return false
+        val castType = createJavaType(typeNode, tree, resolutionContext)
+        val classifierType = castType as? JavaClassifierType
+        val isStringType = classifierType?.classifierQualifiedName == "String" ||
+                classifierType?.classifierQualifiedName == "java.lang.String"
+        val isConstantCastType = castType is JavaPrimitiveTypeOverAst || isStringType
+        if (!isConstantCastType) return false
+        val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
+        if (rparenthIndex < 0) return false
+        val operand = children.getOrNull(rparenthIndex + 1) ?: return false
+        return isConstantExpression(operand)
+    }
 
     /**
      * Evaluates a constant expression node and returns the computed value.
@@ -327,9 +424,7 @@ class ConstantEvaluator private constructor(
                     ?: MemberResolutionResult.Unresolved(reference)
             }
         }
-        // No class adapter. If `resolvedClassId` is null, the qualifier is not a class java-direct
-        // resolves (a JVM facade, or a class FIR serves as a builtin). Otherwise the session has no
-        // symbol provider, which happens only in unit tests with the custom resolver hook.
+        // No class adapter: the qualifier is a JVM facade or a class FIR serves as a builtin.
         resolveExternalReference(reference.qualifier, resolvedClassId, reference.memberName)?.let { return it }
 
         // A Kotlin file facade is a JVM class, but it does not have a class symbol of its own.
@@ -343,18 +438,22 @@ class ConstantEvaluator private constructor(
         return MemberResolutionResult.Unresolved(reference)
     }
 
-    private fun resolveExternalReference(classQualifier: String, qualifierClassId: ClassId?, fieldName: String): MemberResolutionResult? {
+    private fun resolveExternalReference(
+        classQualifier: String,
+        qualifierClassId: ClassId?,
+        fieldName: String,
+    ): MemberResolutionResult? {
         val resolver = customExternalConstantResolver
-        return if (resolver != null) {
-            resolver.resolve(classQualifier, qualifierClassId, fieldName)?.let(MemberResolutionResult::Constant)
-        } else {
-            resolutionContext.fileContext.session.resolveExternalFieldValue(
-                classQualifier,
-                qualifierClassId,
-                fieldName,
-                resolutionContext.packageFqName,
-            )
+        if (resolver != null) {
+            val value = resolver.resolve(classQualifier, qualifierClassId, fieldName) ?: return null
+            return MemberResolutionResult.Constant { value }
         }
+        return resolutionContext.fileContext.session.resolveExternalFieldValue(
+            classQualifier,
+            qualifierClassId,
+            fieldName,
+            resolutionContext.packageFqName,
+        )
     }
 
     /**
@@ -394,7 +493,11 @@ class ConstantEvaluator private constructor(
     }
 
     /** Looks [memberName] up among the fields of [javaClass] and then of its supertypes (JLS 8.3). */
-    private fun findMember(javaClass: JavaClass, memberName: String, visited: MutableSet<ClassId>): MemberResolutionResult? {
+    private fun findMember(
+        javaClass: JavaClass,
+        memberName: String,
+        visited: MutableSet<ClassId>,
+    ): MemberResolutionResult? {
         val classId = javaClass.classId ?: return null
         if (!visited.add(classId)) return null
 
@@ -402,8 +505,8 @@ class ConstantEvaluator private constructor(
             val field = javaClass.fields.firstOrNull { it.name.asString() == memberName }
             if (field != null) {
                 if (field.isEnumEntry) return MemberResolutionResult.EnumEntry(classId, field.name)
-                return field.initializerValue?.let(MemberResolutionResult::Constant)
-                    ?: MemberResolutionResult.NonConstantField
+                return if (field.hasConstantNotNullInitializer) MemberResolutionResult.Constant { field.initializerValue }
+                else MemberResolutionResult.NonConstantField
             }
         } else {
             val session = resolutionContext.fileContext.session

@@ -21,7 +21,7 @@ import p.J
 fun box(): String {
     try {
         val s: String = J.S
-        return if ((s as String?) == null) "OK" else "FAIL: expected null"
+        return "FAIL: no null check, s == null is ${(s as String?) == null}"
     } catch (e: NullPointerException) {
         return "OK"
     }

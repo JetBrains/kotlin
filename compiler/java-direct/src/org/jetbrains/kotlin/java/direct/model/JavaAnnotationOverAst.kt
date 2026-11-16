@@ -117,7 +117,8 @@ internal fun createAnnotationArgumentFromValue(
             when (val resolution = ConstantEvaluator(tree, resolutionContext).resolveReference(valueNode)) {
                 is MemberResolutionResult.EnumEntry ->
                     JavaEnumValueAnnotationArgumentOverAst(name, resolution.enumClassId, resolution.entryName)
-                is MemberResolutionResult.Constant -> JavaLiteralAnnotationArgumentOverAst(name, resolution.value)
+                is MemberResolutionResult.Constant ->
+                    resolution.value?.let { JavaLiteralAnnotationArgumentOverAst(name, it) } ?: JavaUnknownAnnotationArgumentOverAst(name)
                 MemberResolutionResult.NonConstantField -> JavaUnknownAnnotationArgumentOverAst(name)
                 is MemberResolutionResult.Unresolved ->
                     createUnresolvedReferenceArgument(

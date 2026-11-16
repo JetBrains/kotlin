@@ -156,8 +156,7 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
 
         val field = parseFirstClass(source).fields.single { it.name.asString() == "VALUE" }
 
-        // The syntax-only check currently treats a qualified field reference as constant.
-        assertTrue(field.hasConstantNotNullInitializer)
+        assertFalse(field.hasConstantNotNullInitializer)
         assertEquals(null, field.initializerValue)
     }
 
