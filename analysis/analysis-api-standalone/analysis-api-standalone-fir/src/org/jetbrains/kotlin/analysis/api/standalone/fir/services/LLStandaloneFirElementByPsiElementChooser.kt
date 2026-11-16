@@ -158,26 +158,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
         return when {
             contextParameterList == null -> firContextParameters.isEmpty()
             firContextParameters.isEmpty() -> false
-            else -> {
-                val contextParameters = contextParameterList.contextParameters
-                if (contextParameters.isNotEmpty()) {
-                    return parametersMatch(firContextParameters, contextParameters)
-                }
-
-                val contextReceivers = contextParameterList.contextReceivers()
-                if (firContextParameters.size != contextReceivers.size) {
-                    return false
-                }
-
-                firContextParameters.forEachZipped(contextReceivers) { expectedParameter, candidateParameterType ->
-                    val typeReference = candidateParameterType.typeReference() ?: return false
-                    if (!isTheSameTypes(typeReference, expectedParameter.returnTypeRef, isVararg = false)) {
-                        return false
-                    }
-                }
-
-                true
-            }
+            else -> parametersMatch(firContextParameters, contextParameterList.contextParameters)
         }
     }
 
