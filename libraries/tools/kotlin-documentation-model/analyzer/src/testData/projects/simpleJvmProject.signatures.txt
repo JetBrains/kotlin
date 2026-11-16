@@ -1,5 +1,5 @@
 main:
-  class Greeter (declared)
+  class Greeter(val name: String) (declared)
     constructor(name: String) (declared)
     fun greet(): String (declared)
     val name: String (declared)

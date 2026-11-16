@@ -1,6 +1,6 @@
 commonMain:
   class Platform (declared)
-  class Shared (declared)
+  class Shared(val id: Int) (declared)
     constructor(id: Int) (declared)
     val id: Int (declared)
   fun platformName(): String (declared)
@@ -9,7 +9,7 @@ commonMain:
 jvmMain:
   class Platform (declared)
     constructor() (declared)
-  class Shared (declared)
+  class Shared(val id: Int) (declared)
     constructor(id: Int) (declared)
     val id: Int (declared)
   fun jvmOnly(): Int (declared)
