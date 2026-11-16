@@ -37,7 +37,7 @@ internal fun KdBundle.checkElementIds() {
 
 
     fun checkId(id: KdElementId, fragmentName: KdFragmentName, path: String) {
-        // TODO kotlin.any is not supertype in Documentable model,
+        // TODO KT-91717 kotlin.any is not supertype in Documentable model,
         // but Throwable.toString overrides Any.toString
         if (id.value.startsWith("kotlin/Any/") || id.value.startsWith("java.lang/Object/")) return
 
@@ -77,7 +77,7 @@ internal fun KdBundle.checkElementIds() {
 internal fun visitElementIds(value: Any?, path: String, checkId: (KdElementId, String) -> Unit) {
     when (value) {
         null -> Unit
-        is KdClassLikeType, is KdAnnotation, is KdThrows -> Unit // TODO support external links
+        is KdClassLikeType, is KdAnnotation, is KdThrows -> Unit // TODO KT-91717 support external links
         is KdElementId -> checkId(value, path)
         is Map<*, *> -> value.forEach { entry ->
             visitElementIds(entry.key, "$path.keys", checkId)

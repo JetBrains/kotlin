@@ -171,13 +171,13 @@ internal fun buildPropertyElement(
                 (property.setter == null || property.setter.extra.extraModifiersIn(sourceSet).contains(ExtraModifiers.KotlinOnlyModifiers.Inline)),
         isCompanion = property.extra[IsCompanion] != null,
         isExternal = ExtraModifiers.KotlinOnlyModifiers.External in mods || ExtraModifiers.JavaOnlyModifiers.Native in mods,
-        isSuspend = ExtraModifiers.KotlinOnlyModifiers.Suspend in mods, // TODO AA does not support `suspend` for properties
+        isSuspend = ExtraModifiers.KotlinOnlyModifiers.Suspend in mods, // TODO KT-91717 AA does not support `suspend` for properties
         isMutable = property.extra[IsVar] != null,
         isFromPrimaryConstructor = property.extra[IsAlsoParameter]?.inSourceSets.orEmpty().any { it.sourceSetID == sourceSet.sourceSetID },
         isLateinit = ExtraModifiers.KotlinOnlyModifiers.LateInit in mods,
         constExpression = if (ExtraModifiers.KotlinOnlyModifiers.Const in mods) {
             property.extra[DefaultValue]?.expression?.get(sourceSet)?.let { expression ->
-                // TODO add new const values: [UInt], [Chat], [Byte] and so on
+                // TODO KT-91717 add new const values: [UInt], [Chat], [Byte] and so on
                 val value = when (expression) {
                     is StringConstant -> KdConstValue.String(expression.value)
                     is IntegerConstant -> KdConstValue.Int(expression.value.toInt())
@@ -188,7 +188,7 @@ internal fun buildPropertyElement(
                 }
                 //
                 /**
-                 * TODO keep the original expression with links:
+                 * TODO KT-91717 keep the original expression with links:
                  * const val a = 1
                  * const val b = a
                  */
@@ -218,7 +218,7 @@ internal fun buildTypealiasElement(typeAlias: DTypeAlias, sourceSet: DokkaConfig
         name = typeAlias.name,
         typeParameters = typeAlias.generics.map { it.toKdTypeParameter(sourceSet) },
         underlyingType = requireNotNull(typeAlias.underlyingType[sourceSet]) { "Missing underlying type for ${typeAlias.dri} in $sourceSet" }.toKdType(sourceSet),
-        declarations = emptyList(), // TODO on Dokka's side
+        declarations = emptyList(), // TODO KT-91717 on Dokka's side
         visibility = typeAlias.visibility[sourceSet]?.toKdVisibility() ?: KdVisibility.PUBLIC,
         since = typeAlias.extra.sinceIn(typeAlias, sourceSet),
         deprecated = typeAlias.extra.deprecatedIn(typeAlias, sourceSet),

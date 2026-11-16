@@ -152,7 +152,7 @@ internal class DocumentableConverter(
     }
 
     fun assumeUniqueDRIinEachSourceSet(documentables: List<Documentable>): Boolean {
-        /** TODO case
+        /** TODO KT-91717 case
          *
          *```
          * // coomonMain
