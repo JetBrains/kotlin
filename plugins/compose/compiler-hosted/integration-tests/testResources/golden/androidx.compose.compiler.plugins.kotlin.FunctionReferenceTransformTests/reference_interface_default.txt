@@ -41,7 +41,7 @@ fun Ref(intf: Intf, content: Function3<Int, Composer, Int, Unit>, %composer: Com
           fun Fn(receiver: Intf, p0: @[ParameterName(name = 'int')] Int, %composer: Composer?, %changed: Int) {
             %composer.startReplaceGroup(<>)
             sourceInformation(%composer, "C(Fn)N(receiver,p0)<intf::...>:Test.kt")
-            Fn%default(p0, receiver, %composer, 0b1110 and %changed shr 0b0011 or 0b01110000 and %changed shl 0b0011, 0)
+            Fn%default(p0, receiver, %composer, 0b1110 and %changed, 0)
             %composer.endReplaceGroup()
           }
         }

@@ -103,6 +103,29 @@ class FunctionReferenceTests {
         }
     }
 
+    // This is a regression test against a bug that prevented bound references from recomposing when
+    // their arguments changed in certain cases. For more details, see
+    // https://issuetracker.google.com/issues/586486228.
+    @Test
+    fun dispatchReceiverArgumentChange() = compositionTest {
+        val sample = FunctionRefClass()
+        val state = mutableStateOf(0)
+        compose {
+            InvokeWithState(state, sample::TextDefault)
+        }
+
+        validate {
+            Text("TextDefault 0")
+        }
+
+        state.value = 1
+        advance()
+
+        validate {
+            Text("TextDefault 1")
+        }
+    }
+
     @Test
     fun extensionReceiver() = compositionTest {
         val sample = FunctionRefClass()
@@ -120,6 +143,29 @@ class FunctionReferenceTests {
                 Text("TextDefault 1")
                 Text("TextDefault 2")
             }
+        }
+    }
+
+    // This is a regression test against a bug that prevented bound references from recomposing when
+    // their arguments changed in certain cases. For more details, see
+    // https://issuetracker.google.com/issues/586486228.
+    @Test
+    fun extensionReceiverArgumentChange() = compositionTest {
+        val sample = FunctionRefClass()
+        val state = mutableStateOf(0)
+        compose {
+            InvokeWithState(state, sample::TextDefaultExt)
+        }
+
+        validate {
+            Text("TextDefault 0")
+        }
+
+        state.value = 1
+        advance()
+
+        validate {
+            Text("TextDefault 1")
         }
     }
 
@@ -293,6 +339,11 @@ private fun LinearCount(count: Int, content: @Composable (Int) -> Unit) {
             content(it)
         }
     }
+}
+
+@Composable
+private fun InvokeWithState(state: State<Int>, content: @Composable (Int) -> Unit) {
+    content(state.value)
 }
 
 @Composable
