@@ -12,7 +12,10 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/noarg/testData") {
-            testClass<AbstractFirPsiDiagnosticsTestForNoArg> {
+            testClass<AbstractNoArgDiagnosticsTest> {
+                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+            testClass<AbstractLLNoArgDiagnosticsTest> {
                 model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirLightTreeBytecodeListingTestForNoArg> {

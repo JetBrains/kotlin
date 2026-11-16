@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.noarg
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
@@ -44,7 +45,14 @@ open class AbstractFirLightTreeBytecodeListingTestForNoArg : AbstractFirLightTre
 
 // ---------------------------- diagnostic ----------------------------
 
-abstract class AbstractFirPsiDiagnosticsTestForNoArg : AbstractPhasedJvmDiagnosticLightTreeTest() {
+abstract class AbstractNoArgDiagnosticsTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableNoArg()
+    }
+}
+
+abstract class AbstractLLNoArgDiagnosticsTest : AbstractLLDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableNoArg()
