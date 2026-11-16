@@ -1051,7 +1051,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Collection<FirBasedSymbol<*>>>("symbols")
         }
         val MULTIPLE_CONTEXT_LISTS by error<KtElement>()
-        val CONTEXT_PARAMETER_WITHOUT_NAME by error<KtContextReceiver>()
+        val CONTEXT_PARAMETER_WITHOUT_NAME by error<KtElement>()
         val CONTEXT_PARAMETERS_WITH_BACKING_FIELD by error<KtElement>(PositioningStrategy.CONTEXT_KEYWORD)
         val NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE by error<KtElement>()
         val CONTEXT_PARAMETER_WITH_DEFAULT by error<KtElement>()

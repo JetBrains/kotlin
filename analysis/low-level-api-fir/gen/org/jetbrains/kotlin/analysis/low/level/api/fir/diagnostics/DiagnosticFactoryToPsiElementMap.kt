@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
-import org.jetbrains.kotlin.psi.KtContextReceiver
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
@@ -479,7 +478,7 @@ internal val diagnosticFactoryToPsiElementMap: Map<KtDiagnosticFactoryN, Class<o
     FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT to KtElement::class.java,
     FirErrors.CONTEXTUAL_OVERLOAD_SHADOWED to KtElement::class.java,
     FirErrors.MULTIPLE_CONTEXT_LISTS to KtElement::class.java,
-    FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME to KtContextReceiver::class.java,
+    FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME to KtElement::class.java,
     FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD to KtElement::class.java,
     FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE to KtElement::class.java,
     FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT to KtElement::class.java,
