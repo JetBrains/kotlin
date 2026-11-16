@@ -361,6 +361,8 @@ internal object KtStubElementFactories {
             factory = KtContextReceiverStubSerializingElementFactory,
         )
 
+        // `KtContextReceiverList` is deprecated, but it is still the implementation of `KtContextParameterList` for compatibility
+        @Suppress("DEPRECATION")
         registerPlaceHolderFactory(
             type = KtStubElementTypes.CONTEXT_PARAMETER_LIST,
             psiFactory = ::KtContextReceiverList,

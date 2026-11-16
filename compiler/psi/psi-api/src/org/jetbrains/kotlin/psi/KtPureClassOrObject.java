@@ -73,9 +73,14 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
     List<KtSecondaryConstructor> getSecondaryConstructors();
 
     /**
-     * Returns the unnamed context receivers declared on this class or object, or an empty list if there are none. This is the legacy
-     * context-receiver API; named context parameters are exposed by {@link KtContextParameterList}.
+     * Returns an empty list: context receivers are no longer parsed.
+     *
+     * @deprecated Context receivers are no longer parsed, so the list is always empty.
      */
+    @kotlin.Deprecated(
+            message = "Context receivers are no longer parsed, so the list is always empty."
+    )
+    @Deprecated
     @NotNull
     List<KtContextReceiver> getContextReceivers();
 

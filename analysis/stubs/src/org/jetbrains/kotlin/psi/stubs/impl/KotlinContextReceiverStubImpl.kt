@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
+@Suppress("DEPRECATION")
 @KtImplementationDetail
 class KotlinContextReceiverStubImpl(
     parent: StubElement<*>?,

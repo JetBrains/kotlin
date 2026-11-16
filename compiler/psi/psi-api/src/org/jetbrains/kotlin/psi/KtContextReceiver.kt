@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  * fun log(message: String) {}
  * ```
  *
- * Deprecated in favor of context parameters.
+ * This class is obsolete: context receivers are no longer parsed, and a context parameter is always a [KtParameter].
  */
+@Deprecated("This class is obsolete: context receivers are no longer parsed. A context parameter is always a 'KtParameter'.")
+@Suppress("DEPRECATION")
 @OptIn(KtImplementationDetail::class)
 class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     @KtImplementationDetail

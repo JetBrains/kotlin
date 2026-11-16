@@ -253,6 +253,7 @@ public val KtScript.symbol: KaScriptSymbol
  * Throws an exception: context receivers are no longer parsed, so there is no [KtContextReceiver] to pass.
  */
 @Deprecated("Context receivers are no longer parsed, so there is no 'KtContextReceiver' to pass. Use 'KtParameter.symbol' instead.")
+@Suppress("DEPRECATION")
 @KaExperimentalApi
 context(session: KaSession)
 public val KtContextReceiver.symbol: KaContextParameterSymbol

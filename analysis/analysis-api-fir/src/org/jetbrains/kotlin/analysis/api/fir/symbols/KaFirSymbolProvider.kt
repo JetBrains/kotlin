@@ -188,6 +188,7 @@ internal class KaFirSymbolProvider(
             KaFirDestructuringDeclarationSymbol(destructuringDeclaration, analysisSession)
         }
 
+    @Suppress("DEPRECATION")
     override fun symbol(contextReceiver: KtContextReceiver): KaContextParameterSymbol =
         withPsiValidityAssertion(contextReceiver) {
             errorWithAttachment("Context receivers are no longer parsed, so ${KtContextReceiver::class.simpleName} is not supported") {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtContextReceiver
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContextReceiverStubImpl
 
+@Suppress("DEPRECATION")
 internal object KtContextReceiverStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinContextReceiverStubImpl, KtContextReceiver>(
         type = KtNodeTypes.CONTEXT_RECEIVER,

@@ -432,6 +432,8 @@ interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     override val fqName: FqName
 }
 
+@Deprecated("This interface is obsolete because 'KtContextReceiver' is obsolete.")
+@Suppress("DEPRECATION")
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinContextReceiverStub : KotlinStubElement<KtContextReceiver> {
     @KtImplementationDetail

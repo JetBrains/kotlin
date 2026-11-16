@@ -52,6 +52,7 @@ object ElementTypeUtils {
      *
      * Must be updated once a new non-expression element is added to the parser.
      */
+    @Suppress("DEPRECATION") // `CONTEXT_RECEIVER`
     fun LighterASTNode.isExpression(): Boolean = when (tokenType) {
         // Stub-based element types that are not `KtExpression`
         CLASS_BODY,

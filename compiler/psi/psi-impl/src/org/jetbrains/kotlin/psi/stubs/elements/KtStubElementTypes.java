@@ -135,8 +135,11 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType CONSTRUCTOR_CALLEE = new KtNodeType("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression::new);
 
+    @SuppressWarnings("deprecation")
     @NotNull KtNodeType CONTEXT_RECEIVER = new KtNodeType("CONTEXT_RECEIVER", KtContextReceiver::new);
 
+    // `KtContextReceiverList` is deprecated, but it is still the implementation of `KtContextParameterList` for compatibility
+    @SuppressWarnings("deprecation")
     @NotNull KtNodeType CONTEXT_PARAMETER_LIST = new KtNodeType("CONTEXT_PARAMETER_LIST", KtContextReceiverList::new);
 
     @NotNull KtNodeType NULL               = new KtNodeType("NULL", KtConstantExpression::new);
