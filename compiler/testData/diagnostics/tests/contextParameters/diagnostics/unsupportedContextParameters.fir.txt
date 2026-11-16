@@ -103,8 +103,20 @@ FILE: unsupportedContextParameters.kt
     context(R|kotlin/String|)
     public final fun contextReceiverSyntax(): R|kotlin/Unit| {
     }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(R|Anno|, R|kotlin/String|)
+    public final fun annotatedContextReceiverSyntax(): R|kotlin/Unit| {
+    }
     context(<unused var>: R|kotlin/Int|, R|kotlin/String|)
     public final fun mixedSyntax(): R|kotlin/Unit| {
+    }
+    context(R|kotlin/String|)
+    public final fun missingName(): R|kotlin/Unit| {
     }
     context(R|kotlin/String|)
     public final class ClassWithContextReceiverSyntax : R|kotlin/Any| {

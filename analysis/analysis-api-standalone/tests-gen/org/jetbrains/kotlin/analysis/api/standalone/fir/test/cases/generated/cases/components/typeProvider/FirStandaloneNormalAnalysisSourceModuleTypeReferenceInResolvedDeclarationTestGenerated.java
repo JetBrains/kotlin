@@ -56,6 +56,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeReferenceInResolvedDecla
   }
 
   @Test
+  @TestMetadata("libraryClassWithContextReceiver.kt")
+  public void testLibraryClassWithContextReceiver() {
+    run("libraryClassWithContextReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("libraryContextParameter.kt")
   public void testLibraryContextParameter() {
     run("libraryContextParameter.kt");

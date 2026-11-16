@@ -85,7 +85,7 @@ KaNamedClassSymbol:
         typeArguments: []
         type: kotlin/Int
     KaContextReceiver:
-      label: s
+      label: String
       type: KaUsualClassType:
         annotations: []
         typeArguments: []

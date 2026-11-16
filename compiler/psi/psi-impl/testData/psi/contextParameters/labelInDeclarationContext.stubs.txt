@@ -1,0 +1,25 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=LabelInDeclarationContextKt]]
+  facadeFqName: LabelInDeclarationContextKt
+  partSimpleName: "LabelInDeclarationContextKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    MODIFIER_LIST[]
+      CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=label]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
+    MODIFIER_LIST[]
+      CONTEXT_PARAMETER_LIST
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Anno]
+        CONTEXT_RECEIVER[label=null]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    VALUE_PARAMETER_LIST

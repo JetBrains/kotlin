@@ -66,8 +66,17 @@ class EmptyContextClass
 context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)
 fun contextReceiverSyntax() {}
 
+@Target(AnnotationTarget.TYPE)
+annotation class Anno
+
+context(<!CONTEXT_PARAMETER_WITHOUT_NAME!><!SYNTAX!>@<!>Anno<!><!SYNTAX!><!> <!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)
+fun annotatedContextReceiverSyntax() {}
+
 context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>, _: Int)
 fun mixedSyntax() {}
+
+context(<!SYNTAX!><!>: String)
+fun missingName() {}
 
 <!UNSUPPORTED!>context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)<!>
 class ClassWithContextReceiverSyntax {

@@ -5,3 +5,4 @@ fun <T> f4(): Int.(T) -> String = { "" }
 val f5 = fun(x:Int) { return "$x" }
 val f6 = fun() { 56 }
 val f7: () -> Unit = fun() { f1() }
+val f8: context(String) Int.(Boolean) -> Unit = {}
