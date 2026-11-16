@@ -23,7 +23,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.javadoc.Javadoc
-import org.gradle.internal.component.external.model.TestFixturesSupport
 import org.gradle.jvm.JvmLibrary
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
@@ -60,6 +59,29 @@ fun Project.testsJarToBeUsedAlongWithFixtures() {
     // Publish the test jar artifact only to this configuration (not to testImplementation/testRuntime)
     artifacts {
         add(testsJarConfig.name, testsJar)
+    }
+
+    // Expose test sources as well, so that consumers can pack them into their sources jars by
+    // resolving the configuration instead of reaching into this project's source sets,
+    // which is forbidden with the configuration cache and isolated projects
+    val testsSourcesJar = tasks.register("testsSourcesJar", Jar::class) {
+        archiveClassifier.set("tests-sources")
+        from(sourceSets["test"].allSource)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    val testsSourcesJarConfig = configurations.create("testsSourcesJarConfig") {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+        outgoing.capabilities.clear()
+        outgoing.capability("org.jetbrains.kotlin:${project.name}-tests-sources-jar:${project.version}")
+    }
+
+    artifacts {
+        add(testsSourcesJarConfig.name, testsSourcesJar)
     }
 }
 
@@ -389,14 +411,17 @@ private fun Project.publishTestJar(
     apply<JavaPlugin>()
 
     val fatJarContents = configurations.create("fatJarContents")
+    val testSourcesContents = configurations.create("testSourcesContents")
 
     dependencies {
         for (projectName in projectWithFixturesNames) {
             fatJarContents(testFixtures(project(projectName)) as ModuleDependency) { isTransitive = false }
+            testSourcesContents(project(projectName, configuration = "testFixturesSourcesElements")) { isTransitive = false }
         }
 
         for (projectName in projectWithRenamedTestJarNames) {
             fatJarContents(project(projectName, configuration = "testsJarConfig")) { isTransitive = false }
+            testSourcesContents(project(projectName, configuration = "testsSourcesJarConfig")) { isTransitive = false }
         }
     }
 
@@ -415,16 +440,10 @@ private fun Project.publishTestJar(
     }
 
     sourcesJar {
-        fun registerTestSources(projectNames: List<String>) {
-            from {
-                projectNames.map { project(it).testSourceSet.allSource }
-            }
-        }
-
-        registerTestSources(projectWithRenamedTestJarNames)
-
+        val archiveOperations = project.serviceOf<ArchiveOperations>()
+        dependsOn(testSourcesContents)
         from {
-            projectWithFixturesNames.map { project(it).sourceSets.getByName(TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME).allSource }
+            testSourcesContents.map(archiveOperations::zipTree)
         }
     }
 
