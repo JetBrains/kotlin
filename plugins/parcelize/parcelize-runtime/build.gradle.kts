@@ -1,8 +1,16 @@
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import plugins.configureDefaultPublishing
@@ -28,6 +36,29 @@ val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
 }
 
 kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    applyDefaultHierarchyTemplate {
+        common {
+            group("jvmAndAndroid") {
+                withJvm()
+                withCompilations { it.target is AndroidJvmTarget }
+            }
+            group("nonAndroid") {
+                withJvm()
+                withJs()
+                withWasmJs()
+                withWasmWasi()
+                group("native") {
+                    withNative()
+                }
+            }
+        }
+    }
+
     targets.configureEach {
         configureSbomForTarget()
         mavenPublication {
@@ -55,6 +86,7 @@ kotlin {
     metadata() // For common sources in IDE
 
     jvm()
+    androidJvm()
     val buildFeatures = serviceOf<BuildFeatures>()
     js {
         if (!buildFeatures.isolatedProjects.active.get()) {
@@ -80,10 +112,11 @@ kotlin {
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         // This is required because of the common source set dependency on a local stdlib.
         // Only these targets are added in the stdlib project during IDEA sync.
+        // Keep the default target names. The name "native" clashes with the "native" group of the hierarchy template.
         when {
-            HostManager.hostIsMac -> @Suppress("DEPRECATION", "DEPRECATION_ERROR") macosX64("native")
-            HostManager.hostIsMingw -> mingwX64("native")
-            HostManager.hostIsLinux -> linuxX64("native")
+            HostManager.hostIsMac -> @Suppress("DEPRECATION", "DEPRECATION_ERROR") macosX64()
+            HostManager.hostIsMingw -> mingwX64()
+            HostManager.hostIsLinux -> linuxX64()
             else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
         }
     } else {
@@ -120,7 +153,7 @@ kotlin {
         commonMain.dependencies {
             api(kotlinStdlib())
         }
-        jvmMain.dependencies {
+        named("jvmAndAndroidMain").dependencies {
             compileOnly(commonDependency("com.google.android", "android"))
         }
     }
@@ -130,6 +163,17 @@ kotlin {
 tasks.named<Jar>("jvmJar") {
     setupPublicJar("parcelize-runtime")
     archiveAppendix = ""
+}
+
+val commonMetadataJar = tasks.register<Jar>("commonMetadataJar") {
+    archiveAppendix = "common-metadata"
+    archiveExtension = "klib"
+}
+kotlin.metadata().compilations.named { it == "commonMain" }.configureEach {
+    commonMetadataJar.configure { from(output.allOutputs) }
+}
+configurations.consumable("commonMainMetadataElements") {
+    outgoing.artifact(commonMetadataJar)
 }
 
 val httpClientVersion = libs.versions.http.client.get()
@@ -162,3 +206,64 @@ publishing {
         }
     }
 }
+
+/**
+ * Declares the `android` target. This JVM target compiles the `androidMain` source set into a plain JAR for Android consumers.
+ *
+ * KGP accepts only one `jvm()` target in a project, and the Android Gradle plugin builds an AAR.
+ * Thus, this function uses the external target API, and it does not need the Android Gradle plugin.
+ *
+ * KGP and the IDE handle the target as a JVM target. Only the variants of the target have the Android attributes.
+ * Thus, Gradle selects these variants for Android consumers and the `jvm()` variants for JVM consumers.
+ */
+@OptIn(ExternalKotlinTargetApi::class)
+private fun KotlinMultiplatformExtension.androidJvm(): KotlinTarget {
+    val target = createExternalKotlinTarget {
+        targetName = "android"
+        platformType = KotlinPlatformType.jvm
+        targetFactory = TargetFactory(::AndroidJvmTarget)
+    }
+    val androidMain = sourceSets.maybeCreate("androidMain")
+    val main = target.createCompilation {
+        compilationName = KotlinCompilation.MAIN_COMPILATION_NAME
+        defaultSourceSet = androidMain
+        compilationFactory = CompilationFactory(::AndroidJvmCompilation)
+    }
+    val project = target.project
+    val jar = project.tasks.named<Jar>(target.artifactsTaskName) {
+        from(main.output.allOutputs)
+        archiveAppendix = target.targetName
+    }
+
+    val dependencies = project.configurations.getByName(main.runtimeDependencyConfigurationName!!)
+    val binaryConfigurations = with(target) {
+        listOf(
+            apiElementsConfiguration,
+            runtimeElementsConfiguration,
+            apiElementsPublishedConfiguration,
+            runtimeElementsPublishedConfiguration
+        )
+    }
+    binaryConfigurations.forEach { configuration ->
+        configuration.outgoing.artifact(jar)
+        configuration.extendsFrom(dependencies)
+    }
+    val sourcesJar = target.sourcesJarTask(main)
+    target.sourcesElementsConfiguration.outgoing.artifact(sourcesJar) { classifier = "sources" }
+    target.publishSources(sourcesJar)
+    val sourcesConfigurations = listOf(target.sourcesElementsConfiguration, target.sourcesElementsPublishedConfiguration)
+    (binaryConfigurations + sourcesConfigurations).forEach { configuration ->
+        configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
+        configuration.attributes.attribute(
+            TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+            project.objects.named<TargetJvmEnvironment>(TargetJvmEnvironment.ANDROID),
+        )
+    }
+    return target
+}
+
+@OptIn(ExternalKotlinTargetApi::class)
+private class AndroidJvmTarget(delegate: DecoratedExternalKotlinTarget.Delegate) : DecoratedExternalKotlinTarget(delegate)
+
+@OptIn(ExternalKotlinTargetApi::class)
+private class AndroidJvmCompilation(delegate: DecoratedExternalKotlinCompilation.Delegate) : DecoratedExternalKotlinCompilation(delegate)

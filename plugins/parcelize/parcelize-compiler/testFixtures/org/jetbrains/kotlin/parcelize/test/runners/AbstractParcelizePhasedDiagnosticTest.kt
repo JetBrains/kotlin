@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -28,6 +29,7 @@ abstract class AbstractParcelizePhasedDiagnosticTest : AbstractPhasedJvmDiagnost
             JDK_KIND with TestJdkKind.FULL_JDK_21
         }
 
+        useDirectives(ParcelizeDirectives)
         useConfigurators(::ParcelizeEnvironmentConfigurator)
     }
 }

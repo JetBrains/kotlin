@@ -1,3 +1,4 @@
+import TestCompilePaths.PARCELIZE_COMMON_RUNTIME_CLASSPATH
 import TestCompilePaths.PARCELIZE_COMPILER_PLUGIN_CLASSPATH
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import java.util.zip.ZipFile
@@ -51,6 +52,7 @@ val robolectricClasspath = configurations.create("robolectricClasspath") {
 val robolectricDependency = configurations.create("robolectricDependency")
 
 val parcelizeRuntimeForTests = configurations.create("parcelizeRuntimeForTests")
+val parcelizeCommonRuntimeForTests = configurations.create("parcelizeCommonRuntimeForTests")
 val layoutLib = configurations.create("layoutLib")
 val layoutLibApi = configurations.create("layoutLibApi")
 
@@ -91,10 +93,11 @@ dependencies {
 
     // This dependency is an `.aar` file.
     robolectricClasspath("androidx.test:monitor:1.8.0")
-    robolectricClasspath(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
+    robolectricClasspath(project(":plugins:parcelize:parcelize-runtime", configuration = "androidRuntimeElements")) { isTransitive = false }
 
-    parcelizeRuntimeForTests(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
+    parcelizeRuntimeForTests(project(":plugins:parcelize:parcelize-runtime", configuration = "androidRuntimeElements")) { isTransitive = false }
     parcelizeRuntimeForTests(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
+    parcelizeCommonRuntimeForTests(project(":plugins:parcelize:parcelize-runtime", configuration = "commonMainMetadataElements")) { isTransitive = false }
 
     layoutLib("org.jetbrains.intellij.deps.android.tools:layoutlib:26.5.0") { isTransitive = false }
     layoutLibApi("com.android.tools.layoutlib:layoutlib-api:26.5.0") { isTransitive = false }
@@ -132,6 +135,7 @@ projectTests {
         }
 
         addClasspathProperty(parcelizeRuntimeForTests, PARCELIZE_COMPILER_PLUGIN_CLASSPATH)
+        addClasspathProperty(parcelizeCommonRuntimeForTests, PARCELIZE_COMMON_RUNTIME_CLASSPATH)
         addClasspathProperty(robolectricClasspath, "robolectric.classpath")
         addClasspathProperty(layoutLib, "layoutLib.path")
         addClasspathProperty(layoutLibApi, "layoutLibApi.path")
@@ -153,6 +157,7 @@ projectTests {
     testData(isolated, "testData")
 
     withJvmStdlibAndReflect()
+    withStdlibCommon()
     withTestJar()
     withMockJdkAnnotationsJar()
 }

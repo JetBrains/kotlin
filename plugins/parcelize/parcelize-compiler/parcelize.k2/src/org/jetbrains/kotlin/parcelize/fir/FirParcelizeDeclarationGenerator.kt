@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
+import org.jetbrains.kotlin.fir.isMetadataCompilation
 import org.jetbrains.kotlin.fir.plugin.SimpleFunctionBuildingContext
 import org.jetbrains.kotlin.fir.plugin.createConeType
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
@@ -107,6 +108,7 @@ class FirParcelizeDeclarationGenerator(
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
+            session.isMetadataCompilation -> emptySet()
             classSymbol.rawStatus.modality == Modality.ABSTRACT || classSymbol.rawStatus.modality == Modality.SEALED -> emptySet()
             else -> parcelizeMethodsNames
         }

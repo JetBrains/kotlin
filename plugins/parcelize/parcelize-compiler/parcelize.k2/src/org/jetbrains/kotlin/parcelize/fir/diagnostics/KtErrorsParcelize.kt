@@ -56,6 +56,7 @@ object KtErrorsParcelize : KtDiagnosticsContainer() {
     val INAPPLICABLE_IGNORED_ON_PARCEL by warning0<PsiElement>()
     val INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY by warning0<PsiElement>()
     val VALUE_PARAMETER_USED_IN_CLASS_BODY by error0<PsiElement>()
+    val INTERNAL_PARCELABLE_USAGE by error0<PsiElement>()
 
     val POLYMORPHIC_SEALED_MUST_BE_SEALED by error0<PsiElement>(NAME_IDENTIFIER)
     val POLYMORPHIC_SEALED_WITHOUT_PARCELIZE by error0<PsiElement>(NAME_IDENTIFIER)

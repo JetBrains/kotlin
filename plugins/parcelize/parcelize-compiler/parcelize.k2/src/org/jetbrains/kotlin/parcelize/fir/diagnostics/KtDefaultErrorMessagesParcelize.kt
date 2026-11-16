@@ -198,6 +198,12 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
+            KtErrorsParcelize.INTERNAL_PARCELABLE_USAGE,
+            "'kotlinx.parcelize.internal.Parcelable' is internal to Parcelize and cannot be referenced. " +
+                    "Parcelize adds it to '@Parcelize' declarations when 'implicitlyAddParcelableSupertype' is enabled."
+        )
+
+        map.put(
             KtErrorsParcelize.POLYMORPHIC_SEALED_MUST_BE_SEALED,
             "'@PolymorphicSealed' is only applicable to 'sealed class' or 'sealed interface'."
         )
