@@ -10,38 +10,46 @@ STEP 0:
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1, main/m, main/m.export, main
+    dirty js per-class files: lib1/l1, main/m, main/m.export, main
 STEP 1:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1
+    dirty js per-class files: lib1/l1, main/m
 STEP 2..3:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1, main/m
+    dirty js per-class files: lib1/l1, main/m
 STEP 4..6:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1
     dirty js files:   lib1/l1
+    dirty js per-class files: lib1/l1
 STEP 7:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1
+    dirty js per-class files: lib1/l1, main/m
 STEP 8:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1, main/m
+    dirty js per-class files: lib1/l1, main/m
 STEP 9:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1
+    dirty js per-class files: lib1/l1, main/m
 STEP 10..11:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1, main/m
+    dirty js per-class files: lib1/l1, main/m
