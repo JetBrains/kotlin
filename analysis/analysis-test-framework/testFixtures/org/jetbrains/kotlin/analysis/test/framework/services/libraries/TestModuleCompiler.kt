@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.targetPlatform
-import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
@@ -33,7 +34,7 @@ abstract class TestModuleCompiler : TestService {
 
         fun writeFiles(testFiles: List<TestFile>): Path? {
             if (testFiles.isEmpty()) return null
-            val tmpDirectory = createTemporaryPath()
+            val tmpDirectory = createTemporaryDirectory(testServices)
             testFiles.forEach { write(it, testServices, tmpDirectory) }
             return tmpDirectory
         }
@@ -94,8 +95,13 @@ abstract class TestModuleCompiler : TestService {
         }
     }
 
-    private fun createTemporaryPath(): Path {
-        return KtTestUtil.tmpDir("testSourcesToCompile").toPath()
+    /**
+     * Creates a new directory, which is deleted together with the other temporary directories of the test.
+     */
+    protected fun createTemporaryDirectory(testServices: TestServices): Path {
+        // The name is random because a later test can get the same root directory, and the JAR file system, which concurrent
+        // tests share, caches the entries of each JAR by its path.
+        return Files.createTempDirectory(testServices.temporaryDirectoryManager.rootDir.toPath(), "testSourcesToCompile")
     }
 
     private fun write(testFile: TestFile, testServices: TestServices, target: Path): Path {
