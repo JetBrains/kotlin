@@ -100,11 +100,10 @@ internal fun checkArgumentsSize(parametersSize: Int, argumentsSize: Int) {
 @SinceKotlin("1.1")
 val KClassifier.starProjectedType: KType
     get() {
-        val descriptor = (this as? KClassImpl<*>)?.descriptor
-            ?: return createTypeImpl()
-
-        val typeParameters = descriptor.typeConstructor.parameters
-        if (typeParameters.isEmpty()) return createTypeImpl() // TODO: optimize, get defaultType from ClassDescriptor
-
-        return createTypeImpl(typeParameters.map { KTypeProjection.STAR })
+        val typeParametersSize = when {
+            useK1Implementation -> (this as? KClassImpl<*>)?.descriptor?.typeConstructor?.parameters?.size ?: 0
+            this is KClass<*> -> allTypeParameters().size
+            else -> 0
+        }
+        return createTypeImpl(List(typeParametersSize) { KTypeProjection.STAR })
     }
