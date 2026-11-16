@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.resolution.hasEnumEntry
+import org.jetbrains.kotlin.java.direct.resolution.isInheritedTo
 import org.jetbrains.kotlin.java.direct.resolution.resolve
 import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
 import org.jetbrains.kotlin.java.direct.resolution.resolveImportedClassName
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.experimental.inv
 
@@ -442,6 +444,7 @@ class ConstantEvaluator private constructor(
         classQualifier: String,
         qualifierClassId: ClassId?,
         fieldName: String,
+        inheritingPackage: FqName? = null,
     ): MemberResolutionResult? {
         val resolver = customExternalConstantResolver
         if (resolver != null) {
@@ -453,6 +456,7 @@ class ConstantEvaluator private constructor(
             qualifierClassId,
             fieldName,
             resolutionContext.packageFqName,
+            inheritingPackage,
         )
     }
 
@@ -463,10 +467,9 @@ class ConstantEvaluator private constructor(
      * annotation-argument fallback.
      */
     private fun resolveSimpleName(name: String): MemberResolutionResult {
-        val visited = mutableSetOf<ClassId>()
         var currentClass: JavaClass? = containingClass
         while (currentClass != null) {
-            findMember(currentClass, name, visited)?.let { return it }
+            findMember(currentClass, name, mutableSetOf())?.let { return it }
             currentClass = currentClass.outerClass
         }
 
@@ -492,18 +495,23 @@ class ConstantEvaluator private constructor(
         return MemberResolutionResult.Unresolved(unresolvedImport)
     }
 
-    /** Looks [memberName] up among the fields of [javaClass] and then of its supertypes (JLS 8.3). */
+    /**
+     * Looks [memberName] up among the fields of [javaClass] and then of its supertypes (JLS 8.3).
+     * [inheritingPackage] is `null` for the named class itself and the subclass package for its
+     * supertypes; see [isInheritedTo].
+     */
     private fun findMember(
         javaClass: JavaClass,
         memberName: String,
         visited: MutableSet<ClassId>,
+        inheritingPackage: FqName? = null,
     ): MemberResolutionResult? {
         val classId = javaClass.classId ?: return null
         if (!visited.add(classId)) return null
 
         if (javaClass is JavaClassOverAst) {
             val field = javaClass.fields.firstOrNull { it.name.asString() == memberName }
-            if (field != null) {
+            if (field != null && field.visibility.isInheritedTo(inheritingPackage, classId.packageFqName)) {
                 if (field.isEnumEntry) return MemberResolutionResult.EnumEntry(classId, field.name)
                 return if (field.hasConstantNotNullInitializer) MemberResolutionResult.Constant { field.initializerValue }
                 else MemberResolutionResult.NonConstantField
@@ -513,12 +521,12 @@ class ConstantEvaluator private constructor(
             if (session.hasEnumEntry(classId, memberName)) {
                 return MemberResolutionResult.EnumEntry(classId, Name.identifier(memberName))
             }
-            resolveExternalReference(classId.asSingleFqName().asString(), classId, memberName)?.let { return it }
+            resolveExternalReference(classId.asSingleFqName().asString(), classId, memberName, inheritingPackage)?.let { return it }
         }
 
         for (supertype in javaClass.supertypes) {
             val superClass = supertype.classifier as? JavaClass ?: continue
-            findMember(superClass, memberName, visited)?.let { return it }
+            findMember(superClass, memberName, visited, classId.packageFqName)?.let { return it }
         }
         return null
     }

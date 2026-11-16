@@ -29,6 +29,5 @@ const val K = q.D.Y
 
 fun box(): String {
     val runtime = q.D::class.java.getField("Y").getInt(null)
-    // LightTree and PSI currently disagree; the next commit requires both values to match.
-    return if (K in 1..2 && runtime == 2) "OK" else "FAIL: K=$K runtime=$runtime"
+    return if (K == runtime && K == 2) "OK" else "FAIL: K=$K runtime=$runtime"
 }

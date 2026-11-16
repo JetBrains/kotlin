@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -53,6 +56,7 @@ internal fun FirSession.resolveExternalFieldValue(
     qualifierClassId: ClassId?,
     fieldName: String,
     currentPackage: FqName,
+    inheritingPackage: FqName? = null,
 ): MemberResolutionResult? {
     if (nullableSymbolProvider == null) return null
     val propertyName = Name.identifier(fieldName)
@@ -63,14 +67,30 @@ internal fun FirSession.resolveExternalFieldValue(
         return tryResolveAsTopLevelProperty(qualifierPackage, qualifierClassName, propertyName)
     }
 
-    val classMembers = getClassDeclaredPropertySymbols(qualifierClassId, propertyName).toList()
+    val classMembers = getClassDeclaredPropertySymbols(qualifierClassId, propertyName).filter {
+        it.rawStatus.visibility.isInheritedTo(inheritingPackage, qualifierClassId.packageFqName)
+    }.toList()
     for (symbol in classMembers) {
         if (symbol is FirEnumEntrySymbol) return MemberResolutionResult.EnumEntry(qualifierClassId, propertyName)
         symbol.tryResolveAsConstant(this)?.let { return it }
     }
-    tryResolveAsCompanionMember(qualifierClassId, propertyName)?.let { return it }
+    tryResolveAsCompanionMember(qualifierClassId, propertyName, inheritingPackage)?.let { return it }
     if (classMembers.isNotEmpty()) return MemberResolutionResult.NonConstantField
     return null
+}
+
+/**
+ * Checks whether a field with this visibility, declared in [declaringPackage], is a member of the
+ * class the lookup goes through (JLS 8.3).
+ *
+ * @param inheritingPackage `null` for a direct lookup in the named class, not through inheritance, so
+ *   every visibility applies; otherwise the package of the subclass that would inherit the field.
+ *   Private fields are never inherited, and package-private ones only within the same package.
+ */
+internal fun Visibility.isInheritedTo(inheritingPackage: FqName?, declaringPackage: FqName): Boolean {
+    if (inheritingPackage == null) return true
+    if (this == Visibilities.Private) return false
+    return this != JavaVisibilities.PackageVisibility || inheritingPackage == declaringPackage
 }
 
 /**
@@ -108,11 +128,13 @@ private fun FirVariableSymbol<*>.jvmFacadeClassName(): String? {
 private fun FirSession.tryResolveAsCompanionMember(
     classId: ClassId,
     propertyName: Name,
+    inheritingPackage: FqName?,
 ): MemberResolutionResult? {
     val provider = nullableSymbolProvider ?: return null
     val classSymbol = provider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
     val companionClassId = classSymbol?.companionObjectSymbol?.classId ?: return null
     for (symbol in getClassDeclaredPropertySymbols(companionClassId, propertyName)) {
+        if (!symbol.rawStatus.visibility.isInheritedTo(inheritingPackage, companionClassId.packageFqName)) continue
         symbol.tryResolveAsConstant(this)?.let { return it }
     }
     return null
