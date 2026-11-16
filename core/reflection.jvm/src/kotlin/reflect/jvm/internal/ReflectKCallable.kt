@@ -55,6 +55,8 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
 
     val overriddenStorage: KCallableOverriddenStorage
 
+    val overridden: Collection<ReflectKCallable<*>>
+
     val modality: Modality
 
     val isPackagePrivate: Boolean

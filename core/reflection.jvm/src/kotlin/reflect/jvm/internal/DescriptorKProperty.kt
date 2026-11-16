@@ -119,6 +119,14 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     override val isSuspend: Boolean get() = false
 
+    override val overridden: Collection<ReflectKProperty<*>>
+        get() = descriptor.overriddenDescriptors.map { overriddenDescriptor ->
+            val containerClass = (overriddenDescriptor.containingDeclaration as ClassDescriptor).toJavaClass()
+                ?: throw KotlinReflectionInternalError("Unknown container class for overridden property: $this")
+            CreateKCallableVisitor(containerClass.kotlin as KClassImpl<*>)
+                .visitPropertyDescriptor(overriddenDescriptor, Unit) as ReflectKProperty<*>
+        }
+
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectProperty() ?: return false
         return container == that.container && name == that.name && signature == that.signature &&
@@ -146,6 +154,8 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
 
         override val rawBoundContextArguments: List<Any?> get() = property.rawBoundContextArguments
+
+        override val overridden: Collection<ReflectKCallable<*>> get() = computeOverriddenAccessors()
 
         override val isInline: Boolean get() = descriptor.isInline
         override val isExternal: Boolean get() = descriptor.isExternal

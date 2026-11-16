@@ -165,30 +165,36 @@ private fun ReflectKFunction.collectOverriddenDeclarations(result: MutableSet<Re
     }
 }
 
-internal fun computeOverriddenFunctions(callable: ReflectKFunction): Collection<ReflectKFunction> {
+internal fun <T : ReflectKCallable<*>> computeOverriddenCallables(callable: ReflectKCallable<*>): Collection<T> {
     if (callable.overriddenStorage.isFakeOverride) {
-        return callable.overriddenStorage.overridden.map { it as ReflectKFunction }
+        @Suppress("UNCHECKED_CAST")
+        return callable.overriddenStorage.overridden as Collection<T>
     }
 
     val container = callable.container as? MemberContainer<*> ?: return emptyList()
     val thisKotlinSignature = callable.toEquatableCallableSignature(EqualityMode.KotlinSignature)
-    return computeOverriddenFunctions(container, thisKotlinSignature, substituted = false)
+    return computeOverriddenCallables(container, thisKotlinSignature, substituted = false)
 }
 
-internal fun computeOverriddenFunctions(
+internal fun <T : ReflectKCallable<*>> computeOverriddenCallables(
     container: MemberContainer<*>,
     signature: EquatableCallableSignature<EqualityMode.KotlinSignature>,
     substituted: Boolean,
-): Collection<ReflectKFunction> {
-    val result = mutableListOf<ReflectKFunction>()
+): Collection<T> {
+    val result = mutableListOf<T>()
     for (supertype in container.supertypes) {
         val supertypeKClass = supertype.classifier as? MemberContainer<*> ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
         for (supertypeMember in getSupertypeMembersByName(supertype, supertypeKClass, signature.name)) {
-            if (supertypeMember !is ReflectKFunction) continue
-            val fakeOverride = supertypeMember.createFakeOverride(container, substitutor) as ReflectKFunction
+            val isSameKind = when (signature.kind) {
+                SignatureKind.FUNCTION -> supertypeMember is ReflectKFunction
+                SignatureKind.PROPERTY, SignatureKind.FIELD_IN_JAVA_CLASS -> supertypeMember is ReflectKProperty<*>
+            }
+            if (!isSameKind) continue
+            val fakeOverride = supertypeMember.createFakeOverride(container, substitutor)
             if (signature == fakeOverride.toEquatableCallableSignature(EqualityMode.KotlinSignature)) {
-                result.add(if (substituted) fakeOverride else supertypeMember)
+                @Suppress("UNCHECKED_CAST")
+                result.add((if (substituted) fakeOverride else supertypeMember) as T)
             }
         }
     }

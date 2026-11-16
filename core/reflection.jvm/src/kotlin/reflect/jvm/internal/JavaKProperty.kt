@@ -33,6 +33,9 @@ internal abstract class JavaKProperty<out V>(
 
     override val modality: Modality get() = Modality.FINAL
 
+    override val overridden: Collection<ReflectKProperty<*>>
+        get() = overriddenStorage.overridden.filterIsInstance<ReflectKProperty<*>>()
+
     override val isLateinit: Boolean get() = false
 
     abstract override val getter: Getter<V>
@@ -52,6 +55,8 @@ internal abstract class JavaKProperty<out V>(
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
 
         override val rawBoundContextArguments: List<Any?> get() = property.rawBoundContextArguments
+
+        override val overridden: Collection<ReflectKCallable<*>> get() = computeOverriddenAccessors()
 
         override val typeParameters: List<KTypeParameter> get() = emptyList()
 

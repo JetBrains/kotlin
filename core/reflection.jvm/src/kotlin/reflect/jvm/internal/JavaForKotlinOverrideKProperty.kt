@@ -43,6 +43,9 @@ internal abstract class JavaForKotlinOverrideKProperty<out V>(
 
     override val signature: String get() = overriddenProperty.signature
     override val name: String get() = overriddenProperty.name
+    override val overridden: Collection<ReflectKProperty<*>> by lazy(PUBLICATION) {
+        computeOverriddenCallables(this)
+    }
 
     override val visibility: KVisibility? get() = getterMethod.visibility
     override val modality: Modality get() = getterMethod.modality

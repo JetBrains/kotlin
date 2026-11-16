@@ -16,7 +16,7 @@ import kotlin.reflect.full.valueParameters
 internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?>, KotlinGenericDeclaration {
     val signature: String
 
-    val overridden: Collection<ReflectKFunction>
+    override val overridden: Collection<ReflectKFunction>
 
     val isPrimaryConstructor: Boolean
 
