@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.samWithReceiver
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -22,9 +23,14 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractFirLightTreeSamWithReceiverDiagnosticTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with(builder) {
-            configurePlugin()
-        }
+        builder.configurePlugin()
+    }
+}
+
+abstract class AbstractLLSamWithReceiverDiagnosticTest : AbstractLLDiagnosticsTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurePlugin()
     }
 }
 
