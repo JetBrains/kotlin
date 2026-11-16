@@ -54,10 +54,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
  *
- * This one uses [IrBasedDataClassMembersGenerator] to generate function bodies, shared with the counterpart in psi. But, there are two main
+ * This one uses [DataClassLikeMembersBodyGenerator] to generate function bodies, shared with the counterpart in psi. But, there are two main
  * differences. Unlike the counterpart in psi, which uses descriptor-based logic to determine which members to synthesize, this one uses
  * fir own logic that traverses class hierarchies in fir elements. Also, this one creates and passes IR elements, instead of providing how
- * to declare them, to [IrBasedDataClassMembersGenerator].
+ * to declare them, to [DataClassLikeMembersBodyGenerator].
  */
 class Fir2IrDataClassMembersGenerator(
     private val c: Fir2IrComponents,
@@ -279,7 +279,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             }
         }
 
-        private val irDataClassMembersGenerator = object : IrBasedDataClassMembersGenerator(
+        private val irDataClassMembersGenerator = object : DataClassLikeMembersBodyGenerator(
             IrGeneratorContextBase(irBuiltins),
             irClass,
             irClass.kotlinFqName,

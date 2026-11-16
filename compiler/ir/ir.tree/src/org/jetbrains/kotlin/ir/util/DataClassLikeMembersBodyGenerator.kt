@@ -32,9 +32,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * A platform-, frontend-independent logic for generating synthetic members of data class: equals, hashCode, toString, componentN, and copy.
  * Different front-ends may need to define how to declare functions, parameters, etc., or simply provide predefined ones.
  *
+ * It's also used for generating similar methods in other cases like value classes, annotation implementations.
+ *
  * Generating synthetic members of inline class can use this as well, in particular, members from Any: equals, hashCode, and toString.
  */
-abstract class IrBasedDataClassMembersGenerator(
+abstract class DataClassLikeMembersBodyGenerator(
     val context: IrGeneratorContext,
     val irClass: IrClass,
     val fqName: FqName?,

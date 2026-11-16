@@ -274,7 +274,7 @@ class AnnotationImplementationMemberGenerator(
     val nameForToString: String,
     forbidDirectFieldAccess: Boolean,
     val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression
-) : IrBasedDataClassMembersGenerator(
+) : DataClassLikeMembersBodyGenerator(
     context = IrGeneratorContextBase(loweringContext.irBuiltIns),
     irClass = irClass,
     fqName = irClass.kotlinFqName,
