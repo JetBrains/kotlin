@@ -1187,6 +1187,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget 
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun compilerOptions (Lorg/gradle/api/Action;)V
+	public fun configureExtractedPlatformKlibAttributes (Lorg/gradle/api/attributes/AttributeContainer;Lorg/gradle/api/attributes/AttributeContainer;)V
 	public fun getArtifactsTaskName ()Ljava/lang/String;
 	public synthetic fun getBinaries ()Lorg/gradle/api/DomainObjectSet;
 	public fun getBinaries ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeBinaryContainer;
