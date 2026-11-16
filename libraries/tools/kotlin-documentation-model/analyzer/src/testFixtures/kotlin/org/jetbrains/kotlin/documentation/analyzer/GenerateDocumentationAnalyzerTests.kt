@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(
-            testsRoot = "libraries/tools/kotlin-documentation-model/analyzer/src/tests-gen",
+            testsRoot = args[0],
             testDataRoot = "libraries/tools/kotlin-documentation-model/analyzer/src/testData",
         ) {
             testClass<AbstractProjectsGoldenTest> {

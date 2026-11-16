@@ -23,10 +23,6 @@ kotlin {
     }
 }
 
-sourceSets.test {
-    java.srcDir("src/tests-gen")
-}
-
 // This module was written against a stable Kotlin release and relies on plain component1()/component2()
 // destructuring semantics. Override the repo-wide "-Xname-based-destructuring=complete" (set in
 // common-configuration.gradle.kts) back down to "only-syntax" so short-form destructuring by variable
@@ -128,7 +124,7 @@ projectTests {
     testData(project.isolated, "src/test/resources")
     testData(project.isolated, "src/testData")
 
-    testGenerator("org.jetbrains.kotlin.documentation.analyzer.GenerateDocumentationAnalyzerTestsKt")
+    testGenerator("org.jetbrains.kotlin.documentation.analyzer.GenerateDocumentationAnalyzerTestsKt", generateTestsInBuildDirectory = true)
 
     // Built stdlib artifacts per platform, exposed as `kotlin.*.stdlib.path` system properties (see `stdlibFor`).
     withJvmStdlibAndReflect()
