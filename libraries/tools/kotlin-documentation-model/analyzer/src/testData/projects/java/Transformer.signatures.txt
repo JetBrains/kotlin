@@ -1,0 +1,4 @@
+main:
+  interface Transformer (declared)
+    fun convert(value: T, fallback: R): R (declared)
+    fun transform(value: T): T (declared)
