@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsAssignmentLhs
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -33,9 +33,9 @@ object FirParenthesizedLhsSetOperatorChecker : FirFunctionCallChecker(MppChecker
         if (// For `(a[0]) = ...` where `a: Array<A>`
             source.syntaxId in KotlinSyntaxIdSets.UNWRAPPABLE_TOKEN_TYPES && callee.isArrayAccess ||
             // For `(a[0]) += ""` where `a: Array<A>`
-            source.hasUnwrappableAsAssignmentLhs() && callee.isAugmentedAssign ||
+            callee.isAugmentedAssign && withSyntax { source.hasUnwrappableAsAssignmentLhs() } ||
             // For `(a[0])++` where `a` has `get`,`set` and `inc` operators
-            source.hasUnwrappableAsAssignmentLhs() && callee.isIncrementOrDecrement
+            callee.isIncrementOrDecrement && withSyntax { source.hasUnwrappableAsAssignmentLhs() }
         ) {
             reporter.reportOn(source, FirErrors.WRAPPED_LHS_IN_ASSIGNMENT)
         }

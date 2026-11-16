@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.findChildrenByType
+import org.jetbrains.kotlin.diagnostics.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.NoMutableState
@@ -113,6 +114,11 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
             source.lighterASTNode.tokenType == DOT_QUALIFIED_EXPRESSION -> source.lighterASTNode.getChildren(tree).firstOrNull()
             else -> null
         }?.toKtLightSourceElement(tree)
+    }
+
+    override fun KtSourceElement.hasUnwrappableAsAssignmentLhs(): Boolean {
+        val source = unwrap()
+        return source.lighterASTNode.getAssignmentLhsIfUnwrappable(source.treeStructure) != null
     }
 
     override fun KtSourceElement.findParameterNameSource(name: Name): KtSourceElement? {
