@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportedActualMatchExpectChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsQualifierChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirMultipleJsExportDefaultAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalPropertyAccessorChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonNativeInvokeChecker
@@ -21,6 +22,7 @@ object JsDeclarationCheckers : DeclarationCheckers() {
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
         FirJsModuleChecker,
+        FirJsQualifierChecker,
         FirJsRuntimeAnnotationChecker,
         FirJsExternalChecker,
         FirJsExternalFileChecker,

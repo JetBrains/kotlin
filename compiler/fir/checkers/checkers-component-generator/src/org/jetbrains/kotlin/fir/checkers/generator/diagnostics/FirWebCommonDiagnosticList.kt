@@ -34,6 +34,8 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
             parameter<ConeKotlinType>("annotation")
         }
         val JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER by error<KtElement>()
+        val JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL by deprecationError<KtElement>(ProhibitJsQualifierOnMembersAndNonExternals)
+        val JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL by deprecationError<KtElement>(ProhibitJsQualifierOnMembersAndNonExternals)
         val INAPPLICABLE_EAGER_INITIALIZATION by deprecationError<KtElement>(ForbidNonTopLevelEagerInitialization)
         val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN by error<KtElement> {
             parameter<ConeKotlinType>("type")

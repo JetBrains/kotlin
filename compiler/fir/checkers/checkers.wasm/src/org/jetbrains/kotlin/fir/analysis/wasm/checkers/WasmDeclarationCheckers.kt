@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportedActualMatchExpectChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsQualifierChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalPropertyAccessorChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonNativeInvokeChecker
 
@@ -43,6 +44,7 @@ object WasmJsDeclarationCheckers : DeclarationCheckers() {
         FirWasmExportDeclarationChecker.WasmJs,
         FirJsExportedActualMatchExpectChecker,
         FirWasmJsModuleChecker,
+        FirJsQualifierChecker,
         FirWasmExternalFileChecker,
         FirWasmJsAssociatedObjectChecker,
     )

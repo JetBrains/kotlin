@@ -8,14 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsCodeConstantArgumentChecker
-import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsQualifierChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirWebReflectionAPICallChecker
 
 object JsExpressionCheckers : ExpressionCheckers() {
-    override val annotationCallCheckers: Set<FirAnnotationCallChecker> = setOf(
-        FirJsQualifierChecker,
-    )
-
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
         FirJsDefinedExternallyCallChecker,
         FirJsNativeRttiChecker,

@@ -2276,6 +2276,12 @@ private fun KaDiagnosticConverterBuilder.addConversions46() {
             token,
         )
     }
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL.warningFactory) { firDiagnostic ->
+        JsQualifierProhibitedOnNonTopLevelWarningImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS.warningFactory) { firDiagnostic ->
         ReifiedTypeParameterOnAliasWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -3697,6 +3703,12 @@ private fun KaDiagnosticConverterBuilder.addConversions78() {
     }
     add(FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR) { firDiagnostic ->
         AnnotationInWhereClauseErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL.warningFactory) { firDiagnostic ->
+        JsQualifierProhibitedOnNonExternalWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -5382,6 +5394,12 @@ private fun KaDiagnosticConverterBuilder.addConversions114() {
             token,
         )
     }
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL.errorFactory) { firDiagnostic ->
+        JsQualifierProhibitedOnNonTopLevelErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS) { firDiagnostic ->
         TypeArgumentOnTypedValueClassEqualsImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -6628,6 +6646,12 @@ private fun KaDiagnosticConverterBuilder.addConversions137() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions138() {
+    add(FirWebCommonErrors.JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL.errorFactory) { firDiagnostic ->
+        JsQualifierProhibitedOnNonExternalErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE) { firDiagnostic ->
         NamedContextParameterInFunctionTypeImpl(
             firDiagnostic as KtDiagnosticWithSource,
