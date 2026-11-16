@@ -57,10 +57,6 @@ open class LoweringDataClassMemberGenerator(
     generateBodies = true,
 ) {
 
-    override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
-        // no-op — irFunction from lowering should already have necessary parameters
-    }
-
     override fun getProperty(irValueParameter: IrValueParameter?): IrProperty {
         error("This API shouldn't be used in lowerings")
     }

@@ -286,10 +286,6 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             forbidDirectFieldAccess = false,
             generateBodies = !configuration.skipBodies,
         ) {
-            override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
-                // TODO
-            }
-
             override fun getProperty(irValueParameter: IrValueParameter?): IrProperty {
                 requireNotNull(irValueParameter)
                 // `irClass` is a source class and definitely is not a lazy class
