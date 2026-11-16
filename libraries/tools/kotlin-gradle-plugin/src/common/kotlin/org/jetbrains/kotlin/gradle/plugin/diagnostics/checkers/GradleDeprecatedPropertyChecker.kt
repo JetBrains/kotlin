@@ -10,13 +10,9 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
@@ -123,14 +119,6 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             propertyName = "kotlin.pluginLoadedInMultipleProjects.ignore",
             details = "This property should not be used in normal circumstances. If your build doesn't work without it, please consider " +
                     "filing an issue and providing details: https://kotl.in/issue.",
-        ), // since 2.5.0
-        DeprecatedProperty(
-            propertyName = KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION,
-            details = "Unsafe incremental compilation optimizations are now enabled per target: use " +
-                    "$KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES, " +
-                    "$KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION or " +
-                    "$KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION instead. " +
-                    "See https://kotl.in/KT-87522 for details.",
         ), // since 2.5.0
     )
 
