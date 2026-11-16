@@ -7,8 +7,15 @@ import groovy.json.JsonSlurper
 import java.io.File
 
 /**
- * What TeamCity is told about the tests recorded in a `test-executions.json`, so that a task that
+ * What TeamCity is told about the tests recorded in a `test-executions.jsonl`, so that a task that
  * never ran still reports them.
+ *
+ * The recording is what [TestExecutionsListener] wrote, one JSON object per line as Gradle reported
+ * the events, suites and all; this is the other side of that, reading it back. The suite nesting is
+ * rebuilt as TeamCity expects it, which is not the nesting Gradle reports: the suites Gradle inserts
+ * itself are gone, and a class is part of a test's name rather than a suite. Nothing is emitted
+ * for a suite that has no tests and no suite under it: a replay holds back a recording's empty
+ * suites, because a suite reaches the messages only by a test of its own.
  *
  * Apart from [TestBuildCacheTeamCityCompatibilityService] because a build service is not something
  * a test can instantiate. The messages are bodies, without the `##teamcity[` and `]`: a whole line
@@ -19,9 +26,12 @@ internal class TestExecutionsReplay(
     private val warn: (String, Throwable?) -> Unit,
 ) {
     private companion object {
-        const val STATUS_OK = "OK"
-        const val STATUS_FAILURE = "Failure"
-        const val STATUS_IGNORED = "Ignored"
+        /** The only recording format this can replay, the `formatVersion` of a `header` record. */
+        const val FORMAT_VERSION = 1
+
+        const val RESULT_SUCCESS = "SUCCESS"
+        const val RESULT_FAILURE = "FAILURE"
+        const val RESULT_SKIPPED = "SKIPPED"
         const val FAILURE_DETAILS_UNAVAILABLE =
             "Test failed when this task last ran; replayed from cached test results, no failure details recorded"
     }
@@ -30,88 +40,132 @@ internal class TestExecutionsReplay(
      * The tests recorded in [executionsFile], in the order they have to be sent, under a flow of
      * this task's own so that TeamCity keeps them apart from whatever runs alongside.
      *
-     * Produced as they are asked for, so that a task's tests are never all held at once - the
-     * largest of them run six figures of them. The file is read when the sequence is first iterated.
+     * The file is read and parsed when the sequence is first iterated, all of it before anything is
+     * emitted: a recording that turns out unreadable partway through is not worth half a replay.
+     * Nothing is held beyond the parse - the tree the messages are emitted from, not the records -
+     * so the largest of them, which run six figures of tests, is held once, not twice.
      *
      * A file that is missing or unreadable is reported through [warn] and replayed as nothing: not
      * being able to say what a cached task tested is no reason to fail the build.
      */
     fun messagesFor(executionsFile: File): Sequence<String> = sequence {
-        val recorded = read(executionsFile) ?: return@sequence
-        replay(recorded.toReplayTree(), executionsFile)
+        val replayTree = read(executionsFile) ?: return@sequence
+        replay(replayTree)
     }
 
     private val flowId = "TestReplay$taskPath"
 
-    private fun read(executionsFile: File): RecordedSuite? {
+    /** The runner drops suites named after the task, and a task is named by its last path segment. */
+    private val taskName = taskPath.substringAfterLast(':')
+
+    private fun read(executionsFile: File): ReplayNode? {
         if (!executionsFile.isFile) {
             warn("No test executions recorded for $taskPath: $executionsFile does not exist", null)
             return null
         }
 
-        return runCatching {
-            val document = JsonSlurper().parse(executionsFile, Charsets.UTF_8.name()) as Map<*, *>
-            document.toRecordedSuite(suiteName = "")
-        }.getOrElse { failure ->
+        return runCatching { parse(executionsFile) }.getOrElse { failure ->
             warn("Cannot replay the tests of $taskPath from $executionsFile", failure)
             null
         }
     }
 
     /**
-     * Rebuilds the suite nesting TeamCity expects from the structure Gradle reported.
+     * Reads the whole recording into the tree the messages are emitted from, one record at a time.
      *
-     * TeamCity spells a test `<class>.<method>` and does not repeat the class as a suite, so the
-     * class suite the recording keeps for its timings is collapsed here - per test, not per suite: a
-     * class with nested classes stays a suite for *their* tests while disappearing for its own.
+     * Every record of the file, including a record type this does not know, is read by the same
+     * rules: `formatVersion` is what says a recording can be made sense of, so an unknown record of
+     * a known version is ignored rather than refused - the build cache is shared by branches, and
+     * recordings cross versions of this code.
      */
-    private fun RecordedSuite.toReplayTree(): ReplayNode {
+    private fun parse(executionsFile: File): ReplayNode {
         val replayRoot = ReplayNode("")
+        val runningSuites = HashMap<Int, RecordedSuite>()
 
-        fun collect(node: RecordedSuite, path: List<String>) {
-            for (test in node.tests) {
-                val teamCityPath = test.className?.let { path.dropLastWhile { name -> name == it } } ?: path
-                val target = teamCityPath.fold(replayRoot) { parent, name ->
-                    parent.suites.getOrPut(name) { ReplayNode(name) }
+        executionsFile.bufferedReader(Charsets.UTF_8).useLines { lines ->
+            for (line in lines) {
+                if (line.isBlank()) continue
+                val record = JsonSlurper().parseText(line) as Map<*, *>
+                when (record.string("type")) {
+                    // The suite a `parent` refers to has always started above, so it is still open.
+                    "suite" -> {
+                        val parent = record.parent(runningSuites)
+                        runningSuites[record.int("id")] =
+                            RecordedSuite(record.string("name"), record.className(parent), parent)
+                    }
+                    "suiteEnd" -> runningSuites.remove(record.int("id"))
+                    "test" -> recordTest(record, record.parent(runningSuites), replayRoot, executionsFile)
+                    "header" -> {
+                        val formatVersion = record.int("formatVersion")
+                        if (formatVersion != FORMAT_VERSION) {
+                            error("$executionsFile is recorded in format version $formatVersion, which this cannot replay")
+                        }
+                    }
+                    // A record type this does not know is left alone: the format version is what
+                    // says a recording can be made sense of, so an unknown record of a known
+                    // version is an addition, not a change.
                 }
-                target.tests += test
             }
-            for (child in node.suites) collect(child, path + child.name)
         }
-
-        collect(this, emptyList())
         return replayRoot
     }
 
-    private suspend fun SequenceScope<String>.replay(suite: ReplayNode, executionsFile: File) {
+    /**
+     * Puts one recorded test where it belongs in the tree, its TeamCity name computed from the
+     * nesting Gradle reported: the suites that carry nothing of the name dropped, the class part of
+     * the name, and what is left the suites the test sits under.
+     *
+     * The class suite the recording keeps for its timings is collapsed per test, not per suite: a
+     * class with nested classes stays a suite for *their* tests while disappearing for its own.
+     */
+    private fun recordTest(record: Map<*, *>, parent: RecordedSuite?, replayRoot: ReplayNode, executionsFile: File) {
+        val className = record.className(parent)
+        val name = teamCityRunnerMethodName(record.string("name"), record.displayName())
+        val testName = className.qualifying(name)
+
+        val reportedSuites = generateSequence(parent) { it.parent }.map { it.name }.toList().asReversed()
+        val teamCityPath = (className?.let { reportedSuites.dropLastWhile { suite -> suite == it } } ?: reportedSuites)
+            .filterNot { isSyntheticSuiteName(it, taskName, className) }
+
+        val target = teamCityPath.fold(replayRoot) { suite, suiteName ->
+            suite.suites.getOrPut(suiteName) { ReplayNode(suiteName) }
+        }
+        target.tests += RecordedTest(
+            testName,
+            record.string("resultType"),
+            (record["endTime"] as Number).toLong() - (record["startTime"] as Number).toLong(),
+            executionsFile,
+        )
+    }
+
+    private suspend fun SequenceScope<String>.replay(suite: ReplayNode) {
         for (test in suite.tests) {
             // The recorded halves joined back into the name TeamCity expects.
-            val name = test.className.qualifying(test.name)
-            val outcome = when (test.status) {
-                STATUS_OK -> null
-                STATUS_IGNORED -> serviceMessage("testIgnored", "name" to name)
-                STATUS_FAILURE -> serviceMessage(
+            val outcome = when (test.resultType) {
+                RESULT_SUCCESS -> null
+                RESULT_SKIPPED -> serviceMessage("testIgnored", "name" to test.name)
+                RESULT_FAILURE -> serviceMessage(
                     "testFailed",
-                    "name" to name,
+                    "name" to test.name,
                     "message" to FAILURE_DETAILS_UNAVAILABLE,
                 )
                 // Not replayed at all: to TeamCity a test that starts and finishes saying nothing
-                // else has passed, and a status this build cannot read is no reason to claim that.
+                // else has passed, and a result this build cannot read is no reason to claim that.
                 // Recordings do cross versions of this code - the build cache is shared by branches.
                 else -> {
-                    warn("Unknown status '${test.status}' of test $name in $executionsFile", null)
+                    warn("Unknown result type '${test.resultType}' of test ${test.name} in ${test.executionsFile}", null)
                     continue
                 }
             }
 
-            yield(serviceMessage("testStarted", "name" to name))
+            yield(serviceMessage("testStarted", "name" to test.name))
             if (outcome != null) yield(outcome)
-            yield(serviceMessage("testFinished", "name" to name, "duration" to test.durationMillis.toString()))
+            yield(serviceMessage("testFinished", "name" to test.name, "duration" to test.durationMillis.toString()))
         }
 
         for (nested in suite.suites.values) {
             yield(serviceMessage("testSuiteStarted", "name" to nested.name))
-            replay(nested, executionsFile)
+            replay(nested)
             yield(serviceMessage("testSuiteFinished", "name" to nested.name))
         }
     }
@@ -134,13 +188,14 @@ internal class TestExecutionsReplay(
         .replace("[", "|[")
         .replace("]", "|]")
 
-    private class RecordedSuite(val name: String, val suites: List<RecordedSuite>, val tests: List<RecordedTest>)
+    /** A suite that has started and not ended. */
+    private class RecordedSuite(val name: String, val className: String?, val parent: RecordedSuite?)
 
     private class RecordedTest(
         val name: String,
-        val className: String?,
-        val status: String,
+        val resultType: String,
         val durationMillis: Long,
+        val executionsFile: File,
     )
 
     /** The suite nesting as TeamCity wants it, rebuilt from the recorded one. */
@@ -149,21 +204,24 @@ internal class TestExecutionsReplay(
         val tests = mutableListOf<RecordedTest>()
     }
 
-    private fun Map<*, *>.toRecordedSuite(suiteName: String): RecordedSuite = RecordedSuite(
-        name = suiteName,
-        suites = members("suites").map { it.toRecordedSuite(it.string("name")) },
-        // An absent 'className' means the enclosing suite is the test's class, an explicit null
-        // that it has none; the root suite's empty name stands for no class.
-        tests = members("tests").map {
-            val className = if (it.containsKey("className")) it["className"] as String? else suiteName.ifEmpty { null }
-            RecordedTest(it.string("name"), className, it.string("status"), it.long("duration"))
-        },
-    )
+    private fun Map<*, *>.string(key: String): String = this[key] as String? ?: error("A record has no '$key'")
 
-    private fun Map<*, *>.members(key: String): List<Map<*, *>> =
-        (this[key] as? List<*> ?: emptyList<Any>()).map { it as Map<*, *> }
+    private fun Map<*, *>.int(key: String): Int = (this[key] as Number).toInt()
 
-    private fun Map<*, *>.string(key: String): String = this[key] as String
+    /** A record's `displayName`, which a recording omits when it is the name itself. */
+    private fun Map<*, *>.displayName(): String = this["displayName"] as String? ?: string("name")
 
-    private fun Map<*, *>.long(key: String): Long = (this[key] as Number).toLong()
+    /**
+     * The `parent` of a record as the suite it refers to. A `parent` outside the running suites is
+     * a recording this cannot follow; `getValue` says so.
+     */
+    private fun Map<*, *>.parent(runningSuites: Map<Int, RecordedSuite>): RecordedSuite? =
+        this["parent"]?.let { runningSuites.getValue((it as Number).toInt()) }
+
+    /**
+     * The class a record belongs to: written only where it is not the parent suite's, an explicit
+     * null being Gradle's way of saying a test has no class at all.
+     */
+    private fun Map<*, *>.className(parent: RecordedSuite?): String? =
+        if (containsKey("className")) this["className"] as String? else parent?.className
 }

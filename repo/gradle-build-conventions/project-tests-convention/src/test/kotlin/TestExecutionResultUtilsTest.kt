@@ -3,20 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.gradle.api.tasks.testing.TestDescriptor
-import org.gradle.api.tasks.testing.TestResult.ResultType
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
  * The rules for turning what Gradle reports about a test into what TeamCity calls it.
  *
- * Ports of TeamCity's own - its Gradle runner's init script, and the normalization its server
- * applies afterwards - so what they have to be right about is cases rather than builds.
+ * Ports of TeamCity's own - its Gradle runner's init script - so what they have to be right about is
+ * cases rather than builds.
  */
 class TestExecutionResultUtilsTest {
 
@@ -30,36 +26,22 @@ class TestExecutionResultUtilsTest {
 
     @Test
     fun `the method part is the display name where the display name stands for the method`() {
-        assertEquals("passes()", descriptor(name = "passes()", displayName = "passes()").teamCityRunnerMethodName())
+        assertEquals("passes()", teamCityRunnerMethodName(name = "passes()", displayName = "passes()"))
 
         // A '@DisplayName' says something else entirely, so the method it belongs to is kept too.
         assertEquals(
             "passes(does the thing)",
-            descriptor(name = "passes()", displayName = "does the thing").teamCityRunnerMethodName(),
+            teamCityRunnerMethodName(name = "passes()", displayName = "does the thing"),
         )
 
-        // A parameterized invocation: the descriptor is the method, the display name the arguments.
+        // A parameterized invocation: the name is the method, the display name the arguments.
         assertEquals(
             "parameterized([1] 1)",
-            descriptor(name = "parameterized(int)", displayName = "[1] 1").teamCityRunnerMethodName(),
+            teamCityRunnerMethodName(name = "parameterized(int)", displayName = "[1] 1"),
         )
 
         // A display name that only adds a parameter list says nothing the name does not.
-        assertEquals("passes", descriptor(name = "passes", displayName = "passes()").teamCityRunnerMethodName())
-    }
-
-    @Test
-    fun `the name TeamCity registers has an empty parameter list dropped, and nothing else`() {
-        assertEquals(
-            "com.example.SomeTest.passes",
-            descriptor("passes()", className = "com.example.SomeTest").toTeamCityRegisteredTestName(),
-        )
-
-        assertEquals(
-            "com.example.SomeTest.parameterized([1] 1)",
-            descriptor("parameterized(int)", className = "com.example.SomeTest", displayName = "[1] 1")
-                .toTeamCityRegisteredTestName(),
-        )
+        assertEquals("passes", teamCityRunnerMethodName(name = "passes", displayName = "passes()"))
     }
 
     @Test
@@ -79,80 +61,4 @@ class TestExecutionResultUtilsTest {
         // A plain class suite is not synthetic: dropping it is a decision per test, not per suite.
         assertFalse(isSyntheticSuiteName("com.example.SomeTest", "test", "com.example.SomeTest"))
     }
-
-    @Test
-    fun `a class suite named after the task is recorded under the bare class`() {
-        assertEquals(
-            "com.example.SomeTest",
-            descriptor("jsNodeTest.com.example.SomeTest", className = "com.example.SomeTest")
-                .recordedSuiteName(taskName = "jsNodeTest"),
-        )
-
-        // Only that exact spelling is rewritten: a container has a class too, and keeps its own name.
-        assertEquals(
-            "parameterized(int)",
-            descriptor("parameterized(int)", className = "com.example.SomeTest").recordedSuiteName(taskName = "test"),
-        )
-    }
-
-    @Test
-    fun `the recorded suites of a test are the ones Gradle did not insert, its class among them`() {
-        val test = descriptor("passes()", className = "com.example.SomeTest", parent = classSuite())
-
-        assertEquals(listOf("com.example.SomeTest"), test.enclosingSuiteNames(taskName = "test"))
-    }
-
-    @Test
-    fun `the path of a test drops the suite standing for its own class`() {
-        val test = descriptor("passes()", className = "com.example.SomeTest", parent = classSuite())
-
-        val path = test.toTestPath(taskName = "test")
-
-        assertEquals(emptyList(), path.suites)
-        assertEquals("com.example.SomeTest.passes", path.joinToTeamCityName())
-    }
-
-    @Test
-    fun `a container narrower than the class keeps both itself and the class in the path`() {
-        val container = descriptor("parameterized(int)", className = "com.example.SomeTest", parent = classSuite())
-        val invocation = descriptor(
-            name = "parameterized(int)",
-            className = "com.example.SomeTest",
-            displayName = "[1] 1",
-            parent = container,
-        )
-
-        val path = invocation.toTestPath(taskName = "test")
-
-        assertEquals(listOf("com.example.SomeTest", "parameterized(int)"), path.suites)
-        assertEquals(
-            "com.example.SomeTest: parameterized(int): com.example.SomeTest.parameterized([1] 1)",
-            path.joinToTeamCityName(),
-        )
-    }
-
-    /** The spelling both files record and the replay reads back, so it is a contract of its own. */
-    @Test
-    fun `a status is spelled the way TeamCity's own Gradle integration spells it`() {
-        assertEquals("OK", result(ResultType.SUCCESS, durationMillis = 0).statusName())
-        assertEquals("Failure", result(ResultType.FAILURE, durationMillis = 0).statusName())
-        assertEquals("Ignored", result(ResultType.SKIPPED, durationMillis = 0).statusName())
-    }
-
-    /** TeamCity reads the apostrophe as the end of the attribute, so such a name is refused outright. */
-    @Test
-    fun `a name ending in an apostrophe is refused`() {
-        val test = descriptor("what a name'")
-
-        val refusal = assertFailsWith<IllegalStateException> { test.toTestPath(taskName = "test") }
-
-        assertContains(refusal.message.orEmpty(), "TW-101796")
-    }
-}
-
-/** The suites Gradle puts above every test, and the class suite below them. */
-private fun classSuite(className: String = "com.example.SomeTest"): TestDescriptor {
-    val run = descriptor("Gradle Test Run :some:project:test", composite = true)
-    val executor = descriptor("Gradle Test Executor 7", parent = run, composite = true)
-    return descriptor(className, className = className, parent = executor, composite = true)
 }

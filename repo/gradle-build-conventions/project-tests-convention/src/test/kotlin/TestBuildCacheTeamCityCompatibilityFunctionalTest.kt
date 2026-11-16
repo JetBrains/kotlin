@@ -52,7 +52,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         val result = runTasks(cache, FIXTURE_TASK_PATH)
 
         assertEquals(TaskOutcome.SUCCESS, result.fixtureTaskOutcome)
-        assertEquals(expectedRecording, recordedExecutions().withoutDurations())
+        assertEquals(expectedRecording, recordedExecutions().withoutVolatileParts())
         assertEquals(emptyList(), result.replayedTestMessages)
     }
 
@@ -235,46 +235,31 @@ private const val FAILURE_DETAILS_UNAVAILABLE =
     "Test failed when this task last ran; replayed from cached test results, no failure details recorded"
 
 /**
- * The whole of what the fixture's run is recorded as, the format being documented in the `### Format`
- * section of [TestExecutionsListener]. Worth reading for the three states of `className`.
+ * The whole of what the fixture's run is recorded as, one record per line in the order Gradle
+ * reported the events, the format being documented in the `### Format` section of
+ * [TestExecutionsListener]. Worth reading for what a `className` is left to the parent suite to
+ * say, and for the suites Gradle inserts itself, which a recording keeps and a replay drops.
+ *
+ * The times and the executor's number are masked in the comparison, see [withoutVolatileParts].
  */
 private val expectedRecording = """
-    {
-      "formatVersion": 1,
-      "taskPath": "$FIXTURE_TASK_PATH",
-      "duration": <ms>,
-      "suites": [
-        {
-          "name": "$FIXTURE_CLASS",
-          "duration": <ms>,
-          "suites": [
-            {
-              "name": "parameterized(int)",
-              "duration": <ms>,
-              "suites": [],
-              "tests": [
-                { "name": "parameterized([1] 1)", "className": "$FIXTURE_CLASS", "status": "OK", "duration": <ms> },
-                { "name": "parameterized([2] 2)", "className": "$FIXTURE_CLASS", "status": "OK", "duration": <ms> }
-              ]
-            },
-            {
-              "name": "$FIXTURE_NESTED_CLASS",
-              "duration": <ms>,
-              "suites": [],
-              "tests": [
-                { "name": "nested()", "status": "OK", "duration": <ms> }
-              ]
-            }
-          ],
-          "tests": [
-            { "name": "failing()", "status": "OK", "duration": <ms> },
-            { "name": "passing()", "status": "OK", "duration": <ms> },
-            { "name": "ignored()", "status": "Ignored", "duration": <ms> }
-          ]
-        }
-      ],
-      "tests": []
-    }
+    {"type":"header","formatVersion":1,"taskPath":"$FIXTURE_TASK_PATH"}
+    {"type":"suite","id":1,"name":"Gradle Test Run $FIXTURE_TASK_PATH"}
+    {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor <n>"}
+    {"type":"suite","id":3,"parent":2,"name":"$FIXTURE_CLASS","displayName":"TestInventoryFixtureTest","className":"$FIXTURE_CLASS","source":{"kind":"class"}}
+    {"type":"test","parent":3,"name":"failing()","source":{"kind":"method","methodName":"failing"},"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
+    {"type":"test","parent":3,"name":"passing()","source":{"kind":"method","methodName":"passing"},"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
+    {"type":"suite","id":4,"parent":3,"name":"parameterized(int)"}
+    {"type":"test","parent":4,"name":"parameterized(int)[1]","displayName":"[1] 1","source":{"kind":"method","methodName":"parameterized"},"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
+    {"type":"test","parent":4,"name":"parameterized(int)[2]","displayName":"[2] 2","source":{"kind":"method","methodName":"parameterized"},"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
+    {"type":"suiteEnd","id":4,"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
+    {"type":"test","parent":3,"name":"ignored()","source":{"kind":"method","methodName":"ignored"},"resultType":"SKIPPED","startTime":<ms>,"endTime":<ms>}
+    {"type":"suite","id":5,"parent":3,"name":"$FIXTURE_NESTED_CLASS","displayName":"NestedTests","className":"$FIXTURE_NESTED_CLASS","source":{"kind":"class"}}
+    {"type":"test","parent":5,"name":"nested()","source":{"kind":"method","methodName":"nested"},"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
+    {"type":"suiteEnd","id":5,"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
+    {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
+    {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
+    {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":<ms>,"endTime":<ms>}
 
 """.trimIndent()
 
@@ -335,12 +320,16 @@ private val expectedReplay = replayedMessages(
 private val repoRoot: File get() = Path("").toAbsolutePath().toFile()
 
 private val executionsFile: File
-    get() = repoRoot.resolve("repo/test-inventory-fixture/build/test-inventory/test/test-executions.json")
+    get() = repoRoot.resolve("repo/test-inventory-fixture/build/test-inventory/test/test-executions.jsonl")
 
 private fun recordedExecutions(): String = executionsFile.readText()
 
-/** Replaces every duration with a placeholder: they are real timings and differ from run to run. */
-private fun String.withoutDurations(): String = replace(Regex("\"duration\": \\d+"), "\"duration\": <ms>")
+/**
+ * Replaces what two recordings of the same tests cannot help differing in: the times, which are
+ * real timings, and the executor's number, which depends on how Gradle shares the forks out.
+ */
+private fun String.withoutVolatileParts(): String = replace(Regex("\"(startTime|endTime)\":\\d+"), "\"$1\":<ms>")
+    .replace(Regex("Gradle Test Executor \\d+"), "Gradle Test Executor <n>")
 
 private fun BuildResult.outcomeOf(taskPath: String): TaskOutcome =
     (task(taskPath) ?: fail("No '$taskPath' in the build result")).outcome
@@ -349,7 +338,7 @@ private val BuildResult.fixtureTaskOutcome: TaskOutcome get() = outcomeOf(FIXTUR
 
 /**
  * The test related service messages of a build, without their [SERVICE_MESSAGE_MARKER] and with the
- * durations replaced as in [withoutDurations]. Every `test...` message is taken, not only those in a
+ * durations replaced as in [replayedTest]. Every `test...` message is taken, not only those in a
  * replay's flow, so that a message sent under the wrong flow shows up as a difference.
  */
 private val BuildResult.replayedTestMessages: List<String>

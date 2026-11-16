@@ -13,7 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
 /**
- * Tests that exist to be recorded into `test-executions.json` and replayed to TeamCity from it.
+ * Tests that exist to be recorded into `test-executions.jsonl` and replayed to TeamCity from it.
  *
  * Between them they cover every shape a recording can take, each of which the replay does something
  * different with: a test whose class is the suite it sits in, a test in a nested class, a

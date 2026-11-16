@@ -16,7 +16,7 @@ import java.io.File
 /**
  * Reports the tests of the test tasks served from the Gradle Build Cache to TeamCity.
  *
- * One service for the whole build, holding the `test-executions.json` of every test task in the
+ * One service for the whole build, holding the `test-executions.jsonl` of every test task in the
  * graph; when it is subscribed to task completions is load bearing, see [configureTestInventory].
  * What is reported about a recording is [TestExecutionsReplay]'s; this is when, and where to.
  */
@@ -25,7 +25,7 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
     OperationCompletionListener {
 
     interface Parameters : BuildServiceParameters {
-        /** Path of a test task to the `test-executions.json` recorded for it. */
+        /** Path of a test task to the `test-executions.jsonl` recorded for it. */
         val executionsFiles: MapProperty<String, File>
     }
 

@@ -14,6 +14,9 @@ import kotlin.test.assertTrue
  * What a recording is turned into: the shapes one can have, which a build would have to be bent into
  * producing. [TestBuildCacheTeamCityCompatibilityFunctionalTest] asserts the same end to end.
  *
+ * The recordings are written as [TestExecutionsListener] writes them, one record per line, the
+ * suite nesting and all - these tests are where that format is read back, so they spell it out.
+ *
  * The messages are bodies, without the marker a service message is wrapped in, see
  * [TestExecutionsReplay]: a failing assertion prints what it compared.
  */
@@ -29,21 +32,21 @@ class TestExecutionsReplayTest {
     fun `a test of the class its suite stands for is named after it, and the suite is gone`() {
         val messages = replayOf(
             """
-            {
-              "suites": [
-                {
-                  "name": "com.example.SomeTest",
-                  "tests": [ { "name": "passes()", "status": "OK", "duration": 7 } ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":some:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :some:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"$TEST_CLASS","className":"$TEST_CLASS"}
+            {"type":"test","parent":3,"name":"passes()","resultType":"SUCCESS","startTime":10,"endTime":17}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":9,"endTime":18}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":8,"endTime":19}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":7,"endTime":20}
             """
         )
 
         assertEquals(
             listOf(
-                "testStarted name='com.example.SomeTest.passes()' $FLOW",
-                "testFinished name='com.example.SomeTest.passes()' duration='7' $FLOW",
+                "testStarted name='$TEST_CLASS.passes()' $FLOW",
+                "testFinished name='$TEST_CLASS.passes()' duration='7' $FLOW",
             ),
             messages,
         )
@@ -55,85 +58,85 @@ class TestExecutionsReplayTest {
     fun `an ignored test is replayed as ignored`() {
         val messages = replayOf(
             """
-            {
-              "suites": [
-                {
-                  "name": "com.example.SomeTest",
-                  "tests": [ { "name": "skipped()", "status": "Ignored", "duration": 0 } ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":some:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :some:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"$TEST_CLASS","className":"$TEST_CLASS"}
+            {"type":"test","parent":3,"name":"skipped()","resultType":"SKIPPED","startTime":0,"endTime":0}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":0,"endTime":0}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":0,"endTime":0}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":0}
             """
         )
 
         assertEquals(
             listOf(
-                "testStarted name='com.example.SomeTest.skipped()' $FLOW",
-                "testIgnored name='com.example.SomeTest.skipped()' $FLOW",
-                "testFinished name='com.example.SomeTest.skipped()' duration='0' $FLOW",
+                "testStarted name='$TEST_CLASS.skipped()' $FLOW",
+                "testIgnored name='$TEST_CLASS.skipped()' $FLOW",
+                "testFinished name='$TEST_CLASS.skipped()' duration='0' $FLOW",
             ),
             messages,
         )
     }
 
-    /** A recording keeps a status and no stack trace, so the replay says where the verdict came from. */
+    /** A recording keeps a result and no stack trace, so the replay says where the verdict came from. */
     @Test
     fun `a failed test is replayed as a failure that says where the verdict came from`() {
         val messages = replayOf(
             """
-            {
-              "suites": [
-                {
-                  "name": "com.example.SomeTest",
-                  "tests": [ { "name": "fails()", "status": "Failure", "duration": 3 } ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":some:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :some:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"$TEST_CLASS","className":"$TEST_CLASS"}
+            {"type":"test","parent":3,"name":"fails()","resultType":"FAILURE","startTime":3,"endTime":6}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":2,"endTime":7}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":1,"endTime":8}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":9}
             """
         )
 
         assertEquals(
             listOf(
-                "testStarted name='com.example.SomeTest.fails()' $FLOW",
-                "testFailed name='com.example.SomeTest.fails()' message='Test failed when this task last ran; " +
+                "testStarted name='$TEST_CLASS.fails()' $FLOW",
+                "testFailed name='$TEST_CLASS.fails()' message='Test failed when this task last ran; " +
                         "replayed from cached test results, no failure details recorded' $FLOW",
-                "testFinished name='com.example.SomeTest.fails()' duration='3' $FLOW",
+                "testFinished name='$TEST_CLASS.fails()' duration='3' $FLOW",
             ),
             messages,
         )
     }
 
-    /** A suite narrower than the class - a parameterized invocation's container - is not the class, so it stays. */
+    /**
+     * A suite narrower than the class - a parameterized invocation's container - is not the class, so it stays.
+     *
+     * Its tests carry the class explicitly in a recording by [TestExecutionsListener]; here it is
+     * left for the parent suite to say, the other spelling a recording keeps.
+     */
     @Test
     fun `a test that names its own class keeps the suite it sits in`() {
         val messages = replayOf(
             """
-            {
-              "suites": [
-                {
-                  "name": "com.example.SomeTest",
-                  "suites": [
-                    {
-                      "name": "parameterized(int)",
-                      "tests": [
-                        { "name": "parameterized([1] 1)", "className": "com.example.SomeTest", "status": "OK", "duration": 1 }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":some:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :some:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"$TEST_CLASS","className":"$TEST_CLASS"}
+            {"type":"suite","id":4,"parent":3,"name":"parameterized(int)"}
+            {"type":"test","parent":4,"name":"parameterized(int)","displayName":"[1] 1","resultType":"SUCCESS","startTime":0,"endTime":1}
+            {"type":"suiteEnd","id":4,"resultType":"SUCCESS","startTime":0,"endTime":1}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":0,"endTime":1}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":0,"endTime":1}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":1}
             """
         )
 
         assertEquals(
             listOf(
-                "testSuiteStarted name='com.example.SomeTest' $FLOW",
+                "testSuiteStarted name='$TEST_CLASS' $FLOW",
                 "testSuiteStarted name='parameterized(int)' $FLOW",
-                "testStarted name='com.example.SomeTest.parameterized(|[1|] 1)' $FLOW",
-                "testFinished name='com.example.SomeTest.parameterized(|[1|] 1)' duration='1' $FLOW",
+                "testStarted name='$TEST_CLASS.parameterized(|[1|] 1)' $FLOW",
+                "testFinished name='$TEST_CLASS.parameterized(|[1|] 1)' duration='1' $FLOW",
                 "testSuiteFinished name='parameterized(int)' $FLOW",
-                "testSuiteFinished name='com.example.SomeTest' $FLOW",
+                "testSuiteFinished name='$TEST_CLASS' $FLOW",
             ),
             messages,
         )
@@ -144,14 +147,14 @@ class TestExecutionsReplayTest {
     fun `a test recorded with no class at all keeps the bare name`() {
         val messages = replayOf(
             """
-            {
-              "suites": [
-                {
-                  "name": "a suite of no class",
-                  "tests": [ { "name": "classless", "className": null, "status": "OK", "duration": 2 } ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":some:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :some:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"a suite of no class"}
+            {"type":"test","parent":3,"name":"classless","className":null,"resultType":"SUCCESS","startTime":0,"endTime":2}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":0,"endTime":2}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":0,"endTime":2}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":2}
             """
         )
 
@@ -171,31 +174,60 @@ class TestExecutionsReplayTest {
     fun `a class stays a suite for the tests of the class nested in it`() {
         val messages = replayOf(
             """
-            {
-              "suites": [
-                {
-                  "name": "com.example.SomeTest",
-                  "suites": [
-                    {
-                      "name": "$NESTED_CLASS",
-                      "tests": [ { "name": "nested()", "status": "OK", "duration": 4 } ]
-                    }
-                  ],
-                  "tests": [ { "name": "outer()", "status": "OK", "duration": 5 } ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":some:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :some:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"$TEST_CLASS","className":"$TEST_CLASS"}
+            {"type":"test","parent":3,"name":"outer()","resultType":"SUCCESS","startTime":0,"endTime":5}
+            {"type":"suite","id":4,"parent":3,"name":"$NESTED_CLASS","className":"$NESTED_CLASS"}
+            {"type":"test","parent":4,"name":"nested()","resultType":"SUCCESS","startTime":0,"endTime":4}
+            {"type":"suiteEnd","id":4,"resultType":"SUCCESS","startTime":0,"endTime":4}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":0,"endTime":5}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":0,"endTime":5}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":5}
             """
         )
 
         assertEquals(
             listOf(
-                "testStarted name='com.example.SomeTest.outer()' $FLOW",
-                "testFinished name='com.example.SomeTest.outer()' duration='5' $FLOW",
-                "testSuiteStarted name='com.example.SomeTest' $FLOW",
+                "testStarted name='$TEST_CLASS.outer()' $FLOW",
+                "testFinished name='$TEST_CLASS.outer()' duration='5' $FLOW",
+                "testSuiteStarted name='$TEST_CLASS' $FLOW",
                 "testStarted name='$NESTED_CLASS.nested()' $FLOW",
                 "testFinished name='$NESTED_CLASS.nested()' duration='4' $FLOW",
-                "testSuiteFinished name='com.example.SomeTest' $FLOW",
+                "testSuiteFinished name='$TEST_CLASS' $FLOW",
+            ),
+            messages,
+        )
+    }
+
+    /**
+     * The suites a task names after itself carry nothing either: Kotlin/JS and Kotlin/Wasm report a
+     * class suite as `<task name>.<class name>`, which TeamCity never sees.
+     */
+    @Test
+    fun `a suite a task names after itself is gone, and the class is part of the name`() {
+        val messages = TestExecutionsReplay(":some:project:jsNodeTest") { message, _ -> warnings += message }
+            .messagesFor(
+                write(
+                    """
+                    {"type":"header","formatVersion":1,"taskPath":":some:project:jsNodeTest"}
+                    {"type":"suite","id":1,"name":"Gradle Test Run :some:project:jsNodeTest"}
+                    {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+                    {"type":"suite","id":3,"parent":2,"name":"jsNodeTest.$TEST_CLASS","className":"$TEST_CLASS"}
+                    {"type":"test","parent":3,"name":"passes()","resultType":"SUCCESS","startTime":0,"endTime":1}
+                    {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":0,"endTime":1}
+                    {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":0,"endTime":1}
+                    {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":1}
+                    """
+                )
+            )
+            .toList()
+
+        assertEquals(
+            listOf(
+                "testStarted name='$TEST_CLASS.passes()' flowId='TestReplay:some:project:jsNodeTest'",
+                "testFinished name='$TEST_CLASS.passes()' duration='1' flowId='TestReplay:some:project:jsNodeTest'",
             ),
             messages,
         )
@@ -206,17 +238,15 @@ class TestExecutionsReplayTest {
     fun `the attempts of a retried test are replayed in the order they were recorded`() {
         val messages = replayOf(
             """
-            {
-              "suites": [
-                {
-                  "name": "com.example.FlakyTest",
-                  "tests": [
-                    { "name": "flaky()", "status": "Failure", "duration": 1 },
-                    { "name": "flaky()", "status": "OK", "duration": 2 }
-                  ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":some:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :some:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"com.example.FlakyTest","className":"com.example.FlakyTest"}
+            {"type":"test","parent":3,"name":"flaky()","resultType":"FAILURE","startTime":0,"endTime":1}
+            {"type":"test","parent":3,"name":"flaky()","resultType":"SUCCESS","startTime":0,"endTime":2}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":0,"endTime":2}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":0,"endTime":2}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":2}
             """
         )
 
@@ -231,19 +261,19 @@ class TestExecutionsReplayTest {
     fun `a name is escaped the way a service message attribute has to be`() {
         val messages = replayOf(
             """
-            {
-              "suites": [
-                {
-                  "name": "com.example.SomeTest",
-                  "tests": [ { "name": "awkward(|'[a]'\n)", "status": "OK", "duration": 0 } ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":some:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :some:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"$TEST_CLASS","className":"$TEST_CLASS"}
+            {"type":"test","parent":3,"name":"awkward(|'[a]'\n)","resultType":"SUCCESS","startTime":0,"endTime":0}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":0,"endTime":0}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":0,"endTime":0}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":0}
             """
         )
 
         assertEquals(
-            "testStarted name='com.example.SomeTest.awkward(|||'|[a|]|'|n)' $FLOW",
+            "testStarted name='$TEST_CLASS.awkward(|||'|[a|]|'|n)' $FLOW",
             messages.first(),
         )
     }
@@ -253,14 +283,14 @@ class TestExecutionsReplayTest {
     fun `the flow of a replay is the task's own`() {
         val recording = write(
             """
-            {
-              "suites": [
-                {
-                  "name": "com.example.SomeTest",
-                  "tests": [ { "name": "passes()", "status": "OK", "duration": 0 } ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":another:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :another:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"$TEST_CLASS","className":"$TEST_CLASS"}
+            {"type":"test","parent":3,"name":"passes()","resultType":"SUCCESS","startTime":0,"endTime":0}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":0,"endTime":0}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":0,"endTime":0}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":0}
             """
         )
 
@@ -277,7 +307,7 @@ class TestExecutionsReplayTest {
     /** Not being able to say what a cached task tested is worth a warning, never a failed build. */
     @Test
     fun `a recording that is not there is replayed as nothing`() {
-        val missing = File(directory, "not-written.json")
+        val missing = File(directory, "not-written.jsonl")
 
         val messages = TestExecutionsReplay(TASK_PATH) { message, _ -> warnings += message }
             .messagesFor(missing)
@@ -296,34 +326,56 @@ class TestExecutionsReplayTest {
         assertContains(warnings.single(), "Cannot replay the tests of $TASK_PATH")
     }
 
+    /**
+     * Recordings cross versions of this code - the build cache is shared by branches - so the
+     * format a file is recorded in is written down in it, and a version this cannot read is
+     * replayed as nothing rather than guessed at.
+     */
+    @Test
+    fun `a recording of a later format is replayed as nothing`() {
+        val failures = mutableListOf<Throwable?>()
+        val messages = TestExecutionsReplay(TASK_PATH) { message, failure ->
+            warnings += message
+            failures += failure
+        }.messagesFor(
+            write(
+                """
+                {"type":"header","formatVersion":2,"taskPath":":some:project:test"}
+                """
+            )
+        ).toList()
+
+        assertEquals(emptyList(), messages)
+        assertContains(warnings.single(), "Cannot replay the tests of $TASK_PATH")
+        assertContains(failures.single()!!.message.toString(), "format version 2")
+    }
+
     /** Started and finished with nothing in between is how TeamCity is told a test passed. */
     @Test
-    fun `a status nobody knows is left out rather than replayed as a pass`() {
+    fun `a result nobody knows is left out rather than replayed as a pass`() {
         val messages = replayOf(
             """
-            {
-              "suites": [
-                {
-                  "name": "com.example.SomeTest",
-                  "tests": [
-                    { "name": "puzzling()", "status": "Inconclusive", "duration": 0 },
-                    { "name": "passes()", "status": "OK", "duration": 7 }
-                  ]
-                }
-              ]
-            }
+            {"type":"header","formatVersion":1,"taskPath":":some:project:test"}
+            {"type":"suite","id":1,"name":"Gradle Test Run :some:project:test"}
+            {"type":"suite","id":2,"parent":1,"name":"Gradle Test Executor 1"}
+            {"type":"suite","id":3,"parent":2,"name":"$TEST_CLASS","className":"$TEST_CLASS"}
+            {"type":"test","parent":3,"name":"puzzling()","resultType":"INCONCLUSIVE","startTime":0,"endTime":0}
+            {"type":"test","parent":3,"name":"passes()","resultType":"SUCCESS","startTime":0,"endTime":7}
+            {"type":"suiteEnd","id":3,"resultType":"SUCCESS","startTime":0,"endTime":7}
+            {"type":"suiteEnd","id":2,"resultType":"SUCCESS","startTime":0,"endTime":7}
+            {"type":"suiteEnd","id":1,"resultType":"SUCCESS","startTime":0,"endTime":7}
             """
         )
 
         // The tests around it are replayed just the same: one unreadable record is not the file.
         assertEquals(
             listOf(
-                "testStarted name='com.example.SomeTest.passes()' $FLOW",
-                "testFinished name='com.example.SomeTest.passes()' duration='7' $FLOW",
+                "testStarted name='$TEST_CLASS.passes()' $FLOW",
+                "testFinished name='$TEST_CLASS.passes()' duration='7' $FLOW",
             ),
             messages,
         )
-        assertContains(warnings.single(), "Unknown status 'Inconclusive' of test com.example.SomeTest.puzzling()")
+        assertContains(warnings.single(), "Unknown result type 'INCONCLUSIVE' of test $TEST_CLASS.puzzling()")
     }
 
     /** Collected, so that a test sees the warnings a replay produced as it went. */
@@ -333,10 +385,12 @@ class TestExecutionsReplayTest {
             .toList()
 
     private fun write(document: String): File =
-        File(directory, "test-executions.json").apply { writeText(document.trimIndent()) }
+        File(directory, "test-executions.jsonl").apply { writeText(document.trimIndent() + "\n") }
 }
 
 private const val TASK_PATH = ":some:project:test"
+
+private const val TEST_CLASS = "com.example.SomeTest"
 
 /** A nested test class, spelled the way the JVM names one. */
 private const val NESTED_CLASS = $$"com.example.SomeTest$Nested"

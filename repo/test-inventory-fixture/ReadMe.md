@@ -2,7 +2,7 @@
 
 The tests in this module exist to be *recorded and replayed*, not to check anything themselves.
 
-`project-tests-convention` records every test task's tests into `test-executions.json`, and replays
+`project-tests-convention` records every test task's tests into `test-executions.jsonl`, and replays
 them as TeamCity service messages when the task is later served from the build cache. The functional
 tests of that feature - `TestBuildCacheTeamCityCompatibilityFunctionalTest` in
 `repo/gradle-build-conventions/project-tests-convention` - run this module's test task and assert both
