@@ -1992,6 +1992,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             isNullableLhsForCallableReference = this@toError.isNullableLhsForCallableReference
             resolvedLhsTypeForCallableReferenceOrNull = this@toError.resolvedLhsTypeForCallableReferenceOrNull
             resolvedToCompanionObject = this@toError.resolvedToCompanionObject
+            wasResolutionTowerExhausted = (this@toError as? FirErrorResolvedQualifier)?.wasResolutionTowerExhausted ?: false
             nonFatalDiagnostics += this@toError.nonFatalDiagnostics
             resolvedSymbolOrigin = this@toError.resolvedSymbolOrigin
             typeArguments += this@toError.typeArguments
@@ -2696,6 +2697,7 @@ private fun FirNamedReference.createCopyWithNewSource(newSource: KtSourceElement
             source = newSource
             name = oldCalleeReference.name
             diagnostic = oldCalleeReference.diagnostic
+            wasResolutionTowerExhausted = oldCalleeReference.wasResolutionTowerExhausted
         }
         else -> error("Unexpected type of callee reference: ${render()}")
     }

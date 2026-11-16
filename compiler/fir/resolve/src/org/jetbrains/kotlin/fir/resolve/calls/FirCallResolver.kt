@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.StandaloneQualifiedAccessAsValueFailure.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeEquivalentCallConflictResolver
@@ -421,6 +422,12 @@ class FirCallResolver(
             )
         }
 
+        val failureStatus: StandaloneQualifiedAccessAsValueFailure = when {
+            usage.isUsedAsReceiver || @OptIn(ApplicabilityDetail::class) basicResult.isSuccess -> NONE
+            basicResult.applicability.shouldStopResolve -> NO_TOWER_EXHAUSTION
+            else -> WITH_TOWER_EXHAUSTION
+        }
+
         // Even if it's not receiver, it makes sense to continue qualifier if resolution is unsuccessful
         // just to try to resolve to package/class and then report meaningful error at FirStandaloneQualifierChecker
         @OptIn(ApplicabilityDetail::class)
@@ -435,7 +442,8 @@ class FirCallResolver(
                     qualifiedAccess,
                     nonFatalDiagnosticFromExpression + listOfNotNull(diagnosticFromTypeArguments),
                     session,
-                    components
+                    components,
+                    failureStatus,
                 )
                 ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !basicResult.isSuccess }
                 ?.let {
@@ -462,7 +470,7 @@ class FirCallResolver(
             @OptIn(ApplicabilityDetail::class)
             if (!result.isSuccess || (usage.isUsedAsReceiver && result.candidates.all { it.symbol is FirClassLikeSymbol })) {
                 components.resolveRootPartOfQualifier(
-                    callee, qualifiedAccess, nonFatalDiagnosticFromExpression, usage.isUsedAsReceiver
+                    callee, qualifiedAccess, nonFatalDiagnosticFromExpression, usage.isUsedAsReceiver, failureStatus
                 )
                     ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !result.isSuccess }
                     ?.let { return it.qualifier }
@@ -525,22 +533,28 @@ class FirCallResolver(
                         ConeResolutionResultOverridesOtherToPreserveCompatibility
                     }
                 val nonFatalDiagnosticFromExpressionWithExtra = nonFatalDiagnosticFromExpression + listOfNotNull(extraDiagnostic)
+                val qualifierDiagnostic = diagnostic ?: extractNestedClassAccessDiagnostic(
+                    nameReference.source,
+                    qualifiedAccess.explicitReceiver,
+                    referencedSymbol
+                )
                 return components.buildResolvedQualifierForClass(
                     referencedSymbol,
                     qualifiedAccess.source,
                     explicitParent = qualifiedAccess.explicitReceiver as? FirResolvedQualifier,
                     qualifiedAccess.typeArguments,
-                    diagnostic ?: extractNestedClassAccessDiagnostic(
-                        nameReference.source,
-                        qualifiedAccess.explicitReceiver,
-                        referencedSymbol
-                    ),
+                    qualifierDiagnostic,
                     nonFatalDiagnostics = extractNonFatalDiagnostics(
                         qualifiedAccess.explicitReceiver,
                         nonFatalDiagnosticFromExpressionWithExtra,
                     ),
                     annotations = qualifiedAccess.annotations,
                     resolvedSymbolOrigin = resolvedSymbolOrigin,
+                    // Questionable thing for case when there's no diagnostic but due to LowPriorityInOverloadResolution
+                    // shouldStopResolve is false, too. Currently, it means that we don't run CSR in that case.
+                    // TODO: review — For a classifier, only a private declaration accessed from a code fragment gets there
+                    // (FragmentVisibilityError), see codeFragmentDiagnostics/csrShadowedByPrivateObject.kt in the Analysis API tests
+                    wasResolutionTowerExhausted = qualifierDiagnostic != null && !result.applicability.shouldStopResolve,
                 )
             }
             is FirTypeParameterSymbol if referencedSymbol.fir.isReified && diagnostic == null -> {
@@ -644,7 +658,8 @@ class FirCallResolver(
                         reducedCandidates.size == 1 -> createConeDiagnosticForCandidateWithError(applicability, reducedCandidates.single())
                         else -> ConeUnresolvedReferenceError(info.name)
                     },
-                    calleeReference.source
+                    calleeReference.source,
+                    wasResolutionTowerExhausted = !applicability.shouldStopResolve,
                 )
                 resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
                 return applicability to false
@@ -654,7 +669,8 @@ class FirCallResolver(
                     val errorReference = buildReferenceWithErrorCandidate(
                         info,
                         ConeAmbiguityError(info.name, applicability, reducedCandidates.associateWith { null }),
-                        calleeReference.source
+                        calleeReference.source,
+                        wasResolutionTowerExhausted = !applicability.shouldStopResolve,
                     )
                     resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
                     return applicability to false
@@ -731,7 +747,8 @@ class FirCallResolver(
                 ConeSimpleDiagnostic("Erroneous delegated constructor call", DiagnosticKind.UnresolvedSupertype),
                 delegatedConstructorCall.calleeReference.source,
                 transformer.resolutionContext,
-                components.resolutionStageRunner
+                components.resolutionStageRunner,
+                wasResolutionTowerExhausted = false,
             )
             return delegatedConstructorCall.apply {
                 replaceCalleeReference(errorReference)
@@ -790,7 +807,8 @@ class FirCallResolver(
                 buildReferenceWithErrorCandidate(
                     callInfo,
                     if (annotationClassSymbol.isExpect) ConeNoImplicitDefaultConstructorOnExpectClass else ConeNoConstructorError,
-                    reference.source
+                    reference.source,
+                    wasResolutionTowerExhausted = false,
                 )
             }
         } else {
@@ -814,7 +832,8 @@ class FirCallResolver(
                 } else {
                     ConeIllegalAnnotationError(reference.name)
                 },
-                reference.source
+                reference.source,
+                wasResolutionTowerExhausted = false,
             )
         }
 
@@ -1017,7 +1036,10 @@ class FirCallResolver(
         }
 
         if (diagnostic != null) {
-            return createErrorReferenceForSingleCandidate(candidates.singleOrNull(), diagnostic, callInfo, source)
+            return createErrorReferenceForSingleCandidate(
+                candidates.singleOrNull(), diagnostic, callInfo, source,
+                wasResolutionTowerExhausted = !applicability.shouldStopResolve,
+            )
         }
 
         // successful candidate
@@ -1070,17 +1092,20 @@ class FirCallResolver(
         candidate: Candidate?,
         diagnostic: ConeDiagnostic,
         callInfo: CallInfo,
-        source: KtSourceElement?
+        source: KtSourceElement?,
+        wasResolutionTowerExhausted: Boolean,
     ): FirNamedReference {
-        if (candidate == null) return buildReferenceWithErrorCandidate(callInfo, diagnostic, source)
+        if (candidate == null) return buildReferenceWithErrorCandidate(callInfo, diagnostic, source, wasResolutionTowerExhausted)
         return when (diagnostic) {
-            is ConeUnresolvedError, is ConeHiddenCandidateError -> buildReferenceWithErrorCandidate(callInfo, diagnostic, source)
+            is ConeUnresolvedError, is ConeHiddenCandidateError ->
+                buildReferenceWithErrorCandidate(callInfo, diagnostic, source, wasResolutionTowerExhausted)
             else -> createErrorReferenceWithExistingCandidate(
                 candidate,
                 diagnostic,
                 source,
                 transformer.resolutionContext,
-                components.resolutionStageRunner
+                components.resolutionStageRunner,
+                wasResolutionTowerExhausted,
             )
         }
     }
@@ -1088,14 +1113,16 @@ class FirCallResolver(
     private fun buildReferenceWithErrorCandidate(
         callInfo: CallInfo,
         diagnostic: ConeDiagnostic,
-        source: KtSourceElement?
+        source: KtSourceElement?,
+        wasResolutionTowerExhausted: Boolean,
     ): FirErrorReferenceWithCandidate {
         return createErrorReferenceWithErrorCandidate(
             callInfo,
             diagnostic,
             source,
             transformer.resolutionContext,
-            components.resolutionStageRunner
+            components.resolutionStageRunner,
+            wasResolutionTowerExhausted,
         )
     }
 }

@@ -16,13 +16,15 @@ fun createErrorReferenceWithErrorCandidate(
     diagnostic: ConeDiagnostic,
     source: KtSourceElement?,
     resolutionContext: ResolutionContext,
-    resolutionStageRunner: ResolutionStageRunner
+    resolutionStageRunner: ResolutionStageRunner,
+    wasResolutionTowerExhausted: Boolean,
 ): FirErrorReferenceWithCandidate {
     return FirErrorReferenceWithCandidate(
         source,
         callInfo.name,
         resolutionStageRunner.createErrorCandidate(callInfo, resolutionContext, diagnostic),
-        diagnostic
+        diagnostic,
+        wasResolutionTowerExhausted,
     )
 }
 
@@ -32,9 +34,10 @@ fun createErrorReferenceWithExistingCandidate(
     source: KtSourceElement?,
     resolutionContext: ResolutionContext,
     resolutionStageRunner: ResolutionStageRunner,
+    wasResolutionTowerExhausted: Boolean,
 ): FirErrorReferenceWithCandidate {
     resolutionStageRunner.fullyProcessCandidate(candidate, resolutionContext)
-    return FirErrorReferenceWithCandidate(source, candidate.callInfo.name, candidate, diagnostic)
+    return FirErrorReferenceWithCandidate(source, candidate.callInfo.name, candidate, diagnostic, wasResolutionTowerExhausted)
 }
 
 fun ResolutionStageRunner.createErrorCandidate(

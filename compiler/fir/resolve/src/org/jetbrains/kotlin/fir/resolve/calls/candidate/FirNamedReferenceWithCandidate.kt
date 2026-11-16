@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -36,7 +36,11 @@ class FirErrorReferenceWithCandidate(
     source: KtSourceElement?,
     name: Name,
     candidate: Candidate,
-    val diagnostic: ConeDiagnostic
+    val diagnostic: ConeDiagnostic,
+    /**
+     * see [FirErrorNamedReference.wasResolutionTowerExhausted]
+     */
+    val wasResolutionTowerExhausted: Boolean,
 ) : FirNamedReferenceWithCandidate(source, name, candidate) {
     override val isError: Boolean get() = true
 }

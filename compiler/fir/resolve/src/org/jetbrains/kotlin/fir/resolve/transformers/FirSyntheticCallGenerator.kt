@@ -511,6 +511,7 @@ class FirSyntheticCallGenerator(
                         it.candidatesWithErrors,
                     )
                     name = it.name
+                    wasResolutionTowerExhausted = calleeReference.wasResolutionTowerExhausted
                 }
                 replaceCalleeReference(newCalleeReference)
             }
@@ -587,7 +588,8 @@ class FirSyntheticCallGenerator(
                 ConeInapplicableCandidateError(applicability, candidate),
                 source,
                 context,
-                components.resolutionStageRunner
+                components.resolutionStageRunner,
+                wasResolutionTowerExhausted = false,
             )
         }
 

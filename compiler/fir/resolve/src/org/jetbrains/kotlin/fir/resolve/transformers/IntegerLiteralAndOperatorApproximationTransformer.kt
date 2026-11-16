@@ -91,6 +91,7 @@ class IntegerLiteralAndOperatorApproximationTransformer(
                     source = calleeReference.source
                     resolvedSymbol = originalFunctionSymbol
                     diagnostic = calleeReference.diagnostic
+                    wasResolutionTowerExhausted = calleeReference.wasResolutionTowerExhausted
                 }
                 else -> buildResolvedNamedReference {
                     name = calleeReference.name

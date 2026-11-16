@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -355,6 +356,8 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
             sourceElement = info.fakeSourceForImplicitInvokeCallReceiver,
             explicitParent = info.explicitReceiver as? FirResolvedQualifier,
             nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
+            // should be false for successful resolution (no diagnostic passed)
+            wasResolutionTowerExhausted = false,
         )
         else -> throw AssertionError()
     }
@@ -374,6 +377,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         calleeReference = when {
             returnTypeRef is FirErrorTypeRef -> FirErrorReferenceWithCandidate(
                 fakeSource, symbol.name, candidate, returnTypeRef.diagnostic,
+                wasResolutionTowerExhausted = !candidate.applicability.shouldStopResolve,
             )
 
             candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.name, candidate)
@@ -381,6 +385,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
             else -> FirErrorReferenceWithCandidate(
                 fakeSource, symbol.name, candidate,
                 createConeDiagnosticForCandidateWithError(candidate.applicability, candidate),
+                wasResolutionTowerExhausted = !candidate.applicability.shouldStopResolve,
             )
         }
         dispatchReceiver = candidate.dispatchReceiverExpression()

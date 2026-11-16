@@ -143,6 +143,7 @@ private fun resolveCollectionLiteralToErrorCall(
         source = collectionLiteralAtom.expression.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall),
         resolutionContext = context,
         resolutionStageRunner = components.resolutionStageRunner,
+        wasResolutionTowerExhausted = false,
     )
 
     var call = buildFunctionCall {

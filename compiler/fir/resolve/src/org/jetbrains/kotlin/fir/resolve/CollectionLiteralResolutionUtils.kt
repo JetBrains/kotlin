@@ -124,6 +124,7 @@ fun updateCalleeReferenceWithNewErrorsIfNeeded(functionCall: FirFunctionCall, ca
         functionCall.calleeReference.source,
         context,
         context.bodyResolveComponents.resolutionStageRunner,
+        wasResolutionTowerExhausted = (existingReference as? FirErrorReferenceWithCandidate)?.wasResolutionTowerExhausted ?: false,
     )
 
     functionCall.replaceCalleeReference(errorReference)

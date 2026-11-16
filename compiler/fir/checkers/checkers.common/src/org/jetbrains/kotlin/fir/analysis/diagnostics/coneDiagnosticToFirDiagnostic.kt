@@ -608,6 +608,9 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
         )
     }
 
+    // Mostly reported by Fir*QualifierChecker
+    is ConeQualifierNotResolvedAsValue -> null
+
     is ConeTypeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(smallestUnresolvablePrefix.last().source, session)
     is ConeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(source, session)
     is ConeInapplicableWrongReceiver -> when (val diagnostic = primaryDiagnostic) {

@@ -7,20 +7,13 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
-import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.fir.lookupTracker
-import org.jetbrains.kotlin.fir.recordClassLikeLookup
-import org.jetbrains.kotlin.fir.recordNameLookup
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNestedClassAccessedViaInstanceReference
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeQualifierNotResolvedAsValue
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
@@ -32,17 +25,38 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 data class QualifierResolutionResult(
     val qualifier: FirResolvedQualifier,
     val applicability: CandidateApplicability,
 )
 
+/**
+ * Encodes the status of a qualified access resolution as a value (in contrast to it being an explicit receiver)
+ */
+enum class StandaloneQualifiedAccessAsValueFailure {
+    /** No failure: it's either used as a receiver, or the tower resolver has resolved it to a value */
+    NONE,
+
+    /**
+     * The value is standalone and the basic resolution failed with all tower levels exhausted.
+     * See [FirErrorResolvedQualifier.wasResolutionTowerExhausted]
+     */
+    WITH_TOWER_EXHAUSTION,
+
+    /**
+     * The value is standalone and the basic resolution failed, but has stopped at some tower level.
+     */
+    NO_TOWER_EXHAUSTION,
+}
+
 fun BodyResolveComponents.resolveRootPartOfQualifier(
     namedReference: FirSimpleNamedReference,
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     isUsedAsReceiver: Boolean,
+    standaloneValueFailure: StandaloneQualifiedAccessAsValueFailure,
 ): QualifierResolutionResult? {
     val name = namedReference.name
     if (FirQualifierResolver.isRootIdePackageAllowed() && name.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
@@ -77,14 +91,18 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
             continue
         }
 
-        return buildResolvedQualifierResultForTopLevelClass(symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, candidate)
+        return buildResolvedQualifierResultForTopLevelClass(
+            symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, candidate, standaloneValueFailure
+        )
     }
 
     // If we have only found one unsuccessful candidate, return it.
     if (firstUnsuccessful != null) {
         // We checked the type of the symbol in the loop
         val symbol = firstUnsuccessful.symbol as FirClassLikeSymbol
-        return buildResolvedQualifierResultForTopLevelClass(symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, firstUnsuccessful)
+        return buildResolvedQualifierResultForTopLevelClass(
+            symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, firstUnsuccessful, standaloneValueFailure
+        )
     }
 
     // KT-72173 To mimic K1 behavior,
@@ -104,6 +122,7 @@ fun FirResolvedQualifier.continueQualifier(
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>,
     session: FirSession,
     components: BodyResolveComponents,
+    standaloneValueFailure: StandaloneQualifiedAccessAsValueFailure,
 ): QualifierResolutionResult? {
     val name = namedReference.name
 
@@ -152,6 +171,7 @@ fun FirResolvedQualifier.continueQualifier(
         extraTypeArguments = this@continueQualifier.typeArguments,
         candidate = candidate,
         explicitParent = this@continueQualifier,
+        standaloneValueFailure = standaloneValueFailure,
     )
 }
 
@@ -215,6 +235,7 @@ private fun BodyResolveComponents.buildResolvedQualifierResultForTopLevelClass(
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     candidate: FirTypeCandidateCollector.TypeCandidate,
+    standaloneValueFailure: StandaloneQualifiedAccessAsValueFailure,
 ): QualifierResolutionResult {
     val classId = symbol.classId
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
@@ -228,6 +249,7 @@ private fun BodyResolveComponents.buildResolvedQualifierResultForTopLevelClass(
         symbol = symbol,
         nonFatalDiagnostics = nonFatalDiagnostics,
         candidate = candidate,
+        standaloneValueFailure = standaloneValueFailure,
     )
 }
 
@@ -240,7 +262,8 @@ private fun BodyResolveComponents.buildResolvedQualifierResult(
     extraTypeArguments: List<FirTypeProjection>? = null,
     candidate: FirTypeCandidateCollector.TypeCandidate? = null,
     explicitParent: FirResolvedQualifier? = null,
-    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+    standaloneValueFailure: StandaloneQualifiedAccessAsValueFailure = StandaloneQualifiedAccessAsValueFailure.NONE,
 ): QualifierResolutionResult {
     return QualifierResolutionResult(
         buildResolvedQualifierForClass(
@@ -249,11 +272,15 @@ private fun BodyResolveComponents.buildResolvedQualifierResult(
             packageFqName = packageFqName,
             relativeClassName = relativeClassFqName,
             typeArgumentsForQualifier = qualifiedAccess.typeArguments.applyIf(!extraTypeArguments.isNullOrEmpty()) { plus(extraTypeArguments.orEmpty()) },
-            diagnostic = candidate?.diagnostic,
+            diagnostic = candidate?.diagnostic
+                ?: runIf(standaloneValueFailure != StandaloneQualifiedAccessAsValueFailure.NONE && symbol != null) {
+                    ConeQualifierNotResolvedAsValue
+                },
             nonFatalDiagnostics = nonFatalDiagnostics.orEmpty(),
             annotations = qualifiedAccess.annotations,
             explicitParent = explicitParent,
             resolvedSymbolOrigin = candidate?.resolvedSymbolOrigin ?: resolvedSymbolOrigin,
+            wasResolutionTowerExhausted = standaloneValueFailure == StandaloneQualifiedAccessAsValueFailure.WITH_TOWER_EXHAUSTION,
         ),
         candidate?.applicability ?: CandidateApplicability.RESOLVED,
     )

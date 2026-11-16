@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 
 @KaImplementationDetail
 class SingleCandidateResolver(
@@ -112,7 +113,10 @@ class SingleCandidateResolver(
         val diagnostic = createConeDiagnosticForCandidateWithError(applicability, candidate)
         val name = resolutionParameters.callableSymbol.name
         return buildFunctionCall {
-            calleeReference = FirErrorReferenceWithCandidate(source = null, name, candidate, diagnostic)
+            calleeReference = FirErrorReferenceWithCandidate(
+                source = null, name, candidate, diagnostic,
+                wasResolutionTowerExhausted = !applicability.shouldStopResolve,
+            )
         }
     }
 }

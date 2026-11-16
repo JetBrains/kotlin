@@ -117,6 +117,15 @@ class ConeHiddenCandidateError(
     override val reason: String get() = "HIDDEN: ${describeSymbol(candidateSymbol)} is deprecated with DeprecationLevel.HIDDEN"
 }
 
+/**
+ * Mostly a synthetic diagnostic to mark standalone qualifiers as erroneous, ignored when reporting actual FirErrors.
+ * At this point, real errors are being reported at the checker side. Probably, in future we might reconsider the approach
+ * and report concrete errors straight from the resolution, but it requires reworking of necessary machinery.
+ */
+object ConeQualifierNotResolvedAsValue : ConeDiagnostic {
+    override val reason: String get() = "Qualifier is not resolved as a value, the checkers report the actual problem"
+}
+
 open class ConeVisibilityError(
     override val symbol: FirBasedSymbol<*>
 ) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {

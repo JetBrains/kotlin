@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.fir.references.builder.FirPropertyWithExplicitBackin
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.TypeParameterAsExpression
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.isVisible
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
@@ -344,6 +341,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     nonFatalDiagnostics: List<ConeDiagnostic> = emptyList(),
     annotations: List<FirAnnotation> = emptyList(),
     resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+    wasResolutionTowerExhausted: Boolean,
 ): FirResolvedQualifier {
     return buildResolvedQualifierForClass(
         symbol,
@@ -356,6 +354,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         annotations,
         explicitParent,
         resolvedSymbolOrigin,
+        wasResolutionTowerExhausted,
     )
 }
 
@@ -370,11 +369,18 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     annotations: List<FirAnnotation>,
     explicitParent: FirResolvedQualifier?,
     resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
+    wasResolutionTowerExhausted: Boolean,
 ): FirResolvedQualifier {
+    require(!wasResolutionTowerExhausted || diagnostic != null) {
+        "wasResolutionTowerExhausted is set for a qualifier without a diagnostic"
+    }
     val builder: FirAbstractResolvedQualifierBuilder = if (diagnostic == null) {
         FirResolvedQualifierBuilder()
     } else {
-        FirErrorResolvedQualifierBuilder().apply { this.diagnostic = diagnostic }
+        FirErrorResolvedQualifierBuilder().apply {
+            this.diagnostic = diagnostic
+            this.wasResolutionTowerExhausted = wasResolutionTowerExhausted
+        }
     }
 
     return builder.apply {
@@ -881,17 +887,21 @@ private fun ConeKotlinType.simplifyForReceiverInfo(): ConeKotlinType {
 
 fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic): FirNamedReference {
     val calleeReference = this
+    // TODO: review — A successful candidate failing at completion stopped the tower resolver
+    val wasResolutionTowerExhausted = (calleeReference as? FirErrorReferenceWithCandidate)?.wasResolutionTowerExhausted ?: false
     return when (calleeReference.candidateSymbol) {
         is FirErrorPropertySymbol, is FirErrorFunctionSymbol -> buildErrorNamedReference {
             source = calleeReference.source
             name = calleeReference.name
             this.diagnostic = diagnostic
+            this.wasResolutionTowerExhausted = wasResolutionTowerExhausted
         }
         else -> buildResolvedErrorReference {
             source = calleeReference.source
             name = calleeReference.name
             resolvedSymbol = calleeReference.candidateSymbol
             this.diagnostic = diagnostic
+            this.wasResolutionTowerExhausted = wasResolutionTowerExhausted
         }
     }
 }
