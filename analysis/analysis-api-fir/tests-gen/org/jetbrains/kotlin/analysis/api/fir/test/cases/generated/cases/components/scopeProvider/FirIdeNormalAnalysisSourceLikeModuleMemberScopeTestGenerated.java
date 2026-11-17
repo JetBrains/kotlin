@@ -129,6 +129,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleMemberScopeTestGenerated extend
   }
 
   @Test
+  @TestMetadata("javaAnnotationWithDefaultValues.kt")
+  public void testJavaAnnotationWithDefaultValues() {
+    run("javaAnnotationWithDefaultValues.kt");
+  }
+
+  @Test
+  @TestMetadata("javaAnnotationWithDefaultValuesFromLibrary.kt")
+  public void testJavaAnnotationWithDefaultValuesFromLibrary() {
+    run("javaAnnotationWithDefaultValuesFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("javaClass.kt")
   public void testJavaClass() {
     run("javaClass.kt");

@@ -1,0 +1,43 @@
+val intValue: kotlin.Int
+  get()
+
+val stringValue: kotlin.String
+  get()
+
+val classValue: kotlin.reflect.KClass<*>
+  get()
+
+val genericClassValue: kotlin.reflect.KClass<*>
+  get()
+
+val arrayClassValue: kotlin.reflect.KClass<*>
+  get()
+
+val primitiveArrayClassValue: kotlin.reflect.KClass<*>
+  get()
+
+val classArrayValue: kotlin.Array<kotlin.reflect.KClass<*>>
+  get()
+
+val enumValue: one.JavaEnum
+  get()
+
+val enumArrayValue: kotlin.Array<one.JavaEnum>
+  get()
+
+val annotationValue: one.NestedAnno
+  get()
+
+val intArrayValue: kotlin.IntArray
+  get()
+
+val withoutDefault: kotlin.String
+  get()
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+constructor(intValue: kotlin.Int, stringValue: kotlin.String, classValue: kotlin.reflect.KClass<*>, genericClassValue: kotlin.reflect.KClass<*>, arrayClassValue: kotlin.reflect.KClass<*>, primitiveArrayClassValue: kotlin.reflect.KClass<*>, classArrayValue: kotlin.Array<kotlin.reflect.KClass<*>>, enumValue: one.JavaEnum, enumArrayValue: kotlin.Array<one.JavaEnum>, annotationValue: one.NestedAnno, intArrayValue: kotlin.IntArray, withoutDefault: kotlin.String)

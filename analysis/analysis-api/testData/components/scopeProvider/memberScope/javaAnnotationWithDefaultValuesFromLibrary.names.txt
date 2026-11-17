@@ -1,0 +1,20 @@
+Classifier names:
+
+Callable names:
+  <init>
+  annotationType
+  annotationValue
+  arrayClassValue
+  classArrayValue
+  classValue
+  enumArrayValue
+  enumValue
+  equals
+  genericClassValue
+  hashCode
+  intArrayValue
+  intValue
+  primitiveArrayClassValue
+  stringValue
+  toString
+  withoutDefault
