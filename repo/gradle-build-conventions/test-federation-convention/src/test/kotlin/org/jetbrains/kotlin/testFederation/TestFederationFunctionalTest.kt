@@ -783,7 +783,7 @@ class TestFederationFunctionalTest {
     }
 }
 
-private val allTests = setOf(
+private val allTests = sortedSetOf(
     TestResult("PseudoTest", "domain test"),
     TestResult("PseudoTest", "smoke test"),
     TestResult("PseudoTest", "js contract test"),
@@ -796,9 +796,13 @@ private data class TestBuildResult(
     val buildResult: BuildResult,
     val executedTests: Set<TestResult>,
 ) {
-    data class TestResult(val className: String, val methodName: String, val status: String = "PASSED") {
+    data class TestResult(val className: String, val methodName: String, val status: String = "PASSED") : Comparable<TestResult> {
         override fun toString(): String {
             return "$className > $methodName() $status"
+        }
+
+        override fun compareTo(other: TestResult): Int {
+            return toString().compareTo(other.toString())
         }
     }
 }
@@ -882,10 +886,10 @@ private fun runTestBuild(
     val output = buildResult.output.lineSequence().toList()
 
     val testResultRegex = Regex("(?<testClass>.*) > (?<testName>.*)\\(?\\)? (?<status>PASSED)")
-    val tests = output.mapNotNull { line ->
+    val tests: Set<TestResult> = output.mapNotNull { line ->
         val match = testResultRegex.matchEntire(line) ?: return@mapNotNull null
         TestResult(match.groupValues[1], match.groupValues[2].removeSuffix("()"), match.groupValues[3])
-    }.toSet()
+    }.toSortedSet()
 
     return TestBuildResult(buildResult, tests)
 }
