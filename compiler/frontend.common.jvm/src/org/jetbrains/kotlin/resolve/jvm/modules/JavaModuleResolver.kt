@@ -16,19 +16,9 @@ import org.jetbrains.kotlin.name.FqName
 interface JavaModuleResolver : JavaModuleAnnotationsProvider {
     fun checkAccessibility(fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?): AccessError?
 
-    /**
-     * [checkAccessibility] for a class read from a binary class file: the module of [referencedClassFile] is the module owning
-     * the classpath root the file was found in ([BinaryClassFileHandle.rootId]). The default only covers resolvers which know
-     * their modules by virtual files, and fails for a class file which is not one rather than skipping the check.
-     *
-     * TODO(KT-90203): move [JavaModuleResolver] to class file handles altogether, then this default goes away.
-     */
-    @OptIn(VirtualFileBasedApi::class)
-    fun checkAccessibility(fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?): AccessError? {
-        val referencedFile = (referencedClassFile as? VirtualFileBackedClassFileHandle)?.virtualFile
-            ?: error("${this::class.java.name} cannot check Java module accessibility of ${referencedClassFile.pathForDiagnostics}")
-        return checkAccessibility(fileFromOurModule, referencedFile, referencedPackage)
-    }
+    fun checkAccessibility(
+        fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?,
+    ): AccessError?
 
     sealed class AccessError {
         object ModuleDoesNotReadUnnamedModule : AccessError()
@@ -39,4 +29,16 @@ interface JavaModuleResolver : JavaModuleAnnotationsProvider {
     companion object SERVICE {
         fun getInstance(project: Project): JavaModuleResolver = project.getService(JavaModuleResolver::class.java)
     }
+}
+
+// TODO(KT-90203): switch [JavaModuleResolver] to class file handles and drop this function.
+@VirtualFileBasedApi
+fun JavaModuleResolver.checkAccessibilityByVirtualFile(
+    fileFromOurModule: VirtualFile?,
+    referencedClassFile: BinaryClassFileHandle,
+    referencedPackage: FqName?,
+): JavaModuleResolver.AccessError? {
+    val referencedFile = (referencedClassFile as? VirtualFileBackedClassFileHandle)?.virtualFile
+        ?: error("${this::class.java.name} cannot check Java module accessibility of ${referencedClassFile.pathForDiagnostics}")
+    return checkAccessibility(fileFromOurModule, referencedFile, referencedPackage)
 }
