@@ -54,7 +54,8 @@ object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, Js
         // Load declarations referenced during `context` initialization
         deserializer.drainDeserializationQueue()
         deserializer.finalizeIrLinkage(irBuiltIns)
-        deserializer.clear()
+        deserializer.clearInternedData()
+
         // Sort dependencies after IR linkage.
         val sortedModuleDependencies = deserializer.moduleDependencyTracker.reverseTopoOrder(moduleDependencies = moduleDependencies)
         val allModules = sortedModuleDependencies.allDependencies
