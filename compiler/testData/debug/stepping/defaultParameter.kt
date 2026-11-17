@@ -4,7 +4,10 @@
 class A {
     fun computeParam() = 32
 
-    fun foo(param: Int = computeParam()) {
+    fun foo(
+        x: Int = computeParam(),
+        y: Int = computeParam(),
+    ) {
     }
 }
 
@@ -14,50 +17,67 @@ fun box() {
 
 // FORCE_STEP_INTO
 // EXPECTATIONS JVM
-// test.kt:12 box
+// test.kt:15 box
 // test.kt:4 <init>
-// test.kt:12 box
+// test.kt:15 box
 // test.kt:7 foo$default (synthetic)
+// test.kt:8 foo$default (synthetic)
 // test.kt:5 computeParam
+// test.kt:8 foo$default (synthetic)
 // test.kt:7 foo$default (synthetic)
-// test.kt:8 foo
+// test.kt:9 foo$default (synthetic)
+// test.kt:5 computeParam
+// test.kt:9 foo$default (synthetic)
 // test.kt:7 foo$default (synthetic)
-// test.kt:13 box
+// test.kt:11 foo
+// test.kt:7 foo$default (synthetic)
+// test.kt:16 box
 
 // EXPECTATIONS NATIVE
-// test.kt:12 box
+// test.kt:15 box
 // test.kt:4 <init>
-// test.kt:9 <init>
-// test.kt:12 box
-// test.kt:7 foo$default
-// test.kt:5 computeParam
+// test.kt:12 <init>
+// test.kt:15 box
 // test.kt:7 foo$default
 // test.kt:8 foo$default
+// test.kt:5 computeParam
+// test.kt:8 foo$default
+// test.kt:11 foo$default
+// test.kt:7 foo$default
+// test.kt:9 foo$default
+// test.kt:5 computeParam
+// test.kt:9 foo$default
+// test.kt:11 foo$default
 // test.kt:7 foo$default
 // test.kt:7 foo
-// test.kt:8 foo
+// test.kt:11 foo
 // test.kt:7 foo$default
-// test.kt:8 foo$default
-// test.kt:13 box
+// test.kt:11 foo$default
+// test.kt:16 box
 
 // EXPECTATIONS JS_IR JS_IR_ES6
-// test.kt:12 box
+// test.kt:15 box
 // EXPECTATIONS JS_IR
 // test.kt:4 <init>
 // EXPECTATIONS JS_IR JS_IR_ES6
-// test.kt:12 box
-// test.kt:7 foo
-// test.kt:5 computeParam
+// test.kt:15 box
 // test.kt:8 foo
-// test.kt:13 box
+// test.kt:5 computeParam
+// test.kt:9 foo
+// test.kt:5 computeParam
+// test.kt:11 foo
+// test.kt:16 box
 
 // EXPECTATIONS WASM_JS
-// test.kt:12 $box (4)
-// test.kt:9 $A.<init> (1)
-// test.kt:12 $box (8)
-// test.kt:7 $A.foo$default (25)
+// test.kt:15 $box (4)
+// test.kt:12 $A.<init> (1)
+// test.kt:15 $box (8)
+// test.kt:8 $A.foo$default (17)
 // test.kt:5 $A.computeParam (25, 27)
-// test.kt:7 $A.foo$default (25)
-// test.kt:8 $A.foo (5)
-// test.kt:7 $A.foo$default (25)
-// test.kt:13 $box (1)
+// test.kt:8 $A.foo$default (17)
+// test.kt:9 $A.foo$default (17)
+// test.kt:5 $A.computeParam (25, 27)
+// test.kt:9 $A.foo$default (17)
+// test.kt:11 $A.foo (5)
+// test.kt:9 $A.foo$default (17)
+// test.kt:16 $box (1)
