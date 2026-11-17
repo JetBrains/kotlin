@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainManagemen
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinToolchainManagementDsl
+import javax.inject.Inject
 
 @OptIn(ExperimentalWasmDsl::class)
-internal class KotlinToolchainManagementDslImpl(
+internal abstract class KotlinToolchainManagementDslImpl @Inject constructor(
     private val nodeJsDsl: NodeJsToolchainManagementDsl,
     private val wasiAdapterDsl: WasiAdapterToolchainManagementDsl,
     private val wasmToolsDsl: WasmToolsToolchainManagementDsl,

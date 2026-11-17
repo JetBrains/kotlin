@@ -22,7 +22,12 @@ import kotlin.test.assertNull
 class WasmToolsToolchainTest {
 
     private fun buildProjectAndDsl(): Pair<Project, WasmToolsToolchainManagementDsl> =
-        buildProject().let { project -> project to WasmToolsToolchainManagementDslImpl(project.gradle) }
+        buildProject().let { project ->
+            project to project.objects.newInstance(
+                WasmToolsToolchainManagementDslImpl::class.java,
+                project.gradle
+            )
+        }
 
     private fun registeredService(project: Project) = project.gradle.sharedServices.registrations
         .getByName(wasmToolsServiceName)
