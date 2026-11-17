@@ -225,6 +225,20 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             }
         }
     }
+
+    @TestMetadata("simpleProject")
+    @GradleTest
+    @DisplayName("IC event reporting with a compiler predating the IC event collector option does not break compilation")
+    fun icEventReportingWithOlderCompilerVersion(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion, compilerVersion = COMPILER_WITHOUT_IC_EVENT_COLLECTOR) {
+            build("compileKotlin", "-Pkotlin.build.report.ic_event=true") {
+                assertTasksExecuted(":compileKotlin")
+                assertFileExists(kotlinClassesDir("main").resolve("demo/KotlinGreetingJoiner.class"))
+            }
+        }
+    }
 }
 
 private const val THROWING_COMPILER = "2.2.21"
+
+private const val COMPILER_WITHOUT_IC_EVENT_COLLECTOR = "2.4.20-RC"
