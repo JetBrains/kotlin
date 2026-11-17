@@ -93,7 +93,7 @@ private object DomainSourcesGenerator {
                 this += "|}"
                 this += "|"
                 this += "|val ignores = listOf<String>(${ignores.joinToString { "\"$it\"" }})"
-            }.trimMargin()
+            }.trimMargin().trimEnd() + "\n"
         )
 
         outputDir.asFile.toPath().resolve("testSubsets.kt").createParentDirectories().writeText(
@@ -123,7 +123,7 @@ private object DomainSourcesGenerator {
                     this += "|    TestSubset.ContractTestsFor${domain.name},"
                 }
                 this += "|)"
-            }.trimMargin()
+            }.trimMargin().trimEnd() + "\n"
         )
     }
 
