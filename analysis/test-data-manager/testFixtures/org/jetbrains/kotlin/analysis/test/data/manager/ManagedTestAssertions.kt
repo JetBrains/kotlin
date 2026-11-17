@@ -124,6 +124,15 @@ object ManagedTestAssertions {
     ): Unit =
         assertEqualsToTestDataFile(actual, context = TestDataContext.build(testDataPath, variantChain, extension, mode, sanitizer))
 
+    /**
+     * Returns the expected file [assertEqualsToTestDataFile] compares the actual content with: the most specific existing file of the
+     * [variantChain] (e.g., `.js.txt` → `.knm.txt` → `.txt` for `["knm", "js"]`), or the default file if none of them exists.
+     */
+    fun findExpectedFile(testDataPath: Path, variantChain: TestVariantChain, extension: String): Path {
+        val context = TestDataContext.build(testDataPath, variantChain, extension, TestDataManagerMode.currentMode, sanitizer = { it })
+        return context.readTargetFile ?: context.readableFiles.last()
+    }
+
     context(context: TestDataContext)
     private fun assertEqualsToTestDataFile(actual: String?) {
         if (actual == null) {
