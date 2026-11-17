@@ -384,8 +384,13 @@ abstract class KotlinIrLinker(
         } else moduleDeserializer
 
     fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
-        return allModuleDeserializers.flatMap { moduleDeserializer ->
-            moduleDeserializer.getAllMatchingSignatures(callableId, signatureKind)
+        return buildList {
+            fun List<IrModuleDeserializer>?.collectMatchingSignatures() {
+                this?.flatMapTo(this@buildList) { it.getAllMatchingSignatures(callableId, signatureKind) }
+            }
+
+            moduleDeserializersByPackageName[callableId.packageName]?.collectMatchingSignatures()
+            moduleDeserializersWithUnknownPackageNames.collectMatchingSignatures()
         }
     }
 }
