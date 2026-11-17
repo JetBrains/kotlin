@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.utils.getElementTextWithContext
 import java.util.Objects
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 /**
  * The kind of a [KtSourceElement], used to distinguish different source elements backed by the same real source.
  *
