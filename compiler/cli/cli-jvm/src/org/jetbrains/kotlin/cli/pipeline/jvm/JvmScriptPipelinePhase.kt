@@ -36,9 +36,7 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
                 @OptIn(CoreEnvironmentDeprecation::class)
                 KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(rootDisposable),
                 configuration
-            ).also {
-                it.registerExtensionsFromPlugins(configuration)
-            }
+            )
         }
 
         val result = if (configuration.scriptMode || configuration.expressionToEvaluate != null) {

@@ -181,7 +181,7 @@ class ScriptingLauncherTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "-howtorun", "script", "$testDataDirectory/noInline.myscript",
             expectedExitCode = 1,
-            expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
+            expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file (.kts) as the first argument\n"
         )
         runProcess(
             "kotlinr",

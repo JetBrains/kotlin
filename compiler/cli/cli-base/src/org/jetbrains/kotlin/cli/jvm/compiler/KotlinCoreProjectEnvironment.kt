@@ -26,13 +26,19 @@ import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionsArea
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.PersistentFSConstants
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiNameHelper
 import com.intellij.psi.impl.PsiElementFinderImpl
+import com.intellij.psi.impl.PsiJavaModuleModificationTracker
+import com.intellij.psi.impl.PsiNameHelperImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.CliDiagnostics.INITIALIZATION_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -40,15 +46,16 @@ import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
-import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK
-import org.jetbrains.kotlin.compiler.plugin.registerInProject
+import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.useFastJarFileSystem
 import org.jetbrains.kotlin.config.usePsiClassFilesReading
+import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
+import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 
 abstract class KotlinCoreProjectEnvironmentBase(
     disposable: Disposable,
@@ -105,16 +112,19 @@ class KotlinCoreProjectEnvironment(
 
             else -> applicationEnvironment.jarFileSystem
         }
+
+        registerExtensionsFromPlugins(configuration)
+        configureProjectEnvironment(configuration)
     }
 
     private var extensionRegistered = false
 
     @OptIn(CoreEnvironmentDeprecation::class)
     override fun preregisterServices() {
-        KotlinCoreEnvironment.registerProjectExtensionPoints(project.extensionArea)
+        registerProjectExtensionPoints(project.extensionArea)
     }
 
-    fun registerExtensionsFromPlugins(configuration: CompilerConfiguration) {
+    private fun registerExtensionsFromPlugins(configuration: CompilerConfiguration) {
         if (!extensionRegistered) {
             fun createErrorMessage(extension: Any): String {
                 return "The provided plugin ${extension.javaClass.name} is not compatible with this version of compiler"
@@ -128,6 +138,31 @@ class KotlinCoreProjectEnvironment(
             configuration[TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK]?.invoke(project)
             extensionStorage.registerInProject(project) { createErrorMessage(it) }
             extensionRegistered = true
+        }
+    }
+
+    @OptIn(K1Deprecation::class)
+    private fun configureProjectEnvironment(configuration: CompilerConfiguration) {
+        @Suppress("DEPRECATION")
+        PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
+            .apply { isAccessible = true }
+            .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
+
+        registerProjectServices()
+
+        for (extension in configuration.getCompilerExtensions(CompilerConfigurationExtension)) {
+            extension.updateConfiguration(project, configuration)
+        }
+    }
+
+    private fun registerProjectServices() {
+        with(project) {
+            registerService(JavaElementSourceFactory::class.java, JavaFixedElementSourceFactory::class.java)
+            registerService(PsiJavaModuleModificationTracker::class.java, PsiJavaModuleModificationTracker::class.java)
+            registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
+            if (getService(PsiNameHelper::class.java) == null) {
+                registerService(PsiNameHelper::class.java, PsiNameHelperImpl::class.java)
+            }
         }
     }
 

@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
@@ -487,9 +485,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val appEnv = KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(parentDisposable)
         // TODO: get rid of projEnv too - seems that all needed components could be easily extracted
         val projectEnvironment = KotlinCoreProjectEnvironment(parentDisposable, appEnv, configuration)
-
-        @OptIn(CoreEnvironmentDeprecation::class)
-        projectEnvironment.configureProjectEnvironment(configuration)
 
         val project = projectEnvironment.project
         val localFileSystem = projectEnvironment.environment.localFileSystem
