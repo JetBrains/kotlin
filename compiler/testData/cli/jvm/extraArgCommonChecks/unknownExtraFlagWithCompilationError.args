@@ -1,0 +1,4 @@
+-Xnot-a-real-flag
+$TESTDATA_DIR$/unknownExtraFlagWithCompilationError.kt
+-d
+$TEMP_DIR$
