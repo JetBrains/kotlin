@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 interface IntrinsicMarker
