@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extra
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -127,7 +127,7 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
                 // then the assignment itself is a dead code because of its RHS expression,
                 // which will be eventually reported
                 source?.kind is KtFakeSourceElementKind.DesugaredAugmentedAssign ||
-                source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION ||
+                source?.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION ||
                 initializerSource?.kind == KtFakeSourceElementKind.DesugaredForLoop
 
     private class AddAllWrites(private val data: VariableAssignmentData) : ControlFlowGraphVisitorVoid() {

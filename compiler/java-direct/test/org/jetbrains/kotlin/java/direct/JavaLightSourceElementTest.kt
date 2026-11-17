@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightTreeStructure
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
+import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -89,7 +90,8 @@ class JavaLightSourceElementTest {
         val element = tree.sourceElement(classNode)
 
         // Element type is the shared placeholder (type fidelity intentionally not required).
-        assertSame(JAVA_DIRECT_PLACEHOLDER_TYPE, element.elementType)
+        assertSame(JAVA_DIRECT_PLACEHOLDER_TYPE, element.lighterASTNode.tokenType)
+        assertEquals(BasicSyntaxElementTypeIds.NO_ID, element.syntaxId)
 
         // The treeStructure can navigate from the wrapped node.
         val treeStructure = element.treeStructure

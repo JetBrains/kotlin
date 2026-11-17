@@ -32,7 +32,7 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
     override fun isApplicable(element: FirStatement, source: KtSourceElement): Boolean =
         source is KtPsiSourceElement &&
                 source.kind !is KtFakeSourceElementKind &&
-                source.elementType in KtLiteralPrefixAndSuffix.relevantLiteralTypes
+                source.psi.node?.elementType in KtLiteralPrefixAndSuffix.relevantLiteralTypes
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(element: FirStatement, source: KtPsiSourceElement, psi: KtExpression) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -61,7 +62,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     override fun check(declaration: FirProperty) {
         val source = declaration.source ?: return
         // val (...) = `destructuring_declaration`
-        if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
+        if (source.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION) {
             checkInitializer(source, declaration.initializer)
             checkSquareBracketsLanguageFeature(source)
             return
@@ -72,14 +73,14 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         }
 
         // val (`destructuring_declaration_entry`, ...) = ...
-        if (source.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) return
+        if (source.syntaxId != KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION_ENTRY) return
 
         val initializer = declaration.initializer as? FirQualifiedAccessExpression ?: return
         val originalDestructuringDeclaration = getDestructuringVariableOfEntry(declaration) ?: return
         val originalDestructuringDeclarationOrInitializer =
             when (originalDestructuringDeclaration) {
                 is FirProperty -> {
-                    if (originalDestructuringDeclaration.initializer?.source?.elementType == KtNodeTypes.FOR) {
+                    if (originalDestructuringDeclaration.initializer?.source?.syntaxId == KotlinSyntaxNodeTypeIds.FOR) {
                         // for ((entry, ...) = `destructuring_declaration`) { ... }
                         // It will be wrapped as `next()` call whose explicit receiver is `iterator()` on the actual source.
                         val iterator = originalDestructuringDeclaration.initializer?.explicitReceiverOfQualifiedAccess
@@ -147,7 +148,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     }
 
     fun getDestructuringVariableIfEntry(declaration: FirProperty): FirVariableSymbol<*>? {
-        return runIf(declaration.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
+        return runIf(declaration.source?.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION_ENTRY) {
             getDestructuringVariableOfEntry(declaration)?.symbol
         }
     }
@@ -200,9 +201,9 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     }
 
     private fun KtSourceElement.findSquareBracket(): KtSourceElement? {
-        return when (elementType) {
-            KtNodeTypes.DESTRUCTURING_DECLARATION -> getChild(KtTokens.LBRACKET, depth = 1)
-            KtNodeTypes.VALUE_PARAMETER -> getChild(KtNodeTypes.DESTRUCTURING_DECLARATION, depth = 1)?.findSquareBracket()
+        return when (syntaxId) {
+            KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION -> getChild(KtTokens.LBRACKET, depth = 1)
+            KotlinSyntaxNodeTypeIds.VALUE_PARAMETER -> getChild(KtNodeTypes.DESTRUCTURING_DECLARATION, depth = 1)?.findSquareBracket()
             else -> null
         }
     }

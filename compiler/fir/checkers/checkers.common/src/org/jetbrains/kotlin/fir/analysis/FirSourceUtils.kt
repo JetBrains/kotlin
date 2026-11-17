@@ -13,6 +13,7 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
@@ -142,7 +143,7 @@ fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
         segmentSource = segmentSource.getChild(IMPORT_PARENT_TOKEN_TYPES, depth = 1) ?: return null
     }
 
-    return segmentSource.takeIf { it.elementType == KtNodeTypes.REFERENCE_EXPRESSION }
+    return segmentSource.takeIf { it.syntaxId == KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION }
         ?: segmentSource.getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
 }
 

@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import java.lang.Deprecated
 
+// Temporary location: `KtPsiSourceElement.syntaxId` and `KtLightSourceElement.syntaxId` need the mapping, and
+// `psi-frontend-utils` can't host it since it already depends on `frontend.common`.
+// Move it back to `psi-frontend-utils` once these source elements leave `frontend.common`,
+// and drop the dependency of `frontend.common` on `psi-api` (KT-91461).
+
 /**
  * @receiver A Kotlin element type
  * @return The ID from `core:language.syntax` that is consistent across all frontends (PSI/LightTree and KMP).

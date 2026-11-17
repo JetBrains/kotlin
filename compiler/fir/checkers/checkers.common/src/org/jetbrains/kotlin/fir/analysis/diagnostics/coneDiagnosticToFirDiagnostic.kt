@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
@@ -668,7 +669,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, this.typeParameter, session)
     is ConeCannotInferValueParameterType -> when {
         isTopLevelLambda -> FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE.createOn(source, session)
-        source?.elementType == KtNodeTypes.THIS_EXPRESSION -> FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE.createOn(source, session)
+        source?.syntaxId == KotlinSyntaxNodeTypeIds.THIS_EXPRESSION -> FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE.createOn(source, session)
         else -> (this.valueParameter ?: valueParameter?.symbol)?.takeIf { !it.name.isSpecial }?.let { valueParameterSymbol ->
             FirErrors.CANNOT_INFER_VALUE_PARAMETER_TYPE.createOn(
                 source, valueParameterSymbol, session
@@ -740,13 +741,13 @@ private fun inapplicableNullableReceiver(
     val receiverExpression = candidate.callInfo.explicitReceiver
     val singleArgument = candidate.callInfo.argumentList.arguments.singleOrNull()
     if (receiverExpression != null && singleArgument != null &&
-        (source?.elementType == KtNodeTypes.OPERATION_REFERENCE || source?.elementType == KtNodeTypes.BINARY_EXPRESSION) &&
+        (source?.syntaxId == KotlinSyntaxNodeTypeIds.OPERATION_REFERENCE || source?.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION) &&
         (candidateFunctionSymbol?.isOperator == true || candidateFunctionSymbol?.isInfix == true)
     ) {
         // For augmented assignment operations (e.g., `a += b`), the source is the entire binary expression (BINARY_EXPRESSION).
-        // TODO, KT-59809: No need to check for source.elementType == BINARY_EXPRESSION if we use operator as callee reference source
+        // TODO, KT-59809: No need to check for source.syntaxId == BINARY_EXPRESSION if we use operator as callee reference source
         //  (see FirExpressionsResolveTransformer.transformAssignmentOperatorStatement)
-        val operationSource = if (source.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+        val operationSource = if (source.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION) {
             source.getChild(KtNodeTypes.OPERATION_REFERENCE)
         } else {
             source
@@ -1084,10 +1085,10 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
         DiagnosticKind.Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
         DiagnosticKind.SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
-        DiagnosticKind.ExpressionExpected -> when (source?.elementType) {
-            KtNodeTypes.BINARY_EXPRESSION -> FirErrors.ASSIGNMENT_IN_EXPRESSION_CONTEXT
-            KtNodeTypes.FUN -> FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
-            KtNodeTypes.WHEN_CONDITION_IN_RANGE, KtNodeTypes.WHEN_CONDITION_IS_PATTERN, KtNodeTypes.WHEN_CONDITION_EXPRESSION ->
+        DiagnosticKind.ExpressionExpected -> when (source?.syntaxId) {
+            KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION -> FirErrors.ASSIGNMENT_IN_EXPRESSION_CONTEXT
+            KotlinSyntaxNodeTypeIds.FUNCTION -> FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
+            KotlinSyntaxNodeTypeIds.WHEN_CONDITION_IN_RANGE, KotlinSyntaxNodeTypeIds.WHEN_CONDITION_IS_PATTERN, KotlinSyntaxNodeTypeIds.WHEN_CONDITION_EXPRESSION ->
                 FirErrors.EXPECTED_CONDITION
             else -> FirErrors.EXPRESSION_EXPECTED
         }

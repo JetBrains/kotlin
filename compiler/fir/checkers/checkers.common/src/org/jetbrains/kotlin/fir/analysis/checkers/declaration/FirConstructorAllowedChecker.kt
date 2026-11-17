@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -28,8 +28,8 @@ object FirConstructorAllowedChecker : FirConstructorChecker(MppCheckerKind.Commo
     override fun check(declaration: FirConstructor) {
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol ?: return
         val source = declaration.source
-        val elementType = source?.elementType
-        if (elementType != KtNodeTypes.PRIMARY_CONSTRUCTOR && elementType != KtNodeTypes.SECONDARY_CONSTRUCTOR) {
+        val syntaxId = source?.syntaxId
+        if (syntaxId != KotlinSyntaxNodeTypeIds.PRIMARY_CONSTRUCTOR && syntaxId != KotlinSyntaxNodeTypeIds.SECONDARY_CONSTRUCTOR) {
             return
         }
         when (containingClass.classKind) {

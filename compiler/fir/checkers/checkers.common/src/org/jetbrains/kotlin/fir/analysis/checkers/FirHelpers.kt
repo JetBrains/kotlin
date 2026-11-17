@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -546,7 +547,7 @@ fun checkTypeMismatch(
             val calleeSource = (rValue as? FirQualifiedAccessExpression)?.calleeReference?.source
             val factory = when {
                 !isInitializer -> FirErrors.ASSIGNMENT_TYPE_MISMATCH
-                source.elementType == KtNodeTypes.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
+                source.syntaxId == KotlinSyntaxNodeTypeIds.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
                 calleeSource?.kind is KtFakeSourceElementKind.DesugaredForLoop -> FirErrors.TYPE_MISMATCH
                 else -> FirErrors.INITIALIZER_TYPE_MISMATCH
             }

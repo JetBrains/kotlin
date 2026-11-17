@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -123,7 +123,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
             is FirRegularClassSymbol -> {
                 // DO NOTHING: nested annotation classes are allowed in 1.3+
             }
-            is FirPropertySymbol if member.source?.elementType == VALUE_PARAMETER -> {
+            is FirPropertySymbol if member.source?.syntaxId == KotlinSyntaxNodeTypeIds.VALUE_PARAMETER -> {
                 // DO NOTHING to avoid reporting constructor properties
             }
             is FirNamedFunctionSymbol if member.isSynthetic -> {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -22,7 +23,7 @@ object FirWhenSubjectChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
         val subjectVariable = expression.subjectVariable
         val source = (subjectVariable ?: subject)?.source ?: return
         when {
-            subject?.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION -> {
+            subject?.source?.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "destructuring declaration")
             }
             subjectVariable?.source?.getChild(KtTokens.VAR_KEYWORD) != null -> {
