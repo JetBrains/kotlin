@@ -1,21 +1,21 @@
 sample
 sample/Outer
-function:sample/Outer#sameName#parameters=[kotlin/Int];
-property:sample/Outer#CONSTANT#companion;
-property:sample/Outer#mutable#companion;
-function:sample/Outer#sameName#companion;
-function:sample/Outer#genericMember#typeParameters=[<T1_0>: ]; context=[]; parameters=[<T1_0>]; companion;
-constructor:sample/Outer#%3Cinit%3E#
+sample/Outer#sameName#kind=function; parameters=[kotlin/Int];
+sample/Outer#CONSTANT#kind=property; companion;
+sample/Outer#mutable#kind=property; companion;
+sample/Outer#sameName#kind=function; companion;
+sample/Outer#genericMember#kind=function; typeParameters=[<T1_0>: ]; context=[]; parameters=[<T1_0>]; companion;
+sample/Outer##kind=function;
 sample/Named
-function:sample/Named#namedMember#companion;
-constructor:sample/Named#%3Cinit%3E#
+sample/Named#namedMember#kind=function; companion;
+sample/Named##kind=function;
 sample/TwoBlocks
-property:sample/TwoBlocks#Zero#companion;
-function:sample/TwoBlocks#normalize#
-property:sample/TwoBlocks#Dimensions#companion;
-constructor:sample/TwoBlocks#%3Cinit%3E#
+sample/TwoBlocks#Zero#kind=property; companion;
+sample/TwoBlocks#normalize#kind=function;
+sample/TwoBlocks#Dimensions#kind=property; companion;
+sample/TwoBlocks##kind=function;
 sample/WithCompanion
-function:sample/WithCompanion#interfaceCompanionMember#companion;
-function:sample#topLevelExtension#receiver=sample/Outercompanion;
-property:sample#topLevelExtensionProperty#receiver=sample/Outercompanion;
-function:sample#extensionOnNamed#receiver=sample/Namedcompanion;
+sample/WithCompanion#interfaceCompanionMember#kind=function; companion;
+sample#topLevelExtension#kind=function; receiver=sample/Outercompanion;
+sample#topLevelExtensionProperty#kind=property; receiver=sample/Outercompanion;
+sample#extensionOnNamed#kind=function; receiver=sample/Namedcompanion;

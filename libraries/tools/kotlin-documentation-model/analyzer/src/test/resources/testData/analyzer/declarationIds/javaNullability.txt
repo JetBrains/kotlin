@@ -1,13 +1,13 @@
 sample
 sample/JavaClass
-function:sample/JavaClass#none#parameters=[(kotlin/String..kotlin/String?)];
-function:sample/JavaClass#notNull#parameters=[kotlin/String];
-function:sample/JavaClass#nullable#parameters=[kotlin/String?];
-function:sample/JavaClass#staticNone#parameters=[(kotlin/String..kotlin/String?)]; companion;
-function:sample/JavaClass#staticNotNull#parameters=[kotlin/String]; companion;
-constructor:sample/JavaClass#%3Cinit%3E#
+sample/JavaClass#none#kind=function; parameters=[(kotlin/String..kotlin/String?)];
+sample/JavaClass#notNull#kind=function; parameters=[kotlin/String];
+sample/JavaClass#nullable#kind=function; parameters=[kotlin/String?];
+sample/JavaClass#staticNone#kind=function; parameters=[(kotlin/String..kotlin/String?)]; companion;
+sample/JavaClass#staticNotNull#kind=function; parameters=[kotlin/String]; companion;
+sample/JavaClass##kind=function;
 org.jetbrains.annotations
 org.jetbrains.annotations/NotNull
-constructor:org.jetbrains.annotations/NotNull#%3Cinit%3E#
+org.jetbrains.annotations/NotNull##kind=function;
 org.jetbrains.annotations/Nullable
-constructor:org.jetbrains.annotations/Nullable#%3Cinit%3E#
+org.jetbrains.annotations/Nullable##kind=function;

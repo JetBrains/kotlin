@@ -1,6 +1,6 @@
 kotlin.jvm
 kotlin.jvm/JvmName
-constructor:kotlin.jvm/JvmName#%3Cinit%3E#parameters=[kotlin/String];
-property:kotlin.jvm/JvmName#name#
+kotlin.jvm/JvmName##kind=function; parameters=[kotlin/String];
+kotlin.jvm/JvmName#name#kind=property;
 sample
-function:sample#g#parameters=[kotlin/String];   // CONFLICTING_OVERLOADS
+sample#g#kind=function; parameters=[kotlin/String];   // CONFLICTING_OVERLOADS

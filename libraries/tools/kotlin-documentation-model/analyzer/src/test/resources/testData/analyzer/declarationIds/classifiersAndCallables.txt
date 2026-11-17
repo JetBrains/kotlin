@@ -1,31 +1,31 @@
 sample
 sample/Outer
 sample/Outer.Nested
-constructor:sample/Outer.Nested#%3Cinit%3E#
+sample/Outer.Nested##kind=function;
 sample/Outer.Alias
-property:sample/Outer#value#
-function:sample/Outer#value#
+sample/Outer#value#kind=property;
+sample/Outer#value#kind=function;
 sample/Outer.Companion
-function:sample/Outer.Companion#member#
-constructor:sample/Outer.Companion#%3Cinit%3E#
-constructor:sample/Outer#%3Cinit%3E#
+sample/Outer.Companion#member#kind=function;
+sample/Outer.Companion##kind=function;
+sample/Outer##kind=function;
 sample/Alias
 sample/Choice
-enum-entry:sample/Choice#ENTRY#companion;
-function:sample/Choice#values#companion;
-function:sample/Choice#valueOf#parameters=[kotlin/String]; companion;
-property:sample/Choice#entries#companion;
-constructor:sample/Choice#%3Cinit%3E#
-function:sample#top#
-property:sample#top#
+sample/Choice#ENTRY#kind=enum-entry; companion;
+sample/Choice#values#kind=function; companion;
+sample/Choice#valueOf#kind=function; parameters=[kotlin/String]; companion;
+sample/Choice#entries#kind=property; companion;
+sample/Choice##kind=function;
+sample#top#kind=function;
+sample#top#kind=property;
 sample/JavaClass
-field:sample/JavaClass#field#
-field:sample/JavaClass#staticField#companion;
-function:sample/JavaClass#method#
-function:sample/JavaClass#staticMethod#companion;
-function:sample/JavaClass#getText#
-constructor:sample/JavaClass#%3Cinit%3E#
-synthetic-property:sample/JavaClass#text#
+sample/JavaClass#field#kind=field;
+sample/JavaClass#staticField#kind=field; companion;
+sample/JavaClass#method#kind=function;
+sample/JavaClass#staticMethod#kind=function; companion;
+sample/JavaClass#getText#kind=function;
+sample/JavaClass##kind=function;
+sample/JavaClass#text#kind=property;
 /
 /RootClass
-constructor:/RootClass#%3Cinit%3E#
+/RootClass##kind=function;

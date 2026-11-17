@@ -1,3 +1,3 @@
 sample
-function:sample#h#parameters=[vararg kotlin/String];
-function:sample#h#parameters=[kotlin/Array<kotlin/String>];
+sample#h#kind=function; parameters=[vararg kotlin/String];
+sample#h#kind=function; parameters=[kotlin/Array<kotlin/String>];

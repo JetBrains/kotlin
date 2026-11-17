@@ -30,13 +30,15 @@ import java.util.Base64
  * The format depends on the symbol kind:
  * - Package: `[escaped FQ name]`, e.g. `kotlin.text`; the root package is `/` alone.
  * - Classifier: `[escaped ClassId]`, e.g. `kotlin.collections/List`.
- * - Callable: `[kind]:[containing ClassId or package for top-level]#[escaped name]#[signature hash]`,
- *   e.g. `function:kotlin.text#repeat#<hash>` or `constructor:kotlin.collections/ArrayList#%3Cinit%3E#<hash>`.
+ * - Callable: `[containing ClassId or package for top-level]#[escaped name]#[signature hash]`,
+ *   e.g. `kotlin.text#repeat#<hash>`. The callable [kind][CallableKind] is one of `property`, `field`,
+ *   `enum-entry`, `function`; constructors are `function` and synthetic Java properties are `property`.
+ *   The kind participates in the ID only through the signature hash. Property accessors have no ID.
  *
  * By default, [hashSignature] replaces the readable signature with an unpadded URL-safe Base64 encoding
  * of the full FNV-1 64-bit hash of it.
- * Set it to false to inspect the signature used to calculate the digest, e.g.
- * `function:kotlin.text#repeat#typeParameters=[]; context=[]; receiver=kotlin/String; parameters=[kotlin/Int];`
+ * Set it to false to inspect the signature used to calculate the digest, which starts with the
+ * callable's kind, e.g. `kotlin.text#repeat#kind=function; receiver=kotlin/String; parameters=[kotlin/Int];`
  * for `fun String.repeat(n: Int): String`. Package and classifier IDs are unaffected.
  * Return types, ordinary parameter names, annotations, and expect/actual modifiers do not participate
  * in the signature. The exception is callables imported from ObjC — those annotated with
@@ -69,28 +71,34 @@ private fun generateCallableId(
     typeAliasClassId: ClassId?,
     hashSignature: Boolean,
 ): String? {
-    val kind = callableKind(symbol) ?: throw IllegalArgumentException("Unknown callable kind: $symbol")
-    // Accessors inherit the property's receiver, context parameters and type parameters. In particular,
-    // the setter's value parameter must not make the property's return type part of its identity.
-    val declaration = if (symbol is KaPropertyAccessorSymbol) symbol.containingDeclaration as KaPropertySymbol else symbol
-    val prefix = callableIdPrefix(declaration, kind, typeAliasClassId) ?: return null
-    val signature = callableSignature(declaration)
+    val kind = callableKind(symbol) ?: return null
+    val prefix = callableIdPrefix(symbol, typeAliasClassId) ?: return null
+    val signature = callableSignature(symbol, kind)
     return "$prefix#${if (hashSignature) signature.shortHash() else signature}"
 }
 
-private fun callableKind(symbol: KaCallableSymbol): String? = when (symbol) {
-    is KaConstructorSymbol -> "constructor"
-    is KaNamedFunctionSymbol -> "function"
-    is KaPropertyGetterSymbol -> "getter"
-    is KaPropertySetterSymbol -> "setter"
-    is KaSyntheticJavaPropertySymbol -> "synthetic-property"
-    is KaPropertySymbol -> "property"
-    is KaJavaFieldSymbol -> "field"
-    is KaEnumEntrySymbol -> "enum-entry"
+/**
+ * The callable kind as it appears in the `kind=` part of the
+ * hashed signature.
+ */
+internal enum class CallableKind(val id: String) {
+    PROPERTY("property"),
+    FIELD("field"),
+    ENUM_ENTRY("enum-entry"),
+    FUNCTION("function"),
+}
+
+private fun callableKind(symbol: KaCallableSymbol): CallableKind? = when (symbol) {
+    is KaConstructorSymbol -> CallableKind.FUNCTION
+    is KaNamedFunctionSymbol -> CallableKind.FUNCTION
+    is KaSyntheticJavaPropertySymbol -> CallableKind.PROPERTY
+    is KaPropertySymbol -> CallableKind.PROPERTY
+    is KaJavaFieldSymbol -> CallableKind.FIELD
+    is KaEnumEntrySymbol -> CallableKind.ENUM_ENTRY
     else -> null
 }
 
-private fun callableIdPrefix(declaration: KaCallableSymbol, kind: String, typeAliasClassId: ClassId?): String? {
+private fun callableIdPrefix(declaration: KaCallableSymbol, typeAliasClassId: ClassId?): String? {
     require(typeAliasClassId?.isLocalClassId != true) { "Type alias class ID cannot be local" }
 
     val classId = when (declaration) {
@@ -102,7 +110,7 @@ private fun callableIdPrefix(declaration: KaCallableSymbol, kind: String, typeAl
 
     val owner = (typeAliasClassId ?: classId)?.escape() ?: callableId!!.packageName.escape()
     val name = if (declaration is KaConstructorSymbol) CONSTRUCTOR_NAME else callableId!!.callableName.asString()
-    return "$kind:$owner#${name.escapeName()}"
+    return "$owner#${name.escapeName()}"
 }
 
 /** Narrows the opt-in for [ClassId.isLocal] (see its KDoc) to this single accessor. */
@@ -130,12 +138,14 @@ private fun typeParameterIdName(symbol: KaTypeParameterSymbol): String {
 }
 
 context(session: KaSession)
-private fun callableSignature(declaration: KaCallableSymbol): String {
+private fun callableSignature(declaration: KaCallableSymbol, kind: CallableKind): String {
 
     fun render(type: KaType): String =
         @OptIn(KaExperimentalApi::class) type.render(idTypeRenderer, Variance.INVARIANT)
 
     return buildString {
+        append("kind=").append(kind.id).append("; ")
+
         if (declaration.typeParameters.isNotEmpty()) {
             append("typeParameters=")
             declaration.typeParameters.joinTo(this, prefix = "[", postfix = "]") { parameter ->
@@ -288,4 +298,5 @@ private val idTypeRenderer: KaTypeRenderer =
         }
     }
 
-private const val CONSTRUCTOR_NAME = "<init>"
+
+private const val CONSTRUCTOR_NAME = ""
