@@ -97,7 +97,8 @@ class CodegenMetadataTests : AbstractCodegenTest() {
 
     companion object {
         private val additionalPaths = listOf(
-            Classpath.jarFor<kotlin.metadata.jvm.KotlinClassMetadata>(), // kotlin-metadata
+            Classpath.jarFor<kotlin.metadata.jvm.KotlinClassMetadata>(), // kotlin-metadata-jvm
+            Classpath.jarFor<kotlin.metadata.KmClass>(), // kotlin-metadata
             Classpath.jarFor("kotlin.reflect.full.KClasses") // kotlin-reflect
         )
     }
