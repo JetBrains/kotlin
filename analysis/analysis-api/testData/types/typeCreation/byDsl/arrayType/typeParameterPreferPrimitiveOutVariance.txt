@@ -31,6 +31,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: true
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/Array)
@@ -58,10 +59,12 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: true
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 kotlin.Array<out T>

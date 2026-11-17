@@ -32,6 +32,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   receiverType: null
@@ -50,6 +51,7 @@ KaFunctionType:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   symbol: KaNamedClassSymbol(some/MyInlineableFunction0)
   typeArguments: [
     KaUsualClassType:
@@ -67,10 +69,12 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 @org.jetbrains.kotlin.plugin.sandbox.MyInlineable (() -> kotlin.Unit)

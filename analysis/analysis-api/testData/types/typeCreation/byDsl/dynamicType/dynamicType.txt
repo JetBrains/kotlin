@@ -5,6 +5,7 @@ KaDynamicType:
   isMarkedNullable: false
   isNullable: true
   hasFlexibleNullability: true
+  isRaw: false
 
 Rendered type:
 dynamic

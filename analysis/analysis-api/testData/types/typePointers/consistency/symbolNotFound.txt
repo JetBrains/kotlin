@@ -25,8 +25,10 @@ KaClassErrorType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false

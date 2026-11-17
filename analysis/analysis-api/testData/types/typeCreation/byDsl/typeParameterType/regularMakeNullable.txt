@@ -22,6 +22,7 @@ KaTypeParameterType:
   isMarkedNullable: true
   isNullable: true
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 T?

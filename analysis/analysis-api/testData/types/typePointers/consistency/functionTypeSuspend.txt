@@ -24,6 +24,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   parameters: [
     KaFunctionValueParameter:
@@ -43,6 +44,7 @@ KaFunctionType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -64,6 +66,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -79,6 +82,7 @@ KaFunctionType:
           isMarkedNullable: true
           isNullable: true
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   receiverType: null
@@ -97,6 +101,7 @@ KaFunctionType:
     isMarkedNullable: true
     isNullable: true
     hasFlexibleNullability: false
+    isRaw: false
   symbol: KaNamedClassSymbol(kotlin/coroutines/SuspendFunction1)
   typeArguments: [
     KaUsualClassType:
@@ -114,6 +119,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -129,7 +135,9 @@ KaFunctionType:
       isMarkedNullable: true
       isNullable: true
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false

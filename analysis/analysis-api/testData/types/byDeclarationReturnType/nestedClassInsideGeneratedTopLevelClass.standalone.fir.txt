@@ -15,6 +15,7 @@ KaClassErrorType:
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 AllOpenGenerated.NestedMyClass

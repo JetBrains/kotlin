@@ -71,6 +71,25 @@ public val KaType.isPrimitiveBacked: Boolean
     }
 
 /**
+ * Whether the given [KaType] is a [raw Java type](https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.8), such as the
+ * return type of a Java method `List getItems()`.
+ *
+ * A raw type is usually a [KaFlexibleType][org.jetbrains.kotlin.analysis.api.types.KaFlexibleType]. As the Java code specifies no type
+ * arguments, the lower bound gets the erased upper bounds of the type parameters, and the upper bound gets star projections, as in
+ * `(Mutable)List<Any?>!`. A raw supertype of a Java class, such as `ArrayList` in `class Items extends ArrayList`, is a non-flexible
+ * class type.
+ *
+ * Only the type itself is checked. `List<List>` is not raw, although its type argument is.
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val KaType.isRaw: Boolean
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.javaInteroperabilityComponent.isRaw(this)
+    }
+
+/**
  * A [KaNamedClassSymbol] for the given [PsiClass], or `null` for anonymous classes, local classes, type parameters (which are also
  * [PsiClass]es), and Kotlin light classes.
  */

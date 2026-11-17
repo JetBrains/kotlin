@@ -1,0 +1,353 @@
+Restored type is the same as the original one
+
+KaFlexibleType:
+  abbreviation: null
+  annotations: []
+  lowerBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/collections/MutableList
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: MutableList
+        symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+        typeArguments: [
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/collections/MutableList
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: MutableList
+                  symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+                  typeArguments: [
+                    KaUsualClassType:
+                      abbreviation: null
+                      annotations: []
+                      classId: kotlin/Any
+                      qualifiers: [
+                        KaResolvedClassTypeQualifier:
+                          name: Any
+                          symbol: KaNamedClassSymbol(kotlin/Any)
+                          typeArguments: []
+                      ]
+                      symbol: KaNamedClassSymbol(kotlin/Any)
+                      typeArguments: []
+                      isMarkedNullable: true
+                      isNullable: true
+                      hasFlexibleNullability: false
+                      isRaw: false
+                  ]
+              ]
+              symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+              typeArguments: [
+                KaUsualClassType:
+                  abbreviation: null
+                  annotations: []
+                  classId: kotlin/Any
+                  qualifiers: [
+                    KaResolvedClassTypeQualifier:
+                      name: Any
+                      symbol: KaNamedClassSymbol(kotlin/Any)
+                      typeArguments: []
+                  ]
+                  symbol: KaNamedClassSymbol(kotlin/Any)
+                  typeArguments: []
+                  isMarkedNullable: true
+                  isNullable: true
+                  hasFlexibleNullability: false
+                  isRaw: false
+              ]
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
+              isRaw: true
+            upperBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/collections/List
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: List
+                  symbol: KaNamedClassSymbol(kotlin/collections/List)
+                  typeArguments: [
+                    *
+                  ]
+              ]
+              symbol: KaNamedClassSymbol(kotlin/collections/List)
+              typeArguments: [
+                *
+              ]
+              isMarkedNullable: true
+              isNullable: true
+              hasFlexibleNullability: false
+              isRaw: false
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: true
+            isRaw: true
+        ]
+    ]
+    symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+    typeArguments: [
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/collections/MutableList
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: MutableList
+              symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+              typeArguments: [
+                KaUsualClassType:
+                  abbreviation: null
+                  annotations: []
+                  classId: kotlin/Any
+                  qualifiers: [
+                    KaResolvedClassTypeQualifier:
+                      name: Any
+                      symbol: KaNamedClassSymbol(kotlin/Any)
+                      typeArguments: []
+                  ]
+                  symbol: KaNamedClassSymbol(kotlin/Any)
+                  typeArguments: []
+                  isMarkedNullable: true
+                  isNullable: true
+                  hasFlexibleNullability: false
+                  isRaw: false
+              ]
+          ]
+          symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+          typeArguments: [
+            KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/Any
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: Any
+                  symbol: KaNamedClassSymbol(kotlin/Any)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/Any)
+              typeArguments: []
+              isMarkedNullable: true
+              isNullable: true
+              hasFlexibleNullability: false
+              isRaw: false
+          ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+          isRaw: true
+        upperBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/collections/List
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: List
+              symbol: KaNamedClassSymbol(kotlin/collections/List)
+              typeArguments: [
+                *
+              ]
+          ]
+          symbol: KaNamedClassSymbol(kotlin/collections/List)
+          typeArguments: [
+            *
+          ]
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
+          isRaw: false
+        isMarkedNullable: false
+        isNullable: true
+        hasFlexibleNullability: true
+        isRaw: true
+    ]
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+    isRaw: false
+  upperBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/collections/List
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: List
+        symbol: KaNamedClassSymbol(kotlin/collections/List)
+        typeArguments: [
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/collections/MutableList
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: MutableList
+                  symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+                  typeArguments: [
+                    KaUsualClassType:
+                      abbreviation: null
+                      annotations: []
+                      classId: kotlin/Any
+                      qualifiers: [
+                        KaResolvedClassTypeQualifier:
+                          name: Any
+                          symbol: KaNamedClassSymbol(kotlin/Any)
+                          typeArguments: []
+                      ]
+                      symbol: KaNamedClassSymbol(kotlin/Any)
+                      typeArguments: []
+                      isMarkedNullable: true
+                      isNullable: true
+                      hasFlexibleNullability: false
+                      isRaw: false
+                  ]
+              ]
+              symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+              typeArguments: [
+                KaUsualClassType:
+                  abbreviation: null
+                  annotations: []
+                  classId: kotlin/Any
+                  qualifiers: [
+                    KaResolvedClassTypeQualifier:
+                      name: Any
+                      symbol: KaNamedClassSymbol(kotlin/Any)
+                      typeArguments: []
+                  ]
+                  symbol: KaNamedClassSymbol(kotlin/Any)
+                  typeArguments: []
+                  isMarkedNullable: true
+                  isNullable: true
+                  hasFlexibleNullability: false
+                  isRaw: false
+              ]
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
+              isRaw: true
+            upperBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/collections/List
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: List
+                  symbol: KaNamedClassSymbol(kotlin/collections/List)
+                  typeArguments: [
+                    *
+                  ]
+              ]
+              symbol: KaNamedClassSymbol(kotlin/collections/List)
+              typeArguments: [
+                *
+              ]
+              isMarkedNullable: true
+              isNullable: true
+              hasFlexibleNullability: false
+              isRaw: false
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: true
+            isRaw: true
+        ]
+    ]
+    symbol: KaNamedClassSymbol(kotlin/collections/List)
+    typeArguments: [
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/collections/MutableList
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: MutableList
+              symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+              typeArguments: [
+                KaUsualClassType:
+                  abbreviation: null
+                  annotations: []
+                  classId: kotlin/Any
+                  qualifiers: [
+                    KaResolvedClassTypeQualifier:
+                      name: Any
+                      symbol: KaNamedClassSymbol(kotlin/Any)
+                      typeArguments: []
+                  ]
+                  symbol: KaNamedClassSymbol(kotlin/Any)
+                  typeArguments: []
+                  isMarkedNullable: true
+                  isNullable: true
+                  hasFlexibleNullability: false
+                  isRaw: false
+              ]
+          ]
+          symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+          typeArguments: [
+            KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/Any
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: Any
+                  symbol: KaNamedClassSymbol(kotlin/Any)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/Any)
+              typeArguments: []
+              isMarkedNullable: true
+              isNullable: true
+              hasFlexibleNullability: false
+              isRaw: false
+          ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+          isRaw: true
+        upperBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/collections/List
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: List
+              symbol: KaNamedClassSymbol(kotlin/collections/List)
+              typeArguments: [
+                *
+              ]
+          ]
+          symbol: KaNamedClassSymbol(kotlin/collections/List)
+          typeArguments: [
+            *
+          ]
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
+          isRaw: false
+        isMarkedNullable: false
+        isNullable: true
+        hasFlexibleNullability: true
+        isRaw: true
+    ]
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
+    isRaw: false
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+  isRaw: false

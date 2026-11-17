@@ -22,6 +22,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   parameters: [
     KaFunctionValueParameter:
@@ -41,6 +42,7 @@ KaFunctionType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -66,6 +68,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         *
         KaUsualClassType:
           abbreviation: null
@@ -82,6 +85,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   receiverType: KaUsualClassType:
@@ -103,6 +107,7 @@ KaFunctionType:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   returnType: KaUsualClassType:
     abbreviation: null
     annotations: []
@@ -118,6 +123,7 @@ KaFunctionType:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   symbol: KaNamedClassSymbol(kotlin/reflect/KFunction2)
   typeArguments: [
     KaUsualClassType:
@@ -139,6 +145,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     *
     KaUsualClassType:
       abbreviation: null
@@ -155,10 +162,12 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 kotlin.reflect.KFunction2<A<*>, *, kotlin.Unit>

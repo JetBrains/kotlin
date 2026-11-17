@@ -54,6 +54,7 @@ CONSTRUCTOR:
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: false
+            isRaw: false
         ]
     ]
     symbol: KaNamedClassSymbol(Predicate)
@@ -85,10 +86,12 @@ CONSTRUCTOR:
         isMarkedNullable: false
         isNullable: true
         hasFlexibleNullability: false
+        isRaw: false
     ]
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   typeParameters: [
     KaTypeParameterSymbol:
       anchorPsi: KtTypeParameter
@@ -175,6 +178,7 @@ CONSTRUCTOR:
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: false
+            isRaw: false
         ]
         parameters: [
           KaFunctionValueParameter:
@@ -206,6 +210,7 @@ CONSTRUCTOR:
               isMarkedNullable: false
               isNullable: true
               hasFlexibleNullability: false
+              isRaw: false
         ]
         qualifiers: [
           KaResolvedClassTypeQualifier:
@@ -239,6 +244,7 @@ CONSTRUCTOR:
                 isMarkedNullable: false
                 isNullable: true
                 hasFlexibleNullability: false
+                isRaw: false
               KaUsualClassType:
                 abbreviation: null
                 annotations: []
@@ -254,6 +260,7 @@ CONSTRUCTOR:
                 isMarkedNullable: false
                 isNullable: false
                 hasFlexibleNullability: false
+                isRaw: false
             ]
         ]
         receiverType: null
@@ -272,6 +279,7 @@ CONSTRUCTOR:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         symbol: KaNamedClassSymbol(kotlin/Function1)
         typeArguments: [
           KaTypeParameterType:
@@ -301,6 +309,7 @@ CONSTRUCTOR:
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: false
+            isRaw: false
           KaUsualClassType:
             abbreviation: null
             annotations: []
@@ -316,10 +325,12 @@ CONSTRUCTOR:
             isMarkedNullable: false
             isNullable: false
             hasFlexibleNullability: false
+            isRaw: false
         ]
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
@@ -374,6 +385,7 @@ FUNCTIONAL INTERFACE:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   typeParameters: [
     KaTypeParameterSymbol:

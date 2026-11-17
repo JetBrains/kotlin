@@ -32,6 +32,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -47,6 +48,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   receiverType: KaUsualClassType:
@@ -64,6 +66,7 @@ KaFunctionType:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   returnType: KaUsualClassType:
     abbreviation: null
     annotations: []
@@ -79,6 +82,7 @@ KaFunctionType:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   symbol: KaNamedClassSymbol(kotlin/Function1)
   typeArguments: [
     KaUsualClassType:
@@ -96,6 +100,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -111,10 +116,12 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 @MyAnno (kotlin.String.() -> kotlin.Int)

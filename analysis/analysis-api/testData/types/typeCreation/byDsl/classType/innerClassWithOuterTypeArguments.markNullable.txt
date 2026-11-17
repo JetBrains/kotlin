@@ -27,6 +27,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -42,6 +43,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
     KaResolvedClassTypeQualifier:
       name: Inner
@@ -62,6 +64,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -77,6 +80,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   symbol: KaNamedClassSymbol(Outer.Middle.Inner)
@@ -96,6 +100,7 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -111,10 +116,12 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: true
   isNullable: true
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 Outer.Middle<kotlin.Boolean, kotlin.Char>.Inner<kotlin.Long, kotlin.Double>?

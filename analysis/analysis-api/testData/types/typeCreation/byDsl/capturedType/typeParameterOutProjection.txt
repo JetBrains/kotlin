@@ -25,9 +25,11 @@ KaCapturedType:
     isMarkedNullable: false
     isNullable: true
     hasFlexibleNullability: false
+    isRaw: false
   isMarkedNullable: false
   isNullable: true
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 CapturedType(out T)

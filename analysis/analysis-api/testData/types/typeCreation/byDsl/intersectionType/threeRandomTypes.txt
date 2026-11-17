@@ -18,6 +18,7 @@ KaIntersectionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -33,6 +34,7 @@ KaIntersectionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -48,10 +50,12 @@ KaIntersectionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 kotlin.Int & kotlin.String & kotlin.Boolean

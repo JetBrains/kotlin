@@ -32,6 +32,7 @@ KaTypeParameterType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
       KaUsualClassType:
         abbreviation: null
         annotations: []
@@ -47,12 +48,14 @@ KaTypeParameterType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
     ]
     variance: INVARIANT
     visibility: LOCAL
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 T

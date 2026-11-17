@@ -19,6 +19,7 @@ KaIntersectionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -34,6 +35,7 @@ KaIntersectionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -49,7 +51,9 @@ KaIntersectionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false

@@ -17,6 +17,7 @@ KaFlexibleType:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   upperBound: KaUsualClassType:
     abbreviation: null
     annotations: []
@@ -32,9 +33,11 @@ KaFlexibleType:
     isMarkedNullable: true
     isNullable: true
     hasFlexibleNullability: false
+    isRaw: false
   isMarkedNullable: false
   isNullable: true
   hasFlexibleNullability: true
+  isRaw: false
 
 Rendered type:
 kotlin.Any!

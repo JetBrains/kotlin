@@ -36,6 +36,7 @@ CLASS:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   typeParameters: []
   visibility: PUBLIC
