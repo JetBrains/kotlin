@@ -5,13 +5,51 @@
 
 package org.jetbrains.kotlin.parcelize.fir
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.declaredProperties
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
+fun FirClassSymbol<*>?.isParcelize(session: FirSession): Boolean {
+    contract {
+        returns(true) implies (this@isParcelize != null)
+    }
+
+    if (this == null) return false
+    val parcelizeAnnotations = session.parcelizeService.parcelizeAnnotations
+    return checkParcelizeClassSymbols(this, session) { symbol ->
+        symbol.resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in parcelizeAnnotations }
+    }
+}
+
+/**
+ * Check all related [FirClassSymbol]s to the provided [symbol] which are valid locations for a
+ * `Parcelize` annotation to be present. This commonizes class symbol navigation between checker and
+ * generator, even though [predicate] implementation is different.
+ */
+inline fun checkParcelizeClassSymbols(
+    symbol: FirClassSymbol<*>,
+    session: FirSession,
+    predicate: (FirClassSymbol<*>) -> Boolean,
+): Boolean {
+    if (predicate(symbol)) return true
+    return symbol.resolvedSuperTypeRefs.any { superTypeRef ->
+        val superTypeSymbol = superTypeRef.coneType.toRegularClassSymbol(session)
+            ?.takeIf { it.rawStatus.modality == Modality.SEALED }
+            ?: return@any false
+        predicate(superTypeSymbol)
+    }
+}
 
 /**
  * Returns the properties declared by the primary constructor of a data class, in the order of the constructor's value parameters,
