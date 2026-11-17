@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.registerLibrarySess
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -172,6 +173,10 @@ internal fun createScriptAnnotationResolutionSession(
 internal object NoJavaModulesResolver : JavaModuleResolver {
     override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?,
+    ): JavaModuleResolver.AccessError? = null
+
+    override fun checkAccessibility(
+        fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?,
     ): JavaModuleResolver.AccessError? = null
 
     override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? = null

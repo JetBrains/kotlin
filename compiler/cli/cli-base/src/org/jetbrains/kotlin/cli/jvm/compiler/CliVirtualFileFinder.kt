@@ -33,9 +33,12 @@ class CliVirtualFileFinder @VirtualFileBasedApi constructor(
     private val classFiles =
         JvmIndexKotlinClassFinder(index, { accepts(it.virtualFile) }, enableSearchInCtSym, perfManager)
 
-    // The two `VirtualFile` lookups stay for the backend (`inlineCodegenUtils.findVirtualFile`) and the IDE.
+    // The two `VirtualFile` lookups stay for the Analysis API and the IDE.
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
         @OptIn(VirtualFileBasedApi::class) classFiles.findBinaryClassFile(classId)?.virtualFile
+
+    override fun findBinaryClassBytes(classId: ClassId): ByteArray? =
+        classFiles.findBinaryClassFile(classId)?.readBytes()
 
     override fun findSourceOrBinaryVirtualFile(classId: ClassId): VirtualFile? =
         @OptIn(VirtualFileBasedApi::class) classFiles.findSourceOrBinaryClassFile(classId)?.virtualFile

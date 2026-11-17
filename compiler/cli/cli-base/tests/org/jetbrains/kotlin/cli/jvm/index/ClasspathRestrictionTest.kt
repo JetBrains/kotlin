@@ -13,6 +13,7 @@ import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -194,6 +195,47 @@ class ClasspathRestrictionTest {
 
         assertFalse(JvmClasspath.Roots(listOf(synthetic)).containsRoot(onDiskRoot))
         assertTrue(JvmClasspath.ProjectLibraries(excludedRoots = listOf(synthetic)).containsRoot(onDiskRoot))
+    }
+
+    @Test
+    fun testRootFilterMatchesClassFileHandlesLikeVirtualFileRoots(@TempDir tempDir: Path) {
+        val listedDirectory = tempDir.resolve("out").createDirectories()
+        val nestedDirectory = listedDirectory.resolve("nested").createDirectories()
+        val jar = listedDirectory.resolve("lib.jar").createParentsAndWriteJar("pkg/A.class")
+        val jarRoot = checkNotNull(CoreJarFileSystem().findFileByPath(jar.pathForVfs() + JAR_SEPARATOR))
+        val roots = listOf(listedDirectory.asLocalVirtualFile(), nestedDirectory.asLocalVirtualFile(), jarRoot)
+        val classpaths = listOf(
+            JvmClasspath.Roots(rootIds(listedDirectory)),
+            JvmClasspath.Roots(rootIds(jar)),
+            JvmClasspath.Roots(emptyList()),
+            JvmClasspath.ProjectLibraries(),
+            JvmClasspath.ProjectLibraries(rootIds(listedDirectory)),
+        )
+        for (classpath in classpaths) {
+            val filter = JvmClasspathRootFilter(classpath)
+            for (root in roots) {
+                val handle = VfsClassFileHandle(root, JavaRoot(root, JavaRoot.RootType.BINARY))
+                assertEquals(classpath.containsRoot(root), filter.accepts(handle), "$classpath accepting $root")
+            }
+        }
+
+        // A `jrt` module root: its library path is the JDK home, but it is a root of its own.
+        val moduleRootId = JvmClasspathRootId(JvmClasspathRootId.of(listedDirectory).id + JAR_SEPARATOR + "modules/java.base")
+        val moduleRoot = RootHandle(moduleRootId, listedDirectory)
+        assertFalse(JvmClasspathRootFilter(JvmClasspath.Roots(rootIds(listedDirectory))).accepts(moduleRoot), "not under its library path")
+        assertTrue(JvmClasspathRootFilter(JvmClasspath.Roots(listOf(moduleRoot.rootId))).accepts(moduleRoot))
+
+        val inMemory = InMemoryClassFileHandleForTests("A")
+        assertTrue(JvmClasspathRootFilter(JvmClasspath.Roots(listOf(inMemory.rootId))).accepts(inMemory))
+        assertFalse(JvmClasspathRootFilter(JvmClasspath.Roots(rootIds(tempDir))).accepts(inMemory))
+    }
+
+    private class RootHandle(override val rootId: JvmClasspathRootId, override val rootPath: Path?) : BinaryClassFileHandle {
+        override val nameWithoutExtension: String get() = "A"
+        override val extension: String get() = "class"
+        override val pathForDiagnostics: String get() = "$rootId/A.class"
+        override fun readBytes(): ByteArray = ByteArray(0)
+        override fun sibling(nameWithExtension: String): BinaryClassFileHandle? = null
     }
 
     private fun rootIds(vararg roots: Path): List<JvmClasspathRootId> = roots.map(JvmClasspathRootId::of)

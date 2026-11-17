@@ -51,7 +51,7 @@ class VfsClassFileHandle(private val file: VirtualFile, val root: JavaRoot) : Vi
 
 /**
  * The [VirtualFile] of a file found in a VFS-based [JvmDependenciesIndex]. Only for code which still works on [VirtualFile]s:
- * the PSI Java view, the Analysis API and the backend's inline lookup.
+ * the PSI Java view and the Analysis API.
  */
 @VirtualFileBasedApi
 val BinaryClassFileHandle.virtualFile: VirtualFile
