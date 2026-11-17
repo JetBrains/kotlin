@@ -1,1 +1,1 @@
-/585078316.kt:10:9: warning: '@IgnoredOnParcel' is inapplicable to properties without default value declared in the primary constructor.
+/585078316.kt:10:9: error: '@IgnoredOnParcel' is inapplicable to properties without default value declared in the primary constructor.
