@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -58,7 +59,6 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -465,11 +465,10 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val decompiledFile = PsiManager.getInstance(session.project).findFile(libraryRoot.findChild("DependentKt.class")!!) as KtFile
         val decompiledFunction = decompiledFile.declarations.filterIsInstance<KtNamedFunction>().single()
 
-        // `LLStandaloneFirElementByPsiElementChooser` crashes on building FIR type references with `createEmptySession()`
-        val exception = assertThrows<IllegalStateException> {
-            analyze(ktFile) { decompiledFunction.symbol.returnType }
+        val returnTypeClassId = analyze(ktFile) {
+            (decompiledFunction.symbol.returnType as KaClassType).classId
         }
-        assertTrue(exception.message!!.contains("FirLanguageSettingsComponent"), exception.message)
+        assertEquals(StandardClassIds.Unit, returnTypeClassId)
     }
 
     private fun checkOtherModuleUsage(
