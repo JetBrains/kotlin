@@ -273,7 +273,7 @@ class JavaTest : BaseAbstractTest() {
                         type.name equals "Array"
                         with(parameters.firstOrNull().assertNotNull("parameters")) {
                             name equals "data"
-                            type.name equals "Array"
+                            type.name equals "IntArray"
                         }
                     }
                 }
@@ -416,7 +416,7 @@ class JavaTest : BaseAbstractTest() {
                         name equals "bar"
                         with(parameters.firstOrNull().assertNotNull("parameter")) {
                             name equals "x"
-                            type.name equals "Array"
+                            type.name equals "String"
                             assertEquals(
                                 setOf(ExtraModifiers.KotlinOnlyModifiers.VarArg),
                                 extra[AdditionalModifiers]?.content?.values?.first(),
@@ -659,7 +659,7 @@ class JavaTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "Test" / "fn").cast<DFunction>()) {
-                    assertTrue(type is JavaObject)
+                    assertEquals(DRI("kotlin", "Any"), type.driOrNull)
                 }
             }
         }
@@ -844,12 +844,8 @@ class JavaTest : BaseAbstractTest() {
             """.trimIndent(), configuration
         ) {
             documentablesTransformationStage = { module ->
-                with((module / "java" / "Foo" / "a").cast< DProperty>()) {
-                    val expectedDRI = DRI(
-                        packageName = "java.lang", classNames = "String",
-                        target = PointingToDeclaration,
-                    )
-                    assertEquals(expectedDRI, this.type.driOrNull)
+                with((module / "java" / "Foo" / "a").cast<DProperty>()) {
+                    assertEquals(DRI("kotlin", "String"), this.type.driOrNull)
                 }
             }
         }
@@ -876,11 +872,11 @@ class JavaTest : BaseAbstractTest() {
             documentablesTransformationStage = { module ->
                 val child = module / "test" / "Child"
 
-                // Symbols analysis intentionally displays unmapped Java types as Java types (#4564)
-                (child / "s").cast<DProperty>().type.driOrNull equals DRI("java.lang", "String")
+                // Java types are mapped to Kotlin types by the Analysis API
+                (child / "s").cast<DProperty>().type.driOrNull equals DRI("kotlin", "String")
                 (child / "i").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")
-                (child / "integer").cast<DProperty>().type.driOrNull equals DRI("java.lang", "Integer")
-                (child / "method").cast<DFunction>().type.driOrNull equals DRI("java.lang", "Integer")
+                (child / "integer").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")
+                (child / "method").cast<DFunction>().type.driOrNull equals DRI("kotlin", "Int")
             }
         }
     }
