@@ -212,7 +212,8 @@ private class DataFrameFileLowering(
     }
 
     // Implicit receivers injected by org.jetbrains.kotlinx.dataframe.plugin.extensions.ReturnTypeBasedReceiverInjector
-    // don't "exist": they are used for resolve, but there's no value on the stack.
+    // may reuse an enclosing extension receiver or be synthetic. Synthetic scope receivers don't "exist":
+    // they are used for resolve, but there's no value on the stack.
     // We need to find all calls that use them as arguments and generate valid code
     // region injected receivers lowering
     override fun visitCall(expression: IrCall, data: IrDeclarationParent): IrElement {
