@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.linkage
 
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -25,7 +26,7 @@ interface IrDeserializer : IrProvider {
      * The returned symbol may be unbound (and put in the deserialization queue to be deserialized later).
      *
      * However, it is guaranteed that the returned symbol is always bound if [getSymbolAndPutIntoQueue] is called after the
-     * main part of the deserialization process has been finished, i.e. after `postProcess(inOrAfterLinkageStep = true)` was called.
+     * main part of the deserialization process has been finished, i.e. after [KotlinIrLinker.finalizeIrLinkage] was called.
      *
      * @return The symbol for the given signature and kind if successfully found; otherwise, null.
      */

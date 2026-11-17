@@ -95,7 +95,7 @@ internal class LoadedJsIr(
     fun loadUnboundSymbols() {
         signatureProvidersImpl.clear()
         linker.drainDeserializationQueue()
-        linker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
+        linker.finalizeIrLinkage(irBuiltIns)
         linker.checkNoUnboundSymbols(linker.symbolTable, "at the end of IR linkage process")
         linker.clear()
     }
