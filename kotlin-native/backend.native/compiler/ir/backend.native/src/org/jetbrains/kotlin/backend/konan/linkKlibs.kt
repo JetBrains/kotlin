@@ -88,7 +88,7 @@ internal fun LinkKlibsContext.linkKlibs(
     val symbols = BackendNativeSymbols(this, irBuiltIns, config.configuration)
 
     irLinker.drainDeserializationQueue()
-    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
+    irLinker.finalizeIrLinkage(irBuiltIns)
 
     // Drop those platform library modules which remain unused (untouched) during the deserialization.
     val usefulModuleDependencies = originalModuleDependencies.filterOutUnusedPlatformLibraryModules(irLinker)

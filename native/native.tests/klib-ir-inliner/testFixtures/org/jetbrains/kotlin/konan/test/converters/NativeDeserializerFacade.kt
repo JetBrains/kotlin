@@ -155,7 +155,7 @@ class NativeDeserializerFacade(
         val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
         irLinker.drainDeserializationQueue()
-        irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
+        irLinker.finalizeIrLinkage(irBuiltIns)
 
         val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
 

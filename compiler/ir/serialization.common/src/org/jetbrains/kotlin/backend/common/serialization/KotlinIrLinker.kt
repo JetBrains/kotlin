@@ -256,6 +256,8 @@ abstract class KotlinIrLinker(
     /**
      * Deserializes declarations for all unbound symbols in [symbolTable] and everything reachable from them,
      * repeating until the set of unbound symbols stops changing.
+     *
+     * Must be called before [finalizeIrLinkage], which handles the symbols that remain unbound.
      */
     fun drainDeserializationQueue() {
         // Deserializing a reference may lead to new unbound references, so we loop until none are left.
@@ -324,26 +326,35 @@ abstract class KotlinIrLinker(
         irInterner.reset()
     }
 
-    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
-        finished = finished || inOrAfterLinkageStep
-        if (inOrAfterLinkageStep) {
-            // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
-            // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
-            partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
-            partialLinkageSupport.preprocessBeforeFakeOverridesBuilding(symbolTable, fakeOverrideBuilder)
-        }
+    /**
+     * Completes IR linkage: builds fake overrides, lets the partial linkage replace the symbols that remain unbound
+     * with stubs, and checks that no unbound symbols are left.
+     *
+     * Must be called after [drainDeserializationQueue]. Declarations requested later are linked right at deserialization.
+     */
+    fun finalizeIrLinkage(irBuiltIns: IrBuiltIns) {
+        finished = true
+
+        // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
+        // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
+        partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
+        partialLinkageSupport.preprocessBeforeFakeOverridesBuilding(symbolTable, fakeOverrideBuilder)
 
         // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
         fakeOverrideBuilder.provideFakeOverrides(createTypeSystemContext(irBuiltIns))
         triedToDeserializeDeclarationForSymbol.clear()
 
-        if (inOrAfterLinkageStep) {
-            // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
-            partialLinkageSupport.generateStubsAndPatchUsages(irBuiltIns, symbolTable)
-            allModuleDeserializers.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(irBuiltIns) }
-        }
-        // TODO: fix IrPluginContext to make it not produce additional external reference
-        // symbolTable.noUnboundLeft("unbound after fake overrides:")
+        // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
+        partialLinkageSupport.generateStubsAndPatchUsages(irBuiltIns, symbolTable)
+        allModuleDeserializers.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(irBuiltIns) }
+    }
+
+    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
+        require(!inOrAfterLinkageStep) { "Call finalizeIrLinkage() instead of postProcess(..., inOrAfterLinkageStep = true)" }
+
+        // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
+        fakeOverrideBuilder.provideFakeOverrides(createTypeSystemContext(irBuiltIns))
+        triedToDeserializeDeclarationForSymbol.clear()
     }
 
     private fun topLevelKindToSymbolKind(kind: IrDeserializer.TopLevelSymbolKind): BinarySymbolData.SymbolKind {

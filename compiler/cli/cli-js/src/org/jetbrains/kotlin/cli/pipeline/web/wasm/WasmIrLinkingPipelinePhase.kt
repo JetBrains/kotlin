@@ -34,7 +34,7 @@ object WasmIrLinkingPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, W
         val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
         val allModules = sortedModuleDependencies.allDependencies
         allModules.forEach { it.patchDeclarationParents() }
-        irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
+        irLinker.finalizeIrLinkage(irBuiltIns)
         irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
         irLinker.clear()
         return WasmLinkedIrPipelineArtifact(

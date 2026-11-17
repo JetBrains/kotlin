@@ -147,7 +147,7 @@ fun loadIrForSingleModule(
     val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
     irLinker.drainDeserializationQueue()
-    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
+    irLinker.finalizeIrLinkage(irBuiltIns)
 
     val isStdlibCompilation = mainFragment == stdlibFragment
 
@@ -214,7 +214,7 @@ private fun getIrModuleInfoForKlib(
     val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
     irLinker.drainDeserializationQueue()
-    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
+    irLinker.finalizeIrLinkage(irBuiltIns)
 
     return IrModuleInfo(
         module = moduleDependencies.allDependencies.single { it.kotlinLibrary == klibs.included },
