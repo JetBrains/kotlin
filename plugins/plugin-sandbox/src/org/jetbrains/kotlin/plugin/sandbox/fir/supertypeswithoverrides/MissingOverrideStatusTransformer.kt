@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
@@ -68,11 +69,13 @@ class MissingOverrideStatusTransformer(session: FirSession) : FirStatusTransform
         for (supertype in containingClass.getSuperTypes(session)) {
             if (supertype.isAny) continue
             var needsOverride = false
-            supertype.toClassSymbol(session)?.processAllDeclaredCallables(session) { callable ->
-                if (needsOverride) return@processAllDeclaredCallables
-                // For the sake of this test's simplicity, we only check for matching names
-                if (callable is FirNamedFunctionSymbol && callable.name == function.name) {
-                    needsOverride = true
+            session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+                supertype.toClassSymbol(session)?.processAllDeclaredCallables(session) { callable ->
+                    if (needsOverride) return@processAllDeclaredCallables
+                    // For the sake of this test's simplicity, we only check for matching names
+                    if (callable is FirNamedFunctionSymbol && callable.name == function.name) {
+                        needsOverride = true
+                    }
                 }
             }
             if (needsOverride) {
