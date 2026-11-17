@@ -60,3 +60,17 @@ internal class LazyKMutableProperty1<T, V, D : KMutableProperty1<T, V>>(name: St
     override val setter: KMutableProperty1.Setter<T, V> get() = delegate.setter
     override fun set(receiver: T, value: V): Unit = delegate.set(receiver, value)
 }
+
+internal open class LazyKProperty2<T1, T2, out V, out D : KProperty2<T1, T2, V>>(override val name: String, computeProperty: () -> D) :
+    LazyKProperty<V, D>(computeProperty), KProperty2<T1, T2, V> {
+    override val getter: KProperty2.Getter<T1, T2, V> get() = delegate.getter
+    override fun get(receiver1: T1, receiver2: T2): V = delegate.get(receiver1, receiver2)
+    override fun getDelegate(receiver1: T1, receiver2: T2): Any? = delegate.getDelegate(receiver1, receiver2)
+    override fun invoke(receiver1: T1, receiver2: T2): V = delegate.invoke(receiver1, receiver2)
+}
+
+internal class LazyKMutableProperty2<T1, T2, V, D : KMutableProperty2<T1, T2, V>>(name: String, computeProperty: () -> D) :
+    LazyKProperty2<T1, T2, V, D>(name, computeProperty), KMutableProperty2<T1, T2, V> {
+    override val setter: KMutableProperty2.Setter<T1, T2, V> get() = delegate.setter
+    override fun set(receiver1: T1, receiver2: T2, value: V): Unit = delegate.set(receiver1, receiver2, value)
+}
