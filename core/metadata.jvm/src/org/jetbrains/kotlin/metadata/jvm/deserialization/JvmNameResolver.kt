@@ -24,10 +24,16 @@ fun List<Record>.toExpandedRecordsList(): List<Record> =
     ArrayList<Record>().also { list ->
         list.ensureCapacity(size)
         for (record in this) {
-            repeat(record.range) {
+            val range = record.range
+            if (range > MAX_EXPANDED_RECORDS - list.size) {
+                error("String table is too large: more than $MAX_EXPANDED_RECORDS records")
+            }
+            repeat(range) {
                 list.add(record)
             }
         }
         list.trimToSize()
     }
 
+// The compiler writes one string to `kotlin.Metadata.d2` for each expanded record, and an array in an annotation cannot have more elements.
+private const val MAX_EXPANDED_RECORDS = 65535

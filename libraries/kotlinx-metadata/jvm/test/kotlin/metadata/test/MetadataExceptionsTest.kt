@@ -7,11 +7,14 @@ package kotlin.metadata.test
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.junit.jupiter.api.Test
+import java.io.ByteArrayOutputStream
 import kotlin.metadata.KmClass
 import kotlin.metadata.KmType
 import kotlin.metadata.jvm.*
@@ -85,6 +88,24 @@ class MetadataExceptionsTest {
             strings.strings.toTypedArray(),
         )
         return (KotlinClassMetadata.readStrict(metadata) as KotlinClassMetadata.Class).kmClass.functions.single().returnType
+    }
+
+    @Test
+    fun testReadStringTableWithTooLargeRange() {
+        val bytes = ByteArrayOutputStream()
+        JvmProtoBuf.StringTableTypes.newBuilder()
+            .addRecord(JvmProtoBuf.StringTableTypes.Record.newBuilder().setRange(Int.MAX_VALUE))
+            .build()
+            .writeDelimitedTo(bytes)
+        ProtoBuf.Class.newBuilder().setFqName(0).build().writeTo(bytes)
+        val metadata = Metadata(
+            KotlinClassMetadata.CLASS_KIND,
+            JvmMetadataVersion.LATEST_STABLE_SUPPORTED.toIntArray(),
+            BitEncoding.encodeBytes(bytes.toByteArray()),
+            arrayOf("A"),
+        )
+
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.readStrict(metadata) }
     }
 
     @Test
