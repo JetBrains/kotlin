@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiModifier
 import com.intellij.psi.impl.light.LightJavaModule
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.CliDiagnostics
@@ -36,15 +35,11 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
-import org.jetbrains.kotlin.cli.jvm.modules.readJavaModuleInfo
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl
-import org.jetbrains.kotlin.load.java.structure.impl.convert
-import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
@@ -163,23 +158,6 @@ class ClasspathRootsResolver(
         return moduleInfoFile to psiJavaModule
     }
 
-    private fun createJavaModuleInfo(psiJavaModule: PsiJavaModule) = JavaModuleInfo(
-        psiJavaModule.name,
-        psiJavaModule.requires.mapNotNull { statement ->
-            statement.moduleName?.let { moduleName ->
-                JavaModuleInfo.Requires(moduleName, statement.hasModifierProperty(PsiModifier.TRANSITIVE))
-            }
-        },
-        psiJavaModule.exports.mapNotNull { statement ->
-            statement.packageName?.let { packageName ->
-                JavaModuleInfo.Exports(FqName(packageName), statement.moduleNames)
-            }
-        },
-        psiJavaModule.annotations.convert {
-            JavaAnnotationImpl(JavaElementSourceFactory.getInstance(psiJavaModule.project).createPsiSource(it))
-        }
-    )
-
     private fun modularSourceRoot(root: VirtualFile, hasOutputDirectoryInClasspath: Boolean): JavaModule.Explicit? {
         val [moduleInfoFile, psiJavaModule] = findSourceModuleInfo(root) ?: return null
         val sourceRoot = JavaModule.Root(root, isBinary = false)
@@ -187,7 +165,7 @@ class ClasspathRootsResolver(
             if (hasOutputDirectoryInClasspath)
                 listOf(sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true))
             else listOf(sourceRoot)
-        return JavaModule.Explicit(createJavaModuleInfo(psiJavaModule), roots, moduleInfoFile)
+        return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
     }
 
     private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
@@ -202,7 +180,7 @@ class ClasspathRootsResolver(
         )
 
         if (moduleInfoFile != null) {
-            val moduleInfo = readJavaModuleInfo(moduleInfoFile) {
+            val moduleInfo = JavaModuleInfo.read(moduleInfoFile) {
                 javaFileManager.findClass(JavaClassFinder.Request(it), searchScope)
             } ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
