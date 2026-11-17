@@ -1,20 +1,4 @@
 fragment main
-fun oldMethod(): Unit [sample/OldJava/oldMethod/#/PointingToDeclaration/].deprecated:
-{
-  "since": null,
-  "message": {},
-  "level": "WARNING",
-  "replaceWith": null
-}
-
-class OldJava [sample/OldJava///PointingToDeclaration/].deprecated:
-{
-  "since": null,
-  "message": {},
-  "level": "WARNING",
-  "replaceWith": null
-}
-
 constructor() [sample/OldClass/OldClass/#/PointingToDeclaration/].deprecated:
 {
   "since": null,
@@ -67,6 +51,30 @@ class OldClass [sample/OldClass///PointingToDeclaration/].deprecated:
       "links": []
     }
   }
+}
+
+constructor() [sample/OldJava/OldJava/#/PointingToDeclaration/].deprecated:
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
+}
+
+fun oldMethod(): Unit [sample/OldJava/oldMethod/#/PointingToDeclaration/].deprecated:
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
+}
+
+class OldJava [sample/OldJava///PointingToDeclaration/].deprecated:
+{
+  "since": null,
+  "message": {},
+  "level": "WARNING",
+  "replaceWith": null
 }
 
 typealias OldAlias = String [sample/OldAlias///PointingToDeclaration/].deprecated:

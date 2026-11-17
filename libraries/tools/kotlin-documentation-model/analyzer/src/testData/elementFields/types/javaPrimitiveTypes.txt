@@ -1,10 +1,10 @@
 fragment main
-var primitive: int [example/JavaTypes/primitive/#/PointingToDeclaration/].type:
+var primitive: Int [example/JavaTypes/primitive/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "int",
+      "name": "Int",
       "typeArguments": []
     }
   ],
@@ -14,27 +14,27 @@ var primitive: int [example/JavaTypes/primitive/#/PointingToDeclaration/].type:
   "annotations": []
 }
 
-var boxed: Integer [example/JavaTypes/boxed/#/PointingToDeclaration/].type:
+var boxed: Int [example/JavaTypes/boxed/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "Integer",
+      "name": "Int",
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.lang/Integer///PointingToDeclaration/",
+  "classLikeId": "kotlin/Int///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var primitiveBoolean: boolean [example/JavaTypes/primitiveBoolean/#/PointingToDeclaration/].type:
+var primitiveBoolean: Boolean [example/JavaTypes/primitiveBoolean/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "boolean",
+      "name": "Boolean",
       "typeArguments": []
     }
   ],
@@ -53,18 +53,18 @@ var boxedBoolean: Boolean [example/JavaTypes/boxedBoolean/#/PointingToDeclaratio
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.lang/Boolean///PointingToDeclaration/",
+  "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var primitiveByte: byte [example/JavaTypes/primitiveByte/#/PointingToDeclaration/].type:
+var primitiveByte: Byte [example/JavaTypes/primitiveByte/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "byte",
+      "name": "Byte",
       "typeArguments": []
     }
   ],
@@ -83,18 +83,18 @@ var boxedByte: Byte [example/JavaTypes/boxedByte/#/PointingToDeclaration/].type:
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.lang/Byte///PointingToDeclaration/",
+  "classLikeId": "kotlin/Byte///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var primitiveShort: short [example/JavaTypes/primitiveShort/#/PointingToDeclaration/].type:
+var primitiveShort: Short [example/JavaTypes/primitiveShort/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "short",
+      "name": "Short",
       "typeArguments": []
     }
   ],
@@ -113,18 +113,18 @@ var boxedShort: Short [example/JavaTypes/boxedShort/#/PointingToDeclaration/].ty
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.lang/Short///PointingToDeclaration/",
+  "classLikeId": "kotlin/Short///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var primitiveLong: long [example/JavaTypes/primitiveLong/#/PointingToDeclaration/].type:
+var primitiveLong: Long [example/JavaTypes/primitiveLong/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "long",
+      "name": "Long",
       "typeArguments": []
     }
   ],
@@ -143,18 +143,18 @@ var boxedLong: Long [example/JavaTypes/boxedLong/#/PointingToDeclaration/].type:
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.lang/Long///PointingToDeclaration/",
+  "classLikeId": "kotlin/Long///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var primitiveChar: char [example/JavaTypes/primitiveChar/#/PointingToDeclaration/].type:
+var primitiveChar: Char [example/JavaTypes/primitiveChar/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "char",
+      "name": "Char",
       "typeArguments": []
     }
   ],
@@ -164,27 +164,27 @@ var primitiveChar: char [example/JavaTypes/primitiveChar/#/PointingToDeclaration
   "annotations": []
 }
 
-var boxedChar: Character [example/JavaTypes/boxedChar/#/PointingToDeclaration/].type:
+var boxedChar: Char [example/JavaTypes/boxedChar/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "Character",
+      "name": "Char",
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.lang/Character///PointingToDeclaration/",
+  "classLikeId": "kotlin/Char///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var primitiveFloat: float [example/JavaTypes/primitiveFloat/#/PointingToDeclaration/].type:
+var primitiveFloat: Float [example/JavaTypes/primitiveFloat/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "float",
+      "name": "Float",
       "typeArguments": []
     }
   ],
@@ -203,18 +203,18 @@ var boxedFloat: Float [example/JavaTypes/boxedFloat/#/PointingToDeclaration/].ty
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.lang/Float///PointingToDeclaration/",
+  "classLikeId": "kotlin/Float///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var primitiveDouble: double [example/JavaTypes/primitiveDouble/#/PointingToDeclaration/].type:
+var primitiveDouble: Double [example/JavaTypes/primitiveDouble/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "double",
+      "name": "Double",
       "typeArguments": []
     }
   ],
@@ -233,7 +233,7 @@ var boxedDouble: Double [example/JavaTypes/boxedDouble/#/PointingToDeclaration/]
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.lang/Double///PointingToDeclaration/",
+  "classLikeId": "kotlin/Double///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
@@ -263,7 +263,7 @@ var reference: String [example/JavaTypes/reference/#/PointingToDeclaration/].typ
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.lang/String///PointingToDeclaration/",
+  "classLikeId": "kotlin/String///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []

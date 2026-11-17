@@ -1,10 +1,25 @@
 fragment main
-var unbounded: List<*> [example/JavaTypes/unbounded/#/PointingToDeclaration/].type:
+constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "List",
+      "name": "Any",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+var unbounded: MutableList<*> [example/JavaTypes/unbounded/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "MutableList",
       "typeArguments": [
         {
           "kind": "star"
@@ -12,18 +27,18 @@ var unbounded: List<*> [example/JavaTypes/unbounded/#/PointingToDeclaration/].ty
       ]
     }
   ],
-  "classLikeId": "java.util/List///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var upperBound: List<out T> [example/JavaTypes/upperBound/#/PointingToDeclaration/].type:
+var upperBound: MutableList<out T> [example/JavaTypes/upperBound/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "List",
+      "name": "MutableList",
       "typeArguments": [
         {
           "kind": "out",
@@ -38,18 +53,18 @@ var upperBound: List<out T> [example/JavaTypes/upperBound/#/PointingToDeclaratio
       ]
     }
   ],
-  "classLikeId": "java.util/List///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var lowerBound: List<in String> [example/JavaTypes/lowerBound/#/PointingToDeclaration/].type:
+var lowerBound: MutableList<in String> [example/JavaTypes/lowerBound/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "List",
+      "name": "MutableList",
       "typeArguments": [
         {
           "kind": "in",
@@ -61,7 +76,7 @@ var lowerBound: List<in String> [example/JavaTypes/lowerBound/#/PointingToDeclar
                 "typeArguments": []
               }
             ],
-            "classLikeId": "java.lang/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String///PointingToDeclaration/",
             "isMarkedNullable": false,
             "isEnhancedNullability": false,
             "annotations": []
@@ -70,22 +85,54 @@ var lowerBound: List<in String> [example/JavaTypes/lowerBound/#/PointingToDeclar
       ]
     }
   ],
-  "classLikeId": "java.util/List///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
 
-var raw: List [example/JavaTypes/raw/#/PointingToDeclaration/].type:
+var raw: MutableList<Any?> [example/JavaTypes/raw/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "List",
+      "name": "MutableList",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "Any",
+                "typeArguments": []
+              }
+            ],
+            "classLikeId": "kotlin/Any///PointingToDeclaration/",
+            "isMarkedNullable": true,
+            "isEnhancedNullability": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "isEnhancedNullability": false,
+  "annotations": []
+}
+
+class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Any",
       "typeArguments": []
     }
   ],
-  "classLikeId": "java.util/List///PointingToDeclaration/",
+  "classLikeId": "kotlin/Any///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []

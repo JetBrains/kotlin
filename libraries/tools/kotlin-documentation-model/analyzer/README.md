@@ -5,25 +5,23 @@ Analyzes Kotlin and Java sources using some Dokka parts and produces a `KdBundle
 ## Tests
 
 - Golden tests for complete project models, types, and individual element fields.
-- Kotlin and Java source round-trip tests.
+- Kotlin source round-trip tests.
 - Dokka tests covering the Documentable model for source analysis, KDoc/Javadoc parsing, filtering, links, and multiplatform behavior.
 
 ### Golden tests
 
-Golden tests analyze Kotlin and Java fixtures and compare the resulting model, or a focused view of it, with checked-in expected output. Fixtures live under `src/test/resources/testData/analyzer`:
+Golden tests analyze Kotlin and Java fixtures and compare the resulting model, or a focused view of it, with checked-in expected output. Fixtures live under `src/testData`:
 
 | Directory | Generated test class | Expected output |
 | --- | --- | --- |
 | `projects` | `ProjectsGoldenTestGenerated` | Complete bundle (`.kdm.json`) and declaration signatures grouped by fragment (`.signatures.txt`). |
-| `types` | `KdmTypesGoldenTestGenerated` | Every type found in the bundle, with its path and all fields (`.types.txt`). |
-| `elementFields` | `ElementFieldsGoldenTestGenerated` | One selected field from every element (`.txt`). The fixture filename selects `deprecated`, `since`, `annotations`, `throws`, or `overridens`. |
-| `roundTrip` | `KdmKotlinSourceRoundTripTestGenerated`, `KdmJavaSourceRoundTripTestGenerated` | The input source itself: canonical declarations are reconstructed from the model and compared with the fixture. |
+| `elementFields/types` | `KdmTypesGoldenTestGenerated` | Every outermost type in each element, printed as its path and a text dump of all its fields (`.txt`). |
+| `elementFields/<field>` | `AnnotationsGoldenTestGenerated`, `DeprecatedGoldenTestGenerated`, `SinceGoldenTestGenerated`, `ThrowsGoldenTestGenerated`, `OverridensGoldenTestGenerated` | One field (`annotations`, `deprecated`, `since`, `throws`, or `overridens`) from every element (`.txt`). |
+| `roundTrip` | `KdmKotlinSourceRoundTripTestGenerated` | The input source itself: canonical declarations are reconstructed from the model and compared with the fixture. |
 
-`AbstractKdmJavaSourceRoundTripTest` is the runner behind `KdmJavaSourceRoundTripTestGenerated`. It analyzes the `.java` fixtures in `roundTrip`, renders each module's declarations back to Java, and compares the result with the input source. Its fixtures cover interfaces and abstract classes without explicit constructors, bodies, imports, or comments.
+Fixtures use the shared compiler module extractor for `// MODULE:` and `// FILE:` directives, with a KDM-specific `// PLATFORM:` directive (defaulting to JVM). The third module dependency group, `// MODULE: jvm()()(common)`, maps to source-set `dependsOn` relationships. They can include Kotlin and Java sources, package and module descriptors, and multiplatform source-set dependencies. Round-trip fixtures use canonical declaration-only Kotlin source; bodies, imports, comments, and original formatting are outside their scope.
 
-Fixtures use the shared compiler module extractor for `// MODULE:` and `// FILE:` directives, with a KDM-specific `// PLATFORM:` directive (defaulting to JVM). The third module dependency group, `// MODULE: jvm()()(common)`, maps to source-set `dependsOn` relationships. They can include Kotlin and Java sources, package and module descriptors, and multiplatform source-set dependencies. Round-trip fixtures use canonical declaration-only source; bodies, imports, comments, and original formatting are outside their scope.
-
-Expected files are stored beside their fixtures. Where Java analysis modes need separate expectations, symbols Java analysis uses a `.java-symbols` suffix before the output extension, such as `example.java-symbols.kdm.json` or `annotations.java-symbols.txt`. All suites fall back to the default expectation when a Java symbols variant is absent. Identical variant files are removed by the test data manager.
+Expected files are stored beside their fixtures.
 
 ### Generating and running tests
 
@@ -33,26 +31,14 @@ All these suites are registered in `src/testFixtures/kotlin/org/jetbrains/kotlin
 ./gradlew :tools:kotlin-documentation-model:analyzer:generateTests -q
 ```
 
-Do not edit files in `src/tests-gen` manually. The generated tests include checks that every fixture has a test.
+The generated classes go to `build/tests-gen`, not a checked-in directory — do not edit or commit them. The generated tests include checks that every fixture has a test.
 
-Run the generated golden and round-trip suites in both Java analysis modes:
-
-```bash
-./gradlew \
-  :tools:kotlin-documentation-model:analyzer:testSymbols --tests '*GoldenTestGenerated*' --tests '*SourceRoundTripTestGenerated*' \
-  :tools:kotlin-documentation-model:analyzer:testJavaSymbols --tests '*GoldenTestGenerated*' --tests '*SourceRoundTripTestGenerated*' \
-  -q
-```
-
-To run one suite, replace the filters on each task with its class name from the table. Apply `--tests` to each test task explicitly; the aggregate `test` task does not forward its filter to these tasks.
-
-Golden suites use `analysis:test-data-manager`. Update expectations in the default Java PSI mode first, then in Java symbols mode:
+Run the generated golden and round-trip suites with the single `test` task (which runs the symbols-based Java analysis):
 
 ```bash
-./gradlew :tools:kotlin-documentation-model:analyzer:updateTestData -q
-./gradlew :tools:kotlin-documentation-model:analyzer:updateTestData -Pkdm.test.javaSymbols=true -q
+./gradlew :tools:kotlin-documentation-model:analyzer:test --tests '*GoldenTestGenerated*' --tests '*SourceRoundTripTestGenerated*' -q
 ```
 
-Use `checkTestData` instead of `updateTestData` to verify expectations. Both tasks accept the shared filters, for example `-Porg.jetbrains.kotlin.testDataManager.options.testClassPattern=.*ProjectsGoldenTestGenerated.*` or `-Porg.jetbrains.kotlin.testDataManager.options.testDataPath=libraries/tools/kotlin-documentation-model/analyzer/src/test/resources/testData/analyzer/types/`.
+To run one suite, replace the filters with its class name from the table.
 
-Dokka selects its Java analysis mode globally, so each invocation runs one mode. The manager tasks only run golden suites; round-trip fixtures specify their own expected source and continue to use the regular test tasks above. Review expected-output changes after updating.
+Golden assertions write the expected file when it is missing and then fail, so to update an expectation, delete it and rerun the test. Review expected-output changes after updating.

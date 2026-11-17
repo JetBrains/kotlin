@@ -26,7 +26,20 @@
                         {
                             "name": "R",
                             "isReified": false,
-                            "upperBounds": [],
+                            "upperBounds": [
+                                {
+                                    "kind": "classLike",
+                                    "qualifiers": [
+                                        {
+                                            "name": "Any",
+                                            "typeArguments": []
+                                        }
+                                    ],
+                                    "classLikeId": "kotlin/Any///PointingToDeclaration/",
+                                    "isMarkedNullable": false,
+                                    "annotations": []
+                                }
+                            ],
                             "variance": null,
                             "annotations": []
                         }
@@ -135,7 +148,20 @@
                         {
                             "name": "T",
                             "isReified": false,
-                            "upperBounds": [],
+                            "upperBounds": [
+                                {
+                                    "kind": "classLike",
+                                    "qualifiers": [
+                                        {
+                                            "name": "Any",
+                                            "typeArguments": []
+                                        }
+                                    ],
+                                    "classLikeId": "kotlin/Any///PointingToDeclaration/",
+                                    "isMarkedNullable": false,
+                                    "annotations": []
+                                }
+                            ],
                             "variance": null,
                             "annotations": []
                         }

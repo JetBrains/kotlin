@@ -1,37 +1,4 @@
 fragment main
-fun annotated(): Unit [sample/AnnotatedJava/annotated/#/PointingToDeclaration/].annotations:
-[
-  {
-    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
-    "arguments": {}
-  }
-]
-
-class AnnotatedJava [sample/AnnotatedJava///PointingToDeclaration/].annotations:
-[
-  {
-    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
-    "arguments": {}
-  }
-]
-
-annotation class PackageLabel [sample/PackageLabel///PointingToDeclaration/].annotations:
-[
-  {
-    "classLikeId": "java.lang.annotation/Documented///PointingToDeclaration/",
-    "arguments": {}
-  },
-  {
-    "classLikeId": "java.lang.annotation/Target///PointingToDeclaration/",
-    "arguments": {
-      "value": {
-        "kind": "enumEntry",
-        "enumEntryId": "java.lang.annotation/ElementType///PointingToDeclaration/"
-      }
-    }
-  }
-]
-
 constructor() [sample/Annotated/Annotated/#/PointingToDeclaration/].annotations:
 [
   {
@@ -156,6 +123,64 @@ class Annotated [sample/Annotated///PointingToDeclaration/].annotations:
   }
 ]
 
+constructor(value: String) [sample/PackageLabel/PackageLabel/#kotlin.String/PointingToDeclaration/].annotations:
+[
+  {
+    "classLikeId": "java.lang.annotation/Documented///PointingToDeclaration/",
+    "arguments": {}
+  },
+  {
+    "classLikeId": "java.lang.annotation/Target///PointingToDeclaration/",
+    "arguments": {
+      "value": {
+        "kind": "enumEntry",
+        "enumEntryId": "java.lang.annotation/ElementType///PointingToDeclaration/"
+      }
+    }
+  }
+]
+
+annotation class PackageLabel [sample/PackageLabel///PointingToDeclaration/].annotations:
+[
+  {
+    "classLikeId": "java.lang.annotation/Documented///PointingToDeclaration/",
+    "arguments": {}
+  },
+  {
+    "classLikeId": "java.lang.annotation/Target///PointingToDeclaration/",
+    "arguments": {
+      "value": {
+        "kind": "enumEntry",
+        "enumEntryId": "java.lang.annotation/ElementType///PointingToDeclaration/"
+      }
+    }
+  }
+]
+
+constructor() [sample/AnnotatedJava/AnnotatedJava/#/PointingToDeclaration/].annotations:
+[
+  {
+    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+    "arguments": {}
+  }
+]
+
+fun annotated(): Unit [sample/AnnotatedJava/annotated/#/PointingToDeclaration/].annotations:
+[
+  {
+    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+    "arguments": {}
+  }
+]
+
+class AnnotatedJava [sample/AnnotatedJava///PointingToDeclaration/].annotations:
+[
+  {
+    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+    "arguments": {}
+  }
+]
+
 typealias AnnotatedAlias = String [sample/AnnotatedAlias///PointingToDeclaration/].annotations:
 [
   {
@@ -176,6 +201,29 @@ typealias AnnotatedAlias = String [sample/AnnotatedAlias///PointingToDeclaration
 ]
 
 package sample [sample////PointingToDeclaration/].annotations:
+[
+  {
+    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+    "arguments": {}
+  },
+  {
+    "classLikeId": "sample/PackageLabel///PointingToDeclaration/",
+    "arguments": {
+      "value": {
+        "kind": "const",
+        "expression": {
+          "value": {
+            "kind": "string",
+            "value": "sample package"
+          },
+          "expression": null
+        }
+      }
+    }
+  }
+]
+
+package <root> [package:////PointingToDeclaration/].annotations:
 [
   {
     "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",

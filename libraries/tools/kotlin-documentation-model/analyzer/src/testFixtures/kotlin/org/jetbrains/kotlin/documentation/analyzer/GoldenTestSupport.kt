@@ -9,20 +9,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.kotlin.documentation.*
 import org.jetbrains.kotlin.documentation.analyzer.internal.visitElementIds
-import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
-import org.jetbrains.kotlin.analysis.test.data.manager.assertEqualsToTestDataFile
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import java.io.File
 import kotlin.text.ifEmpty
 
-/** Shared golden-file assertions for both Dokka Java analysis modes. */
-abstract class AbstractKdmGoldenTest : ManagedTest {
-    override val variantChain: List<String>
-        get() = if (java.lang.Boolean.getBoolean("org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis")) {
-            listOf("java-symbols")
-        } else {
-            emptyList()
-        }
-
+/** Shared golden-file assertions for the golden test suites. */
+abstract class AbstractKdmGoldenTest {
     protected fun assertMatchesGoldenFile(bundle: KdBundle, testDataFile: File) {
         val actual = Json(from = KdJson) { prettyPrint = true }
             .encodeToString(KdBundle.serializer(), bundle) + "\n"
@@ -30,7 +22,8 @@ abstract class AbstractKdmGoldenTest : ManagedTest {
     }
 
     protected fun assertMatchesGoldenTextFile(actual: String, testDataFile: File, extension: String) {
-        assertEqualsToTestDataFile(testDataFile.toPath(), actual, extension)
+        val expectedFile = File(testDataFile.parentFile, testDataFile.nameWithoutExtension + "." + extension.removePrefix("."))
+        JUnit5Assertions.assertEqualsToFile(expectedFile, actual)
     }
 }
 

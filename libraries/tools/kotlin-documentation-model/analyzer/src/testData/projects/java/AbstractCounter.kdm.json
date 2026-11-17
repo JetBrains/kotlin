@@ -6,7 +6,7 @@
             "elements": {
                 "example/AbstractCounter/AbstractCounter/#/PointingToDeclaration/": {
                     "kind": "constructor",
-                    "isPrimary": false,
+                    "isPrimary": true,
                     "isExternal": false,
                     "mappedTo": null,
                     "typeParameters": [],
@@ -32,7 +32,7 @@
                         "kind": "classLike",
                         "qualifiers": [
                             {
-                                "name": "int",
+                                "name": "Int",
                                 "typeArguments": []
                             }
                         ],
