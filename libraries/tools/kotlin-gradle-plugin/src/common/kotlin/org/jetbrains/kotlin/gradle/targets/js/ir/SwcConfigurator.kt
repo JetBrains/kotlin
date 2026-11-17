@@ -70,9 +70,10 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
         ) {
             val compilerOptions = binary.linkTask.map(Kotlin2JsCompile::compilerOptions)
 
-            esTarget.set(compilerOptions.flatMap(KotlinJsCompilerOptions::target))
-            moduleKind.set(compilerOptions.flatMap(KotlinJsCompilerOptions::moduleKind))
+            esTarget.set(binary.linkTaskTarget)
+            moduleKind.set(binary.linkTaskModuleKind)
             sourceMaps.set(compilerOptions.flatMap(KotlinJsCompilerOptions::sourceMap))
+            linkTaskName.set(binary.linkTaskName)
         }
 
         val swcTask = SwcExec.register(

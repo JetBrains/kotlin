@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.D
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.targetVersion
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.withType
-import org.jetbrains.kotlin.js.config.supportsEsModules
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
@@ -259,15 +257,13 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
             .disallowChanges()
         this.rootPackageDir.value(nodeJsRoot.rootPackageDirectory)
             .disallowChanges()
+        this.linkTaskName.value(binary.linkTaskName)
+            .disallowChanges()
 
         this.inputFilesDirectory.set(inputFilesDirectory)
 
         val platformType = binary.compilation.platformType
-        val moduleKind = binary.linkTask.flatMap { task ->
-            task.compilerOptions.moduleKind.orElse(task.compilerOptions.targetVersion.map {
-                if (it.supportsEsModules) JsModuleKind.MODULE_ES else JsModuleKind.MODULE_UMD
-            })
-        }
+        val moduleKind = binary.linkTaskModuleKind
 
         this.entryModuleName.set(entryModuleName)
         this.esModules.convention(

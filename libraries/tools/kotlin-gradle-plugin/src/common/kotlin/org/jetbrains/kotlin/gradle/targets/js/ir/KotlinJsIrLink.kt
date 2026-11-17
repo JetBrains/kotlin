@@ -16,23 +16,21 @@ import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.effectiveModuleKind
+import org.jetbrains.kotlin.gradle.plugin.mpp.effectiveTarget
 import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinJsIrLinkMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinWasmIrLinkMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
-import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
-import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.js.config.EcmaVersion
-import org.jetbrains.kotlin.js.config.supportsEsModules
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import javax.inject.Inject
 
@@ -154,23 +152,25 @@ abstract class KotlinJsIrLink
             }
 
             if (delegateTranspilationToExternalTool && !isWasmPlatformValue) {
-                val userDefinedTarget = args.target?.let(EcmaVersion::fromName) ?: EcmaVersion.defaultVersion()
+                // The target defined by the user for this task (`args` don't include the free compiler arguments yet)
+                val userDefinedTargetVersion = compilerOptions.effectiveTarget
+                    .map<EcmaVersion> { EcmaVersion.fromName(it) }
+                    .getOrElse(EcmaVersion.defaultVersion())
                 // If the delegated transpilation used, we should compile to the latest supported JS version
                 // so that the third-party transpilation tool (swc) will transpile it by the rules defined by users
                 args.target = JsPlatforms.latestSupportedTarget
                 // Also, right now the module system should be defined explicitly, until we introduce package information
                 // saving for ES modules, so that it will be compatible with the other module systems,
                 // and we can delegate module system transpilation to SWC too.
-                // If the user-defined target supports ES modules, they are the implied module system,
-                // so the compiler should produce them, as the rest of the build expects (SWC config, file extensions, run tasks)
+                // If the module kind isn't set, it's the one the user-defined target implies,
+                // so the compiler should produce it, as the rest of the build expects (SWC config, file extensions, run tasks)
                 if (args.moduleKind == null) {
-                    args.moduleKind =
-                        if (userDefinedTarget.supportsEsModules) JsModuleKind.MODULE_ES.kind else JsModuleKind.MODULE_UMD.kind
+                    args.moduleKind = compilerOptions.effectiveModuleKind.get().kind
                 }
                 // The latest supported target implies Long compilation as BigInt, which can't be transpiled by SWC
                 // to the older JS versions, so we keep the behavior defined by the user-defined target
                 if (args.compileLongAsBigInt == null) {
-                    args.compileLongAsBigInt = userDefinedTarget >= EcmaVersion.es2020
+                    args.compileLongAsBigInt = userDefinedTargetVersion >= EcmaVersion.es2020
                 }
             }
         }
