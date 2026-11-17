@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.io.ByteArrayOutputStream
@@ -59,6 +60,7 @@ import kotlin.test.assertTrue
  * A download is only verified against the published checksums when it comes from the official Node.js
  * distribution, so the verification is intentionally out of the scope of these tests.
  */
+@MustRunOnChangesInGradle
 abstract class DefaultNodeJsToolchainServiceImplWithKtorIT : KGPBaseTest() {
     @DisplayName("Each requested Node.js distribution is downloaded only once")
     @GradleTest
