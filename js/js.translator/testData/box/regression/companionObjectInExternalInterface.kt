@@ -1,8 +1,6 @@
-// This hack is used in org.w3c.* part of standard library to represent unions of Strings
-// Test that we are not actually trying to access nonexistent companion object
+// After inlining the extension properties, the unused companion object reference is eliminated
+// (see RedundantVariableDeclarationElimination), so the nonexistent `I` must not be accessed at runtime.
 
-@JsName("null")
-@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface I {
     companion object
 }
