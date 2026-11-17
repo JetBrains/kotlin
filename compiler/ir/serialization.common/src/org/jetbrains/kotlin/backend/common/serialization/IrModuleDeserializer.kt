@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.*
@@ -120,7 +119,7 @@ abstract class IrModuleDeserializer(
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
-    open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
+    open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
         return fileDeserializers.flatMap { [_, fileDeserializer] ->
             fileDeserializer.getAllMatchingSignatures(callableId, signatureKind)
         }
@@ -251,7 +250,7 @@ class IrModuleDeserializerWithBuiltIns(
         irBuiltIns.functionFactory = syntheticFunctionClassGenerator
     }
 
-    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
+    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
         irBuiltInsCallableIdMap[callableId]?.let { return it }
         return super.getAllMatchingSignatures(callableId, signatureKind)
     }

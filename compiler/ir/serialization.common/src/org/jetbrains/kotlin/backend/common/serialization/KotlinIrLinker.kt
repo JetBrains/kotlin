@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -42,7 +42,7 @@ abstract class KotlinIrLinker(
     private val friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
-) : IrDeserializer {
+) : IrProvider {
     constructor(
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
@@ -315,12 +315,24 @@ abstract class KotlinIrLinker(
         return symbol.owner as IrDeclaration
     }
 
-    override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind): IrSymbol? {
+    /**
+     * Retrieves the symbol associated with the given signature and kind.
+     *
+     * It is guaranteed that the returned symbol is not null if such a symbol belongs to the module represented by the current deserializer.
+     * The returned symbol may be unbound (and put in the deserialization queue to be deserialized later).
+     *
+     * However, it is guaranteed that the returned symbol is always bound if [getSymbolAndPutIntoQueue] is called after the
+     * main part of the deserialization process has been finished, i.e. after [finalizeIrLinkage] was called.
+     *
+     * @return The symbol for the given signature and kind if successfully found; otherwise, null.
+     */
+    fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
         val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
-        return moduleDeserializer.tryDeserializeIrSymbol(signature, topLevelKindToSymbolKind(kind)).also {
+        return moduleDeserializer.tryDeserializeIrSymbol(signature, kind).also {
             if (finished) deserializeAllReachableTopLevels()
         }
     }
+
 
     /**
      * Drops everything interned by [irInterner] during IR deserialization to free memory.
@@ -355,15 +367,6 @@ abstract class KotlinIrLinker(
         allModuleDeserializers.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(irBuiltIns) }
 
         checkNoUnboundSymbols("at the end of IR linkage process")
-    }
-
-    private fun topLevelKindToSymbolKind(kind: IrDeserializer.TopLevelSymbolKind): BinarySymbolData.SymbolKind {
-        return when (kind) {
-            IrDeserializer.TopLevelSymbolKind.CLASS_SYMBOL -> BinarySymbolData.SymbolKind.CLASS_SYMBOL
-            IrDeserializer.TopLevelSymbolKind.PROPERTY_SYMBOL -> BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
-            IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL -> BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
-            IrDeserializer.TopLevelSymbolKind.TYPEALIAS_SYMBOL -> BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
-        }
     }
 
     fun createAndRegisterModuleDeserializer(
@@ -416,7 +419,7 @@ abstract class KotlinIrLinker(
             )
         } else moduleDeserializer
 
-    fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
+    fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
         return buildList {
             fun List<IrModuleDeserializer>?.collectMatchingSignatures() {
                 this?.flatMapTo(this@buildList) { it.getAllMatchingSignatures(callableId, signatureKind) }
