@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.ir.util.isMethodOfAny
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
 
 fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
