@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_IDS
 import kotlin.contracts.ExperimentalContracts
@@ -46,6 +48,14 @@ fun FirClassSymbol<*>.hasParcelizeAnnotation(session: FirSession): Boolean {
 
 fun FirBasedSymbol<*>.hasAnyAnnotation(classIds: Collection<ClassId>, session: FirSession): Boolean {
     return resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in classIds }
+}
+
+/**
+ * Returns the first `@IgnoredOnParcel` annotation, either from the current or from the deprecated runtime package,
+ * or `null` if there is none.
+ */
+fun List<FirAnnotation>.findIgnoredOnParcel(session: FirSession): FirAnnotation? {
+    return firstOrNull { it.toAnnotationClassId(session) in IGNORED_ON_PARCEL_CLASS_IDS }
 }
 
 /**

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.parcelize.ParcelizeNames
+import org.jetbrains.kotlin.parcelize.fir.findIgnoredOnParcel
 import org.jetbrains.kotlin.parcelize.fir.hasCustomParceler
 import org.jetbrains.kotlin.parcelize.fir.isParcelize
 import org.jetbrains.kotlin.parcelize.fir.parcelizeService
@@ -54,9 +54,7 @@ object FirParcelizeConstructorChecker : FirConstructorChecker(MppCheckerKind.Pla
                 continue
             }
             if (valueParameter.defaultValue == null) {
-                val illegalAnnotation = valueParameter.correspondingProperty?.annotations?.firstOrNull {
-                    it.toAnnotationClassId(context.session) in ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
-                }
+                val illegalAnnotation = valueParameter.correspondingProperty?.annotations?.findIgnoredOnParcel(context.session)
                 if (illegalAnnotation != null) {
                     reporter.reportOn(
                         illegalAnnotation.source,

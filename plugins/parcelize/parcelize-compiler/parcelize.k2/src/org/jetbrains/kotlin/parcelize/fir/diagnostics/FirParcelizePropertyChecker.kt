@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.parcelize.BuiltinParcelableTypes
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.fir.dataClassPrimaryConstructorPropertiesOrNull
+import org.jetbrains.kotlin.parcelize.fir.findIgnoredOnParcel
 import org.jetbrains.kotlin.parcelize.fir.hasCustomParceler
 import org.jetbrains.kotlin.parcelize.fir.isParcelize
 
@@ -243,12 +243,6 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
     }
 
     private fun FirProperty.hasIgnoredOnParcel(session: FirSession): Boolean {
-        return annotations.hasIgnoredOnParcel(session) || (getter?.annotations?.hasIgnoredOnParcel(session) ?: false)
-    }
-
-    private fun List<FirAnnotation>.hasIgnoredOnParcel(session: FirSession): Boolean {
-        return this.any {
-            it.fqName(session) in IGNORED_ON_PARCEL_FQ_NAMES
-        }
+        return annotations.findIgnoredOnParcel(session) != null || getter?.annotations?.findIgnoredOnParcel(session) != null
     }
 }
