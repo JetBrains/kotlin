@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.parcelize.BuiltinParcelableTypes
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_FQ_NAMES
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
 import org.jetbrains.kotlin.parcelize.fir.dataClassPrimaryConstructorPropertiesOrNull
+import org.jetbrains.kotlin.parcelize.fir.hasCustomParceler
 import org.jetbrains.kotlin.parcelize.fir.isParcelize
 
 object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform) {
@@ -249,13 +249,6 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
     private fun List<FirAnnotation>.hasIgnoredOnParcel(session: FirSession): Boolean {
         return this.any {
             it.fqName(session) in IGNORED_ON_PARCEL_FQ_NAMES
-        }
-    }
-
-    private fun FirRegularClassSymbol.hasCustomParceler(session: FirSession): Boolean {
-        val companionObjectSymbol = this.resolvedCompanionObjectSymbol ?: return false
-        return lookupSuperTypes(companionObjectSymbol, lookupInterfaces = true, deep = true, session).any {
-            it.classId == PARCELER_ID
         }
     }
 }
