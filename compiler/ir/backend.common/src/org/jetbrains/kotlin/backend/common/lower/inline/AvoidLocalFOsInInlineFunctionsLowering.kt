@@ -12,22 +12,12 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
-import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
-import org.jetbrains.kotlin.ir.expressions.implicitCastTo
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.AbstractIrTypeSubstitutor
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
-import org.jetbrains.kotlin.ir.types.chainedWith
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.typeConstructorParameters
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -80,11 +70,11 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
                         // rather than from the local class declaration, because for a generic local class the declared supertype
                         // is expressed via the class's own type parameters (e.g. `Base<T of Local>`), and those must not leak
                         // into the call site. Substituting through the receiver type gives the specialized one (e.g. `Base<Int>`).
-                        // If the receiver type is not a simple type, fall back to the declared (unsubstituted) supertype.
+                        // If the receiver type is not a class type, the receiver is left without a cast.
                         val dispatchReceiver = expression.arguments[dispatchParam]
                         val receiverType = dispatchReceiver?.type as? IrSimpleType
                         val newDispatcherType = receiverType
-                            ?.let { createSupertypeSubstitutor(superClass.symbol, it) }
+                            ?.let { AbstractIrTypeSubstitutor.forSuperClass(superClass.symbol, it) }
                             ?.substitute(superClass.defaultType)
                         expression.arguments[dispatchParam] = dispatchReceiver?.implicitCastTo(newDispatcherType)
                     }
@@ -105,18 +95,6 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
                         is IrRichPropertyReference -> expression.reflectionTargetSymbol = it as IrPropertySymbol
                     }
                 }
-            }
-
-            private fun createSupertypeSubstitutor(superClass: IrClassSymbol, receiverType: IrSimpleType): AbstractIrTypeSubstitutor? {
-                val receiverClass = receiverType.classOrNull ?: return null
-                val typeParameters = receiverClass.owner.typeConstructorParameters.map { it.symbol }.toList()
-                // The type of a local class may carry more arguments than the class has type constructor parameters: in addition to
-                // its own type parameters, the frontend also captures the type parameters of the enclosing declarations, including
-                // those outside an enclosing anonymous object (where `typeConstructorParameters` stops). The own type parameters
-                // always come first, so only the leading arguments are used for the substitution.
-                val typeArguments = receiverType.arguments.take(typeParameters.size)
-                return AbstractIrTypeSubstitutor.forSuperClass(superClass, receiverClass)
-                    ?.chainedWith(IrTypeSubstitutor(typeParameters, typeArguments, allowEmptySubstitution = true))
             }
 
             private fun findOverriddenNonLocalFo(member: IrOverridableDeclaration<*>): IrSymbol? {
