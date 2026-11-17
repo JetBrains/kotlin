@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_IDS
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -63,6 +65,15 @@ fun FirRegularClassSymbol.hasCustomParceler(session: FirSession): Boolean {
     return lookupSuperTypes(companion, lookupInterfaces = true, deep = true, useSiteSession = session).any {
         it.classId in PARCELER_CLASS_IDS
     }
+}
+
+/**
+ * Returns `true` if this class is annotated with `@PolymorphicSealed`.
+ * Unlike `isPolymorphicSealed` in the IR part of the plugin, this function does not check that the class is actually `sealed`,
+ * as this is reported by a dedicated checker.
+ */
+fun FirClassLikeSymbol<*>.hasPolymorphicSealedAnnotation(session: FirSession): Boolean {
+    return resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in POLYMORPHIC_SEALED_CLASS_IDS }
 }
 
 /**

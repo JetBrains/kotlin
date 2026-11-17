@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DEPRECATED_RUNTIME_PACKAGE
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_TAG_CLASS_IDS
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.fir.hasPolymorphicSealedAnnotation
 import org.jetbrains.kotlin.parcelize.fir.isParcelize
 import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
@@ -173,9 +173,7 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
     ) {
         val annotationContainer = context.annotationContainers.lastOrNull() as? FirClass
         val containingClass = annotationContainer?.getContainingClassSymbol()
-        val isContainingClassPolymorphicSealed = containingClass?.resolvedAnnotationsWithClassIds.orEmpty().any {
-            it.toAnnotationClassId(context.session) in POLYMORPHIC_SEALED_CLASS_IDS
-        }
+        val isContainingClassPolymorphicSealed = containingClass?.hasPolymorphicSealedAnnotation(context.session) == true
         val implementsContainingClass = annotationContainer?.superTypeRefs.orEmpty().any {
             it.coneType.toRegularClassSymbol(context.session) == containingClass
         }
