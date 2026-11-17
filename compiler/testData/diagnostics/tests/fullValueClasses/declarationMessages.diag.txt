@@ -10,4 +10,4 @@
 
 /declarationMessages.kt:16:30: error: Inline value class must have exactly one primary constructor parameter.
 
-/declarationMessages.kt:19:11: error: Value class cannot be inner.
+/declarationMessages.kt:19:11: error: Value class cannot be local or inner.
