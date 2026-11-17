@@ -140,10 +140,7 @@ internal class InlineFunctionDeserializer(
         linker.partialLinkageSupport.enqueueDeclaration(function)
         linker.partialLinkageSupport.generateStubsAndPatchUsages(irBuiltIns, linker.symbolTable)
 
-        linker.checkNoUnboundSymbols(
-                linker.symbolTable,
-                "after deserializing lazy-IR function ${function.name.asString()} in inline functions lowering"
-        )
+        linker.checkNoUnboundSymbols("after deserializing lazy-IR function ${function.name.asString()} in inline functions lowering")
     }
 }
 
