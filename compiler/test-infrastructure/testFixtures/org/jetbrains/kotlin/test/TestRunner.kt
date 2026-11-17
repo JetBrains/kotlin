@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectivesImpl
 import org.jetbrains.kotlin.test.model.AnalysisHandler
+import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule
@@ -210,6 +211,12 @@ class NonGroupingTestRunner(
 
     private val allRanHandlers = mutableSetOf<Pair<AnalysisHandler<*>, TestPhase?>>()
 
+    /**
+     * Whether the frontend didn't analyze some modules: a failure stopped the pipeline before the last module, or a frontend facade
+     * produced no artifact. The meta-infos of such modules are missing.
+     */
+    private var someModulesWereNotAnalyzed = false
+
     fun runTest(@TestDataFile testDataFileName: String, beforeDispose: (NonGroupingStageTestConfiguration) -> Unit = {}) {
         try {
             prepareModuleStructure(testDataFileName) ?: return
@@ -273,9 +280,12 @@ class NonGroupingTestRunner(
             if (pipelineIsInvalid) return
         }
 
-        for (module in moduleStructure.modules) {
+        for ([index, module] in moduleStructure.modules.withIndex()) {
             val shouldProcessNextModules = processModule(module, services.artifactsProvider)
-            if (!shouldProcessNextModules) break
+            if (!shouldProcessNextModules) {
+                if (index < moduleStructure.modules.lastIndex) someModulesWereNotAnalyzed = true
+                break
+            }
         }
 
         for ([handler, stepPhase] in allRanHandlers) {
@@ -289,8 +299,15 @@ class NonGroupingTestRunner(
         }
 
         if (testConfiguration.metaInfoHandlerEnabled) {
+            // A module which wasn't analyzed reports no meta-infos, even if the test expects the failure which stopped the pipeline.
+            // A failure of the test infrastructure (e.g., a misplaced handlers step) may skip the handlers which report them as well.
+            // Other failures the test expects (e.g., in a phase after the one it runs till) don't count.
+            val metaInfosMayBeIncomplete = someModulesWereNotAnalyzed || failuresInterceptor.allFailedExceptions.any { failure ->
+                failure.isTestInfrastructureFailure ||
+                        failure.isCrash && testConfiguration.failureSuppressors.none { it.isExpectedFailure(failure) }
+            }
             failuresInterceptor.withAssertionCatching(WrappedException::FromMetaInfoHandler) {
-                services.globalMetadataInfoHandler.compareAllMetaDataInfos()
+                services.globalMetadataInfoHandler.compareAllMetaDataInfos(metaInfosMayBeIncomplete)
             }
         }
 
@@ -318,7 +335,13 @@ class NonGroupingTestRunner(
                 resolveStepInput(step, latestArtifact, module, artifactsProvider)
             },
             runStep = { step, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps ->
-                step.hackyProcessModule(module, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)
+                step.hackyProcessModule(module, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps).also { result ->
+                    // E.g., `FirCliFacade` under `CHECK_COMPILER_OUTPUT`, if the compiler stops before the analysis
+                    val isFrontend = step is TestStep.FacadeStep<*, *> && step.facade is FrontendFacade<*>
+                    if (isFrontend && result is TestStep.StepResult.NoArtifactFromFacade) {
+                        someModulesWereNotAnalyzed = true
+                    }
+                }
             },
             onArtifactResult = {
                 artifactsProvider.registerArtifact(module, it)
@@ -465,3 +488,18 @@ class GroupingTestRunner(
         return this.process(artifact as I, thereWereExceptionsOnPreviousSteps)
     }
 }
+
+/**
+ * Whether the failure leaves the reported meta-infos (diagnostics) incomplete: a failed facade produces no artifact for its handlers, and
+ * a crashed handler may be the one which reports them. Assertion failures and failures of handlers which fail by design don't count.
+ */
+private val WrappedException.isCrash: Boolean
+    get() {
+        val failedHandler = when (this) {
+            is WrappedException.FromFacade, is WrappedException.FromGroupingFacade -> return true
+            is WrappedException.FromHandler -> handler
+            is WrappedException.FromGroupingHandler -> handler
+            else -> return false
+        }
+        return cause !is AssertionError && !failedHandler.failsByDesign
+    }

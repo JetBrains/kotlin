@@ -23,6 +23,7 @@ dependencies {
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
     testFixturesImplementation(project(":compiler:backend.jvm.lower"))
+    testFixturesImplementation(testFixtures(project(":analysis:test-data-manager")))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesImplementation(project(":wasm:wasm.frontend"))
