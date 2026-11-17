@@ -339,6 +339,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol.staticDeclaredMemberScope.callables
             .filterIsInstance<KaEnumEntrySymbol>()
             .mapNotNullTo(result) {
+                // `lightClassForEnumEntryInitializer` and `LightClassMemberUtils.lightMemberKotlinOrigin` rely on this `kotlinOrigin`
                 val enumEntry = it.sourcePsiSafe<KtEnumEntry>()
                 val name = enumEntry?.name ?: return@mapNotNullTo null
                 SymbolLightFieldForEnumEntry(
