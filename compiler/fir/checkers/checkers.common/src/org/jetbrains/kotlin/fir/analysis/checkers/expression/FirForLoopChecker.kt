@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -25,11 +26,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPERATOR_MODIFIER_REQUIRED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.createOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.calls.OperatorCallOfNonOperatorFunction
@@ -102,57 +107,23 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         val calleeReference = call.calleeReference
         when {
             calleeReference.isError() -> {
-                @OptIn(ApplicabilityDetail::class)
-                when (val diagnostic = calleeReference.diagnostic) {
-                    is ConeAmbiguityError -> {
-                        reporter.reportOn(
-                            reportSource,
-                            if (diagnostic.applicability.isSuccess || noneApplicableFactory == null) ambiguityFactory else noneApplicableFactory,
-                            diagnostic.candidates.map { it.symbol })
-                    }
-                    is ConeUnresolvedNameError -> {
-                        reporter.reportOn(reportSource, missingFactory)
-                    }
-                    is ConeInapplicableWrongReceiver -> when {
-                        noneApplicableFactory != null -> {
-                            reporter.reportOn(reportSource, noneApplicableFactory, diagnostic.candidateSymbols)
-                        }
-                        calleeReference.name == OperatorNameConventions.ITERATOR -> {
-                            reporter.reportOn(reportSource, missingFactory)
-                        }
-                        else -> {
-                            error("ConeInapplicableWrongReceiver, but no diagnostic reported")
-                        }
-                    }
-                    is ConeConstraintSystemHasContradiction -> {
-                        if (calleeReference.name == OperatorNameConventions.ITERATOR)
-                            reporter.reportOn(reportSource, missingFactory)
-                    }
-                    is ConeInapplicableCandidateError -> {
-                        if (nullableReceiverFactory != null || noneApplicableFactory != null) {
-                            diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.forEach {
-                                when (it) {
-                                    is InapplicableUnsafeReceiver -> {
-                                        if (nullableReceiverFactory != null) {
-                                            reporter.reportOn(
-                                                reportSource, nullableReceiverFactory, it.actualType,
-                                            )
-                                        } else {
-                                            reporter.reportOn(
-                                                reportSource, noneApplicableFactory!!, listOf(diagnostic.candidate.symbol)
-                                            )
-                                        }
-                                        return true
-                                    }
-                                    is OperatorCallOfNonOperatorFunction -> {
-                                        val symbol = it.function
-                                        reporter.reportOn(
-                                            reportSource, OPERATOR_MODIFIER_REQUIRED, symbol,
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                val specialDiagnostic = createSpecialDiagnostic(
+                    calleeReference,
+                    calleeReference.diagnostic,
+                    reportSource,
+                    noneApplicableFactory,
+                    ambiguityFactory,
+                    missingFactory,
+                    nullableReceiverFactory
+                )
+
+                if (specialDiagnostic != null) {
+                    reporter.report(specialDiagnostic, context)
+                } else {
+                    val fallbackDiagnostics =
+                        calleeReference.diagnostic.toFirDiagnostics(context.session, reportSource, callOrAssignmentSource = null)
+                    for (ktDiagnostic in fallbackDiagnostics) {
+                        reporter.report(ktDiagnostic, context)
                     }
                 }
                 return true
@@ -168,5 +139,64 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
             }
         }
         return false
+    }
+
+    context(context: CheckerContext)
+    private fun createSpecialDiagnostic(
+        calleeReference: FirNamedReference,
+        diagnostic: ConeDiagnostic,
+        reportSource: KtSourceElement?,
+        noneApplicableFactory: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>?,
+        ambiguityFactory: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>,
+        missingFactory: KtDiagnosticFactory0,
+        nullableReceiverFactory: KtDiagnosticFactory1<ConeKotlinType>?,
+    ): KtDiagnostic? {
+        @OptIn(ApplicabilityDetail::class)
+        when (diagnostic) {
+            is ConeAmbiguityError -> {
+                val factory = if (diagnostic.applicability.isSuccess || noneApplicableFactory == null) {
+                    ambiguityFactory
+                } else {
+                    noneApplicableFactory
+                }
+                return factory.createOn(reportSource, diagnostic.candidates.map { it.symbol }, context.session)
+            }
+            is ConeUnresolvedNameError -> {
+                return missingFactory.createOn(reportSource, context.session)
+            }
+            is ConeInapplicableWrongReceiver -> when {
+                noneApplicableFactory != null -> {
+                    return noneApplicableFactory.createOn(reportSource, diagnostic.candidateSymbols, context.session)
+                }
+                calleeReference.name == OperatorNameConventions.ITERATOR -> {
+                    return missingFactory.createOn(reportSource, context.session)
+                }
+            }
+            is ConeConstraintSystemHasContradiction -> {
+                if (calleeReference.name == OperatorNameConventions.ITERATOR) {
+                    return missingFactory.createOn(reportSource, context.session)
+                }
+            }
+            is ConeInapplicableCandidateError -> {
+                if (nullableReceiverFactory != null || noneApplicableFactory != null) {
+                    diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.forEach {
+                        when (it) {
+                            is InapplicableUnsafeReceiver -> {
+                                return if (nullableReceiverFactory != null) {
+                                    nullableReceiverFactory.createOn(reportSource, it.actualType, context.session)
+                                } else {
+                                    noneApplicableFactory!!.createOn(reportSource, listOf(diagnostic.candidate.symbol), context.session)
+                                }
+                            }
+                            is OperatorCallOfNonOperatorFunction -> {
+                                val symbol = it.function
+                                return OPERATOR_MODIFIER_REQUIRED.createOn(reportSource, symbol, context.session)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null
     }
 }
