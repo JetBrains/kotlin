@@ -7,7 +7,6 @@ ignored:
  - .claude
  - .junie
  - AGENTS.md
- - CLAUDE.md
  - CODE_OF_CONDUCT.md
  - ReadMe.md
  - SECURITY.md

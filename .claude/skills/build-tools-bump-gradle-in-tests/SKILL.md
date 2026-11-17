@@ -68,7 +68,7 @@ Plus one read-only reference (open it but do not edit it):
 
 ## Tooling
 
-Per the project `CLAUDE.md`, use JetBrains IDE MCP tools for every read and
+Per `.ai/guidelines.md`, use JetBrains IDE MCP tools for every read and
 write on these project files. Specifically:
 
 - Read with `mcp__idea__read_file` or `mcp__idea__get_symbol_info`.

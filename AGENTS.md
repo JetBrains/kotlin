@@ -9,4 +9,8 @@ repository: monorepo
 
 ## Project Guidelines
 
-**CRITICAL: [guidelines.md](./.ai/guidelines.md) MUST be followed at all times.**
+**CRITICAL: @./.ai/guidelines.md guidelines MUST be followed at all times.**
+
+## Individual Preferences
+
+**Local Preferences:** @./.ai/local.md

@@ -58,7 +58,7 @@ follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_gui
 | Standard library         |                        | libraries/stdlib/                                         | —                                                                                |
 | Test infrastructure      |                        | compiler/test-infrastructure/, compiler/tests-common-new/ | [testing.md](testing.md)                                                         |
 
-> **Adding new area docs:** Create `AGENTS.md` with content and `CLAUDE.md` containing only `@AGENTS.md`
+> **Adding new area docs:** Create `AGENTS.md`
 
 ## Running Individual Tests
 

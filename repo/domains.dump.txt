@@ -154,7 +154,6 @@ CoreLibs:
 AnalysisApi:
  - analysis
  - compiler/psi/AGENTS.md
- - compiler/psi/CLAUDE.md
  - compiler/psi/psi-api
  - compiler/psi/psi-frontend-utils
  - compiler/psi/psi-impl
@@ -163,7 +162,6 @@ AnalysisApi:
 
 BuildToolsApi:
  - compiler/build-tools/AGENTS.md
- - compiler/build-tools/CLAUDE.md
  - compiler/build-tools/kotlin-build-tools-api
  - compiler/build-tools/kotlin-build-tools-api-backports
  - compiler/build-tools/kotlin-build-tools-api-forward-tests
@@ -267,7 +265,6 @@ Unknown:
  - benchmarks
  - code-rules.md
  - compiler/AGENTS.md
- - compiler/CLAUDE.md
  - compiler/ir/code-rules.md
  - compiler/test-coverage
  - dependencies
