@@ -94,7 +94,7 @@ class KonanInteropModuleDeserializer(
     private val definedPackageFqName: FqName = klib.packageFqName?.let(::FqName)
         ?: error("Interop klib ${klib.path} does not contain an expected manifest property: $KLIB_PROPERTY_PACKAGE")
 
-    override fun getDefinedPackageNames(): Set<FqName> = setOf(definedPackageFqName)
+    override val contributedPackageNames: Set<FqName> = setOf(definedPackageFqName)
 
     /**
      * The package fragment with all deserialized declarations that are not put into a special [IrFile] inside [moduleFragment]

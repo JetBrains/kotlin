@@ -201,7 +201,7 @@ abstract class KotlinIrLinker(
      * in the following order:
      * 1. Module deserializers whose list of defined package names includes [packageFqName].
      * 2. Module deserializers that cannot tell which packages they define
-     *    ([IrModuleDeserializer.getDefinedPackageNames] returns `null`). These are checked for every package.
+     *    ([IrModuleDeserializer.contributedPackageNames] returns `null`). These are checked for every package.
      *
      * Inside each group, module deserializers are checked in the order they were registered with [createAndRegisterModuleDeserializer].
      */
@@ -219,7 +219,7 @@ abstract class KotlinIrLinker(
      * in the following order:
      * 1. Module deserializers whose list of defined package names includes [packageFqName].
      * 2. Module deserializers that cannot tell which packages they define
-     *    ([IrModuleDeserializer.getDefinedPackageNames] returns `null`). These are checked for every package.
+     *    ([IrModuleDeserializer.contributedPackageNames] returns `null`). These are checked for every package.
      *
      * Inside each group, module deserializers are checked in the order they were registered with [createAndRegisterModuleDeserializer].
      */
@@ -356,11 +356,9 @@ abstract class KotlinIrLinker(
             nonKlibDeserializers += deserializer
         }
 
-        val definedPackageNames = deserializer.getDefinedPackageNames()
-        if (definedPackageNames == null) {
-            moduleDeserializersWithUnknownPackageNames += deserializer
-        } else {
-            for (packageName in definedPackageNames) {
+        when (val contributedPackageNames: Set<FqName>? = deserializer.contributedPackageNames) {
+            null -> moduleDeserializersWithUnknownPackageNames += deserializer
+            else -> for (packageName in contributedPackageNames) {
                 moduleDeserializersByPackageName.putToMultiMap(packageName, deserializer)
             }
         }

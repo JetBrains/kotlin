@@ -45,8 +45,8 @@ abstract class BasicIrModuleDeserializer(
 
     protected val fileDeserializationStates: List<FileDeserializationState>
 
-    private val _definedPackageNames = mutableSetOf<FqName>()
-    override fun getDefinedPackageNames(): Set<FqName>? = _definedPackageNames
+    final override val contributedPackageNames: Set<FqName>
+        field = mutableSetOf<FqName>()
 
     protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
@@ -61,7 +61,7 @@ abstract class BasicIrModuleDeserializer(
                 val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, i))
                 val file = fileReader.createFile(moduleFragment, fileProto, linker.fileEntryDeserializer)
 
-                _definedPackageNames += file.packageFqName
+                contributedPackageNames += file.packageFqName
                 this += deserializeIrFile(
                     fileProto,
                     file,
