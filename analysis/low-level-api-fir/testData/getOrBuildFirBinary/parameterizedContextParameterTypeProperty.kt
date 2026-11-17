@@ -1,5 +1,6 @@
 // IGNORE_STANDALONE
-// `LLStandaloneFirElementByPsiElementChooser` crashes on building FIR type references with `createEmptySession()`
+// KT-91917
+// `LLStandaloneFirElementByPsiElementChooser` doesn't count context parameters of function types correctly
 // LANGUAGE: +ContextParameters
 // DECLARATION_TYPE: org.jetbrains.kotlin.psi.KtProperty
 

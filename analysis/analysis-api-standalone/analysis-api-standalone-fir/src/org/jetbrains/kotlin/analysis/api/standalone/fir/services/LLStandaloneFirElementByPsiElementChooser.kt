@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.createEmptySession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
  * In Standalone mode, deserialized elements don't have sources, so we need to implement [LLFirElementByPsiElementChooser] based on
  * component comparison (see [LLFirElementByPsiElementChooser]).
  *
- * TODO: We might be able to remove this service if KT-65836 is viable (using stub-based deserialized symbol providers in Standalone mode).
+ * TODO: KT-92074, We might be able to remove this service if KT-65836 is viable (using stub-based deserialized symbol providers in Standalone mode).
  */
 @KaImplementationDetail
 class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChooser() {
@@ -259,8 +260,9 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
     @Suppress("DEPRECATION_ERROR")
     private fun KtTypeReference.toKotlinTypeReference(): FirTypeRef {
         // Maybe resolve all types here to not to work with FirTypeRef directly
+        // TODO: KT-92074
         return PsiRawFirBuilder(
-            createEmptySession(),
+            createEmptySession(LanguageVersionSettingsImpl.DEFAULT),
             DummyScopeProvider,
             bodyBuildingMode = BodyBuildingMode.NORMAL
         ).buildTypeReference(this)
