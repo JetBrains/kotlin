@@ -809,40 +809,40 @@ private fun commonBuildSetup(
         joinToString(separator = " ")
     }
 
-    return buildOptions.toArguments(gradleVersion) +
-            buildArguments +
-            jdkToolchainConfiguration(gradleVersion) +
-            listOfNotNull(
-                // Disable automatic download of android SDK.
-                // It should be downloaded in dependencies/android-sdk to enable caching and prevent sdk installation failures.
-                "-Pandroid.builder.sdkDownload=false",
-                // Decreasing Gradle daemon idle timeout to 1 min from default 3 hours.
-                // This should help with OOM on CI when agents do not have enough free memory available.
-                "-Dorg.gradle.daemon.idletimeout=60000",
+    return buildList {
+        addAll(buildOptions.toArguments(gradleVersion))
+        addAll(buildArguments)
+        addAll(jdkToolchainConfiguration(gradleVersion))
+        // Disable automatic download of android SDK.
+        // It should be downloaded in dependencies/android-sdk to enable caching and prevent sdk installation failures.
+        add("-Pandroid.builder.sdkDownload=false")
+        // Decreasing Gradle daemon idle timeout to 1 min from default 3 hours.
+        // This should help with OOM on CI when agents do not have enough free memory available.
+        add("-Dorg.gradle.daemon.idletimeout=60000")
 
-                // Decrease lifetime of Kotlin daemon
-                kotlinDaemonIdleTimeout?.let {
-                    "-Dkotlin.daemon.options=\"autoshutdownIdleSeconds=${it.inWholeSeconds}\""
-                },
-                if (gradleJvmOptions.isNotEmpty()) {
-                    "-Dorg.gradle.jvmargs=${gradleJvmOptions.joinToJvmArgsString()}"
-                } else null,
-                if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null,
-                if (enableBuildScan) "--scan" else null,
-                if (enableOfflineMode) "--offline" else null,
-                if (kotlinDaemonJvmArgs.isNotEmpty()) {
-                    // do not enclose as KGP transforms arguments like "-Xmx1024m" to -"-Xmx1024m": KT-72870
-                    "-Pkotlin.daemon.jvmargs=${kotlinDaemonJvmArgs.joinToJvmArgsString(enclose = false)}"
-                } else null,
-                // Configure a non-default directory to be able to track Kotlin daemons started from the tests
-                // Useful for the tests like KGPDaemonsBaseTest
-                if (buildOptions.customKotlinDaemonRunFilesDirectory != null) {
-                    @Suppress("DEPRECATION")
-                    "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${
+        // Decrease lifetime of Kotlin daemon
+        if (kotlinDaemonIdleTimeout != null) {
+            add("-Dkotlin.daemon.options=\"autoshutdownIdleSeconds=${kotlinDaemonIdleTimeout.inWholeSeconds}\"")
+        }
+        if (gradleJvmOptions.isNotEmpty()) {
+            add("-Dorg.gradle.jvmargs=${gradleJvmOptions.joinToJvmArgsString()}")
+        }
+        if (enableBuildCacheDebug) add("-Dorg.gradle.caching.debug=true")
+        if (enableBuildScan) add("--scan")
+        if (enableOfflineMode) add("--offline")
+        if (kotlinDaemonJvmArgs.isNotEmpty()) {
+            // do not enclose as KGP transforms arguments like "-Xmx1024m" to -"-Xmx1024m": KT-72870
+            add("-Pkotlin.daemon.jvmargs=${kotlinDaemonJvmArgs.joinToJvmArgsString(enclose = false)}")
+        }
+        // Configure a non-default directory to be able to track Kotlin daemons started from the tests
+        // Useful for the tests like KGPDaemonsBaseTest
+        if (buildOptions.customKotlinDaemonRunFilesDirectory != null) {
+            add(
+                "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=" +
                         buildOptions.customKotlinDaemonRunFilesDirectory.normalizedAbsolutePath().toString()
-                    }"
-                } else null,
             )
+        }
+    }
 }
 
 // Required toolchains should be pre-installed via repo. Tests should not download any JDKs
