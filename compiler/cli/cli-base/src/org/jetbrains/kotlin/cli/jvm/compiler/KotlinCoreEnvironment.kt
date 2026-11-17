@@ -10,13 +10,9 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.*
-import com.intellij.psi.PsiNameHelper
 import com.intellij.psi.impl.*
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
@@ -34,15 +30,12 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.*
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
-import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
-import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
 
-@OptIn(K1Deprecation::class, CoreEnvironmentDeprecation::class)
+@OptIn(CoreEnvironmentDeprecation::class)
 class KotlinCoreEnvironment private constructor(
     val projectEnvironment: KotlinCoreProjectEnvironment,
     val configuration: CompilerConfiguration
@@ -56,7 +49,6 @@ class KotlinCoreEnvironment private constructor(
     private val initialRoots = ArrayList<JavaRoot>()
 
     init {
-        projectEnvironment.configureProjectEnvironment(configuration)
         val project = projectEnvironment.project
 
         val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
@@ -217,42 +209,6 @@ class KotlinCoreEnvironment private constructor(
         @CoreEnvironmentDeprecation
         fun create(projectEnvironment: KotlinCoreProjectEnvironment, configuration: CompilerConfiguration): KotlinCoreEnvironment {
             return KotlinCoreEnvironment(projectEnvironment, configuration)
-        }
-
-        @JvmStatic
-        @CoreEnvironmentDeprecation
-        fun KotlinCoreProjectEnvironment.configureProjectEnvironment(configuration: CompilerConfiguration) {
-            PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
-                .apply { isAccessible = true }
-                .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
-
-            registerExtensionsFromPlugins(configuration)
-            registerProjectServices(project)
-
-            for (extension in configuration.getCompilerExtensions(CompilerConfigurationExtension)) {
-                extension.updateConfiguration(project, configuration)
-            }
-        }
-
-
-        @JvmStatic
-        @CoreEnvironmentDeprecation
-        fun registerProjectExtensionPoints(area: ExtensionsArea) {
-            KotlinCoreProjectEnvironment.registerProjectExtensionPoints(area)
-        }
-
-        // made public for Android Lint
-        @JvmStatic
-        @CoreEnvironmentDeprecation
-        fun registerProjectServices(project: MockProject) {
-            with(project) {
-                registerService(JavaElementSourceFactory::class.java, JavaFixedElementSourceFactory::class.java)
-                registerService(PsiJavaModuleModificationTracker::class.java, PsiJavaModuleModificationTracker::class.java)
-                registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
-                if (getService(PsiNameHelper::class.java) == null) {
-                    registerService(PsiNameHelper::class.java, PsiNameHelperImpl::class.java)
-                }
-            }
         }
     }
 }

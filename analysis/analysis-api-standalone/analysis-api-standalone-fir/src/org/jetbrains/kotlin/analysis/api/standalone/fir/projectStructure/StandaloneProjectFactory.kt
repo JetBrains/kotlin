@@ -214,7 +214,7 @@ object StandaloneProjectFactory {
         val project = environment.project
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        KotlinCoreEnvironment.registerProjectExtensionPoints(project.extensionArea)
+        KotlinCoreProjectEnvironment.registerProjectExtensionPoints(project.extensionArea)
 
         project.registerService(SmartTypePointerManager::class.java, SmartTypePointerManagerImpl::class.java)
         project.registerService(SmartPointerManager::class.java, SmartPointerManagerImpl::class.java)
