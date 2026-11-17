@@ -55,9 +55,6 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         get() = fir.isInfix
         set(_) = mutationNotSupported()
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor
-        get() = symbol.descriptor
 
     override var isInline: Boolean
         get() = fir.isInline

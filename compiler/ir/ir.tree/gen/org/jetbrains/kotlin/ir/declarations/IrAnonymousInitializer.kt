@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
@@ -21,9 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.anonymousInitializer]
  */
 abstract class IrAnonymousInitializer : IrDeclarationBase() {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassDescriptor
-
     abstract override val symbol: IrAnonymousInitializerSymbol
 
     abstract var isStatic: Boolean

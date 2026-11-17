@@ -10,10 +10,8 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
@@ -31,10 +29,6 @@ class IrReturnableBlockImpl internal constructor(
     override var attributeOwnerId: IrElement = this
 
     override val statements: MutableList<IrStatement> = ArrayList(2)
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor
-        get() = symbol.descriptor
 
     init {
         symbol.bind(this)

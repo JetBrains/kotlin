@@ -62,10 +62,6 @@ class Fir2IrLazyProperty(
 
     override var annotations: List<IrAnnotation> by createLazyAnnotations()
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor
-        get() = symbol.descriptor
-
     override var isVar: Boolean
         get() = fir.isVar
         set(_) = mutationNotSupported()

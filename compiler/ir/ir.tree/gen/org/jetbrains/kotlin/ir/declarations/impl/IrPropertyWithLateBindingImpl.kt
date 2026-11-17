@@ -12,12 +12,9 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.name.Name
@@ -47,10 +44,6 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
 
     override val containerSource: DeserializedContainerSource?
         get() = null
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor
-        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
     override val symbol: IrPropertySymbol
         get() = _symbol ?: error("$this has not acquired a symbol yet")

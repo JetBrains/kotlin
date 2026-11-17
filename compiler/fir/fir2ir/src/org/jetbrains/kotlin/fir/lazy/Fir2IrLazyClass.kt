@@ -61,10 +61,6 @@ class Fir2IrLazyClass(
     override val source: SourceElement
         get() = fir.sourceElement ?: SourceElement.NO_SOURCE
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor
-        get() = symbol.descriptor
-
     override var name: Name
         get() = fir.name
         set(_) = mutationNotSupported()

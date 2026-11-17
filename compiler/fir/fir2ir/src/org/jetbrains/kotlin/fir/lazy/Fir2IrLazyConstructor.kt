@@ -49,10 +49,6 @@ class Fir2IrLazyConstructor(
         get() = fir.isPrimary
         set(_) = mutationNotSupported()
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassConstructorDescriptor
-        get() = symbol.descriptor
-
     override var isInline: Boolean
         get() = fir.isInline
         set(_) = mutationNotSupported()
