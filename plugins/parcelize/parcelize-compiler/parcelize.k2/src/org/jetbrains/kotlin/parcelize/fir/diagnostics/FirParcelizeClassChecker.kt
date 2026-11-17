@@ -82,14 +82,10 @@ object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Platform) {
             reporter.reportOn(source, KtErrorsParcelize.NO_PARCELABLE_SUPERTYPE, context)
         }
 
+        val parcelableType = PARCELABLE_ID.constructClassLikeType()
         klass.delegateFieldsMap?.forEach { [index, _] ->
             val superTypeRef = klass.superTypeRefs[index]
             val superType = superTypeRef.coneType
-            val parcelableType = ConeClassLikeTypeImpl(
-                PARCELABLE_ID.toLookupTag(),
-                ConeTypeProjection.EMPTY_ARRAY,
-                isMarkedNullable = false
-            )
             if (superType.isSubtypeOf(parcelableType, context.session)) {
                 reporter.reportOn(superTypeRef.source, KtErrorsParcelize.PARCELABLE_DELEGATE_IS_NOT_ALLOWED, context)
             }
