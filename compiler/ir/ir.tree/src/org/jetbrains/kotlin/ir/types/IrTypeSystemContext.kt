@@ -459,7 +459,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     @OptIn(ValueClassBackendAgnosticApi::class)
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isInlineClass(treatFullValueClassesWithOneFieldAsBasic) == true
+        (this as? IrClassSymbol)?.owner?.isInlineClass() == true
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? =
         (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.underlyingPropertyNamesToTypes
@@ -475,7 +475,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     @OptIn(ValueClassBackendAgnosticApi::class)
     override fun KotlinTypeMarker.getUnsubstitutedUnderlyingTypeInJvm(): KotlinTypeMarker? =
-        (this as IrType).classOrNull?.owner?.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic)?.underlyingType
+        (this as IrType).classOrNull?.owner?.inlineClassRepresentation()?.underlyingType
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortName)

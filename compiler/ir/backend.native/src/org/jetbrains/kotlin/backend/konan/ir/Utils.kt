@@ -86,8 +86,8 @@ val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.isInlineClass: Boolean
-    get() = isInlineClass(treatCompatibleFullValueClassesAsInline = true)
+    get() = isInlineClass()
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
-    get() = inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = true)
+    get() = inlineClassRepresentation()

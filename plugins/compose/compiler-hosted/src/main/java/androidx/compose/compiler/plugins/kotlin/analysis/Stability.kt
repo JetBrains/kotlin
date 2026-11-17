@@ -544,7 +544,7 @@ class StabilityInferencer(
                         underlyingSubstitutions, currentlyAnalyzing, analysisEntryFile, includeKnownConstructs = false,
                     )?.let { return it }
                     stabilityOf(
-                        type = getInlineClassUnderlyingType(inlineClassDeclaration, treatCompatibleFullValueClassesAsInline = false),
+                        type = getInlineClassUnderlyingType(inlineClassDeclaration),
                         substitutions = underlyingSubstitutions,
                         currentlyAnalyzing = currentlyAnalyzing,
                         analysisEntryFile

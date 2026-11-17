@@ -66,7 +66,7 @@ internal class NativeBackendContext(
     @OptIn(ValueClassBackendAgnosticApi::class)
     override val inlineClassesUtils: InlineClassesUtils = object : InlineClassesUtils {
         override fun isClassInlineLike(klass: IrClass): Boolean =
-                klass.isInlineClass(treatCompatibleFullValueClassesAsInline = true)
+                klass.isInlineClass()
     }
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
     override val bridgesSupport by lazy { BridgesSupport(irBuiltIns, symbols, irFactory) }

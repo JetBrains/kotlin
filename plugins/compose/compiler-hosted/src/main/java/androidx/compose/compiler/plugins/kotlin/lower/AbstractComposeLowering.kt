@@ -166,9 +166,7 @@ abstract class AbstractComposeLowering(
     @OptIn(ValueClassBackendAgnosticApi::class)
     fun IrType.unboxType(): IrType? {
         val klass = classOrNull?.owner ?: return null
-        val representation = klass.inlineClassRepresentation(
-            treatCompatibleFullValueClassesAsInline = !context.platform.isJvm()
-        ) ?: return null
+        val representation = klass.inlineClassRepresentation() ?: return null
         if (!isInlineClassType()) return null
 
         // TODO: Apply type substitutions
@@ -1906,7 +1904,7 @@ fun IrType.isInlineClassType(isJvm: Boolean): Boolean {
     return if (this is IrSimpleType && classifier.owner is IrScript) {
         false
     } else {
-        erasedUpperBound.isInlineClass(treatCompatibleFullValueClassesAsInline = !isJvm)
+        erasedUpperBound.isInlineClass()
     }
 }
 
