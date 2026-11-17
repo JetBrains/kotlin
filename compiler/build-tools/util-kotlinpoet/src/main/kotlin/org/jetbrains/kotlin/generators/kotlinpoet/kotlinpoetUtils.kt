@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.generators.kotlinpoet
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 fun arrayTypeNameOf(typeParameter: TypeName): ParameterizedTypeName = Array::class.asTypeName().parameterizedBy(typeParameter)
 fun listTypeNameOf(typeParameter: TypeName): ParameterizedTypeName = List::class.asTypeName().parameterizedBy(typeParameter)
 
