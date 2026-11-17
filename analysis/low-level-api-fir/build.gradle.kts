@@ -65,6 +65,7 @@ dependencies {
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
+    testFixturesApi(testFixtures(project(":analysis:test-data-manager")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testFixturesApi(kotlinTest("junit5"))
     testFixturesApi(platform(libs.junit.bom))

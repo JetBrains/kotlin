@@ -107,6 +107,15 @@ Why this hierarchy?
    In most cases the output is the same as the golden one, so there is no need to share it with `lib`. `[kmp]` could be used as the shared variant,
    but effectively there are no such cases that it would help to deduplicate the data.
 
+#### Compiler tests with inline diagnostics
+
+A compiler test ([AbstractKotlinCompilerTest](../../compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/runners/AbstractKotlinCompilerTest.kt))
+implementing `ManagedTest` gets [ManagedTestData](../../compiler/test-infrastructure/testFixtures/org/jetbrains/kotlin/test/services/ManagedTestData.kt):
+its test data file is both the input and the expected output, so the variants go before the extension of the test data (`foo.ll.kt`,
+`foo.ll.test.kts`), and the test reads the expected file of its chain. The compiler's phased light tree diagnostic test is the golden one
+(`[]`), the LL diagnostic tests are `[ll]`, `[ll, reversed]` and `[ll, partialBody]`; the chains of all configurations are in
+[compiler/testData/diagnostics/AGENTS.md](../../compiler/testData/diagnostics/AGENTS.md#updating-test-data).
+
 ### Convergence Loop
 
 Within each group, tests may update files that other tests depend on.

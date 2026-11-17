@@ -8,6 +8,7 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 val sandboxAnnotationsNativeRuntimeForTests = configurations.create("sandboxAnnotationsNativeRuntimeForTests") {
@@ -68,6 +69,10 @@ optInToUnsafeDuringIrConstructionAPI()
 sourceSets {
     "main" { projectDefault() }
     "testFixtures" { projectDefault() }
+}
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.plugin.sandbox")
 }
 
 projectTests {

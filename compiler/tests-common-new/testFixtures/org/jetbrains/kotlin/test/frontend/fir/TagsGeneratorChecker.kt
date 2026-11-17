@@ -43,28 +43,17 @@ import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.TAG_S
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
-import org.jetbrains.kotlin.test.utils.llFirTestDataFile
-import org.jetbrains.kotlin.test.utils.originalTestDataFile
-import org.jetbrains.kotlin.test.utils.reversedTestDataFile
+import org.jetbrains.kotlin.test.services.assertFileUnchangedBy
+import org.jetbrains.kotlin.test.services.baseTestDataFile
+import org.jetbrains.kotlin.test.services.managedTestData
+import org.jetbrains.kotlin.test.utils.withTestDataVariants
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 
 class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(testServices) {
     private val tagsFromAllModules: MutableSet<String> = mutableSetOf()
-    private val testDataFiles: List<File> by lazy {
-        testServices.moduleStructure.originalTestDataFiles.first().let { originalFile ->
-            listOf(
-                originalFile.originalTestDataFile,
-                originalFile.llFirTestDataFile,
-                originalFile.reversedTestDataFile,
-                originalFile.latestLVTestDataFile
-            ).filter { it.exists() }
-        }
-    }
+    private val testDataFiles: List<File> by lazy { testServices.baseTestDataFile.withTestDataVariants }
 
     private val shouldSkip: Boolean by lazy { testDataFiles.any { it.readText().contains(TAG_PREFIX) } }
 
@@ -81,16 +70,23 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (shouldSkip) return
         if (tagsFromAllModules.isEmpty()) return
+        val tagsComment = formatTagsAsMultilineComment()
+        val withTags = { content: String ->
+            buildString {
+                append(content.trim())
+                append("\n\n")
+                appendLine(tagsComment)
+            }
+        }
+
         for (testDataFile in testDataFiles) {
             val testDataFileContent = testDataFile.readText()
             if (testDataFileContent.contains(TAG_PREFIX)) return
 
-            testServices.assertions.assertEqualsToFile(testDataFile, buildString {
-                append(testDataFileContent.trim())
-                append("\n\n")
-                appendLine(formatTagsAsMultilineComment())
-            })
+            testServices.assertFileUnchangedBy(testDataFile, edit = withTags)
         }
+
+        testServices.managedTestData?.updateCreatedWriteTargetFile(withTags)
     }
 
     private fun formatTagsAsMultilineComment(): String {

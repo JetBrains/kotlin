@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor.SuppressionChecker
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.NonSourceErrorMessagesHan
 import org.jetbrains.kotlin.test.frontend.fir.handlers.PsiLightTreeMetaInfoProcessor
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
+import org.jetbrains.kotlin.test.utils.CONTEXT_SENSITIVE_VARIANT
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
@@ -70,9 +73,16 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
 }
 
 open class AbstractPhasedJvmDiagnosticKmpTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.KmpTree)
-open class AbstractPhasedJvmDiagnosticLightTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree)
+
+/**
+ * The golden test of the compiler diagnostic test data: low-level API tests of the same test data are its variants.
+ */
+open class AbstractPhasedJvmDiagnosticLightTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree), ManagedTest
 
 open class AbstractPhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
+    override val variantChain: TestVariantChain
+        get() = listOf(CONTEXT_SENSITIVE_VARIANT)
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {

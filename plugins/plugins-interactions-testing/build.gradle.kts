@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 val beforePluginClasspath: Configuration = configurations.create("beforePluginClasspath")
@@ -53,6 +54,10 @@ sourceSets {
 
 runtimeJar()
 sourcesJar()
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.compiler.plugins")
+}
 
 projectTests {
     testTask(

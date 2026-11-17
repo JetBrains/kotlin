@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.RUN_PIPELINE_TILL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import org.jetbrains.kotlin.test.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -141,9 +142,15 @@ class PhasedPipelineChecker(
             }?.toPhase()
         }.minOrNull() ?: expectedLastPhase
 
-        return createDiffsForAllTestDataFiles("Please specify the test phase in `// RUN_PIPELINE_TILL` directive") {
+        return createDiffsForAllTestDataFiles("Please specify the test phase in `// RUN_PIPELINE_TILL` directive") { content ->
+            // A variant of the test data may declare its own phase, e.g., `.ll.kt` after its `LL_FIR_DIVERGENCE` directive
+            val declaresPhase = content.lineSequence().any { line ->
+                RegisteredDirectivesParser.parseDirective(line)?.name == RUN_PIPELINE_TILL.name
+            }
+            if (declaresPhase) return@createDiffsForAllTestDataFiles content
+
             @Suppress("ConvertToStringTemplate")
-            "// RUN_PIPELINE_TILL: $proposedPhase\n" + it
+            "// RUN_PIPELINE_TILL: $proposedPhase\n" + content
         }
     }
 
@@ -152,26 +159,14 @@ class PhasedPipelineChecker(
         newContent: (String) -> String
     ): List<WrappedException> {
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val originalFile = testDataFile.originalTestDataFile
         val filesList = when {
             // `.disabled` test data may declare a phase different from the original test data, see `LANGUAGE_FEATURE_TOGGLED`
             testDataFile.extension == "nkt" || testDataFile.isLfDisabledTestData -> listOf(testDataFile)
-            else -> listOf(
-                originalFile,
-                originalFile.llFirTestDataFile,
-                originalFile.latestLVTestDataFile,
-                originalFile.reversedTestDataFile,
-                originalFile.partialBodyTestDataFile,
-            )
+            else -> testServices.baseTestDataFile.withTestDataVariants
         }
         return filesList.filter { it.exists() }.mapNotNull { file ->
-            val contentWithNewDirective = newContent(file.readText())
             try {
-                testServices.assertions.assertEqualsToFile(
-                    file,
-                    contentWithNewDirective,
-                    message = { message }
-                )
+                testServices.assertFileUnchangedBy(file, { message }, newContent)
                 null
             } catch (e: AssertionError) {
                 WrappedException.FromAfterAnalysisChecker(e)

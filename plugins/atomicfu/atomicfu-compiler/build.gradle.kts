@@ -13,6 +13,7 @@ plugins {
     id("d8-configuration")
     id("test-inputs-check")
     id("java-test-fixtures")
+    id("test-data-manager")
 }
 
 val antLauncherJar = configurations.create("antLauncherJar")
@@ -172,6 +173,10 @@ sourceSets {
 }
 
 optInToK1Deprecation()
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlinx.atomicfu")
+}
 
 projectTests {
     testTask {

@@ -9,6 +9,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 val junit5Classpath = configurations.create("junit5Classpath")
@@ -66,6 +67,10 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.powerassert")
+}
 
 projectTests {
     testTask {
