@@ -240,6 +240,12 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     public void testUncheckedCastTest() {
       run("UncheckedCastTest.kt");
     }
+
+    @Test
+    @TestMetadata("UsageInExtensions.kt")
+    public void testUsageInExtensions() {
+      run("UsageInExtensions.kt");
+    }
   }
 
   @Nested
