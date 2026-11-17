@@ -92,7 +92,7 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
 
             private fun findOverriddenNonLocalFo(member: IrOverridableDeclaration<*>): IrSymbol? {
                 var properMember: IrOverridableDeclaration<*> = member
-                while (properMember.isLocal && properMember.isFakeOverride) {
+                while (properMember.isFakeOverride && properMember.isLocal) {
                     properMember = properMember.overriddenSymbols.getOrNull(0)?.owner as? IrOverridableDeclaration<*> ?: break
                 }
                 return if (properMember === member) null else properMember.symbol
