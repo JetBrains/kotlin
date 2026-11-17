@@ -34,6 +34,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("annotationClassParameterWithDefaultValue.kt")
+  public void testAnnotationClassParameterWithDefaultValue() {
+    run("annotationClassParameterWithDefaultValue.kt");
+  }
+
+  @Test
   @TestMetadata("companionBlockFunction.kt")
   public void testCompanionBlockFunction() {
     run("companionBlockFunction.kt");
@@ -43,6 +49,30 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   @TestMetadata("companionBlockProperty.kt")
   public void testCompanionBlockProperty() {
     run("companionBlockProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensionPropertyGetterWithJvmName.kt")
+  public void testCompanionExtensionPropertyGetterWithJvmName() {
+    run("companionExtensionPropertyGetterWithJvmName.kt");
+  }
+
+  @Test
+  @TestMetadata("companionExtensionPropertySetterWithJvmName.kt")
+  public void testCompanionExtensionPropertySetterWithJvmName() {
+    run("companionExtensionPropertySetterWithJvmName.kt");
+  }
+
+  @Test
+  @TestMetadata("companionObjectContextParameterProperty.kt")
+  public void testCompanionObjectContextParameterProperty() {
+    run("companionObjectContextParameterProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("companionObjectContextReceiverProperty.kt")
+  public void testCompanionObjectContextReceiverProperty() {
+    run("companionObjectContextReceiverProperty.kt");
   }
 
   @Test
@@ -64,6 +94,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("companionObjectJvmStaticPropertyWithJvmNameOnGetterAndSetter.kt")
+  public void testCompanionObjectJvmStaticPropertyWithJvmNameOnGetterAndSetter() {
+    run("companionObjectJvmStaticPropertyWithJvmNameOnGetterAndSetter.kt");
+  }
+
+  @Test
   @TestMetadata("companionObjectProperty.kt")
   public void testCompanionObjectProperty() {
     run("companionObjectProperty.kt");
@@ -73,6 +109,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   @TestMetadata("constructorPropertyParameter.kt")
   public void testConstructorPropertyParameter() {
     run("constructorPropertyParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameterPropertyWithJvmNameOnGetterAndSetter.kt")
+  public void testContextParameterPropertyWithJvmNameOnGetterAndSetter() {
+    run("contextParameterPropertyWithJvmNameOnGetterAndSetter.kt");
   }
 
   @Test
@@ -196,6 +238,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("memberPropertyWithJvmNameOnGetterAndSetter.kt")
+  public void testMemberPropertyWithJvmNameOnGetterAndSetter() {
+    run("memberPropertyWithJvmNameOnGetterAndSetter.kt");
+  }
+
+  @Test
   @TestMetadata("objectFunction.kt")
   public void testObjectFunction() {
     run("objectFunction.kt");
@@ -244,6 +292,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("propertySetterWithJvmName.kt")
+  public void testPropertySetterWithJvmName() {
+    run("propertySetterWithJvmName.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithExplicitAccessors.kt")
   public void testPropertyWithExplicitAccessors() {
     run("propertyWithExplicitAccessors.kt");
@@ -262,15 +316,45 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("propertyWithGetterLikeJvmNameOnSetter.kt")
+  public void testPropertyWithGetterLikeJvmNameOnSetter() {
+    run("propertyWithGetterLikeJvmNameOnSetter.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithImplicitAccessors.kt")
   public void testPropertyWithImplicitAccessors() {
     run("propertyWithImplicitAccessors.kt");
   }
 
   @Test
+  @TestMetadata("propertyWithJvmNameOnAccessors.kt")
+  public void testPropertyWithJvmNameOnAccessors() {
+    run("propertyWithJvmNameOnAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithJvmNameOnGetter.kt")
+  public void testPropertyWithJvmNameOnGetter() {
+    run("propertyWithJvmNameOnGetter.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithJvmNameOnGetterAndSetter.kt")
   public void testPropertyWithJvmNameOnGetterAndSetter() {
     run("propertyWithJvmNameOnGetterAndSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithJvmNameOnSetter.kt")
+  public void testPropertyWithJvmNameOnSetter() {
+    run("propertyWithJvmNameOnSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithSetterLikeJvmNameOnGetter.kt")
+  public void testPropertyWithSetterLikeJvmNameOnGetter() {
+    run("propertyWithSetterLikeJvmNameOnGetter.kt");
   }
 
   @Test
