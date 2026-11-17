@@ -266,7 +266,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                 }
             }
             
-            $jsCodeToGetModuleWithBoxFunction;
+            $jsCodeToGetModuleWithBoxFunction
             
             enableDebugger();
             setBreakpoint(box);
@@ -295,7 +295,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                             <script type="module">
                                 let test = document.getElementById("test")
                                 try {
-                                    const jsModule = $jsCodeToGetModuleWithBoxFunction;
+                                    $jsCodeToGetModuleWithBoxFunction
                                     try { 
                                       if (jsModule.box.length) {
                                         box(jsModule.makeEmptyContinuation());
