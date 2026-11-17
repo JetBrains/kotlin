@@ -47,6 +47,15 @@ sourceSets {
     "test" {
         projectDefault()
     }
+    /* Tests that inspect compiled classes, dist or run Gradle; executed by the `withBinariesTest` task */
+    "withBinariesTest" {
+        codebaseTestDir(project, "withBinariesTest")
+    }
+}
+
+/* Gives the tests from the `withBinariesTest` source set access to `internal` declarations of `main` */
+kotlin.target.compilations.named("withBinariesTest") {
+    associateWith(kotlin.target.compilations.getByName("main"))
 }
 
 open class TestSystemPropertiesProvider @Inject constructor(
@@ -82,8 +91,34 @@ open class TestSystemPropertiesProvider @Inject constructor(
 
 projectTests {
     testTask(javaLauncher = JdkMajorVersion.JDK_21_0, maxHeapSize = testMaxHeapSizeTiny) {
-        dependsOn(":dist")
-        dependsOn(":compileAll")
+        description = "Runs tests that checks files in the repository"
+        workingDir = rootDir
+
+        jvmArgumentProviders.add(objects.newInstance<TestSystemPropertiesProvider>().apply {
+            spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
+            gradleUserHome.set(gradle.gradleUserHomeDir)
+            teamcity = kotlinBuildProperties.isTeamcityBuild
+        })
+
+        testFederation {
+            smokeTests { includeAll() }
+        }
+
+        useJUnitPlatform {
+            excludeTags("codebaseNightly")
+        }
+    }
+
+    testTask("withBinariesTest", javaLauncher = JdkMajorVersion.JDK_21_0, maxHeapSize = testMaxHeapSizeTiny, skipInLocalBuild = false) {
+        description = "Runs codebase tests from the 'withBinariesTest' source set, which depend on the compilation of the project and dist"
+        if (!dryRun.get()) {
+            dependsOn(":dist", ":compileAll")
+        }
+
+        val withBinariesTestSourceSet = sourceSets["withBinariesTest"]
+        testClassesDirs = withBinariesTestSourceSet.output.classesDirs
+        classpath = withBinariesTestSourceSet.runtimeClasspath
+
         workingDir = rootDir
 
         withJvmStdlibAndReflect()
@@ -99,10 +134,6 @@ projectTests {
 
         testFederation {
             smokeTests { includeAll() }
-        }
-
-        useJUnitPlatform {
-            excludeTags("codebaseNightly")
         }
 
         assertKotlinNativeIsEnabled()
@@ -125,7 +156,6 @@ projectTests {
         assertKotlinNativeIsEnabled()
     }
 }
-
 
 tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
     doNotTrackState("Should always run")
