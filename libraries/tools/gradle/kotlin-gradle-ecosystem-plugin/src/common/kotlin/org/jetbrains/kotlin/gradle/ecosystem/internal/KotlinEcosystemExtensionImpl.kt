@@ -35,10 +35,11 @@ internal open class KotlinEcosystemExtensionImpl @Inject constructor(
         nativeDsl.configure()
     }
 
-    private val toolchainManagementDsl = KotlinToolchainManagementDslImpl(
-        NodeJsToolchainManagementDslImpl(settings.gradle),
-        WasiAdapterToolchainManagementDslImpl(settings.gradle),
-        WasmToolsToolchainManagementDslImpl(settings.gradle),
+    private val toolchainManagementDsl = objects.newInstance(
+        KotlinToolchainManagementDslImpl::class.java,
+        objects.newInstance(NodeJsToolchainManagementDslImpl::class.java, settings.gradle),
+        objects.newInstance(WasiAdapterToolchainManagementDslImpl::class.java, settings.gradle),
+        objects.newInstance(WasmToolsToolchainManagementDslImpl::class.java, settings.gradle),
     )
 
     override fun toolchainManagement(configure: KotlinToolchainManagementDsl.() -> Unit) {
