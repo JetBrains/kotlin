@@ -322,7 +322,13 @@ abstract class KotlinIrLinker(
         }
     }
 
-    fun clear() {
+    /**
+     * Drops everything interned by [irInterner] during IR deserialization to free memory.
+     *
+     * Call it only when deserialization is over: instances interned afterwards are not deduplicated
+     * against the ones interned before.
+     */
+    fun clearInternedData() {
         irInterner.reset()
     }
 

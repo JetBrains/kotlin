@@ -34,7 +34,8 @@ object WasmIrLinkingPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, W
         val allModules = sortedModuleDependencies.allDependencies
         allModules.forEach { it.patchDeclarationParents() }
         irLinker.finalizeIrLinkage(irBuiltIns)
-        irLinker.clear()
+        irLinker.clearInternedData()
+
         return WasmLinkedIrPipelineArtifact(
             allModules,
             context,

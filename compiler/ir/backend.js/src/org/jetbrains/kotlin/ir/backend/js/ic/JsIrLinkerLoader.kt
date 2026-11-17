@@ -95,7 +95,7 @@ internal class LoadedJsIr(
         signatureProvidersImpl.clear()
         linker.drainDeserializationQueue()
         linker.finalizeIrLinkage(irBuiltIns)
-        linker.clear()
+        linker.clearInternedData()
     }
 
     fun collectSymbolsReplacedWithStubs(): Set<IrSymbol> {
