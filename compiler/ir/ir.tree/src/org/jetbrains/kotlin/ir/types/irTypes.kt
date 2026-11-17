@@ -131,18 +131,6 @@ fun IrType.mergeNullability(other: IrType) = when (other) {
     else -> this
 }
 
-@ObsoleteDescriptorBasedAPI
-fun IrType.toKotlinType(): KotlinType {
-    originalKotlinType?.let {
-        return it
-    }
-
-    return when (this) {
-        is IrSimpleType -> makeKotlinType(classifier, arguments, nullability == SimpleTypeNullability.MARKED_NULLABLE)
-        else -> TODO(toString())
-    }
-}
-
 fun IrType.getClass(): IrClass? =
     classOrNull?.owner
 
@@ -153,21 +141,6 @@ fun IrClassSymbol.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArg
         arguments,
         emptyList()
     )
-
-@ObsoleteDescriptorBasedAPI
-private fun makeKotlinType(
-    classifier: IrClassifierSymbol,
-    arguments: List<IrTypeArgument>,
-    hasQuestionMark: Boolean
-): SimpleType {
-    val kotlinTypeArguments = arguments.memoryOptimizedMapIndexed { index, it ->
-        when (it) {
-            is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toKotlinType())
-            is IrStarProjection -> StarProjectionImpl((classifier.descriptor as ClassDescriptor).typeConstructor.parameters[index])
-        }
-    }
-    return classifier.descriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
-}
 
 val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
     get() = IrSimpleTypeImpl(
