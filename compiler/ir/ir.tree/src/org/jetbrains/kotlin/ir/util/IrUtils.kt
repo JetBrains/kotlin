@@ -427,19 +427,6 @@ fun IrValueParameter.hasDefaultValue(predicate: (IrValueParameter) -> Boolean = 
 )
 
 @ObsoleteDescriptorBasedAPI
-fun ReferenceSymbolTable.referenceClassifier(classifier: ClassifierDescriptor): IrClassifierSymbol =
-    when (classifier) {
-        is TypeParameterDescriptor ->
-            descriptorExtension.referenceTypeParameter(classifier)
-        is ScriptDescriptor ->
-            descriptorExtension.referenceScript(classifier)
-        is ClassDescriptor ->
-            descriptorExtension.referenceClass(classifier)
-        else ->
-            throw IllegalArgumentException("Unexpected classifier descriptor: $classifier")
-    }
-
-@ObsoleteDescriptorBasedAPI
 fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunctionSymbol =
     when (callable) {
         is ClassConstructorDescriptor ->

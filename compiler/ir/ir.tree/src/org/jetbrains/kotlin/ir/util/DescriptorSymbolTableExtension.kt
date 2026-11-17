@@ -8,18 +8,12 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.threadLocal
 
 @ObsoleteDescriptorBasedAPI
@@ -41,8 +35,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
 
     private val signatureComposer: IdSignatureComposer
         get() = table.signaturer!!
-
-    private val externalPackageFragmentSlice: SymbolTableSlice<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol> = SymbolTableSlice.Flat(lock)
 
     private val valueParameterSlice: SymbolTableSlice.Scoped<ParameterDescriptor, IrValueParameter, IrValueParameterSymbol> by threadLocal {
         SymbolTableSlice.Scoped(lock)
@@ -96,17 +88,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         }
     }
 
-    fun declareClassFromLinker(descriptor: ClassDescriptor, signature: IdSignature, classFactory: (IrClassSymbol) -> IrClass): IrClass {
-        return declareFromLinker(
-            descriptor,
-            signature,
-            SymbolTable::declareClass,
-            ::declareClass,
-            ::createClassSymbol,
-            classFactory
-        )
-    }
-
     override fun createPublicClassSymbol(declaration: ClassDescriptor, signature: IdSignature): IrClassSymbol {
         return IrClassSymbolImpl(declaration, signature)
     }
@@ -117,21 +98,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
 
     // ------------------------------------ constructor ------------------------------------
 
-    fun declareConstructorFromLinker(
-        descriptor: ClassConstructorDescriptor,
-        signature: IdSignature,
-        constructorFactory: (IrConstructorSymbol) -> IrConstructor,
-    ): IrConstructor {
-        return declareFromLinker(
-            descriptor,
-            signature,
-            SymbolTable::declareConstructor,
-            ::declareConstructor,
-            ::createConstructorSymbol,
-            constructorFactory
-        )
-    }
-
     override fun createPublicConstructorSymbol(declaration: ClassConstructorDescriptor, signature: IdSignature): IrConstructorSymbol {
         return IrConstructorSymbolImpl(declaration, signature)
     }
@@ -141,21 +107,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     // ------------------------------------ enum entry ------------------------------------
-
-    fun declareEnumEntryFromLinker(
-        descriptor: ClassDescriptor,
-        signature: IdSignature,
-        factory: (IrEnumEntrySymbol) -> IrEnumEntry,
-    ): IrEnumEntry {
-        return declareFromLinker(
-            descriptor,
-            signature,
-            SymbolTable::declareEnumEntry,
-            ::declareEnumEntry,
-            ::createEnumEntrySymbol,
-            factory
-        )
-    }
 
     override fun createPublicEnumEntrySymbol(declaration: ClassDescriptor, signature: IdSignature): IrEnumEntrySymbol {
         return IrEnumEntrySymbolImpl(declaration, signature)
@@ -212,21 +163,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
 
     // ------------------------------------ property ------------------------------------
 
-    fun declarePropertyFromLinker(
-        descriptor: PropertyDescriptor,
-        signature: IdSignature,
-        propertyFactory: (IrPropertySymbol) -> IrProperty,
-    ): IrProperty {
-        return declareFromLinker(
-            descriptor,
-            signature,
-            SymbolTable::declareProperty,
-            ::declareProperty,
-            ::createPropertySymbol,
-            propertyFactory
-        )
-    }
-
     override fun createPublicPropertySymbol(declaration: PropertyDescriptor, signature: IdSignature): IrPropertySymbol {
         return IrPropertySymbolImpl(declaration, signature)
     }
@@ -275,21 +211,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
 
     // ------------------------------------ function ------------------------------------
 
-    fun declareSimpleFunctionFromLinker(
-        descriptor: FunctionDescriptor,
-        signature: IdSignature,
-        functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction,
-    ): IrSimpleFunction {
-        return declareFromLinker(
-            descriptor,
-            signature,
-            SymbolTable::declareSimpleFunction,
-            ::declareSimpleFunction,
-            ::createFunctionSymbol,
-            functionFactory
-        )
-    }
-
     override fun createPublicFunctionSymbol(declaration: FunctionDescriptor, signature: IdSignature): IrSimpleFunctionSymbol {
         return IrSimpleFunctionSymbolImpl(declaration, signature)
     }
@@ -327,172 +248,11 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         )
     }
 
-    // ------------------------------------ package fragment ------------------------------------
-
-    fun referenceExternalPackageFragment(descriptor: PackageFragmentDescriptor): IrExternalPackageFragmentSymbol =
-        externalPackageFragmentSlice.referenced(descriptor) { IrExternalPackageFragmentSymbolImpl(descriptor) }
-
-    fun declareExternalPackageFragment(descriptor: PackageFragmentDescriptor): IrExternalPackageFragment {
-        return externalPackageFragmentSlice.declare(
-            descriptor,
-            { IrExternalPackageFragmentSymbolImpl(descriptor) },
-            { IrExternalPackageFragmentImpl(it, descriptor.fqName, IrModuleFragmentImpl(descriptor.module)) }
-        )
-    }
-
-    fun declareExternalPackageFragmentIfNotExists(descriptor: PackageFragmentDescriptor): IrExternalPackageFragment {
-        return externalPackageFragmentSlice.declareIfNotExists(
-            descriptor,
-            { IrExternalPackageFragmentSymbolImpl(descriptor) },
-            { IrExternalPackageFragmentImpl(it, descriptor.fqName, IrModuleFragmentImpl(descriptor.module)) }
-        )
-    }
-
-    // ------------------------------------ anonymous initializer ------------------------------------
-
-    fun declareAnonymousInitializer(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ClassDescriptor
-    ): IrAnonymousInitializer =
-        irFactory.createAnonymousInitializer(
-            startOffset, endOffset, origin,
-            IrAnonymousInitializerSymbolImpl(descriptor)
-        )
-
     // ------------------------------------ value parameter ------------------------------------
-
-    fun declareValueParameter(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ParameterDescriptor,
-        kind: IrParameterKind,
-        type: IrType,
-        varargElementType: IrType? = null,
-        name: Name? = null,
-        isAssignable: Boolean = false,
-        valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
-            irFactory.createValueParameter(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                kind = kind,
-                name = name ?: nameProvider.nameForDeclaration(descriptor),
-                type = type,
-                isAssignable = isAssignable,
-                symbol = it,
-                varargElementType = varargElementType,
-                isCrossinline = descriptor is ValueParameterDescriptor && descriptor.isCrossinline,
-                isNoinline = descriptor is ValueParameterDescriptor && descriptor.isNoinline,
-                isHidden = false,
-            )
-        }
-    ): IrValueParameter =
-        valueParameterSlice.declareLocal(
-            descriptor,
-            { IrValueParameterSymbolImpl(descriptor) },
-            valueParameterFactory
-        )
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun introduceValueParameter(irValueParameter: IrValueParameter) {
-        valueParameterSlice.introduceLocal(irValueParameter.descriptor, irValueParameter.symbol)
-    }
 
     override fun referenceValueParameter(declaration: ParameterDescriptor): IrValueParameterSymbol {
         return valueParameterSlice.referenced(declaration) {
             error("Undefined parameter referenced: $declaration\n${valueParameterSlice.dump()}")
-        }
-    }
-
-    open fun referenceValue(value: ValueDescriptor): IrValueSymbol {
-        return when (value) {
-            is ParameterDescriptor -> valueParameterSlice.referenced(value) { error("Undefined parameter referenced: $value") }
-            is VariableDescriptor -> variableSlice.referenced(value) { error("Undefined variable referenced: $value") }
-            else -> error("Unexpected value descriptor: $value")
-        }
-    }
-
-
-    // ------------------------------------ variable ------------------------------------
-
-    fun declareVariable(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptor,
-        type: IrType,
-    ): IrVariable =
-        variableSlice.declareLocal(
-            descriptor,
-            { IrVariableSymbolImpl(descriptor) }
-        ) {
-            IrVariableImpl(
-                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type,
-                descriptor.isVar, descriptor.isConst, descriptor.isLateInit
-            )
-        }
-
-    fun declareVariable(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptor,
-        type: IrType,
-        irInitializerExpression: IrExpression?
-    ): IrVariable =
-        declareVariable(startOffset, endOffset, origin, descriptor, type).apply {
-            initializer = irInitializerExpression
-        }
-
-    // ------------------------------------ local delegated property ------------------------------------
-
-    fun declareLocalDelegatedProperty(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptorWithAccessors,
-        type: IrType
-    ): IrLocalDelegatedProperty {
-        return localDelegatedPropertySlice.declareLocal(
-            descriptor,
-            { IrLocalDelegatedPropertySymbolImpl(descriptor) },
-        ) {
-            irFactory.createLocalDelegatedProperty(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = nameProvider.nameForDeclaration(descriptor),
-                symbol = it,
-                type = type,
-                isVar = descriptor.isVar
-            )
-        }.apply {
-            metadata = DescriptorMetadataSource.LocalDelegatedProperty(descriptor)
-        }
-    }
-
-    fun referenceLocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors): IrLocalDelegatedPropertySymbol =
-        localDelegatedPropertySlice.referenced(descriptor) {
-            error("Undefined local delegated property referenced: $descriptor")
-        }
-
-    // ------------------------------------ utilities ------------------------------------
-
-    private inline fun <D : DeclarationDescriptor, Symbol : IrBindableSymbol<*, SymbolOwner>, SymbolOwner : IrSymbolOwner> declareFromLinker(
-        descriptor: D,
-        signature: IdSignature,
-        declareBySignature: SymbolTable.(IdSignature, () -> Symbol, OwnerFactory<Symbol, SymbolOwner>) -> SymbolOwner,
-        declareByDescriptor: (D, OwnerFactory<Symbol, SymbolOwner>) -> SymbolOwner,
-        crossinline symbolFactory: SymbolFactory<D, Symbol>,
-        noinline ownerFactory: OwnerFactory<Symbol, SymbolOwner>
-    ): SymbolOwner {
-        return if (signature.isPubliclyVisible) {
-            table.declareBySignature(signature, { symbolFactory(descriptor, signature) }, ownerFactory)
-        } else {
-            declareByDescriptor(descriptor, ownerFactory)
         }
     }
 }
