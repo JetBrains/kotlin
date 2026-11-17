@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGen
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.io.deleteOnExit
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
@@ -121,6 +124,15 @@ internal fun CompilerConfiguration.hasObjCCacheBinaryOptions(): Boolean =
 
 internal const val OBJC_CACHE_BINARY_OPTIONS = "-Xbinary=objcExportErrorOnNameCollisions=true, " +
         "-Xbinary=objcExportDisableSwiftMemberNameMangling=true and -Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"
+
+internal fun objCExportNamingConfiguration(configuration: CompilerConfiguration): String = listOf(
+        "generics=${configuration.objcGenerics}",
+        "explicitMethodFamily=${configuration.getBoolean(BinaryOptions.objcExportExplicitMethodFamily)}",
+        "blockExplicitParameterNames=${configuration.get(BinaryOptions.objcExportBlockExplicitParameterNames, false)}",
+        "unitSuspendFunctionExport=" +
+                configuration.get(BinaryOptions.unitSuspendFunctionObjCExport, UnitSuspendFunctionObjCExport.DEFAULT),
+        "exportKDoc=${configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExportKDocDocumentationToKlib)}",
+).joinToString(";")
 
 private class ObjCExportCompilerProblemCollector(val context: NativeBackendPhaseContext) : ObjCExportProblemCollector {
     private val DeclarationDescriptor.psiLocation
@@ -240,6 +252,7 @@ internal class ObjCExport(
                     protocolAdapters = objCCodeGenerator.objCCacheProtocolAdapters,
                     categoryAdapters = objCCodeGenerator.objCCacheCategoryAdapters,
                     exportedLibraries = config.cachedLibraries.exportedDependencies(library, config.exportedLibrariesForObjCCache),
+                    namingConfiguration = objCExportNamingConfiguration(config.configuration),
             )
             generationState.outputFiles.objcCacheMetadataFile?.let { file ->
                 file.parent.createDirectories()

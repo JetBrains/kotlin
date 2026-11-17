@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.CacheSupport.Companion.cacheFileId
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.common.lazyEvaluatedFingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
+import org.jetbrains.kotlin.backend.konan.objcexport.objCExportNamingConfiguration
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
@@ -272,6 +273,7 @@ class CachedLibraries(
     fun getObjCCaches(exportedLibraries: Set<KotlinLibrary>, moduleName: String): Map<KotlinLibrary, ObjCCache> {
         if (exportedLibraries.isEmpty() || moduleName.isEmpty()) return emptyMap()
         val directoriesByName = cacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists() }.groupBy { it.name }
+        val namingConfiguration = objCExportNamingConfiguration(configuration)
         return exportedLibraries.mapNotNull { library ->
             val archive = findObjCCache(library, moduleName, directoriesByName) ?: return@mapNotNull null
             val directory = archive.parent.parent
@@ -287,6 +289,13 @@ class CachedLibraries(
                         directory,
                         "was built exporting [$built] of the dependencies of ${library.uniqueName}, " +
                                 "but this compilation exports [${expected.joinToString()}]",
+                )
+            }
+            if (metadata.namingConfiguration != namingConfiguration) {
+                return@mapNotNull ignoreObjCCache(
+                        directory,
+                        "was built with the Objective-C export options [${metadata.namingConfiguration}], " +
+                                "but this compilation uses [$namingConfiguration]",
                 )
             }
             library to ObjCCache(archive.absolutePathString(), metadata)
@@ -443,6 +452,7 @@ class ObjCCacheMetadata(
     val protocolAdapters: List<ObjCCacheAdapterEntry>,
     val categoryAdapters: List<ObjCCacheAdapterEntry>,
     val exportedLibraries: List<String>,
+    val namingConfiguration: String,
 ) {
     fun serialize(writer: java.io.Writer) {
         writer.appendLine("format=$FORMAT_VERSION")
@@ -450,6 +460,7 @@ class ObjCCacheMetadata(
         writer.appendLine("protocolAdapters=${protocolAdapters.serializeEntries()}")
         writer.appendLine("categoryAdapters=${categoryAdapters.serializeEntries()}")
         writer.appendLine("exportedLibraries=${exportedLibraries.sorted().joinToString(";")}")
+        writer.appendLine("namingConfiguration=$namingConfiguration")
     }
 
     companion object {
@@ -467,6 +478,7 @@ class ObjCCacheMetadata(
                 protocolAdapters = parseTypeAdapters("protocolAdapters", isInterface = true),
                 categoryAdapters = parseList("categoryAdapters").map { ObjCCacheAdapterEntry.categoryAdapter(it, library) },
                 exportedLibraries = parseList("exportedLibraries"),
+                namingConfiguration = property("namingConfiguration"),
             )
         }
     }

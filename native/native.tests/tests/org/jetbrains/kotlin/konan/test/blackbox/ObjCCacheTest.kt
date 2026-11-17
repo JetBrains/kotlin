@@ -279,7 +279,10 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         assertTrue(binDir.isDirectory) { "Expected the cache in $binDir" }
         val metadata = objCCacheMetadata(libraries.cacheDir, "layoutLib")
         assertEquals(
-            setOf("format", "classAdapters", "protocolAdapters", "categoryAdapters", "exportedLibraries"),
+            setOf(
+                "format", "classAdapters", "protocolAdapters", "categoryAdapters", "exportedLibraries",
+                "namingConfiguration",
+            ),
             metadata.stringPropertyNames(),
         )
         assertEquals("1", metadata.getProperty("format"))
@@ -730,6 +733,11 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         val framework = linkFramework(compileLibraries(testLibrary()), binaryOptions = emptyList())
         framework.assertObjCCachesLinked("library", linked = false)
     }
+
+    @Test
+    fun testUsedWhenObjCExportOptionIsSetToItsDefault() {
+        linkFramework(alphaAndBeta(listOf("-Xbinary=unitSuspendFunctionObjCExport=proper"))).assertObjCCachesLinked("libA", "libB")
+    }
 }
 
 @Tag("caches")
@@ -763,6 +771,13 @@ class ObjCCacheWarningsTest : ObjCCacheTestBase() {
         metadata.writeText(metadata.readText().replace("format=1", "format=0"))
         assertLibBCacheIgnored(libraries, "libB-Kt.objc_cache was built in format 0, but this compiler reads format 1")
     }
+
+    @Test
+    fun testIgnoredWhenObjCExportOptionsDiffer() =
+        assertLibBCacheIgnored(alphaAndBeta(listOf("-Xbinary=objcExportExplicitMethodFamily=true")), "explicitMethodFamily=true")
+
+    @Test
+    fun testIgnoredWhenExportKDocDiffers() = assertLibBCacheIgnored(alphaAndBeta(listOf("-Xexport-kdoc")), "exportKDoc=true")
 
     private fun assertLibBCacheIgnored(libraries: Libraries, warning: String) {
         val framework = linkFramework(libraries)
