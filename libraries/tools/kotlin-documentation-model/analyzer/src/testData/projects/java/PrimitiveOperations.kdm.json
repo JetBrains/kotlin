@@ -19,7 +19,7 @@
                         "kind": "classLike",
                         "qualifiers": [
                             {
-                                "name": "boolean",
+                                "name": "Boolean",
                                 "typeArguments": []
                             }
                         ],
@@ -35,7 +35,7 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "boolean",
+                                        "name": "Boolean",
                                         "typeArguments": []
                                     }
                                 ],
@@ -55,7 +55,7 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "byte",
+                                        "name": "Byte",
                                         "typeArguments": []
                                     }
                                 ],
@@ -75,7 +75,7 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "short",
+                                        "name": "Short",
                                         "typeArguments": []
                                     }
                                 ],
@@ -95,7 +95,7 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "char",
+                                        "name": "Char",
                                         "typeArguments": []
                                     }
                                 ],
@@ -139,7 +139,7 @@
                                 "typeArguments": []
                             }
                         ],
-                        "classLikeId": "java.lang/Boolean///PointingToDeclaration/",
+                        "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
                         "isMarkedNullable": false,
                         "annotations": []
                     },
@@ -155,7 +155,7 @@
                                         "typeArguments": []
                                     }
                                 ],
-                                "classLikeId": "java.lang/Boolean///PointingToDeclaration/",
+                                "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
                                 "isMarkedNullable": false,
                                 "annotations": []
                             },
@@ -175,7 +175,7 @@
                                         "typeArguments": []
                                     }
                                 ],
-                                "classLikeId": "java.lang/Byte///PointingToDeclaration/",
+                                "classLikeId": "kotlin/Byte///PointingToDeclaration/",
                                 "isMarkedNullable": false,
                                 "annotations": []
                             },
@@ -195,7 +195,7 @@
                                         "typeArguments": []
                                     }
                                 ],
-                                "classLikeId": "java.lang/Short///PointingToDeclaration/",
+                                "classLikeId": "kotlin/Short///PointingToDeclaration/",
                                 "isMarkedNullable": false,
                                 "annotations": []
                             },
@@ -211,11 +211,11 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "Character",
+                                        "name": "Char",
                                         "typeArguments": []
                                     }
                                 ],
-                                "classLikeId": "java.lang/Character///PointingToDeclaration/",
+                                "classLikeId": "kotlin/Char///PointingToDeclaration/",
                                 "isMarkedNullable": false,
                                 "annotations": []
                             },
@@ -251,7 +251,7 @@
                         "kind": "classLike",
                         "qualifiers": [
                             {
-                                "name": "double",
+                                "name": "Double",
                                 "typeArguments": []
                             }
                         ],
@@ -267,7 +267,7 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "float",
+                                        "name": "Float",
                                         "typeArguments": []
                                     }
                                 ],
@@ -287,7 +287,7 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "double",
+                                        "name": "Double",
                                         "typeArguments": []
                                     }
                                 ],
@@ -331,7 +331,7 @@
                                 "typeArguments": []
                             }
                         ],
-                        "classLikeId": "java.lang/Double///PointingToDeclaration/",
+                        "classLikeId": "kotlin/Double///PointingToDeclaration/",
                         "isMarkedNullable": false,
                         "annotations": []
                     },
@@ -347,7 +347,7 @@
                                         "typeArguments": []
                                     }
                                 ],
-                                "classLikeId": "java.lang/Float///PointingToDeclaration/",
+                                "classLikeId": "kotlin/Float///PointingToDeclaration/",
                                 "isMarkedNullable": false,
                                 "annotations": []
                             },
@@ -367,7 +367,7 @@
                                         "typeArguments": []
                                     }
                                 ],
-                                "classLikeId": "java.lang/Double///PointingToDeclaration/",
+                                "classLikeId": "kotlin/Double///PointingToDeclaration/",
                                 "isMarkedNullable": false,
                                 "annotations": []
                             },
@@ -403,7 +403,7 @@
                         "kind": "classLike",
                         "qualifiers": [
                             {
-                                "name": "long",
+                                "name": "Long",
                                 "typeArguments": []
                             }
                         ],
@@ -419,7 +419,7 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "int",
+                                        "name": "Int",
                                         "typeArguments": []
                                     }
                                 ],
@@ -439,7 +439,7 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "long",
+                                        "name": "Long",
                                         "typeArguments": []
                                     }
                                 ],
@@ -483,7 +483,7 @@
                                 "typeArguments": []
                             }
                         ],
-                        "classLikeId": "java.lang/Long///PointingToDeclaration/",
+                        "classLikeId": "kotlin/Long///PointingToDeclaration/",
                         "isMarkedNullable": false,
                         "annotations": []
                     },
@@ -495,11 +495,11 @@
                                 "kind": "classLike",
                                 "qualifiers": [
                                     {
-                                        "name": "Integer",
+                                        "name": "Int",
                                         "typeArguments": []
                                     }
                                 ],
-                                "classLikeId": "java.lang/Integer///PointingToDeclaration/",
+                                "classLikeId": "kotlin/Int///PointingToDeclaration/",
                                 "isMarkedNullable": false,
                                 "annotations": []
                             },
@@ -519,7 +519,7 @@
                                         "typeArguments": []
                                     }
                                 ],
-                                "classLikeId": "java.lang/Long///PointingToDeclaration/",
+                                "classLikeId": "kotlin/Long///PointingToDeclaration/",
                                 "isMarkedNullable": false,
                                 "annotations": []
                             },

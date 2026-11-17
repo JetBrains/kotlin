@@ -10,7 +10,6 @@ plugins {
     kotlin("jvm")
     `java-test-fixtures`
     id("test-inputs-check")
-    id("test-data-manager")
 }
 
 kotlin {
@@ -83,7 +82,6 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesImplementation(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":analysis:test-data-manager")))
     testImplementation(intellijCore())
     testImplementation(libs.junit.jupiter.params)
 }

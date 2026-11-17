@@ -1,7 +1,0 @@
-main:
-  class KUser (declared)
-    constructor() (declared)
-    fun describe(point: JPoint): Int (declared)
-  open class JPoint (declared)
-    constructor() (declared)
-    open val x: int (declared)

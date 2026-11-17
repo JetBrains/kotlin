@@ -1,36 +1,19 @@
 fragment main
-fun varargs(values: Array<String>): Unit [example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/].valueParameters[0].type:
+fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/].valueParameters[0].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "Array",
-      "typeArguments": [
-        {
-          "kind": "invariant",
-          "type": {
-            "kind": "classLike",
-            "qualifiers": [
-              {
-                "name": "String",
-                "typeArguments": []
-              }
-            ],
-            "classLikeId": "java.lang/String///PointingToDeclaration/",
-            "isMarkedNullable": false,
-            "isEnhancedNullability": false,
-            "annotations": []
-          }
-        }
-      ]
+      "name": "String",
+      "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Array///PointingToDeclaration/",
+  "classLikeId": "kotlin/String///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
 }
-fun varargs(values: Array<String>): Unit [example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/].returnType:
+fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/].returnType:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -45,33 +28,16 @@ fun varargs(values: Array<String>): Unit [example/JavaTypes/varargs/#java.lang.S
   "annotations": []
 }
 
-var primitiveArray: Array<int> [example/JavaTypes/primitiveArray/#/PointingToDeclaration/].type:
+var primitiveArray: IntArray [example/JavaTypes/primitiveArray/#/PointingToDeclaration/].type:
 {
   "kind": "classLike",
   "qualifiers": [
     {
-      "name": "Array",
-      "typeArguments": [
-        {
-          "kind": "invariant",
-          "type": {
-            "kind": "classLike",
-            "qualifiers": [
-              {
-                "name": "int",
-                "typeArguments": []
-              }
-            ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
-            "isMarkedNullable": false,
-            "isEnhancedNullability": false,
-            "annotations": []
-          }
-        }
-      ]
+      "name": "IntArray",
+      "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Array///PointingToDeclaration/",
+  "classLikeId": "kotlin/IntArray///PointingToDeclaration/",
   "isMarkedNullable": false,
   "isEnhancedNullability": false,
   "annotations": []
@@ -102,7 +68,7 @@ var referenceArray: Array<Array<String>> [example/JavaTypes/referenceArray/#/Poi
                           "typeArguments": []
                         }
                       ],
-                      "classLikeId": "java.lang/String///PointingToDeclaration/",
+                      "classLikeId": "kotlin/String///PointingToDeclaration/",
                       "isMarkedNullable": false,
                       "isEnhancedNullability": false,
                       "annotations": []
