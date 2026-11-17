@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
+import org.jetbrains.kotlin.fir.syntax.SyntaxIdPredicate
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
@@ -25,7 +26,7 @@ private fun KtSourceElement.getChildMatching(
     index: Int,
     depth: Int,
     reverse: Boolean,
-    isTargetType: (SyntaxId) -> Boolean,
+    isTargetType: SyntaxIdPredicate,
 ): KtSourceElement? {
     var idx = index
     var result: KtSourceElement? = null
