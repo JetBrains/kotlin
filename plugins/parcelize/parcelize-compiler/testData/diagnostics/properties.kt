@@ -1,6 +1,6 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
-// ISSUE: https://issuetracker.google.com/585078316
+
 package test
 
 import kotlinx.parcelize.*
@@ -24,7 +24,7 @@ class A(val firstName: String) : Parcelable {
 
 @Parcelize
 @Suppress(<!ERROR_SUPPRESSION!>"WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET"<!>)
-class B(<!INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY!>@IgnoredOnParcel<!> val firstName: String) : Parcelable {
+class B(@IgnoredOnParcel val firstName: String = "OK") : Parcelable {
     @IgnoredOnParcel
     var a: String = ""
 
