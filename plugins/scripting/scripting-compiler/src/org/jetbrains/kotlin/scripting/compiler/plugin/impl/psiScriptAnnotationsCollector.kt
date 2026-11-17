@@ -9,13 +9,13 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.ParserMode
@@ -204,7 +204,7 @@ private class AnnotationResolutionProjectEnvironment(
     override fun getJavaModuleResolver(): JavaModuleResolver = NoJavaModulesResolver
 
     override fun getKotlinClassFinder(classpath: JvmClasspath): KotlinClassFinder =
-        CliVirtualFileFinder(index, classpath, enableSearchInCtSym = false, perfManager = null)
+        JvmIndexKotlinClassFinder(index, classpath, enableSearchInCtSym = false, perfManager = null)
 
     override fun getPackagePartProvider(classpath: JvmClasspath): PackagePartProvider =
         getPackagePartProviderFn(classpath)

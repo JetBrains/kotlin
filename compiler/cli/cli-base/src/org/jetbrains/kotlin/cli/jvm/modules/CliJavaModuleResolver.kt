@@ -21,7 +21,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
+import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -39,7 +39,7 @@ class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
     private val systemModules: List<JavaModule.Explicit>,
-    private val classpathFinder: CliVirtualFileFinder,
+    private val classpathFinder: JvmIndexKotlinClassFinder,
 ) : JavaModuleResolver {
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
