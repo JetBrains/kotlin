@@ -8,8 +8,13 @@ package kotlin.metadata.test
 import kotlin.metadata.KmClass
 import kotlin.metadata.jvm.JvmMetadataVersion
 import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.KotlinModuleMetadata
 import kotlin.metadata.jvm.Metadata
+import kotlin.metadata.jvm.UnstableMetadataApi
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion as CompilerMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.junit.jupiter.api.Test
 import kotlin.test.*
@@ -24,6 +29,24 @@ class MetadataExceptionsTest {
             (KotlinClassMetadata.readStrict(malformedMetadata) as KotlinClassMetadata.Class)
         }
         assertIs<InvalidProtocolBufferException>(e.cause)
+    }
+
+    @OptIn(UnstableMetadataApi::class)
+    @Test
+    fun testReadModuleWithCyclicQualifiedName() {
+        val name = ProtoBuf.QualifiedNameTable.QualifiedName.newBuilder()
+            .setShortName(0)
+            .setKind(ProtoBuf.QualifiedNameTable.QualifiedName.Kind.CLASS)
+            .setParentQualifiedName(0)
+            .build()
+        val module = JvmModuleProtoBuf.Module.newBuilder()
+            .setStringTable(ProtoBuf.StringTable.newBuilder().addString("C").build())
+            .setQualifiedNameTable(ProtoBuf.QualifiedNameTable.newBuilder().addQualifiedName(name).build())
+            .addAnnotation(ProtoBuf.Annotation.newBuilder().setId(0))
+            .build()
+            .serializeToByteArray(CompilerMetadataVersion.INSTANCE, 0)
+
+        assertFailsWith<IllegalArgumentException> { KotlinModuleMetadata.readStrict(module) }
     }
 
     @Test
