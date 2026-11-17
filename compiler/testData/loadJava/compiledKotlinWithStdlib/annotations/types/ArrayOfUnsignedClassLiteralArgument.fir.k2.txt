@@ -7,7 +7,7 @@
 }
 
 public final class Usage : R|kotlin/Any| {
-    public final fun arraysOfUnsignedArrays(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/Array<kotlin/UInt>>|)))  kotlin/String|, b: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/Array<kotlin/Array<kotlin/UInt>>>|)))  kotlin/String|): R|kotlin/Unit|
+    public final fun arraysOfUnsignedArrays(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/UIntArray>|)))  kotlin/String|, b: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/Array<kotlin/UIntArray>>|)))  kotlin/String|): R|kotlin/Unit|
 
     public final fun arrayOfUnsigned(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/UInt>|)))  kotlin/String|): R|kotlin/Unit|
 
