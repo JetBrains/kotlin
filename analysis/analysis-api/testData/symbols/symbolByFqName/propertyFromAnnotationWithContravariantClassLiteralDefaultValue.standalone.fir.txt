@@ -102,7 +102,7 @@ KaKotlinPropertySymbol:
   hasBackingField: false
   hasGetter: true
   hasSetter: false
-  initializer: KaConstantValueForAnnotation(kotlin.Array<kotlin.Any>::class)
+  initializer: KaConstantValueForAnnotation(kotlin.Any::class)
   isActual: false
   isCompanion: false
   isConst: false

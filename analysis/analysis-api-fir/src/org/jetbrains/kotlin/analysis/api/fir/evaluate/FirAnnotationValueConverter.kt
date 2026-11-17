@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.annotations.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -177,7 +178,7 @@ internal object FirAnnotationValueConverter {
             }
 
             is FirGetClassCall -> {
-                val coneType = getTargetType()?.fullyExpandedType(session)?.lowerBoundIfFlexible()
+                val coneType = classLiteralTargetType(session)?.fullyExpandedType(session)?.lowerBoundIfFlexible()
 
                 if (coneType is ConeClassLikeType && coneType !is ConeErrorType) {
                     val classId = coneType.lookupTag.classId
@@ -194,6 +195,25 @@ internal object FirAnnotationValueConverter {
             else -> null
         } ?: FirCompileTimeConstantEvaluator.evaluate(this, builder.rootSession)
             ?.convertConstantExpression(builder.analysisSession)
+    }
+
+    /**
+     * The type of the class referenced by the class literal.
+     *
+     * A deserialized class literal is described by its class reference. The type of the call can't be used instead, as a deserialized
+     * property initializer gets the declared type of its property: `String::class` in `val value: KClass<*> = String::class` is typed
+     * as `KClass<*>`.
+     *
+     * Binaries store a class literal as a class and a number of array dimensions, so the type arguments of a generic class are lost, and
+     * its class reference has none. They are restored as star projections, which is what `Box::class` has in the source code. A reference
+     * that already has type arguments, such as an array type or a type from a Java annotation, is used as is.
+     */
+    private fun FirGetClassCall.classLiteralTargetType(session: FirSession): ConeKotlinType? {
+        val referencedType = (argument as? FirClassReferenceExpression)?.classTypeRef?.coneTypeOrNull ?: return getTargetType()
+        if (referencedType !is ConeClassLikeType || referencedType.typeArguments.isNotEmpty()) return referencedType
+
+        val classSymbol = referencedType.toRegularClassSymbol(session) ?: return referencedType
+        return if (classSymbol.typeParameterSymbols.isEmpty()) referencedType else classSymbol.constructStarProjectedType()
     }
 
     private fun createNestedAnnotation(

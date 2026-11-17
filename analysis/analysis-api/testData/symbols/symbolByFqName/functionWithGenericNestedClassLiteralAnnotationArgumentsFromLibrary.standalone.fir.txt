@@ -1,7 +1,7 @@
 KaNamedFunctionSymbol:
   anchorPsi: null
   annotations: [
-    one/Anno(values = [one.Outer::class, one.Outer.Inner::class, one.Outer.InnerWithoutParameters::class, one.Outer.Nested::class])
+    one/Anno(values = [one.Outer<*>::class, one.Outer.Inner<*>::class, one.Outer.InnerWithoutParameters::class, one.Outer.Nested<*>::class])
       psi: null
   ]
   callableId: one/foo

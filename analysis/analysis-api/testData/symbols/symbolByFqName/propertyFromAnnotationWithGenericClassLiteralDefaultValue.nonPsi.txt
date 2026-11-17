@@ -86,7 +86,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KaConstantValueForAnnotation(one.Box::class)
+  initializer: KaConstantValueForAnnotation(one.Box<*>::class)
   isActual: false
   isCompanion: false
   isConst: false

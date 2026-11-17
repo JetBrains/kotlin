@@ -1,2 +1,2 @@
-@one.Anno(value = kotlin.Array::class)
+@one.Anno(value = kotlin.Array<*>::class)
 fun foo()
