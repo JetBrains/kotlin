@@ -7,11 +7,9 @@
 package org.jetbrains.kotlin.cli.pipeline.metadata
 
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
@@ -23,14 +21,12 @@ import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
@@ -43,7 +39,6 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val (configuration, rootDisposable) = input
         val diagnosticsReporter = configuration.diagnosticsCollector
         val rootModuleName = Name.special("<${configuration.moduleName!!}>")
-        val parserMode = configuration.parserMode
 
         val libraryList = DependencyListForCliModule.build(rootModuleName) {
             val refinedPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS)?.map { File(it) }.orEmpty()
@@ -75,16 +70,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             prepareIncrementalCompilationContextAndLibrariesClasspath(configuration, projectEnvironment)
 
         val groupedSources = collectSources(configuration, projectEnvironment)
-
-        val sourceFiles = when {
-            parserMode.treeBased -> groupedSources.let { it.commonSources + it.platformSources }.toList()
-            else -> projectEnvironment.computeKtSources(configuration).also { ktFiles ->
-                perfManager?.addSourcesStats(ktFiles.size, ktFiles.countLinesOfCode())
-                for (ktFile in ktFiles) {
-                    SyntaxErrorReporter.reportSyntaxErrors(ktFile, diagnosticsReporter)
-                }
-            }.map { KtPsiSourceFile(it) }
-        }
+        val sourceFiles = groupedSources.commonSources + groupedSources.platformSources
 
         val sessionsWithSources = prepareMetadataSessions(
             sourceFiles,
@@ -95,26 +81,12 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             librariesClasspath,
             libraryList,
             resolvedLibraries = klibs,
-            isCommonSource = groupedSources.isCommonSourceForLt,
-            fileBelongsToModule = groupedSources.fileBelongsToModuleForLt,
+            isCommonSource = groupedSources::isCommonSource,
+            fileBelongsToModule = groupedSources::fileBelongsToModule,
             incrementalCompilationContext,
         )
 
-        val outputs = sessionsWithSources.map { (session, files) ->
-            val firFiles = when {
-                parserMode.treeBased -> {
-                    session.buildFirViaLightTree(
-                        files, diagnosticsReporter, useMultiplatformParsing = parserMode == KmpTree
-                    ) { files, lines ->
-                        perfManager?.addSourcesStats(files, lines)
-                    }
-                }
-                else -> {
-                    session.buildFirFromKtFiles(files.map { (it as KtPsiSourceFile).psiFile as KtFile })
-                }
-            }
-            resolveAndCheckFir(session, firFiles, diagnosticsReporter)
-        }
+        val outputs = sessionsWithSources.map { (session, files) -> buildResolveAndCheckFir(session, files, configuration) }
 
         outputs.runPlatformCheckers(diagnosticsReporter)
 

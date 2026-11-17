@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.computeKtSources
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
@@ -26,11 +23,8 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.incrementalDataProvider
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -39,8 +33,6 @@ import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 
@@ -60,71 +52,33 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             it.notifyPhaseStarted(PhaseType.Analysis)
         }
         val diagnosticsCollector = configuration.diagnosticsCollector
-        val libraries = configuration.libraries
-        val friendLibraries = configuration.friendLibraries
-
-        val isWasm = configuration.wasmCompilation
 
         val klibs = loadWebKlibs(configuration, configuration.platformChecker)
 
         val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
-        val vfsBasedProjectEnvironment = environmentForJS.toVfsBasedProjectEnvironment()
+        val groupedSources = collectSources(configuration, environmentForJS.toVfsBasedProjectEnvironment())
 
-        val analyzedOutput = if (configuration.parserMode.treeBased) {
-            val groupedSources = collectSources(configuration, vfsBasedProjectEnvironment)
-
-            if (
-                groupedSources.isEmpty() &&
-                !configuration.allowNoSourceFiles &&
-                !configuration.jsIncrementalCompilationEnabled
-            ) {
-                if (!configuration.printVersion) {
-                    configuration.report(COMPILER_ARGUMENTS_ERROR, "No source files")
-                }
-                return null
+        if (
+            groupedSources.isEmpty() &&
+            !configuration.allowNoSourceFiles &&
+            !configuration.jsIncrementalCompilationEnabled
+        ) {
+            if (!configuration.printVersion) {
+                configuration.report(COMPILER_ARGUMENTS_ERROR, "No source files")
             }
-
-            compileModulesToAnalyzedFirWithLightTree(
-                configuration = configuration,
-                resolvedLibraries = klibs.all,
-                // TODO: Only pass groupedSources, because
-                //  we will need to have them separated again
-                //  in createSessionsForLegacyMppProject anyway
-                groupedSources = groupedSources,
-                ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
-                libraries = libraries,
-                friendLibraries = friendLibraries,
-                diagnosticsReporter = configuration.diagnosticsCollector,
-                performanceManager = configuration.perfManager,
-                incrementalDataProvider = configuration.incrementalDataProvider,
-                extensionStorage = extensionStorage,
-                useWasmPlatform = isWasm,
-            )
-        } else {
-            val sourceFiles = vfsBasedProjectEnvironment.computeKtSources(configuration)
-            if (
-                sourceFiles.isEmpty() &&
-                !configuration.allowNoSourceFiles &&
-                !configuration.jsIncrementalCompilationEnabled
-            ) {
-                if (!configuration.printVersion) {
-                    configuration.report(COMPILER_ARGUMENTS_ERROR, "No source files")
-                }
-                return null
-            }
-
-            compileModuleToAnalyzedFirWithPsi(
-                configuration = configuration,
-                resolvedLibraries = klibs.all,
-                ktFiles = sourceFiles,
-                libraries = libraries,
-                friendLibraries = friendLibraries,
-                diagnosticsReporter = configuration.diagnosticsCollector,
-                incrementalDataProvider = configuration.incrementalDataProvider,
-                extensionStorage = extensionStorage,
-                useWasmPlatform = isWasm,
-            )
+            return null
         }
+
+        val analyzedOutput = compileModulesToAnalyzedFir(
+            configuration = configuration,
+            resolvedLibraries = klibs.all,
+            groupedSources = groupedSources,
+            libraries = configuration.libraries,
+            friendLibraries = configuration.friendLibraries,
+            incrementalDataProvider = configuration.incrementalDataProvider,
+            extensionStorage = extensionStorage,
+            useWasmPlatform = configuration.wasmCompilation,
+        )
 
         return WebFrontendPipelineArtifact(
             analyzedOutput,
@@ -134,84 +88,16 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         )
     }
 
-    private fun compileModuleToAnalyzedFirWithPsi(
-        configuration: CompilerConfiguration,
-        resolvedLibraries: List<KotlinLibrary>,
-        ktFiles: List<KtFile>,
-        libraries: List<String>,
-        friendLibraries: List<String>,
-        diagnosticsReporter: BaseDiagnosticsCollector,
-        incrementalDataProvider: IncrementalDataProvider?,
-        extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
-        useWasmPlatform: Boolean,
-    ): AllModulesFrontendOutput {
-        for (ktFile in ktFiles) {
-            SyntaxErrorReporter.reportSyntaxErrors(ktFile, diagnosticsReporter)
-        }
-        val output = compileModuleToAnalyzedFir(
-            configuration,
-            resolvedLibraries,
-            ktFiles,
-            libraries,
-            friendLibraries,
-            incrementalDataProvider,
-            extensionStorage,
-            isCommonSource = isCommonSourceForPsi,
-            fileBelongsToModule = fileBelongsToModuleForPsi,
-            buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
-            },
-            useWasmPlatform = useWasmPlatform,
-        )
-        output.runPlatformCheckers(diagnosticsReporter)
-        return AllModulesFrontendOutput(output)
-    }
-
-    private fun compileModulesToAnalyzedFirWithLightTree(
+    private fun compileModulesToAnalyzedFir(
         configuration: CompilerConfiguration,
         resolvedLibraries: List<KotlinLibrary>,
         groupedSources: GroupedKtSources,
-        ktSourceFiles: List<KtSourceFile>,
         libraries: List<String>,
         friendLibraries: List<String>,
-        diagnosticsReporter: BaseDiagnosticsCollector,
-        performanceManager: PerformanceManager?,
         incrementalDataProvider: IncrementalDataProvider?,
         extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
         useWasmPlatform: Boolean,
     ): AllModulesFrontendOutput {
-        val output = compileModuleToAnalyzedFir(
-            configuration,
-            resolvedLibraries,
-            ktSourceFiles,
-            libraries,
-            friendLibraries,
-            incrementalDataProvider,
-            extensionStorage,
-            isCommonSource = { groupedSources.isCommonSourceForLt(it) },
-            fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
-            buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, performanceManager?.let { it::addSourcesStats })
-            },
-            useWasmPlatform = useWasmPlatform,
-        )
-        output.runPlatformCheckers(diagnosticsReporter)
-        return AllModulesFrontendOutput(output)
-    }
-
-    private inline fun <F> compileModuleToAnalyzedFir(
-        configuration: CompilerConfiguration,
-        resolvedLibraries: List<KotlinLibrary>,
-        files: List<F>,
-        libraries: List<String>,
-        friendLibraries: List<String>,
-        incrementalDataProvider: IncrementalDataProvider?,
-        extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
-        noinline isCommonSource: (F) -> Boolean,
-        noinline fileBelongsToModule: (F, String) -> Boolean,
-        buildResolveAndCheckFir: (FirSession, List<F>) -> SingleModuleFrontendOutput,
-        useWasmPlatform: Boolean,
-    ): List<SingleModuleFrontendOutput> {
         // FIR
         @Suppress("UNCHECKED_CAST")
         val extensionRegistrars = extensionStorage[FirExtensionRegistrarAdapter] as List<FirExtensionRegistrar>
@@ -224,28 +110,27 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             // TODO: !!! dependencies module data?
         }
 
+        val sourceFiles = groupedSources.commonSources + groupedSources.platformSources
         val sessionsWithSources = if (useWasmPlatform) {
             prepareWasmSessions(
-                files, configuration, escapedMainModuleName,
+                sourceFiles, configuration, escapedMainModuleName,
                 resolvedLibraries, dependencyList, extensionRegistrars,
-                isCommonSource = isCommonSource,
-                fileBelongsToModule = fileBelongsToModule,
+                isCommonSource = groupedSources::isCommonSource,
+                fileBelongsToModule = groupedSources::fileBelongsToModule,
                 incrementalDataProvider = incrementalDataProvider
             )
         } else {
             prepareJsSessions(
-                files, configuration, escapedMainModuleName,
+                sourceFiles, configuration, escapedMainModuleName,
                 resolvedLibraries, dependencyList, extensionRegistrars,
-                isCommonSource = isCommonSource,
-                fileBelongsToModule = fileBelongsToModule,
+                isCommonSource = groupedSources::isCommonSource,
+                fileBelongsToModule = groupedSources::fileBelongsToModule,
                 incrementalDataProvider = incrementalDataProvider
             )
         }
 
-        val outputs = sessionsWithSources.map {
-            buildResolveAndCheckFir(it.session, it.files)
-        }
-
-        return outputs
+        val outputs = sessionsWithSources.map { (session, files) -> buildResolveAndCheckFir(session, files, configuration) }
+        outputs.runPlatformCheckers(configuration.diagnosticsCollector)
+        return AllModulesFrontendOutput(outputs)
     }
 }

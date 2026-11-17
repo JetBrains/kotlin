@@ -6,16 +6,11 @@
 package org.jetbrains.kotlin.native.pipeline
 
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.parserMode
-import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -48,19 +43,16 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         )
     }
 
-    private inline fun <F> NativeFirstStagePhaseContext.firFrontend(
+    private fun NativeFirstStagePhaseContext.firFrontend(
+        environment: VfsBasedProjectEnvironment,
         configuration: CompilerConfiguration,
-        files: List<F>,
-        checkSyntaxErrors: (F) -> Unit,
-        noinline isCommonSource: (F) -> Boolean,
-        noinline fileBelongsToModule: (F, String) -> Boolean,
-        buildResolveAndCheckFir: (FirSession, List<F>, BaseDiagnosticsCollector) -> SingleModuleFrontendOutput,
     ): AllModulesFrontendOutput {
+        val groupedSources = collectSources(configuration, environment)
+        val sourceFiles = groupedSources.commonSources + groupedSources.platformSources
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
 
         // FIR
         val mainModuleName = Name.special("<${config.moduleId}>")
-        files.forEach { checkSyntaxErrors(it) }
         val dependencyList = DependencyListForCliModule.build {
             val [interopLibs, regularLibs] = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
             defaultDependenciesSet(mainModuleName) {
@@ -80,19 +72,19 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         }
 
         val sessionsWithSources = prepareNativeSessions(
-            files,
+            sourceFiles,
             configuration,
             mainModuleName,
             config.loadedKlibs.all,
             dependencyList,
             extensionRegistrars,
             metadataCompilationMode = config.metadataKlib,
-            isCommonSource = isCommonSource,
-            fileBelongsToModule = fileBelongsToModule,
+            isCommonSource = groupedSources::isCommonSource,
+            fileBelongsToModule = groupedSources::fileBelongsToModule,
         )
 
         val outputs = sessionsWithSources.map { (val session, val sources = files) ->
-            buildResolveAndCheckFir(session, sources, configuration.diagnosticsCollector).also {
+            buildResolveAndCheckFir(session, sources, configuration).also {
                 if (config.configuration.konanPrintFiles) {
                     it.fir.forEach { file -> println(file.render()) }
                 }
@@ -100,67 +92,6 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         }
 
         outputs.runPlatformCheckers(configuration.diagnosticsCollector)
-        return AllModulesFrontendOutput(outputs)
-    }
-
-    private fun NativeFirstStagePhaseContext.firFrontendWithPsi(
-        environment: VfsBasedProjectEnvironment,
-        configuration: CompilerConfiguration,
-    ): AllModulesFrontendOutput {
-        val perfManager = configuration.perfManager
-        val ktFiles = environment.computeKtSources(configuration)
-        perfManager?.addSourcesStats(ktFiles.size, ktFiles.countLinesOfCode())
-        return firFrontend(
-            configuration,
-            ktFiles,
-            checkSyntaxErrors = {
-                SyntaxErrorReporter.reportSyntaxErrors(it, configuration.diagnosticsCollector).isHasErrors
-            },
-            isCommonSource = isCommonSourceForPsi,
-            fileBelongsToModule = fileBelongsToModuleForPsi,
-            buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
-            },
-        )
-    }
-
-    private fun NativeFirstStagePhaseContext.firFrontendWithLightTree(
-        environment: VfsBasedProjectEnvironment,
-        configuration: CompilerConfiguration,
-    ): AllModulesFrontendOutput {
-        // FIR
-
-        val groupedSources = collectSources(configuration, environment)
-
-        val ktSourceFiles = mutableListOf<KtSourceFile>().apply {
-            addAll(groupedSources.commonSources)
-            addAll(groupedSources.platformSources)
-        }
-
-        return firFrontend(
-            configuration,
-            ktSourceFiles,
-            checkSyntaxErrors = {},
-            isCommonSource = { groupedSources.isCommonSourceForLt(it) },
-            fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
-            buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter) { files, lines ->
-                    configuration.perfManager?.addSourcesStats(files, lines)
-                }
-            },
-        )
-    }
-
-    private fun NativeFirstStagePhaseContext.firFrontend(
-        environment: VfsBasedProjectEnvironment,
-        configuration: CompilerConfiguration
-    ): AllModulesFrontendOutput {
-        var output = if (configuration.parserMode.treeBased) {
-            firFrontendWithLightTree(environment, configuration)
-        } else {
-            firFrontendWithPsi(environment, configuration)
-        }
-        output = FrontendFilesForPluginsGenerationPipelinePhase.createFilesWithGeneratedDeclarations(output)
-        return output
+        return FrontendFilesForPluginsGenerationPipelinePhase.createFilesWithGeneratedDeclarations(AllModulesFrontendOutput(outputs))
     }
 }
