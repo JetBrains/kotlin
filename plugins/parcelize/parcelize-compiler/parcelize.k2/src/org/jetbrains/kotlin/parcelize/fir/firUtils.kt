@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -48,6 +51,17 @@ inline fun checkParcelizeClassSymbols(
             ?.takeIf { it.rawStatus.modality == Modality.SEALED }
             ?: return@any false
         predicate(superTypeSymbol)
+    }
+}
+
+/**
+ * Returns `true` if the companion object of this class implements `Parceler`, either from the current or from the deprecated runtime
+ * package. Such classes provide their own serialization logic.
+ */
+fun FirRegularClassSymbol.hasCustomParceler(session: FirSession): Boolean {
+    val companion = resolvedCompanionObjectSymbol ?: return false
+    return lookupSuperTypes(companion, lookupInterfaces = true, deep = true, useSiteSession = session).any {
+        it.classId in PARCELER_CLASS_IDS
     }
 }
 
