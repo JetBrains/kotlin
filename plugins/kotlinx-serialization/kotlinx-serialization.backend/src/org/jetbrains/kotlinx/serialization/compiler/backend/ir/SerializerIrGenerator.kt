@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -644,7 +643,7 @@ open class SerializerIrGenerator(
             }
             val generator = when {
                 serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(irClass, context)
-                serializableDesc.isSerializedAsInlineClass(isJvm = context.platform.isJvm()) ->
+                serializableDesc.isSerializedAsInlineClass() ->
                     SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context)
             }

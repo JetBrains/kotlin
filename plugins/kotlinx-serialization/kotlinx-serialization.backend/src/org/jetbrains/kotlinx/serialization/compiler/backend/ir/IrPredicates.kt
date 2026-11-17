@@ -304,11 +304,10 @@ fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
 }
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(isJvm: Boolean, functionPresenceChecker: () -> IrSimpleFunction?) =
+internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> IrSimpleFunction?) =
     !isInlineClass() && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
 
-// Off JVM, a single-field full value class without a superclass is unboxed like an inline class. It is still serialized like a regular
-// class, through its primary constructor, when it has a supertype, as a polymorphic serializer can't encode an inline class.
+// Only inline classes are serialized as inline classes. A full value class is serialized like a regular class, through its primary constructor.
 @OptIn(ValueClassBackendAgnosticApi::class)
-internal fun IrClass.isSerializedAsInlineClass(isJvm: Boolean): Boolean =
+internal fun IrClass.isSerializedAsInlineClass(): Boolean =
     isInlineClass()
