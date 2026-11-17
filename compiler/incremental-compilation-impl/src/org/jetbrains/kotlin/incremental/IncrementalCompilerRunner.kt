@@ -81,7 +81,7 @@ abstract class IncrementalCompilerRunner<
      */
     protected val icFeatures: IncrementalCompilationFeatures,
 
-    private val compilationCanceledStatus: CompilationCanceledStatus? = null,
+    protected val compilationCanceledStatus: CompilationCanceledStatus? = null,
     private val pluginsLoader: PluginsLoader?,
 ) {
 

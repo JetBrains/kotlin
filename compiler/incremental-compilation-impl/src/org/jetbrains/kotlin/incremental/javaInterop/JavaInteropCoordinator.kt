@@ -134,7 +134,7 @@ internal class PsiFilesHolder(private val compilerConfiguration: CompilerConfigu
     @OptIn(CoreEnvironmentDeprecation::class)
     private val psiFileFactory: PsiFileFactory by lazy {
         val rootDisposable =
-            Disposer.newDisposable("Disposable for PSI file factory of ${IncrementalJvmCompilerRunnerBase::class.simpleName}")
+            Disposer.newDisposable("Disposable for PSI file factory of ${IncrementalFirJvmCompilerRunner::class.simpleName}")
                 .also { this.rootDisposableForPsiFileFactory = it }
         val configuration = compilerConfiguration
         val environment =

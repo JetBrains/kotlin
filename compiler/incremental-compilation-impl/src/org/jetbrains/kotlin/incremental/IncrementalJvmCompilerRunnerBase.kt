@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -18,28 +20,33 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.build.report.reportMarkDirty
-import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.FILE_IDS_TO_PATHS_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.LOOKUPS_FILENAME
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.SUBTYPES_FILENAME
 import org.jetbrains.kotlin.buildtools.internal.cri.CriDataSerializerImpl
-import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
+import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.cli.pipeline.jvm.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.getModuleNameForSource
+import org.jetbrains.kotlin.config.isFromCommonModule
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasFqNames
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.shrinkAndSaveClasspathSnapshot
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
-import org.jetbrains.kotlin.incremental.components.ICJvmCommonMetadataTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.SubtypeTracker
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.incremental.dirtyFiles.JvmSourcesToCompileCalculator
 import org.jetbrains.kotlin.incremental.javaInterop.JavaInteropCoordinator
 import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
@@ -50,7 +57,10 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
@@ -61,7 +71,7 @@ import java.io.File
  * but it doesn't make sense to copy all this shared code into them
  * (and it's hard to break away from inheritance-based architecture)
  */
-abstract class IncrementalJvmCompilerRunnerBase(
+open class IncrementalFirJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     outputDirs: Collection<File>?,
@@ -96,6 +106,14 @@ abstract class IncrementalJvmCompilerRunnerBase(
 
     private val lazyClasspathSnapshot = LazyClasspathSnapshot(classpathChanges, ClasspathSnapshotBuildReporter(reporter))
     private val subtypeTracker = if (compilerRefIndexDirectory != null) SubtypeTrackerImpl() else null
+
+    private val configurationPhase = JvmConfigurationPipelinePhase
+    private val frontendPhases = JvmFrontendPipelinePhase then
+            FrontendFilesForPluginsGenerationPipelinePhase() then
+            JvmFir2IrPipelinePhase
+    private val backendPhases = JvmLoweringsPipelinePhase then
+            JvmCodegenPipelinePhase then
+            JvmWriteOutputsPhase
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
         IncrementalJvmCachesManager(
@@ -263,16 +281,102 @@ abstract class IncrementalJvmCompilerRunnerBase(
         services: Services,
         messageCollector: MessageCollector,
         allSources: List<File>,
-        isIncremental: Boolean,
+        isIncremental: Boolean
     ): Pair<ExitCode, Collection<File>> {
-        val compiler = K2JVMCompiler()
-        val freeArgsBackup = args.freeArgs.toList()
-        args.freeArgs += sourcesToCompile.map { it.absolutePath }
-        args.allowNoSourceFiles = true
-        val exitCode = compiler.exec(messageCollector, services, args)
-        args.freeArgs = freeArgsBackup
-        reporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
-        return exitCode to sourcesToCompile
+        messageCollector.report(
+            CompilerMessageSeverity.WARNING,
+            "The FIR runner is deprecated and will be removed in Kotlin 2.5.0."
+        )
+        ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(compilationCanceledStatus)
+        val rootDisposable = Disposer.newDisposable("Disposable for ${IncrementalFirJvmCompilerRunner::class.simpleName}.runCompiler")
+        val collector = GroupingMessageCollector(
+            messageCollector,
+            args.allWarningsAsErrors,
+            args.reportAllWarnings
+        )
+        val performanceManager = createPerformanceManagerFor(JvmPlatforms.defaultJvmPlatform)
+        if (args.reportPerf || args.dumpPerf != null) {
+            performanceManager.enableExtendedStats()
+        }
+
+        val confPhaseArgs = ArgumentsPipelineArtifact(
+            args,
+            services,
+            rootDisposable,
+            collector,
+            performanceManager
+        )
+        val baseCompilationConfiguration = configurationPhase.executePhase(confPhaseArgs)
+        val baseContentRootsWithoutKotlin = baseCompilationConfiguration.configuration[CLIConfigurationKeys.CONTENT_ROOTS]
+            ?.filterNot { it is KotlinSourceRoot }
+            ?: emptyList()
+
+        @OptIn(PipelineArtifact.CliPipelineInternals::class)
+        val incrementalCompilationConfiguration = baseCompilationConfiguration.withCompilerConfiguration(
+            baseCompilationConfiguration.configuration.copy().apply {
+                // JVMConfigurationKeys.MODULES and JVMConfigurationKeys.MODULE_CHUNK seem to be unrelevant
+                // and generally not used in the new pipeline
+                val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
+                val kotlinContentRoots = sourcesToCompile.map {
+                    val kotlinSourceFilePath = it.path
+                    KotlinSourceRoot(
+                        path = kotlinSourceFilePath,
+                        isCommon = hmppCliModuleStructure?.isFromCommonModule(kotlinSourceFilePath) ?: false,
+                        hmppModuleName = hmppCliModuleStructure?.getModuleNameForSource(kotlinSourceFilePath)
+                    )
+                }
+                put(CLIConfigurationKeys.CONTENT_ROOTS, baseContentRootsWithoutKotlin + kotlinContentRoots)
+                // We want to regenerate .kotlin_module if file was deleted
+                put(CLIConfigurationKeys.ALLOW_NO_SOURCE_FILES, true)
+            }
+        )
+
+        try {
+            val phasedConfig = PhaseConfig()
+            val context = PipelineContext(
+                performanceManager,
+                kaptMode = isKaptMode(args)
+            )
+            val compilationOutput = frontendPhases.invokeToplevel(
+                phasedConfig,
+                context,
+                incrementalCompilationConfiguration
+            )
+
+            if (compilationOutput.configuration.diagnosticsCollector.hasErrors) {
+                compilationOutput.configuration.diagnosticsCollector.reportToMessageCollector(
+                    messageCollector,
+                    renderDiagnosticName = compilationOutput.configuration.renderDiagnosticInternalName
+                )
+                return ExitCode.COMPILATION_ERROR to sourcesToCompile
+            }
+
+            val backendOutput = backendPhases.invokeToplevel(phasedConfig, context, compilationOutput)
+            backendOutput.configuration.diagnosticsCollector.reportToMessageCollector(
+                messageCollector,
+                renderDiagnosticName = backendOutput.configuration.renderDiagnosticInternalName
+            )
+        } catch (_: PipelineStepException) {
+            if (CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrors(incrementalCompilationConfiguration.configuration)) {
+                CheckCompilationErrors.CheckDiagnosticCollector.reportToMessageCollector(incrementalCompilationConfiguration.configuration)
+            }
+            return ExitCode.COMPILATION_ERROR to sourcesToCompile
+        } catch (_: CompilationCanceledException) {
+            collector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", null)
+            return ExitCode.OK to sourcesToCompile
+        } catch (e: RuntimeException) {
+            val cause = e.cause
+            if (cause is CompilationCanceledException) {
+                collector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", null)
+                return ExitCode.OK to sourcesToCompile
+            } else {
+                throw e
+            }
+        } finally {
+            collector.flush()
+            Disposer.dispose(rootDisposable)
+        }
+        return ExitCode.OK to sourcesToCompile
     }
 
     override fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: IncrementalJvmCachesManager) {
@@ -326,4 +430,9 @@ abstract class IncrementalJvmCompilerRunnerBase(
         reporter.info { "Compiler Reference Index data saved to ${lookupsFile.path}, ${fileIdsToPathsFile.path}, ${subtypesFile.path}" }
         reporter.debug { "Lookups stored: ${lookupTracker.lookups.size()}, subtypes stored: ${subtypes.size}" }
     }
+}
+
+// copied from JvmCliPipeline, potentially should be unified within one place to get the flag
+private fun isKaptMode(arguments: K2JVMCompilerArguments): Boolean {
+    return arguments.pluginOptions.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") }
 }
