@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNative
 
-object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterface = true) {
+object FirJsExternalChecker : FirWebCommonExternalChecker() {
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
         return symbol.isNativeObject(session)
     }

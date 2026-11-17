@@ -11,7 +11,6 @@ export default { x, f };
 
 // FILE: externalInterfaceCompanionJsModule.kt
 @JsModule("./externalInterfaceCompanionJsModule.mjs")
-@Suppress("COMPANION_OBJECT_IN_EXTERNAL_INTERFACE")
 external interface ModuleStatics : JsAny {
     companion object {
         val x: String

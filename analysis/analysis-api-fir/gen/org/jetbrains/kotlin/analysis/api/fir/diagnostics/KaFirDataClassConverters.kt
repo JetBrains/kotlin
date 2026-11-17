@@ -8547,12 +8547,6 @@ private fun KaDiagnosticConverterBuilder.addConversions182() {
             token,
         )
     }
-    add(FirWebCommonErrors.COMPANION_OBJECT_IN_EXTERNAL_INTERFACE) { firDiagnostic ->
-        CompanionObjectInExternalInterfaceImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions183() {

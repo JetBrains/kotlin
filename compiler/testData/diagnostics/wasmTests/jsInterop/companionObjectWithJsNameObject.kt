@@ -1,8 +1,7 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// ISSUE: KT-87862
-// RENDER_DIAGNOSTICS_FULL_TEXT
+// RUN_PIPELINE_TILL: CODEGEN
+// ISSUE: KT-76462
 
 @JsName("Object")
 external interface JsNameObjectInterface {
-    companion <!COMPANION_OBJECT_IN_EXTERNAL_INTERFACE!>object<!>
+    companion object
 }

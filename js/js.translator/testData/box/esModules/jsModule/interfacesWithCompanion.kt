@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM_JS
-// ^^^ KT-76462: COMPANION_OBJECT_IN_EXTERNAL_INTERFACE
 // ES_MODULES
 // FILE: bar.kt
 @file:JsModule("./interfacesWithCompanion.mjs")
