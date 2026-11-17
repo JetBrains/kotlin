@@ -20,9 +20,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.fir.FirLanguageSettingsComponent
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -183,12 +186,14 @@ internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession)
 
 @KaImplementationDetail
 @Deprecated(
-    "This is a dirty hack used only for one usage (building fir for psi from stubs) and it should be removed after fix of that usage",
+    "This is a dirty hack used only for one usage (building fir for psi from stubs) and it should be removed after fix of that usage, see KT-92074",
     level = DeprecationLevel.ERROR
 )
-@OptIn(PrivateSessionConstructor::class)
-fun createEmptySession(): FirSession {
+@OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
+fun createEmptySession(languageVersionSettings: LanguageVersionSettings): FirSession {
     return object : FirSession(Kind.Source) {}.apply {
+        register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings, isMetadataCompilation = false))
+
         val moduleData = FirSourceModuleData(
             Name.identifier("<stub module>"),
             dependencies = emptyList(),
