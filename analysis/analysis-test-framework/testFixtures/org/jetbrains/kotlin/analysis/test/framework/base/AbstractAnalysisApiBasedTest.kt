@@ -305,6 +305,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
          * so the environment is already initialized (see [AnalysisApiEnvironmentManager][org.jetbrains.kotlin.analysis.test.framework.services.AnalysisApiEnvironmentManager]).
          */
         override fun preprocessModuleStructure(moduleStructure: TestModuleStructure) {
+            @Suppress("UnstableApiUsage")
             val application = testServices.environmentManager.getApplication() as MockApplication
             val project = testServices.environmentManager.getProject() as MockProject
 
