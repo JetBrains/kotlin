@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_IDS
 import kotlin.contracts.ExperimentalContracts
@@ -31,10 +33,19 @@ fun FirClassSymbol<*>?.isParcelize(session: FirSession): Boolean {
     }
 
     if (this == null) return false
-    val parcelizeAnnotations = session.parcelizeService.parcelizeAnnotations
-    return checkParcelizeClassSymbols(this, session) { symbol ->
-        symbol.resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in parcelizeAnnotations }
-    }
+    return checkParcelizeClassSymbols(this, session) { it.hasParcelizeAnnotation(session) }
+}
+
+/**
+ * Returns `true` if this class itself is annotated with one of the `Parcelize` annotations.
+ * Unlike [isParcelize], sealed supertypes are not taken into account.
+ */
+fun FirClassSymbol<*>.hasParcelizeAnnotation(session: FirSession): Boolean {
+    return hasAnyAnnotation(session.parcelizeService.parcelizeAnnotations, session)
+}
+
+fun FirBasedSymbol<*>.hasAnyAnnotation(classIds: Collection<ClassId>, session: FirSession): Boolean {
+    return resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in classIds }
 }
 
 /**
@@ -73,7 +84,7 @@ fun FirRegularClassSymbol.hasCustomParceler(session: FirSession): Boolean {
  * as this is reported by a dedicated checker.
  */
 fun FirClassLikeSymbol<*>.hasPolymorphicSealedAnnotation(session: FirSession): Boolean {
-    return resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in POLYMORPHIC_SEALED_CLASS_IDS }
+    return hasAnyAnnotation(POLYMORPHIC_SEALED_CLASS_IDS, session)
 }
 
 /**
