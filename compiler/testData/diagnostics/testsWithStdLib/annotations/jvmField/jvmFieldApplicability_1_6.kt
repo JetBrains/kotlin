@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED -INLINE_CLASS_DEPRECATED_ERROR
+// LANGUAGE: +RichErrors
 
 <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>
 fun foo() {
@@ -134,7 +134,9 @@ object O {
 <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
 private val private = 3
 
-inline class Foo(val x: Int)
+inline value class Foo(val x: Int)
+
+error object Err
 
 object IObject {
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
@@ -142,6 +144,9 @@ object IObject {
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     val u = 42u
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    val errorUnion: String | Err = "OK"
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     private val r: Result<Int> = TODO()

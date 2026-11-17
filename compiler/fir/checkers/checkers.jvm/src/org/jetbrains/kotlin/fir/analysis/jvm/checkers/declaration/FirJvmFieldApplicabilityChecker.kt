@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeUnionType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_ID
 
@@ -58,6 +60,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
             containingClassSymbol == null && isInsideJvmMultifileClassFile() ->
                 TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE
             declaration.returnTypeRef.isInlineClassThatRequiresMangling(session) -> RETURN_TYPE_IS_VALUE_CLASS
+            declaration.returnTypeRef.coneType is ConeUnionType -> RETURN_TYPE_IS_UNION
             containingClassSymbol?.classKind == ClassKind.ANNOTATION_CLASS -> ANNOTATION
             declaration.hasExplicitBackingField -> PROPERTY_WITH_EXPLICIT_FIELD
             else -> return
