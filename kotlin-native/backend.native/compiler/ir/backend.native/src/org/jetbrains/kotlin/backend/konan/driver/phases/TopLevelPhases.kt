@@ -107,19 +107,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                     llvmModuleName = "out", // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
                     fragment.performanceManager
             )
-            try {
-                val module = fragment.irModule
-                newEngine(generationState) { generationStateEngine ->
-                    if (context.config.produce.isCache) {
-                        generationStateEngine.runAndMeasurePhase(BuildAdditionalCacheInfoPhase, module)
-                        if (context.config.produce.isHeaderCache) return@newEngine
-                    }
-                }
-                return generationState
-            } catch (t: Throwable) {
-                generationState.dispose()
-                throw t
-            }
+            return generationState
         }
 
         fun List<Pair<BackendJobFragment, NativeGenerationState>>.runEngineForLowerings(block: PhaseEngine<NativeGenerationState>.(IrModuleFragment) -> Unit) =
@@ -153,6 +141,12 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
         fun List<BackendJobFragment>.runAllLowerings(): List<NativeGenerationState> {
             val generationStates = this.map { fragment -> createGenerationState(fragment) }
             val fragmentWithState = this.zip(generationStates)
+
+            if (context.config.produce.isCache) {
+                fragmentWithState.runEngineForLowerings { module ->
+                    runAndMeasurePhase(BuildAdditionalPreLoweringsCacheInfoPhase, module)
+                }
+            }
 
             if (context.config.produce == CompilerOutputKind.PROGRAM) {
                 // Cannot use `runSpecifiedLowering`, because we really need to run this lowering on a single module, not on the module
@@ -193,6 +187,12 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             fragmentWithState.runSpecifiedLowering(::IrValidationAfterInliningAllFunctionsKlibSecondStagePhase)
             fragmentWithState.runSpecifiedLowerings(context.config.getLoweringsAfterInlining())
             fragmentWithState.runSpecifiedLowering(::IrValidationAfterLoweringsSecondStagePhase)
+
+            if (context.config.produce.isCache) {
+                fragmentWithState.runEngineForLowerings { module ->
+                    runAndMeasurePhase(BuildAdditionalPostLoweringsCacheInfoPhase, module)
+                }
+            }
 
             fragmentWithState.finalizeLowerings()
 

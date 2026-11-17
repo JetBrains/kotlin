@@ -13,15 +13,16 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
-import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
+import org.jetbrains.kotlin.backend.konan.lower.PostLoweringsCacheInfoBuilder
+import org.jetbrains.kotlin.backend.konan.lower.PreLoweringsCacheInfoBuilder
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 
 /**
- * Builds additional cache info (inline functions bodies and fields of classes).
+ * Builds additional cache info on a pre-lowered state (e.g. inline functions bodies).
  */
-internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "BuildAdditionalCacheInfo",
+internal val BuildAdditionalPreLoweringsCacheInfoPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "BuildAdditionalPreLoweringsCacheInfo",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { context, module ->
@@ -32,12 +33,33 @@ internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nati
     val moduleDeserializer = parent.moduleDeserializerProvider.getDeserializerOrNull(klib)
     if (moduleDeserializer == null) {
         require(klib.isCInteropLibrary()) { "No module deserializer for module ${module.name} (${klib.path})" }
-        // C-interop libraries have no deserialized IR, so CacheInfoBuilder is not run for them. Still record
+        // C-interop libraries have no deserialized IR, so PreLoweringsCacheInfoBuilder is not run for them. Still record
         // the library fingerprint, so that the cache staleness check can detect a changed library (KT-87273).
         context.klibHash = SerializedKlibFingerprint(klib.path.toFile()).klibFingerprint
     } else {
-        CacheInfoBuilder(context, moduleDeserializer, module).build()
+        PreLoweringsCacheInfoBuilder(context, moduleDeserializer, module).build()
     }
+}
+
+/**
+ * Builds additional cache info on a post-lowered state (e.g. class layout).
+ */
+internal val BuildAdditionalPostLoweringsCacheInfoPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "BuildAdditionalPostLoweringsCacheInfo",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
+) { context, module ->
+    // TODO: Use explicit parameter
+    val parent = context.context
+
+    val klib = module.kotlinLibrary ?: error("No Kotlin library for module ${module.name}")
+    val moduleDeserializer = parent.moduleDeserializerProvider.getDeserializerOrNull(klib)
+    if (moduleDeserializer == null) {
+        require(klib.isCInteropLibrary()) { "No module deserializer for module ${module.name} (${klib.path})" }
+        return@createSimpleNamedCompilerPhase
+    }
+
+    PostLoweringsCacheInfoBuilder(context, moduleDeserializer, module).build()
 }
 
 /**
