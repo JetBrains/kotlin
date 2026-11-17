@@ -357,14 +357,6 @@ abstract class KotlinIrLinker(
         checkNoUnboundSymbols("at the end of IR linkage process")
     }
 
-    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
-        require(!inOrAfterLinkageStep) { "Call finalizeIrLinkage() instead of postProcess(..., inOrAfterLinkageStep = true)" }
-
-        // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
-        fakeOverrideBuilder.provideFakeOverrides(createTypeSystemContext(irBuiltIns))
-        triedToDeserializeDeclarationForSymbol.clear()
-    }
-
     private fun topLevelKindToSymbolKind(kind: IrDeserializer.TopLevelSymbolKind): BinarySymbolData.SymbolKind {
         return when (kind) {
             IrDeserializer.TopLevelSymbolKind.CLASS_SYMBOL -> BinarySymbolData.SymbolKind.CLASS_SYMBOL
