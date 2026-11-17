@@ -14,7 +14,6 @@ import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.CliBinaryClassFileIndex
-import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathRootFilter
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
@@ -153,17 +153,17 @@ abstract class JvmDependenciesIndexContractTestBase {
 abstract class AbstractJvmDependenciesIndexContractTest : JvmDependenciesIndexContractTestBase() {
     protected abstract fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex
 
-    private fun finder(index: JvmDependenciesIndex, classpath: JvmClasspath): CliVirtualFileFinder =
-        CliVirtualFileFinder(index, classpath, enableSearchInCtSym = false, perfManager = null)
+    private fun finder(index: JvmDependenciesIndex, classpath: JvmClasspath): JvmIndexKotlinClassFinder =
+        JvmIndexKotlinClassFinder(index, classpath, enableSearchInCtSym = false, perfManager = null)
 
-    private fun finder(index: JvmDependenciesIndex, classpath: List<JvmClasspathRootId>): CliVirtualFileFinder =
+    private fun finder(index: JvmDependenciesIndex, classpath: List<JvmClasspathRootId>): JvmIndexKotlinClassFinder =
         finder(index, JvmClasspath.Roots(classpath))
 
-    private fun finder(index: JvmDependenciesIndex): CliVirtualFileFinder = finder(index, emptyList())
+    private fun finder(index: JvmDependenciesIndex): JvmIndexKotlinClassFinder = finder(index, emptyList())
 
-    private fun finder(index: JvmDependenciesIndex, root: JvmClasspathRootId): CliVirtualFileFinder = finder(index, listOf(root))
+    private fun finder(index: JvmDependenciesIndex, root: JvmClasspathRootId): JvmIndexKotlinClassFinder = finder(index, listOf(root))
 
-    private fun finder(index: JvmDependenciesIndex, first: JvmClasspathRootId, second: JvmClasspathRootId): CliVirtualFileFinder =
+    private fun finder(index: JvmDependenciesIndex, first: JvmClasspathRootId, second: JvmClasspathRootId): JvmIndexKotlinClassFinder =
         finder(index, listOf(first, second))
 
     // ---- 1. Root order / first match ----
@@ -490,7 +490,7 @@ abstract class AbstractJvmDependenciesIndexContractTest : JvmDependenciesIndexCo
         assertNull(restricted.findBuiltInsData(fq("other")))
     }
 
-    // ---- 6. .kotlin_metadata via CliVirtualFileFinder ----
+    // ---- 6. .kotlin_metadata via JvmIndexKotlinClassFinder ----
 
     @Test
     fun metadataPackageQueriesThroughFinderAreIndexWideNotRestrictedByClasspath() {
@@ -505,8 +505,8 @@ abstract class AbstractJvmDependenciesIndexContractTest : JvmDependenciesIndexCo
     }
 
     /**
-     * Unlike the package-level metadata queries, [CliVirtualFileFinder.findMetadata] goes through the classpath filter, which is applied
-     * during the traversal, as for class files (KT-91439).
+     * Unlike the package-level metadata queries, [JvmIndexKotlinClassFinder.findMetadata] goes through the classpath filter, which is
+     * applied during the traversal, as for class files (KT-91439).
      */
     @Test
     fun findMetadataIsFilteredByClasspathDuringTraversal() {
