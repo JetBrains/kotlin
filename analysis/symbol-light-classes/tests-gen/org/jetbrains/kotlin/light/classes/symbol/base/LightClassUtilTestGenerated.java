@@ -70,6 +70,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("companionExtensionFunctionParameter.kt")
+  public void testCompanionExtensionFunctionParameter() {
+    run("companionExtensionFunctionParameter.kt");
+  }
+
+  @Test
   @TestMetadata("companionExtensionPropertyGetterWithJvmName.kt")
   public void testCompanionExtensionPropertyGetterWithJvmName() {
     run("companionExtensionPropertyGetterWithJvmName.kt");
@@ -130,9 +136,33 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("contextParameterExtensionFunctionParameter.kt")
+  public void testContextParameterExtensionFunctionParameter() {
+    run("contextParameterExtensionFunctionParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameterFunctionParameter.kt")
+  public void testContextParameterFunctionParameter() {
+    run("contextParameterFunctionParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameterPropertySetterParameter.kt")
+  public void testContextParameterPropertySetterParameter() {
+    run("contextParameterPropertySetterParameter.kt");
+  }
+
+  @Test
   @TestMetadata("contextParameterPropertyWithJvmNameOnGetterAndSetter.kt")
   public void testContextParameterPropertyWithJvmNameOnGetterAndSetter() {
     run("contextParameterPropertyWithJvmNameOnGetterAndSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("contextReceiverFunctionParameter.kt")
+  public void testContextReceiverFunctionParameter() {
+    run("contextReceiverFunctionParameter.kt");
   }
 
   @Test
