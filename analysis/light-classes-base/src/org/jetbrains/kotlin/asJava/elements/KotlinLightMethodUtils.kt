@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -30,8 +31,20 @@ fun KtLightMethod.isTraitFakeOverride(): Boolean {
 fun KtLightMethod.isAccessor(getter: Boolean): Boolean {
     val origin = kotlinOrigin as? KtCallableDeclaration ?: return false
     if (origin !is KtProperty && origin !is KtParameter) return false
-    val expectedParametersCount = (if (getter) 0 else 1) + (if (origin.receiverTypeReference != null) 1 else 0)
+    val expectedParametersCount = (if (getter) 0 else 1) +
+            (if (origin.hasReceiverParameter()) 1 else 0) +
+            origin.contextParameters.size +
+            origin.contextReceivers.size
     return parameterList.parametersCount == expectedParametersCount
+}
+
+/**
+ * Whether the JVM accessors of this property have a receiver parameter.
+ * A companion extension has a receiver type but no receiver parameter.
+ */
+private fun KtCallableDeclaration.hasReceiverParameter(): Boolean {
+    if (receiverTypeReference == null) return false
+    return !(this is KtProperty && isTopLevel && hasModifier(KtTokens.COMPANION_KEYWORD))
 }
 
 val KtLightMethod.isGetter: Boolean
