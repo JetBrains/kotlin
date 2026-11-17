@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.findOverriddenMethodOfAny
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -60,11 +62,7 @@ internal fun CodeGenerator.collectReverseBridgeAdapters(file: IrFile): Map<IrCla
     val bridgesByClass = file.allBindReverseBridgeToMethod.groupBy { it.targetClass }
     return bridgesByClass.mapValues { [irClass, bridges] ->
         val layoutBuilder = generationState.context.getLayoutBuilder(irClass)
-        bridges.flatMap { bridge ->
-            resolveReverseBridgeAdapters(irClass, layoutBuilder, bridge) ?: error(
-                    "Cannot bind ${bridge.bridgeFunction.render()} to '${bridge.targetMethod}'"
-            )
-        }
+        bridges.flatMap { bridge -> resolveReverseBridgeAdapters(irClass, layoutBuilder, bridge) }
     }.filterValues { it.isNotEmpty() }
 }
 
@@ -72,17 +70,8 @@ private fun CodeGenerator.resolveReverseBridgeAdapters(
         irClass: IrClass,
         layoutBuilder: ClassLayoutBuilder,
         bridge: BindReverseBridgeToMethod,
-): List<ReverseBridgeAdapter>? {
-    val candidates = irClass.simpleFunctions()
-            .filter { it.name.asString() == bridge.targetMethod }
-            .map { with(layoutBuilder) { it.getLoweredVersion() } }
-            .filter { it.bridgeTarget == null }
-            .takeIfNotEmpty()
-            ?: return null
-
-    val targetFunction = candidates.singleOrNull()
-            ?: candidates.singleOrNull { it.hasMatchingSignatureTo(bridge.bridgeFunction) }
-            ?: return null
+): List<ReverseBridgeAdapter> {
+    val targetFunction = findTargetFunction(irClass, layoutBuilder, bridge)
 
     val isInterfaceMethod = irClass.isInterface
     val vtableIndex = if (isInterfaceMethod) {
@@ -126,14 +115,43 @@ private fun CodeGenerator.implementedInterfaceSlotAdapters(
             }
 }
 
-private fun IrSimpleFunction.hasMatchingSignatureTo(bridgeFunction: IrSimpleFunction): Boolean {
+private fun findTargetFunction(
+        irClass: IrClass,
+        layoutBuilder: ClassLayoutBuilder,
+        bridge: BindReverseBridgeToMethod,
+): IrSimpleFunction {
+    val bridgeFunction = bridge.bridgeFunction
+    fun cannotBind(reason: String): Nothing =
+            error("Cannot bind ${bridgeFunction.render()} to '${bridge.targetMethod}' of ${irClass.fqNameWhenAvailable}: $reason")
+
+    val candidates = irClass.simpleFunctions()
+            .filter { it.name.asString() == bridge.targetMethod }
+            .map { with(layoutBuilder) { it.getLoweredVersion() } }
+            .filter { it.bridgeTarget == null }
+            .takeIfNotEmpty()
+            ?: cannotBind("no such method")
+
+    candidates.singleOrNull()?.let { return it }
+
+    val erasedMatches = candidates.filter {
+        it.hasMatchingSignatureTo(bridgeFunction) { l, r -> l.erasedUpperBound == r.erasedUpperBound && l.isNullable() == r.isNullable() }
+    }
+
+    return erasedMatches.singleOrNull()
+            ?: erasedMatches.singleOrNull { it.hasMatchingSignatureTo(bridgeFunction) { l, r -> l == r } }
+            ?: cannotBind("parameter types do not single out one overload; matching overloads:\n${erasedMatches.joinToString("\n") { "    ${it.render()}" }}")
+}
+
+private fun IrSimpleFunction.hasMatchingSignatureTo(
+        bridgeFunction: IrSimpleFunction,
+        typesMatch: (type: IrType, bridgeType: IrType) -> Boolean,
+): Boolean {
     val valueParameters = parameters.filter { it.kind != IrParameterKind.DispatchReceiver }
 
     val bridgeValueParameters = bridgeFunction.parameters.filter { it.kind == IrParameterKind.Regular }.drop(1)
 
     return valueParameters.size == bridgeValueParameters.size &&
             valueParameters.zip(bridgeValueParameters).all { [parameter, bridgeParameter] ->
-                parameter.type.erasedUpperBound == bridgeParameter.type.erasedUpperBound &&
-                        parameter.type.isNullable() == bridgeParameter.type.isNullable()
+                typesMatch(parameter.type, bridgeParameter.type)
             }
 }
