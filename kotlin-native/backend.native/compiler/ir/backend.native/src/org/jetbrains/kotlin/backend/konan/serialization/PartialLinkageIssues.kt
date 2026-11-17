@@ -75,7 +75,7 @@ internal object PartialLinkageIssuesSerializer {
             stream.writeInt(stringTable.indices[it.message]!!)
             stream.writeInt(it.significance.ordinal)
         }
-        return stream.buf
+        return stream.toByteArray()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedPartialLinkageIssue>) {

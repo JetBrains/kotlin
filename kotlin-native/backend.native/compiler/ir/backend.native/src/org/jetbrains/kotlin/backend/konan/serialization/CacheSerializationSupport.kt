@@ -306,7 +306,7 @@ internal object InlineFunctionBodyReferenceSerializer {
             stream.writeInt(it.endOffset)
             stream.writeIntArray(it.defaultValues)
         }
-        return stream.buf
+        return stream.toByteArray()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedInlineFunctionReference>) {
@@ -382,7 +382,7 @@ internal abstract class IdSignatureAwareSerializer<T : FileAwareSerializedData> 
             stream.writeInt(signatureSerializer[signatureOf(item)]!!)
             stream.writeExtraPayload(stringTable, item)
         }
-        return IrArrayWriter(listOf(signatures, signatureStrings, stream.buf), false).writeIntoMemory()
+        return IrArrayWriter(listOf(signatures, signatureStrings, stream.toByteArray()), false).writeIntoMemory()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<T>) {
@@ -545,7 +545,7 @@ internal object ObjCAdapterSerializer {
                 }
             }
         }
-        return stream.buf
+        return stream.toByteArray()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedObjCAdapter>) {
@@ -616,7 +616,7 @@ internal object EagerInitializedPropertySerializer {
             stream.writeInt(stringTable.indices[it.file.fqName]!!)
             stream.writeInt(stringTable.indices[it.file.path]!!)
         }
-        return stream.buf
+        return stream.toByteArray()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedEagerInitializedFile>) {
