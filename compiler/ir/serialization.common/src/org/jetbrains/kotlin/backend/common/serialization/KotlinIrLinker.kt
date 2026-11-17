@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.moduleVisibilityProvider
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.ModuleVisibilityProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.toIdSignature
@@ -37,15 +39,18 @@ import org.jetbrains.kotlin.utils.putToMultiMap
 
 abstract class KotlinIrLinker(
     val symbolTable: SymbolTable,
+    private val friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer {
     constructor(
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
+        friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
         deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     ) : this(
         symbolTable,
+        friendModules,
         errorCallback = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, it) },
         deserializedSymbolPostProcessor
     )
@@ -333,6 +338,8 @@ abstract class KotlinIrLinker(
     ): IrModuleDeserializer {
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
         moduleFragment.kotlinLibrary = kotlinLibrary
+        moduleFragment.friendLibraries = friendModules[kotlinLibrary]?.toSet().orEmpty()
+        moduleFragment.moduleVisibilityProvider = IrLinkerModuleVisibilityProvider
 
         val deserializer = maybeWrapWithBuiltIn(
             createModuleDeserializer(
@@ -446,6 +453,16 @@ enum class DeserializationStrategy(
     ALL(needBodies = true, explicitlyExported = true, theWholeWorld = true),
 
     /**
+     * All top-level declarations of the file are deserialized, whether referenced or not, but no function
+     * bodies are loaded.
+     *
+     * Used when every declaration has to be visible in the linked IR although nothing will be generated
+     * from this library, e.g. when a library is fully present in the compiler cache, but we still need to
+     * walk every declaration of it.
+     */
+    ALL_DECLARATION_HEADERS(theWholeWorld = true),
+
+    /**
      * Only declarations reachable from elsewhere, plus explicitly exported ones, are deserialized,
      * and all of them get their function bodies.
      *
@@ -463,7 +480,7 @@ enum class DeserializationStrategy(
      * known for linkage, e.g. a library that is fully present in the Kotlin/Native cache. This is also
      * the default strategy of [IrModuleDeserializer].
      */
-    ONLY_DECLARATION_HEADERS,
+    ONLY_REFERENCED_DECLARATION_HEADERS,
 
     /**
      * Only declarations reachable from elsewhere are deserialized, and only inline functions get their bodies.
@@ -490,11 +507,29 @@ fun interface DeserializationStrategyResolver {
 /**
  * This is an auxiliary attribute that is used to store [KotlinLibrary] instance for deserialized [IrModuleFragment].
  *
- * It is stamped by [KotlinIrLinker] for every module fragment created during IR linkage. Code that creates a synthetic
- * module fragment for an already deserialized library module must stamp the new fragment manually.
+ * It is stamped by [KotlinIrLinker] for every module fragment created during IR linkage.
  *
  * The attribute stays `null` for module fragments that the linker did not create: the fragment of the module being
  * compiled, fragments on backends that have no klibs at all (JVM), and the single fragment that the frontend creates
  * for all binary dependencies at once, see `DependencyListForCliModule.Builder`.
  */
-var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault = false)
+var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault = true)
+
+/**
+ * The list of friend Klibs, as specified by -Xfriend-modules.
+ *
+ * It is present only when [IrModuleFragment.kotlinLibrary] is present, i.e. in module fragments deserialized with IR linker.
+ * In practice, it's present at the 2-nd stage of compilation. Friend dependencies on the 1-st stage are tracked by frontend structures.
+ */
+internal var IrModuleFragment.friendLibraries: Set<KotlinLibrary>? by irAttribute(copyByDefault = true)
+
+private object IrLinkerModuleVisibilityProvider : ModuleVisibilityProvider {
+    override fun canSeeInternals(thisModule: IrModuleFragment, otherModule: IrModuleFragment): Boolean {
+        if (otherModule.moduleVisibilityProvider !is IrLinkerModuleVisibilityProvider) return false
+        if (thisModule == otherModule) return true
+
+        val fromModuleKlib = thisModule.kotlinLibrary ?: return false
+        val toModuleKlib = otherModule.kotlinLibrary ?: return false
+        return fromModuleKlib == toModuleKlib || thisModule.friendLibraries?.contains(toModuleKlib) == true
+    }
+}

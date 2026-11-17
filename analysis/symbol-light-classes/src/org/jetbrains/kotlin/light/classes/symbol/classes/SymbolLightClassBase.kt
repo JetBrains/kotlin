@@ -21,17 +21,19 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.classSymbol
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
@@ -41,7 +43,7 @@ import javax.swing.Icon
  */
 internal typealias SymbolLightClassBase = SymbolLightClassBaseImpl<KaSymbol>
 
-@OptIn(KaImplementationDetail::class)
+@OptIn(KaImplementationDetail::class, KtImplementationDetail::class)
 internal abstract class SymbolLightClassBaseImpl<out SType : KaSymbol> protected constructor(manager: PsiManager) :
     LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass, KaSymbolJavaView<SType> {
 
@@ -85,6 +87,12 @@ internal abstract class SymbolLightClassBaseImpl<out SType : KaSymbol> protected
         checkBases: Boolean,
     ): PsiClass? = contentFinderCache.findInnerClassByName(name, checkBases)
 
+    override fun findOwnMethodsByKotlinOrigin(kotlinOrigin: KtElement): List<PsiMethod> =
+        contentFinderCache.findOwnMethodsByKotlinOrigin(kotlinOrigin)
+
+    override fun findOwnFieldsByKotlinOrigin(kotlinOrigin: KtElement): List<PsiField> =
+        contentFinderCache.findOwnFieldsByKotlinOrigin(kotlinOrigin)
+
     abstract override fun getOwnFields(): List<PsiField>
     abstract override fun getOwnMethods(): List<PsiMethod>
     abstract override fun getOwnInnerClasses(): List<PsiClass>
@@ -92,7 +100,7 @@ internal abstract class SymbolLightClassBaseImpl<out SType : KaSymbol> protected
     open val ownConstructors: Array<PsiMethod> get() = cachedValue { PsiImplUtil.getConstructors(this) }
 
     override fun processDeclarations(
-        processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement
+        processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement,
     ): Boolean = PsiClassImplUtil.processDeclarationsInClass(
         /* aClass = */ this,
         /* processor = */ processor,
@@ -139,7 +147,7 @@ internal abstract class SymbolLightClassBaseImpl<out SType : KaSymbol> protected
     private fun PsiClass.hasSuper(
         baseClass: PsiClass,
         checkDeep: Boolean,
-        visitedSupers: MutableSet<PsiClass> = mutableSetOf()
+        visitedSupers: MutableSet<PsiClass> = mutableSetOf(),
     ): Boolean {
         visitedSupers.add(this)
         val notVisitedSupers = supers.filterNot { visitedSupers.contains(it) }

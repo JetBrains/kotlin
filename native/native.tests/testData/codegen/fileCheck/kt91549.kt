@@ -2,6 +2,8 @@
 // FILECHECK_STAGE: CStubs
 // DISABLE_NATIVE: optimizationMode=DEBUG
 // DISABLE_NATIVE: optimizationMode=NO
+// DISABLE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// DISABLE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 // KT-91549: companion accesses must not go through a static initializer getter
 // when the superclasses have nothing to initialize.

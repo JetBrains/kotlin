@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
+import org.jetbrains.kotlin.asJava.elements.leadingJvmParameterCount
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -63,8 +64,8 @@ fun KtElement.toLightElements(): List<PsiNamedElement> = when (this) {
     is KtPropertyAccessor -> listOfNotNull(LightClassUtil.getLightClassAccessorMethod(this))
     is KtParameter -> mutableListOf<PsiNamedElement>().also { elements ->
         toPsiParameters().toCollection(elements)
+        // Includes the method of an annotation class parameter
         LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
-        toAnnotationLightMethod()?.let(elements::add)
     }
 
     is KtTypeParameter -> toPsiTypeParameters()
@@ -100,7 +101,13 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     val paramIndex = paramList.parameters.indexOf(this)
     if (paramIndex < 0) return emptyList()
     val owner = paramList.parent
-    val lightParamIndex = if (owner is KtDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
+    val callable = when (owner) {
+        is KtPropertyAccessor -> owner.property
+        is KtCallableDeclaration -> owner
+        else -> null
+    }
+
+    val lightParamIndex = paramIndex + (callable?.leadingJvmParameterCount ?: 0)
 
     val methods: Collection<PsiMethod> = when (owner) {
         is KtFunction -> LightClassUtil.getLightClassMethods(owner)
@@ -109,14 +116,6 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     } ?: return emptyList()
 
     return methods.mapNotNull { it.parameterList.parameters.getOrNull(lightParamIndex) }
-}
-
-private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
-    val parent = ownerFunction as? KtPrimaryConstructor ?: return null
-    val containingClass = parent.getContainingClassOrObject()
-    if (!containingClass.isAnnotation()) return null
-
-    return LightClassUtil.getLightClassMethod(this)
 }
 
 @Deprecated("Use `asPsiMethods` from Analysis API or replace with a custom implementation. See KT-85385")

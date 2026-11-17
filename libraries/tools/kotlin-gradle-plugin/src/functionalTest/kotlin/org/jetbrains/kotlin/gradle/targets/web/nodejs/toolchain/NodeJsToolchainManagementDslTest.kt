@@ -22,7 +22,12 @@ import kotlin.test.assertTrue
 class NodeJsToolchainManagementDslTest {
 
     private fun buildProjectAndDsl(): Pair<Project, NodeJsToolchainManagementDsl> =
-        buildProject().let { project -> project to NodeJsToolchainManagementDslImpl(project.gradle) }
+        buildProject().let { project ->
+            project to project.objects.newInstance(
+                NodeJsToolchainManagementDslImpl::class.java,
+                project.gradle
+            )
+        }
 
     private fun registeredService(project: Project) = project.gradle.sharedServices.registrations
         .getByName(nodeJsServiceName)

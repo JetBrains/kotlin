@@ -62,6 +62,7 @@ internal class SymbolLightFieldForProperty private constructor(
         containingClass = containingClass,
         lightMemberOrigin = lightMemberOrigin,
         isStatic = isStatic,
+        // `LightClassMemberUtils.lightMemberKotlinOrigin` relies on this `kotlinOrigin`
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
         symbolPointer = backingFieldSymbol.createPointer(),
     )

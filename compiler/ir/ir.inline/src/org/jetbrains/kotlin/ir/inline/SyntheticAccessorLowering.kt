@@ -38,6 +38,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  *   and IR to a KLIB, or at the second phase (KLIB -> binaries) in a KLIB-based backend.
  * - It's not designed to work with the JVM backend because the visibility rules on JVM are stricter.
  * - By the point it's executed, all _private_ inline functions have already been inlined.
+ *
+ * It also routes a read of a static field made outside the field's container (e.g. a lowered `::prop.isInitialized`
+ * observed from a nested class) through a synthetic accessor in that container. A direct read bypasses the initialization
+ * of the container that its functions do, while the accessor is a static function of the container, so it initializes
+ * the container just like the property getter would. See KT-89375.
  */
 @PhasePrerequisites(
     OuterThisInInlineFunctionsSpecialAccessorLowering::class,
@@ -58,7 +63,13 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
      */
     private val emitExplicitApiModeWarnings = isExecutedOnFirstPhase
 
-    private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
+    /**
+     * Second-phase accessors get a name suffix, so they never clash with first-phase accessors deserialized from KLIBs.
+     */
+    private val accessorGenerator = KlibSyntheticAccessorGenerator(
+        context,
+        accessorNameSuffix = runIf(!isExecutedOnFirstPhase) { SECOND_PHASE_ACCESSOR_NAME_SUFFIX },
+    )
 
     override fun lower(irFile: IrFile) {
         val transformer = Transformer(irFile)
@@ -172,6 +183,19 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
     private inner class Transformer(private val currentFile: IrFile) : IrTransformer<TransformerData?>() {
         val generatedAccessors = currentFile::generatedAccessors.getOrSetIfNull(::GeneratedAccessors)
 
+        /** The innermost declaration container of the current element. */
+        private var currentContainer: IrDeclarationContainer = currentFile
+
+        override fun visitClass(declaration: IrClass, data: TransformerData?): IrStatement {
+            val outerContainer = currentContainer
+            currentContainer = declaration
+            try {
+                return super.visitClass(declaration, data)
+            } finally {
+                currentContainer = outerContainer
+            }
+        }
+
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
             val newData = data ?: runIf(declaration.isInline && !declaration.symbol.isConsideredAsPrivateForInlining()) {
                 // By the time this lowering is executed, there must be no private inline functions; however,
@@ -209,23 +233,44 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
          * real cases when it's necessary.
          */
         override fun visitGetField(expression: IrGetField, data: TransformerData?): IrExpression {
-            if (data == null)
-                return super.visitGetField(expression, data = null)
+            if (data == null) {
+                if (!expression.isStaticFieldReadOutsideContainer())
+                    return super.visitGetField(expression, data = null)
+
+                val accessor = getOrCreateGetterAccessor(expression)
+                generatedAccessors.memoize(accessor, expression.symbol)
+                return super.visitExpression(accessorGenerator.modifyGetterExpression(expression, accessor.symbol), data = null)
+            }
 
             val targetField = expression.symbol.owner
             if (!targetField.isNonLocalBackingField() || expression.checkIncorrectCrossFileDeclarationAccess())
                 return super.visitGetField(expression, data)
 
+            val accessor = getOrCreateGetterAccessor(expression)
+            generatedAccessors.memoize(accessor, expression.symbol, data.currentInlineFunction)
+            return super.visitExpression(accessorGenerator.modifyGetterExpression(expression, accessor.symbol), data)
+        }
+
+        /**
+         * The visibility of the accessor can be narrowed later.
+         */
+        private fun getOrCreateGetterAccessor(expression: IrGetField): IrSimpleFunction {
+            val targetField = expression.symbol.owner
             val accessor = targetField.factory.stageController.restrictTo(targetField) {
                 accessorGenerator.getSyntheticGetter(expression, null)
             }
-            generatedAccessors.memoize(
-                accessor,
-                targetSymbol = expression.symbol,
-                inlineFunction = data.currentInlineFunction
-            )
+            return accessor
+        }
 
-            return super.visitExpression(accessorGenerator.modifyGetterExpression(expression, accessor.symbol), data)
+        private fun IrGetField.isStaticFieldReadOutsideContainer(): Boolean {
+            val field = symbol.owner
+            if (!field.isStatic || !field.isNonLocalBackingField()) return false
+            if (field.correspondingPropertySymbol?.owner?.isConst == true) return false // nothing to initialize
+            // Static functions of the innermost container initialize it, instance ones run after a constructor.
+            if (field.parent == currentContainer) return false
+            // Only the file being lowered can get an accessor. A read of a field from another file is possible only in invalid IR,
+            // see `checkIncorrectCrossFileDeclarationAccess`.
+            return field.fileOrNull == currentFile
         }
 
         /**
@@ -286,6 +331,8 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
     }
 
     companion object {
+        private const val SECOND_PHASE_ACCESSOR_NAME_SUFFIX = "s"
+
         private fun IrFunction.isNonLocalPrivateFunction(): Boolean =
             isPrivate(visibility) && !isLocal
 
@@ -302,8 +349,15 @@ private class GeneratedAccessors {
 
 
     fun memoize(accessor: IrFunction, targetSymbol: IrSymbol, inlineFunction: IrFunction) {
+        memoize(accessor, targetSymbol).inlineFunctions += inlineFunction
+    }
+
+    /**
+     * Memoizes an accessor that is not used in an inline function (e.g. an accessor for a static field read outside its container).
+     */
+    fun memoize(accessor: IrFunction, targetSymbol: IrSymbol): GeneratedAccessor {
         check(!frozen) { "An attempt to generate an accessor after all accessors have been already added to their containers" }
-        accessors.getOrPut(accessor) { GeneratedAccessor(accessor, targetSymbol) }.inlineFunctions += inlineFunction
+        return accessors.getOrPut(accessor) { GeneratedAccessor(accessor, targetSymbol) }
     }
 
     fun freezeAndGetAccessors(): Collection<GeneratedAccessor> {

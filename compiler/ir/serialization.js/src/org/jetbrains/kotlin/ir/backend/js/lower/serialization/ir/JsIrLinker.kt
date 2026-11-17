@@ -31,6 +31,7 @@ class JsIrLinker(
 ) : KotlinIrLinker(
     configuration = configuration,
     symbolTable = symbolTable,
+    friendModules = friendModules,
     deserializedSymbolPostProcessor = { symbol, signature, fileSymbol ->
         runIf(signature.isLocal) {
             symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), signature)
@@ -51,7 +52,6 @@ class JsIrLinker(
         fileLocalSymbolProvider = fileLocalSymbolProvider,
         symbolTable = symbolTable,
         mangler = irMangler,
-        friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport
     )
 

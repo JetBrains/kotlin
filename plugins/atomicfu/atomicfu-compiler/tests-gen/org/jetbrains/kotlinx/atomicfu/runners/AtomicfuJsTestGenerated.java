@@ -228,6 +228,12 @@ public class AtomicfuJsTestGenerated extends AbstractAtomicfuJsTest {
     public void testUncheckedCastTest() {
       run("UncheckedCastTest.kt");
     }
+
+    @Test
+    @TestMetadata("UsageInExtensions.kt")
+    public void testUsageInExtensions() {
+      run("UsageInExtensions.kt");
+    }
   }
 
   @Nested
@@ -317,6 +323,12 @@ public class AtomicfuJsTestGenerated extends AbstractAtomicfuJsTest {
     @Test
     public void testAllFilesPresentInDelegated() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("DelegatedPropertiesAdvancedTest.kt")
+    public void testDelegatedPropertiesAdvancedTest() {
+      run("DelegatedPropertiesAdvancedTest.kt");
     }
 
     @Test

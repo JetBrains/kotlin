@@ -132,7 +132,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
     testImplementation(testFixtures(project(":native:swift:swift-export-standalone-integration-tests:external")))
-    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(testFixtures(project(":compiler:jvm.tests")))
 }

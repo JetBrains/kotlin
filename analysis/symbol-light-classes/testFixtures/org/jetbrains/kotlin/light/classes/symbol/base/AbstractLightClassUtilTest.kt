@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
+import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightElements
 import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightElementsForJavaDeclaration
 import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightElementsFromDeclaration
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -34,6 +36,12 @@ abstract class AbstractLightClassUtilTest : AbstractAnalysisApiBasedTest() {
         val lightElements = when (file) {
             is KtFile -> {
                 val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(file)
+                if (declaration != null) {
+                    @Suppress("DEPRECATION")
+                    val lightElementsByPsi = declaration.toLightElements()
+                    assertLightElements(Directives.EXPECTED_BY_PSI, lightElementsByPsi, mainModule, testServices)
+                }
+
                 analyzeForTest(file) {
                     // Declarations without PSI (e.g., intersection overrides) can be referenced by a fully qualified name
                     declaration?.getLightElements()
@@ -49,14 +57,19 @@ abstract class AbstractLightClassUtilTest : AbstractAnalysisApiBasedTest() {
             else -> error("Unexpected file: ${file::class}")
         }
 
-        val expectedLightElements = mainModule.testModule.directives[Directives.EXPECTED]
+        assertLightElements(Directives.EXPECTED, lightElements, mainModule, testServices)
+    }
 
-        testServices.assertions.assertEquals(expectedLightElements.size, lightElements.size) {
-            "Found ${lightElements.map { "${it.javaClass.name}(${it.name})" }}"
-        }
-
-        lightElements.forEachIndexed { index, element ->
-            testServices.assertions.assertEquals(expectedLightElements[index], "${element.javaClass.name}(${element.name})")
+    private fun assertLightElements(
+        directive: StringDirective,
+        lightElements: List<PsiNamedElement>,
+        mainModule: KtTestModule,
+        testServices: TestServices,
+    ) {
+        val expectedLightElements = mainModule.testModule.directives[directive]
+        val actualLightElements = lightElements.map { "${it.javaClass.name}(${it.name})" }
+        testServices.assertions.assertEquals(expectedLightElements, actualLightElements) {
+            "Unexpected light elements for ${directive.name}"
         }
     }
 
@@ -72,5 +85,9 @@ abstract class AbstractLightClassUtilTest : AbstractAnalysisApiBasedTest() {
 
     private object Directives : SimpleDirectivesContainer() {
         val EXPECTED by stringDirective(description = "Expected light classes")
+
+        val EXPECTED_BY_PSI by stringDirective(
+            description = "Expected light elements of the declaration at the caret from the PSI-based `toLightElements`"
+        )
     }
 }

@@ -8,11 +8,6 @@ import kotlin.test.assertEquals
 fun KClass<*>.member(name: String): KCallable<*> = members.single { it.name == name }
 
 fun box(): String {
-    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
-        // KotlinReflectionInternalError: Could not compute caller for function: [...] toByte() [...] (member = null)
-        return "OK"
-    }
-
     assertEquals(42.toByte(), Int::class.member("toByte").call(42))
     assertEquals(42.toShort(), Int::class.member("toShort").call(42))
     assertEquals(42, Int::class.member("toInt").call(42))

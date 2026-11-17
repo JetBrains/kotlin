@@ -62,7 +62,6 @@ dependencies {
     testFixturesApi(libs.opentest4j)
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testFixturesApi(kotlinTest("junit5"))

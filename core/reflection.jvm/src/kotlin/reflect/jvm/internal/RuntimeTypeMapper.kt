@@ -172,7 +172,10 @@ internal object RuntimeTypeMapper {
                 val proto = function.proto
                 if (proto is ProtoBuf.Function) {
                     JvmProtoBufUtil.getJvmMethodSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
-                        return JvmFunctionSignature.KotlinFunction(signature)
+                        val specialName = getJvmMethodNameIfSpecial(function)
+                        return JvmFunctionSignature.KotlinFunction(
+                            if (specialName != null) JvmMemberSignature.Method(specialName, signature.desc) else signature
+                        )
                     }
                 }
                 if (proto is ProtoBuf.Constructor) {
