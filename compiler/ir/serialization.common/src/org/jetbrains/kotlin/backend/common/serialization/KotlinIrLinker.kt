@@ -452,7 +452,7 @@ enum class DeserializationStrategy(
      * from this library, e.g. when a library is fully present in the compiler cache, but we still need to
      * walk every declaration of it.
      */
-    ALL_WITHOUT_BODIES(theWholeWorld = true),
+    ALL_DECLARATION_HEADERS(theWholeWorld = true),
 
     /**
      * Only declarations reachable from elsewhere, plus explicitly exported ones, are deserialized,
@@ -472,7 +472,7 @@ enum class DeserializationStrategy(
      * known for linkage, e.g. a library that is fully present in the Kotlin/Native cache. This is also
      * the default strategy of [IrModuleDeserializer].
      */
-    ONLY_DECLARATION_HEADERS,
+    ONLY_REFERENCED_DECLARATION_HEADERS,
 
     /**
      * Only declarations reachable from elsewhere are deserialized, and only inline functions get their bodies.

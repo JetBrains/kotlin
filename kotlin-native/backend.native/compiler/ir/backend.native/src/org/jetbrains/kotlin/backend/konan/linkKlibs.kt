@@ -208,8 +208,8 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
 
         val deserializationStrategy = when {
             isFullyCachedLibrary && library.isHeader -> DeserializationStrategy.WITH_INLINE_BODIES
-            isFullyCachedLibrary && library in librariesWithCExportsFromIr -> DeserializationStrategy.ALL_WITHOUT_BODIES
-            isFullyCachedLibrary -> DeserializationStrategy.ONLY_DECLARATION_HEADERS
+            isFullyCachedLibrary && library in librariesWithCExportsFromIr -> DeserializationStrategy.ALL_DECLARATION_HEADERS
+            isFullyCachedLibrary -> DeserializationStrategy.ONLY_REFERENCED_DECLARATION_HEADERS
             library in exportedDependencies -> DeserializationStrategy.ALL
             else -> DeserializationStrategy.EXPLICITLY_EXPORTED
         }

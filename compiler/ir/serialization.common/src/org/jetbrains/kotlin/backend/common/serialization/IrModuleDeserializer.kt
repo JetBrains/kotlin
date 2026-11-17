@@ -114,7 +114,7 @@ abstract class IrModuleDeserializer(
      */
     open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
 
-    open val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ONLY_DECLARATION_HEADERS
+    open val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ONLY_REFERENCED_DECLARATION_HEADERS
 
     open val fileDeserializers: Map<IrFile, IrFileDeserializer> get() = emptyMap()
 
