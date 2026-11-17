@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_TAG_CLASS_IDS
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.fir.hasPolymorphicSealedAnnotation
 import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
 object FirPolymorphicSealedClassChecker : FirClassChecker(MppCheckerKind.Platform) {
@@ -35,7 +35,7 @@ object FirPolymorphicSealedClassChecker : FirClassChecker(MppCheckerKind.Platfor
     }
 
     private fun checkPolymorphicSealedDeclaration(klass: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!klass.symbol.isPolymorphicSealed(context.session)) return
+        if (!klass.symbol.hasPolymorphicSealedAnnotation(context.session)) return
 
         val source = klass.source ?: return
 
@@ -89,7 +89,7 @@ object FirPolymorphicSealedClassChecker : FirClassChecker(MppCheckerKind.Platfor
         val session = context.session
 
         val polymorphicSealedSupertypes = klass.superTypeRefs.mapNotNull { it.coneType.toRegularClassSymbol(session) }
-            .filter { it.isPolymorphicSealed(session) }
+            .filter { it.hasPolymorphicSealedAnnotation(session) }
 
         if (polymorphicSealedSupertypes.isEmpty()) return
 
@@ -124,10 +124,6 @@ object FirPolymorphicSealedClassChecker : FirClassChecker(MppCheckerKind.Platfor
 
     private fun FirClassSymbol<*>.getParcelTagAnnotation(session: FirSession): FirAnnotation? {
         return resolvedAnnotationsWithArguments.find { it.toAnnotationClassId(session) in PARCEL_TAG_CLASS_IDS }
-    }
-
-    fun FirClassSymbol<*>.isPolymorphicSealed(session: FirSession): Boolean {
-        return resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in POLYMORPHIC_SEALED_CLASS_IDS }
     }
 
     private fun extractParcelTagValue(annotation: FirAnnotation): Int? {
