@@ -171,6 +171,7 @@ private class ConeClassLikeTypePointer(
     private val isNullable = coneType.isMarkedNullable
     private val abbreviatedTypePointer = coneType.abbreviatedType?.createPointer(builder, guard)
     private val isTypeAlias = lookupTag.toSymbol(builder.rootSession) is FirTypeAliasSymbol
+    private val isRaw = coneType.isRaw()
 
     // function types-specific attributes
     private val hasReceiverType = coneType.receiverType(builder.rootSession) != null
@@ -189,6 +190,9 @@ private class ConeClassLikeTypePointer(
         val attributes = buildList {
             if (abbreviatedType != null) {
                 add(AbbreviatedTypeAttribute(abbreviatedType))
+            }
+            if (isRaw) {
+                add(CompilerConeAttributes.RawType)
             }
             if (hasReceiverType) {
                 add(CompilerConeAttributes.ExtensionFunctionType)
