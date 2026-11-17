@@ -455,8 +455,6 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? =
         this as? IrTypeParameterSymbol
 
-    val treatFullValueClassesWithOneFieldAsBasic: Boolean get() = true
-
     @OptIn(ValueClassBackendAgnosticApi::class)
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isInlineClass() == true
