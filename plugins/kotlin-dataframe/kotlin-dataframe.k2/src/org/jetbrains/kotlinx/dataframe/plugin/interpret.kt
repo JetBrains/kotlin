@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -252,7 +253,10 @@ private fun KotlinTypeFacade.extractValue(
         (expression.calleeReference as? FirResolvedNamedReference)?.let {
             val symbol = it.resolvedSymbol
             val firPropertySymbol = symbol as? FirLocalPropertySymbol
-            val literalInitializer = firPropertySymbol?.resolvedInitializer
+            // TODO(KT-91732) fix contract violation
+            val literalInitializer = session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+                firPropertySymbol?.resolvedInitializer
+            }
 
             if (symbol is FirEnumEntrySymbol) {
                 Interpreter.Success(
