@@ -63,8 +63,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import java.io.IOException
 import java.nio.file.Path
-import kotlin.io.path.exists
-import kotlin.io.path.nameWithoutExtension
 
 /**
  * The base class for all Analysis API-based tests.
@@ -463,14 +461,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         variantChain: TestVariantChain = this.variantChain,
         sanitizer: (String) -> String = testServices.testOutputSanitizerOrDefault
     ) {
-        val resolvedPath = if (subdirectoryName != null) {
-            testDataPath.resolveSibling(subdirectoryName).resolve(testDataPath.fileName)
-        } else {
-            testDataPath
-        }
-
         ManagedTestAssertions.assertEqualsToTestDataFile(
-            testDataPath = resolvedPath,
+            testDataPath = resolveTestDataPath(subdirectoryName),
             actual = actual,
             variantChain = variantChain,
             extension = extension,
@@ -479,50 +471,31 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
     }
 
     /**
-     * Returns the test output file with any of the [variantChain] if it exists, or the non-variant (default) test output file.
+     * Returns the test output file [assertEqualsToTestOutputFile] compares with: the file of the most specific variant of [testPrefixes]
+     * that exists, or the non-variant (default) test output file.
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
      * test data.
      *
      * @see assertEqualsToTestOutputFile
+     * @see ManagedTestAssertions.findExpectedFile
      */
     protected fun getTestOutputFile(
         extension: String = "txt",
         subdirectoryName: String? = null,
         testPrefixes: List<String> = variantChain,
-    ): Path {
-        for (variant in testPrefixes) {
-            findVariantTestOutputFile(extension, subdirectoryName, variant)?.let { return it }
-        }
-        return getDefaultTestOutputFile(extension, subdirectoryName)
-    }
+    ): Path = ManagedTestAssertions.findExpectedFile(resolveTestDataPath(subdirectoryName), testPrefixes, extension)
 
     /**
-     * Returns the default test output file without a variant. The file is resolved in the given [subdirectoryName] directory, or as a
-     * sibling of the test data file if no [subdirectoryName] is provided.
+     * The test data path whose sibling files are the test output files: the test data itself, or its namesake in the given
+     * [subdirectoryName].
      */
-    private fun getDefaultTestOutputFile(extension: String, subdirectoryName: String?): Path =
-        buildTestOutputFilePath(extension, subdirectoryName, variant = null)
-
-    /**
-     * Returns the test output file with the given [variant] if it exists. The file is resolved in the given [subdirectoryName]
-     * directory, or as a sibling of the test data file if no [subdirectoryName] is provided.
-     */
-    private fun findVariantTestOutputFile(extension: String, subdirectoryName: String?, variant: String): Path? =
-        buildTestOutputFilePath(extension, subdirectoryName, variant).takeIf { it.exists() }
-
-    private fun buildTestOutputFilePath(extension: String, subdirectoryName: String?, variant: String?): Path {
-        val extensionWithDot = "." + extension.removePrefix(".")
-        val baseName = testDataPath.nameWithoutExtension
-        val directoryPath = subdirectoryName?.let { testDataPath.resolveSibling(it) } ?: testDataPath.parent
-
-        val relativePath = if (variant != null) {
-            "$baseName.$variant$extensionWithDot"
+    private fun resolveTestDataPath(subdirectoryName: String?): Path =
+        if (subdirectoryName != null) {
+            testDataPath.resolveSibling(subdirectoryName).resolve(testDataPath.fileName)
         } else {
-            baseName + extensionWithDot
+            testDataPath
         }
-        return directoryPath.resolve(relativePath)
-    }
 
     private val configure: TestConfigurationBuilder.() -> Unit = {
         globalDefaults {
