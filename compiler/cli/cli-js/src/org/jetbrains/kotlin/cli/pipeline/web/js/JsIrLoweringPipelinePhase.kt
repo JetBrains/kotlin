@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.js.config.*
 
 object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, JsLoweredIrPipelineArtifact>(
@@ -54,8 +53,7 @@ object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, Js
             incrementalCacheEnabled = false,
         )
         // Load declarations referenced during `context` initialization
-        val irProviders = listOf(element = deserializer)
-        ExternalDependenciesGenerator(symbolTable = symbolTable, irProviders = irProviders).generateUnboundSymbolsAsDependencies()
+        deserializer.drainDeserializationQueue()
         deserializer.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
         deserializer.checkNoUnboundSymbols(symbolTable = symbolTable, whenDetected = "at the end of IR linkage process")
         deserializer.clear()
