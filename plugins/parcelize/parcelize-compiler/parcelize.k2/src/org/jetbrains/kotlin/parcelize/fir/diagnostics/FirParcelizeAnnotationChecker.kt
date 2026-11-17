@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallCh
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -79,14 +80,13 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
     }
 
     private fun checkTypeParcelerUsage(annotationCall: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val thisMappedType = annotationCall.typeArguments.takeIf { it.size == 2 }?.first()?.toConeTypeProjection()?.type
-            ?: return
+        val thisMappedType = annotationCall.typeParcelerMappedType() ?: return
 
         val annotationContainer = context.annotationContainers.lastOrNull()
         val duplicatingAnnotationCount = annotationContainer
             ?.annotations
             ?.filter { it.toAnnotationClassId(context.session) in TYPE_PARCELER_CLASS_IDS }
-            ?.mapNotNull { it.typeArguments.takeIf { it.size == 2 }?.first()?.toConeTypeProjection()?.type }
+            ?.mapNotNull { it.typeParcelerMappedType() }
             ?.count { it == thisMappedType }
 
         if (duplicatingAnnotationCount != null && duplicatingAnnotationCount > 1) {
@@ -109,6 +109,12 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
             }
         }
     }
+
+    /**
+     * For `@TypeParceler<T, P>`, returns `T`, i.e. the type whose serialization is customized by the parceler `P`.
+     */
+    private fun FirAnnotation.typeParcelerMappedType(): ConeKotlinType? =
+        typeArguments.takeIf { it.size == 2 }?.first()?.toConeTypeProjection()?.type
 
     private fun checkForRedundantTypeParceler(
         enclosingClass: FirClassSymbol<*>,
