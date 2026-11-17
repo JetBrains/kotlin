@@ -11,7 +11,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -26,11 +26,9 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 annotation class DiagnosticLossRisk
 
 open class PositioningStrategy<in E : PsiElement> {
-
-    open fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
+    open fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
         @Suppress("UNCHECKED_CAST")
-        @OptIn(K1Deprecation::class)
-        return mark(diagnostic.psiElement as E)
+        return mark((diagnostic.element as KtPsiSourceElement).psi as E)
     }
 
     open fun mark(element: E): List<TextRange> {

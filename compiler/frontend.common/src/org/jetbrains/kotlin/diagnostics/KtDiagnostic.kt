@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 
 // ------------------------------ diagnostics ------------------------------
@@ -43,13 +40,13 @@ class KtDiagnosticWithoutSource(
         get() = TextRange.EMPTY_RANGE
 }
 
-sealed class KtDiagnosticWithSource : KtDiagnostic(), DiagnosticMarker {
+sealed class KtDiagnosticWithSource : KtDiagnostic() {
     abstract val element: AbstractKtSourceElement
     abstract override val factory: KtDiagnosticFactoryN
     abstract val positioningStrategy: AbstractSourceElementPositioningStrategy
     abstract override val severity: Severity
 
-    final override val textRanges: List<TextRange>
+    val textRanges: List<TextRange>
         get() = positioningStrategy.markDiagnostic(this)
 
     final override val isValid: Boolean
@@ -57,10 +54,6 @@ sealed class KtDiagnosticWithSource : KtDiagnostic(), DiagnosticMarker {
 
     final override val firstRange: TextRange
         get() = DiagnosticRangeUtils.firstRange(textRanges)
-
-    @K1Deprecation
-    final override val psiElement: PsiElement
-        get() = (element as KtPsiSourceElement).psi
 }
 
 data class KtSimpleDiagnostic(
