@@ -95,7 +95,7 @@ abstract class IrModuleDeserializer(
     open fun declareIrSymbol(symbol: IrSymbol) {
         val signature = symbol.signature
         require(signature != null) { "Symbol is not public API" }
-        deserializeIrSymbolOrFail(signature, symbol.kind())
+        tryDeserializeIrSymbol(signature, symbol.kind()) ?: deserializedSymbolNotFound(signature)
     }
 
     abstract val klib: KotlinLibrary
@@ -135,9 +135,6 @@ abstract class IrModuleDeserializer(
         output: MutableCollection<IdSignature>,
     )
 }
-
-fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol =
-    tryDeserializeIrSymbol(idSig, symbolKind) ?: deserializedSymbolNotFound(idSig)
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
 @OptIn(InternalSymbolFinderAPI::class)

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
-import org.jetbrains.kotlin.backend.common.serialization.deserializeIrSymbolOrFail
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.konan.serialization.KonanInteropModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -130,7 +129,8 @@ internal class KlibToolIrLinker(
 
         // We cannot load the real nothing class. So let's use an emulated one here.
         private val emulatedNothingClass: IrClassSymbol by lazy {
-            deserializeIrSymbolOrFail(StandardClassIds.Nothing.toIdSignature(), CLASS_SYMBOL) as IrClassSymbol
+            val idSig = StandardClassIds.Nothing.toIdSignature()
+            tryDeserializeIrSymbol(idSig, CLASS_SYMBOL) as? IrClassSymbol ?: deserializedSymbolNotFound(idSig)
         }
 
         override val klib: KotlinLibrary get() = error("The emulated standard library has no Klib")
