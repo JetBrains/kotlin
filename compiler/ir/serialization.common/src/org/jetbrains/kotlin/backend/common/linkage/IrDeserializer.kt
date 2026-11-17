@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.linkage
 
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -31,25 +30,4 @@ interface IrDeserializer : IrProvider {
      * @return The symbol for the given signature and kind if successfully found; otherwise, null.
      */
     fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: TopLevelSymbolKind): IrSymbol?
-
-    /**
-     * [postProcess] has two usages with different expectations:
-     * - IR plugin API: actualize expects/actuals, generate fake overrides
-     * - Linker(s): the same + run partial linkage
-     *
-     * In the future, this function should be split into several functions with different semantics for more precise use.
-     */
-    @Deprecated(
-        "Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead",
-        level = DeprecationLevel.ERROR
-    )
-    fun postProcess(): Nothing = error("Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead")
-
-    @Deprecated(
-        "Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead",
-        level = DeprecationLevel.ERROR
-    )
-    fun postProcess(inOrAfterLinkageStep: Boolean): Nothing = error("Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead")
-
-    fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean)
 }
