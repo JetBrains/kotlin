@@ -5,19 +5,20 @@
 
 package kotlin.metadata.test
 
-import kotlin.metadata.KmClass
-import kotlin.metadata.jvm.JvmMetadataVersion
-import kotlin.metadata.jvm.KotlinClassMetadata
-import kotlin.metadata.jvm.KotlinModuleMetadata
-import kotlin.metadata.jvm.Metadata
-import kotlin.metadata.jvm.UnstableMetadataApi
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion as CompilerMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
+import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.junit.jupiter.api.Test
-import kotlin.test.*
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmType
+import kotlin.metadata.jvm.*
+import kotlin.test.assertContains
+import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion as CompilerMetadataVersion
 
 class MetadataExceptionsTest {
     @Test
@@ -47,6 +48,43 @@ class MetadataExceptionsTest {
             .serializeToByteArray(CompilerMetadataVersion.INSTANCE, 0)
 
         assertFailsWith<IllegalArgumentException> { KotlinModuleMetadata.readStrict(module) }
+    }
+
+    @Test
+    fun testReadTypeTableWithCyclicTypes() {
+        doTestCyclicTypeTable({ setOuterTypeId(0) })
+        doTestCyclicTypeTable({ setAbbreviatedTypeId(0) })
+        doTestCyclicTypeTable({ setFlexibleUpperBoundId(0) })
+        doTestCyclicTypeTable({ addArgument(ProtoBuf.Type.Argument.newBuilder().setTypeId(0).build()) })
+        doTestCyclicTypeTable({ setOuterTypeId(1) }, { setOuterTypeId(0) })
+    }
+
+    private fun doTestCyclicTypeTable(vararg typeTable: ProtoBuf.Type.Builder.() -> Unit) {
+        assertFailsWith<IllegalArgumentException> { readFunctionReturnType(*typeTable) }
+    }
+
+    private fun readFunctionReturnType(
+        vararg typeTable: ProtoBuf.Type.Builder.() -> Unit,
+        returnType: (ProtoBuf.Type.Builder.() -> Unit)? = null,
+    ): KmType {
+        val strings = JvmStringTable()
+        val className = strings.getQualifiedClassNameIndex("A", false)
+        fun type(init: ProtoBuf.Type.Builder.() -> Unit) = ProtoBuf.Type.newBuilder().setClassName(className).apply(init).build()
+
+        val function = ProtoBuf.Function.newBuilder().setName(strings.getStringIndex("f"))
+        if (returnType != null) function.setReturnType(type(returnType)) else function.setReturnTypeId(0)
+        val proto = ProtoBuf.Class.newBuilder()
+            .setFqName(className)
+            .setTypeTable(ProtoBuf.TypeTable.newBuilder().addAllType(typeTable.map(::type)))
+            .addFunction(function)
+            .build()
+        val metadata = Metadata(
+            KotlinClassMetadata.CLASS_KIND,
+            JvmMetadataVersion.LATEST_STABLE_SUPPORTED.toIntArray(),
+            JvmProtoBufUtil.writeData(proto, strings),
+            strings.strings.toTypedArray(),
+        )
+        return (KotlinClassMetadata.readStrict(metadata) as KotlinClassMetadata.Class).kmClass.functions.single().returnType
     }
 
     @Test
