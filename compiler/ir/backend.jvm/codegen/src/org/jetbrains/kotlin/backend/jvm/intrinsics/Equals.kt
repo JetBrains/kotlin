@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
+import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil

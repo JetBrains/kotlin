@@ -125,7 +125,7 @@ abstract class DataClassMembersGenerator(
 
         private fun IrSimpleFunction.isTypedEqualsInValueClass() =
             name == OperatorNameConventions.EQUALS
-                    && irClass.isInlineClass()
+                    && irClass.isInlineClass
                     && hasShape(dispatchReceiver = true, regularParameters = 1)
                     && parameters[1].type.classifierOrNull == irClass.symbol
 

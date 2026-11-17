@@ -140,7 +140,7 @@ fun getUnboxedType(boxedType: Type, state: GenerationState): Type {
 
 fun unboxedTypeOfInlineClass(boxedType: Type, state: GenerationState): Type? {
     val irClass = state.jvmBackendClassResolver.resolveToClasses(boxedType).singleOrNull()?.takeIf {
-        it.isInlineClass()
+        it.isInlineClass
     } ?: return null
     return state.mapInlineClass(irClass)
 }

@@ -219,11 +219,6 @@ internal class ClassifierExplorer(
         return null
     }
 
-    private val IrClass.isInlineClass: Boolean
-        // does not really matter if the flag is true or false here, as compatible full value classes don't have superclasses anyway.
-        get() = isInlineClass()
-
-
     companion object {
         private val IrClass.annotationConstructorsIfApplicable: Sequence<IrConstructor>?
             get() = if (isAnnotationClass) constructors else null

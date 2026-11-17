@@ -51,7 +51,7 @@ interface JsCommonBackendContext : CommonBackendContext {
 
 interface JsCommonInlineClassesUtils : InlineClassesUtils {
     override fun isClassInlineLike(klass: IrClass): Boolean =
-        klass.isInlineClass()
+        klass.isInlineClass
 
     /**
      * Returns the inlined class for the given type, or `null` if the type is not inlined.
