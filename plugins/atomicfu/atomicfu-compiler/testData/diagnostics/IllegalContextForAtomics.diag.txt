@@ -72,3 +72,5 @@ public val a: T by _a
 /IllegalContextForAtomics.kt:57:18: error: Atomic factories can only be called to initialize an atomic property or as delegates.
 
 /IllegalContextForAtomics.kt:58:21: error: Atomic factories can only be called to initialize an atomic property or as delegates.
+
+/IllegalContextForAtomics.kt:60:5: error: Local properties delegated to kotlinx.atomicfu.Atomic* values are unsupported.

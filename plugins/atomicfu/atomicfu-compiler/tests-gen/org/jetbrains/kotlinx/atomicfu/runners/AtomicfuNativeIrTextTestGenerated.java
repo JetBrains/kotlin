@@ -341,6 +341,12 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
     }
 
     @Test
+    @TestMetadata("DelegatedPropertiesAdvancedTest.kt")
+    public void testDelegatedPropertiesAdvancedTest() {
+      run("DelegatedPropertiesAdvancedTest.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedPropertiesTest.kt")
     public void testDelegatedPropertiesTest() {
       run("DelegatedPropertiesTest.kt");

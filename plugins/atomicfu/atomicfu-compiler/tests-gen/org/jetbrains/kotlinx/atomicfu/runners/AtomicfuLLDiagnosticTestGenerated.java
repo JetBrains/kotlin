@@ -82,6 +82,12 @@ public class AtomicfuLLDiagnosticTestGenerated extends AbstractAtomicfuLLDiagnos
   }
 
   @Test
+  @TestMetadata("DelegatedProperties.kt")
+  public void testDelegatedProperties() {
+    run("DelegatedProperties.kt");
+  }
+
+  @Test
   @TestMetadata("errorProneAtomicArrayArguments.kt")
   public void testErrorProneAtomicArrayArguments() {
     run("errorProneAtomicArrayArguments.kt");
