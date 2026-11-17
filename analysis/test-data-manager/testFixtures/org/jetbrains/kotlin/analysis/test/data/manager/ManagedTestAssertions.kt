@@ -42,7 +42,7 @@ object ManagedTestAssertions {
         val existedBefore = file.exists()
         block()
         if (recordFileActions) {
-            recordedFileActions.add(RecordedFileAction(context.testDataPath, file, existedBefore, file.exists()))
+            recordedFileActions.add(RecordedFileAction(context.reportedTestDataPath, file, existedBefore, file.exists()))
         }
     }
 
@@ -125,6 +125,24 @@ object ManagedTestAssertions {
         assertEqualsToTestDataFile(actual, context = TestDataContext.build(testDataPath, variantChain, extension, mode, sanitizer))
 
     /**
+     * Updates [file] to [actual] like [assertEqualsToTestDataFile] updates a golden file in [TestDataManagerMode.UPDATE] mode. [file] is
+     * test data which the test of [testDataPath] edits besides its own output, e.g., a directive in a variant of the test data: the run
+     * reports the change for [testDataPath], like the other changes of that test.
+     */
+    fun updateTestDataFile(testDataPath: Path, file: Path, actual: String) {
+        val context = TestDataContext.build(
+            testDataPath = file,
+            variantChain = emptyList(),
+            extension = file.extension,
+            mode = TestDataManagerMode.UPDATE,
+            sanitizer = { it },
+            reportedTestDataPath = testDataPath,
+        )
+
+        assertEqualsToTestDataFile(actual, context = context)
+    }
+
+    /**
      * Returns the expected file [assertEqualsToTestDataFile] compares the actual content with: the most specific existing file of the
      * [variantChain] (e.g., `.js.txt` → `.knm.txt` → `.txt` for `["knm", "js"]`), or the default file if none of them exists.
      */
@@ -132,6 +150,21 @@ object ManagedTestAssertions {
         val context = TestDataContext.build(testDataPath, variantChain, extension, TestDataManagerMode.currentMode, sanitizer = { it })
         return context.readTargetFile ?: context.readableFiles.last()
     }
+
+    /**
+     * Returns the only file [assertEqualsToTestDataFile] creates, updates or deletes: the file of the last variant of the [variantChain]
+     * (e.g., `.js.txt` for `["knm", "js"]`), or the default file for an empty chain.
+     */
+    fun getWriteTargetFile(testDataPath: Path, variantChain: TestVariantChain, extension: String): Path =
+        TestDataContext.build(testDataPath, variantChain, extension, TestDataManagerMode.currentMode, sanitizer = { it }).writeTargetFile
+
+    /**
+     * Returns the file [assertEqualsToTestDataFile] would compare the actual content with if the [write target][getWriteTargetFile]
+     * didn't exist: the most specific existing file of the [variantChain] except the write target (e.g., `.knm.txt` → `.txt` for
+     * `["knm", "js"]`), or `null` if none of them exists.
+     */
+    fun findFallbackFile(testDataPath: Path, variantChain: TestVariantChain, extension: String): Path? =
+        TestDataContext.build(testDataPath, variantChain, extension, TestDataManagerMode.currentMode, sanitizer = { it }).fallbackFile
 
     context(context: TestDataContext)
     private fun assertEqualsToTestDataFile(actual: String?) {

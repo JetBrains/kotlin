@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -21,6 +22,9 @@ abstract class AbstractLLReversedWasmDiagnosticsTest(
     private val targetPlatform: TargetPlatform,
     private val wasmTarget: WasmTarget,
 ) : AbstractLLReversedDiagnosticsTest() {
+    override val variantChain: TestVariantChain
+        get() = super.variantChain.withWasmVariants(wasmTarget)
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         configureForLLWasmDiagnosticsTest(targetPlatform, wasmTarget)
@@ -36,5 +40,4 @@ abstract class AbstractLLReversedWasmWasiDiagnosticsTest : AbstractLLWasmDiagnos
     WasmPlatforms.wasmWasi,
     WasmTarget.WASI,
 )
-
 

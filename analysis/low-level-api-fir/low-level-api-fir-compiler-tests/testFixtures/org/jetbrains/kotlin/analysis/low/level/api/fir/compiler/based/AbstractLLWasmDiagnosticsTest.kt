@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -12,6 +13,9 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.utils.WASM_JS_VARIANT
+import org.jetbrains.kotlin.test.utils.WASM_WASI_VARIANT
+import org.jetbrains.kotlin.test.utils.withWasmVariant
 import org.jetbrains.kotlin.utils.bind
 
 /**
@@ -25,10 +29,28 @@ abstract class AbstractLLWasmDiagnosticsTest(
     private val targetPlatform: TargetPlatform,
     private val wasmTarget: WasmTarget,
 ) : AbstractLLDiagnosticsTest() {
+    override val variantChain: TestVariantChain
+        get() = super.variantChain.withWasmVariants(wasmTarget)
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         configureForLLWasmDiagnosticsTest(targetPlatform, wasmTarget)
     }
+}
+
+/**
+ * The variant chain of an LL Wasm diagnostic test over the test data of the JVM LL test with [this] chain: some test data is shared with
+ * the JVM tests, so each variant gets its Wasm counterpart, e.g., `[ll, ll.wasmJs]` for `[ll]`.
+ *
+ * Unlike [withAdditionalVariant][org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant], it adds no standalone `wasmJs`
+ * variant: no test writes it, as the Wasm compiler tests write the base test data.
+ */
+internal fun TestVariantChain.withWasmVariants(wasmTarget: WasmTarget): TestVariantChain {
+    val wasmVariant = when (wasmTarget) {
+        WasmTarget.JS -> WASM_JS_VARIANT
+        WasmTarget.WASI -> WASM_WASI_VARIANT
+    }
+    return this + map { it.withWasmVariant(wasmVariant) }
 }
 
 fun TestConfigurationBuilder.configureForLLWasmDiagnosticsTest(targetPlatform: TargetPlatform, wasmTarget: WasmTarget) {
@@ -58,5 +80,3 @@ abstract class AbstractLLWasmWasiDiagnosticsTest : AbstractLLWasmDiagnosticsTest
     WasmPlatforms.wasmWasi,
     WasmTarget.WASI,
 )
-
-

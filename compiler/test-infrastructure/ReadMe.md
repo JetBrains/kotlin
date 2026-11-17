@@ -385,7 +385,7 @@ The IR dumps will appear next to the generated `.js` or `.wat` file.
 
 # Massive testdata updating
 
-There is a handler [UpdateTestDataHandler](../tests-common-new/testFixtures/org/jetbrains/kotlin/test/backend/handlers/UpdateTestDataHandler.kt),
+There is a handler [UpdateTestDataHandler](testFixtures/org/jetbrains/kotlin/test/backend/handlers/UpdateTestDataHandler.kt),
 which can be used to update all testData. It is disabled by default. It can be enabled by either changing code,
 or by passing system property `kotlin.test.update.test.data`.
 
@@ -393,6 +393,10 @@ For example, to update all IR text test data by the output of the JVM backend, y
 ```bash
 ./gradlew -Pkotlin.test.update.test.data=true :compiler:fir:fir2ir:test --tests "org.jetbrains.kotlin.test.runners.ir.FirPsiJvmIrTextTestGenerated" --continue
 ```
+
+It leaves alone the files written by the managed assertions of a test implementing `ManagedTest`, such as the `.kt` file with the inline
+diagnostics of a diagnostic test: the [test data manager](../../analysis/AGENTS.md#working-with-test-data) updates them. Other files of such
+a test (e.g., `.fir.txt`) are still updated by the handler.
 
 # Code style
 

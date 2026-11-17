@@ -1178,6 +1178,49 @@ class ManagedTestAssertionsTest {
     }
 
     @Test
+    fun `updateTestDataFile - records the edit for the editing test`() {
+        setupFiles("test.js.txt" to "old")
+        ManagedTestAssertions.recordFileActions = true
+
+        ManagedTestAssertions.updateTestDataFile(tempDir.resolve("test.kt"), tempDir.resolve("test.js.txt"), "new")
+
+        assertFileActionsAndFileState(
+            expectedFileActions = "test.kt UPDATED test.js.txt",
+            expectedFileState = "test.js.txt: new",
+        )
+    }
+
+    @Test
+    fun `updateTestDataFile - records nothing when the content is the same`() {
+        setupFiles("test.js.txt" to "same")
+        ManagedTestAssertions.recordFileActions = true
+
+        ManagedTestAssertions.updateTestDataFile(tempDir.resolve("test.kt"), tempDir.resolve("test.js.txt"), "same")
+
+        assertFileActionsAndFileState(
+            expectedFileActions = "",
+            expectedFileState = "test.js.txt: same",
+        )
+    }
+
+    @Test
+    fun `updateTestDataFile - records the edit and a later deletion as a deletion for the editing test`() {
+        setupFiles(
+            "test.txt" to "golden",
+            "test.js.txt" to "old",
+        )
+        ManagedTestAssertions.recordFileActions = true
+
+        ManagedTestAssertions.updateTestDataFile(tempDir.resolve("test.kt"), tempDir.resolve("test.js.txt"), "new")
+        runAssertion(variantChain = listOf("js"), actual = null, mode = TestDataManagerMode.UPDATE)
+
+        assertFileActionsAndFileState(
+            expectedFileActions = "test.kt DELETED test.js.txt",
+            expectedFileState = "test.txt: golden",
+        )
+    }
+
+    @Test
     fun `UPDATE mode - records nothing when disabled`() {
         setupFiles()  // No expected files
         ManagedTestAssertions.recordFileActions = false
@@ -1244,5 +1287,60 @@ class ManagedTestAssertionsTest {
     fun `findExpectedFile - no file exists`() {
         setupFiles()
         assertEquals("test.txt", findExpectedFileName(listOf("knm", "js")))
+    }
+
+    private fun getWriteTargetFileName(variantChain: TestVariantChain): String =
+        ManagedTestAssertions.getWriteTargetFile(tempDir.resolve("test.kt"), variantChain, extension = ".txt").fileName.toString()
+
+    @Test
+    fun `getWriteTargetFile - golden`() {
+        setupFiles("test.txt" to "golden")
+        assertEquals("test.txt", getWriteTargetFileName(emptyList()))
+    }
+
+    @Test
+    fun `getWriteTargetFile - last variant regardless of existing files`() {
+        setupFiles("test.txt" to "golden", "test.knm.txt" to "knm")
+        assertEquals("test.js.txt", getWriteTargetFileName(listOf("knm", "js")))
+    }
+
+    private fun findFallbackFileName(variantChain: TestVariantChain): String? =
+        ManagedTestAssertions.findFallbackFile(tempDir.resolve("test.kt"), variantChain, extension = ".txt")?.fileName?.toString()
+
+    @Test
+    fun `findFallbackFile - skips the write target`() {
+        setupFiles("test.txt" to "golden", "test.knm.txt" to "knm", "test.js.txt" to "js")
+        assertEquals("test.knm.txt", findFallbackFileName(listOf("knm", "js")))
+    }
+
+    @Test
+    fun `findFallbackFile - falls back to the golden file`() {
+        setupFiles("test.txt" to "golden", "test.js.txt" to "js")
+        assertEquals("test.txt", findFallbackFileName(listOf("knm", "js")))
+    }
+
+    @Test
+    fun `findFallbackFile - golden has no fallback`() {
+        setupFiles("test.txt" to "golden")
+        assertEquals(null, findFallbackFileName(emptyList()))
+    }
+
+    @Test
+    fun `compound test data extension - the variant goes before the extension`() {
+        tempDir.resolve("script.test.kts").writeText("golden\n")
+        val fileNames = listOf("script.test.kts", "script.ll.test.kts", "script.test.ll.kts")
+
+        runAssertion(testDataFileName = "script.test.kts", variantChain = listOf("ll"), actual = "ll", extension = ".test.kts")
+
+        assertFileState(
+            fileNames = fileNames,
+            expected = """
+                script.test.kts: golden
+                script.ll.test.kts: ll
+            """,
+        )
+
+        val expectedFile = ManagedTestAssertions.findExpectedFile(tempDir.resolve("script.test.kts"), listOf("ll"), extension = ".test.kts")
+        assertEquals("script.ll.test.kts", expectedFile.fileName.toString())
     }
 }
