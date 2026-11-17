@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 
@@ -31,9 +30,6 @@ open class SymbolTable(
     private val propertySlice = IdSignatureSymbolTableSlice<IrProperty, IrPropertySymbol>(lock)
     private val typeAliasSlice = IdSignatureSymbolTableSlice<IrTypeAlias, IrTypeAliasSymbol>(lock)
     private val globalTypeParameterSlice = IdSignatureSymbolTableSlice<IrTypeParameter, IrTypeParameterSymbol>(lock)
-
-    @Suppress("LeakingThis")
-    val lazyWrapper = IrLazySymbolTable(this)
 
     @Suppress("LeakingThis")
     @ObsoleteDescriptorBasedAPI
