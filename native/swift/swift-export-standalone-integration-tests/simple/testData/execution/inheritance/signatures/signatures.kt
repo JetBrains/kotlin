@@ -23,6 +23,20 @@ fun callPick2(o: Overloads, arg1: String, arg2: Int): String = o.pick(arg1, arg2
 fun callSameString(o: Overloads, arg: String): String = o.same(arg)
 fun callSameInt(o: Overloads, arg: Int): String = o.same(arg)
 
+// Overloads whose parameters differ only in type arguments (KT-90968): they erase to the same signature,
+// so each reverse bridge is told apart by its exact parameter types.
+open class TypeArgumentOverloads {
+    open fun foo(items: List<Int>): String = "kotlin-ints(${items.sum()})"
+    open fun foo(items: List<String>): String = "kotlin-strings(${items.joinToString("")})"
+    open fun bar(arg: (Int) -> String): String = "kotlin-bar-int(${arg(1)})"
+    open fun bar(arg: (String) -> String): String = "kotlin-bar-string(${arg("k")})"
+}
+
+fun callFooInts(o: TypeArgumentOverloads): String = o.foo(listOf(1, 2, 3))
+fun callFooStrings(o: TypeArgumentOverloads): String = o.foo(listOf("a", "b"))
+fun callBarInt(o: TypeArgumentOverloads): String = o.bar { v: Int -> "int:$v" }
+fun callBarString(o: TypeArgumentOverloads): String = o.bar { v: String -> "string:$v" }
+
 // Overloads declared in an interface: their reverse bridges land in the interface table instead.
 interface OverloadedSpeaker {
     fun say(): String
