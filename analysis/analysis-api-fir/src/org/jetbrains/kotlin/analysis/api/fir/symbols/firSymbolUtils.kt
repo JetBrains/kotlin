@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.findAnnotationConstructor
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaInitializerValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
@@ -127,6 +128,18 @@ internal fun FirVariableSymbol<*>.getKtConstantInitializer(builder: KaSymbolByFi
         ?.classKind == ClassKind.ANNOTATION_CLASS
 
     return firInitializer.asKaInitializerValue(builder, parentIsAnnotation)
+}
+
+/**
+ * The default value of the Java annotation member which the synthetic property is created for.
+ *
+ * The property itself has no initializer: the default value is kept in the parameter of the annotation constructor.
+ */
+internal fun FirSyntheticPropertySymbol.getJavaAnnotationDefaultValue(builder: KaSymbolByFirBuilder): KaInitializerValue? {
+    val session = builder.rootSession
+    val annotationConstructor = dispatchReceiverType?.toRegularClassSymbol(session)?.findAnnotationConstructor(session = session)
+    val parameter = annotationConstructor?.valueParameterSymbols?.find { it.name == name } ?: return null
+    return parameter.resolvedDefaultValue?.asKaInitializerValue(builder, forAnnotationDefaultValue = true)
 }
 
 internal val FirBasedSymbol<*>.kaSymbolModality: KaSymbolModality

@@ -398,6 +398,8 @@ public sealed class KaPropertySymbol : KaVariableSymbol() {
      * - [KaConstantValueForAnnotation][org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation] - the property is contained in an
      *   annotation class and has an initializer which can be evaluated to a
      *   [KaAnnotationValue][org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue].
+     *
+     * The initializer of a Java annotation member is its default value.
      */
     @KaExperimentalApi
     public abstract val initializer: KaInitializerValue?
