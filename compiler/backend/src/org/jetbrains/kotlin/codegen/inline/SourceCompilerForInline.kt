@@ -94,7 +94,7 @@ fun loadCompiledInlineFunction(
     val containerType = AsmUtil.asmTypeByClassId(containerId)
     val resultInCache = state.inlineCache.computeMethodBytes(MethodId(containerType.descriptor, asmMethod)) {
         val bytes = state.inlineCache.computeClassBytes(containerType.internalName) {
-            findVirtualFile(state, containerId)?.contentsToByteArray()
+            findClassBytes(state, containerId)
                 ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
         }
         getMethodNode(containerType, bytes, asmMethod, isSuspend, isMangled, isInternalToBeMatchedIgnoringSuffix)

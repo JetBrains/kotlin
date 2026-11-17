@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.api.platform.java.*
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.load.java.structure.impl.convert
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.resolve.jvm.modules.checkAccessibilityByVirtualFile
 
 internal class KaFirJavaModuleResolver(private val project: Project) : JavaModuleResolver {
     private val annotationCache = NullableCaffeineCache<ClassId, List<JavaAnnotation>> { it.maximumSize(1000) }
@@ -47,6 +50,15 @@ internal class KaFirJavaModuleResolver(private val project: Project) : JavaModul
         KotlinJavaModuleAccessibilityChecker.getInstance(project)
             .checkAccessibility(fileFromOurModule, referencedFile, referencedPackage)
             ?.let(::convertAccessibilityError)
+
+    // The Analysis API reads class files from virtual files only.
+    @OptIn(VirtualFileBasedApi::class)
+    override fun checkAccessibility(
+        fileFromOurModule: VirtualFile?,
+        referencedClassFile: BinaryClassFileHandle,
+        referencedPackage: FqName?,
+    ): JavaModuleResolver.AccessError? =
+        checkAccessibilityByVirtualFile(fileFromOurModule, referencedClassFile, referencedPackage)
 
     private fun convertAccessibilityError(accessibilityError: KotlinJavaModuleAccessibilityError): JavaModuleResolver.AccessError =
         when (accessibilityError) {

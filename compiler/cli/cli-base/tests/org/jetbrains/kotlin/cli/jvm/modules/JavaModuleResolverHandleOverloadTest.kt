@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.resolve.jvm.modules.checkAccessibilityByVirtualFile
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -24,10 +26,6 @@ import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeBytes
 
-/**
- * The default [JavaModuleResolver.checkAccessibility] overload for a [BinaryClassFileHandle], used by resolvers which know their modules
- * by virtual files only.
- */
 class JavaModuleResolverHandleOverloadTest {
 
     private class VirtualFileOnlyResolver : JavaModuleResolver {
@@ -39,6 +37,11 @@ class JavaModuleResolverHandleOverloadTest {
             checkedFiles += referencedFile
             return JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule
         }
+
+        @OptIn(VirtualFileBasedApi::class)
+        override fun checkAccessibility(
+            fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?,
+        ): JavaModuleResolver.AccessError? = checkAccessibilityByVirtualFile(fileFromOurModule, referencedClassFile, referencedPackage)
 
         override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? = null
     }
