@@ -1,6 +1,6 @@
 error: [ERROR_SEVERITY_CHANGED] Diagnostic "CONFLICTING_PROJECTION" is an error. Changing the severity of errors is prohibited
 error: [MISSING_DIAGNOSTIC_NAME] Warning with name "NON_EXISTING_DIAGNOSTIC" does not exist
-compiler/testData/cli/jvm/globalWarningSuppression.kt:7:16: warning: [CONFLICTING_PROJECTION] Projection conflicts with variance of the corresponding type parameter of 'Out<in Int>'. Remove the projection or replace it with '*'.
+compiler/testData/cli/jvm/globalWarningSuppression.kt:7:16: error: [CONFLICTING_PROJECTION] Projection conflicts with variance of the corresponding type parameter of 'Out<in Int>'. Remove the projection or replace it with '*'.
 fun bar(x: Out<in Int>) {}
                ^^
 COMPILATION_ERROR
