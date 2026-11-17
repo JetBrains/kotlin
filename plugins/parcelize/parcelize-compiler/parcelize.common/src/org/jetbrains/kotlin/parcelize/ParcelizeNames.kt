@@ -68,6 +68,8 @@ object ParcelizeNames {
 
     val CREATOR_NAME = Name.identifier("CREATOR")
 
+    val PARCEL_TAG_ARGUMENT_NAME = Name.identifier("tag")
+
     // -------------------- Utils --------------------
 
     private fun createClassIds(name: String): List<ClassId> {
