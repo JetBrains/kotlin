@@ -19,10 +19,11 @@ internal class ObjCExportHeaderGeneratorImpl(
     override val shouldExportKDoc: Boolean,
     private val additionalImports: List<String>,
     private val restrictToLocalModules: Boolean = false,
+    private val cachedModules: Set<ModuleDescriptor> = emptySet(),
 ) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, objcExportBlockExplicitParameterNames, problemCollector) {
     override fun getAdditionalImports(): List<String> =
         additionalImports
 
     override fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean =
-        !restrictToLocalModules || descriptor.module in moduleDescriptors
+        descriptor.module !in cachedModules && (!restrictToLocalModules || descriptor.module in moduleDescriptors)
 }

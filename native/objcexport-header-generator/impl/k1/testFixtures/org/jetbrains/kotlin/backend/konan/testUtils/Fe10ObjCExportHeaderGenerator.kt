@@ -15,11 +15,15 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.tooling.core.closure
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
+import java.io.BufferedReader
 import java.io.File
+import java.io.StringReader
+import java.io.StringWriter
 
 class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
 
@@ -46,13 +50,27 @@ class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
 
 class Fe10HeaderGeneratorImpl : HeaderGenerator {
     override fun generateHeaders(root: File, configuration: HeaderGenerator.Configuration): ObjCHeader {
-        val headerGenerator = createObjCExportHeaderGenerator(root, configuration)
+        val newGenerator = createObjCExportHeaderGeneratorFactory(root, configuration)
+        val [headerGenerator, namer] = newGenerator(null)
 
         if (configuration.withObjCBaseDeclarationStubs) {
             headerGenerator.translateBaseDeclarations()
         }
 
         headerGenerator.translateModuleDeclarations()
+        val unitsGenerator = newGenerator(namer.takeIf { it.hasCollisions || it.typeParameterClashes().isNotEmpty() }).first
+        if (configuration.withObjCBaseDeclarationStubs) {
+            unitsGenerator.translateBaseDeclarations()
+        }
+        unitsGenerator.assembleHeader(unitsGenerator.translateUnits().mapIndexed { index, units ->
+            val text = StringWriter().also { units.write(it, exportKDoc = true) }.toString()
+            ObjCExportModuleUnits(index, ObjCExportUnits.read(BufferedReader(StringReader(text))))
+        })
+        assertEquals(
+            headerGenerator.build().joinToString("\n"),
+            unitsGenerator.build().joinToString("\n"),
+            "The header assembled from units differs from the translated header",
+        )
         val header = headerGenerator.buildHeader()
         return header.copy(
             /** To match AA implementation we sort stubs in the same way. See more at [ObjCInterfaceOrder] */
@@ -60,9 +78,9 @@ class Fe10HeaderGeneratorImpl : HeaderGenerator {
         )
     }
 
-    private fun createObjCExportHeaderGenerator(
+    private fun createObjCExportHeaderGeneratorFactory(
         root: File, configuration: HeaderGenerator.Configuration,
-    ): ObjCExportHeaderGenerator {
+    ): (ObjCExportNamerImpl?) -> Pair<ObjCExportHeaderGenerator, ObjCExportNamerImpl> {
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
         val dependencyKlibs = configuration.dependencies.flatMap { it.klibs }
         val moduleDescriptors = setOf(compileAndDeserializeSources(kotlinFiles, dependencyKlibs))
@@ -91,26 +109,27 @@ class Fe10HeaderGeneratorImpl : HeaderGenerator {
                     origin.library.path in exportedKlibs
             }
 
-        val namer = ObjCExportNamerImpl(
-            moduleDescriptors = exportedModuleDescriptors,
-            builtIns = DefaultBuiltIns.Instance,
-            mapper = mapper,
-            problemCollector = ObjCExportProblemCollector.SILENT,
-            topLevelNamePrefix = configuration.frameworkName,
-            local = false,
-            objcGenerics = true,
-            explicitMethodFamily = configuration.explicitMethodFamily,
-        )
-
-        return ObjCExportHeaderGeneratorImpl(
-            moduleDescriptors = exportedModuleDescriptors.toList(),
-            mapper = mapper,
-            namer = namer,
-            problemCollector = ObjCExportProblemCollector.SILENT,
-            objcGenerics = true,
-            objcExportBlockExplicitParameterNames = configuration.objcExportBlockExplicitParameterNames,
-            shouldExportKDoc = true,
-            additionalImports = emptyList()
-        )
+        return { sharedNamer ->
+            val namer = sharedNamer ?: ObjCExportNamerImpl(
+                moduleDescriptors = exportedModuleDescriptors,
+                builtIns = DefaultBuiltIns.Instance,
+                mapper = mapper,
+                problemCollector = ObjCExportProblemCollector.SILENT,
+                topLevelNamePrefix = configuration.frameworkName,
+                local = false,
+                objcGenerics = true,
+                explicitMethodFamily = configuration.explicitMethodFamily,
+            )
+            ObjCExportHeaderGeneratorImpl(
+                moduleDescriptors = exportedModuleDescriptors.toList(),
+                mapper = mapper,
+                namer = namer,
+                problemCollector = ObjCExportProblemCollector.SILENT,
+                objcGenerics = true,
+                objcExportBlockExplicitParameterNames = configuration.objcExportBlockExplicitParameterNames,
+                shouldExportKDoc = true,
+                additionalImports = emptyList()
+            ) to namer
+        }
     }
 }

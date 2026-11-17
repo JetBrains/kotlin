@@ -28,14 +28,17 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOriginOrNull
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.nio.file.Path
+import java.util.zip.GZIPOutputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createTempFile
 import kotlin.io.path.name
+import kotlin.io.path.outputStream
 import kotlin.io.path.writeLines
 
 private val ModuleDescriptor.library: KotlinLibrary?
@@ -44,6 +47,8 @@ private val ModuleDescriptor.library: KotlinLibrary?
 internal fun produceObjCExportInterface(
     context: NativeBackendPhaseContext,
     moduleDescriptor: ModuleDescriptor,
+    reporter: ObjCExportProblemCollector = ObjCExportCompilerProblemCollector(context),
+    useObjCCaches: Boolean = true,
 ): ObjCExportedInterface {
     val config = context.config
     require(config.target.family.isAppleFamily)
@@ -88,7 +93,15 @@ internal fun produceObjCExportInterface(
     val explicitMethodFamily = config.configuration.getBoolean(BinaryOptions.objcExportExplicitMethodFamily)
     val objcExportBlockExplicitParameterNames = config.configuration.get(BinaryOptions.objcExportBlockExplicitParameterNames, false)
 
-    val problemCollector = ObjCExportCompilerProblemCollector(context)
+    val headerModuleDescriptors = libraryToCacheModule?.let { listOf(it) } ?: moduleDescriptors
+
+    val objCCaches = if (useObjCCaches) config.objCCaches else emptyMap()
+    val cachedModules = headerModuleDescriptors.mapNotNull { module ->
+        module.library?.let { objCCaches[it] }?.let { module to it }
+    }.toMap()
+
+    val cachedProblems = if (cachedModules.isEmpty()) null else ObjCExportProblemBuffer()
+    val problemCollector = cachedProblems ?: reporter
 
     val namer = ObjCExportNamerImpl(
             moduleDescriptors.toSet(),
@@ -101,20 +114,68 @@ internal fun produceObjCExportInterface(
             disableSwiftMemberNameMangling = disableSwiftMemberNameMangling,
             ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
             nameCollisionMode = when {
+                config.produce.isObjCCache -> ObjCExportNameCollisionMode.NONE
                 errorOnNameCollisions -> ObjCExportNameCollisionMode.ERROR
                 reportNameCollisions -> ObjCExportNameCollisionMode.WARNING
                 else -> ObjCExportNameCollisionMode.NONE
             },
             explicitMethodFamily = explicitMethodFamily,
+            recordNames = config.produce.isObjCCache,
     )
-    val headerModuleDescriptors = libraryToCacheModule?.let { listOf(it) } ?: moduleDescriptors
+
     val shouldExportKDoc = context.shouldExportKDoc()
     val additionalImports = context.config.configuration.getNotNull(NativeConfigurationKeys.FRAMEWORK_IMPORT_HEADERS)
     val headerGenerator = ObjCExportHeaderGenerator.createInstance(
-            headerModuleDescriptors, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames, shouldExportKDoc = shouldExportKDoc,
-            additionalImports = additionalImports, restrictToLocalModules = config.produce.isObjCCache)
-    headerGenerator.translateModule()
+            headerModuleDescriptors.filter { it !in cachedModules }, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames, shouldExportKDoc = shouldExportKDoc,
+            additionalImports = additionalImports,
+            restrictToLocalModules = config.produce.isObjCCache, cachedModules = cachedModules.keys)
+
+    headerGenerator.translateBaseDeclarations()
+    when {
+        config.produce.isObjCCache -> {
+            val units = headerGenerator.translateUnits().single()
+            headerGenerator.assembleHeader(listOf(ObjCExportModuleUnits(0, units)))
+            val cacheUnits = namer.withRecordedNames(units)
+            return headerGenerator.buildInterface(objCCacheUnits = cacheUnits)
+        }
+        cachedModules.isNotEmpty() -> {
+            val moduleIndices = moduleDescriptors.withIndex().associate { [index, module] -> module to index }
+            val localModules = headerGenerator.moduleDescriptors.associateWith { moduleIndices.getValue(it) }
+            val cachedUnits = cachedModules.map { [module, cache] -> ObjCExportModuleUnits(moduleIndices.getValue(module), cache.units) }
+            namer.useCachedNames(cachedModules.values.map { it.units })
+            headerGenerator.assembleHeader(cachedUnits, localModules) { classId ->
+                runCatching { ClassId.fromString(classId) }.getOrNull()?.let { moduleDescriptor.findClassAcrossModuleDependencies(it) }
+            }
+            if (namer.hasCollisions) {
+                val uncachedProblems = ObjCExportProblemBuffer()
+                produceObjCExportInterface(context, moduleDescriptor, uncachedProblems, useObjCCaches = false)
+                if (uncachedProblems.hasErrors) {
+                    uncachedProblems.replayTo(reporter)
+                } else {
+                    cachedProblems?.replayTo(reporter)
+                    reporter.reportError(cachedNameCollisionMessage(namer.cachedNameCollisions))
+                }
+                throw KonanCompilationException()
+            }
+            val typeParameterClashes = namer.typeParameterClashes()
+            if (typeParameterClashes.isNotEmpty()) {
+                typeParameterClashes.forEach {
+                    reporter.reportError("type parameter $it has the same name as an Objective-C class or protocol, which Objective-C caches do not support")
+                }
+                throw KonanCompilationException()
+            }
+            cachedProblems?.replayTo(reporter)
+        }
+        else -> headerGenerator.translateModuleDeclarations()
+    }
+
     return headerGenerator.buildInterface()
+}
+
+private fun cachedNameCollisionMessage(collisions: List<String>): String {
+    val details = if (collisions.isEmpty()) "" else collisions.joinToString(prefix = ": ")
+    return "Cached Objective-C names collide$details, but a build without the caches reports no collision. " +
+            "This happens when the caches were built with other entry points (-Xbinary=objcExportEntryPointsPath) than the framework."
 }
 
 internal fun CompilerConfiguration.hasObjCCacheBinaryOptions(): Boolean =
@@ -133,6 +194,39 @@ internal fun objCExportNamingConfiguration(configuration: CompilerConfiguration)
                 configuration.get(BinaryOptions.unitSuspendFunctionObjCExport, UnitSuspendFunctionObjCExport.DEFAULT),
         "exportKDoc=${configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExportKDocDocumentationToKlib)}",
 ).joinToString(";")
+
+private class ObjCExportProblemBuffer : ObjCExportProblemCollector {
+    private val reports = mutableListOf<(ObjCExportProblemCollector) -> Unit>()
+
+    var hasErrors = false
+        private set
+
+    override fun reportWarning(text: String) {
+        reports += { it.reportWarning(text) }
+    }
+
+    override fun reportWarning(declaration: DeclarationDescriptor, text: String) {
+        reports += { it.reportWarning(declaration, text) }
+    }
+
+    override fun reportError(text: String) {
+        hasErrors = true
+        reports += { it.reportError(text) }
+    }
+
+    override fun reportError(declaration: DeclarationDescriptor, text: String) {
+        hasErrors = true
+        reports += { it.reportError(declaration, text) }
+    }
+
+    override fun reportException(throwable: Throwable) {
+        throw throwable
+    }
+
+    fun replayTo(collector: ObjCExportProblemCollector) {
+        reports.forEach { it(collector) }
+    }
+}
 
 private class ObjCExportCompilerProblemCollector(val context: NativeBackendPhaseContext) : ObjCExportProblemCollector {
     private val DeclarationDescriptor.psiLocation
@@ -245,7 +339,7 @@ internal class ObjCExport(
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
 
-        if (config.produce.isObjCCache) {
+        if (config.produce.isObjCCache && exportedInterface != null) {
             val library = requireNotNull(config.librariesToCache.keys.singleOrNull())
             val metadata = ObjCCacheMetadata(
                     classAdapters = objCCodeGenerator.objCCacheClassAdapters,
@@ -257,6 +351,12 @@ internal class ObjCExport(
             generationState.outputFiles.objcCacheMetadataFile?.let { file ->
                 file.parent.createDirectories()
                 file.bufferedWriter().use { metadata.serialize(it) }
+            }
+            val units = exportedInterface.objCCacheUnits
+            val unitsFile = generationState.outputFiles.objcCacheUnitsFile
+            if (units != null && unitsFile != null) {
+                unitsFile.parent.createDirectories()
+                GZIPOutputStream(unitsFile.outputStream()).bufferedWriter().use { units.write(it, generationState.shouldExportKDoc()) }
             }
         }
     }

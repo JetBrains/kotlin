@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.Properties
+import java.util.zip.GZIPInputStream
 
 abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
     protected val frameworkTestDataDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/framework")
@@ -277,6 +278,8 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         )
         val binDir = objCCacheBinDir(libraries.cacheDir, "layoutLib")
         assertTrue(binDir.isDirectory) { "Expected the cache in $binDir" }
+        val units = GZIPInputStream(binDir.resolve("objc_cache_units.txt.gz").inputStream()).bufferedReader().use { it.readText() }
+        assertTrue("LayoutWorker" in units) { "Expected the header units to declare LayoutWorker" }
         val metadata = objCCacheMetadata(libraries.cacheDir, "layoutLib")
         assertEquals(
             setOf(
@@ -729,6 +732,31 @@ class ObjCCacheTest : ObjCCacheTestBase() {
     }
 
     @Test
+    fun testHeaderKeepsControlCharactersOfCachedLibraries() {
+        val libraries = compileLibraries(
+            Library(
+                "libA",
+                """
+                package liba
+                @MustBeDocumented
+                annotation class Doc(val text: String)
+                class Documented {
+                    @Doc("cr\rcrlf\r\ntab\tbackslash\\n")
+                    fun annotated(): Int = 1
+                }
+                """,
+                objCCacheArgs = listOf("-Xexport-kdoc"),
+            ),
+        )
+        val kdocArgs = listOf("-Xexport-kdoc")
+        val cached = linkFramework(libraries, extraArgs = kdocArgs, dir = buildDir.resolve("cached"))
+        val uncached = linkFramework(libraries, withCaches = false, extraArgs = kdocArgs, dir = buildDir.resolve("uncached"))
+        cached.assertObjCCachesLinked("libA")
+        assertTrue("cr\rcrlf\r\ntab\tbackslash\\n" in uncached.header) { uncached.header }
+        assertEquals(uncached.header, cached.header) { "Expected the header with caches to match the header without caches" }
+    }
+
+    @Test
     fun testNotUsedWithoutCollisionErrors() {
         val framework = linkFramework(compileLibraries(testLibrary()), binaryOptions = emptyList())
         framework.assertObjCCachesLinked("library", linked = false)
@@ -737,6 +765,178 @@ class ObjCCacheTest : ObjCCacheTestBase() {
     @Test
     fun testUsedWhenObjCExportOptionIsSetToItsDefault() {
         linkFramework(alphaAndBeta(listOf("-Xbinary=unitSuspendFunctionObjCExport=proper"))).assertObjCCachesLinked("libA", "libB")
+    }
+
+    @Test
+    fun testOverloadsFailLikeWithoutCaches() = assertFailsLikeWithoutCaches(
+        "conflicts with fun execute(item: ",
+        Library("libA", overloadedAlpha),
+        betaOverridingExecute("Int"),
+    )
+
+    @Test
+    fun testOverrideIsNamedAsWithoutCaches() {
+        val [uncached, cached] = linkWithAndWithoutCaches(
+            Library("libA", "package liba\nopen class Alpha {\n    open fun execute(item: String): String = \"A\"\n}"),
+            betaOverridingExecute("String"),
+        )
+        cached.assertObjCCachesLinked("libA", "libB")
+        assertEquals(uncached.header, cached.header) { "Expected the header of the framework without caches" }
+    }
+
+    @Test
+    fun testOverloadOverriddenInAnotherCacheFailsLikeWithoutCaches() = assertFailsLikeWithoutCaches(
+        "conflicts with fun execute(item: ",
+        Library("libA", overloadedAlpha),
+        betaOverridingExecute("String"),
+    )
+
+    @Test
+    fun testExtensionsInSeparateCachesFailLikeWithoutCaches() = assertFailsLikeWithoutCaches(
+        "conflicts with fun Alpha.greet(): ",
+        Library("libA", alphaSource),
+        Library("libB", "package libb\nimport liba.Alpha\nfun Alpha.greet(): String = name", listOf("libA")),
+        Library("libC", "package libc\nimport liba.Alpha\nfun Alpha.greet(): Int = 42", listOf("libA")),
+    )
+
+    @Test
+    fun testExtensionAndSubclassInSeparateCachesFailLikeWithoutCaches() = assertFailsLikeWithoutCaches(
+        "greet(who: ",
+        Library("libA", "package liba\nopen class Alpha(val name: String)"),
+        Library("libB", "package libb\nimport liba.Alpha\nfun Alpha.greet(who: String): String = name + who", listOf("libA")),
+        Library("libC", betaWithGreetSource, listOf("libA")),
+    )
+
+    @Test
+    fun testUncachedExtensionFailsLikeWithoutCaches() = assertFailsLikeWithoutCaches(
+        "greet(who: ",
+        Library("libA", "package liba\nopen class Alpha(val name: String)"),
+        Library("libC", betaWithGreetSource, listOf("libA")),
+        source = "package app\nimport liba.Alpha\nfun Alpha.greet(who: String): String = name + who",
+    )
+
+    @Test
+    fun testMemberOfNonExportedClassFailsLikeWithoutCaches() = assertFailsLikeWithoutCaches(
+        "greet(): ",
+        Library(
+            "libN",
+            """
+            package libn
+            open class Base
+            class Derived : Base() {
+                fun greet(): String = "member"
+            }
+            """,
+            isExported = false,
+        ),
+        Library("libL", "package libl\nimport libn.Derived\nfun makeDerived(): Derived = Derived()", listOf("libN")),
+        Library("libM", "package libm\nimport libn.Base\nfun Base.greet(): Int = 42", listOf("libN")),
+    )
+
+    @Test
+    fun testDuplicateClassNamesFailLikeWithoutCaches() = assertFailsLikeWithoutCaches(
+        "conflicts with class Widget defined in liba",
+        Library("libA", "package liba\nclass Widget(val tag: String)"),
+        Library("libB", "package libb\nclass Widget(val tag: String)"),
+        Library("libC", "package libc\nclass Gadget(val widget: liba.Widget)", listOf("libA")),
+    )
+
+    @Test
+    fun testDiagnosticsFailLikeWithoutCaches() {
+        val diagnosticsDir =
+            ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
+        assertFailsLikeWithoutCaches(
+            "conflicts with a keyword or a reserved name",
+            Library("lib1", diagnosticsDir.resolve("lib1.kt").readText()),
+            Library("lib2", diagnosticsDir.resolve("lib2.kt").readText()),
+        )
+    }
+
+    @Test
+    fun testTypeParameterSharingClassNameFails() {
+        val [uncached, cached] = linkWithAndWithoutCaches(
+            Library("libA", "package liba\nclass Box<T>(val value: T)"),
+            Library(
+                "libB",
+                """
+                @file:OptIn(kotlin.experimental.ExperimentalObjCName::class)
+                package libb
+                @ObjCName("T", exact = true)
+                class Tee
+                """,
+            ),
+        )
+        uncached.result.assertSuccess()
+        val expectedError = "type parameter T of liba/Box has the same name as an Objective-C class or protocol"
+        assertTrue(cached.result !is TestCompilationResult.Success && expectedError in cached.output) {
+            "Expected the type parameter of Box to be reported:\n${cached.output}"
+        }
+    }
+
+    @Test
+    fun testCollisionOnlyBetweenCachesIsReported() {
+        fun entryPoints(name: String, vararg callables: String): List<String> {
+            val file = buildDir.resolve("$name.entryPoints").apply { writeText(callables.joinToString("\n") { "callable $it" }) }
+            return listOf("-Xbinary=objcExportEntryPointsPath=${file.absolutePath}")
+        }
+        val libraries = compileLibraries(
+            Library(
+                "libA", "package liba\nopen class Parent {\n    fun clash(x: String): Int = 1\n}",
+                objCCacheArgs = entryPoints("libA", "liba.Parent.<init>", "liba.Parent.clash"),
+            ),
+            Library(
+                "libB", "package libb\nimport liba.Parent\nclass Child : Parent() {\n    fun clash(x: Int): Int = 2\n}", listOf("libA"),
+                objCCacheArgs = entryPoints("libB", "libb.Child.<init>", "libb.Child.clash"),
+            ),
+        )
+        val framework = linkFramework(
+            libraries, extraArgs = entryPoints("framework", "liba.Parent.<init>", "libb.Child.<init>", "libb.Child.clash"),
+        )
+        val expectedError = "cached Objective-C names collide: selector name 'clashX:' of libb/Child.clash, but a build without the caches"
+        assertTrue(framework.result !is TestCompilationResult.Success && expectedError in framework.output) { framework.output }
+    }
+
+    private val overloadedAlpha = """
+        package liba
+        open class Alpha {
+            open fun execute(item: String): String = "A"
+            open fun execute(item: Int): String = "A"
+        }
+        """
+
+    private val betaWithGreetSource = """
+        package libc
+        import liba.Alpha
+        class Beta(name: String) : Alpha(name) {
+            fun greet(who: Int): Int = who
+        }
+        """
+
+    private fun betaOverridingExecute(itemType: String) = Library(
+        "libB",
+        """
+        package libb
+        import liba.Alpha
+        class Beta : Alpha() {
+            override fun execute(item: $itemType): String = "B"
+        }
+        """,
+        listOf("libA"),
+    )
+
+    private fun linkWithAndWithoutCaches(vararg libraries: Library, source: String = frameworkMarkerSource): Pair<Framework, Framework> {
+        val compiled = compileLibraries(*libraries)
+        return linkFramework(compiled, withCaches = false, source = source, dir = buildDir.resolve("uncached")) to
+                linkFramework(compiled, source = source, dir = buildDir.resolve("cached"))
+    }
+
+    private fun assertFailsLikeWithoutCaches(expectedError: String, vararg libraries: Library, source: String = frameworkMarkerSource) {
+        val [uncached, cached] = linkWithAndWithoutCaches(*libraries, source = source)
+        assertTrue(uncached.result !is TestCompilationResult.Success && expectedError in uncached.output) {
+            "Expected the build without caches to fail with '$expectedError':\n${uncached.output}"
+        }
+        assertTrue(cached.result !is TestCompilationResult.Success) { "Expected the build with caches to fail:\n${cached.output}" }
+        assertEquals(uncached.output, cached.output) { "Expected the build with caches to fail like the build without caches" }
     }
 
     @Test
@@ -781,6 +981,13 @@ class ObjCCacheWarningsTest : ObjCCacheTestBase() {
         val metadata = objCCacheBinDir(libraries.cacheDir, "libB").resolve("objc_cache_metadata.properties")
         metadata.writeText(metadata.readText().replace("format=1", "format=0"))
         assertLibBCacheIgnored(libraries, "libB-Kt.objc_cache was built in format 0, but this compiler reads format 1")
+    }
+
+    @Test
+    fun testIgnoredWhenIncomplete() {
+        val libraries = alphaAndBeta()
+        objCCacheBinDir(libraries.cacheDir, "libB").resolve("objc_cache_units.txt.gz").delete()
+        assertLibBCacheIgnored(libraries, "libB-Kt.objc_cache is incomplete or unreadable")
     }
 
     @Test
