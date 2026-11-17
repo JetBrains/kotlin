@@ -23,18 +23,9 @@ function:sample/Outer#member#parameters=[<T0_1>];
 function:sample/Outer#member#typeParameters=[<T1_0>: ]; context=[]; parameters=[<T1_0>];
 constructor:sample/Outer#%3Cinit%3E#typeParameters=[<T0_0>: , <T0_1>: ]; context=[];
 property:sample#computed#
-getter:sample#computed#
 property:sample#mutable#
-getter:sample#mutable#
-setter:sample#mutable#
-property:sample#contextual#
-getter:sample#contextual#
-setter:sample#contextual#
+property:sample#contextual#  // REDECLARATION
 property:sample#extensionValue#typeParameters=[<T0_0>: ]; context=[]; receiver=<T0_0>
-getter:sample#extensionValue#typeParameters=[<T0_0>: ]; context=[]; receiver=<T0_0>
-setter:sample#extensionValue#typeParameters=[<T0_0>: ]; context=[]; receiver=<T0_0>
 sample/WithAccessors
 property:sample/WithAccessors#counter#
-getter:sample/WithAccessors#counter#
-setter:sample/WithAccessors#counter#
 constructor:sample/WithAccessors#%3Cinit%3E#

@@ -2,10 +2,7 @@ sample
 sample/Outer
 function:sample/Outer#sameName#parameters=[kotlin/Int];
 property:sample/Outer#CONSTANT#companion;
-getter:sample/Outer#CONSTANT#companion;
 property:sample/Outer#mutable#companion;
-getter:sample/Outer#mutable#companion;
-setter:sample/Outer#mutable#companion;
 function:sample/Outer#sameName#companion;
 function:sample/Outer#genericMember#typeParameters=[<T1_0>: ]; context=[]; parameters=[<T1_0>]; companion;
 constructor:sample/Outer#%3Cinit%3E#
@@ -14,14 +11,11 @@ function:sample/Named#namedMember#companion;
 constructor:sample/Named#%3Cinit%3E#
 sample/TwoBlocks
 property:sample/TwoBlocks#Zero#companion;
-getter:sample/TwoBlocks#Zero#companion;
 function:sample/TwoBlocks#normalize#
 property:sample/TwoBlocks#Dimensions#companion;
-getter:sample/TwoBlocks#Dimensions#companion;
 constructor:sample/TwoBlocks#%3Cinit%3E#
 sample/WithCompanion
 function:sample/WithCompanion#interfaceCompanionMember#companion;
 function:sample#topLevelExtension#receiver=sample/Outercompanion;
 property:sample#topLevelExtensionProperty#receiver=sample/Outercompanion;
-getter:sample#topLevelExtensionProperty#receiver=sample/Outercompanion;
 function:sample#extensionOnNamed#receiver=sample/Namedcompanion;

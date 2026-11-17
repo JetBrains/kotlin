@@ -11,6 +11,8 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity
+import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.fileScope
@@ -23,12 +25,23 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.documentation.analyzer.ids.generateDeclarationId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtTypeParameter
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 
 /**
  * Compares the unhashed declaration IDs of every symbol reachable from the fixture with a golden `.txt` file,
  * in source order, and checks that each ID identifies a single declaration.
+ *
+ * Declarations that the compiler reports ERROR diagnostics on get those diagnostics appended to their line in
+ * the golden file. This pins down how declaration ID generation behaves on code that does not compile:
+ * erroneous declarations still get IDs, and the IDs stay unique even when the errors are about declarations
+ * clashing.
  *
  * Runs on the Analysis API test framework in standalone mode, matching the sessions the KDM analyzer itself
  * creates.
@@ -39,6 +52,13 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
             override val testPrefixes: List<String> = emptyList()
         }
 
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.defaultDirectives {
+            LanguageSettingsDirectives.LANGUAGE with listOf("+CompanionBlocks", "+CompanionExtensions")
+        }
+    }
+
     override fun doTestByMainModuleAndOptionalMainFile(
         mainFile: KtFile?,
         mainModule: KtTestModule,
@@ -46,10 +66,29 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
     ) {
         val contextFile = mainFile ?: mainModule.ktFiles.firstOrNull() ?: error("The fixture must contain a Kotlin file")
         val actual = analyzeForTest(contextFile) {
-            dumpUnhashedIds(mainModule.psiFiles)
+            val errorsByDeclaration = HashMap<PsiElement, MutableList<String>>()
+            for (file in mainModule.psiFiles.filterIsInstance<KtFile>()) {
+                for (diagnostic in @OptIn(KaExperimentalApi::class) file.diagnostics()) {
+                    if (diagnostic.severity != KaSeverity.ERROR) continue
+                    val declaration = owningDeclaration(diagnostic.psi) ?: continue
+                    errorsByDeclaration.getOrPut(declaration) { mutableListOf() }.add(diagnostic.factoryName)
+                }
+            }
+            dumpUnhashedIds(mainModule.psiFiles, errorsByDeclaration)
         }
-        assertEqualsToTestOutputFile(actual, ".txt")
+        assertEqualsToTestOutputFile(actual, ".txt", variantChain = dokkaJavaSymbolsVariantChain)
     }
+
+    /**
+     * A diagnostic is reported on a precise element (a name reference, a type reference in a parameter, ...);
+     * the ID lines are per declaration. The error is attributed to the nearest enclosing declaration, skipping
+     * parameters and type parameters so that an error in a signature (e.g. an unresolved parameter type)
+     * annotates the callable's line, not the parameter's.
+     */
+    private fun owningDeclaration(psi: PsiElement): KtDeclaration? =
+        psi.parentsWithSelf
+            .filterIsInstance<KtDeclaration>()
+            .firstOrNull { it !is KtParameter && it !is KtTypeParameter }
 }
 
 /**
@@ -57,7 +96,8 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
  * file reads like the test data it was generated from. Each file first contributes the ID of its package; files
  * sharing a package contribute it once, at the first file that declares it. Symbols with no declaration of their
  * own (default constructors, enum `values`/`valueOf`/`entries`, synthetic Java properties) follow the class body
- * that owns them. The order of the files themselves is not part of the contract.
+ * that owns them; property accessors have no ID and are skipped. The order of the files themselves is not part
+ * of the contract.
  *
  * When [errorsByDeclaration] is supplied, every line whose declaration has compiler errors gets them appended
  * after the ID, as `// ERROR_NAME, ...`.
@@ -86,13 +126,9 @@ internal fun dumpUnhashedIds(
     fun KaSymbol.sourceOrderKey(): Int = realPsi?.textOffset ?: Int.MAX_VALUE
 
     fun walkDeclaration(symbol: KaDeclarationSymbol) {
+        // Property accessors are not walked: they have no declaration ID of their own.
         add(symbol)
-        if (symbol is KaPropertySymbol) {
-            symbol.getter?.let(::add)
-            symbol.setter?.let(::add)
-        }
         if (symbol is KaNamedClassSymbol) {
-            // The primary constructor is declared in the class header, before the body declarations.
             val scope = symbol.combinedDeclaredMemberScope
             for (member in scope.declarations.sortedBy(KaSymbol::sourceOrderKey)) {
                 walkDeclaration(member)

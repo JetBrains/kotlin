@@ -1,5 +1,4 @@
 sample
 property:sample#c#  // REDECLARATION
-getter:sample#c#
 function:sample#c#
 function:sample#c#parameters=[kotlin/Int];

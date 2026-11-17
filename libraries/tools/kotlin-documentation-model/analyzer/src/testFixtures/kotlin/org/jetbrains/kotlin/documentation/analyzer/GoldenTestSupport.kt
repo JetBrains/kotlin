@@ -12,14 +12,22 @@ import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
 import org.jetbrains.kotlin.analysis.test.data.manager.assertEqualsToTestDataFile
 import java.io.File
 
+/**
+ * Variant chain for tests whose output depends on the Dokka Java analysis mode: `java-symbols` when the
+ * experimental symbols-based Java analysis is enabled (see [AbstractKdmGoldenTest]), empty for the default
+ * Java PSI mode, so the latter compares against the plain golden files.
+ */
+internal val dokkaJavaSymbolsVariantChain: List<String>
+    get() = if (java.lang.Boolean.getBoolean("org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis")) {
+        listOf("java-symbols")
+    } else {
+        emptyList()
+    }
+
 /** Shared golden-file assertions for both Dokka Java analysis modes. */
 abstract class AbstractKdmGoldenTest : ManagedTest {
     override val variantChain: List<String>
-        get() = if (java.lang.Boolean.getBoolean("org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis")) {
-            listOf("java-symbols")
-        } else {
-            emptyList()
-        }
+        get() = dokkaJavaSymbolsVariantChain
 
     protected fun assertMatchesGoldenFile(bundle: KdBundle, testDataFile: File) {
         val actual = Json(from = KdJson) { prettyPrint = true }
