@@ -292,11 +292,11 @@ class AnnotationImplementationMemberGenerator(
             type.classOrNull?.functions?.singleOrNull { it.owner.isHashCode() }
                 ?: context.irBuiltIns.anyClass.functions.single { it.owner.name.asString() == "hashCode" }
         }
-        return object : HashCodeFunctionInfo {
-            override val symbol: IrSimpleFunctionSymbol = symbol
+        return HashCodeFunctionInfo(symbol, hasDispatchReceiver = symbol.hasDispatchReceiver())
+    }
 
-            override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>) {}
-        }
+    private fun IrSimpleFunctionSymbol.hasDispatchReceiver(): Boolean {
+        return owner.dispatchReceiverParameter != null
     }
 
     override fun IrClass.classNameForToString(): String = nameForToString

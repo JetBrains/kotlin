@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERA
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_INLINE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_FULL_VALUE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -295,16 +294,6 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             forbidDirectFieldAccess = false,
             generateBodies = !configuration.skipBodies,
         ) {
-
-            inner class Fir2IrHashCodeFunctionInfo(
-                override val symbol: IrSimpleFunctionSymbol,
-                override val hasDispatchReceiver: Boolean,
-            ) : HashCodeFunctionInfo {
-                override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>) {
-                    // TODO
-                }
-            }
-
             private fun getHashCodeFunction(klass: FirRegularClass): FirNamedFunctionSymbol {
                 if (klass.classId == StandardClassIds.Nothing) {
                     // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in the scope of kotlin.Any
@@ -359,7 +348,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                         functionSymbol to (firHashCode.dispatchReceiverType != null)
                     }
                 }
-                return Fir2IrHashCodeFunctionInfo(symbol, hasDispatchReceiver)
+                return HashCodeFunctionInfo(symbol, hasDispatchReceiver)
             }
         }
     }

@@ -275,7 +275,7 @@ abstract class DataClassLikeMembersBodyGenerator(
 
     protected fun IrBuilderWithScope.getHashCodeOf(hashCodeFunctionInfo: HashCodeFunctionInfo, irValue: IrExpression): IrExpression {
         val hashCodeFunctionSymbol = hashCodeFunctionInfo.symbol
-        val hasDispatchReceiver = hashCodeFunctionInfo.hasDispatchReceiver ?: hashCodeFunctionSymbol.hasDispatchReceiver()
+        val hasDispatchReceiver = hashCodeFunctionInfo.hasDispatchReceiver
         return IrCallImplWithShape(
             startOffset = startOffset,
             endOffset = endOffset,
@@ -288,24 +288,13 @@ abstract class DataClassLikeMembersBodyGenerator(
             typeArgumentsCount = 0,
         ).apply {
             arguments[0] = irValue
-            hashCodeFunctionInfo.commitSubstituted(this)
         }
     }
 
     val IrClassifierSymbol?.isArrayOrPrimitiveArray: Boolean
         get() = isArrayOrPrimitiveArray(context.irBuiltIns)
 
-    interface HashCodeFunctionInfo {
-        val symbol: IrSimpleFunctionSymbol
-
-        /**
-         * Implement it if [symbol] may be unbound
-         */
-        val hasDispatchReceiver: Boolean?
-            get() = null
-
-        fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>)
-    }
+    class HashCodeFunctionInfo(val symbol: IrSimpleFunctionSymbol, val hasDispatchReceiver: Boolean)
 
     abstract fun getHashCodeFunctionInfo(property: IrProperty): HashCodeFunctionInfo
 
@@ -361,10 +350,6 @@ abstract class DataClassLikeMembersBodyGenerator(
                 body(function)
             }
         }
-    }
-
-    private fun IrSimpleFunctionSymbol.hasDispatchReceiver(): Boolean {
-        return owner.dispatchReceiverParameter != null
     }
 
     private fun IrConstructorSymbol.typesOfTypeParameters(): List<IrType> {
