@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.DEST_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.FLAGS_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
-import org.jetbrains.kotlin.parcelize.fir.diagnostics.checkParcelizeClassSymbols
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(DirectDeclarationsAccess::class)
