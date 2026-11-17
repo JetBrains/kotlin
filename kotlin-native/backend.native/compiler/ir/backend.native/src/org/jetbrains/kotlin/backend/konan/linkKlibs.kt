@@ -96,7 +96,7 @@ internal fun LinkKlibsContext.linkKlibs(
     // Generate stubs only for useful modules.
     generateImplForCStructsAndEnums(usefulModuleDependencies, irBuiltIns, symbols)
 
-    config.configuration.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
+    config.configuration.checkNoUnboundSymbols(symbolTable, "after generating implementations for C structs and enums")
 
     // Also, sort modules in RTO according to their actual dependencies DAG.
     val sortedUsefulModuleDependencies = usefulModuleDependencies.reverseTopoSortUsingKlibDAG(config.klibDag)
