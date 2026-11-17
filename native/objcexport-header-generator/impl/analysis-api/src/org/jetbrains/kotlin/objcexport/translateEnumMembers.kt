@@ -27,8 +27,8 @@ private fun ObjCExportContext.getEnumEntries(symbol: KaClassSymbol): List<ObjCPr
     val staticMembers = with(analysisSession) { symbol.staticDeclaredMemberScope }.callables.toList()
     return staticMembers.filterIsInstance<KaEnumEntrySymbol>().map { entry ->
 
-        val entryName = getEnumEntryName(entry, false, mangleObjCName = true)
-        val swiftName = getEnumEntryName(entry, true, mangleObjCName = true)
+        val entryName = getEnumEntryName(entry, false, canMangleNames = true)
+        val swiftName = getEnumEntryName(entry, true, canMangleNames = true)
         ObjCProperty(
             name = entryName,
             comment = null,
@@ -88,14 +88,14 @@ internal fun ObjCExportContext.getNSEnumEntrySwiftName(symbol: KaEnumEntrySymbol
 private fun ObjCExportContext.getNSEnumEntryBaseName(symbol: KaEnumEntrySymbol, forSwift: Boolean): String {
     val objCEnumEntryNameAnnotation = symbol.resolveObjCEnumEntryNameAnnotation()
     val name = (if (forSwift) objCEnumEntryNameAnnotation?.swiftName?.ifEmpty { null } else null) ?: objCEnumEntryNameAnnotation?.objCName
-    return name?.ifEmpty { null } ?: getEnumEntryName(symbol, forSwift, mangleObjCName = false)
+    return name?.ifEmpty { null } ?: getEnumEntryName(symbol, forSwift, canMangleNames = false)
 }
 
 /**
  * See K1 implementation as [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getEnumEntryName]
  */
-internal fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean, mangleObjCName: Boolean): String {
-    val name = getObjCPropertyName(symbol, mangleObjCName) {
+internal fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean, canMangleNames: Boolean): String {
+    val name = getObjCPropertyName(symbol, canMangleNames) {
         it.split('_').mapIndexed { index, s ->
             // This is the transformation block that'd run if the @ObjCName annotation was not present.
             // If present, we'd use the user provided name as-is.
@@ -114,6 +114,10 @@ internal fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSw
     }
 
     return if (name in objCSpecialNames) name.handleSpecialNames("the")
-    else if (name.isReservedPropertyName) name + "_"
+    // canMangleNames is set to false if we're fetching name(s) for NS closed enum entries.
+    // Their ObjC names are prefixed with the NS closed enum name, and their corresponding
+    // Swift names can be of reserved names, as they don't cause any compilation errors.
+    // Either way, mangling them becomes unnecessary.
+    else if (canMangleNames && name.isReservedPropertyName) name + "_"
     else name
 }

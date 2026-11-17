@@ -357,7 +357,10 @@ class ObjCExportNamerImpl(
     private val enumClassSelectors = EnumNameMapping()
     private val enumClassSwiftNames = EnumNameMapping()
     private val closedEnumEntryNames = GlobalNameMapping<ClassDescriptor, String>()
-    private val closedEnumSwiftNames = EnumNameMapping()
+    private val closedEnumSwiftNames = object : Mapping<ClassDescriptor, String>() {
+        override fun conflict(first: ClassDescriptor, second: ClassDescriptor): Boolean =
+            first.containingDeclaration == second.containingDeclaration
+    }
 
     override fun getFileClassName(file: SourceFile): ObjCExportNamer.ClassOrProtocolName {
         val candidate by lazy {
