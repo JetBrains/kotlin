@@ -173,8 +173,8 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
             is EnumValue -> sourceElement.toEnumEntryReferenceExpression(value.enumClassId, value.enumEntryName)
             is KClassValue -> buildGetClassCall {
                 source = KtRealPsiSourceElement(sourceElement)
-                val lookupTag = (value.value as KClassValue.Value.NormalClass).classId.toLookupTag()
-                val referencedType = lookupTag.constructType()
+                val normalClass = value.value as KClassValue.Value.NormalClass
+                val referencedType = normalClass.classId.toLookupTag().constructType().withArrayDimensions(normalClass.arrayDimensions)
                 val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {

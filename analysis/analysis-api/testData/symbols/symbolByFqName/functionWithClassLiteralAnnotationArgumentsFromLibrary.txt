@@ -1,7 +1,7 @@
 KaNamedFunctionSymbol:
   anchorPsi: KtNamedFunction
   annotations: [
-    one/Anno(value = kotlin.String::class, values = [kotlin.IntArray::class, kotlin.IntArray::class, kotlin.String::class, one.Box::class])
+    one/Anno(value = kotlin.Array<kotlin.String>::class, values = [kotlin.IntArray::class, kotlin.Array<kotlin.IntArray>::class, kotlin.Array<kotlin.Array<kotlin.String>>::class, one.Box::class])
       psi: null
   ]
   callableId: one/foo

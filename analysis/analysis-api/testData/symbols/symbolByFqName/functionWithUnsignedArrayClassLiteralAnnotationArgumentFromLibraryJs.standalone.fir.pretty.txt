@@ -1,2 +1,0 @@
-@one.Anno(value = kotlin.Array<kotlin.UInt>::class)
-fun foo()
