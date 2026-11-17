@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class NodeJsGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
