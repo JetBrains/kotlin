@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import java.io.File
 import javax.inject.Inject
+import kotlin.io.invariantSeparatorsPath
 
 /**
  * Base class for tasks running Kotlin/Native tests by launching a test
@@ -117,11 +118,16 @@ internal constructor(
     /**
      * [workingDir] relativized against the project directory when located
      * inside it (as configured by default), or the absolute path otherwise.
+     *
+     * The invariant separator is used, so that cache entries do not depend
+     * on the path separator of the operating system they were produced on.
      */
     @get:Input
     @Suppress("UNUSED") // Gradle input
     internal val relativizedWorkingDir: String
-        get() = processOptions.workingDir.get().asFile.relativeToOrSelf(projectDirectory).path
+        get() = processOptions.workingDir.get().asFile
+            .relativeToOrSelf(projectDirectory)
+            .invariantSeparatorsPath
 
     /**
      * Environment variables to pass to the test process, replacing the
