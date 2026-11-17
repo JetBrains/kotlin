@@ -58,7 +58,7 @@ class JsDebugRunner(testServices: TestServices) :
     override val debugMode: DebugMode get() = DebugMode.NONE
 
     // language=js
-    override val jsCodeToGetModuleWithBoxFunction = "const box = main.box"
+    override val jsCodeToGetModuleWithBoxFunction = "const box = main.box;"
 
     override fun saveEntryFile(outputDir: File, content: String) {
         val testFile = File(outputDir, "test.js")

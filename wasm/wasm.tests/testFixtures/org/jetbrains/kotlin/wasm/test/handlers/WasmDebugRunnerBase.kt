@@ -39,7 +39,7 @@ abstract class WasmDebugRunnerBase(testServices: TestServices, includeLocalVaria
 
     // language=js
     override val jsCodeToGetModuleWithBoxFunction = """
-        const jsModule = await import('./index.mjs')
+        const jsModule = await import('./index.mjs');
         const box = jsModule.box;
     """.trimIndent()
 
