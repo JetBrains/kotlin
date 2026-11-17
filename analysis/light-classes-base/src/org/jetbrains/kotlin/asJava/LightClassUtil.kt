@@ -152,7 +152,8 @@ object LightClassUtil {
      * Light classes of decompiled declarations are scanned: the `kotlinOrigin` of their members is a search in the compiled file,
      * so a lookup that computes it for all members costs more than a scan that filters by name first.
      */
-    private fun PsiClass.asLightClassWithKotlinOriginLookup(): KtExtensibleLightClass? =
+    @KtImplementationDetail
+    fun PsiClass.asLightClassWithKotlinOriginLookup(): KtExtensibleLightClass? =
         if (this is KtExtensibleLightClass && this !is KtClsJavaBasedLightClass) this else null
 
     fun getLightClassPropertyMethods(parameter: KtParameter): PropertyAccessorsPsiMethods {
