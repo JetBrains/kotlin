@@ -103,7 +103,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         }
     }
 
-    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+    override fun transformFlat(declaration: IrDeclaration): List<IrFunction>? {
         if (declaration !is IrFunction || declaration.isExternalOrInheritedFromExternal()) {
             return null
         }
@@ -113,10 +113,6 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         }
 
         val [originalFun, defaultFunStub] = super.transformFlat(declaration) ?: return null
-
-        if (originalFun !is IrFunction || defaultFunStub !is IrFunction) {
-            return listOf(originalFun, defaultFunStub)
-        }
 
         val isOriginalFunctionExported = originalFun.isExported(context)
 
