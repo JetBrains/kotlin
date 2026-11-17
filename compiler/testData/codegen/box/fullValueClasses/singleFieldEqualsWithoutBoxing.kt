@@ -7,10 +7,10 @@
 // - Native output is verified with FileCheck directives
 // Wasm does not have it (KT-90128), which is pinned with `WASM_COUNT_INSTRUCTION_IN_FUNCTION` directives: the comparisons allocate there.
 
-value class Single(val x: Int)
-value class Outer(val single: Single)
-value class OverUShort(val x: UShort)
-value class OuterOverUShort(val single: OverUShort)
+inline value class Single(val x: Int)
+inline value class Outer(val single: Single)
+inline value class OverUShort(val x: UShort)
+inline value class OuterOverUShort(val single: OverUShort)
 
 // CHECK-LABEL: define ptr @"kfun:#test(){}kotlin.String"
 // CHECK-NOT: <Single-box>

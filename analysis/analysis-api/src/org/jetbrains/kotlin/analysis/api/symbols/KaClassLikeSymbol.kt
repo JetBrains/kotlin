@@ -221,11 +221,9 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
     /**
      * Whether the class uses Kotlin's single-field [inline value class](https://kotlinlang.org/docs/inline-classes.html) representation.
      *
-     * This is a declaration-level property. It does not predict whether a value is boxed at a particular use site, nor whether a backend
-     * can optimize a compatible
+     * This is a declaration-level property. It does not predict whether a value is boxed at a particular use site. In particular, a
      * [full value class](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
-     * to an unboxed form. In particular, a full value class with exactly one primary property still returns `false`. Use [isValue] to
-     * recognize both inline and full value classes.
+     * with exactly one primary property still returns `false`. Use [isValue] to recognize both inline and full value classes.
      *
      * For valid declarations, this property is `true` for all of the following:
      *
