@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extra
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -33,7 +34,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
         val iterator = data.properties.iterator()
         for (symbol in iterator) {
             val source = symbol.source ?: continue
-            val canBeVal = if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
+            val canBeVal = if (source.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION) {
                 // var (a, b) -> { val _tmp; var a; var b }
                 val count = source.lighterASTNode.getChildren(source.treeStructure).count {
                     it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY

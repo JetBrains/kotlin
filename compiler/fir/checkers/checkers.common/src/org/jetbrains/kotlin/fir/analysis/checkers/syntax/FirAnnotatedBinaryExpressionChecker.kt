@@ -17,10 +17,11 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil.isStatementContainer
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
 object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirStatement, PsiElement>() {
     override fun isApplicable(element: FirStatement, source: KtSourceElement): Boolean {
-        return source.kind is KtRealSourceElementKind && source.elementType == KtNodeTypes.BINARY_EXPRESSION && source.hasAnnotatedLhs
+        return source.kind is KtRealSourceElementKind && source.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION && source.hasAnnotatedLhs
     }
 
     private val KtSourceElement.hasAnnotatedLhs: Boolean

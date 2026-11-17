@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -148,8 +148,8 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
     }
 
     private val KtSourceElement.isIfExpression: Boolean
-        get() = elementType == KtNodeTypes.IF
+        get() = syntaxId == KotlinSyntaxNodeTypeIds.IF
 
     private val KtSourceElement.isWhenExpression: Boolean
-        get() = elementType == KtNodeTypes.WHEN
+        get() = syntaxId == KotlinSyntaxNodeTypeIds.WHEN
 }

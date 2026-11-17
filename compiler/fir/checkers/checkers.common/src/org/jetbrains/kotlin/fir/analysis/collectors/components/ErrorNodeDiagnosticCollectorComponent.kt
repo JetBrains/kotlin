@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
@@ -108,7 +108,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             it.toReference(session) == reference
         }
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
-        if (source?.elementType == KtNodeTypes.ANNOTATION_ENTRY && diagnostic is ConeUnresolvedNameError) return
+        if (source?.syntaxId == KotlinSyntaxNodeTypeIds.ANNOTATION_ENTRY && diagnostic is ConeUnresolvedNameError) return
         // Already reported in FirConventionFunctionCallChecker
         if (source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference &&
             diagnostic is ConeUnresolvedNameError
@@ -208,7 +208,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             valueParameter: FirValueParameter? = null,
         ) {
             // Will be handled by [FirDestructuringDeclarationChecker]
-            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY && source.kind != KtFakeSourceElementKind.DesugaredNameBasedDestructuring) {
+            if (source?.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION_ENTRY && source.kind != KtFakeSourceElementKind.DesugaredNameBasedDestructuring) {
                 return
             }
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -46,7 +46,7 @@ object FirUnnecessarySafeCallChecker : AbstractFirUnnecessarySafeCallChecker() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirSafeCallExpression) {
         val receiverType = expression.receiver.resolvedType.fullyExpandedType()
-        if (expression.receiver.source?.elementType == KtNodeTypes.SUPER_EXPRESSION) {
+        if (expression.receiver.source?.syntaxId == KotlinSyntaxNodeTypeIds.SUPER_EXPRESSION) {
             reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL)
             return
         }

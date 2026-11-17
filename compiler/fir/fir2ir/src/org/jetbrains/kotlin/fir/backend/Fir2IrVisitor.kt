@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -1442,15 +1443,15 @@ class Fir2IrVisitor(
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Any?): IrElement {
         val subjectVariable = generateWhenSubjectVariable(whenExpression)
-        val origin = when (whenExpression.source?.elementType) {
-            KtNodeTypes.WHEN -> IrStatementOrigin.WHEN
-            KtNodeTypes.IF -> IrStatementOrigin.IF
-            KtNodeTypes.BINARY_EXPRESSION -> when (whenExpression.source?.operationToken) {
+        val origin = when (whenExpression.source?.syntaxId) {
+            KotlinSyntaxNodeTypeIds.WHEN -> IrStatementOrigin.WHEN
+            KotlinSyntaxNodeTypeIds.IF -> IrStatementOrigin.IF
+            KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION -> when (whenExpression.source?.operationToken) {
                 KtTokens.OROR -> IrStatementOrigin.OROR
                 KtTokens.ANDAND -> IrStatementOrigin.ANDAND
                 else -> null
             }
-            KtNodeTypes.POSTFIX_EXPRESSION -> IrStatementOrigin.EXCLEXCL
+            KotlinSyntaxNodeTypeIds.POSTFIX_EXPRESSION -> IrStatementOrigin.EXCLEXCL
             else -> null
         }
         return conversionScope.withWhenSubject(subjectVariable) {
@@ -1554,7 +1555,7 @@ class Fir2IrVisitor(
     private fun FirWhenBranch.nestedElseIfOrNull(): FirWhenExpression? {
         if (condition is FirElseIfTrueCondition) {
             val elseWhenExpression = (result as? FirSingleExpressionBlock)?.statement as? FirWhenExpression
-            if (elseWhenExpression != null && elseWhenExpression.source?.elementType == KtNodeTypes.IF) {
+            if (elseWhenExpression != null && elseWhenExpression.source?.syntaxId == KotlinSyntaxNodeTypeIds.IF) {
                 return elseWhenExpression
             }
         }
@@ -1650,7 +1651,7 @@ class Fir2IrVisitor(
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: Any?): IrElement {
         return whileLoop.convertWithOffsets { startOffset, endOffset ->
-            val isForLoop = whileLoop.source?.elementType == KtNodeTypes.FOR
+            val isForLoop = whileLoop.source?.syntaxId == KotlinSyntaxNodeTypeIds.FOR
             val origin = if (isForLoop) IrStatementOrigin.FOR_LOOP_INNER_WHILE else IrStatementOrigin.WHILE_LOOP
             val firLoopBody = whileLoop.block
             IrWhileLoopImpl(startOffset, endOffset, builtins.unitType, origin).apply {
@@ -2076,7 +2077,7 @@ val KtSourceElement.isChildOfForLoop: Boolean
 
 val KtSourceElement.operationToken: IElementType?
     get() {
-        assert(elementType == KtNodeTypes.BINARY_EXPRESSION)
+        assert(syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION)
         return if (this is KtPsiSourceElement) (psi as? KtBinaryExpression)?.operationToken
         else treeStructure.findChildByType(lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)?.tokenType
             ?: error("No operation reference for binary expression: $lighterASTNode")

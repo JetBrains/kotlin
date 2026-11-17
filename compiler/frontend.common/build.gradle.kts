@@ -9,6 +9,11 @@ dependencies {
     api(project(":compiler:config"))
     api(project(":core:language.syntax"))
 
+    // Temporary dependency that's needed for `syntaxId()` that maps `IElementType` with `SyntaxId`
+    // Once `KtPsiSourceElement` and `KtLightSourceElement` leaves this module, the dependency must be dropped.
+    // TODO: KT-91461
+    implementation(project(":compiler:psi:psi-api"))
+
     api(project(":core:deserialization.common"))
     api(project(":compiler:plugin-api"))
     compileOnly(intellijCore())

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -26,7 +26,7 @@ object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(
         if (
             declaration !is FirDefaultPropertyAccessor &&
             declaration.isDirectlyExternal() &&
-            declaration.source?.elementType == KtNodeTypes.PROPERTY_ACCESSOR
+            declaration.source?.syntaxId == KotlinSyntaxNodeTypeIds.PROPERTY_ACCESSOR
         ) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "property accessor")
         }
