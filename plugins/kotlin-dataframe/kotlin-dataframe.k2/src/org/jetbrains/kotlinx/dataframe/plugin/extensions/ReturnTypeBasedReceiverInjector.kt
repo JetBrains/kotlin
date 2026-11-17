@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
@@ -45,10 +46,11 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
         containingCallableSymbol: FirBasedSymbol<*>,
     ): List<ImplicitExtensionReceiverValue> {
         val callReturnType = functionCall.resolvedType
+        // detect whether there exists an outer `this` and save it so we can intersect our new scopeType with it
         val outerReceiver = (containingCallableSymbol as? FirCallableSymbol<*>)?.let { callable ->
             val receiverParameter = callable.receiverParameterSymbol ?: return@let null
             val receiverType = callable.resolvedReceiverType ?: return@let null
-            receiverParameter to receiverType
+            Pair(receiverParameter, receiverType)
         }
         val typeArguments = mutableListOf<ConeTypeProjection>()
         callReturnType.forEachType {
@@ -70,10 +72,15 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
                     .map { it.resolvedReturnType }
             }
             .map { scopeType ->
-                val receiverType = outerReceiver?.let { (_, outerType) ->
-                    ConeTypeIntersector.intersectTypes(session.typeContext, listOf(outerType, scopeType))
-                } ?: scopeType
-                val receiverSymbol = outerReceiver?.first ?: run {
+                val receiverSymbol: FirReceiverParameterSymbol
+                val receiverType: ConeKotlinType
+
+                if (outerReceiver != null) {
+                    // if we have an outer `this` receiver, intersect our new scopeType with its type so calling `this` remains the same
+                    val [outerParameter, outerType] = outerReceiver
+                    receiverSymbol = outerParameter
+                    receiverType = ConeTypeIntersector.intersectTypes(session.typeContext, listOf(outerType, scopeType))
+                } else {
                     val receiverParameter = buildReceiverParameter {
                         resolvePhase = FirResolvePhase.BODY_RESOLVE
                         moduleData = session.moduleData
@@ -85,13 +92,15 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
                         }
                     }
                     receiverParameter.captureValueInAnalyze = false
-                    receiverParameter.symbol
+                    receiverSymbol = receiverParameter.symbol
+                    receiverType = scopeType
                 }
+
                 ImplicitExtensionReceiverValue(
-                    receiverSymbol,
-                    receiverType,
-                    sessionHolder.session,
-                    sessionHolder.scopeSession
+                    boundSymbol = receiverSymbol,
+                    type = receiverType,
+                    useSiteSession = sessionHolder.session,
+                    scopeSession = sessionHolder.scopeSession
                 )
             }
     }
