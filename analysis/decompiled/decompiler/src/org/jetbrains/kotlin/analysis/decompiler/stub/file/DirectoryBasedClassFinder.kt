@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.JvmClassFileNameUtils
 import java.io.InputStream
 
 class DirectoryBasedClassFinder(
@@ -26,7 +27,7 @@ class DirectoryBasedClassFinder(
         if (classId.packageFqName != directoryPackageFqName) {
             return null
         }
-        val targetName = classId.relativeClassName.pathSegments().joinToString("$", postfix = ".class")
+        val targetName = JvmClassFileNameUtils.classFileName(classId.relativeClassName)
         val virtualFile = packageDirectory.findChild(targetName)
         if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile, metadataVersion)) {
             return ClsKotlinBinaryClassCache.getInstance().getKotlinBinaryClass(virtualFile)?.let(::KotlinClass)
