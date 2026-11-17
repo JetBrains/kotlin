@@ -87,9 +87,13 @@ fun computeDownwardClosure(
         if (entryPoints.shouldBeExposed(descriptor)) {
             matched.add(descriptor.original)
         }
+        if (descriptor is PropertyDescriptor) {
+            descriptor.accessors.forEach { processCallable(it) }
+        }
     }
 
     fun processClass(descriptor: ClassDescriptor) {
+        descriptor.constructors.forEach { processCallable(it) }
         descriptor.unsubstitutedMemberScope.getContributedDescriptors().forEach { descriptor ->
             when (descriptor) {
                 is CallableMemberDescriptor -> processCallable(descriptor)

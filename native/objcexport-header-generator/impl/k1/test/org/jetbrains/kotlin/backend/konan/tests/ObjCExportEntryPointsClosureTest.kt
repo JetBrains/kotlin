@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.testUtils.InlineSourceTestEnvironment
 import org.jetbrains.kotlin.backend.konan.testUtils.compileAndDeserializeSources
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.junit.jupiter.api.AfterEach
@@ -114,5 +115,39 @@ class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
         assertFalse(runnableRun.original in closure, "Runnable.run should not be in closure")
         assertTrue(aRun in closure, "A.run should be in closure")
         assertFalse(bRun in closure, "B.run should not be in closure")
+    }
+
+    @Test
+    fun `test downward closure with constructors and property accessors`() {
+        val source = """
+            open class A(val name: String) {
+                open var count: Int = 0
+            }
+            class B : A("b") {
+                override var count: Int = 1
+            }
+        """.trimIndent()
+
+        val module = compileAndDeserializeSources(source)
+
+        val a = module.findClassAcrossModuleDependencies(ClassId.fromString("A"))!!
+        val b = module.findClassAcrossModuleDependencies(ClassId.fromString("B"))!!
+
+        val aConstructor = a.constructors.single()
+        val aCountSetter = a.unsubstitutedMemberScope.getContributedDescriptors()
+            .filterIsInstance<PropertyDescriptor>().single { it.name.asString() == "count" }.setter!!
+        val bCountSetter = b.unsubstitutedMemberScope.getContributedDescriptors()
+            .filterIsInstance<PropertyDescriptor>().single { it.name.asString() == "count" }.setter!!
+
+        val entryPoints = object : ObjCEntryPoints {
+            override fun shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean =
+                descriptor.original == aConstructor.original || descriptor.original == aCountSetter.original
+        }
+
+        val closure = computeDownwardClosure(entryPoints, listOf(module))
+
+        assertTrue(aConstructor in closure, "The constructor of A should be in closure")
+        assertTrue(aCountSetter in closure, "The setter of A.count should be in closure")
+        assertTrue(bCountSetter in closure, "The setter of B.count, which overrides it, should be in closure")
     }
 }
