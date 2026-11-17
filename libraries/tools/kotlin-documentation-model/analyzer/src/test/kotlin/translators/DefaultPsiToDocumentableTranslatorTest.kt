@@ -443,7 +443,7 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                 val setter = property.setter
                 assertNotNull(setter)
                 assertEquals(1, setter.parameters.size)
-                assertEquals(PrimitiveJavaType("int"), setter.parameters[0].type)
+                assertEquals(GenericTypeConstructor(DRI("kotlin", "Int"), emptyList(), null), setter.parameters[0].type)
 
                 val regularSetterFunctions = testClass.functions.filter { it.name == "setA" }
                 assertEquals(4, regularSetterFunctions.size)

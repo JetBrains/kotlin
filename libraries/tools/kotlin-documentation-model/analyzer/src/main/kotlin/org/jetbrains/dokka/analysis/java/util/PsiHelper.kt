@@ -9,23 +9,17 @@ import com.intellij.lang.jvm.annotation.JvmAnnotationAttributeValue
 import com.intellij.lang.jvm.annotation.JvmAnnotationConstantValue
 import com.intellij.lang.jvm.annotation.JvmAnnotationEnumFieldValue
 import com.intellij.psi.*
-import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.analysis.java.BreakingAbstractionKotlinLightMethodChecker
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
-import org.jetbrains.dokka.model.AnnotationTarget
-import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.utilities.DokkaLogger
 
 @InternalDokkaApi
 internal class PsiHelper(
-    private val sourceSet: DokkaConfiguration.DokkaSourceSet,
     private val logger: DokkaLogger,
     private val lightMethodChecker: BreakingAbstractionKotlinLightMethodChecker
 ) {
-    private val cachedBounds = hashMapOf<String, Bound>()
-
     /**
      * Extracts a list of [DRI]s for checked exceptions from a [PsiMethod]'s throws clause.
      */
@@ -34,117 +28,6 @@ internal class PsiHelper(
 
     private fun PsiReferenceList.toDriList(): List<DRI> =
         referenceElements.mapNotNull { it?.resolve()?.let { resolved -> DRI.from(resolved) } }
-
-    private fun <T> T.toSourceSetDependent() = mapOf(sourceSet to this)
-
-    private fun <T : AnnotationTarget> PsiType.annotations(): PropertyContainer<T> =
-        convertAnnotations(this.annotations.toList()).annotations()
-
-    private fun <T : AnnotationTarget> List<Annotations.Annotation>.annotations(): PropertyContainer<T> =
-        this.takeIf { it.isNotEmpty() }?.let { annotations ->
-            PropertyContainer.withAll(annotations.toSourceSetDependent().toAnnotations())
-        } ?: PropertyContainer.empty()
-
-    // requires access to annotations, so extracted here
-    fun getBound(type: PsiType): Bound {
-        //We would like to cache most of the bounds since it is not common to annotate them,
-        //but if this is the case, we treat them as 'one of'
-        fun PsiType.cacheBoundIfHasNoAnnotation(f: (List<Annotations.Annotation>) -> Bound): Bound {
-            val annotations = convertAnnotations(this.annotations.toList())
-            return if (annotations.isNotEmpty()) f(annotations)
-            else cachedBounds.getOrPut(canonicalText) {
-                f(annotations)
-            }
-        }
-
-        return when (type) {
-            is PsiClassType ->
-                type.resolve()?.let { resolved ->
-                    when {
-                        resolved.qualifiedName == "java.lang.Object" -> type.cacheBoundIfHasNoAnnotation { annotations ->
-                            JavaObject(
-                                annotations.annotations()
-                            )
-                        }
-
-                        resolved is PsiTypeParameter -> {
-                            TypeParameter(
-                                dri = DRI.from(resolved),
-                                name = resolved.name.orEmpty(),
-                                extra = type.annotations()
-                            )
-                        }
-
-                        Regex("kotlin\\.jvm\\.functions\\.Function.*").matches(resolved.qualifiedName ?: "") ||
-                                Regex("java\\.util\\.function\\.Function.*").matches(
-                                    resolved.qualifiedName ?: ""
-                                ) -> FunctionalTypeConstructor(
-                            DRI.from(resolved),
-                            type.parameters.map { getProjection(it) },
-                            extra = type.annotations()
-                        )
-
-                        else -> {
-                            // cache types that have no annotation and no type parameter
-                            // since we cache only by name and type parameters depend on context
-                            val typeParameters = type.parameters.map { getProjection(it) }
-                            if (typeParameters.isEmpty())
-                                type.cacheBoundIfHasNoAnnotation { annotations ->
-                                    GenericTypeConstructor(
-                                        DRI.from(resolved),
-                                        typeParameters,
-                                        extra = annotations.annotations()
-                                    )
-                                }
-                            else
-                                GenericTypeConstructor(
-                                    DRI.from(resolved),
-                                    typeParameters,
-                                    extra = type.annotations()
-                                )
-                        }
-                    }
-                } ?: UnresolvedBound(type.presentableText, type.annotations())
-            // aka vararg
-            is PsiEllipsisType -> GenericTypeConstructor(
-                DRI("kotlin", "Array"),
-                listOf(Invariance(getBound(type.componentType))),
-                extra = type.annotations()
-            )
-            is PsiArrayType -> GenericTypeConstructor(
-                DRI("kotlin", "Array"),
-                listOf(Invariance(getBound(type.componentType))), // kotlin.Array is invariant, but Java Array is covariant
-                extra = type.annotations()
-            )
-
-            is PsiPrimitiveType -> if (type.name == "void") Void
-            else type.cacheBoundIfHasNoAnnotation { annotations ->
-                PrimitiveJavaType(
-                    type.name,
-                    annotations.annotations()
-                )
-            }
-
-            else -> throw IllegalStateException("${type.presentableText} is not supported by PSI parser")
-        }
-    }
-
-    private fun getVariance(type: PsiWildcardType): Projection = when {
-        type.isExtends -> Covariance(getBound(type.extendsBound))
-        type.isSuper -> Contravariance(getBound(type.superBound))
-        // If the type isn't explicitly bounded, it still has an implicit `extends Object` bound
-        type.extendsBound != PsiTypes.nullType() -> if ((type.extendsBound as PsiClassType).resolve()?.qualifiedName == "java.lang.Object") Star else Covariance(
-            getBound(type.extendsBound)
-        )
-        else -> throw IllegalStateException("${type.presentableText} has incorrect bounds")
-    }
-
-    // requires access to annotations, so extracted here
-    internal fun getProjection(type: PsiType): Projection = when (type) {
-        is PsiEllipsisType -> Star
-        is PsiWildcardType -> getVariance(type)
-        else -> Invariance(getBound(type))
-    }
 
     fun convertAnnotations(annotations: Collection<PsiAnnotation>): List<Annotations.Annotation> =
         annotations.filter { !lightMethodChecker.isLightAnnotation(it) }.mapNotNull { convertAnnotation(it) }
@@ -220,7 +103,7 @@ internal class PsiHelper(
             this as PsiClass
             return try {
                 this.annotations
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 logger.warn("Failed to get annotations from ${this.qualifiedName}")
                 null
             }
