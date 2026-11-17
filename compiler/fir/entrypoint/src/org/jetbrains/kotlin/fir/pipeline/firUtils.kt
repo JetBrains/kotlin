@@ -89,16 +89,6 @@ fun resolveAndCheckFir(
     return SingleModuleFrontendOutput(session, scopeSession, fir)
 }
 
-fun buildResolveAndCheckFirViaLightTree(
-    session: FirSession,
-    ktFiles: Collection<KtSourceFile>,
-    diagnosticsReporter: BaseDiagnosticsCollector,
-    countFilesAndLines: ((Int, Int) -> Unit)?
-): SingleModuleFrontendOutput {
-    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, useMultiplatformParsing = false, countFilesAndLines)
-    return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
-}
-
 @OptIn(DirectDeclarationsAccess::class)
 fun requireIrForHeaderCompilationMode(frontendOutput: AllModulesFrontendOutput): Boolean {
     return frontendOutput.outputs.any { output ->

@@ -14,7 +14,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_ERROR
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
@@ -36,7 +34,6 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -57,14 +54,9 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.hmppModuleName
-import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 import javax.xml.stream.XMLOutputFactory
 import javax.xml.stream.XMLStreamWriter
@@ -75,25 +67,20 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     name = "JvmFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    @Suppress("IncorrectFormatting") // Destructuring declaration reformating is weird due to KTIJ-38744
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
         val (configuration, rootDisposable) = input
 
         val perfManager = configuration.perfManager
         val chunk = configuration.moduleChunk!!
-        val targetDescription = chunk.targetDescription()
-        perfManager?.targetDescription = targetDescription
+        perfManager?.targetDescription = chunk.targetDescription()
 
         if (!checkNotSupportedPlugins(configuration)) {
             perfManager?.notifyPhaseFinished(PhaseType.Initialization)
             return null
         }
 
-        (val environment, val sourcesProvider = sources) = createEnvironmentAndSources(
-            configuration,
-            rootDisposable,
-            targetDescription,
-        ) ?: run {
+        val environment = createProjectEnvironment(configuration, rootDisposable)
+        if (CheckDiagnosticCollector.checkHasErrors(configuration)) {
             perfManager?.notifyPhaseFinished(PhaseType.Initialization)
             return null
         }
@@ -111,7 +98,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         }
 
-        val sources = sourcesProvider()
+        val sources = collectSources(configuration, environment)
         val allSources = sources.allFiles
 
         perfManager?.notifyPhaseFinished(PhaseType.Initialization)
@@ -153,97 +140,17 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             projectEnvironment = environment,
             librariesClasspath = librariesClasspath,
             libraryList = libraryList,
-            isCommonSource = sources.isCommonSourceForLt,
-            isScript = {
-                when (it) {
-                    is KtPsiSourceFile -> (it.psiFile as? KtFile)?.isScript() == true
-                    else -> it.isScript()
-                }
-            },
-            fileBelongsToModule = sources.fileBelongsToModuleForLt,
+            isCommonSource = sources::isCommonSource,
+            isScript = { it.isScript() },
+            fileBelongsToModule = sources::fileBelongsToModule,
             incrementalCompilationContext,
         )
 
-        val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
-        val diagnosticsCollector = configuration.diagnosticsCollector
-        val outputs = sessionsWithSources.map { (val session, val sources = files) ->
-            val rawFirFiles = when (configuration.parserMode.treeBased) {
-                true -> session.buildFirViaLightTree(sources, diagnosticsCollector, useMultiplatformParsing = false, countFilesAndLines)
-                false -> session.buildFirFromKtFiles(sources.asKtFilesList())
-            }
-            resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)
-        }
-        outputs.runPlatformCheckers(diagnosticsCollector)
+        val outputs = sessionsWithSources.map { (session, files) -> buildResolveAndCheckFir(session, files, configuration) }
+        outputs.runPlatformCheckers(configuration.diagnosticsCollector)
 
         val frontendOutput = AllModulesFrontendOutput(outputs)
         return JvmFrontendPipelineArtifact(frontendOutput, configuration, environment, allSources)
-    }
-
-    private data class EnvironmentAndSources(val environment: VfsBasedProjectEnvironment, val sources: () -> GroupedKtSources)
-
-    /**
-     * Calculation of sources should be postponed due to analysis handler extensions.
-     * To call the extensions, we need to have an instance of project, and the extension might suppress any errors
-     * caused by sources parsing.
-     *
-     * Also, since it's necessary to have the instance of KotlinCoreEnvironment to build the KtFiles, which
-     * we don't want to leak outside of [createEnvironmentAndSources] method, it's not possible to split this method into twos (one
-     * for building environment, one for building sources)
-     */
-    private fun createEnvironmentAndSources(
-        configuration: CompilerConfiguration,
-        rootDisposable: Disposable,
-        targetDescription: String,
-    ): EnvironmentAndSources? {
-        val diagnosticReporter = configuration.diagnosticsCollector
-        return when (configuration.parserMode.treeBased) {
-            true -> {
-                val environment = createProjectEnvironment(
-                    configuration,
-                    rootDisposable
-                )
-                val sources = { collectSources(configuration, environment) }
-                EnvironmentAndSources(environment, sources)
-            }
-            false -> {
-                val kotlinCoreEnvironment = createCoreEnvironment(
-                    rootDisposable, configuration, targetDescription
-                ) ?: return null
-
-                val projectEnvironment = kotlinCoreEnvironment.toVfsBasedProjectEnvironment()
-
-                val sources = {
-                    val ktFiles = projectEnvironment.computeKtSources(configuration)
-                    configuration.perfManager?.addSourcesStats(ktFiles.size, ktFiles.countLinesOfCode())
-                    ktFiles.forEach { SyntaxErrorReporter.reportSyntaxErrors(it, diagnosticReporter) }
-                    groupKtFiles(ktFiles)
-                }
-
-                EnvironmentAndSources(projectEnvironment, sources)
-            }
-        }.takeUnless { CheckDiagnosticCollector.checkHasErrors(configuration) }
-    }
-
-    private fun groupKtFiles(ktFiles: List<KtFile>): GroupedKtSources {
-        val platformSources = mutableSetOf<KtPsiSourceFile>()
-        val commonSources = mutableSetOf<KtPsiSourceFile>()
-        val sourcesByModuleName = mutableMapOf<String, MutableSet<KtPsiSourceFile>>()
-
-        for (ktFile in ktFiles) {
-            val sourceFile = KtPsiSourceFile(ktFile)
-            @OptIn(KtImplementationDetail::class)
-            when (val moduleName = ktFile.hmppModuleName) {
-                null -> when {
-                    ktFile.isCommonSource == true -> commonSources.add(sourceFile)
-                    else -> platformSources.add(sourceFile)
-                }
-                else -> {
-                    commonSources.add(sourceFile)
-                    sourcesByModuleName.getOrPut(moduleName) { mutableSetOf() }.add(sourceFile)
-                }
-            }
-        }
-        return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
     }
 
     private fun checkNotSupportedPlugins(compilerConfiguration: CompilerConfiguration): Boolean {
@@ -279,36 +186,21 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val hmppModuleStructure = configuration.hmppModuleStructure
         val lastHmppModuleName = hmppModuleStructure?.modules?.lastOrNull()?.name
 
-        @OptIn(KtImplementationDetail::class)
         val commonScripts = allSources.filter { source ->
-            when (source) {
-                is KtPsiSourceFile -> {
-                    val psiFile = source.psiFile as KtFile
-                    psiFile.isScript() && (psiFile.isCommonSource == true || psiFile.hmppModuleName != lastHmppModuleName)
-                }
-                else -> when {
-                    !source.isScript() -> false
-                    source in commonSources -> true
-                    else -> {
-                        val path = source.path ?: return@filter false
-                        hmppModuleStructure?.getModuleNameForSource(File(path)) != lastHmppModuleName
-                    }
+            when {
+                !source.isScript() -> false
+                source in commonSources -> true
+                else -> {
+                    val path = source.path ?: return@filter false
+                    hmppModuleStructure?.getModuleNameForSource(File(path)) != lastHmppModuleName
                 }
             }
         }
         if (commonScripts.isNotEmpty()) {
-            val cwd = File(".").absoluteFile
-            fun renderFile(ktFile: KtFile): String = File(ktFile.virtualFilePath).descendantRelativeTo(cwd).path
             configuration.report(
                 COMPILER_ARGUMENTS_ERROR,
                 "Script files in common source roots are not supported. Misplaced files:\n    " +
-                        commonScripts.joinToString("\n    ", transform = { source ->
-                            if (source is KtPsiSourceFile) {
-                                renderFile(source.psiFile as KtFile)
-                            } else {
-                                source.path ?: source.name
-                            }
-                        })
+                        commonScripts.joinToString("\n    ") { it.path ?: it.name }
             )
             return true
         }
@@ -774,22 +666,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 )
             }
         }
-    }
-
-    private fun createCoreEnvironment(
-        rootDisposable: Disposable,
-        configuration: CompilerConfiguration,
-        targetDescription: String,
-    ): KotlinCoreEnvironment? {
-        val perfManager = configuration.perfManager
-        perfManager?.targetDescription = targetDescription
-
-        if (CheckDiagnosticCollector.checkHasErrors(configuration)) return null
-
-        @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.create(rootDisposable, configuration)
-
-        return if (CheckDiagnosticCollector.checkHasErrors(configuration)) null else environment
     }
 }
 

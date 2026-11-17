@@ -7,13 +7,20 @@ package org.jetbrains.kotlin.cli.common
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.countLinesOfCode
+import org.jetbrains.kotlin.cli.pipeline.jvm.asKtFilesList
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.CliOnlyLanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
+import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
+import org.jetbrains.kotlin.fir.pipeline.buildFirViaLightTree
+import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -47,11 +54,33 @@ val isCommonSourceForPsi: (KtFile) -> Boolean = { it.isCommonSource == true }
 @OptIn(KtImplementationDetail::class)
 val fileBelongsToModuleForPsi: (KtFile, String) -> Boolean = { file, moduleName -> file.hmppModuleName == moduleName }
 
-val GroupedKtSources.isCommonSourceForLt: (KtSourceFile) -> Boolean
-    get() = { it in commonSources }
-
-val GroupedKtSources.fileBelongsToModuleForLt: (KtSourceFile, String) -> Boolean
-    get() = { file, moduleName -> sourcesByModuleName[moduleName].orEmpty().contains(file) }
+/**
+ * Builds the raw FIR of [files] with the raw FIR builder of [CompilerConfiguration.parserMode], then resolves it and runs
+ * the common checkers. Syntax errors and source statistics are reported while the raw FIR is built.
+ *
+ * [files] must be the sources of [collectSources], which match the parser mode.
+ */
+fun buildResolveAndCheckFir(
+    session: FirSession,
+    files: List<KtSourceFile>,
+    configuration: CompilerConfiguration,
+): SingleModuleFrontendOutput {
+    val diagnosticsCollector = configuration.diagnosticsCollector
+    val perfManager = configuration.perfManager
+    val reportFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
+    val rawFirFiles = when (val parserMode = configuration.parserMode) {
+        ParserMode.Psi -> {
+            val ktFiles = files.asKtFilesList()
+            ktFiles.forEach { SyntaxErrorReporter.reportSyntaxErrors(it, diagnosticsCollector) }
+            reportFilesAndLines?.invoke(ktFiles.size, ktFiles.countLinesOfCode())
+            session.buildFirFromKtFiles(ktFiles)
+        }
+        ParserMode.LightTree, ParserMode.KmpTree -> session.buildFirViaLightTree(
+            files, diagnosticsCollector, useMultiplatformParsing = parserMode == ParserMode.KmpTree, reportFilesAndLines,
+        )
+    }
+    return resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)
+}
 
 /**
  * Creates library session and sources session for JS platform

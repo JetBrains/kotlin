@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.isFile
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.CliDiagnostics
@@ -20,10 +23,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.getSourceRootsCheckingForDuplicates
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.dontSortSourceFiles
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.util.*
 
@@ -32,7 +38,17 @@ data class GroupedKtSources(
     val commonSources: Collection<KtSourceFile>,
     val sourcesByModuleName: Map<String, Set<KtSourceFile>>,
 ) {
-    fun isEmpty(): Boolean = platformSources.isEmpty() && commonSources.isEmpty()
+    fun isEmpty(): Boolean {
+        return platformSources.isEmpty() && commonSources.isEmpty()
+    }
+
+    fun isCommonSource(file: KtSourceFile): Boolean {
+        return file in commonSources
+    }
+
+    fun fileBelongsToModule(file: KtSourceFile, moduleName: String): Boolean {
+        return sourcesByModuleName[moduleName]?.contains(file) == true
+    }
 }
 
 val GroupedKtSources.allFiles: List<KtSourceFile>
@@ -44,6 +60,13 @@ private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
     path1.compareTo(path2)
 }
 
+/**
+ * Collects the Kotlin sources of the compilation from the source roots in [compilerConfiguration].
+ *
+ * The kind of the sources depends on [CompilerConfiguration.parserMode], so that they match the raw FIR builder:
+ * [KtPsiSourceFile]s for [ParserMode.Psi], and [KtVirtualFileSourceFile]s, which the raw FIR builder parses itself,
+ * for the tree-based parser modes.
+ */
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment
@@ -114,7 +137,32 @@ fun collectSources(
             }
         }
 
-    return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
+    val sources = GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
+    return when (compilerConfiguration.parserMode) {
+        ParserMode.Psi -> sources.toPsiSources(projectEnvironment.project)
+        ParserMode.LightTree, ParserMode.KmpTree -> sources
+    }
+}
+
+private fun GroupedKtSources.toPsiSources(project: Project): GroupedKtSources {
+    val psiManager = PsiManager.getInstance(project)
+    val sourceToKtFile = HashMap<KtSourceFile, KtPsiSourceFile?>()
+
+    fun Collection<KtSourceFile>.mapToPsiSourceFiles(): Set<KtPsiSourceFile> {
+        return mapNotNullTo(LinkedHashSet()) l@{ source ->
+            sourceToKtFile.getOrPut(source) {
+                check(source is KtVirtualFileSourceFile) { "Unexpected source file ${source::class.simpleName}: ${source.path}" }
+                val ktFile = psiManager.findFile(source.virtualFile) as? KtFile ?: return@l null
+                KtPsiSourceFile(ktFile)
+            }
+        }
+    }
+
+    return GroupedKtSources(
+        platformSources = platformSources.mapToPsiSourceFiles(),
+        commonSources = commonSources.mapToPsiSourceFiles(),
+        sourcesByModuleName = sourcesByModuleName.mapValues { it.value.mapToPsiSourceFiles() },
+    )
 }
 
 /**
