@@ -129,7 +129,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                     KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKProperty0(container, signature, boundReceiver, boundContextArguments, kmProperty, KCallableOverriddenStorage.EMPTY);
                 }
-                else if (container instanceof KClassImpl && container.getJClass().getAnnotation(Metadata.class) == null) {
+                else if (container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
                     return findProperty((KClassImpl<?>) container, name, signature, boundReceiver, boundContextArguments);
                 }
                 return new DescriptorKProperty0(container, name, signature, boundReceiver, boundContextArguments);
@@ -158,7 +158,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                             container, signature, boundReceiver, boundContextArguments, kmProperty, KCallableOverriddenStorage.EMPTY
                     );
                 }
-                else if (container instanceof KClassImpl && container.getJClass().getAnnotation(Metadata.class) == null) {
+                else if (container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
                     return findProperty((KClassImpl<?>) container, name, signature, boundReceiver, boundContextArguments);
                 }
                 return new DescriptorKMutableProperty0(container, name, signature, boundReceiver, boundContextArguments);
@@ -213,12 +213,44 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KProperty2 property2(PropertyReference2 p) {
-        return new DescriptorKProperty2(getOwner(p), p.getName(), p.getSignature());
+        KDeclarationContainerImpl container = getOwner(p);
+        String name = p.getName();
+        String signature = p.getSignature();
+        Object boundReceiver = p.getBoundReceiver();
+        if (!SystemPropertiesKt.getUseK1Implementation()) {
+            return new LazyKProperty2(name, () -> {
+                if (container instanceof KPackageImpl) {
+                    KmProperty kmProperty = container.findPropertyMetadata(name, signature);
+                    return new KotlinKProperty2(container, signature, boundReceiver, kmProperty, KCallableOverriddenStorage.EMPTY);
+                }
+                else if (container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
+                    return findProperty((KClassImpl<?>) container, name, signature, boundReceiver, Collections.emptyList());
+                }
+                return new DescriptorKProperty2(container, name, signature);
+            });
+        }
+        return new DescriptorKProperty2(container, name, signature);
     }
 
     @Override
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
-        return new DescriptorKMutableProperty2(getOwner(p), p.getName(), p.getSignature());
+        KDeclarationContainerImpl container = getOwner(p);
+        String name = p.getName();
+        String signature = p.getSignature();
+        Object boundReceiver = p.getBoundReceiver();
+        if (!SystemPropertiesKt.getUseK1Implementation()) {
+            return new LazyKMutableProperty2(name, () -> {
+                if (container instanceof KPackageImpl) {
+                    KmProperty kmProperty = container.findPropertyMetadata(name, signature);
+                    return new KotlinKMutableProperty2(container, signature, boundReceiver, kmProperty, KCallableOverriddenStorage.EMPTY);
+                }
+                else if (container instanceof KClassImpl && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
+                    return findProperty((KClassImpl<?>) container, name, signature, boundReceiver, Collections.emptyList());
+                }
+                return new DescriptorKMutableProperty2(container, name, signature);
+            });
+        }
+        return new DescriptorKMutableProperty2(container, name, signature);
     }
 
     private static KDeclarationContainerImpl getOwner(CallableReference reference) {
