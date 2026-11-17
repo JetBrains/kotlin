@@ -1,8 +1,6 @@
 // WITH_STDLIB
 // ES_MODULES
 // ISSUE: KT-76462
-// IGNORE_BACKEND: WASM_JS
-// ^^^ KT-76462: the companion object of an external interface evaluates to an empty JS object
 
 // FILE: externalInterfaceCompanionJsModule.mjs
 const x = "O";
