@@ -42,6 +42,9 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 val IrFunction.hasDefaultArgumentBridge: Boolean
     get() = defaultArgumentsDispatchFunction.let { it != null && it != this }
 
+private inline fun <reified C : IrDeclarationParent> IrFunction.canContainCall(property: (C) -> IrSimpleFunction?): Boolean =
+    (parent as? C)?.let { property(it) == null } ?: false
+
 /**
  * We can use the ES6 default parameter syntax if we know for sure that there are no effects occur before the evaluation of
  * the default values.
@@ -49,14 +52,16 @@ val IrFunction.hasDefaultArgumentBridge: Boolean
  * This means that we can do it:
  * - In class instance methods (the class's static initializers are only called in static methods and constructors)
  * - In class constructors and static methods for classes without a static initializer.
- *
- * Because [JsPropertyLazyInitLowering] runs _after_ [JsDefaultArgumentStubGenerator], we cannot say for sure whether it's safe to use
- * the ES6 syntax for top-level functions, because at this point we don't know if the file has an initializer function.
+ * - In top-level functions in files without lazily initialized properties.
  */
 fun IrFunction.canUseEs6DefaultParameterSyntax(context: CommonBackendContext): Boolean =
-    context.configuration.useEs6DefaultArgs && (isInstanceMethod || (parent as? IrClass)?.let { it.staticInitFunction == null } ?: false)
+    context.configuration.useEs6DefaultArgs &&
+            (isInstanceMethod || canContainCall(IrClass::staticInitFunction) || canContainCall(IrFile::initializationFunction))
 
-@PhasePrerequisites(JsStaticInitializersUsageLowering::class)
+@PhasePrerequisites(
+    JsStaticInitializersUsageLowering::class,
+    JsPropertyLazyInitLowering::class,
+)
 class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
     DefaultArgumentStubGenerator<JsIrBackendContext>(
         context = context,

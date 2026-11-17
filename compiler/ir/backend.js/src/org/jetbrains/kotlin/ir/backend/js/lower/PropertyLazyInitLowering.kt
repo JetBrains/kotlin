@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.name.Name
 
-private var IrFile.initializationFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrFile.initializationFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 private var IrFile.isPureForInitialization: Boolean? by irAttribute(copyByDefault = false)
 
 abstract class PropertyLazyInitLowering(
@@ -121,7 +121,6 @@ abstract class PropertyLazyInitLowering(
     }
 }
 
-@PhasePrerequisites(JsDefaultArgumentStubGenerator::class)
 class JsPropertyLazyInitLowering(context: JsIrBackendContext) : PropertyLazyInitLowering(context) {
     override val initializationGenerator = JsLazyGlobalInitializationGenerator(context)
 }

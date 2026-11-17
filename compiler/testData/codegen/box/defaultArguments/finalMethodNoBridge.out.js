@@ -1,5 +1,4 @@
-function topLevelWithoutFileInitializerCall(x) {
-  x = x === VOID ? 3 : x;
+function topLevelWithoutFileInitializerCall(x = 3) {
   return 'x=' + x;
 }
 class C1 {
