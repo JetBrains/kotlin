@@ -324,7 +324,6 @@ private fun TestProject.buildWithAction(
             }
             if (enableBuildScan) buildResult.printBuildScanUrl()
             assertions(buildResult)
-            buildResult.additionalAssertions(buildOptions)
         }
     }
 }
@@ -456,10 +455,6 @@ private fun validateDebuggingSocketIsListeningForTestsWithEnv(
             appendLine()
         }
     )
-}
-
-private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
-    // no-op
 }
 
 private fun TestProject.ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions: BuildOptions) {
