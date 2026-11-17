@@ -1,3 +1,4 @@
+// LANGUAGE: +WasmAllowCompanionObjectInExternalInterface
 // ISSUE: KT-76462
 // FILE: externalInterfaceNestedCompanion.js
 
@@ -22,7 +23,6 @@ const Statics = {
 
 // A companion object of a nested interface is qualified by all enclosing names: `Outer.Inner`.
 external interface Outer {
-    @Suppress("COMPANION_OBJECT_IN_EXTERNAL_INTERFACE")
     interface Inner {
         companion object {
             val x: String
@@ -31,7 +31,6 @@ external interface Outer {
 }
 
 // Declarations nested in a companion object are qualified by the interface name in JS: `Statics.Holder`, `Statics.NestedClass`.
-@Suppress("COMPANION_OBJECT_IN_EXTERNAL_INTERFACE")
 external interface Statics {
     companion object {
         object Holder {

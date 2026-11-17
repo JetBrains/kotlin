@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +WasmAllowCompanionObjectInExternalInterface
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 // RENDER_DIAGNOSTICS_FULL_TEXT
 package foo
@@ -11,12 +12,9 @@ external interface I {
 
 // The companion object is meant to be imported from the module, so @JsModule is not
 // prohibited here.
-// KT-87862: COMPANION_OBJECT_IN_EXTERNAL_INTERFACE is temporary (see KT-76462).
-// For now the companion compiles to an empty JS object; the error goes away
-// once the hack is removed.
 @JsModule("WithCompanion")
 external interface WithCompanion {
-    companion <!COMPANION_OBJECT_IN_EXTERNAL_INTERFACE!>object<!> {
+    companion object {
         fun ok(): String
     }
 }

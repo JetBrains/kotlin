@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +WasmAllowCompanionObjectInExternalInterface
 external interface I {
     interface J
 
@@ -8,9 +9,9 @@ external interface I {
 
     enum class <!NESTED_CLASS_IN_EXTERNAL_INTERFACE, WRONG_EXTERNAL_DECLARATION!>E<!>
 
-    companion <!COMPANION_OBJECT_IN_EXTERNAL_INTERFACE!>object<!>
+    companion object
 }
 
 external interface NamedCompanion {
-    companion <!COMPANION_OBJECT_IN_EXTERNAL_INTERFACE!>object Named<!>
+    companion <!NAMED_COMPANION_IN_EXTERNAL_INTERFACE!>object Named<!>
 }

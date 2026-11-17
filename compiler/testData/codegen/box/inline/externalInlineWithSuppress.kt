@@ -1,9 +1,9 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6, WASM_JS
+// LANGUAGE: +WasmAllowCompanionObjectInExternalInterface
 // FILE: main.kt
 @file:Suppress(
     "WRONG_BODY_OF_EXTERNAL_DECLARATION",
     "INLINE_EXTERNAL_DECLARATION",
-    "COMPANION_OBJECT_IN_EXTERNAL_INTERFACE",
 )
 package foo
 

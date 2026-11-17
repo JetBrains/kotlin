@@ -1,9 +1,8 @@
 // WITH_STDLIB
-// LANGUAGE: +AllowAnyAsAnActualTypeForExpectInterface
+// LANGUAGE: +AllowAnyAsAnActualTypeForExpectInterface +WasmAllowCompanionObjectInExternalInterface
 // ISSUE: KT-76462
 
 @JsName("Object")
-@Suppress("COMPANION_OBJECT_IN_EXTERNAL_INTERFACE")
 public external interface CanvasFillRule : JsAny {
     companion object
 }

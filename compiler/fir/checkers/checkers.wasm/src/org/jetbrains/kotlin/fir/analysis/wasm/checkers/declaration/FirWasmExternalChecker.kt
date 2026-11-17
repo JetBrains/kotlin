@@ -20,10 +20,14 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
-object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterface = false) {
+object FirWasmExternalChecker : FirWebCommonExternalChecker() {
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
         return symbol.isEffectivelyExternal(session)
     }
+
+    context(context: CheckerContext)
+    override fun isCompanionObjectInExternalInterfaceAllowed(): Boolean =
+        LanguageFeature.WasmAllowCompanionObjectInExternalInterface.isEnabled()
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun reportExternalEnum(declaration: FirDeclaration) {
@@ -67,4 +71,3 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInte
     override fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean =
         false
 }
-
