@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
+import org.jetbrains.kotlin.cli.jvm.index.virtualFile
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -41,6 +43,7 @@ class IncrementalJavaClassFromPreviousOutputTest : AbstractIncrementalJvmCompile
 
     /** A class in a rejected output root must not prevent the libraries session from finding a later library class. */
     @Test
+    @OptIn(VirtualFileBasedApi::class)
     fun testLibrarySessionContinuesPastPreviousOutputClass_KT88892(@TempDir tempDir: File) {
         val outputRoot = File(tempDir, "out").apply { mkdirs() }
         val libraryRoot = File(tempDir, "library").apply { mkdirs() }
@@ -66,16 +69,16 @@ class IncrementalJavaClassFromPreviousOutputTest : AbstractIncrementalJvmCompile
         )
         val classId = ClassId.fromString("p/Shadow")
         val outputRootId = JvmClasspathRootId.of(outputRoot.toPath())
-        val outputFinder = CliVirtualFileFinder(index, JvmClasspath.Roots(listOf(outputRootId)), false, null)
-        val librariesFinder = CliVirtualFileFinder(
+        val outputFinder = JvmIndexKotlinClassFinder(index, JvmClasspath.Roots(listOf(outputRootId)), false, null)
+        val librariesFinder = JvmIndexKotlinClassFinder(
             index,
             JvmClasspath.ProjectLibraries(excludedRoots = listOf(outputRootId)),
             false,
             null,
         )
 
-        assertEquals(outputClass.absolutePath.replace('\\', '/'), outputFinder.findVirtualFileWithHeader(classId)?.path)
-        assertEquals(libraryClass.absolutePath.replace('\\', '/'), librariesFinder.findVirtualFileWithHeader(classId)?.path)
+        assertEquals(outputClass.absolutePath.replace('\\', '/'), outputFinder.findBinaryClassFile(classId)?.virtualFile?.path)
+        assertEquals(libraryClass.absolutePath.replace('\\', '/'), librariesFinder.findBinaryClassFile(classId)?.virtualFile?.path)
     }
 
     /**
