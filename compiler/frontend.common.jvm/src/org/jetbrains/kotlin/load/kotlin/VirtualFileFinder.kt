@@ -33,6 +33,9 @@ abstract class VirtualFileFinder(
 
     abstract fun findSourceOrBinaryVirtualFile(classId: ClassId): VirtualFile?
 
+    open fun findBinaryClassBytes(classId: ClassId): ByteArray? =
+        findVirtualFileWithHeader(classId)?.contentsToByteArray()
+
     override fun findKotlinClassOrContent(classId: ClassId, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
         val file = findVirtualFileWithHeader(classId) ?: return null
         return KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, metadataVersion, perfManager = perfManager)
