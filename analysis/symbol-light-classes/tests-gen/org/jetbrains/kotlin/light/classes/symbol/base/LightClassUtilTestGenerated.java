@@ -28,6 +28,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("annotationClassParameter.kt")
+  public void testAnnotationClassParameter() {
+    run("annotationClassParameter.kt");
+  }
+
+  @Test
   @TestMetadata("companionBlockFunction.kt")
   public void testCompanionBlockFunction() {
     run("companionBlockFunction.kt");
@@ -40,9 +46,51 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("companionObjectJvmFieldProperty.kt")
+  public void testCompanionObjectJvmFieldProperty() {
+    run("companionObjectJvmFieldProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("companionObjectJvmStaticFunction.kt")
+  public void testCompanionObjectJvmStaticFunction() {
+    run("companionObjectJvmStaticFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("companionObjectJvmStaticProperty.kt")
+  public void testCompanionObjectJvmStaticProperty() {
+    run("companionObjectJvmStaticProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("companionObjectProperty.kt")
+  public void testCompanionObjectProperty() {
+    run("companionObjectProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorPropertyParameter.kt")
+  public void testConstructorPropertyParameter() {
+    run("constructorPropertyParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("dataClassComponentFunction.kt")
+  public void testDataClassComponentFunction() {
+    run("dataClassComponentFunction.kt");
+  }
+
+  @Test
   @TestMetadata("dataClassProperty.kt")
   public void testDataClassProperty() {
     run("dataClassProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatedProperty.kt")
+  public void testDelegatedProperty() {
+    run("delegatedProperty.kt");
   }
 
   @Test
@@ -67,6 +115,18 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   @TestMetadata("fullValueClassProperty.kt")
   public void testFullValueClassProperty() {
     run("fullValueClassProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithJvmOverloads.kt")
+  public void testFunctionWithJvmOverloads() {
+    run("functionWithJvmOverloads.kt");
+  }
+
+  @Test
+  @TestMetadata("interfacePropertyWithDefaultGetter.kt")
+  public void testInterfacePropertyWithDefaultGetter() {
+    run("interfacePropertyWithDefaultGetter.kt");
   }
 
   @Test
@@ -112,6 +172,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("lateinitProperty.kt")
+  public void testLateinitProperty() {
+    run("lateinitProperty.kt");
+  }
+
+  @Test
   @TestMetadata("mangledName.kt")
   public void testMangledName() {
     run("mangledName.kt");
@@ -130,9 +196,27 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("objectFunction.kt")
+  public void testObjectFunction() {
+    run("objectFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("objectProperty.kt")
+  public void testObjectProperty() {
+    run("objectProperty.kt");
+  }
+
+  @Test
   @TestMetadata("primaryConstructorWithDefaultParameter.kt")
   public void testPrimaryConstructorWithDefaultParameter() {
     run("primaryConstructorWithDefaultParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("privateProperty.kt")
+  public void testPrivateProperty() {
+    run("privateProperty.kt");
   }
 
   @Test
@@ -151,6 +235,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   @TestMetadata("propertyAccessorWithImplicitAnnotation.kt")
   public void testPropertyAccessorWithImplicitAnnotation() {
     run("propertyAccessorWithImplicitAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyAndFunctionWithSameJvmName.kt")
+  public void testPropertyAndFunctionWithSameJvmName() {
+    run("propertyAndFunctionWithSameJvmName.kt");
   }
 
   @Test
@@ -190,9 +280,27 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("secondaryConstructor.kt")
+  public void testSecondaryConstructor() {
+    run("secondaryConstructor.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelDestructuringEntry.kt")
   public void testTopLevelDestructuringEntry() {
     run("topLevelDestructuringEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunctionWithJvmName.kt")
+  public void testTopLevelFunctionWithJvmName() {
+    run("topLevelFunctionWithJvmName.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelProperty.kt")
+  public void testTopLevelProperty() {
+    run("topLevelProperty.kt");
   }
 
   @Test
