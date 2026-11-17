@@ -1,3 +1,4 @@
+// ISSUE: KT-90505
 // DUMP_IR_DIFFERENCE: NATIVE, JS_IR
 // LANGUAGE: +CompanionBlocks
 
