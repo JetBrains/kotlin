@@ -80,6 +80,10 @@ object NativeConfigurationKeys {
     @JvmField
     val MAKE_PER_FILE_CACHE = CompilerConfigurationKey.create<Boolean>("MAKE_PER_FILE_CACHE")
 
+    // Emit object files from LLVM bitcode in-process, without invoking an external clang process (experimental).
+    @JvmField
+    val IN_PROCESS_OBJ_EMISSION = CompilerConfigurationKey.create<Boolean>("IN_PROCESS_OBJ_EMISSION")
+
     // Combined fingerprint of external cached dependencies of the library being cached.
     @JvmField
     val CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT = CompilerConfigurationKey.create<String>("CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT")
@@ -342,6 +346,10 @@ var CompilerConfiguration.filesToCache: List<String>
 var CompilerConfiguration.makePerFileCache: Boolean
     get() = getBoolean(NativeConfigurationKeys.MAKE_PER_FILE_CACHE)
     set(value) { put(NativeConfigurationKeys.MAKE_PER_FILE_CACHE, value) }
+
+var CompilerConfiguration.inProcessObjEmission: Boolean
+    get() = getBoolean(NativeConfigurationKeys.IN_PROCESS_OBJ_EMISSION)
+    set(value) { put(NativeConfigurationKeys.IN_PROCESS_OBJ_EMISSION, value) }
 
 var CompilerConfiguration.cachedLibraryDependenciesFingerprint: String?
     get() = get(NativeConfigurationKeys.CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT)
