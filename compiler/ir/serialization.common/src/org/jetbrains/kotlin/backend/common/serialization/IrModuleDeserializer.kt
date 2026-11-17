@@ -92,12 +92,6 @@ abstract class IrModuleDeserializer(
     abstract fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol?
     abstract fun deserializedSymbolNotFound(idSig: IdSignature): Nothing
 
-    open fun declareIrSymbol(symbol: IrSymbol) {
-        val signature = symbol.signature
-        require(signature != null) { "Symbol is not public API" }
-        tryDeserializeIrSymbol(signature, symbol.kind()) ?: deserializedSymbolNotFound(signature)
-    }
-
     abstract val klib: KotlinLibrary
 
     open fun postProcess() {}
@@ -227,13 +221,6 @@ class IrModuleDeserializerWithBuiltIns(
     }
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = delegate.deserializedSymbolNotFound(idSig)
-
-    override fun declareIrSymbol(symbol: IrSymbol) {
-        val signature = symbol.signature
-        if (signature != null && checkIsFunctionInterface(signature))
-            computeFunctionClass(signature)
-        else delegate.declareIrSymbol(symbol)
-    }
 
     override val klib: KotlinLibrary
         get() = delegate.klib

@@ -276,7 +276,9 @@ abstract class KotlinIrLinker(
         val signature = symbol.signature ?: return false
         val moduleDeserializer = resolveModuleDeserializer(signature)
             ?: return false
-        moduleDeserializer.declareIrSymbol(symbol)
+
+        moduleDeserializer.tryDeserializeIrSymbol(signature, symbol.kind())
+            ?: moduleDeserializer.deserializedSymbolNotFound(signature)
 
         deserializeAllReachableTopLevels()
 
