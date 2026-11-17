@@ -31,13 +31,12 @@ abstract class AbstractLLReversedWasmDiagnosticsTest(
     }
 }
 
-abstract class AbstractLLReversedWasmJsDiagnosticsTest : AbstractLLWasmDiagnosticsTest(
+abstract class AbstractLLReversedWasmJsDiagnosticsTest : AbstractLLReversedWasmDiagnosticsTest(
     WasmPlatforms.wasmJs,
     WasmTarget.JS,
 )
 
-abstract class AbstractLLReversedWasmWasiDiagnosticsTest : AbstractLLWasmDiagnosticsTest(
+abstract class AbstractLLReversedWasmWasiDiagnosticsTest : AbstractLLReversedWasmDiagnosticsTest(
     WasmPlatforms.wasmWasi,
     WasmTarget.WASI,
 )
-
