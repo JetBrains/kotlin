@@ -74,7 +74,7 @@ KaNamedFunctionSymbol:
   callableId: /tooo
   contextParameters: [
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -90,8 +90,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: A
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -157,7 +157,7 @@ KaNamedFunctionSymbol:
   callableId: /tooo
   contextParameters: [
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -173,8 +173,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: B
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -240,7 +240,7 @@ KaNamedFunctionSymbol:
   callableId: /tooo
   contextParameters: [
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -256,8 +256,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: A
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -271,7 +271,7 @@ KaNamedFunctionSymbol:
       deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -287,8 +287,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: B
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -360,7 +360,7 @@ KaNamedFunctionSymbol:
   callableId: /tooo
   contextParameters: [
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -376,8 +376,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: B
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -391,7 +391,7 @@ KaNamedFunctionSymbol:
       deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -407,8 +407,8 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: A
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

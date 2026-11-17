@@ -23,6 +23,11 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  *
  * Use [KtContextParameterList] instead.
  */
+@Deprecated(
+    message = "This class is obsolete and exists for compatibility reasons only. Use 'KtContextParameterList' instead.",
+    replaceWith = ReplaceWith("KtContextParameterList"),
+)
+@Suppress("DEPRECATION")
 @OptIn(KtImplementationDetail::class)
 class KtContextReceiverList : KtContextParameterList {
     @KtImplementationDetail

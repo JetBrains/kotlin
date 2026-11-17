@@ -517,7 +517,7 @@ KtFunctionType(661,703): 'context(Logger, Database) (String) -> Unit'
 KtContextReceiverList(661,686): 'context(Logger, Database)'
   null
 
-KtContextReceiver(669,675): 'Logger'
+KtParameter(669,675): 'Logger'
   null
 
 KtTypeReference(669,675): 'Logger'
@@ -529,7 +529,7 @@ KtUserType(669,675): 'Logger'
 KtNameReferenceExpression(669,675): 'Logger'
   null
 
-KtContextReceiver(677,685): 'Database'
+KtParameter(677,685): 'Database'
   null
 
 KtTypeReference(677,685): 'Database'

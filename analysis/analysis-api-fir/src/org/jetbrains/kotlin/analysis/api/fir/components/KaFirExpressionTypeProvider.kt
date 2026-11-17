@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.inferClassIdByPsi
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.unexpectedElementError
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -264,6 +265,15 @@ internal class KaFirExpressionTypeProvider(
 
         // Function type parameters have no symbol
         if (declaration is KtParameter && declaration.isFunctionTypeParameter) {
+            // FIR keeps only the types of the context parameters of a function type
+            if (declaration.isContextParameter) {
+                val typeReference = declaration.typeReference ?: errorWithAttachment("Context parameter without a type reference") {
+                    withPsiEntry("parameter", declaration)
+                }
+
+                return with(analysisSession) { typeReference.type }
+            }
+
             val firParameter = declaration.getOrBuildFirOfType<FirFunctionTypeParameter>(resolutionFacade)
             return firParameter.returnTypeRef.coneType.asKaType()
         }

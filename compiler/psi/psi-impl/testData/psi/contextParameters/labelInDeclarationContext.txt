@@ -1,0 +1,36 @@
+KtFile: labelInDeclarationContext.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
+  MODIFIER_LIST
+    CONTEXT_PARAMETER_LIST
+      PsiElement(context)('context')
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('label')
+      PsiErrorElement:Expecting comma or ')'
+        <empty list>
+      PsiErrorElement:Expecting ')'
+        PsiElement(AT)('@')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('String')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

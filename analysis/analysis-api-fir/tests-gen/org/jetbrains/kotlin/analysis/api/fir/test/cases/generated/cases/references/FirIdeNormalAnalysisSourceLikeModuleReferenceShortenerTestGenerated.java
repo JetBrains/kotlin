@@ -309,6 +309,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleReferenceShortenerTestGenerated
   }
 
   @Test
+  @TestMetadata("functionalType_contextParameterPosition.kt")
+  public void testFunctionalType_contextParameterPosition() {
+    run("functionalType_contextParameterPosition.kt");
+  }
+
+  @Test
   @TestMetadata("functionalType_parameterPosition.kt")
   public void testFunctionalType_parameterPosition() {
     run("functionalType_parameterPosition.kt");

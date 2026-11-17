@@ -100,7 +100,7 @@ scopes:
         callableId: /test
         contextParameters: [
           KaContextParameterSymbol:
-            anchorPsi: KtContextReceiver
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -116,8 +116,8 @@ scopes:
             modality: FINAL
             name: Context
             origin: SOURCE
-            psi: KtContextReceiver
-            realPsi: KtContextReceiver
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []

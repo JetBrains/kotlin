@@ -108,7 +108,6 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     val SUPER_TYPE_ENTRY: SyntaxElementType = register(KotlinSyntaxNodeTypeIds.SUPER_TYPE_ENTRY, "SUPER_TYPE_ENTRY")
     val CONSTRUCTOR_CALLEE: SyntaxElementType = register(KotlinSyntaxNodeTypeIds.CONSTRUCTOR_CALLEE, "CONSTRUCTOR_CALLEE")
 
-    val CONTEXT_RECEIVER: SyntaxElementType = register(KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER, "CONTEXT_RECEIVER")
     val CONTEXT_PARAMETER_LIST: SyntaxElementType = register(KotlinSyntaxNodeTypeIds.CONTEXT_PARAMETER_LIST, "CONTEXT_PARAMETER_LIST")
 
     val NULL: SyntaxElementType = register(KotlinSyntaxNodeTypeIds.NULL, "NULL")

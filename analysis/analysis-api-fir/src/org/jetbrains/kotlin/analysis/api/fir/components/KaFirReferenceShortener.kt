@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
 
 internal class KaFirReferenceShortener(
     override val analysisSessionProvider: () -> KaFirSession
@@ -57,7 +58,7 @@ internal class KaFirReferenceShortener(
     ): ShortenCommand = withPsiValidityAssertion(file) {
         require(!file.isCompiled) { "No sense to collect references for shortening in compiled file $file" }
 
-        val declarationToVisit = file.findSmallestElementOfTypeContainingSelection<KtDeclaration>(selection)
+        val declarationToVisit = file.findSmallestDeclarationContainingSelection(selection)
             ?: file
 
         val firDeclaration = declarationToVisit.getCorrespondingFirElement() ?: return ShortenCommandImpl(
@@ -131,10 +132,16 @@ internal class KaFirReferenceShortener(
     private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KaSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
 }
 
-private inline fun <reified T : KtElement> KtFile.findSmallestElementOfTypeContainingSelection(selection: TextRange): T? =
+private fun KtFile.findSmallestDeclarationContainingSelection(selection: TextRange): KtDeclaration? =
     findElementAt(selection.startOffset)
-        ?.parentsOfType<T>(withSelf = true)
-        ?.firstOrNull { selection in it.textRange }
+        ?.parentsOfType<KtDeclaration>(withSelf = true)
+        ?.firstOrNull { declaration ->
+            // FIR keeps only the type of a context parameter of a function type, so such a parameter has no FIR element to visit
+            val isFunctionTypeContextParameter =
+                declaration is KtParameter && declaration.isFunctionTypeParameter && declaration.isContextParameter
+
+            selection in declaration.textRange && !isFunctionTypeContextParameter
+        }
 
 private class ShortenCommandImpl(
     override val targetFile: SmartPsiElementPointer<KtFile>,

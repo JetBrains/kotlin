@@ -23,8 +23,7 @@ public object KotlinSyntaxNodeTypeIds {
     public const val SCRIPT_INITIALIZER: SyntaxId = CLASS_INITIALIZER + 1
     public const val SECONDARY_CONSTRUCTOR: SyntaxId = SCRIPT_INITIALIZER + 1
     public const val PRIMARY_CONSTRUCTOR: SyntaxId = SECONDARY_CONSTRUCTOR + 1
-    public const val CONTEXT_RECEIVER: SyntaxId = PRIMARY_CONSTRUCTOR + 1
-    public const val CONTEXT_PARAMETER_LIST: SyntaxId = CONTEXT_RECEIVER + 1
+    public const val CONTEXT_PARAMETER_LIST: SyntaxId = PRIMARY_CONSTRUCTOR + 1
     public const val TYPE_PARAMETER_LIST: SyntaxId = CONTEXT_PARAMETER_LIST + 1
     public const val TYPE_PARAMETER: SyntaxId = TYPE_PARAMETER_LIST + 1
     public const val SUPER_TYPE_LIST: SyntaxId = TYPE_PARAMETER + 1

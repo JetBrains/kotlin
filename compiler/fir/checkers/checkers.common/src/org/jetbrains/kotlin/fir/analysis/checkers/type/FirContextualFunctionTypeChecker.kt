@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.hasContextParameters
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Platform) {
@@ -33,7 +35,9 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
             }
 
         source.forEachChildOfType(valueParameterElementSet, depth = 1) {
-            reporter.reportOn(it, FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE)
+            if (it.getChild(KtTokens.IDENTIFIER, depth = 1) != null) {
+                reporter.reportOn(it, FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE)
+            }
         }
 
         source.requireFeatureSupport(LanguageFeature.ContextParameters)

@@ -1845,34 +1845,41 @@ open class PsiRawFirBuilder(
         ) {
             for (contextList in contextLists) {
                 contextList.contextParameters.mapTo(this) { contextParameterElement ->
-                    contextParameterElement.toFirValueParameter(
-                        defaultTypeRef = null,
-                        containingDeclarationSymbol = containingDeclarationSymbol,
-                        valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER,
-                    )
-                }
-
-                contextList.contextReceivers().mapTo(this) { contextReceiverElement ->
-                    buildValueParameter {
-                        this.source = contextReceiverElement.toFirSourceElement()
-                        this.moduleData = baseModuleData
-                        this.origin = FirDeclarationOrigin.Source
-
-                        val customLabelName = contextReceiverElement.labelNameAsName()
-                        val labelNameFromTypeRef = contextReceiverElement.typeReference()?.nameForReceiverLabel()?.let(Name::identifier)
-
-                        // We're abusing the value parameter name for the label/type name of legacy context receivers.
-                        // Luckily, legacy context receivers are getting removed soon.
-                        this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                        this.symbol = FirValueParameterSymbol()
-                        this@PsiRawFirBuilder.context.withContainerSymbol(this.symbol) {
-                            this.returnTypeRef = contextReceiverElement.typeReference().toFirOrErrorType()
-                        }
-                        this.containingDeclarationSymbol = containingDeclarationSymbol
-                        this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
+                    if (contextParameterElement.name != null) {
+                        contextParameterElement.toFirValueParameter(
+                            defaultTypeRef = null,
+                            containingDeclarationSymbol = containingDeclarationSymbol,
+                            valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER,
+                        )
+                    } else {
+                        buildLegacyContextReceiver(contextParameterElement, containingDeclarationSymbol)
                     }
                 }
             }
+        }
+
+        /**
+         * Builds a legacy context receiver from a context parameter without a name.
+         */
+        private fun buildLegacyContextReceiver(
+            parameter: KtParameter,
+            containingDeclarationSymbol: FirBasedSymbol<*>,
+        ): FirValueParameter = buildValueParameter {
+            this.source = parameter.toFirSourceElement()
+            this.moduleData = baseModuleData
+            this.origin = FirDeclarationOrigin.Source
+
+            val typeReference = parameter.typeReference
+
+            // We're abusing the value parameter name for the type name of legacy context receivers.
+            // Luckily, legacy context receivers are getting removed soon.
+            this.name = typeReference?.nameForReceiverLabel()?.let(Name::identifier) ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            this.symbol = FirValueParameterSymbol()
+            this@PsiRawFirBuilder.context.withContainerSymbol(this.symbol) {
+                this.returnTypeRef = typeReference.toFirOrErrorType()
+            }
+            this.containingDeclarationSymbol = containingDeclarationSymbol
+            this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
         }
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject, data: FirElement?): FirElement {
@@ -2839,11 +2846,7 @@ open class PsiRawFirBuilder(
                             }
                         }
 
-                        val contextReceiverList = unwrappedElement.contextParameterList
-                        contextReceiverList?.contextReceivers()?.mapNotNullTo(contextParameterTypeRefs) {
-                            it.typeReference()?.toFirType()
-                        }
-                        contextReceiverList?.contextParameters?.mapNotNullTo(contextParameterTypeRefs) {
+                        unwrappedElement.contextParameterList?.contextParameters?.mapNotNullTo(contextParameterTypeRefs) {
                             it.typeReference?.toFirType()
                         }
                     }

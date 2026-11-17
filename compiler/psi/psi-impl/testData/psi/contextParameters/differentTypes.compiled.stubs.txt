@@ -193,7 +193,7 @@ Foo.class:
                               isClassRef: true
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
-                      CONTEXT_RECEIVER[label=null]
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                         TYPE_REFERENCE
                           USER_TYPE
                             USER_TYPE
@@ -212,7 +212,7 @@ Foo.class:
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
-                      CONTEXT_RECEIVER[label=null]
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                         TYPE_REFERENCE
                           USER_TYPE
                             USER_TYPE
@@ -248,7 +248,7 @@ Foo.class:
                         isClassRef: true
             FUNCTION_TYPE
               CONTEXT_PARAMETER_LIST
-                CONTEXT_RECEIVER[label=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
@@ -394,7 +394,7 @@ Foo.class:
                               isClassRef: true
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
-                      CONTEXT_RECEIVER[label=null]
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                         TYPE_REFERENCE
                           USER_TYPE
                             USER_TYPE
@@ -413,7 +413,7 @@ Foo.class:
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
-                      CONTEXT_RECEIVER[label=null]
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                         TYPE_REFERENCE
                           USER_TYPE
                             USER_TYPE

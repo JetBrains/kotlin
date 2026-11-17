@@ -96,6 +96,7 @@ internal object KtStubBasedElementTypes {
     val CONTEXT_PARAMETER_LIST: KtNodeType = provider.contextParameterListType
 
     @JvmField
+    @Deprecated("This element type is obsolete: context receivers are no longer parsed.")
     val CONTEXT_RECEIVER: KtNodeType = provider.contextReceiverType
 
 

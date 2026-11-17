@@ -250,12 +250,10 @@ public val KtScript.symbol: KaScriptSymbol
     }
 
 /**
- * Represents [KtContextReceiver] as a [KaContextParameterSymbol].
- *
- * This is a temporary API for simplicity during the transition from context receivers to context parameters.
- *
- * **Note**: context receivers inside [KtFunctionType] are not supported.
+ * Throws an exception: context receivers are no longer parsed, so there is no [KtContextReceiver] to pass.
  */
+@Deprecated("Context receivers are no longer parsed, so there is no 'KtContextReceiver' to pass. Use 'KtParameter.symbol' instead.")
+@Suppress("DEPRECATION")
 @KaExperimentalApi
 context(session: KaSession)
 public val KtContextReceiver.symbol: KaContextParameterSymbol

@@ -156,7 +156,13 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
      * Must not be overridden at the same time as {@link #visitContextParameterList(KtContextParameterList)}.
      *
      * @see KtVisitor#visitContextReceiverList(KtContextReceiverList, Object)
+     * @deprecated Use {@link #visitContextParameterList(KtContextParameterList)} instead. This method is obsolete because
+     * {@link KtContextReceiverList} is obsolete.
      */
+    @kotlin.Deprecated(
+            message = "Use 'visitContextParameterList' instead. This method is obsolete because 'KtContextReceiverList' is obsolete."
+    )
+    @Deprecated
     public void visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList) {
         super.visitContextReceiverList(contextReceiverList, null);
     }
@@ -165,6 +171,13 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitContextParameterList(contextParameterList, null);
     }
 
+    /**
+     * @deprecated This method is obsolete because {@link KtContextReceiver} is obsolete.
+     */
+    @kotlin.Deprecated(
+            message = "This method is obsolete because 'KtContextReceiver' is obsolete."
+    )
+    @Deprecated
     public void visitContextReceiver(@NotNull KtContextReceiver contextReceiver) {
         super.visitContextReceiver(contextReceiver, null);
     }
@@ -683,6 +696,14 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         return null;
     }
 
+    /**
+     * @deprecated Use {@link #visitContextParameterList(KtContextParameterList)} instead. This method is obsolete because
+     * {@link KtContextReceiverList} is obsolete.
+     */
+    @kotlin.Deprecated(
+            message = "Use 'visitContextParameterList' instead. This method is obsolete because 'KtContextReceiverList' is obsolete."
+    )
+    @Deprecated
     @Override
     public final Void visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList, Void data) {
         visitContextReceiverList(contextReceiverList);
@@ -695,6 +716,13 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         return null;
     }
 
+    /**
+     * @deprecated This method is obsolete because {@link KtContextReceiver} is obsolete.
+     */
+    @kotlin.Deprecated(
+            message = "This method is obsolete because 'KtContextReceiver' is obsolete."
+    )
+    @Deprecated
     @Override
     public Void visitContextReceiver(@NotNull KtContextReceiver contextReceiver, Void data) {
         visitContextReceiver(contextReceiver);

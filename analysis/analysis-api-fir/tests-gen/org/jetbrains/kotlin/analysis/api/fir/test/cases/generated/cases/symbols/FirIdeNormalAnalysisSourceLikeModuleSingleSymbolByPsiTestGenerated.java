@@ -1036,6 +1036,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
     }
 
     @Test
+    @TestMetadata("contextReceiverOfFunction.kt")
+    public void testContextReceiverOfFunction() {
+      run("contextReceiverOfFunction.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextParameterInClass.kt")
     public void testDanglingContextParameterInClass() {
       run("danglingContextParameterInClass.kt");

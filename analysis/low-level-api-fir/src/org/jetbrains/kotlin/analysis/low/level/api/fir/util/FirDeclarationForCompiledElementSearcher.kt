@@ -153,14 +153,19 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         val ownerDeclaration = param.ownerDeclaration ?: errorWithFirSpecificEntries("Unsupported compiled parameter", psi = param)
         val firDeclaration = findNonLocalDeclaration(ownerDeclaration)
         return if (param.isContextParameter) {
-            val firCallable = firDeclaration as? FirCallableDeclaration ?: errorWithFirSpecificEntries(
-                "${FirCallableDeclaration::class.simpleName} expected but ${firDeclaration::class.simpleName} found",
-                psi = ownerDeclaration,
-                fir = firDeclaration,
-            )
+            val contextParameters = when (firDeclaration) {
+                is FirCallableDeclaration -> firDeclaration.contextParameters
+                is FirRegularClass -> firDeclaration.contextParameters
+                else -> errorWithFirSpecificEntries(
+                    "${FirCallableDeclaration::class.simpleName} or ${FirRegularClass::class.simpleName} expected " +
+                            "but ${firDeclaration::class.simpleName} found",
+                    psi = ownerDeclaration,
+                    fir = firDeclaration,
+                )
+            }
 
-            firCallable.contextParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
-                ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firCallable)
+            contextParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
+                ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firDeclaration)
         } else {
             val firFunction = firDeclaration as? FirFunction ?: errorWithFirSpecificEntries(
                 "${FirFunction::class.simpleName} expected but ${firDeclaration::class.simpleName} found",

@@ -614,7 +614,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
             else if (at(CONTEXT_KEYWORD) && annotationParsingMode.allowContextList && lookahead(1) == LPAR) {
                 PsiBuilder.Marker contextMarker = mark();
-                if (!parseContextParameterOrReceiverList(false) && localDeclaration) {
+                if (!parseContextParameterList(false) && localDeclaration) {
                     // Rollback the entire context declaration to make it possible to prevent parsing of potential local declarations
                     // that in fact are not declarations (we are trying to parse declarations at first and statements as second).
                     contextMarker.rollbackTo();
@@ -692,15 +692,15 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     /**
-     * contextReceiverList
-     *   : "context" "(" (contextReceiver{","})+ ")"
+     * contextParameterList
+     *   : "context" "(" (contextParameter{","})+ ")"
      *
-     * @return <tt>true</tt> if it parsed a context with value parameters
-     * Otherwise returns <tt>false</tt> if it parsed a context with type refs (that work as receivers) or encountered a syntax error during parsing.
+     * @return <tt>false</tt> if it encountered a syntax error or parsed a parameter that is only a type reference outside a function type,
+     * and <tt>true</tt> otherwise.
      */
-    private boolean parseContextParameterOrReceiverList(boolean inFunctionType) {
+    private boolean parseContextParameterList(boolean inFunctionType) {
         assert _at(CONTEXT_KEYWORD);
-        PsiBuilder.Marker valueParameterOrTypeRefList = mark();
+        PsiBuilder.Marker contextParameterList = mark();
         advance(); // CONTEXT_KEYWORD
 
         assert _at(LPAR);
@@ -714,33 +714,32 @@ public class KotlinParsing extends AbstractKotlinParsing {
             noError = false;
         }
         else {
-            // Treat parsing of context receivers (deprecated syntax) as an error,
+            // Treat a parameter that is only a type reference outside a function type as an error,
             // But an outer caller decides if the entire list should be dropped:
             // If we're trying to parse a local declaration, we should drop it to prevent unexpected parsing of ahead declarations
-            noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, () -> parseValueParameterOrTypeRef(inFunctionType));
+            noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, () -> parseContextParameter(inFunctionType));
         }
 
-        valueParameterOrTypeRefList.done(CONTEXT_PARAMETER_LIST);
+        contextParameterList.done(CONTEXT_PARAMETER_LIST);
         return noError;
     }
 
     /**
-     * contextReceiver
-     *   : label? typeReference
+     * contextParameter
+     *   : functionParameter
+     *   : typeReference
+     *   ;
      *
-     * @return <tt>true</tt> if it parsed a value parameter or type ref in the correct position (in function type) and <tt>false</tt> otherwise.
+     * @return <tt>false</tt> if it parsed a parameter that is only a type reference outside a function type, and <tt>true</tt> otherwise.
      */
-    private boolean parseValueParameterOrTypeRef(boolean inFunctionType) {
+    private boolean parseContextParameter(boolean inFunctionType) {
         if (tryParseValueParameter(true)) {
             return true;
         }
 
-        PsiBuilder.Marker contextReceiver = mark();
-        if (!inFunctionType && myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier()) {
-            myExpressionParsing.parseLabelDefinition();
-        }
+        PsiBuilder.Marker contextParameter = mark();
         parseTypeRef();
-        contextReceiver.done(CONTEXT_RECEIVER);
+        closeDeclarationWithCommentBinders(contextParameter, VALUE_PARAMETER, false);
         return inFunctionType;
     }
 
@@ -2264,13 +2263,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
         IElementType lookahead = lookahead(1);
         IElementType lookahead2 = lookahead(2);
         boolean typeBeforeDot = true;
-        boolean withContextReceiver = at(CONTEXT_KEYWORD) && lookahead == LPAR;
+        boolean withContextParameterList = at(CONTEXT_KEYWORD) && lookahead == LPAR;
         boolean wasFunctionTypeParsed = false;
 
-        PsiBuilder.Marker contextReceiversStart = mark();
+        PsiBuilder.Marker contextParameterListStart = mark();
 
-        if (withContextReceiver) {
-            parseContextParameterOrReceiverList(true);
+        if (withContextParameterList) {
+            parseContextParameterList(true);
         }
 
         PsiBuilder.Marker typeElementMarker = mark();
@@ -2302,7 +2301,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 // or
                 //   (a : A) -> C
                 functionOrParenthesizedType.rollbackTo();
-                parseFunctionType(contextReceiversStart.precede());
+                parseFunctionType(contextParameterListStart.precede());
                 wasFunctionTypeParsed = true;
             }
         }
@@ -2359,7 +2358,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             //  A.(B) -> C
             //   ^
 
-            PsiBuilder.Marker functionType = contextReceiversStart.precede();
+            PsiBuilder.Marker functionType = contextParameterListStart.precede();
 
             PsiBuilder.Marker receiverTypeRef = typeElementMarker.precede();
             PsiBuilder.Marker receiverType = receiverTypeRef.precede();
@@ -2379,7 +2378,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             wasFunctionTypeParsed = true;
         }
 
-        if (withContextReceiver && !wasFunctionTypeParsed) {
+        if (withContextParameterList && !wasFunctionTypeParsed) {
             errorWithRecovery("Function type expected expected",
                               TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
                                              TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
@@ -2387,7 +2386,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         typeElementMarker.drop();
-        contextReceiversStart.drop();
+        contextParameterListStart.drop();
         return typeRefMarker;
     }
 

@@ -168,6 +168,8 @@ public interface KaSymbolProvider : KaSessionComponent {
      *
      * **Note**: context receivers inside [KtFunctionType] are not supported.
      */
+    @Deprecated("Context receivers are no longer parsed, so there is no 'KtContextReceiver' to pass. Use 'KtParameter.symbol' instead.")
+    @Suppress("DEPRECATION")
     @KaExperimentalApi
     public val KtContextReceiver.symbol: KaContextParameterSymbol
 

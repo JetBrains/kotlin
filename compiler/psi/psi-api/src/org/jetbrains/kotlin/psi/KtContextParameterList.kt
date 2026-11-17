@@ -54,35 +54,33 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
     /**
      * Returns the context parameters within the list.
      *
-     * Note that [KtFunctionType] still uses [contextReceivers] for compatibility with K1.
+     * A context parameter that is declared only by its type has no name. This is the case in a [KtFunctionType], as in
+     * `context(String) () -> Unit`, and in the syntax of legacy context receivers, as in `context(String) fun foo() {}`.
      */
     val contextParameters: List<KtParameter>
         get() = getStubOrPsiChildren(KtNodeTypes.VALUE_PARAMETER, KtParameter.EMPTY_ARRAY).asList()
 
     /**
-     * Returns the context receivers within the list.
-     *
-     * This API is obsolete for declarations ([contextParameters] has to be used instead), but it is still used for [KtFunctionType] for
-     * compatibility with K1.
+     * Returns an empty list: context receivers are no longer parsed, [contextParameters] has to be used instead.
      *
      * This API will be removed in the future (together with [KtContextReceiver]).
      *
      * @see contextParameters
      */
-    fun contextReceivers(): List<KtContextReceiver> =
-        getStubOrPsiChildren(KtNodeTypes.CONTEXT_RECEIVER, KtContextReceiver.EMPTY_ARRAY).asList()
+    @Deprecated("Context receivers are no longer parsed, so the list is always empty. Use 'contextParameters' instead.")
+    @Suppress("DEPRECATION")
+    fun contextReceivers(): List<KtContextReceiver> = emptyList()
 
     /**
-     * Returns the list of type references from context receivers.
+     * Returns the type references of the [contextParameters].
      *
-     * This API is obsolete for declarations ([contextParameters] has to be used instead), but it is still used for [KtFunctionType] for
-     * compatibility with K1.
-     *
-     * This API will be removed in the future (together with [KtContextReceiver]).
-     *
-     * @see contextReceivers
+     * @see contextParameters
      */
-    fun typeReferences(): List<KtTypeReference> = contextReceivers().mapNotNull { it.typeReference() }
+    @Deprecated(
+        message = "Use 'contextParameters' instead.",
+        replaceWith = ReplaceWith("contextParameters.mapNotNull { it.typeReference }"),
+    )
+    fun typeReferences(): List<KtTypeReference> = contextParameters.mapNotNull { it.typeReference }
 
     /**
      * Returns the owner declaration of the context parameter list.

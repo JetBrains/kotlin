@@ -55,6 +55,7 @@ public interface KaInternalsSymbolProvider {
 
     public fun symbol(script: KtScript): KaScriptSymbol
 
+    @Suppress("DEPRECATION")
     public fun symbol(contextReceiver: KtContextReceiver): KaContextParameterSymbol
 
     public fun findPackage(fqName: FqName): KaPackageSymbol?
