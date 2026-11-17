@@ -4,6 +4,7 @@ package org.jetbrains.kotlin.arguments
 package org.jetbrains.kotlin.build.report
 package org.jetbrains.kotlin.build.report.events
 package org.jetbrains.kotlin.build.report.metrics
+package org.jetbrains.kotlin.buildtools.icevents
 package org.jetbrains.kotlin.cli
 package org.jetbrains.kotlin.cli.common
 package org.jetbrains.kotlin.cli.common.arguments
