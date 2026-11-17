@@ -38,7 +38,9 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
 import org.jetbrains.kotlin.cli.jvm.index.containsRoot
+import org.jetbrains.kotlin.cli.jvm.index.virtualFile
 import org.jetbrains.kotlin.cli.jvm.config.VirtualJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -54,7 +56,6 @@ import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
@@ -115,7 +116,7 @@ class IncrementalCompilationCustomScopeTest {
     }
 
     @Test
-    @OptIn(K1Deprecation::class)
+    @OptIn(K1Deprecation::class, VirtualFileBasedApi::class)
     fun testTheInMemoryRootRestrictsTheLookupToItself(@TempDir tempDir: File) {
         val outputFileSystem = InMemoryOutputFileSystem()
         val previousOutputClass = outputFileSystem.addFile("p/Ref.class")
@@ -139,7 +140,7 @@ class IncrementalCompilationCustomScopeTest {
         )
         assertFalse(classpath.containsRoot(localOutputRoot), "a local root is not the in-memory output root")
 
-        val finder = CliVirtualFileFinder(
+        val finder = JvmIndexKotlinClassFinder(
             FixedJvmDependenciesIndex(
                 listOf(previousOutputClass, localOutputClass),
                 sequenceOf(
@@ -151,17 +152,18 @@ class IncrementalCompilationCustomScopeTest {
             enableSearchInCtSym = false,
             perfManager = null,
         )
-        assertEquals(previousOutputClass, finder.findVirtualFileWithHeader(ClassId.fromString("p/Ref")))
-        assertNull(finder.findVirtualFileWithHeader(ClassId.fromString("p/Local")))
+        assertEquals(previousOutputClass, finder.findBinaryClassFile(ClassId.fromString("p/Ref"))?.virtualFile)
+        assertNull(finder.findBinaryClassFile(ClassId.fromString("p/Local")))
     }
 
     @Test
+    @OptIn(VirtualFileBasedApi::class)
     fun testTheRootIdFinderRestrictsLookupToTheLocalOutputDirectory(@TempDir tempDir: File) {
         val localOutputClass = localClassFile(tempDir)
         val [_, context] = prepareClasspaths(tempDir, PlainComponents())
-        val finder = projectEnvironment.getKotlinClassFinder(context!!.precompiledBinaries!!) as VirtualFileFinder
+        val finder = projectEnvironment.getKotlinClassFinder(context!!.precompiledBinaries!!) as JvmIndexKotlinClassFinder
 
-        assertEquals(localOutputClass.path, finder.findVirtualFileWithHeader(ClassId.fromString("p/Local"))?.path)
+        assertEquals(localOutputClass.path, finder.findBinaryClassFile(ClassId.fromString("p/Local"))?.virtualFile?.path)
     }
 
     @Test
@@ -186,9 +188,9 @@ class IncrementalCompilationCustomScopeTest {
             )
         )
         val classpath = JvmClasspath.Roots(listOf(JvmClasspathRootId.of(secondRoot.toPath())))
-        val finder = CliVirtualFileFinder(index, classpath, enableSearchInCtSym = false, perfManager = null)
+        val finder = JvmIndexKotlinClassFinder(index, classpath, enableSearchInCtSym = false, perfManager = null)
 
-        assertEquals(localVirtualFile(secondClass).path, finder.findVirtualFileWithHeader(ClassId.fromString("p/Shared"))?.path)
+        assertEquals(localVirtualFile(secondClass).path, finder.findBinaryClassFile(ClassId.fromString("p/Shared"))?.virtualFile?.path)
 
         val acceptedFile = localVirtualFile(secondClass)
         val scopeFinder = CliVirtualFileFinder(
@@ -230,14 +232,14 @@ class IncrementalCompilationCustomScopeTest {
             sequenceOf(JavaRoot(localVirtualFile(platformLibraryRoot), JavaRoot.RootType.BINARY)),
         )
         val classId = ClassId.fromString("p/JavaOnly")
-        val commonKotlinFinder = CliVirtualFileFinder(
+        val commonKotlinFinder = JvmIndexKotlinClassFinder(
             index,
             JvmClasspath.Roots(listOf(JvmClasspathRootId.of(commonDependencyRoot.toPath()))),
             enableSearchInCtSym = false,
             perfManager = null,
         )
 
-        assertNull(commonKotlinFinder.findVirtualFileWithHeader(classId))
+        assertNull(commonKotlinFinder.findBinaryClassFile(classId))
         assertTrue(JvmClasspath.ProjectLibraries().containsRoot(localVirtualFile(platformLibraryRoot)))
     }
 
