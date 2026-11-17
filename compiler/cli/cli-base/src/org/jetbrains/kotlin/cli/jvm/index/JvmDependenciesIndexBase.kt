@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
-import com.intellij.ide.highlighter.JavaClassFileType
-import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.JvmClassFileNames
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
@@ -142,7 +141,7 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         handleEntry: (VirtualFile, JavaRoot) -> Boolean,
     ) {
         // a list of package sub names, ["org", "jb", "kotlin"]
-        val packagesPath = packageFqName.pathSegments().map { it.identifierOrNullIfSpecial ?: return }
+        val packagesPath = packageFqName.pathSegments().map { JvmClassFileNames.packageDirectoryName(it) ?: return }
         // a list of caches corresponding to packages, [default, "org", "org.jb", "org.jb.kotlin"]
         val caches = cachesPath(packagesPath)
 
@@ -224,15 +223,11 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
     private fun VirtualFile.findChildPackage(subPackageName: String, rootType: JavaRoot.RootType): VirtualFile? {
         val childDirectory = findChild(subPackageName) ?: return null
 
-        val fileExtension = when (rootType) {
-            JavaRoot.RootType.BINARY -> JavaClassFileType.INSTANCE.defaultExtension
-            JavaRoot.RootType.BINARY_SIG -> "sig"
-            JavaRoot.RootType.SOURCE -> JavaFileType.INSTANCE.defaultExtension
-        }
+        val fileExtension = rootType.classFileExtension.extension
 
         // If in addition to a directory "foo" there's a class file "foo.class" AND there are no classes anywhere in the directory "foo",
         // then we ignore the directory and let the resolution choose the class "foo" instead.
-        if (findChild("$subPackageName.$fileExtension")?.isDirectory == false) {
+        if (findChild(JvmClassFileNames.fileName(subPackageName, fileExtension))?.isDirectory == false) {
             if (VfsUtilCore.processFilesRecursively(childDirectory) { file -> file.extension != fileExtension }) {
                 return null
             }

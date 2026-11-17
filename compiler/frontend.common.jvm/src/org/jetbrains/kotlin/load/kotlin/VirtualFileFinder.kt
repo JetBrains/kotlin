@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.jvm.JvmClassFileNames
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.sure
 
@@ -44,16 +45,16 @@ abstract class VirtualFileFinder(
         if (javaClass.outerClass != null) {
             // For nested classes we get a file of the containing class, to get the actual class file for A.B.C,
             // we take the file for A, take its parent directory, then in this directory we look for A$B$C.class
-            file = file.parent!!.findChild(classFileName(javaClass) + ".class").sure { "Virtual file not found for $javaClass" }
+            val fileName = JvmClassFileNames.fileName(classFileNameWithoutExtension(javaClass), JvmClassFileNames.CLASS_FILE_EXTENSION)
+            file = file.parent!!.findChild(fileName).sure { "Virtual file not found for $javaClass" }
         }
 
         return KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, metadataVersion, perfManager = perfManager)
     }
 
-    private fun classFileName(jClass: JavaClass): String {
-        val simpleName = jClass.name.asString()
-        val outerClass = jClass.outerClass ?: return simpleName
-        return classFileName(outerClass) + "$" + simpleName
+    private fun classFileNameWithoutExtension(jClass: JavaClass): String {
+        val outerClass = jClass.outerClass ?: return jClass.name.asString()
+        return JvmClassFileNames.nestedClassFileNameWithoutExtension(classFileNameWithoutExtension(outerClass), jClass.name)
     }
 
     companion object SERVICE {
