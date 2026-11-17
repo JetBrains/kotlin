@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClassInJvm(session: FirSession): ConeKotlinType? {
     val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
-    return symbol.inlineClassRepresentationInJvm()?.underlyingType
+    return symbol.inlineClassRepresentation?.underlyingType
 }
 
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
