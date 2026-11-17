@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_TAG_ARGUMENT_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_TAG_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.fir.hasAnyAnnotation
 import org.jetbrains.kotlin.parcelize.fir.hasParcelizeAnnotation
@@ -124,7 +124,7 @@ object FirPolymorphicSealedClassChecker : FirClassChecker(MppCheckerKind.Platfor
     }
 
     private fun extractParcelTagValue(annotation: FirAnnotation): Int? {
-        val tagArg = annotation.findArgumentByName(Name.identifier("tag"))
+        val tagArg = annotation.findArgumentByName(PARCEL_TAG_ARGUMENT_NAME)
         return (tagArg as? FirLiteralExpression)?.let { (it.value as? Number)?.toInt() }
     }
 }
