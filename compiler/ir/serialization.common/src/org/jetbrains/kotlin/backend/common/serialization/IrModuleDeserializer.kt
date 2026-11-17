@@ -84,7 +84,7 @@ abstract class IrModuleDeserializer(
      * Null value means that the set of packages is unknown (or not feasible to be provided).
      * In that case the module may be probed for every sought signature, just in case.
      */
-    abstract fun getDefinedPackageNames(): Set<FqName>?
+    abstract val contributedPackageNames: Set<FqName>?
 
     open val preferLinkingToTheCurrentModule: Boolean get() = true
 
@@ -163,12 +163,10 @@ class IrModuleDeserializerWithBuiltIns(
         symbol.signature to symbol
     }
 
-    private val builtinPackageNames: Set<FqName> =
-        syntheticProvider.operatorsPackageFragment.declarations
-            .map { it.getPackageFragment().packageFqName }
-            .toSet()
-
-    override fun getDefinedPackageNames() = delegate.getDefinedPackageNames()?.plus(builtinPackageNames)
+    override val contributedPackageNames: Set<FqName> = buildSet {
+        this += syntheticProvider.operatorsPackageFragment.packageFqName
+        delegate.contributedPackageNames?.let { addAll(it) }
+    }
 
     private val irBuiltInsCallableIdMap: Map<CallableId, MutableList<IdSignature>> by lazy {
         buildMap {

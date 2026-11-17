@@ -117,7 +117,7 @@ internal class KlibToolIrLinker(
      * constructor. The KLIB tool does not load the standard library, so the linker can't find the class and the annotation fails
      * with an NPE. This deserializer creates a stub annotation class instead.
      *
-     * [getDefinedPackageNames] returns `null`, so the linker consults this deserializer only after all regular ones. If a real
+     * [contributedPackageNames] returns `null`, so the linker consults this deserializer only after all regular ones. If a real
      * module defines the same declarations (e.g., when dumping the standard library itself), the real module wins.
      */
     private inner class EmulatedStandardLibraryModuleDeserializer(
@@ -131,7 +131,7 @@ internal class KlibToolIrLinker(
         }
 
         override val klib: KotlinLibrary get() = error("The emulated standard library has no Klib")
-        override fun getDefinedPackageNames(): Set<FqName>? = null
+        override val contributedPackageNames: Set<FqName>? get() = null
 
         override fun contains(idSig: IdSignature): Boolean {
             val packageFqName = (idSig as? IdSignature.CommonSignature)?.packageFqName() ?: return false
