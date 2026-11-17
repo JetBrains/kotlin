@@ -40,6 +40,10 @@ enum class CompilerOutputKind {
     },
     HEADER_CACHE {
         override fun suffix(target: KonanTarget?) = ".header"
+    },
+    OBJC_CACHE {
+        override fun suffix(target: KonanTarget?) = ".${target!!.family.staticSuffix}"
+        override fun prefix(target: KonanTarget?) = target!!.family.staticPrefix
     };
 
     abstract fun suffix(target: KonanTarget? = null): String
@@ -52,5 +56,8 @@ val CompilerOutputKind.isFullCache: Boolean
 val CompilerOutputKind.isHeaderCache: Boolean
     get() = this == CompilerOutputKind.HEADER_CACHE
 
+val CompilerOutputKind.isObjCCache: Boolean
+    get() = this == CompilerOutputKind.OBJC_CACHE
+
 val CompilerOutputKind.isCache: Boolean
-    get() = this.isFullCache || this.isHeaderCache
+    get() = this.isFullCache || this.isHeaderCache || this.isObjCCache
