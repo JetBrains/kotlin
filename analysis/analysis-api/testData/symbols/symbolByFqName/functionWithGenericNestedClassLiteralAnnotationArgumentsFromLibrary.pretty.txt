@@ -1,0 +1,2 @@
+@one.Anno(values = [one.Outer::class, one.Outer.Inner::class, one.Outer.InnerWithoutParameters::class, one.Outer.Nested::class])
+fun foo()

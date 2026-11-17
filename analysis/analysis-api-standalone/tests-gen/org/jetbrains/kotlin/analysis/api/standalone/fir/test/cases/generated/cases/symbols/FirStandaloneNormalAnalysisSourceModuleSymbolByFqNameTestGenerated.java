@@ -152,9 +152,33 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("functionWithBareArrayClassLiteralAnnotationArgumentFromLibraryJs.kt")
+  public void testFunctionWithBareArrayClassLiteralAnnotationArgumentFromLibraryJs() {
+    run("functionWithBareArrayClassLiteralAnnotationArgumentFromLibraryJs.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithClassLiteralAnnotationArgumentsFromLibrary.kt")
+  public void testFunctionWithClassLiteralAnnotationArgumentsFromLibrary() {
+    run("functionWithClassLiteralAnnotationArgumentsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithContextParameterFromLibrary.kt")
   public void testFunctionWithContextParameterFromLibrary() {
     run("functionWithContextParameterFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithGenericNestedClassLiteralAnnotationArgumentsFromLibrary.kt")
+  public void testFunctionWithGenericNestedClassLiteralAnnotationArgumentsFromLibrary() {
+    run("functionWithGenericNestedClassLiteralAnnotationArgumentsFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithUnsignedArrayClassLiteralAnnotationArgumentFromLibraryJs.kt")
+  public void testFunctionWithUnsignedArrayClassLiteralAnnotationArgumentFromLibraryJs() {
+    run("functionWithUnsignedArrayClassLiteralAnnotationArgumentFromLibraryJs.kt");
   }
 
   @Test
@@ -242,6 +266,30 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("propertyFromAnnotationWithArrayClassLiteralDefaultValue.kt")
+  public void testPropertyFromAnnotationWithArrayClassLiteralDefaultValue() {
+    run("propertyFromAnnotationWithArrayClassLiteralDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithBoundedClassLiteralDefaultValue.kt")
+  public void testPropertyFromAnnotationWithBoundedClassLiteralDefaultValue() {
+    run("propertyFromAnnotationWithBoundedClassLiteralDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithClassLiteralDefaultValue.kt")
+  public void testPropertyFromAnnotationWithClassLiteralDefaultValue() {
+    run("propertyFromAnnotationWithClassLiteralDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithContravariantClassLiteralDefaultValue.kt")
+  public void testPropertyFromAnnotationWithContravariantClassLiteralDefaultValue() {
+    run("propertyFromAnnotationWithContravariantClassLiteralDefaultValue.kt");
+  }
+
+  @Test
   @TestMetadata("propertyFromAnnotationWithDefaultValue.kt")
   public void testPropertyFromAnnotationWithDefaultValue() {
     run("propertyFromAnnotationWithDefaultValue.kt");
@@ -251,6 +299,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   @TestMetadata("propertyFromAnnotationWithDefaultValueJs.kt")
   public void testPropertyFromAnnotationWithDefaultValueJs() {
     run("propertyFromAnnotationWithDefaultValueJs.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithGenericClassLiteralDefaultValue.kt")
+  public void testPropertyFromAnnotationWithGenericClassLiteralDefaultValue() {
+    run("propertyFromAnnotationWithGenericClassLiteralDefaultValue.kt");
   }
 
   @Test
