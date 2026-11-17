@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtPsiSourceFile
@@ -700,7 +701,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     private class ProjectEnvironmentWithCoreEnvironmentEmulation(
         project: Project,
         knownFileSystems: List<VirtualFileSystem>,
-        getPackagePartProviderFn: (JvmClasspath) -> PackagePartProvider,
+        getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
         initialRoots: List<JavaRoot>,
         val configuration: CompilerConfiguration,
         val projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,

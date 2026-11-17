@@ -506,7 +506,7 @@ object StandaloneProjectFactory {
         libraryRoots: List<JavaRoot>,
         languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
     ): (GlobalSearchScope) -> JvmPackagePartProvider = { scope ->
-        JvmPackagePartProvider(languageVersionSettings) { it in scope }.apply {
+        JvmPackagePartProvider(languageVersionSettings, scope).apply {
             addRoots(libraryRoots, createStubConfigurationForReporting())
         }
     }
