@@ -24,6 +24,8 @@ FILE: builderSingularSameNameAsOtherProperty_kotlin.kt
 
             public open fun oneSheep(oneSheep: R|kotlin/String|): R|SingularConflict.SingularConflictBuilder|
 
+            public open fun oneSheep(oneSheep: R|kotlin/String|): R|SingularConflict.SingularConflictBuilder|
+
             private final var oneSheep: R|kotlin/String|
                 private get(): R|kotlin/String|
                 private set(value: R|kotlin/String|): R|kotlin/Unit|

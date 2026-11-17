@@ -74,7 +74,8 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
     ) {
         val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
-        addFunctionIfNotClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
+        val buildMethodName = Name.identifier(builder.buildMethodName)
+        addFunctionIfNotClashingWithSources(buildMethodName, existingFunctionNames, allowGeneratedClash = false) { name ->
             val declaredReturnTypeRef = when (ownerDeclaration) {
                 is FirRegularClass -> ownerDeclaration.defaultType().toFirResolvedTypeRef()
                 is FirNamedFunction -> ownerDeclaration.returnTypeRef
