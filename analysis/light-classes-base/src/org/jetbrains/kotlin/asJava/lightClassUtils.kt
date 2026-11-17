@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
+import org.jetbrains.kotlin.asJava.elements.leadingJvmParameterCount
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -100,7 +101,13 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     val paramIndex = paramList.parameters.indexOf(this)
     if (paramIndex < 0) return emptyList()
     val owner = paramList.parent
-    val lightParamIndex = if (owner is KtDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
+    val callable = when (owner) {
+        is KtPropertyAccessor -> owner.property
+        is KtCallableDeclaration -> owner
+        else -> null
+    }
+
+    val lightParamIndex = paramIndex + (callable?.leadingJvmParameterCount ?: 0)
 
     val methods: Collection<PsiMethod> = when (owner) {
         is KtFunction -> LightClassUtil.getLightClassMethods(owner)
