@@ -73,9 +73,9 @@ class NativeTestsBuildCacheIT : KGPBaseTest() {
     }
 
     @TestMetadata("native-tests")
-    @DisplayName("runs with suppressed test failures should not be cached")
+    @DisplayName("suppressed test failures are cached and detected in restored results")
     @GradleTest
-    fun testSuppressedFailuresAreNotCached(gradleVersion: GradleVersion) {
+    fun testSuppressedFailuresAreCachedAndDetectedOnRestore(gradleVersion: GradleVersion) {
         nativeProject("native-tests", gradleVersion, environmentVariables = stableEnvironment) {
             enableLocalBuildCache(localBuildCacheDir)
 
@@ -91,16 +91,26 @@ class NativeTestsBuildCacheIT : KGPBaseTest() {
 
             // With the aggregated test report (allTests) in the task graph, the
             // failures of individual test tasks are suppressed, so hostTest
-            // succeeds despite the failing test, but its execution must not be
-            // stored in the build cache:
+            // succeeds despite the failing test, and its execution (including
+            // the recorded failure count) is stored in the build cache:
             buildAndFail("check") {
                 assertTasksFailed(":allTests")
                 assertTasksExecuted(":hostTest")
-                assertOutputDoesNotContain("Stored cache entry for task ':hostTest'")
+                assertTasksPackedToCache(":hostTest")
             }
 
-            // Without the aggregate in the task graph nothing was cached, so the
-            // task is re-executed and the failing tests fail the task:
+            // The restored execution still fails the build: the aggregated
+            // report detects the failures recorded in the restored outputs,
+            // which the listener-based detection cannot do for FROM-CACHE
+            // tasks:
+            buildAndFail("clean", "check") {
+                assertTasksFromCache(":hostTest")
+                assertTasksFailed(":allTests")
+            }
+
+            // Standalone executions use a different cache key (failures are
+            // not suppressed without the aggregate), so the stored entry can
+            // never be restored there and the failing tests fail the task:
             buildAndFail("hostTest") {
                 assertTasksFailed(":hostTest")
             }

@@ -285,8 +285,8 @@ internal constructor(
  * Caching is enabled for this task type: with the build cache enabled, a
  * restored-from-cache run replays previously recorded test results instead
  * of executing the tests. See [KotlinNativeTest] for the correctness
- * contract of the task inputs, and [KotlinTest] for why runs with ignored
- * test failures are never stored.
+ * contract of the task inputs, and [KotlinTest] for how runs with suppressed
+ * test failures are kept apart from honest runs in the build cache.
  */
 @CacheableTask
 abstract class KotlinNativeHostTest

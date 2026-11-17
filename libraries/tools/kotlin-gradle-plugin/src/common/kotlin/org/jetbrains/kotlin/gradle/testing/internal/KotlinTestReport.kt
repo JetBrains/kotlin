@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testing.internal
 
 import org.gradle.api.GradleException
 import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -114,6 +115,7 @@ abstract class KotlinTestReport : TestReport(), UsesTestReportService {
         if (task is KotlinTest) {
             val listener = SuppressedTestRunningFailureListener(parentPaths, task.path, testReportServiceProvider)
             task.addRunListener(listener)
+            failedTestsCountFiles.from(task.failedTestsCountFile)
         }
         reportOn(task)
 
@@ -135,6 +137,16 @@ abstract class KotlinTestReport : TestReport(), UsesTestReportService {
     @get:Internal
     abstract val htmlReportFile: RegularFileProperty
 
+    /**
+     * [KotlinTest.failedTestsCountFile] of the aggregated test tasks, stored
+     * in and restored from the build cache together with the test results.
+     * Unlike the listener-based failure detection, these outputs are also
+     * available for tasks whose results were restored FROM-CACHE, so test
+     * failures in such results are detected as well.
+     */
+    @get:Internal
+    abstract val failedTestsCountFiles: ConfigurableFileCollection
+
     @Suppress("unused")
     @Deprecated("Use `htmlReportFile` instead", ReplaceWith("htmlReportFile"))
     @get:Internal
@@ -145,7 +157,7 @@ abstract class KotlinTestReport : TestReport(), UsesTestReportService {
     fun checkFailedTests() {
         if (checkFailedTests) {
             checkSuppressedRunningFailures()
-            if (hasFailedTests) {
+            if (hasFailedTests || hasFailedTestsInCountFiles()) {
                 if (ignoreFailures) {
                     logger.warn(getFailingTestsMessage())
                 } else {
@@ -153,6 +165,16 @@ abstract class KotlinTestReport : TestReport(), UsesTestReportService {
                 }
             }
         }
+    }
+
+    /**
+     * Checks the [KotlinTest.failedTestsCountFile] outputs of the aggregated
+     * test tasks. Unlike [hasFailedTests], which relies on test listeners
+     * that only run for executed tasks, this also detects failures in test
+     * results restored from the build cache.
+     */
+    private fun hasFailedTestsInCountFiles(): Boolean = failedTestsCountFiles.files.any { file ->
+        file.isFile && (file.readText().trim().toIntOrNull() ?: 0) > 0
     }
 
     private fun getFailingTestsMessage(): String {
