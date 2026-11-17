@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain.Companion.native
 import org.jetbrains.kotlin.buildtools.api.konan.nativeKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.isKotlinNativeStdlibFromBootstrap
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
@@ -67,9 +68,11 @@ class NativeModule(
                 buildList {
                     add("-nostdlib")
                     add("-no-default-libs")
-                    // When K/N is disabled in this build, the stdlib klib comes from the (older) bootstrap distribution,
-                    // and the compiler would refuse it otherwise: "The Kotlin/Native standard library has an older version".
-                    add("-Xskip-library-special-compatibility-checks")
+                    if (isKotlinNativeStdlibFromBootstrap) {
+                        // The stdlib klib comes from the (older) bootstrap distribution,
+                        // and the compiler would refuse it otherwise: "The Kotlin/Native standard library has an older version".
+                        add("-Xskip-library-special-compatibility-checks")
+                    }
                     add("-module-name")
                     add(moduleName)
                     for (library in dependencyFiles) {
