@@ -253,6 +253,26 @@ abstract class KotlinIrLinker(
         }
     }
 
+    /**
+     * Deserializes declarations for all unbound symbols in [symbolTable] and everything reachable from them,
+     * repeating until the set of unbound symbols stops changing.
+     */
+    fun drainDeserializationQueue() {
+        // Deserializing a reference may lead to new unbound references, so we loop until none are left.
+        var unbound: Set<IrSymbol> = emptySet()
+        do {
+            val prevUnbound: Set<IrSymbol> = unbound
+            unbound = symbolTable.descriptorExtension.allUnboundSymbols
+            for (symbol: IrSymbol in unbound) {
+                // Symbol could get bound as a side effect of deserializing other symbols.
+                if (!symbol.isBound) {
+                    getDeclaration(symbol)
+                }
+            }
+            // We wait for the unbound to stabilize on fake overrides.
+        } while (unbound != prevUnbound)
+    }
+
     private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): Boolean {
         if (!triedToDeserializeDeclarationForSymbol.add(symbol)) return false
 

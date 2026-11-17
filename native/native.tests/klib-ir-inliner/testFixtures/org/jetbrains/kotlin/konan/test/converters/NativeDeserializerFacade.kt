@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -155,7 +154,7 @@ class NativeDeserializerFacade(
         @OptIn(InternalSymbolFinderAPI::class)
         val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
-        ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+        irLinker.drainDeserializationQueue()
         irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
         val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
