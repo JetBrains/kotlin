@@ -7,7 +7,7 @@
 }
 
 public final class Usage : R|kotlin/Any| {
-    public final fun unsignedArrays(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/UByte|)))  kotlin/String|, b: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/UShort|)))  kotlin/String|, c: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/UInt|)))  kotlin/String|, d: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/ULong|)))  kotlin/String|): R|kotlin/Unit|
+    public final fun unsignedArrays(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/UByte>|)))  kotlin/String|, b: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/UShort>|)))  kotlin/String|, c: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/UInt>|)))  kotlin/String|, d: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/ULong>|)))  kotlin/String|): R|kotlin/Unit|
 
     public final fun primitiveArray(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/IntArray|)))  kotlin/String|): R|kotlin/Unit|
 

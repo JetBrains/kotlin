@@ -34,6 +34,20 @@ fun ConeTypeProjection.createArrayType(nullable: Boolean = false, createPrimitiv
     return StandardClassIds.Array.constructClassLikeType(arrayOf(this), nullable)
 }
 
+/**
+ * Wraps the type in [dimensions] arrays, as in `Array<Array<String>>` for `String` and two dimensions.
+ *
+ * No primitive array types are created: `Int` with one dimension is `Array<Int>`, not `IntArray`.
+ */
+fun ConeKotlinType.withArrayDimensions(dimensions: Int): ConeKotlinType {
+    var result = this
+    repeat(dimensions) {
+        result = result.createArrayType(createPrimitiveArrayTypeIfPossible = false)
+    }
+
+    return result
+}
+
 fun ConeKotlinType.varargElementType(): ConeKotlinType {
     return this.arrayElementType() ?: this
 }

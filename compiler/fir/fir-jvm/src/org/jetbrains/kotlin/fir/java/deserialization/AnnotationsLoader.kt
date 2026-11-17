@@ -44,7 +44,10 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             @OptIn(ClassIdBasedLocality::class)
             if (classId.isLocal) return null
 
-            val resolvedClassTypeRef = classId.toLookupTag().toDefaultResolvedTypeRef()
+            val resolvedClassTypeRef = buildResolvedTypeRef {
+                coneType = classId.toLookupTag().constructType().withArrayDimensions(arrayNestedness)
+            }
+
             return buildClassReferenceExpression {
                 classTypeRef = resolvedClassTypeRef
                 coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.coneType), false)

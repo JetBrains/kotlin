@@ -7,11 +7,11 @@
 }
 
 public final class Usage : R|kotlin/Any| {
-    public final fun arraysOfUnsignedArrays(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/UInt|)))  kotlin/String|, b: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/UInt|)))  kotlin/String|): R|kotlin/Unit|
+    public final fun arraysOfUnsignedArrays(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/Array<kotlin/UInt>>|)))  kotlin/String|, b: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/Array<kotlin/Array<kotlin/UInt>>>|)))  kotlin/String|): R|kotlin/Unit|
 
-    public final fun arrayOfUnsigned(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/UInt|)))  kotlin/String|): R|kotlin/Unit|
+    public final fun arrayOfUnsigned(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/UInt>|)))  kotlin/String|): R|kotlin/Unit|
 
-    public final fun arraysOfPrimitives(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/IntArray|)))  kotlin/String|, b: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Int|)))  kotlin/String|): R|kotlin/Unit|
+    public final fun arraysOfPrimitives(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/IntArray>|)))  kotlin/String|, b: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/Int>|)))  kotlin/String|): R|kotlin/Unit|
 
     public constructor(): R|test/Usage|
 
