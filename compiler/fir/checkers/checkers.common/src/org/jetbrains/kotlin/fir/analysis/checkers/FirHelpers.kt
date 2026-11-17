@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
+import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
+import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -329,6 +331,7 @@ val FirFunctionCall.isIterator: Boolean
 fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession): Boolean =
     session.builtinTypes.throwableType.coneType.isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
 
+context(syntax: FirSyntaxComponent<*>)
 val FirValueParameter.hasValOrVar: Boolean
     get() {
         val source = this.source ?: return false
@@ -791,7 +794,7 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
         }
         is FirValueParameter -> {
             when {
-                annotated.hasValOrVar -> TargetLists.T_VALUE_PARAMETER_WITH_VAL
+                with(session.syntaxComponent) { annotated.hasValOrVar } -> TargetLists.T_VALUE_PARAMETER_WITH_VAL
                 else -> TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
             }
         }

@@ -227,7 +227,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
             )
 
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(
-                rootCause.argument.source?.getChild(KotlinSyntaxTokenIds.MUL, depth = 1)!!,
+                with(session.syntaxComponent) { rootCause.argument.source?.getChild(KotlinSyntaxTokenIds.MUL, depth = 1) }!!,
                 session
             )
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source, session)
@@ -747,12 +747,15 @@ private fun inapplicableNullableReceiver(
         // For augmented assignment operations (e.g., `a += b`), the source is the entire binary expression (BINARY_EXPRESSION).
         // TODO, KT-59809: No need to check for source.syntaxId == BINARY_EXPRESSION if we use operator as callee reference source
         //  (see FirExpressionsResolveTransformer.transformAssignmentOperatorStatement)
-        val operationSource = if (source.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION) {
-            source.getChild(KotlinSyntaxNodeTypeIds.OPERATION_REFERENCE)
-        } else {
-            source
+        val hasIdentifier = with(session.syntaxComponent) {
+            val operationSource = if (source.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION) {
+                source.getChild(KotlinSyntaxNodeTypeIds.OPERATION_REFERENCE)
+            } else {
+                source
+            }
+            operationSource?.getChild(KotlinSyntaxTokenIds.IDENTIFIER) != null
         }
-        return if (operationSource?.getChild(KotlinSyntaxTokenIds.IDENTIFIER) != null) {
+        return if (hasIdentifier) {
             FirErrors.UNSAFE_INFIX_CALL.createOn(
                 source,
                 rootCause.actualType,

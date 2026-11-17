@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -25,10 +26,10 @@ object FirWhenSubjectChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
             subject?.source?.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "destructuring declaration")
             }
-            subjectVariable?.source?.getChild(KotlinSyntaxTokenIds.VAR_KEYWORD) != null -> {
+            withSyntax { subjectVariable?.source?.getChild(KotlinSyntaxTokenIds.VAR_KEYWORD) } != null -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "var")
             }
-            subjectVariable?.source?.getChild(KotlinSyntaxNodeTypeIds.PROPERTY_DELEGATE) != null -> {
+            withSyntax { subjectVariable?.source?.getChild(KotlinSyntaxNodeTypeIds.PROPERTY_DELEGATE) } != null -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "delegated property")
             }
             subjectVariable != null && subjectVariable.initializer == null -> {

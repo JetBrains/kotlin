@@ -35,8 +35,10 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
                 withFirEntry("fir", typeRef)
             }
 
-        source.forEachChildOfType(valueParameterElementSet, depth = 1) {
-            reporter.reportOn(it, FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE)
+        withSyntax {
+            source.forEachChildOfType(valueParameterElementSet, depth = 1) {
+                reporter.reportOn(it, FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE)
+            }
         }
 
         source.requireFeatureSupport(LanguageFeature.ContextParameters)

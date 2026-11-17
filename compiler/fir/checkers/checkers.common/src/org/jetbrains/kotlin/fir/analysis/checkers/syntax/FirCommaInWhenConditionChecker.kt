@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
@@ -37,7 +38,7 @@ object FirCommaInWhenConditionChecker : FirExpressionSyntaxChecker<FirWhenExpres
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkCommaInBranchCondition(branch: FirWhenBranch) {
         val source = branch.source
-        if (source?.syntaxId == KotlinSyntaxNodeTypeIds.WHEN_ENTRY && source.getChild(KotlinSyntaxTokenIds.COMMA, depth = 1) != null) {
+        if (source?.syntaxId == KotlinSyntaxNodeTypeIds.WHEN_ENTRY && withSyntax { source.getChild(KotlinSyntaxTokenIds.COMMA, depth = 1) } != null) {
             reporter.reportOn(source, FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT)
         }
     }

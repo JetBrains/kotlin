@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.annotations
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.diagnostics.userType
-import org.jetbrains.kotlin.fir.analysis.buildChildSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isUnderscore
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
@@ -64,5 +64,17 @@ object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirF
                 )
             }
         }
+    }
+
+    /**
+     * Keeps 'padding' of parent node in child node
+     */
+    private fun KtLightSourceElement.buildChildSourceElement(childNode: LighterASTNode): KtLightSourceElement {
+        val offsetDelta = startOffset - lighterASTNode.startOffset
+        return childNode.toKtLightSourceElement(
+            treeStructure,
+            startOffset = childNode.startOffset + offsetDelta,
+            endOffset = childNode.endOffset + offsetDelta
+        )
     }
 }
