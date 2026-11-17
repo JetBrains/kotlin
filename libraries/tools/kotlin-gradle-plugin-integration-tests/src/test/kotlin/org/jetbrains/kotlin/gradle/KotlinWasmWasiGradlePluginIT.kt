@@ -29,7 +29,10 @@ import kotlin.io.path.writeText
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin.Companion.WASMTIME_VERSION
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 
+@MustRunOnChangesInWasm
 @WasmWasiGradlePluginTests
 class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
@@ -862,6 +865,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
     @TestMetadata("new-mpp-wasm-wasi-test")
     @DisplayName("Check wasi target run")
     @GradleTest
+    @MustRunOnChangesInGradle
     fun wasiRun(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
             build(":wasmWasiNodeDevelopmentRun") {
