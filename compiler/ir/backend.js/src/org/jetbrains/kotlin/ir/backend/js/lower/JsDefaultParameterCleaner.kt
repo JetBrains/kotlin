@@ -8,8 +8,18 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterCleaner
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 
 @PhasePrerequisites(
     CollectClassDefaultConstructorsLowering::class,
 )
-class JsDefaultParameterCleaner(context: JsIrBackendContext) : DefaultParameterCleaner(context)
+class JsDefaultParameterCleaner(context: JsIrBackendContext) : DefaultParameterCleaner(context) {
+    override fun shouldCleanDefaultValue(parameter: IrValueParameter): Boolean {
+        val function = parameter.parent as IrFunction
+        if (function.canUseEs6DefaultParameterSyntax(context) && !function.hasDefaultArgumentBridge) {
+            return false
+        }
+        return super.shouldCleanDefaultValue(parameter)
+    }
+}

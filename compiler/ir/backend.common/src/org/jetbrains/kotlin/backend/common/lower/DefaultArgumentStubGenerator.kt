@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -440,8 +440,10 @@ open class DefaultParameterCleaner(
 ) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
+    open fun shouldCleanDefaultValue(parameter: IrValueParameter): Boolean = true
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrValueParameter && declaration.defaultValue != null) {
+        if (declaration is IrValueParameter && declaration.defaultValue != null && shouldCleanDefaultValue(declaration)) {
             if (replaceDefaultValuesWithStubs) {
                 if ((declaration.parent as IrFunction).defaultArgumentsOriginalFunction == null) {
                     declaration.defaultValue = context.irFactory.createExpressionBody(

@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.useEs6DefaultArgs
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -38,6 +42,22 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 val IrFunction.hasDefaultArgumentBridge: Boolean
     get() = defaultArgumentsDispatchFunction.let { it != null && it != this }
 
+/**
+ * We can use the ES6 default parameter syntax if we know for sure that there are no effects occur before the evaluation of
+ * the default values.
+ *
+ * This means that we can do it:
+ * - In class instance methods (the class's static initializers are only called in static methods and constructors)
+ *
+ * Because [JsStaticInitializersUsageLowering] and [JsPropertyLazyInitLowering] run _after_ [JsDefaultArgumentStubGenerator],
+ * we cannot say for sure whether it's safe to use the ES6 syntax for top-level and static functions and class constructors,
+ * because at this point we don't know whether a call to the static initializer will be inserted as the first statement into the function
+ * body. (That call must always be _before_ the default parameter resolution.)
+ */
+fun IrFunction.canUseEs6DefaultParameterSyntax(context: CommonBackendContext): Boolean =
+    context.configuration.useEs6DefaultArgs && isInstanceMethod
+
+@PhasePrerequisites(JsStaticInitializersUsageLowering::class)
 class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
     DefaultArgumentStubGenerator<JsIrBackendContext>(
         context = context,
@@ -108,8 +128,16 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
             return null
         }
 
-        if (declaration.hasDefaultArgs() && (declaration is IrConstructor || declaration.isTopLevel || declaration.isStatic)) {
-            return listOf(declaration.introduceDefaultResolution())
+        val canUseEs6DefaultParameterSyntax = declaration.canUseEs6DefaultParameterSyntax(context)
+
+        if (declaration.hasDefaultArgs() && (declaration !is IrSimpleFunction || declaration.modality == FINAL)) {
+            // Don't generate stubs for constructors and final functions
+            return if (canUseEs6DefaultParameterSyntax) {
+                declaration.defaultArgumentsDispatchFunction = declaration
+                null
+            } else {
+                listOf(declaration.introduceDefaultResolution())
+            }
         }
 
         val [originalFun, defaultFunStub] = super.transformFlat(declaration) ?: return null
@@ -118,11 +146,13 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
 
         if (!defaultFunStub.isFakeOverride) {
             with(defaultFunStub) {
-                parameters.forEach {
-                    if (it.defaultValue != null) {
-                        it.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+                if (!canUseEs6DefaultParameterSyntax) {
+                    parameters.forEach {
+                        if (it.defaultValue != null) {
+                            it.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+                        }
+                        it.defaultValue = null
                     }
-                    it.defaultValue = null
                 }
 
                 if (isOriginalFunctionExported) {
@@ -161,13 +191,15 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         val variables = originalDeclaration.parameters.associateByTo(hashMapOf(), { it }, { parameters[it.indexInParameters] })
 
         return irBuilder.irBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-            +parameters.zip(originalDeclaration.parameters)
-                .mapNotNull { [new, original] ->
-                    createResolutionStatement(
-                        new,
-                        original.defaultValue?.expression?.transform(VariableRemapper(variables), null),
-                    )
-                }
+            if (!canUseEs6DefaultParameterSyntax(this@JsDefaultArgumentStubGenerator.context)) {
+                +parameters.zip(originalDeclaration.parameters)
+                    .mapNotNull { [new, original] ->
+                        createResolutionStatement(
+                            new,
+                            original.defaultValue?.expression?.transform(VariableRemapper(variables), null),
+                        )
+                    }
+            }
 
             val wrappedFunctionCall = irCall(originalDeclaration, JsStatementOrigins.IMPLEMENTATION_DELEGATION_CALL).apply {
                 passTypeArgumentsFrom(originalDeclaration)
