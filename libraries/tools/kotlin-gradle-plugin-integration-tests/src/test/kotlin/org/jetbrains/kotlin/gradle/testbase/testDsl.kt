@@ -329,8 +329,8 @@ private fun TestProject.buildWithAction(
     }
 }
 
-fun getGradleUserHome(): File {
-    return testKitDir.toAbsolutePath().toFile().normalize().absoluteFile
+fun getGradleUserHome(): Path {
+    return testKitDir.toAbsolutePath().normalize()
 }
 
 
@@ -473,7 +473,7 @@ private fun TestProject.ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buil
 fun TestProject.enableLocalBuildCache(
     buildCacheLocation: Path,
 ) {
-    val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
+    val settingsFile = if (settingsGradle.exists()) settingsGradle else settingsGradleKts
 
     settingsFile.append(
         """
@@ -906,7 +906,12 @@ internal val testKitDir: Path get() = Path("./build/testKitCache")
  */
 internal val kgpTestInfraWorkingDirectory: Path get() = Path("./build/kgpTestInfra")
 
-private val hashAlphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+private val hashAlphabet: List<Char> = buildList {
+    addAll('a'..'z')
+    addAll('A'..'Z')
+    addAll('0'..'9')
+}
+
 private fun randomHash(length: Int = 15): String {
     return List(length) { hashAlphabet.random() }.joinToString("")
 }
@@ -918,7 +923,7 @@ private fun setupProjectFromTestResources(
     optionalSubDir: String,
 ): Path {
     val testProjectPath = projectName.testProjectPath
-    assertTrue("Test project doesn't exists") { Files.exists(testProjectPath) }
+    assertTrue("Test project doesn't exists") { testProjectPath.exists() }
     assertTrue("Test project path isn't a directory") { Files.isDirectory(testProjectPath) }
 
     return tempDir
@@ -962,19 +967,19 @@ private fun Path.addDependencyRepositoriesToBuildScript(
     val settingsGradle = resolve("settings.gradle")
     val settingsGradleKts = resolve("settings.gradle.kts")
     when {
-        Files.exists(buildGradle) -> buildGradle.modify {
+        buildGradle.exists() -> buildGradle.modify {
             it.insertBlockToBuildScriptAfterPluginsAndImports(
                 getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo).wrapWithAllProjectBlock()
             )
         }
 
-        Files.exists(buildGradleKts) -> buildGradleKts.modify {
+        buildGradleKts.exists() -> buildGradleKts.modify {
             it.insertBlockToBuildScriptAfterPluginsAndImports(
                 getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo).wrapWithAllProjectBlock()
             )
         }
 
-        Files.exists(settingsGradle) -> buildGradle.toFile()
+        settingsGradle.exists() -> buildGradle
             .writeText(
                 getGroovyRepositoryBlock(
                     additionalDependencyRepositories,
@@ -982,7 +987,7 @@ private fun Path.addDependencyRepositoriesToBuildScript(
                 ).wrapWithAllProjectBlock()
             )
 
-        Files.exists(settingsGradleKts) -> buildGradleKts.toFile()
+        settingsGradleKts.exists() -> buildGradleKts
             .writeText(
                 getKotlinRepositoryBlock(
                     additionalDependencyRepositories,
@@ -993,7 +998,7 @@ private fun Path.addDependencyRepositoriesToBuildScript(
         else -> error("No build-file or settings file found")
     }
 
-    if (Files.exists(resolve("buildSrc"))) {
+    if (resolve("buildSrc").exists()) {
         resolve("buildSrc").addDependencyRepositoriesToBuildScript(additionalDependencyRepositories, localRepo)
     }
 }
@@ -1074,7 +1079,7 @@ internal fun Path.addPluginManagementToSettings() {
     val settingsGradle = resolve("settings.gradle")
     val settingsGradleKts = resolve("settings.gradle.kts")
     when {
-        Files.exists(settingsGradle) -> settingsGradle.modify {
+        settingsGradle.exists() -> settingsGradle.modify {
             if (!it.contains("pluginManagement {")) {
                 """
                 |$DEFAULT_GROOVY_SETTINGS_FILE
@@ -1086,7 +1091,7 @@ internal fun Path.addPluginManagementToSettings() {
             }
         }
 
-        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
+        settingsGradleKts.exists() -> settingsGradleKts.modify {
             if (!it.contains("pluginManagement {")) {
                 """
                 |$DEFAULT_KOTLIN_SETTINGS_FILE
@@ -1098,13 +1103,13 @@ internal fun Path.addPluginManagementToSettings() {
             }
         }
 
-        Files.exists(buildGradle) -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
-        Files.exists(buildGradleKts) -> settingsGradleKts.toFile().writeText(DEFAULT_KOTLIN_SETTINGS_FILE)
+        buildGradle.exists() -> settingsGradle.writeText(DEFAULT_GROOVY_SETTINGS_FILE)
+        buildGradleKts.exists() -> settingsGradleKts.writeText(DEFAULT_KOTLIN_SETTINGS_FILE)
 
         else -> error("No build-file or settings file found")
     }
 
-    if (Files.exists(resolve("buildSrc"))) {
+    if (resolve("buildSrc").exists()) {
         resolve("buildSrc").addPluginManagementToSettings()
     }
 }
@@ -1116,10 +1121,10 @@ internal fun Path.addCompilerVersionOverrideToSettings(compilerVersion: String) 
     val settingsGradle = resolve("settings.gradle")
     val settingsGradleKts = resolve("settings.gradle.kts")
     when {
-        Files.exists(settingsGradle) -> settingsGradle.append(getGroovyCompilerVersionBlock(compilerVersion))
-        Files.exists(settingsGradleKts) -> settingsGradleKts.append(getKtsCompilerVersionBlock(compilerVersion))
-        Files.exists(buildGradle) -> settingsGradle.writeText(getGroovyCompilerVersionBlock(compilerVersion))
-        Files.exists(buildGradleKts) -> settingsGradleKts.writeText(getKtsCompilerVersionBlock(compilerVersion))
+        settingsGradle.exists() -> settingsGradle.append(getGroovyCompilerVersionBlock(compilerVersion))
+        settingsGradleKts.exists() -> settingsGradleKts.append(getKtsCompilerVersionBlock(compilerVersion))
+        buildGradle.exists() -> settingsGradle.writeText(getGroovyCompilerVersionBlock(compilerVersion))
+        buildGradleKts.exists() -> settingsGradleKts.writeText(getKtsCompilerVersionBlock(compilerVersion))
         else -> error("No build-file or settings file found")
     }
 }
@@ -1159,7 +1164,7 @@ internal fun Path.addDependencyManagementToSettings(
     val settingsGradle = resolve("settings.gradle")
     val settingsGradleKts = resolve("settings.gradle.kts")
     when {
-        Files.exists(settingsGradle) -> settingsGradle.modify {
+        settingsGradle.exists() -> settingsGradle.modify {
             if (!it.contains("dependencyManagement {")) {
                 """
                 |$it
@@ -1177,7 +1182,7 @@ internal fun Path.addDependencyManagementToSettings(
             }
         }
 
-        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
+        settingsGradleKts.exists() -> settingsGradleKts.modify {
             if (!it.contains("dependencyManagement {")) {
                 """
                 |$it
@@ -1195,7 +1200,7 @@ internal fun Path.addDependencyManagementToSettings(
             }
         }
 
-        Files.exists(buildGradle) -> settingsGradle.toFile()
+        buildGradle.exists() -> settingsGradle
             .writeText(
                 getGroovyDependencyManagementBlock(
                     gradleRepositoriesMode,
@@ -1204,7 +1209,7 @@ internal fun Path.addDependencyManagementToSettings(
                 )
             )
 
-        Files.exists(buildGradleKts) -> settingsGradleKts.toFile()
+        buildGradleKts.exists() -> settingsGradleKts
             .writeText(
                 getKotlinDependencyManagementBlock(
                     gradleRepositoriesMode,
@@ -1216,13 +1221,13 @@ internal fun Path.addDependencyManagementToSettings(
         else -> error("No build-file or settings file found")
     }
 
-    if (Files.exists(resolve("buildSrc"))) {
+    if (resolve("buildSrc").exists()) {
         resolve("buildSrc").addDependencyManagementToSettings(gradleRepositoriesMode, additionalDependencyRepositories, localRepo)
     }
 }
 
 private fun TestProject.agreeToBuildScanService(gradleVersion: GradleVersion) {
-    val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
+    val settingsFile = if (settingsGradle.exists()) settingsGradle else settingsGradleKts
     if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_5)) {
         settingsFile.appendText(
             """
@@ -1330,7 +1335,7 @@ internal fun Path.enableCacheRedirector() {
     val settingsGradle = resolve("settings.gradle")
     val settingsGradleKts = resolve("settings.gradle.kts")
     when {
-        Files.exists(settingsGradle) -> settingsGradle.modify {
+        settingsGradle.exists() -> settingsGradle.modify {
             """
             |${it.substringBefore("pluginManagement {")}
             |pluginManagement {
@@ -1338,7 +1343,7 @@ internal fun Path.enableCacheRedirector() {
             |${it.substringAfter("pluginManagement {")}
             """.trimMargin()
         }
-        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
+        settingsGradleKts.exists() -> settingsGradleKts.modify {
             """
             |${it.substringBefore("pluginManagement {")}
             |pluginManagement {
