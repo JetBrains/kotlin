@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.fir.isParcelize
 import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
 // TODO: extract common checker for expect interfaces

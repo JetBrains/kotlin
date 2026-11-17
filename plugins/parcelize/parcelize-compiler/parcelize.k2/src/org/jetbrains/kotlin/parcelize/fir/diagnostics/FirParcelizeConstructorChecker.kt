@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
+import org.jetbrains.kotlin.parcelize.fir.isParcelize
 import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
 object FirParcelizeConstructorChecker : FirConstructorChecker(MppCheckerKind.Platform) {
@@ -66,7 +67,7 @@ object FirParcelizeConstructorChecker : FirConstructorChecker(MppCheckerKind.Pla
             }
         }
         val superIsParcelize = containingClass.superTypeRefs.any {
-            it.toRegularClassSymbol(context.session)?.isParcelize(context.session) == true
+            it.toRegularClassSymbol(context.session).isParcelize(context.session)
         }
         val experimentalCodeGeneration = context.session.parcelizeService.experimentalCodeGeneration
         val allowBareValueArguments = experimentalCodeGeneration

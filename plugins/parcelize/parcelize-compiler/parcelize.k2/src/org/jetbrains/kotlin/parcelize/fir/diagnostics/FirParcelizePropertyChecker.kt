@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
 import org.jetbrains.kotlin.parcelize.fir.dataClassPrimaryConstructorPropertiesOrNull
+import org.jetbrains.kotlin.parcelize.fir.isParcelize
 
 object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -58,7 +59,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
 
         if (declaration.name == CREATOR_NAME && containingClassSymbol.isCompanion && declaration.hasJvmFieldAnnotation(session)) {
             val outerClass = context.containingDeclarations.asReversed().getOrNull(1) as? FirRegularClassSymbol
-            if (outerClass != null && outerClass.isParcelize(session)) {
+            if (outerClass.isParcelize(session)) {
                 reporter.reportOn(declaration.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED)
             }
         }
