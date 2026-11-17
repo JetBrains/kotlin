@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class JvmNameResolverTest {
@@ -179,5 +180,31 @@ class JvmNameResolverTest {
         }
 
         (0..4).forEach { assertEquals("kotlin", n.getString(it)) }
+    }
+
+    @Test
+    fun testMaxRange() {
+        val n = create {
+            string(null, internalString = "kotlin", range = 65535)
+        }
+
+        assertEquals("kotlin", n.getString(65534))
+    }
+
+    @Test
+    fun testTooLargeRange() {
+        assertThrows(IllegalStateException::class.java) {
+            create { string(null, range = Int.MAX_VALUE) }
+        }
+    }
+
+    @Test
+    fun testTooLargeSumOfRanges() {
+        assertThrows(IllegalStateException::class.java) {
+            create {
+                string(null, range = 40000)
+                string(null, range = 40000)
+            }
+        }
     }
 }
