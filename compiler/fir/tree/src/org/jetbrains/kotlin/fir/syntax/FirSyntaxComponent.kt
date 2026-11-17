@@ -19,6 +19,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 /**
+ * Unlike `(SyntaxId) -> Boolean`, [matches] takes a primitive `Int`, so non-inline functions can call it for every visited node
+ * without boxing the IDs (some of them are out of the `Integer` cache range).
+ */
+fun interface SyntaxIdPredicate {
+    fun matches(id: SyntaxId): Boolean
+}
+
+/**
  * Provides syntax-specific services for the source elements of a [org.jetbrains.kotlin.fir.FirSession].
  *
  * There is one implementation per [ParserMode]; it must match the kind of source elements produced by the raw FIR builder
@@ -52,7 +60,7 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
     abstract fun KtSourceElement.forEachChildMatching(
         depth: Int,
         reverse: Boolean,
-        isTargetType: (SyntaxId) -> Boolean,
+        isTargetType: SyntaxIdPredicate,
         processChild: (KtSourceElement) -> Boolean,
     )
 
@@ -63,7 +71,7 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
         root: N,
         depth: Int,
         reverse: Boolean,
-        isTargetType: (SyntaxId) -> Boolean,
+        isTargetType: SyntaxIdPredicate,
         getSyntaxId: (N) -> SyntaxId,
         getChildren: (N) -> List<N>,
         processChild: (N) -> Boolean,
@@ -73,7 +81,7 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
         while (stack.isNotEmpty()) {
             val [element, currentDepth] = stack.popLast()
 
-            if (currentDepth != 0 && isTargetType(getSyntaxId(element)) && !processChild(element)) {
+            if (currentDepth != 0 && isTargetType.matches(getSyntaxId(element)) && !processChild(element)) {
                 return
             }
 
