@@ -1,26 +1,26 @@
 kotlinx.cinterop
 kotlinx.cinterop/ObjCMethod
-constructor:kotlinx.cinterop/ObjCMethod#%3Cinit%3E#
+kotlinx.cinterop/ObjCMethod##kind=function;
 kotlinx.cinterop/ObjCConstructor
-constructor:kotlinx.cinterop/ObjCConstructor#%3Cinit%3E#
+kotlinx.cinterop/ObjCConstructor##kind=function;
 kotlinx.cinterop/ObjCFactory
-constructor:kotlinx.cinterop/ObjCFactory#%3Cinit%3E#
+kotlinx.cinterop/ObjCFactory##kind=function;
 kotlin.native
 kotlin.native/ObjCName
-constructor:kotlin.native/ObjCName#%3Cinit%3E#parameters=[kotlin/String, kotlin/String, kotlin/Boolean];
-property:kotlin.native/ObjCName#name#
-property:kotlin.native/ObjCName#swiftName#
-property:kotlin.native/ObjCName#exact#
+kotlin.native/ObjCName##kind=function; parameters=[kotlin/String, kotlin/String, kotlin/Boolean];
+kotlin.native/ObjCName#name#kind=property;
+kotlin.native/ObjCName#swiftName#kind=property;
+kotlin.native/ObjCName#exact#kind=property;
 sample
-function:sample#plain#parameters=[kotlin/String, kotlin/Int]; objcParameterNames=[first, second]
-function:sample#create#parameters=[kotlin/Int, kotlin/Int]; objcParameterNames=[first, second]
+sample#plain#kind=function; parameters=[kotlin/String, kotlin/Int]; objcParameterNames=[first, second]
+sample#create#kind=function; parameters=[kotlin/Int, kotlin/Int]; objcParameterNames=[first, second]
 sample/Base
-function:sample/Base#foo#parameters=[kotlin/String, kotlin/String]; objcParameterNames=[first, second]
-constructor:sample/Base#%3Cinit%3E#
+sample/Base#foo#kind=function; parameters=[kotlin/String, kotlin/String]; objcParameterNames=[first, second]
+sample/Base##kind=function;
 sample/Derived
-function:sample/Derived#foo#parameters=[kotlin/String, kotlin/String]; objcParameterNames=[first, second]
-constructor:sample/Derived#%3Cinit%3E#
+sample/Derived#foo#kind=function; parameters=[kotlin/String, kotlin/String]; objcParameterNames=[first, second]
+sample/Derived##kind=function;
 sample/Constructed
-constructor:sample/Constructed#%3Cinit%3E#parameters=[kotlin/Int, kotlin/Int]; objcParameterNames=[first, second]
-function:sample#power#parameters=[kotlin/Int, kotlin/Int];
-function:sample#control#parameters=[kotlin/Int];
+sample/Constructed##kind=function; parameters=[kotlin/Int, kotlin/Int]; objcParameterNames=[first, second]
+sample#power#kind=function; parameters=[kotlin/Int, kotlin/Int];
+sample#control#kind=function; parameters=[kotlin/Int];

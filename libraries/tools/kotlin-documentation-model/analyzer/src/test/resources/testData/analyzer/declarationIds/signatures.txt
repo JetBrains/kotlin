@@ -1,31 +1,31 @@
 sample
-function:sample#noArgs#
-function:sample#stringParam#parameters=[kotlin/String];
-function:sample#nullableString#parameters=[kotlin/String?];
-function:sample#stringReceiver#receiver=kotlin/String
-function:sample#intReceiver#receiver=kotlin/Int
-function:sample#contextReceiver#
-function:sample#suspended# suspend;
-function:sample#varargParam#parameters=[vararg kotlin/String];
-function:sample#arrayOut#parameters=[kotlin/Array<out kotlin/String>];
-function:sample#generic#typeParameters=[<T0_0>: ]; context=[]; parameters=[<T0_0>];
-function:sample#bounded#typeParameters=[<T0_0>: kotlin/CharSequence]; context=[]; parameters=[<T0_0>];
-function:sample#functionType#parameters=[(kotlin/String) -> kotlin/Unit];
-function:sample#suspendFunctionType#parameters=[suspend (kotlin/String) -> kotlin/Unit];
-function:sample#extensionFunctionType#parameters=[kotlin/String.() -> kotlin/Unit];
-function:sample#complex#typeParameters=[<T0_0>: kotlin/CharSequence]; context=[kotlin/String]; receiver=kotlin/Intparameters=[vararg <T0_0>];  suspend;
-function:sample#mapAndLambda#parameters=[kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/Int>>, (kotlin/String) -> kotlin/Unit];
+sample#noArgs#kind=function;
+sample#stringParam#kind=function; parameters=[kotlin/String];
+sample#nullableString#kind=function; parameters=[kotlin/String?];
+sample#stringReceiver#kind=function; receiver=kotlin/String
+sample#intReceiver#kind=function; receiver=kotlin/Int
+sample#contextReceiver#kind=function;
+sample#suspended#kind=function;  suspend;
+sample#varargParam#kind=function; parameters=[vararg kotlin/String];
+sample#arrayOut#kind=function; parameters=[kotlin/Array<out kotlin/String>];
+sample#generic#kind=function; typeParameters=[<T0_0>: ]; context=[]; parameters=[<T0_0>];
+sample#bounded#kind=function; typeParameters=[<T0_0>: kotlin/CharSequence]; context=[]; parameters=[<T0_0>];
+sample#functionType#kind=function; parameters=[(kotlin/String) -> kotlin/Unit];
+sample#suspendFunctionType#kind=function; parameters=[suspend (kotlin/String) -> kotlin/Unit];
+sample#extensionFunctionType#kind=function; parameters=[kotlin/String.() -> kotlin/Unit];
+sample#complex#kind=function; typeParameters=[<T0_0>: kotlin/CharSequence]; context=[kotlin/String]; receiver=kotlin/Intparameters=[vararg <T0_0>];  suspend;
+sample#mapAndLambda#kind=function; parameters=[kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/Int>>, (kotlin/String) -> kotlin/Unit];
 sample/Text
-function:sample#aliased#parameters=[sample/Text];
+sample#aliased#kind=function; parameters=[sample/Text];
 sample/Outer
-function:sample/Outer#member#parameters=[<T0_0>];
-function:sample/Outer#member#parameters=[<T0_1>];
-function:sample/Outer#member#typeParameters=[<T1_0>: ]; context=[]; parameters=[<T1_0>];
-constructor:sample/Outer#%3Cinit%3E#typeParameters=[<T0_0>: , <T0_1>: ]; context=[];
-property:sample#computed#
-property:sample#mutable#
-property:sample#contextual#  // REDECLARATION
-property:sample#extensionValue#typeParameters=[<T0_0>: ]; context=[]; receiver=<T0_0>
+sample/Outer#member#kind=function; parameters=[<T0_0>];
+sample/Outer#member#kind=function; parameters=[<T0_1>];
+sample/Outer#member#kind=function; typeParameters=[<T1_0>: ]; context=[]; parameters=[<T1_0>];
+sample/Outer##kind=function; typeParameters=[<T0_0>: , <T0_1>: ]; context=[];
+sample#computed#kind=property;
+sample#mutable#kind=property;
+sample#contextual#kind=property;   // REDECLARATION
+sample#extensionValue#kind=property; typeParameters=[<T0_0>: ]; context=[]; receiver=<T0_0>
 sample/WithAccessors
-property:sample/WithAccessors#counter#
-constructor:sample/WithAccessors#%3Cinit%3E#
+sample/WithAccessors#counter#kind=property;
+sample/WithAccessors##kind=function;
