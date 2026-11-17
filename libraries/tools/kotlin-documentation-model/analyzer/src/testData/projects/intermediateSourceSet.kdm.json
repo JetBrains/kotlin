@@ -1698,7 +1698,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "cause",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -1789,7 +1789,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "s",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -1845,7 +1845,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "s",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -1936,7 +1936,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "exception",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -2191,7 +2191,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "message",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -2211,7 +2211,7 @@
                             "annotations": []
                         },
                         {
-                            "name": "p1",
+                            "name": "cause",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -2231,7 +2231,7 @@
                             "annotations": []
                         },
                         {
-                            "name": "p2",
+                            "name": "enableSuppression",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -2251,7 +2251,7 @@
                             "annotations": []
                         },
                         {
-                            "name": "p3",
+                            "name": "writableStackTrace",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -3032,7 +3032,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "cause",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -3123,7 +3123,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "s",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -3179,7 +3179,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "s",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -3270,7 +3270,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "exception",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -3525,7 +3525,7 @@
                     "typeParameters": [],
                     "valueParameters": [
                         {
-                            "name": "p0",
+                            "name": "message",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -3545,7 +3545,7 @@
                             "annotations": []
                         },
                         {
-                            "name": "p1",
+                            "name": "cause",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -3565,7 +3565,7 @@
                             "annotations": []
                         },
                         {
-                            "name": "p2",
+                            "name": "enableSuppression",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [
@@ -3585,7 +3585,7 @@
                             "annotations": []
                         },
                         {
-                            "name": "p3",
+                            "name": "writableStackTrace",
                             "type": {
                                 "kind": "classLike",
                                 "qualifiers": [

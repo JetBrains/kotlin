@@ -4,116 +4,6 @@
         {
             "name": "main",
             "elements": {
-                "pkg/JPoint/JPoint/#/PointingToDeclaration/": {
-                    "kind": "constructor",
-                    "isPrimary": false,
-                    "isExternal": false,
-                    "mappedTo": null,
-                    "typeParameters": [],
-                    "valueParameters": [],
-                    "visibility": "PUBLIC",
-                    "since": null,
-                    "deprecated": null,
-                    "throws": [],
-                    "annotations": []
-                },
-                "pkg/JPoint/getX/#/PointingToDeclaration/": {
-                    "kind": "function",
-                    "name": "getX",
-                    "isCompanion": false,
-                    "isExternal": false,
-                    "isSuspend": false,
-                    "isOperator": false,
-                    "isInfix": false,
-                    "isInline": false,
-                    "isTailRec": false,
-                    "mappedTo": null,
-                    "returnType": {
-                        "kind": "classLike",
-                        "qualifiers": [
-                            {
-                                "name": "int",
-                                "typeArguments": []
-                            }
-                        ],
-                        "classLikeId": "kotlin/Int///PointingToDeclaration/",
-                        "isMarkedNullable": false,
-                        "annotations": []
-                    },
-                    "typeParameters": [],
-                    "valueParameters": [],
-                    "extensionReceiverParameter": null,
-                    "contextParameters": [],
-                    "overridens": [],
-                    "visibility": "PUBLIC",
-                    "modality": "OPEN",
-                    "since": null,
-                    "deprecated": null,
-                    "throws": [],
-                    "annotations": []
-                },
-                "pkg/JPoint/x/#/PointingToDeclaration/": {
-                    "kind": "property",
-                    "name": "x",
-                    "isLateinit": false,
-                    "isInline": false,
-                    "isCompanion": false,
-                    "isExternal": false,
-                    "isSuspend": false,
-                    "isMutable": true,
-                    "isFromPrimaryConstructor": false,
-                    "constExpression": null,
-                    "getter": null,
-                    "setter": null,
-                    "mappedTo": null,
-                    "type": {
-                        "kind": "classLike",
-                        "qualifiers": [
-                            {
-                                "name": "int",
-                                "typeArguments": []
-                            }
-                        ],
-                        "classLikeId": "kotlin/Int///PointingToDeclaration/",
-                        "isMarkedNullable": false,
-                        "annotations": []
-                    },
-                    "typeParameters": [],
-                    "extensionReceiverParameter": null,
-                    "contextParameters": [],
-                    "overridens": [],
-                    "visibility": "PUBLIC",
-                    "modality": "OPEN",
-                    "since": null,
-                    "deprecated": null,
-                    "throws": [],
-                    "annotations": []
-                },
-                "pkg/JPoint///PointingToDeclaration/": {
-                    "kind": "class",
-                    "name": "JPoint",
-                    "classKind": "CLASS",
-                    "isCompanion": false,
-                    "isData": false,
-                    "isValue": false,
-                    "isFun": false,
-                    "isInner": false,
-                    "isExternal": false,
-                    "isError": false,
-                    "mappedTo": null,
-                    "typeParameters": [],
-                    "superTypes": [],
-                    "declarations": [
-                        "pkg/JPoint/JPoint/#/PointingToDeclaration/",
-                        "pkg/JPoint/getX/#/PointingToDeclaration/",
-                        "pkg/JPoint/x/#/PointingToDeclaration/"
-                    ],
-                    "visibility": "PUBLIC",
-                    "modality": "OPEN",
-                    "since": null,
-                    "deprecated": null,
-                    "annotations": []
-                },
                 "pkg/KUser/KUser/#/PointingToDeclaration/": {
                     "kind": "constructor",
                     "isPrimary": true,
@@ -207,12 +97,86 @@
                     "deprecated": null,
                     "annotations": []
                 },
+                "pkg/JPoint/JPoint/#/PointingToDeclaration/": {
+                    "kind": "constructor",
+                    "isPrimary": true,
+                    "isExternal": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "valueParameters": [],
+                    "visibility": "PUBLIC",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/JPoint/x/#/PointingToDeclaration/": {
+                    "kind": "property",
+                    "name": "x",
+                    "isLateinit": false,
+                    "isInline": false,
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isMutable": false,
+                    "isFromPrimaryConstructor": false,
+                    "constExpression": null,
+                    "getter": null,
+                    "setter": null,
+                    "mappedTo": null,
+                    "type": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Int",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "OPEN",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/JPoint///PointingToDeclaration/": {
+                    "kind": "class",
+                    "name": "JPoint",
+                    "classKind": "CLASS",
+                    "isCompanion": false,
+                    "isData": false,
+                    "isValue": false,
+                    "isFun": false,
+                    "isInner": false,
+                    "isExternal": false,
+                    "isError": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "superTypes": [],
+                    "declarations": [
+                        "pkg/JPoint/JPoint/#/PointingToDeclaration/",
+                        "pkg/JPoint/x/#/PointingToDeclaration/"
+                    ],
+                    "visibility": "PUBLIC",
+                    "modality": "OPEN",
+                    "since": null,
+                    "deprecated": null,
+                    "annotations": []
+                },
                 "pkg////PointingToDeclaration/": {
                     "kind": "package",
                     "name": "pkg",
                     "declarations": [
-                        "pkg/JPoint///PointingToDeclaration/",
-                        "pkg/KUser///PointingToDeclaration/"
+                        "pkg/KUser///PointingToDeclaration/",
+                        "pkg/JPoint///PointingToDeclaration/"
                     ],
                     "annotations": []
                 },

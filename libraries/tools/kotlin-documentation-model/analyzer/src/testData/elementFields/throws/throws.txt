@@ -51,6 +51,14 @@ fun setAccessors(value: String): Unit [sample//setAccessors/#kotlin.String/Point
   }
 ]
 
+constructor() [sample/Constructed/Constructed/#/PointingToDeclaration/].throws:
+[
+  {
+    "classLikeId": "sample/FirstException///PointingToDeclaration/",
+    "documentation": {}
+  }
+]
+
 constructor() [sample/JavaDeclarations/JavaDeclarations/#/PointingToDeclaration/].throws:
 [
   {
@@ -75,14 +83,6 @@ fun externalException(): Unit [sample/JavaDeclarations/externalException/#/Point
 [
   {
     "classLikeId": "java.io/IOException///PointingToDeclaration/",
-    "documentation": {}
-  }
-]
-
-constructor() [sample/Constructed/Constructed/#/PointingToDeclaration/].throws:
-[
-  {
-    "classLikeId": "sample/FirstException///PointingToDeclaration/",
     "documentation": {}
   }
 ]
