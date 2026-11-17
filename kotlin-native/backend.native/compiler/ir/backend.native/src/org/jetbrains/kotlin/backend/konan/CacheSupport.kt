@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
 import org.jetbrains.kotlin.konan.config.makePerFileCache
+import org.jetbrains.kotlin.konan.config.optimization
 import org.jetbrains.kotlin.konan.config.preLinkCaches
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -187,6 +189,8 @@ class CacheSupport(
     }
 
     fun checkConsistency() {
+        checkNoPerFileCachesInReleaseMode()
+
         // Note: The libraries should be in the reverse topo-order here.
         for (library in klibDag.librariesReverseTopoSorted) {
             val cache = cachedLibraries.getLibraryCache(library)
@@ -207,6 +211,23 @@ class CacheSupport(
             if (cache is CachedLibraries.Cache.Monolithic) {
                 configuration.reportCompilationErrorAndThrow("can't cache library '${library.path}' " +
                         "that is already cached in '${cache.path}'")
+            }
+        }
+    }
+
+    // The DFG-based optimizations run for a release cache need the DFG of the whole library and of all
+    // its dependencies, while a per-file cache neither stores the DFG nor is built from the entire library.
+    private fun checkNoPerFileCachesInReleaseMode() {
+        if (!configuration.optimization || configuration[BinaryOptions.enableReleaseBinaryCache] != true) return
+
+        if (configuration.makePerFileCache || librariesToCache.values.any { it.strategy != CacheDeserializationStrategy.WholeModule }) {
+            configuration.reportCompilationErrorAndThrow("per-file caches are not supported in optimized compilation")
+        }
+        for (library in klibDag.librariesReverseTopoSorted) {
+            val cache = cachedLibraries.getLibraryCache(library, allowIncomplete = true)
+            if (cache is CachedLibraries.Cache.PerFile) {
+                configuration.reportCompilationErrorAndThrow("per-file caches are not supported in optimized compilation, " +
+                        "but '${library.path}' is cached per file in '${cache.path}'")
             }
         }
     }
