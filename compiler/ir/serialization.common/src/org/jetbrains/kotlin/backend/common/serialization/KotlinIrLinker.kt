@@ -265,10 +265,14 @@ abstract class KotlinIrLinker(
             unbound = symbolTable.descriptorExtension.allUnboundSymbols
             for (symbol: IrSymbol in unbound) {
                 // Symbol could get bound as a side effect of deserializing other symbols.
-                if (!symbol.isBound) {
-                    getDeclaration(symbol)
+                if (!symbol.isBound && triedToDeserializeDeclarationForSymbol.add(symbol)) {
+                    val signature = symbol.signature ?: continue
+                    // TODO (KT-91417): Need to make it without an excessive IrModuleDeserializer.contains() call!
+                    firstModuleDeserializerOrNull(signature.packageFqName()) { signature in it }
+                        ?.tryDeserializeIrSymbol(signature, symbol.kind())
                 }
             }
+            deserializeAllReachableTopLevels()
             // We wait for the unbound to stabilize on fake overrides.
         } while (unbound != prevUnbound)
     }
