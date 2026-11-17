@@ -55,6 +55,141 @@ class RegexTest {
         assertEquals(null, p.find(input, input.length))
     }
 
+    @Test fun matchLazyPlusResult() {
+        val p = "\\d+?".toRegex()
+        val input = "123"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchLazyLookingPlusResult() {
+        val p = "\\d+\\+?".toRegex()
+        val input = "123"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchLazyStarResult() {
+        val p = "\\d*?".toRegex()
+        val input = "123"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchLazyLookingStarResult() {
+        val p = "\\d+\\*?".toRegex()
+        val input = "123"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchLazyQuestionResult() {
+        val p = "\\d??".toRegex()
+        val input = "1"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchLazyLookingQuestionResult() {
+        val p = "\\d?\\??".toRegex()
+        val input = "1"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchLazyBraceResult() {
+        val p = "\\d{1,3}?".toRegex()
+        val input = "123"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchLazyLookingBraceResult() {
+        val p = "\\d+\\{1,3\\}?".toRegex()
+        val input = "123{1,3}"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchAlternateResult() {
+        val p = ".|\\d+".toRegex()
+        val input = "123"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchMultilineResult() {
+        val p = "\\d+".toRegex(RegexOption.MULTILINE)
+        val input = "123\n456"
+
+        assertFalse(input matches p)
+        assertFalse(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchMultilineLazyResult() {
+        val p = "\\d+\\n??.*?".toRegex(RegexOption.MULTILINE)
+        val input = "123\n456"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchMultilineLazyLookingResult() {
+        val p = "\\d+\\n\\??.\\*?".toRegex(RegexOption.MULTILINE)
+        val input = "123\n5"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchMultilineLazyBraceResult() {
+        val p = "\\d+\\n{0,1}?.{0,}?".toRegex(RegexOption.MULTILINE)
+        val input = "123\n456"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchMultilineLazyLookingBraceResult() {
+        val p = "\\d+\\n\\{0,1\\}?.\\{0,\\}?".toRegex(RegexOption.MULTILINE)
+        val input = "123\n{0,16{0,"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchMultilineLazyLookingCharacterClassResult() {
+        val p = "\\d+\\n[*?{1,2}?]{2}.".toRegex(RegexOption.MULTILINE)
+        val input = "123\n??5"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
     @Test fun matchEscapeSurrogatePair() {
         if (!supportsEscapeAnyCharInRegex) return
 
@@ -330,7 +465,6 @@ class RegexTest {
         assertEquals(listOf("test", "", "Line"), matchedValues)
     }
 
-
     @Test fun matchEntire() {
         val regex = "(\\d)(\\w)".toRegex()
 
@@ -339,6 +473,79 @@ class RegexTest {
             assertEquals("3c", m.value)
             assertEquals(3, m.groups.size)
             assertEquals(listOf("3c", "3", "c"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+    }
+
+    @Test fun matchEntireAnchored() {
+        val regex = "^(?:a|b)$".toRegex()
+
+        assertNull(regex.matchEntire("ac"))
+        assertNull(regex.matchEntire("ab"))
+        assertNotNull(regex.matchEntire("a")) { m ->
+            assertEquals("a", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("a"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+        assertNotNull(regex.matchEntire("b")) { m ->
+            assertEquals("b", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("b"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+    }
+
+    @Test fun matchEntireSeeminglyAnchored() {
+        val regex = "^a|b$".toRegex()
+
+        assertNull(regex.matchEntire("ac"))
+        assertNull(regex.matchEntire("ab"))
+        assertNotNull(regex.matchEntire("a")) { m ->
+            assertEquals("a", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("a"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+        assertNotNull(regex.matchEntire("b")) { m ->
+            assertEquals("b", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("b"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+    }
+
+    @Test fun matchEntireMultiline() {
+        val regex = "\\d+".toRegex(RegexOption.MULTILINE)
+
+        assertNull(regex.matchEntire("123\n456"))
+        assertNotNull(regex.matchEntire("123")) { m ->
+            assertEquals("123", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("123"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+    }
+
+    @Test fun matchEntireMultilineLazy() {
+        val regex = "\\d+\\n??.*?".toRegex(RegexOption.MULTILINE)
+
+        assertNull(regex.matchEntire("123\n456\n789"))
+        assertNotNull(regex.matchEntire("123\n456")) { m ->
+            assertEquals("123\n456", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("123\n456"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+    }
+
+    @Test fun matchEntireMultilineLazyLooking() {
+        val regex = "\\d+\\n\\??.\\*?".toRegex(RegexOption.MULTILINE)
+
+        assertNotNull(regex.matchEntire("123\n5")) { m ->
+            assertEquals("123\n5", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("123\n5"), m.groups.map { it!!.value })
             assertNull(m.next())
         }
     }
