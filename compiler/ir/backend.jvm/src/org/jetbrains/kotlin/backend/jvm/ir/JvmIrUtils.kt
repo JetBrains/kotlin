@@ -585,8 +585,6 @@ fun IrMutableAnnotationContainer.copyAnnotationsAndAddJavaLangDeprecated(source:
             irBuilder.irAnnotation(irBuilder.irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
 }
 
-@OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.isInlineClass: Boolean get() = isInlineClass()
 
-@OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.inlineClassRepresentation get() = inlineClassRepresentation()

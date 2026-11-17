@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
@@ -17,7 +16,6 @@ abstract class KotlinTypeMapper {
     companion object {
         @JvmStatic
         fun mapUnderlyingTypeOfInlineClassType(irType: IrType, typeMapper: KotlinTypeMapperBase): Type {
-            @OptIn(ValueClassBackendAgnosticApi::class)
             val underlyingType = irType.classOrNull?.owner?.let {
                 getInlineClassUnderlyingType(it)
             } ?: throw IllegalStateException("There should be underlying type for inline class type: $irType")

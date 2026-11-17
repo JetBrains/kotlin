@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -435,7 +434,6 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private val uintSerializer = IrUnsafeCoerceWrappedSerializer(intSerializer, symbols.kotlinUInt.defaultType, irBuiltIns.intType)
     private val ulongSerializer = IrUnsafeCoerceWrappedSerializer(longSerializer, symbols.kotlinULong.defaultType, irBuiltIns.longType)
 
-    @OptIn(ValueClassBackendAgnosticApi::class)
     private val IrClass.inlineClassRepresentation get() = inlineClassRepresentation()
 
     // Unsigned array types

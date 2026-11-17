@@ -643,8 +643,7 @@ open class SerializerIrGenerator(
             }
             val generator = when {
                 serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(irClass, context)
-                serializableDesc.isSerializedAsInlineClass() ->
-                    SerializerForInlineClassGenerator(irClass, context)
+                serializableDesc.isInlineClass() -> SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context)
             }
             generator.generate()

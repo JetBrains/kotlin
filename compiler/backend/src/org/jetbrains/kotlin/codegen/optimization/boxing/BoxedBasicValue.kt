@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isBoxedPrimitiveType
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -139,7 +138,6 @@ fun getUnboxedType(boxedType: Type, state: GenerationState): Type {
     throw IllegalArgumentException("Expected primitive type wrapper or KClass or inline class wrapper, got: $boxedType")
 }
 
-@OptIn(ValueClassBackendAgnosticApi::class)
 fun unboxedTypeOfInlineClass(boxedType: Type, state: GenerationState): Type? {
     val irClass = state.jvmBackendClassResolver.resolveToClasses(boxedType).singleOrNull()?.takeIf {
         it.isInlineClass()
