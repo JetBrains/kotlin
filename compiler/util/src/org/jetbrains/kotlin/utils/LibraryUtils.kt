@@ -24,6 +24,9 @@ import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.jar.Manifest
 
+@Suppress("unused")
+private val multiDomainChangeNoOp = Unit
+
 object LibraryUtils {
     private val LOG = Logger.getInstance(LibraryUtils::class.java)
 
