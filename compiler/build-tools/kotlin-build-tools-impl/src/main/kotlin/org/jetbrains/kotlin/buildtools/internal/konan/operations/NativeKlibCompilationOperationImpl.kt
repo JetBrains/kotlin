@@ -80,6 +80,7 @@ internal class NativeKlibCompilationOperationImpl :
             (logger ?: DefaultKotlinLogger).error(DAEMON_NOT_SUPPORTED_MESSAGE)
             return CompilationResult.COMPILATION_ERROR
         }
+        checkKotlinNativeCompilerIsAvailable()
         return super.executeCancellableImpl(projectId, executionPolicy, logger, executionContext)
     }
 
@@ -122,5 +123,24 @@ internal class NativeKlibCompilationOperationImpl :
     companion object {
         private const val DAEMON_NOT_SUPPORTED_MESSAGE =
             "Kotlin/Native compilation via the Kotlin daemon is not supported yet. Use the in-process execution policy."
+
+        private const val K2NATIVE_CLASS_NAME = "org.jetbrains.kotlin.cli.bc.K2Native"
+
+        /**
+         * The Kotlin/Native compiler is not a dependency of the Build Tools API implementation (in particular, it is absent when the
+         * implementation is built with Kotlin/Native disabled), so its presence is checked explicitly to report a clear reason
+         * instead of a [NoClassDefFoundError] from the middle of the compilation.
+         */
+        private fun checkKotlinNativeCompilerIsAvailable() {
+            try {
+                Class.forName(K2NATIVE_CLASS_NAME, false, NativeKlibCompilationOperationImpl::class.java.classLoader)
+            } catch (e: ClassNotFoundException) {
+                throw IllegalStateException(
+                    "The Kotlin/Native compiler is not available: class $K2NATIVE_CLASS_NAME is not on the classpath of the Kotlin Build Tools API implementation. " +
+                            "Rebuild BTA with Kotlin/Native enabled.",
+                    e
+                )
+            }
+        }
     }
 }
