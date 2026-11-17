@@ -142,7 +142,18 @@ data class JavaRoot(
     enum class RootType {
         SOURCE,
         BINARY,
-        BINARY_SIG
+        BINARY_SIG;
+
+        /**
+         * The extension of the files declaring classes in a root of this type. A directory `foo` next to a file `foo` with this
+         * extension is considered a package only if there is such a file below it.
+         */
+        val classFileExtension: JavaFileExtension
+            get() = when (this) {
+                SOURCE -> JavaFileExtension.JAVA
+                BINARY -> JavaFileExtension.CLASS
+                BINARY_SIG -> JavaFileExtension.SIG
+            }
     }
 
     companion object RootTypes {
