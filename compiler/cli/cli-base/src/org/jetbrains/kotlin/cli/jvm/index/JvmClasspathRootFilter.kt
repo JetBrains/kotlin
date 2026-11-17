@@ -16,6 +16,7 @@ import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.isDirectory
 
 /**
  * Caches classpath acceptance by indexed root, rather than matching every class file against the classpath.
@@ -25,10 +26,10 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class JvmClasspathRootFilter(classpath: JvmClasspath) : ClassFileFilter {
     private val matcher = JvmClasspathRootMatcher(classpath)
-    private val acceptedRoots = ConcurrentHashMap<VirtualFile, Boolean>()
+    private val acceptedRoots = ConcurrentHashMap<JvmClasspathRootId, Boolean>()
 
     override fun accepts(file: BinaryClassFileHandle): Boolean =
-        acceptedRoots.computeIfAbsent((file as VfsClassFileHandle).root.file, matcher::accepts)
+        acceptedRoots.computeIfAbsent(file.rootId) { matcher.accepts(it, file.rootPath) }
 }
 
 /**
@@ -51,6 +52,11 @@ internal class JvmClasspathRootMatcher(private val classpath: JvmClasspath) {
         is JvmClasspath.ProjectLibraries -> !isAtOrUnderNamedRoot(root)
     }
 
+    fun accepts(rootId: JvmClasspathRootId, rootPath: Path?): Boolean = when (classpath) {
+        is JvmClasspath.Roots -> isAtOrUnderNamedRoot(rootId, rootPath)
+        is JvmClasspath.ProjectLibraries -> !isAtOrUnderNamedRoot(rootId, rootPath)
+    }
+
     private fun isAtOrUnderNamedRoot(root: VirtualFile): Boolean {
         if (rootIds.isEmpty()) return false
 
@@ -65,6 +71,12 @@ internal class JvmClasspathRootMatcher(private val classpath: JvmClasspath) {
         }
 
         return root.asJvmClasspathRootId() in rootIds
+    }
+
+    private fun isAtOrUnderNamedRoot(rootId: JvmClasspathRootId, rootPath: Path?): Boolean {
+        if (rootIds.isEmpty()) return false
+        if (rootPath == null || JAR_SEPARATOR in rootId.id) return rootId in rootIds
+        return if (rootPath.isDirectory()) rootPaths.any(rootPath::startsWith) else rootPath in rootPaths
     }
 }
 

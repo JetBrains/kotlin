@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.optimization.common.intConstantOrError
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -100,20 +99,19 @@ internal fun getMethodNode(classData: ByteArray, classType: Type, method: Method
 fun argumentsSize(descriptor: String, isStatic: Boolean): Int =
     (Type.getArgumentsAndReturnSizes(descriptor) shr 2) - (if (isStatic) 1 else 0)
 
-internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
-    return VirtualFileFinder.getInstance(state.project).findVirtualFileWithHeader(classId)
-}
+internal fun findClassBytes(state: GenerationState, classId: ClassId): ByteArray? =
+    VirtualFileFinderFactory.getInstance(state.project).findBinaryClassBytes(state.project, classId)
 
-internal fun findVirtualFileImprecise(state: GenerationState, internalClassName: String): VirtualFile? {
+internal fun findClassBytesImprecise(state: GenerationState, internalClassName: String): ByteArray? {
     val packageFqName = JvmClassName.byInternalName(internalClassName).packageFqName
     val classNameWithDollars = internalClassName.substringAfterLast("/", internalClassName)
     //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
     // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE
-    return findVirtualFile(state, ClassId(packageFqName, Name.identifier(classNameWithDollars)))
+    return findClassBytes(state, ClassId(packageFqName, Name.identifier(classNameWithDollars)))
 }
 
 fun classFileContainsMethod(classId: ClassId, state: GenerationState, method: Method): Boolean? {
-    val bytes = findVirtualFile(state, classId)?.contentsToByteArray() ?: return null
+    val bytes = findClassBytes(state, classId) ?: return null
     var found = false
     ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
         override fun visitMethod(
@@ -461,9 +459,7 @@ internal fun loadClassBytesByInternalName(state: GenerationState, internalName: 
 
     state.inlineCache.getClassBytes(internalName)?.let { return it }
 
-    val file = findVirtualFileImprecise(state, internalName) ?: throw RuntimeException("Couldn't find virtual file for $internalName")
-
-    return file.contentsToByteArray()
+    return findClassBytesImprecise(state, internalName) ?: throw RuntimeException("Couldn't find class file for $internalName")
 }
 
 fun generateFinallyMarker(v: InstructionAdapter, depth: Int, start: Boolean) {

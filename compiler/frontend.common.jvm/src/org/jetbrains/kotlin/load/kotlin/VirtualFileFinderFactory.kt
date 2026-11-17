@@ -18,11 +18,15 @@ package org.jetbrains.kotlin.load.kotlin
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.name.ClassId
 
 interface VirtualFileFinderFactory {
     fun create(scope: GlobalSearchScope): VirtualFileFinder
 
     fun create(project: Project): VirtualFileFinder
+
+    fun findBinaryClassBytes(project: Project, classId: ClassId): ByteArray? =
+        create(GlobalSearchScope.allScope(project)).findVirtualFileWithHeader(classId)?.contentsToByteArray()
 
     companion object SERVICE {
         fun getInstance(project: Project): VirtualFileFinderFactory =

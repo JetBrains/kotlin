@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.util.PerformanceManager
 
 // TODO(KT-90203): create different JvmDependenciesIndex instances for different sets of source roots to improve performance
@@ -42,4 +43,9 @@ class CliVirtualFileFinderFactory(
 
     override fun create(project: Project): VirtualFileFinder =
         create(GlobalSearchScope.allScope(project))
+
+    private val allRootsFinder by lazy(LazyThreadSafetyMode.PUBLICATION) { create(JvmClasspath.ProjectLibraries()) }
+
+    override fun findBinaryClassBytes(project: Project, classId: ClassId): ByteArray? =
+        allRootsFinder.findBinaryClassFile(classId)?.readBytes()
 }
