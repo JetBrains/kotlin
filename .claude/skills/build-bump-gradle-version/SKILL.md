@@ -33,7 +33,7 @@ It is one of three Gradle-version skills; make sure you're in the right one:
 | `GRADLE_COMMON_COMPILE_API_VERSION` (plugin compile API) | `build-tools-bump-gradle-api` |
 | the KGP integration-test version matrix (`MAX_SUPPORTED`) | `build-tools-bump-gradle-in-tests` |
 
-**Tooling:** per the project `CLAUDE.md`, use JetBrains IDE MCP tools for every read and write on
+**Tooling:** per `.ai/guidelines.md`, use JetBrains IDE MCP tools for every read and write on
 project files — `mcp__idea__read_file`, `mcp__idea__search_text` / `mcp__idea__search_regex`,
 `mcp__idea__get_symbol_info`, and `mcp__idea__apply_patch` for edits — not `Read`/`Edit`/`Grep`/`Glob`,
 which bypass the IDE's view of open buffers. Use the default `Bash` tool for Gradle commands (never

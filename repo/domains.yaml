@@ -295,7 +295,6 @@ ignore:
   - ".claude"
   - ".ai"
   - "AGENTS.md"
-  - "CLAUDE.md"
 
   # Ignore docs
   - "docs"
