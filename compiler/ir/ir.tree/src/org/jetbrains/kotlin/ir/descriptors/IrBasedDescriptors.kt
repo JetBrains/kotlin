@@ -76,7 +76,7 @@ fun IrDeclaration.toIrBasedDescriptor(): DeclarationDescriptor = when (this) {
     is IrProperty -> toIrBasedDescriptor()
     is IrField -> toIrBasedDescriptor()
     is IrTypeAlias -> toIrBasedDescriptor()
-    is IrScript -> toIrBasedDescriptor()
+    is IrScript -> error("ScriptDescriptor is not implemented") // See also KT-60631
     else -> error("Unknown declaration kind")
 }
 
@@ -1214,7 +1214,7 @@ private fun makeKotlinType(
         }
         is IrScriptSymbol -> {
             TypeUtils.makeUnsubstitutedType(
-                classifier.toIrBasedDescriptorIfPossible(),
+                null,
                 MemberScope.Empty,
                 KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY
             ).makeNullableAsSpecified(hasQuestionMark)
@@ -1229,15 +1229,6 @@ private fun IrClassSymbol.toIrBasedDescriptorIfPossible(): ClassDescriptor =
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun IrTypeParameterSymbol.toIrBasedDescriptorIfPossible(): TypeParameterDescriptor =
     if (isBound) owner.toIrBasedDescriptor() else descriptor
-
-// this is a temporary solution for scripts
-// TODO: implement IR-based descriptors for scripts, see KT-60631
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun IrScriptSymbol.toIrBasedDescriptorIfPossible(): ScriptDescriptor = descriptor
-
-// see comment above to IrScriptSymbol.toIrBasedDescriptorIfPossible()
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun IrScript.toIrBasedDescriptor() = descriptor
 
 private fun IrElement.toConstantValue(): ConstantValue<*> {
     return when (this) {
