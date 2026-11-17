@@ -45,7 +45,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
 ) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
-    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+    override fun transformFlat(declaration: IrDeclaration): List<IrFunction>? {
         if (declaration is IrFunction) {
             return lower(declaration)
         }
