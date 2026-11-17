@@ -5,6 +5,8 @@
 
 package kotlin
 
+import kotlin.internal.RequireKotlin
+
 
 public expect open class Error : Throwable {
     public constructor()
@@ -110,6 +112,25 @@ public expect class UninitializedPropertyAccessException : RuntimeException {
     public constructor(message: String?)
     public constructor(message: String?, cause: Throwable?)
     public constructor(cause: Throwable?)
+}
+
+/**
+ * Thrown on an attempt to initialize a `lateinit val` property that was already initialized.
+ *
+ * Refer to [KEEP-0445](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0455-lateinit-val.md)
+ * for additional information about `lateinit val`s and its runtime behavior.
+ *
+ * ### Implementation details
+ * Visibility of the exception can be relaxed in the future, depending on the feedback.
+ * It is a published API as the generated code will depend on it.
+ */
+@PublishedApi
+@SinceKotlin("2.5")
+internal class InitializedPropertyAssignmentException : RuntimeException {
+    constructor() : super()
+    constructor(message: String?) : super(message)
+    constructor(message: String?, cause: Throwable?) : super(message, cause)
+    constructor(cause: Throwable?) : super(cause)
 }
 
 /**
