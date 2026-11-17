@@ -6,6 +6,8 @@ package kotlin.metadata.internal
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import java.util.Collections
+import java.util.IdentityHashMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
@@ -27,6 +29,9 @@ public class ReadContext(
     public val contextExtensions: List<ReadContextExtension> = emptyList()
 ) {
     private val typeParameterNameToId = mutableMapOf<Int, Int>()
+
+    internal val typesInProgress: MutableSet<ProtoBuf.Type> =
+        parent?.typesInProgress ?: Collections.newSetFromMap(IdentityHashMap())
 
     internal val extensions = MetadataExtensions.INSTANCES
 
@@ -315,6 +320,20 @@ private fun ProtoBuf.TypeParameter.toKmTypeParameter(
 }
 
 private fun ProtoBuf.Type.toKmType(c: ReadContext): KmType {
+    // We don't need to check for cycles if type table is not used.
+    if (c.types.types.isEmpty()) return readKmType(c)
+
+    if (!c.typesInProgress.add(this)) {
+        throw InconsistentKotlinMetadataException("Cyclic type reference in the type table")
+    }
+    try {
+        return readKmType(c)
+    } finally {
+        c.typesInProgress.remove(this)
+    }
+}
+
+private fun ProtoBuf.Type.readKmType(c: ReadContext): KmType {
     val v = KmType(typeFlags)
     v.classifier = when {
         hasClassName() -> KmClassifier.Class(c.className(className))
