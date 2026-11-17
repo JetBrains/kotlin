@@ -4,8 +4,6 @@ sample/Outer.Nested
 constructor:sample/Outer.Nested#%3Cinit%3E#
 sample/Outer.Alias
 property:sample/Outer#value#
-getter:sample/Outer#value#
-setter:sample/Outer#value#
 function:sample/Outer#value#
 sample/Outer.Companion
 function:sample/Outer.Companion#member#
@@ -17,11 +15,9 @@ enum-entry:sample/Choice#ENTRY#companion;
 function:sample/Choice#values#companion;
 function:sample/Choice#valueOf#parameters=[kotlin/String]; companion;
 property:sample/Choice#entries#companion;
-getter:sample/Choice#entries#companion;
 constructor:sample/Choice#%3Cinit%3E#
 function:sample#top#
 property:sample#top#
-getter:sample#top#
 sample/JavaClass
 field:sample/JavaClass#field#
 field:sample/JavaClass#staticField#companion;

@@ -4,11 +4,10 @@ constructor:sample%23/A%23B#%3Cinit%3E#
 sample%23/A%2523B
 constructor:sample%23/A%2523B#%3Cinit%3E#
 function:sample%23#foo%23bar#
-sample%23/when
+sample%23/when  // CONFLICTING_OVERLOADS
 constructor:sample%23/when#%3Cinit%3E#
-function:sample%23#when#
+function:sample%23#when#  // CONFLICTING_OVERLOADS
 property:sample%23#with%20spaces#
-getter:sample%23#with%20spaces#
 function:sample%23#say%2520hello%2521#
 function:sample%23#hashedClass#parameters=[sample%23/A%23B];
 function:sample%23#escapedHashClass#parameters=[sample%23/A%2523B];

@@ -4,13 +4,10 @@ constructor:sample/Marker#%3Cinit%3E#
 sample/Levelled
 constructor:sample/Levelled#%3Cinit%3E#parameters=[kotlin/Int];
 property:sample/Levelled#level#
-getter:sample/Levelled#level#
 sample/Composed
 constructor:sample/Composed#%3Cinit%3E#parameters=[sample/Levelled, kotlin/String];
 property:sample/Composed#first#
-getter:sample/Composed#first#
 property:sample/Composed#message#
-getter:sample/Composed#message#
 function:sample#marked#
 function:sample#heavilyAnnotated#parameters=[kotlin/String];
 function:sample#markerParameter#parameters=[sample/Marker];
@@ -20,13 +17,9 @@ function:sample#annotationList#parameters=[kotlin.collections/List<sample/Levell
 sample/MarkerAlias
 function:sample#viaAlias#parameters=[sample/MarkerAlias];
 property:sample#annotatedGetter#
-getter:sample#annotatedGetter#
 property:sample#annotatedAccessors#
-getter:sample#annotatedAccessors#
-setter:sample#annotatedAccessors#
 function:sample#annotatedReceiver#receiver=sample/Marker
 sample/Carrying
 constructor:sample/Carrying#%3Cinit%3E#parameters=[kotlin/Int];
 function:sample/Carrying#method#
 property:sample/Carrying#value#
-getter:sample/Carrying#value#

@@ -34,6 +34,12 @@ public class UniqueDeclarationIdGoldenTestGenerated extends AbstractUniqueDeclar
   }
 
   @Test
+  @TestMetadata("callableKinds.kt")
+  public void testCallableKinds() {
+    run("callableKinds.kt");
+  }
+
+  @Test
   @TestMetadata("classifiersAndCallables.kt")
   public void testClassifiersAndCallables() {
     run("classifiersAndCallables.kt");
@@ -64,6 +70,12 @@ public class UniqueDeclarationIdGoldenTestGenerated extends AbstractUniqueDeclar
   }
 
   @Test
+  @TestMetadata("overloadKinds.kt")
+  public void testOverloadKinds() {
+    run("overloadKinds.kt");
+  }
+
+  @Test
   @TestMetadata("signatures.kt")
   public void testSignatures() {
     run("signatures.kt");
@@ -73,5 +85,11 @@ public class UniqueDeclarationIdGoldenTestGenerated extends AbstractUniqueDeclar
   @TestMetadata("typeParameterBounds.kt")
   public void testTypeParameterBounds() {
     run("typeParameterBounds.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassOverload.kt")
+  public void testValueClassOverload() {
+    run("valueClassOverload.kt");
   }
 }

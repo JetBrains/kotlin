@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("libraries/tools/kotlin-documentation-model/analyzer/src/test/resources/testData/analyzer/declarationIdErrors")
 @TestDataPath("$PROJECT_ROOT")
-public class DeclarationIdErrorsGoldenTestGenerated extends AbstractDeclarationIdErrorsGoldenTest {
+public class DeclarationIdErrorsGoldenTestGenerated extends AbstractUniqueDeclarationIdGoldenTest {
   private void run(String fileName) {
     runTest("libraries/tools/kotlin-documentation-model/analyzer/src/test/resources/testData/analyzer/declarationIdErrors/" + fileName);
   }
@@ -34,6 +34,12 @@ public class DeclarationIdErrorsGoldenTestGenerated extends AbstractDeclarationI
   }
 
   @Test
+  @TestMetadata("clashingCallables.kt")
+  public void testClashingCallables() {
+    run("clashingCallables.kt");
+  }
+
+  @Test
   @TestMetadata("defaultBoundNormalization.kt")
   public void testDefaultBoundNormalization() {
     run("defaultBoundNormalization.kt");
@@ -43,5 +49,35 @@ public class DeclarationIdErrorsGoldenTestGenerated extends AbstractDeclarationI
   @TestMetadata("erroneousDeclarations.kt")
   public void testErroneousDeclarations() {
     run("erroneousDeclarations.kt");
+  }
+
+  @Test
+  @TestMetadata("extensionReceiverClash.kt")
+  public void testExtensionReceiverClash() {
+    run("extensionReceiverClash.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmNameClash.kt")
+  public void testJvmNameClash() {
+    run("jvmNameClash.kt");
+  }
+
+  @Test
+  @TestMetadata("reifiedClash.kt")
+  public void testReifiedClash() {
+    run("reifiedClash.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameterRename.kt")
+  public void testTypeParameterRename() {
+    run("typeParameterRename.kt");
+  }
+
+  @Test
+  @TestMetadata("varargArrayClash.kt")
+  public void testVarargArrayClash() {
+    run("varargArrayClash.kt");
   }
 }

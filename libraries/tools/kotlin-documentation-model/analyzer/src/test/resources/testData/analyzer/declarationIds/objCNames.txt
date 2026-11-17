@@ -9,11 +9,8 @@ kotlin.native
 kotlin.native/ObjCName
 constructor:kotlin.native/ObjCName#%3Cinit%3E#parameters=[kotlin/String, kotlin/String, kotlin/Boolean];
 property:kotlin.native/ObjCName#name#
-getter:kotlin.native/ObjCName#name#
 property:kotlin.native/ObjCName#swiftName#
-getter:kotlin.native/ObjCName#swiftName#
 property:kotlin.native/ObjCName#exact#
-getter:kotlin.native/ObjCName#exact#
 sample
 function:sample#plain#parameters=[kotlin/String, kotlin/Int]; objcParameterNames=[first, second]
 function:sample#create#parameters=[kotlin/Int, kotlin/Int]; objcParameterNames=[first, second]
