@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline.web.js
 
 import org.jetbrains.kotlin.backend.common.CompilationException
-import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.cli.common.reportCompilationException
 import org.jetbrains.kotlin.cli.js.resolve
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
@@ -55,7 +54,6 @@ object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, Js
         // Load declarations referenced during `context` initialization
         deserializer.drainDeserializationQueue()
         deserializer.finalizeIrLinkage(irBuiltIns)
-        deserializer.checkNoUnboundSymbols(symbolTable = symbolTable, whenDetected = "at the end of IR linkage process")
         deserializer.clear()
         // Sort dependencies after IR linkage.
         val sortedModuleDependencies = deserializer.moduleDependencyTracker.reverseTopoOrder(moduleDependencies = moduleDependencies)

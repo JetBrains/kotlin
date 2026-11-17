@@ -347,6 +347,8 @@ abstract class KotlinIrLinker(
         // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
         partialLinkageSupport.generateStubsAndPatchUsages(irBuiltIns, symbolTable)
         allModuleDeserializers.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(irBuiltIns) }
+
+        checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
     }
 
     override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
