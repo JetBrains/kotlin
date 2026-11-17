@@ -41,3 +41,15 @@ enum class Foo {
 @ObjCEnum(name = "N") enum class C {
     @ObjCName("O") ENTRY_4,
 }
+
+@ObjCEnum
+enum class ReservedSwiftNames {
+    @ObjCName("if") RESERVED_ENTRY_1,
+    @ObjCName("description") RESERVED_ENTRY_2,
+    @ObjCName(swiftName = "throw") RESERVED_ENTRY_3,
+    @ObjCEnum.EntryName(name = "release", swiftName = "release") RESERVED_ENTRY_4,
+    @ObjCEnum.EntryName(name = "alloc", swiftName = "alloc") RESERVED_ENTRY_5,
+    @ObjCEnum.EntryName(name = "public", swiftName = "public") RESERVED_ENTRY_6,
+    DEFAULT,
+    CLASS
+}
