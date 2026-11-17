@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.buildtools.internal.classloading.LruClassLoadersCach
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.konan.NativePlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -42,6 +44,7 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
                 JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(getCompilerVersion())
                 WasmPlatformToolchain::class.java -> WasmPlatformToolchainImpl(getCompilerVersion())
                 KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainImpl(getCompilerVersion())
+                NativePlatformToolchain::class.java -> NativePlatformToolchainImpl(getCompilerVersion())
                 CriToolchain::class.java -> CriToolchainImpl()
                 AbiValidationToolchain::class.java -> AbiValidationToolchainImpl()
                 else -> error("Unsupported platform toolchain type: $type.")
