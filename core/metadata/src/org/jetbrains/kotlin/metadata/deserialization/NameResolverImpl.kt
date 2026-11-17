@@ -30,11 +30,15 @@ class NameResolverImpl(
 
     private fun traverseIds(startingIndex: Int): Triple<List<String>, List<String>, Boolean> {
         var index = startingIndex
+        var steps = 0
         val packageNameSegments = LinkedList<String>()
         val relativeClassNameSegments = LinkedList<String>()
         var local = false
 
         while (index != -1) {
+            if (steps++ >= qualifiedNames.qualifiedNameCount) {
+                error("Cyclic parent reference in qualified name table (index $startingIndex)")
+            }
             val proto = qualifiedNames.getQualifiedName(index)
             val shortName = strings.getString(proto.shortName)
             when (proto.kind!!) {
