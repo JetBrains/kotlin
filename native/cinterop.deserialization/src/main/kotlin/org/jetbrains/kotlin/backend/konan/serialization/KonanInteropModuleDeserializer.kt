@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.fqName
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer.TopLevelSymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
@@ -148,7 +147,7 @@ class KonanInteropModuleDeserializer(
         // Note: Along classes, C-interop Klibs also define type aliases. However, all types in IR and metadata already provide their
         // expanded representation, and type aliases are not otherwise useful in IR, so there is no need to deserialize them.
         val topLevelName = FqName(topLevelSignature.declarationFqName)
-        val topLevelClassId = MetadataDeclarationId(TopLevelSymbolKind.CLASS_SYMBOL, packageFqName, topLevelName)
+        val topLevelClassId = MetadataDeclarationId(BinarySymbolData.SymbolKind.CLASS_SYMBOL, packageFqName, topLevelName)
         if (topLevelClassId in metadataReader.getDeclaredDeclarationIds()) {
             return true
         }
@@ -193,15 +192,20 @@ class KonanInteropModuleDeserializer(
             tryDeserializeIrSymbol(topLevelClassSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
         } else {
             val packageFqName = FqName(commonSig.packageFqName)
-            val declarationKind = when (searchForSymbolKind) {
-                BinarySymbolData.SymbolKind.CLASS_SYMBOL -> TopLevelSymbolKind.CLASS_SYMBOL
-                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> TopLevelSymbolKind.FUNCTION_SYMBOL
-                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> TopLevelSymbolKind.PROPERTY_SYMBOL
+            when (searchForSymbolKind) {
+                BinarySymbolData.SymbolKind.CLASS_SYMBOL,
+                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL,
+                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> {
+                    deserializeTopLevelDeclarations(MetadataDeclarationId(searchForSymbolKind, packageFqName, declarationFqName))
+                }
+
                 BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL,
-                BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> error("This declaration cannot be top-level: $searchForSymbolKind")
+                BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> {
+                    error("This declaration cannot be top-level: $searchForSymbolKind")
+                }
+
                 else -> error("Symbol kind is unsupported by C-interop Klib: $searchForSymbolKind")
             }
-            deserializeTopLevelDeclarations(MetadataDeclarationId(declarationKind, packageFqName, declarationFqName))
         }
 
         // If the deserialization process above found a declaration with the requested signature, it should store it in this map.
@@ -232,7 +236,7 @@ class KonanInteropModuleDeserializer(
         for (id in metadataReader.getDeclaredDeclarationIds().toList()) {
             // Nested classes cannot be loaded here directly, as all class members should be loaded only when deserializing
             // their parent class.
-            if (id.kind == TopLevelSymbolKind.CLASS_SYMBOL && !id.relativeDeclarationName.isOneSegmentFQN()) continue
+            if (id.kind == BinarySymbolData.SymbolKind.CLASS_SYMBOL && !id.relativeDeclarationName.isOneSegmentFQN()) continue
 
             // Declarations that have already been converted to IR (e.g., by `contains()` or when referenced from another declaration)
             // are not retrieved again, so nothing is deserialized twice, even if this function is called more than once.
@@ -254,7 +258,7 @@ class KonanInteropModuleDeserializer(
 
     fun deserializeAllCStructsAndEnums() {
         for (id in metadataReader.getDeclaredDeclarationIds()) {
-            if (id.kind != TopLevelSymbolKind.CLASS_SYMBOL) continue
+            if (id.kind != BinarySymbolData.SymbolKind.CLASS_SYMBOL) continue
 
             // All C structs and enums are expected to be top-level classes.
             // Also, nested classes cannot be loaded here directly, as all class members should be loaded only when deserializing
@@ -343,17 +347,17 @@ class KonanInteropModuleDeserializer(
                 val packageFqName = FqName(packageFragment.fqName ?: continue)
                 for (clazz in packageFragment.classes) {
                     val classFqName = clazz.name.declarationFqName
-                    val id = MetadataDeclarationId(TopLevelSymbolKind.CLASS_SYMBOL, packageFqName, classFqName)
+                    val id = MetadataDeclarationId(BinarySymbolData.SymbolKind.CLASS_SYMBOL, packageFqName, classFqName)
                     deserializedDeclarations.putToMultiMap(id, clazz)
                 }
 
                 val pkg = packageFragment.pkg ?: continue
                 for (function in pkg.functions) {
-                    val id = MetadataDeclarationId(TopLevelSymbolKind.FUNCTION_SYMBOL, packageFqName, FqName(function.name))
+                    val id = MetadataDeclarationId(BinarySymbolData.SymbolKind.FUNCTION_SYMBOL, packageFqName, FqName(function.name))
                     deserializedDeclarations.putToMultiMap(id, function)
                 }
                 for (property in pkg.properties) {
-                    val id = MetadataDeclarationId(TopLevelSymbolKind.PROPERTY_SYMBOL, packageFqName, FqName(property.name))
+                    val id = MetadataDeclarationId(BinarySymbolData.SymbolKind.PROPERTY_SYMBOL, packageFqName, FqName(property.name))
                     deserializedDeclarations.putToMultiMap(id, property)
                 }
             }
@@ -413,14 +417,14 @@ class KonanInteropModuleDeserializer(
     }
 
     private data class MetadataDeclarationId(
-        val kind: TopLevelSymbolKind,
+        val kind: BinarySymbolData.SymbolKind,
         val packageFqName: FqName,
         val relativeDeclarationName: FqName,
     )
 
     companion object {
         private fun ClassId.toDeclarationId() = MetadataDeclarationId(
-            kind = TopLevelSymbolKind.CLASS_SYMBOL,
+            kind = BinarySymbolData.SymbolKind.CLASS_SYMBOL,
             packageFqName = packageFqName,
             relativeDeclarationName = relativeClassName
         )
