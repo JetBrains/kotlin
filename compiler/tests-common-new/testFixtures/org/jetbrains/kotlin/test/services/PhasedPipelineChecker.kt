@@ -29,6 +29,12 @@ class PhasedPipelineChecker(
         return checkPhases(failedAssertions)
     }
 
+    override fun isExpectedFailure(failure: WrappedException): Boolean {
+        latestPhaseDirectiveOr { return false }
+        if (getTargetedPhase() == null) return false
+        return failure in sortFailures(listOf(failure)).suppressibleFailures
+    }
+
     /**
      * [suppressIfNeeded] is called only if there were some failures, but the phase directives must be checked
      * for passing tests as well (e.g., to suggest promoting the phase of a test which passes the whole pipeline).

@@ -53,7 +53,11 @@ class GlobalMetadataInfoHandler(
         infos += codeMetaInfos
     }
 
-    fun compareAllMetaDataInfos() {
+    /**
+     * Compares the reported meta-infos with the test data. [mayBeIncomplete] tells that the test crashed or didn't analyze some modules,
+     * so the reported meta-infos may be incomplete.
+     */
+    fun compareAllMetaDataInfos(mayBeIncomplete: Boolean) {
         // TODO: adapt to multiple testdata files
         val moduleStructure = testServices.moduleStructure
         val builder = StringBuilder()
@@ -80,7 +84,12 @@ class GlobalMetadataInfoHandler(
             }
         }
         val actualText = builder.toString()
-        testServices.assertions.assertEqualsToFile(moduleStructure.originalTestDataFiles.single(), actualText)
+        val managedTestData = testServices.managedTestData
+        if (managedTestData != null) {
+            managedTestData.assertEqualsToTestDataFile(actualText, isActualComplete = !mayBeIncomplete)
+        } else {
+            testServices.assertions.assertEqualsToFile(moduleStructure.originalTestDataFiles.single(), actualText)
+        }
     }
 
     private fun StringBuilder.stripAdditionalEmptyLines(file: TestFile): CharSequence {

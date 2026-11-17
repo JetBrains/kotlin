@@ -26,6 +26,13 @@ abstract class AnalysisHandlerBase<A : ResultingArtifact<A>>(
     abstract val artifactKind: TestArtifactKind<A>
 
     /**
+     * Whether the handler fails by design on what the code under test reports, e.g., on the compilation errors of a test which runs only
+     * till the frontend. Unlike a crash, such a failure leaves the output of the test complete.
+     */
+    open val failsByDesign: Boolean
+        get() = false
+
+    /**
      * The compilation stage this handler is being executed in.
      */
     lateinit var compilationStage: CompilationStage

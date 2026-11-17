@@ -23,6 +23,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
 
     testFixturesImplementation(project(":js:js.config"))
+    testFixturesImplementation(testFixtures(project(":analysis:test-data-manager")))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 }

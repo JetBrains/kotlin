@@ -1218,4 +1218,31 @@ class ManagedTestAssertionsTest {
             expectedFileState = "test.txt: content",
         )
     }
+
+    private fun findExpectedFileName(variantChain: TestVariantChain): String =
+        ManagedTestAssertions.findExpectedFile(tempDir.resolve("test.kt"), variantChain, extension = ".txt").fileName.toString()
+
+    @Test
+    fun `findExpectedFile - most specific variant exists`() {
+        setupFiles("test.txt" to "golden", "test.knm.txt" to "knm", "test.js.txt" to "js")
+        assertEquals("test.js.txt", findExpectedFileName(listOf("knm", "js")))
+    }
+
+    @Test
+    fun `findExpectedFile - falls back to a less specific variant`() {
+        setupFiles("test.txt" to "golden", "test.knm.txt" to "knm")
+        assertEquals("test.knm.txt", findExpectedFileName(listOf("knm", "js")))
+    }
+
+    @Test
+    fun `findExpectedFile - falls back to the golden file`() {
+        setupFiles("test.txt" to "golden")
+        assertEquals("test.txt", findExpectedFileName(listOf("knm", "js")))
+    }
+
+    @Test
+    fun `findExpectedFile - no file exists`() {
+        setupFiles()
+        assertEquals("test.txt", findExpectedFileName(listOf("knm", "js")))
+    }
 }

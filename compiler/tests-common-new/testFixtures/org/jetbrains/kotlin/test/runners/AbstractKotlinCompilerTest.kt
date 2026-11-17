@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.runners
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.test.Constructor
@@ -73,6 +74,10 @@ abstract class AbstractKotlinCompilerTest {
         useAdditionalService { createApplicationDisposableProvider() }
         useAdditionalService { createKotlinStandardLibrariesPathProvider() }
         testInfo = this@AbstractKotlinCompilerTest.testInfo
+        (this@AbstractKotlinCompilerTest as? ManagedTest)?.let { managedTest ->
+            useAdditionalService { ManagedTestData(it, managedTest.variantChain) }
+            useMetaTestConfigurators(::ManagedTestDataConfigurator)
+        }
         @OptIn(TestInfrastructureInternals::class)
         configureInternal(this)
     }
