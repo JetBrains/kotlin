@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.contains
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -63,12 +64,9 @@ class JavaClassFinderOverBinaryIndex(
     private fun findClassImpl(request: JavaClassFinder.Request, restrictToClasspath: Boolean): JavaClass? {
         val [classId, classFileContentFromRequest, outerClassFromRequest] = request
 
-        val classFiles = if (restrictToClasspath) {
-            classes.findTopLevelClassFiles(classId.packageFqName, classId.relativeClassName.topLevelName(), classpath)
-        } else {
-            classes.findTopLevelClassFiles(classId.packageFqName, classId.relativeClassName.topLevelName())
-        }
-        val classFile = classFiles.firstOrNull() ?: return null
+        val candidates = classes.findTopLevelClassFiles(classId.packageFqName, classId.relativeClassName.topLevelName())
+        val classFile =
+            (if (restrictToClasspath) candidates.firstOrNull { it in classpath } else candidates.firstOrNull()) ?: return null
 
         return readBinaryJavaClass(
             classId = classId,
