@@ -62,13 +62,7 @@ abstract class DefaultArgumentFunctionFactory(
             it.copyTo(
                 this,
                 type = if (makeNullable) newType.makeNullable() else newType,
-                defaultValue = if (it.defaultValue != null) {
-                    original.factory.createExpressionBody(
-                        IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, "Default Stub").apply {
-                            attributeOwnerId = it.defaultValue!!.expression
-                        }
-                    )
-                } else null,
+                defaultValue = it.defaultValue,
                 isAssignable = it.defaultValue != null
             )
         }

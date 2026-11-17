@@ -1,5 +1,4 @@
-function C1$foo(x) {
-  x = x === VOID ? 10 : x;
+function C1$foo(x = 10) {
   return 'x=' + x;
 }
 function C2$foo(x) {
