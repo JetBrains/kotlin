@@ -59,17 +59,17 @@ interface FileLocalSymbolProvider {
      * Returns a symbol of the simple function with the file-local [signature] in the scope of the given [file].
      * If the symbol hasn't been referenced in the [file] yet, it is created.
      *
-     * Returns `null`, if [file] isn't known to this provider.
+     * Throws an error if [file] isn't known to this provider.
      */
-    fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol?
+    fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol
 
     /**
      * Returns a symbol of the property with the file-local [signature] in the scope of the given [file].
      * If the symbol hasn't been referenced in the [file] yet, it is created.
      *
-     * Returns `null`, if [file] isn't known to this provider.
+     * Throws an error if  [file] isn't known to this provider.
      */
-    fun referenceProperty(file: IrFile, signature: IdSignature.FileLocalSignature): IrPropertySymbol?
+    fun referenceProperty(file: IrFile, signature: IdSignature.FileLocalSignature): IrPropertySymbol
 }
 
 object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
