@@ -293,6 +293,12 @@ internal constructor(
  * of executing the tests. See [KotlinNativeTest] for the correctness
  * contract of the task inputs, and [KotlinTest] for how runs with suppressed
  * test failures are kept apart from honest runs in the build cache.
+ *
+ * Cache entries are chained to the cache entries of the task producing the
+ * test executable: the executable's content is part of the task inputs, and
+ * Kotlin/Native binaries are not reproducible between link invocations
+ * (see KT-91761), so a re-linked executable re-runs the tests even when its
+ * inputs are otherwise unchanged.
  */
 @CacheableTask
 abstract class KotlinNativeHostTest
