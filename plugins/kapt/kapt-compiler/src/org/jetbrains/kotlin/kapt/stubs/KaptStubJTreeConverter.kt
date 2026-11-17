@@ -165,10 +165,7 @@ class KaptStubJTreeConverter(
         name: String,
         type: JCExpression,
         modifiers: JCModifiers,
-        isVararg: Boolean,
-    ): JCVariableDecl {
-        return treeMaker.VarDef(modifiers, treeMaker.name(name), type, null)
-    }
+    ): JCVariableDecl = treeMaker.VarDef(modifiers, treeMaker.name(name), type, null)
 
     override fun makeEnumValueInitializer(
         name: String,
@@ -242,8 +239,8 @@ class KaptStubJTreeConverter(
     override fun makeModifiers(kind: ElementKind, isEnumField: Boolean, flags: Long, annotations: List<JCAnnotation>): JCModifiers =
         treeMaker.Modifiers(flags, JavacList.from(annotations))
 
-    override fun makeTypeParameter(name: String, allBounds: List<JCExpression>): JCTypeParameter =
-        treeMaker.TypeParameter(treeMaker.name(name), JavacList.from(allBounds))
+    override fun makeTypeParameter(name: String, allBounds: List<JCExpression>, annotations: List<JCAnnotation>): JCTypeParameter =
+        treeMaker.TypeParameter(treeMaker.name(name), JavacList.from(allBounds), JavacList.from(annotations))
 
     override fun makeUnboundWildcard(): JCExpression =
         treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.UNBOUND), null)
@@ -256,14 +253,14 @@ class KaptStubJTreeConverter(
     }
 
     override fun makeArrayType(
-        baseType: JCExpression,
-        arrayDimensions: Int,
+        elementType: JCExpression,
+        arrayDimensions: List<List<JCAnnotation>>,
+        isVararg: Boolean,
     ): JCExpression {
-        var resultExpression = baseType
-        var count = arrayDimensions
-        while (count > 0) {
-            resultExpression = treeMaker.TypeArray(resultExpression)
-            count--
+        check(!isVararg || arrayDimensions.isNotEmpty()) { "A vararg parameter must have an array type" }
+        var resultExpression = elementType
+        for (annotations in arrayDimensions.asReversed()) {
+            resultExpression = makeAnnotatedIfNeeded(treeMaker.TypeArray(resultExpression), annotations)
         }
         return resultExpression
     }
@@ -287,9 +284,30 @@ class KaptStubJTreeConverter(
     override fun makeSelect(left: JCExpression, simpleName: String): JCExpression =
         treeMaker.Select(left, treeMaker.name(simpleName))
 
+    override fun makeInnerClassType(
+        outerType: JCExpression,
+        innerClassName: String,
+        annotationsOnInnerClassName: List<JCAnnotation>,
+    ): JCExpression {
+        val innerClassType = treeMaker.Select(outerType, treeMaker.name(innerClassName))
+        return makeAnnotatedIfNeeded(innerClassType, annotationsOnInnerClassName)
+    }
+
     override fun makeType(asmType: Type): JCExpression = treeMaker.Type(asmType)
 
+    override fun makeAnnotatedType(type: JCExpression, annotations: List<JCAnnotation>): JCExpression =
+        treeMaker.AnnotatedType(JavacList.from(annotations), type)
+
     override fun makeQualifiedName(javaName: String): JCExpression = treeMaker.FqName(javaName)
+
+    override fun makeClassType(internalClassName: String, annotationsOnClassName: List<JCAnnotation>): JCExpression {
+        val classType = makeQualifiedName(internalClassName)
+        return makeAnnotatedIfNeeded(classType, annotationsOnClassName)
+    }
+
+    private fun makeAnnotatedIfNeeded(type: JCExpression, annotations: List<JCAnnotation>): JCExpression =
+        if (annotations.isEmpty()) type else makeAnnotatedType(type, annotations)
+
     override fun makeQualifiedName(fqName: FqName): JCExpression = treeMaker.FqName(fqName)
 
     override fun makeArray(expressions: List<JCExpression>): JCExpression =

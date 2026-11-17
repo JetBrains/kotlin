@@ -84,7 +84,8 @@ fun TypeSystemCommonBackendContext.isMostPreciseContravariantArgument(type: Kotl
     type.typeConstructor().isAnyConstructor()
 
 fun TypeSystemCommonBackendContext.isMostPreciseCovariantArgument(type: KotlinTypeMarker): Boolean =
-    !canHaveSubtypesIgnoringNullability(type)
+    // An error placeholder's finality does not establish whether the unresolved type can have subtypes.
+    !type.isError() && !canHaveSubtypesIgnoringNullability(type)
 
 private fun TypeSystemCommonBackendContext.canHaveSubtypesIgnoringNullability(kotlinType: KotlinTypeMarker): Boolean {
     val constructor = kotlinType.typeConstructor()

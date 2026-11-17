@@ -1,0 +1,145 @@
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final data class test/RecordTypeAnnotations : java/lang/Record {
+ *
+ *   // signature: <init>(Ljava/lang/String;Ljava/util/List;)V
+ *   public constructor(plain: @test/Anno kotlin/String, generic: @test/Anno kotlin/collections/List<@test/Anno kotlin/String>)
+ *
+ *   // signature: component1()Ljava/lang/String;
+ *   public final (* synthesized *) operator fun component1(): @test/Anno kotlin/String
+ *
+ *   // signature: component2()Ljava/util/List;
+ *   public final (* synthesized *) operator fun component2(): @test/Anno kotlin/collections/List<@test/Anno kotlin/String>
+ *
+ *   // signature: copy(Ljava/lang/String;Ljava/util/List;)Ltest/RecordTypeAnnotations;
+ *   public final (* synthesized *) fun copy(plain: @test/Anno kotlin/String (* = ... *), generic: @test/Anno kotlin/collections/List<@test/Anno kotlin/String> (* = ... *)): test/RecordTypeAnnotations
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: generic:Ljava/util/List;
+ *   // getter: generic()Ljava/util/List;
+ *   public final val generic: @test/Anno kotlin/collections/List<@test/Anno kotlin/String>
+ *     public final get
+ *
+ *   // field: plain:Ljava/lang/String;
+ *   // getter: plain()Ljava/lang/String;
+ *   public final val plain: @test/Anno kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class RecordTypeAnnotations extends java.lang.Record {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.@Anno() @SourceAnno() String plain = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() String> generic = null;
+
+    public RecordTypeAnnotations(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() @SourceAnno() String plain, @org.jetbrains.annotations.NotNull()
+    java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() String> generic) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() @SourceAnno() String plain() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() String> generic() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() @SourceAnno() String component1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() String> component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final test.RecordTypeAnnotations copy(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() @SourceAnno() String plain, @org.jetbrains.annotations.NotNull()
+    java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() String> generic) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class test/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}

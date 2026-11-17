@@ -1,0 +1,412 @@
+package org.jetbrains;
+
+import org.jetbrains.GenericOuter.StaticNested;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class org/jetbrains/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import org.jetbrains.GenericOuter.StaticNested;
+
+/**
+ * public final class org/jetbrains/ChainOuter : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ChainOuter {
+
+    public ChainOuter() {
+        super();
+    }
+
+    /**
+     * public final class org/jetbrains/ChainOuter.Nested : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // nested class: Inner1
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Nested {
+
+        public Nested() {
+            super();
+        }
+
+        /**
+         * public final inner class org/jetbrains/ChainOuter.Nested.Inner1 : kotlin/Any {
+         *
+         *   // signature: <init>(Lorg/jetbrains/ChainOuter$Nested;)V
+         *   public constructor()
+         *
+         *   // nested class: Inner2
+         *
+         *   // module name: main
+         * }
+         */
+        @kotlin.Metadata()
+        public final class Inner1 {
+
+            public Inner1() {
+                super();
+            }
+
+            /**
+             * public final inner class org/jetbrains/ChainOuter.Nested.Inner1.Inner2 : kotlin/Any {
+             *
+             *   // signature: <init>(Lorg/jetbrains/ChainOuter$Nested$Inner1;)V
+             *   public constructor()
+             *
+             *   // nested class: InnerT
+             *
+             *   // nested class: StaticNested
+             *
+             *   // module name: main
+             * }
+             */
+            @kotlin.Metadata()
+            public final class Inner2 {
+
+                public Inner2() {
+                    super();
+                }
+
+                /**
+                 * public final inner class org/jetbrains/ChainOuter.Nested.Inner1.Inner2.InnerT<T#0 (* T *), T#1 (* U *)> : kotlin/Any {
+                 *
+                 *   // signature: <init>(Lorg/jetbrains/ChainOuter$Nested$Inner1$Inner2;)V
+                 *   public constructor()
+                 *
+                 *   // module name: main
+                 * }
+                 */
+                @kotlin.Metadata()
+                public final class InnerT<T extends java.lang.Object, U extends java.lang.Object> {
+
+                    public InnerT() {
+                        super();
+                    }
+                }
+
+                /**
+                 * public final class org/jetbrains/ChainOuter.Nested.Inner1.Inner2.StaticNested : kotlin/Any {
+                 *
+                 *   // signature: <init>()V
+                 *   public constructor()
+                 *
+                 *   // nested class: InnerAfter
+                 *
+                 *   // module name: main
+                 * }
+                 */
+                @kotlin.Metadata()
+                public static final class StaticNested {
+
+                    public StaticNested() {
+                        super();
+                    }
+
+                    /**
+                     * public final inner class org/jetbrains/ChainOuter.Nested.Inner1.Inner2.StaticNested.InnerAfter<T#0 (* T *)> : kotlin/Any {
+                     *
+                     *   // signature: <init>(Lorg/jetbrains/ChainOuter$Nested$Inner1$Inner2$StaticNested;)V
+                     *   public constructor()
+                     *
+                     *   // module name: main
+                     * }
+                     */
+                    @kotlin.Metadata()
+                    public final class InnerAfter<T extends java.lang.Object> {
+
+                        public InnerAfter() {
+                            super();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import org.jetbrains.GenericOuter.StaticNested;
+
+/**
+ * public final class org/jetbrains/FieldTypeAnnotationsErrorTypesInnerInjected : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: corrected:Lorg/jetbrains/GenericOuter$Inner;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val corrected: org/jetbrains/GenericOuter<kotlin/String>.Inner<kotlin/collections/List<error/NonExistentClass>>?
+ *     public final get
+ *
+ *   // field: genericInnerChain:Lorg/jetbrains/ChainOuter$Nested$Inner1$Inner2$InnerT;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val genericInnerChain: org/jetbrains/ChainOuter.Nested.Inner1.Inner2.InnerT<kotlin/String, error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: importedTwoInners:Lorg/jetbrains/GenericOuter$StaticNested$Inner1$Inner2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val importedTwoInners: org/jetbrains/GenericOuter.StaticNested<kotlin/String>.Inner1<kotlin/Int>.Inner2<kotlin/collections/List<error/NonExistentClass>>?
+ *     public final get
+ *
+ *   // field: innerClassArgument:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val innerClassArgument: kotlin/collections/Map<error/NonExistentClass, org/jetbrains/Outer.Inner<error/NonExistentClass>>?
+ *     public final get
+ *
+ *   // field: nestedClass:Lorg/jetbrains/Outer$Inner;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedClass: org/jetbrains/Outer.Inner<error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: nestedInjectedInner:Lorg/jetbrains/Outer$Inner;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedInjectedInner: org/jetbrains/Outer.Inner<error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: staticReset:Lorg/jetbrains/ChainOuter$Nested$Inner1$Inner2$StaticNested$InnerAfter;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val staticReset: org/jetbrains/ChainOuter.Nested.Inner1.Inner2.StaticNested.InnerAfter<error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: twoInners:Lorg/jetbrains/GenericOuter$StaticNested$Inner1$Inner2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val twoInners: org/jetbrains/GenericOuter.StaticNested<kotlin/String>.Inner1<kotlin/Int>.Inner2<kotlin/collections/List<error/NonExistentClass>>?
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class FieldTypeAnnotationsErrorTypesInnerInjected {
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.@SourceAnno() Outer.@Anno() Inner<Missing> nestedClass = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, org.jetbrains.@Anno() Outer.@SourceAnno() Inner<Missing>> innerClassArgument = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.Outer.@SourceAnno() Inner<Missing> nestedInjectedInner = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.ChainOuter.@SourceAnno() Nested.@Anno() Inner1.@SourceAnno() Inner2.@Anno() InnerT<java.lang.@SourceAnno() String, Missing> genericInnerChain = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.ChainOuter.Nested.Inner1.Inner2.@Anno() StaticNested.@SourceAnno() InnerAfter<Missing> staticReset = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.GenericOuter<java.lang.@Anno() String>.Inner<java.util.@SourceAnno() List<Missing>> corrected = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.GenericOuter.StaticNested<java.lang.@Anno() String>.Inner1<java.lang.@SourceAnno() Integer>.Inner2<java.util.@Anno() List<Missing>> twoInners = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.GenericOuter.StaticNested<java.lang.@Anno() String>.Inner1<java.lang.@SourceAnno() Integer>.Inner2<java.util.@Anno() List<Missing>> importedTwoInners = null;
+
+    public FieldTypeAnnotationsErrorTypesInnerInjected() {
+        super();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import org.jetbrains.GenericOuter.StaticNested;
+
+/**
+ * public final class org/jetbrains/GenericOuter<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Inner
+ *
+ *   // nested class: StaticNested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class GenericOuter<T extends java.lang.Object> {
+
+    public GenericOuter() {
+        super();
+    }
+
+    /**
+     * public final inner class org/jetbrains/GenericOuter.Inner<T#1 (* U *)> : kotlin/Any {
+     *
+     *   // signature: <init>(Lorg/jetbrains/GenericOuter;)V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner<U extends java.lang.Object> {
+
+        public Inner() {
+            super();
+        }
+    }
+
+    /**
+     * public final class org/jetbrains/GenericOuter.StaticNested<T#1 (* U *)> : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // nested class: Inner1
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class StaticNested<U extends java.lang.Object> {
+
+        public StaticNested() {
+            super();
+        }
+
+        /**
+         * public final inner class org/jetbrains/GenericOuter.StaticNested.Inner1<T#2 (* V *)> : kotlin/Any {
+         *
+         *   // signature: <init>(Lorg/jetbrains/GenericOuter$StaticNested;)V
+         *   public constructor()
+         *
+         *   // nested class: Inner2
+         *
+         *   // module name: main
+         * }
+         */
+        @kotlin.Metadata()
+        public final class Inner1<V extends java.lang.Object> {
+
+            public Inner1() {
+                super();
+            }
+
+            /**
+             * public final inner class org/jetbrains/GenericOuter.StaticNested.Inner1.Inner2<T#3 (* W *)> : kotlin/Any {
+             *
+             *   // signature: <init>(Lorg/jetbrains/GenericOuter$StaticNested$Inner1;)V
+             *   public constructor()
+             *
+             *   // module name: main
+             * }
+             */
+            @kotlin.Metadata()
+            public final class Inner2<W extends java.lang.Object> {
+
+                public Inner2() {
+                    super();
+                }
+            }
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import org.jetbrains.GenericOuter.StaticNested;
+
+/**
+ * public final class org/jetbrains/Outer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Inner
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Outer {
+
+    public Outer() {
+        super();
+    }
+
+    /**
+     * public final inner class org/jetbrains/Outer.Inner<T#0 (* T *)> : kotlin/Any {
+     *
+     *   // signature: <init>(Lorg/jetbrains/Outer;)V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner<T extends java.lang.Object> {
+
+        public Inner() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import org.jetbrains.GenericOuter.StaticNested;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class org/jetbrains/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}

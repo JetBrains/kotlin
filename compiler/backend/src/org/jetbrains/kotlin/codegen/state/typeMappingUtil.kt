@@ -19,11 +19,11 @@
 package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.suppressWildcardsMode
 
 val FqName?.isMethodWithDeclarationSiteWildcardsFqName: Boolean
@@ -36,9 +36,9 @@ private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
     FqNames.mutableMap.child("putAll")
 )
 
-fun IrTypeSystemContext.extractTypeMappingModeFromAnnotation(
+fun TypeSystemCommonBackendContext.extractTypeMappingModeFromAnnotation(
     callableSuppressWildcardsMode: Boolean?,
-    outerType: IrType,
+    outerType: KotlinTypeMarker,
     isForAnnotationParameter: Boolean,
     mapTypeAliases: Boolean
 ): TypeMappingMode? {

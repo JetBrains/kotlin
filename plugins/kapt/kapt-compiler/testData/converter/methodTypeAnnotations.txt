@@ -1,0 +1,555 @@
+package test;
+
+/**
+ * public abstract interface test/AbstractMethods : kotlin/Any {
+ *
+ *   // signature: abstractMethod(Ljava/lang/String;)Ljava/lang/String;
+ *   public abstract fun abstractMethod(value: @test/Anno kotlin/String): kotlin/String
+ *
+ *   // signature: defaultMethod(Ljava/lang/String;)Ljava/lang/String;
+ *   public open fun defaultMethod(value: kotlin/String): @test/Anno kotlin/String
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface AbstractMethods {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.@SourceAnno() String abstractMethod(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String value);
+
+    @org.jetbrains.annotations.NotNull()
+    public default java.lang.@Anno() String defaultMethod(@org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() String value) {
+        return null;
+    }
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        @org.jetbrains.annotations.NotNull()
+        @java.lang.Deprecated()
+        public static java.lang.@Anno() String defaultMethod(@org.jetbrains.annotations.NotNull()
+        test.AbstractMethods $this, @org.jetbrains.annotations.NotNull()
+        java.lang.@SourceAnno() String value) {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_PARAMETER, java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public open class test/Base : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class Base {
+
+    public Base() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final enum class test/Enum : kotlin/Enum<test/Enum> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;Ljava/util/List;)V
+ *   private constructor(value: @test/Anno kotlin/String, generic: kotlin/collections/List<kotlin/String>)
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum Enum {
+;
+
+    Enum(java.lang.@Anno() String value, java.util.List<java.lang.@SourceAnno() String> generic) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<test.Enum> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract interface test/First : kotlin/Any {
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface First {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract interface test/GenericMethods<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: genericDefault(Ljava/lang/Object;)Ljava/lang/Object;
+ *   public open fun genericDefault(value: @test/Anno T#0): T#0
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface GenericMethods<T extends java.lang.Object> {
+
+    @SourceAnno()
+    public default T genericDefault(@Anno()
+    T value) {
+        return null;
+    }
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        @java.lang.Deprecated()
+        @SourceAnno()
+        public static <T extends java.lang.Object>T genericDefault(@org.jetbrains.annotations.NotNull()
+        test.GenericMethods<T> $this, @Anno()
+        T value) {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: topLevel(Ljava/lang/String;)Ljava/lang/String;
+ *   public final fun topLevel(value: @test/Anno kotlin/String): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class MethodTypeAnnotationsKt {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.@SourceAnno() String topLevel(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String value) {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Methods : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(constructorParameter: @test/Anno kotlin/String)
+ *
+ *   // signature: <init>(Ljava/util/List;)V
+ *   public (* secondary *) constructor(value: @test/Anno kotlin/collections/List<kotlin/String>)
+ *
+ *   // signature: bounds(Ltest/Base;Ltest/First;)Ltest/Base;
+ *   public final fun <@test/Anno T#0 (* T *) : @test/Anno test/Base & test/First & @test/Anno test/Second, T#1 (* U *) : @test/Anno test/First & test/Second> bounds(first: T#0, second: T#1): T#0
+ *
+ *   // signature: contextual(Ljava/lang/String;Ljava/lang/Number;Ljava/lang/String;I)Ljava/lang/String;
+ *   context(first: @test/Anno kotlin/String, second: kotlin/Number)
+ *   public final fun kotlin/String.contextual(value: @test/Anno kotlin/Int): @test/Anno kotlin/String
+ *
+ *   // signature: extension(Ljava/lang/String;I)Ljava/lang/String;
+ *   public final fun @test/Anno kotlin/String.extension(value: kotlin/Int): kotlin/String
+ *
+ *   // signature: generic(Ljava/util/List;Ljava/util/List;)Ljava/util/List;
+ *   public final fun generic(first: kotlin/collections/List<@test/Anno kotlin/String>, second: kotlin/collections/List<kotlin/Number>): kotlin/collections/List<kotlin/String>
+ *
+ *   // signature: overloads(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+ *   @kotlin/jvm/JvmOverloads
+ *   public final fun overloads(first: @test/Anno kotlin/String, second: kotlin/String (* = ... *)): kotlin/String
+ *
+ *   // signature: plain(Ljava/lang/String;I)Ljava/lang/String;
+ *   public final fun plain(first: @test/Anno kotlin/String, second: kotlin/Int): @test/Anno kotlin/String
+ *
+ *   // signature: primitive()I
+ *   public final fun primitive(): @test/Anno kotlin/Int
+ *
+ *   // signature: suspending(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   public final suspend fun suspending(value: @test/Anno kotlin/String): kotlin/collections/List<@test/Anno kotlin/String>
+ *
+ *   // signature: typeVarBounds(Ljava/lang/Object;Ljava/lang/Object;Ltest/First;)Ljava/lang/Object;
+ *   public final fun <T#0 (* T *), T#1 (* U *) : @test/Anno T#0 & test/First, T#2 (* V *) : @test/Anno test/First & T#0> typeVarBounds(first: T#0, second: T#1, third: T#2): T#0
+ *
+ *   // signature: typeVariables(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+ *   public final fun <@test/Anno T#0 (* T *), T#1 (* U *)> typeVariables(first: T#0, second: @test/Anno T#1): @test/Anno T#0
+ *
+ *   // signature: unit()V
+ *   public final fun unit(): @test/Anno kotlin/Unit
+ *
+ *   // signature: unsignedVarargs([I)V
+ *   @kotlin/jvm/JvmName(name = "unsignedVarargs")
+ *   public final fun unsignedVarargs(vararg values: @test/Anno kotlin/UInt (* kotlin/UIntArray *)): kotlin/Unit
+ *
+ *   // field: constructorParameter:Ljava/lang/String;
+ *   // getter: getConstructorParameter()Ljava/lang/String;
+ *   public final val constructorParameter: @test/Anno kotlin/String
+ *     public final get
+ *
+ *   // getter: getExtensionProperty(Ljava/lang/String;)Ljava/lang/String;
+ *   // setter: setExtensionProperty(Ljava/lang/String;Ljava/lang/String;)V
+ *   public final var @test/Anno kotlin/String.extensionProperty: kotlin/String
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: kotlin/String)
+ *
+ *   // field: property:Ljava/lang/String;
+ *   // getter: getProperty()Ljava/lang/String;
+ *   // setter: setProperty(Ljava/lang/String;)V
+ *   public final var property: @test/Anno kotlin/String
+ *     public final get
+ *     public final set
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // nested class: Inner
+ *
+ *   // nested class: PlainInner
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Methods {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.@Anno() @SourceAnno() String constructorParameter = null;
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.@Anno() @SourceAnno() String property = "";
+    @org.jetbrains.annotations.NotNull()
+    public static final test.Methods.Companion Companion = null;
+
+    public Methods(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() @SourceAnno() String constructorParameter) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() @SourceAnno() String getConstructorParameter() {
+        return null;
+    }
+
+    public Methods(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<java.lang.@SourceAnno() String> value) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() @SourceAnno() String plain(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String first, @SourceAnno()
+    int second) {
+        return null;
+    }
+
+    @Anno()
+    @SourceAnno()
+    public final int primitive() {
+        return 0;
+    }
+
+    @Anno()
+    @SourceAnno()
+    public final void unit() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.@SourceAnno() String> generic(@org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.@Anno() String> first, @org.jetbrains.annotations.NotNull()
+    java.util.@SourceAnno() List<? extends java.lang.Number> second) {
+        return null;
+    }
+
+    @Anno()
+    public final <@Anno() T extends java.lang.Object, @SourceAnno() U extends java.lang.Object>T typeVariables(@SourceAnno()
+    T first, @Anno()
+    U second) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final <@Anno() @SourceAnno() T extends test.@Anno() Base & test.@SourceAnno() First & test.@Anno() @SourceAnno() Second, U extends test.@Anno() First & test.@SourceAnno() Second>T bounds(@org.jetbrains.annotations.NotNull()
+    T first, @org.jetbrains.annotations.NotNull()
+    U second) {
+        return null;
+    }
+
+    public final <T extends java.lang.Object, U extends @Anno() T & test.@SourceAnno() First, V extends test.@Anno() First & @SourceAnno() T>T typeVarBounds(T first, U second, V third) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@SourceAnno() String extension(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String $this$extension, @SourceAnno()
+    int value) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() String contextual(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String first, @org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() Number second, @org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() String $this$contextual, @Anno()
+    int value) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() @SourceAnno() String getProperty() {
+        return null;
+    }
+
+    public final void setProperty(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() @SourceAnno() String p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@SourceAnno() String getExtensionProperty(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String $this$extensionProperty) {
+        return null;
+    }
+
+    public final void setExtensionProperty(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String $this$extensionProperty, @org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() String value) {
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.Object suspending(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String value, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<java.lang.@Anno() String>> $completion) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@SourceAnno() String overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String first) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@SourceAnno() String overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String first, @org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() String second) {
+        return null;
+    }
+
+    @kotlin.OptIn(markerClass = {kotlin.ExperimentalUnsignedTypes.class})
+    @kotlin.jvm.JvmName(name = "unsignedVarargs")
+    public final void unsignedVarargs(@org.jetbrains.annotations.NotNull()
+    int @Anno() ... values) {
+    }
+
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.@Anno() String staticMethod(@org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() String value) {
+        return null;
+    }
+
+    /**
+     * public final companion object test/Methods.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // signature: staticMethod(Ljava/lang/String;)Ljava/lang/String;
+     *   @kotlin/jvm/JvmStatic
+     *   public final fun staticMethod(value: kotlin/String): @test/Anno kotlin/String
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @kotlin.jvm.JvmStatic()
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.@Anno() String staticMethod(@org.jetbrains.annotations.NotNull()
+        java.lang.@SourceAnno() String value) {
+            return null;
+        }
+    }
+
+    /**
+     * public final inner class test/Methods.Inner : kotlin/Any {
+     *
+     *   // signature: <init>(Ltest/Methods;Ljava/lang/String;Ljava/util/List;)V
+     *   public constructor(value: @test/Anno kotlin/String, generic: kotlin/collections/List<kotlin/String>)
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner {
+
+        public Inner(@org.jetbrains.annotations.NotNull()
+        java.lang.@Anno() String value, @org.jetbrains.annotations.NotNull()
+        java.util.List<java.lang.@SourceAnno() String> generic) {
+            super();
+        }
+    }
+
+    /**
+     * public final inner class test/Methods.PlainInner : kotlin/Any {
+     *
+     *   // signature: <init>(Ltest/Methods;Ljava/lang/String;)V
+     *   public constructor(value: @test/Anno kotlin/String)
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class PlainInner {
+
+        public PlainInner(@org.jetbrains.annotations.NotNull()
+        java.lang.@Anno() @SourceAnno() String value) {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final enum class test/PlainEnum : kotlin/Enum<test/PlainEnum> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;)V
+ *   private constructor(value: @test/Anno kotlin/String)
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum PlainEnum {
+;
+
+    PlainEnum(java.lang.@Anno() @SourceAnno() String value) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<test.PlainEnum> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract interface test/Second : kotlin/Any {
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Second {
+}
+
+////////////////////
+
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_PARAMETER, java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class test/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}

@@ -1,3 +1,6 @@
+// EMIT_JVM_TYPE_ANNOTATIONS
+// FULL_JDK
+
 class Subject {
 
 
@@ -6,6 +9,11 @@ class Subject {
 
     @MyAnnotation
     val annotationTrigger: String = ""
+
+    fun annotatedMethod(value: List<@TypeAnnotation String>) {}
 }
 
 internal annotation class MyAnnotation
+
+@Target(AnnotationTarget.TYPE)
+annotation class TypeAnnotation

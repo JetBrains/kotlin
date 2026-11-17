@@ -1,0 +1,100 @@
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Methods : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: arrayVarargs([[Ljava/lang/String;)V
+ *   public final fun arrayVarargs(vararg values: @test/Anno kotlin/Array<kotlin/String> (* kotlin/Array<out @test/Anno kotlin/Array<kotlin/String>> *)): kotlin/Unit
+ *
+ *   // signature: nestedArrayVarargs([[[Ljava/lang/String;)V
+ *   public final fun nestedArrayVarargs(vararg values: @test/Anno kotlin/Array<kotlin/Array<kotlin/String>> (* kotlin/Array<out @test/Anno kotlin/Array<kotlin/Array<kotlin/String>>> *)): kotlin/Unit
+ *
+ *   // signature: nonLastVararg([Ljava/lang/String;Ljava/lang/String;)V
+ *   public final fun nonLastVararg(vararg values: kotlin/String (* kotlin/Array<out kotlin/String> *), last: @test/Anno kotlin/String): kotlin/Unit
+ *
+ *   // signature: primitiveArrayVarargs([[I)V
+ *   public final fun primitiveArrayVarargs(vararg values: kotlin/IntArray (* kotlin/Array<out kotlin/IntArray> *)): kotlin/Unit
+ *
+ *   // signature: varargs([Ljava/lang/String;)V
+ *   public final fun varargs(vararg values: @test/Anno kotlin/String (* kotlin/Array<out @test/Anno kotlin/String> *)): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Methods {
+
+    public Methods() {
+        super();
+    }
+
+    public final void varargs(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String @Anno() @SourceAnno() ... values) {
+    }
+
+    public final void arrayVarargs(@org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() String @Anno() @SourceAnno() [] @Anno() ... values) {
+    }
+
+    public final void nestedArrayVarargs(@org.jetbrains.annotations.NotNull()
+    java.lang.String @SourceAnno() [] @Anno() @SourceAnno() [] @Anno() ... values) {
+    }
+
+    public final void primitiveArrayVarargs(@org.jetbrains.annotations.NotNull()
+    int @Anno() [] @SourceAnno() ... values) {
+    }
+
+    public final void nonLastVararg(@org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() String @Anno() @SourceAnno() [] values, @org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String last) {
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class test/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}

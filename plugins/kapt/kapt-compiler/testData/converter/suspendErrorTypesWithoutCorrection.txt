@@ -31,7 +31,7 @@ public final class Foo {
 
     @org.jetbrains.annotations.Nullable()
     public final java.lang.Object c(@org.jetbrains.annotations.NotNull()
-    kotlin.coroutines.Continuation<? super java.util.List<error.NonExistentClass>> $completion) {
+    kotlin.coroutines.Continuation<? super java.util.List<? extends error.NonExistentClass>> $completion) {
         return null;
     }
 }

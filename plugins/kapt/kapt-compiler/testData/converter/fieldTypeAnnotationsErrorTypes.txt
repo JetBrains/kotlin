@@ -1,0 +1,1441 @@
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class org/jetbrains/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+/**
+ * public final class org/jetbrains/ContravariantBox<in T#0 (* T *), T#1 (* U *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ContravariantBox<T extends java.lang.Object, U extends java.lang.Object> {
+
+    public ContravariantBox() {
+        super();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+/**
+ * public final class org/jetbrains/FieldTypeAnnotationsErrorTypes<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: aliasExpansion:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val aliasExpansion: @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, kotlin/collections/List<@org/jetbrains/Anno kotlin/String>>? (* = @org/jetbrains/Anno org/jetbrains/WithMissing^<@org/jetbrains/Anno kotlin/String>? *)
+ *     public final get
+ *
+ *   // field: aliasForcedNestedWildcard:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val aliasForcedNestedWildcard: kotlin/collections/Map<error/NonExistentClass, @kotlin/jvm/JvmWildcard kotlin/collections/List<kotlin/Number>>? (* = org/jetbrains/SameOrder^<error/NonExistentClass, @kotlin/jvm/JvmWildcard kotlin/collections/List<kotlin/Number>>? *)
+ *     public final get
+ *
+ *   // field: aliasForcedWildcard:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val aliasForcedWildcard: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno @kotlin/jvm/JvmWildcard kotlin/Number>? (* = org/jetbrains/SameOrder^<error/NonExistentClass, @org/jetbrains/Anno @kotlin/jvm/JvmWildcard kotlin/Number>? *)
+ *     public final get
+ *
+ *   // field: aliasGenericMissing:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val aliasGenericMissing: @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, kotlin/String>? (* = @org/jetbrains/Anno org/jetbrains/WithGenericMissing^<kotlin/String>? *)
+ *     public final get
+ *
+ *   // field: aliasImportedMissing:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val aliasImportedMissing: @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, kotlin/String>? (* = @org/jetbrains/Anno org/jetbrains/WithImportedMissing^<kotlin/String>? *)
+ *     public final get
+ *
+ *   // field: aliasNestedWildcard:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var aliasNestedWildcard: kotlin/collections/Map<error/NonExistentClass, kotlin/collections/List<kotlin/Number>>? (* = org/jetbrains/SameOrder^<error/NonExistentClass, kotlin/collections/List<kotlin/Number>>? *)
+ *     public final get
+ *     public final set
+ *
+ *   // field: aliasOfMissingClass:Lerror/NonExistentClass;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val aliasOfMissingClass: error/NonExistentClass (* = @org/jetbrains/Anno org/jetbrains/MissingAlias^<@org/jetbrains/Anno kotlin/String>? *)
+ *     public final get
+ *
+ *   // field: aliasSuppressedNestedWildcard:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var aliasSuppressedNestedWildcard: kotlin/collections/Map<error/NonExistentClass, @kotlin/jvm/JvmSuppressWildcards kotlin/collections/List<kotlin/Number>>? (* = org/jetbrains/SameOrder^<error/NonExistentClass, @kotlin/jvm/JvmSuppressWildcards kotlin/collections/List<kotlin/Number>>? *)
+ *     public final get
+ *     public final set
+ *
+ *   // field: aliasSuppressedWildcard:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var aliasSuppressedWildcard: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno @kotlin/jvm/JvmSuppressWildcards kotlin/Number>? (* = org/jetbrains/SameOrder^<error/NonExistentClass, @org/jetbrains/Anno @kotlin/jvm/JvmSuppressWildcards kotlin/Number>? *)
+ *     public final get
+ *     public final set
+ *
+ *   // field: annotatedExpansion:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val annotatedExpansion: @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, kotlin/collections/List<@org/jetbrains/Anno T#0>>? (* = org/jetbrains/AnnotatedAlias^<@org/jetbrains/Anno T#0>? *)
+ *     public final get
+ *
+ *   // field: argumentOfMissingClass:Lerror/NonExistentClass;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val argumentOfMissingClass: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: arrayAlias:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val arrayAlias: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Array<kotlin/collections/List<@org/jetbrains/Anno kotlin/String>> (* = @org/jetbrains/Anno org/jetbrains/ArrayAlias^<@org/jetbrains/Anno kotlin/String> *)>?
+ *     public final get
+ *
+ *   // field: arrayArgumentAlias:[Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val arrayArgumentAlias: @org/jetbrains/Anno kotlin/Array<kotlin/collections/Map<error/NonExistentClass, kotlin/Array<@org/jetbrains/Anno T#0>>>? (* = @org/jetbrains/Anno org/jetbrains/MissingArray^<kotlin/Array<@org/jetbrains/Anno T#0>>? *)
+ *     public final get
+ *
+ *   // field: arrayDimensions:[[Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val arrayDimensions: @org/jetbrains/Anno kotlin/Array<kotlin/Array<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>>>?
+ *     public final get
+ *
+ *   // field: boxedArray:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val boxedArray: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Array<kotlin/Int>>?
+ *     public final get
+ *
+ *   // field: boxedPrimitive:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val boxedPrimitive: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Int>?
+ *     public final get
+ *
+ *   // field: chainedAlias:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val chainedAlias: @org/jetbrains/Anno kotlin/collections/Map<kotlin/collections/List<error/NonExistentClass>, kotlin/Number>? (* = @org/jetbrains/Anno org/jetbrains/Chained^<error/NonExistentClass, kotlin/Number>? *)
+ *     public final get
+ *
+ *   // field: chainedMissingAlias:Lerror/NonExistentClass;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val chainedMissingAlias: error/NonExistentClass (* = @org/jetbrains/Anno org/jetbrains/ChainedMissing^<kotlin/String>? *)
+ *     public final get
+ *
+ *   // field: contravariantNothing:Lorg/jetbrains/ContravariantBox;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val contravariantNothing: @org/jetbrains/Anno org/jetbrains/ContravariantBox<kotlin/Nothing, error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: declarationForcedWildcard:Ljava/util/Map;
+ *   // synthetic method for annotations: getDeclarationForcedWildcard$annotations()V
+ *   @kotlin/jvm/JvmSuppressWildcards(suppress = false)
+ *   @field:kotlin/jvm/JvmField
+ *   public final val declarationForcedWildcard: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Number>?
+ *     public final get
+ *
+ *   // field: declarationSuppressedWildcard:Ljava/util/Map;
+ *   // synthetic method for annotations: getDeclarationSuppressedWildcard$annotations()V
+ *   @kotlin/jvm/JvmSuppressWildcards
+ *   @field:kotlin/jvm/JvmField
+ *   public final var declarationSuppressedWildcard: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Number>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: duplicatedAlias:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val duplicatedAlias: kotlin/collections/Map<@org/jetbrains/Anno kotlin/collections/List<kotlin/collections/List<error/NonExistentClass>>, @org/jetbrains/Anno kotlin/collections/List<kotlin/collections/List<error/NonExistentClass>>>? (* = org/jetbrains/Duplicated^<@org/jetbrains/Anno kotlin/collections/List<kotlin/collections/List<error/NonExistentClass>>>? *)
+ *     public final get
+ *
+ *   // field: explicitFunctionStarInput:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitFunctionStarInput: @org/jetbrains/Anno kotlin/Function2<*, error/NonExistentClass, kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>
+ *     public final get
+ *
+ *   // field: explicitFunctionStarReturn:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var explicitFunctionStarReturn: @org/jetbrains/Anno kotlin/Function1<kotlin/collections/List<error/NonExistentClass>, *>
+ *     public final get
+ *     public final set
+ *
+ *   // field: explicitLargeFunction:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitLargeFunction: @org/jetbrains/Anno kotlin/Function23<error/NonExistentClass, @org/jetbrains/Anno kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, @org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/String>>
+ *     public final get
+ *
+ *   // field: explicitLargeFunctionStars:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitLargeFunctionStars: @org/jetbrains/Anno kotlin/Function23<error/NonExistentClass, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, kotlin/collections/List<@org/jetbrains/Anno kotlin/String>>
+ *     public final get
+ *
+ *   // field: explicitLargeFunctionWildcards:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var explicitLargeFunctionWildcards: @org/jetbrains/Anno kotlin/Function23<error/NonExistentClass, @org/jetbrains/Anno kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, @org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>
+ *     public final get
+ *     public final set
+ *
+ *   // field: explicitLargeSuspendFunction:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitLargeSuspendFunction: @org/jetbrains/Anno suspend kotlin/Function23<error/NonExistentClass, @org/jetbrains/Anno kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: explicitLargeSuspendNothingReturn:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitLargeSuspendNothingReturn: @org/jetbrains/Anno suspend kotlin/Function24<error/NonExistentClass, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/Nothing>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: explicitNestedSuspend:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitNestedSuspend: kotlin/Function1<error/NonExistentClass, @org/jetbrains/Anno suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Array<@org/jetbrains/Anno T#0>>, kotlin/Any?>>
+ *     public final get
+ *
+ *   // field: explicitSuspendErrorReturn:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitSuspendErrorReturn: @org/jetbrains/Anno suspend kotlin/Function1<kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/collections/List<kotlin/collections/List<error/NonExistentClass>>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: explicitSuspendFunction22:Lkotlin/jvm/functions/Function22;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitSuspendFunction22: @org/jetbrains/Anno suspend kotlin/Function22<error/NonExistentClass, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Number, kotlin/coroutines/Continuation<@org/jetbrains/Anno T#0>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: explicitSuspendNothingReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitSuspendNothingReturn: @org/jetbrains/Anno suspend kotlin/Function2<error/NonExistentClass, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/Nothing>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: explicitSuspendReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitSuspendReturn: suspend kotlin/Function2<error/NonExistentClass, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: explicitSuspendStarInput:Lkotlin/jvm/functions/Function3;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val explicitSuspendStarInput: @org/jetbrains/Anno suspend kotlin/Function3<*, error/NonExistentClass, kotlin/coroutines/Continuation<kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: explicitSuspendStarReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var explicitSuspendStarReturn: @org/jetbrains/Anno suspend kotlin/Function2<kotlin/collections/List<error/NonExistentClass>, kotlin/coroutines/Continuation<*>, kotlin/Any?>
+ *     public final get
+ *     public final set
+ *
+ *   // field: explicitSuspendWildcards:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var explicitSuspendWildcards: suspend kotlin/Function2<in @org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>, kotlin/coroutines/Continuation<out kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *     public final set
+ *
+ *   // field: finalContainer:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var finalContainer: kotlin/collections/List<@org/jetbrains/Anno org/jetbrains/FinalBox<error/NonExistentClass>>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: forcedMissingRootFunction:Lerror/NonExistentClass;
+ *   // synthetic method for annotations: getForcedMissingRootFunction$annotations()V
+ *   @kotlin/jvm/JvmSuppressWildcards(suppress = false)
+ *   @field:kotlin/jvm/JvmField
+ *   public final val forcedMissingRootFunction: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: forcedWildcard:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val forcedWildcard: kotlin/collections/Map<error/NonExistentClass, @kotlin/jvm/JvmWildcard @org/jetbrains/Anno kotlin/Number>?
+ *     public final get
+ *
+ *   // field: function:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val function: @org/jetbrains/Anno kotlin/Function1<error/NonExistentClass, kotlin/String>
+ *     public final get
+ *
+ *   // field: function22:Lkotlin/jvm/functions/Function22;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val function22: @org/jetbrains/Anno kotlin/Function22<error/NonExistentClass, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Number, @org/jetbrains/Anno T#0>
+ *     public final get
+ *
+ *   // field: functionAlias:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val functionAlias: @org/jetbrains/Anno kotlin/Function1<error/NonExistentClass, T#0>? (* = @org/jetbrains/Anno org/jetbrains/AliasFunction^<T#0, error/NonExistentClass>? *)
+ *     public final get
+ *
+ *   // field: functionArray:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val functionArray: kotlin/Function1<@org/jetbrains/Anno kotlin/Array<kotlin/collections/List<error/NonExistentClass>>, kotlin/Int>
+ *     public final get
+ *
+ *   // field: functionContextParameters:Lkotlin/jvm/functions/Function4;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val functionContextParameters: @kotlin/ExtensionFunctionType @kotlin/ContextFunctionTypeParams(count = 2) kotlin/Function4<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>, kotlin/String, @org/jetbrains/Anno kotlin/Number, kotlin/Int, @org/jetbrains/Anno T#0>
+ *     public final get
+ *
+ *   // field: functionNoParameters:Lkotlin/jvm/functions/Function0;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val functionNoParameters: @org/jetbrains/Anno kotlin/Function0<kotlin/collections/List<error/NonExistentClass>>
+ *     public final get
+ *
+ *   // field: functionNothingReturn:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val functionNothingReturn: @org/jetbrains/Anno kotlin/Function1<error/NonExistentClass, kotlin/Nothing>
+ *     public final get
+ *
+ *   // field: functionParameter:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val functionParameter: kotlin/Function1<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>, kotlin/String>
+ *     public final get
+ *
+ *   // field: functionReturn:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val functionReturn: kotlin/Function1<error/NonExistentClass, @org/jetbrains/Anno kotlin/collections/List<kotlin/String>>
+ *     public final get
+ *
+ *   // field: functionWildcards:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var functionWildcards: kotlin/Function1<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>, kotlin/collections/List<kotlin/Number>>
+ *     public final get
+ *     public final set
+ *
+ *   // field: inArray:[Ljava/lang/Object;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val inArray: @org/jetbrains/Anno kotlin/Array<in @org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>>?
+ *     public final get
+ *
+ *   // field: invariantContainer:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var invariantContainer: kotlin/collections/List<@org/jetbrains/Anno org/jetbrains/InvariantBox<error/NonExistentClass>>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: largeFunction:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val largeFunction: @org/jetbrains/Anno kotlin/Function23<error/NonExistentClass, @org/jetbrains/Anno kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, @org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/String>>
+ *     public final get
+ *
+ *   // field: largeFunctionNothingReturn:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val largeFunctionNothingReturn: @org/jetbrains/Anno kotlin/Function23<error/NonExistentClass, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, @org/jetbrains/Anno kotlin/Nothing>
+ *     public final get
+ *
+ *   // field: largeFunctionWildcards:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var largeFunctionWildcards: @org/jetbrains/Anno kotlin/Function23<error/NonExistentClass, @org/jetbrains/Anno kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, @org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>
+ *     public final get
+ *     public final set
+ *
+ *   // field: largeSuspendFunction:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val largeSuspendFunction: @org/jetbrains/Anno suspend kotlin/Function23<error/NonExistentClass, @org/jetbrains/Anno kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: largeSuspendNothingReturn:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val largeSuspendNothingReturn: @org/jetbrains/Anno suspend kotlin/Function24<error/NonExistentClass, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/Nothing>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: missingArgument:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val missingArgument: kotlin/collections/List<error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: missingFirst:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val missingFirst: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/String>?
+ *     public final get
+ *
+ *   // field: missingLast:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val missingLast: kotlin/collections/Map<@org/jetbrains/Anno kotlin/String, error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: missingRoot:Lerror/NonExistentClass;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val missingRoot: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: missingRootFunction:Lerror/NonExistentClass;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val missingRootFunction: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: mixedTypePath:[Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val mixedTypePath: @org/jetbrains/Anno kotlin/Array<kotlin/collections/MutableMap<error/NonExistentClass, out @org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>>>?
+ *     public final get
+ *
+ *   // field: mutableMissingRootFunction:Lerror/NonExistentClass;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var mutableMissingRootFunction: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: nestedArrayAlias:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedArrayAlias: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Array<kotlin/Array<kotlin/collections/List<@org/jetbrains/Anno kotlin/String>> (* = org/jetbrains/ArrayAlias^<@org/jetbrains/Anno kotlin/String> *)>>?
+ *     public final get
+ *
+ *   // field: nestedClass:Lorg/jetbrains/Outer$Nested;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedClass: @org/jetbrains/Anno org/jetbrains/Outer.Nested<error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: nestedFunction:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedFunction: kotlin/Function1<error/NonExistentClass, @org/jetbrains/Anno kotlin/Function1<kotlin/Number, @org/jetbrains/Anno T#0>>
+ *     public final get
+ *
+ *   // field: nestedLargeFunction:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedLargeFunction: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Function23<kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Array<@org/jetbrains/Anno T#0>>>
+ *     public final get
+ *
+ *   // field: nestedMissingAlias:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedMissingAlias: kotlin/collections/Map<@org/jetbrains/Anno kotlin/String, error/NonExistentClass (* = org/jetbrains/MissingAlias^<kotlin/Number> *)>?
+ *     public final get
+ *
+ *   // field: nestedPrimitiveArray:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedPrimitiveArray: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Array<kotlin/IntArray>>?
+ *     public final get
+ *
+ *   // field: nestedReorderedAlias:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedReorderedAlias: kotlin/collections/MutableList<out @org/jetbrains/Anno kotlin/Array<kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno T#0> (* = org/jetbrains/Reversed^<@org/jetbrains/Anno T#0, error/NonExistentClass> *)>>?
+ *     public final get
+ *
+ *   // field: nestedSuspendAlias:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedSuspendAlias: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/collections/List<kotlin/Number>>, kotlin/Any?> (* = @org/jetbrains/Anno org/jetbrains/AliasSuspend^<kotlin/Number, kotlin/String> *)>
+ *     public final get
+ *
+ *   // field: nestedSuspendFunction:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedSuspendFunction: kotlin/Function1<error/NonExistentClass, @org/jetbrains/Anno suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Array<@org/jetbrains/Anno T#0>>, kotlin/Any?>>
+ *     public final get
+ *
+ *   // field: nestedWildcardBound:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedWildcardBound: kotlin/collections/MutableList<in kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Number>>?
+ *     public final get
+ *
+ *   // field: outArray:[Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var outArray: @org/jetbrains/Anno kotlin/Array<out kotlin/collections/List<error/NonExistentClass>>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: primitiveArray:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val primitiveArray: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/IntArray>?
+ *     public final get
+ *
+ *   // field: primitiveArrayAlias:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val primitiveArrayAlias: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/IntArray (* = @org/jetbrains/Anno org/jetbrains/PrimitiveArrayAlias^ *)>?
+ *     public final get
+ *
+ *   // field: reorderedAliasArguments:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val reorderedAliasArguments: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/String>? (* = org/jetbrains/Reversed^<@org/jetbrains/Anno kotlin/String, error/NonExistentClass>? *)
+ *     public final get
+ *
+ *   // field: resolvedArrayDimensions:[[Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedArrayDimensions: @org/jetbrains/Anno kotlin/Array<kotlin/Array<@org/jetbrains/Anno kotlin/collections/List<kotlin/Number>>>?
+ *     public final get
+ *
+ *   // field: resolvedContainer:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedContainer: kotlin/collections/List<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>>?
+ *     public final get
+ *
+ *   // field: resolvedContravariantNothing:Lorg/jetbrains/ContravariantBox;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedContravariantNothing: @org/jetbrains/Anno org/jetbrains/ContravariantBox<kotlin/Nothing, kotlin/String>?
+ *     public final get
+ *
+ *   // field: resolvedFinalContainer:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var resolvedFinalContainer: kotlin/collections/List<@org/jetbrains/Anno org/jetbrains/FinalBox<kotlin/String>>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: resolvedForcedMissingRootFunction:Lorg/jetbrains/ResolvedContainer;
+ *   // synthetic method for annotations: getResolvedForcedMissingRootFunction$annotations()V
+ *   @kotlin/jvm/JvmSuppressWildcards(suppress = false)
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedForcedMissingRootFunction: org/jetbrains/ResolvedContainer<kotlin/String, kotlin/Function1<kotlin/collections/List<kotlin/Number>, kotlin/Unit>>?
+ *     public final get
+ *
+ *   // field: resolvedInArray:[Ljava/lang/Object;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedInArray: @org/jetbrains/Anno kotlin/Array<in @org/jetbrains/Anno kotlin/collections/List<kotlin/Number>>?
+ *     public final get
+ *
+ *   // field: resolvedLargeSuspendFunction:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedLargeSuspendFunction: kotlin/Function23<kotlin/Number, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/coroutines/Continuation<kotlin/collections/List<kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: resolvedMissingRootFunction:Lorg/jetbrains/ResolvedContainer;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedMissingRootFunction: org/jetbrains/ResolvedContainer<kotlin/String, kotlin/Function1<kotlin/collections/List<kotlin/Number>, kotlin/Unit>>?
+ *     public final get
+ *
+ *   // field: resolvedMutableMissingRootFunction:Lorg/jetbrains/ResolvedContainer;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var resolvedMutableMissingRootFunction: org/jetbrains/ResolvedContainer<kotlin/String, kotlin/Function1<kotlin/collections/List<kotlin/Number>, kotlin/Unit>>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: resolvedNestedSuspendFunction:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedNestedSuspendFunction: kotlin/Function1<kotlin/Number, suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Array<T#0>>, kotlin/Any?>>
+ *     public final get
+ *
+ *   // field: resolvedOpenContainer:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var resolvedOpenContainer: kotlin/collections/List<@org/jetbrains/Anno org/jetbrains/FinalBox<kotlin/Number>>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: resolvedOutArray:[Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var resolvedOutArray: @org/jetbrains/Anno kotlin/Array<out kotlin/collections/List<kotlin/Number>>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: resolvedReorderedAlias:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedReorderedAlias: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/collections/Map<@org/jetbrains/Anno kotlin/Number, kotlin/String> (* = @org/jetbrains/Anno org/jetbrains/Reversed^<kotlin/String, @org/jetbrains/Anno kotlin/Number> *)>?
+ *     public final get
+ *
+ *   // field: resolvedRoot:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedRoot: @org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: resolvedSuppressedMissingRootFunction:Lorg/jetbrains/ResolvedContainer;
+ *   // synthetic method for annotations: getResolvedSuppressedMissingRootFunction$annotations()V
+ *   @kotlin/jvm/JvmSuppressWildcards
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedSuppressedMissingRootFunction: org/jetbrains/ResolvedContainer<kotlin/String, kotlin/Function1<kotlin/collections/List<kotlin/Number>, kotlin/Unit>>?
+ *     public final get
+ *
+ *   // field: resolvedSuspendArrayReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedSuspendArrayReturn: suspend kotlin/Function2<kotlin/Number, kotlin/coroutines/Continuation<kotlin/Array<kotlin/collections/List<kotlin/Number>>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: resolvedSuspendContextParameters:Lkotlin/jvm/functions/Function5;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedSuspendContextParameters: @kotlin/ExtensionFunctionType @kotlin/ContextFunctionTypeParams(count = 2) suspend kotlin/Function5<kotlin/collections/List<kotlin/Number>, kotlin/String, kotlin/Number, kotlin/Int, kotlin/coroutines/Continuation<T#0>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: resolvedSuspendErrorReturn:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedSuspendErrorReturn: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/collections/List<kotlin/collections/List<kotlin/Number>>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: resolvedSuspendFunction22:Lkotlin/jvm/functions/Function22;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedSuspendFunction22: suspend kotlin/Function22<kotlin/Number, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Number, kotlin/coroutines/Continuation<T#0>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: resolvedSuspendNothingReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedSuspendNothingReturn: suspend kotlin/Function2<kotlin/Number, kotlin/coroutines/Continuation<kotlin/Nothing>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: resolvedSuspendReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedSuspendReturn: suspend kotlin/Function2<kotlin/Number, kotlin/coroutines/Continuation<kotlin/collections/List<kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: resolvedSuspendSuppressedReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val resolvedSuspendSuppressedReturn: suspend kotlin/Function2<kotlin/Number, kotlin/coroutines/Continuation<@kotlin/jvm/JvmSuppressWildcards kotlin/collections/List<kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: resolvedSuspendWildcards:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var resolvedSuspendWildcards: suspend kotlin/Function2<kotlin/collections/List<kotlin/Number>, kotlin/coroutines/Continuation<kotlin/collections/List<kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *     public final set
+ *
+ *   // field: starAlias:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val starAlias: @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, kotlin/collections/List<*>>? (* = @org/jetbrains/Anno org/jetbrains/WithMissing^<*>? *)
+ *     public final get
+ *
+ *   // field: starArray:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val starArray: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Array<*>>?
+ *     public final get
+ *
+ *   // field: starProjection:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val starProjection: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/collections/List<*>>?
+ *     public final get
+ *
+ *   // field: substitutedArrayDimensions:[[Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val substitutedArrayDimensions: @org/jetbrains/Anno kotlin/Array<kotlin/Array<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>> (* = org/jetbrains/ArrayOf^<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>> *)>? (* = @org/jetbrains/Anno org/jetbrains/ArrayOf^<kotlin/Array<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>> (* = org/jetbrains/ArrayOf^<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>> *)>? *)
+ *     public final get
+ *
+ *   // field: suppressedMissingRootFunction:Lerror/NonExistentClass;
+ *   // synthetic method for annotations: getSuppressedMissingRootFunction$annotations()V
+ *   @kotlin/jvm/JvmSuppressWildcards
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suppressedMissingRootFunction: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: suppressedWildcard:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var suppressedWildcard: kotlin/collections/Map<error/NonExistentClass, @kotlin/jvm/JvmSuppressWildcards @org/jetbrains/Anno kotlin/Number>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: suspendAlias:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendAlias: @org/jetbrains/Anno suspend kotlin/Function2<error/NonExistentClass, kotlin/coroutines/Continuation<kotlin/collections/List<kotlin/Number>>, kotlin/Any?> (* = @org/jetbrains/Anno org/jetbrains/AliasSuspend^<kotlin/Number, error/NonExistentClass> *)
+ *     public final get
+ *
+ *   // field: suspendArrayReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendArrayReturn: suspend kotlin/Function2<error/NonExistentClass, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/Array<kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: suspendContextParameters:Lkotlin/jvm/functions/Function5;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendContextParameters: @kotlin/ExtensionFunctionType @kotlin/ContextFunctionTypeParams(count = 2) suspend kotlin/Function5<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>, kotlin/String, @org/jetbrains/Anno kotlin/Number, kotlin/Int, kotlin/coroutines/Continuation<@org/jetbrains/Anno T#0>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: suspendErrorReturn:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendErrorReturn: @org/jetbrains/Anno suspend kotlin/Function1<kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/collections/List<kotlin/collections/List<error/NonExistentClass>>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: suspendFunction:Lkotlin/jvm/functions/Function3;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendFunction: @org/jetbrains/Anno suspend kotlin/Function3<@org/jetbrains/Anno kotlin/Number, error/NonExistentClass, kotlin/coroutines/Continuation<kotlin/collections/List<kotlin/String>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: suspendFunction22:Lkotlin/jvm/functions/Function22;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendFunction22: @org/jetbrains/Anno suspend kotlin/Function22<error/NonExistentClass, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Number, kotlin/coroutines/Continuation<@org/jetbrains/Anno T#0>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: suspendNothingReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendNothingReturn: @org/jetbrains/Anno suspend kotlin/Function2<error/NonExistentClass, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/Nothing>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: suspendReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendReturn: suspend kotlin/Function2<error/NonExistentClass, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: suspendStarInput:Lkotlin/jvm/functions/Function3;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendStarInput: @org/jetbrains/Anno suspend kotlin/Function3<kotlin/Any?, error/NonExistentClass, kotlin/coroutines/Continuation<kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: suspendStarReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var suspendStarReturn: @org/jetbrains/Anno suspend kotlin/Function2<kotlin/collections/List<error/NonExistentClass>, kotlin/coroutines/Continuation<kotlin/Any?>, kotlin/Any?>
+ *     public final get
+ *     public final set
+ *
+ *   // field: suspendSuppressedReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val suspendSuppressedReturn: suspend kotlin/Function2<error/NonExistentClass, kotlin/coroutines/Continuation<@org/jetbrains/Anno @kotlin/jvm/JvmSuppressWildcards kotlin/collections/List<kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: suspendWildcards:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var suspendWildcards: suspend kotlin/Function2<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>, kotlin/coroutines/Continuation<kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *     public final set
+ *
+ *   // field: typeVariable:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val typeVariable: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno T#0>?
+ *     public final get
+ *
+ *   // field: typeVariableArray:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val typeVariableArray: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Array<T#0>>?
+ *     public final get
+ *
+ *   // field: wildcardArray:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val wildcardArray: kotlin/collections/MutableList<out @org/jetbrains/Anno kotlin/Array<kotlin/collections/List<error/NonExistentClass>>>?
+ *     public final get
+ *
+ *   // field: wildcardLowerBound:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var wildcardLowerBound: kotlin/collections/MutableList<in @org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>>?
+ *     public final get
+ *     public final set
+ *
+ *   // field: wildcardUpperBound:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val wildcardUpperBound: kotlin/collections/MutableList<out @org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>>?
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class FieldTypeAnnotationsErrorTypes<T extends java.lang.Object> {
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() @SourceAnno() List<Missing> resolvedRoot = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.List<java.util.@Anno() @SourceAnno() List<Missing>> resolvedContainer = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, java.lang.@Anno() @SourceAnno() String> missingFirst = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<java.lang.@Anno() @SourceAnno() String, Missing> missingLast = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, @Anno() @SourceAnno() T> typeVariable = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.List<? extends java.util.@Anno() @SourceAnno() List<Missing>> wildcardUpperBound = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.List<? super java.util.@Anno() @SourceAnno() List<? extends Missing>> wildcardLowerBound;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, ? extends java.lang.@Anno() @kotlin.jvm.JvmWildcard() @SourceAnno() Number> forcedWildcard = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, ? extends java.lang.@Anno() @SourceAnno() @kotlin.jvm.JvmWildcard() Number> aliasForcedWildcard = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.Map<Missing, java.lang.@Anno() @SourceAnno() @kotlin.jvm.JvmSuppressWildcards() Number> aliasSuppressedWildcard;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.Map<Missing, ? extends java.util.List<? extends java.lang.Number>> aliasNestedWildcard;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, ? extends java.util.@kotlin.jvm.JvmWildcard() List<java.lang.Number>> aliasForcedNestedWildcard = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.Map<Missing, java.util.@kotlin.jvm.JvmSuppressWildcards() List<java.lang.Number>> aliasSuppressedNestedWildcard;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.Map<Missing, java.lang.@Anno() @kotlin.jvm.JvmSuppressWildcards() @SourceAnno() Number> suppressedWildcard;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.Map<Missing, java.lang.@Anno() @SourceAnno() Number> declarationSuppressedWildcard;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, ? extends java.lang.@Anno() @SourceAnno() Number> declarationForcedWildcard = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.List<? super java.util.Map<Missing, ? extends java.lang.@Anno() @SourceAnno() Number>> nestedWildcardBound = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, java.lang.@Anno() @SourceAnno() Integer> boxedPrimitive = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, java.util.@Anno() @SourceAnno() List<?>> starProjection = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.@Anno() @SourceAnno() ContravariantBox<?, Missing> contravariantNothing = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.@Anno() @SourceAnno() ContravariantBox<?, java.lang.String> resolvedContravariantNothing = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.List<? extends org.jetbrains.@Anno() @SourceAnno() FinalBox<? extends Missing>> finalContainer;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.List<org.jetbrains.@Anno() @SourceAnno() InvariantBox<Missing>> invariantContainer;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.List<org.jetbrains.@Anno() @SourceAnno() FinalBox<java.lang.String>> resolvedFinalContainer;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.List<? extends org.jetbrains.@Anno() @SourceAnno() FinalBox<? extends java.lang.Number>> resolvedOpenContainer;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() @SourceAnno() List<Missing> @Anno() [] @SourceAnno() [] arrayDimensions = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@SourceAnno() Map<Missing, ? extends java.util.@Anno() @SourceAnno() List<Missing>> @Anno() [] mixedTypePath = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.@SourceAnno() List<? extends Missing> @Anno() [] outArray;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.@Anno() @SourceAnno() Object @Anno() @SourceAnno() [] inArray = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, java.lang.Object @Anno() @SourceAnno() []> starArray = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, java.lang.@SourceAnno() Integer @Anno() []> boxedArray = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, int @Anno() @SourceAnno() []> primitiveArray = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, int @Anno() [] @SourceAnno() []> nestedPrimitiveArray = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, @SourceAnno() T @Anno() []> typeVariableArray = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.List<? extends java.util.@SourceAnno() List<Missing> @Anno() []> wildcardArray = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, java.util.List<java.lang.@Anno() @SourceAnno() String> @Anno() @SourceAnno() []> arrayAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, java.util.List<java.lang.@Anno() @SourceAnno() String> @Anno() [] @SourceAnno() []> nestedArrayAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, int @Anno() @SourceAnno() []> primitiveArrayAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public java.util.@SourceAnno() List<? extends java.lang.Number> @Anno() [] resolvedOutArray;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.@Anno() @SourceAnno() Object @Anno() @SourceAnno() [] resolvedInArray = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() @SourceAnno() List<java.lang.Number> @Anno() [] @SourceAnno() [] resolvedArrayDimensions = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.Outer.@Anno() @SourceAnno() Nested<Missing> nestedClass = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() Function1<Missing, java.lang.String> function = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<java.util.@Anno() @SourceAnno() List<? extends Missing>, java.lang.String> functionParameter = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<Missing, java.util.@Anno() @SourceAnno() List<java.lang.String>> functionReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@kotlin.ExtensionFunctionType() Function4<java.util.@Anno() List<? extends Missing>, java.lang.@SourceAnno() String, java.lang.@Anno() Number, java.lang.@SourceAnno() Integer, @Anno() @SourceAnno() T> functionContextParameters = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.Function1<? super java.util.@Anno() List<? extends Missing>, ? extends java.util.@SourceAnno() List<? extends java.lang.Number>> functionWildcards;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() Function2<?, Missing, java.util.@SourceAnno() List<java.lang.@Anno() Number>> explicitFunctionStarInput = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.@Anno() Function1<? super java.util.@SourceAnno() List<? extends Missing>, ?> explicitFunctionStarReturn;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<Missing, kotlin.jvm.functions.@Anno() Function1<java.lang.@SourceAnno() Number, @Anno() T>> nestedFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<java.util.@SourceAnno() List<? extends Missing> @Anno() [], java.lang.@SourceAnno() Integer> functionArray = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() Function0<java.util.List<Missing>> functionNoParameters = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() Function1 functionNothingReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() Function22<Missing, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.@SourceAnno() Number, @Anno() T> function22 = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() Function3<java.lang.@Anno() Number, Missing, kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<java.lang.String>>, java.lang.Object> suspendFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function2<Missing, kotlin.coroutines.Continuation<? super java.util.@Anno() @SourceAnno() List<? extends java.lang.@Anno() @SourceAnno() Number>>, java.lang.Object> suspendReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.Function2<? super java.util.@Anno() List<? extends Missing>, ? super kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<? extends java.lang.@Anno() Number>>, ? extends java.lang.Object> suspendWildcards;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@kotlin.ExtensionFunctionType() Function5<java.util.@Anno() List<? extends Missing>, java.lang.@SourceAnno() String, java.lang.@Anno() Number, java.lang.@SourceAnno() Integer, kotlin.coroutines.Continuation<? super @Anno() @SourceAnno() T>, java.lang.Object> suspendContextParameters = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<Missing, kotlin.jvm.functions.@Anno() Function1<kotlin.coroutines.Continuation<? super @Anno() T @SourceAnno() []>, java.lang.Object>> nestedSuspendFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() Function22<Missing, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.@SourceAnno() Number, kotlin.coroutines.Continuation<? super @Anno() @SourceAnno() T>, java.lang.Object> suspendFunction22 = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<java.lang.Object> largeSuspendFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() Function2<Missing, kotlin.coroutines.Continuation<?>, java.lang.Object> suspendNothingReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() Function1<kotlin.coroutines.Continuation<? super java.util.@Anno() List<? extends java.util.@SourceAnno() List<? extends Missing>>>, java.lang.Object> suspendErrorReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function2<Missing, kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<? extends java.lang.@Anno() Number> @Anno() []>, java.lang.Object> suspendArrayReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function2<Missing, kotlin.coroutines.Continuation<java.util.@Anno() @kotlin.jvm.JvmSuppressWildcards() List<java.lang.@SourceAnno() Number>>, java.lang.Object> suspendSuppressedReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<java.lang.Object> largeSuspendNothingReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function2<Missing, kotlin.coroutines.Continuation<? super java.util.@Anno() @SourceAnno() List<? extends java.lang.@Anno() @SourceAnno() Number>>, java.lang.Object> explicitSuspendReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.Function2<? super java.util.@Anno() List<? extends Missing>, ? super kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<? extends java.lang.@Anno() Number>>, ? extends java.lang.Object> explicitSuspendWildcards;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<Missing, kotlin.jvm.functions.@Anno() Function1<kotlin.coroutines.Continuation<? super @Anno() T @SourceAnno() []>, java.lang.Object>> explicitNestedSuspend = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() Function2<Missing, kotlin.coroutines.Continuation<?>, java.lang.Object> explicitSuspendNothingReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() Function1<kotlin.coroutines.Continuation<? super java.util.@Anno() List<? extends java.util.@SourceAnno() List<? extends Missing>>>, java.lang.Object> explicitSuspendErrorReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() Function22<Missing, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.@SourceAnno() Number, kotlin.coroutines.Continuation<? super @Anno() @SourceAnno() T>, java.lang.Object> explicitSuspendFunction22 = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<java.lang.Object> explicitLargeSuspendFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<java.lang.Object> explicitLargeSuspendNothingReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() Function3<java.lang.Object, Missing, kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<? extends java.lang.@Anno() Number>>, java.lang.Object> explicitSuspendStarInput = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() Function3<java.lang.Object, Missing, kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<? extends java.lang.@Anno() Number>>, java.lang.Object> suspendStarInput = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.@Anno() Function2<? super java.util.@SourceAnno() List<? extends Missing>, ? super kotlin.coroutines.Continuation<java.lang.Object>, ? extends java.lang.Object> explicitSuspendStarReturn;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.@Anno() Function2<? super java.util.@SourceAnno() List<? extends Missing>, ? super kotlin.coroutines.Continuation<java.lang.Object>, ? extends java.lang.Object> suspendStarReturn;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function2<java.lang.Number, kotlin.coroutines.Continuation<? super java.util.List<? extends java.lang.Number>>, java.lang.Object> resolvedSuspendReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.Function2<? super java.util.List<? extends java.lang.Number>, ? super kotlin.coroutines.Continuation<? super java.util.List<? extends java.lang.Number>>, ? extends java.lang.Object> resolvedSuspendWildcards;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@kotlin.ExtensionFunctionType() Function5<java.util.List<? extends java.lang.Number>, java.lang.String, java.lang.Number, java.lang.Integer, kotlin.coroutines.Continuation<? super T>, java.lang.Object> resolvedSuspendContextParameters = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<java.lang.Number, kotlin.jvm.functions.Function1<kotlin.coroutines.Continuation<? super T[]>, java.lang.Object>> resolvedNestedSuspendFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function22<java.lang.Number, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Number, kotlin.coroutines.Continuation<? super T>, java.lang.Object> resolvedSuspendFunction22 = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.FunctionN<java.lang.Object> resolvedLargeSuspendFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function2<java.lang.Number, kotlin.coroutines.Continuation<?>, java.lang.Object> resolvedSuspendNothingReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<kotlin.coroutines.Continuation<? super java.util.List<? extends java.util.List<? extends java.lang.Number>>>, java.lang.Object> resolvedSuspendErrorReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function2<java.lang.Number, kotlin.coroutines.Continuation<? super java.util.List<? extends java.lang.Number>[]>, java.lang.Object> resolvedSuspendArrayReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function2<java.lang.Number, kotlin.coroutines.@kotlin.jvm.JvmSuppressWildcards() Continuation<java.util.List<java.lang.Number>>, java.lang.Object> resolvedSuspendSuppressedReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() String>> largeFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<? extends java.util.@Anno() @SourceAnno() List<? extends java.lang.@Anno() @SourceAnno() Number>> largeFunctionWildcards;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() String>> explicitLargeFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<? extends java.util.@Anno() @SourceAnno() List<? extends java.lang.@Anno() @SourceAnno() Number>> explicitLargeFunctionWildcards;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() FunctionN<java.util.@SourceAnno() List<java.lang.@Anno() String>> explicitLargeFunctionStars = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.Map<Missing, kotlin.jvm.functions.@Anno() FunctionN<@Anno() T @SourceAnno() []>> nestedLargeFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN largeFunctionNothingReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() Map<Missing, java.util.List<java.lang.@Anno() @SourceAnno() String>> aliasExpansion = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, java.lang.@Anno() @SourceAnno() String> reorderedAliasArguments = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() Map<java.util.List<Missing>, java.lang.@SourceAnno() Number> chainedAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<java.util.@Anno() List<java.util.@SourceAnno() List<Missing>>, java.util.@Anno() List<java.util.@SourceAnno() List<Missing>>> duplicatedAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.List<? extends java.util.@SourceAnno() Map<Missing, @Anno() T> @Anno() []> nestedReorderedAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, @Anno() T @SourceAnno() []> @Anno() [] arrayArgumentAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() List<Missing> @Anno() [] @SourceAnno() [] substitutedArrayDimensions = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final kotlin.jvm.functions.@Anno() Function1<Missing, @SourceAnno() T> functionAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<Missing, java.util.@Anno() Map<java.lang.@Anno() Number, java.lang.@SourceAnno() String>> resolvedReorderedAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() Map<Missing, java.util.@SourceAnno() List<@Anno() T>> annotatedExpansion = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() @SourceAnno() Map<Missing, java.util.List<?>> starAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() Map<Missing<java.lang.String>, java.lang.@SourceAnno() String> aliasGenericMissing = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() Function2<Missing, kotlin.coroutines.Continuation<? super java.util.List<? extends java.lang.@SourceAnno() Number>>, java.lang.Object> suspendAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.Map<Missing, kotlin.jvm.functions.@Anno() Function2<java.lang.String, kotlin.coroutines.Continuation<? super java.util.List<? extends java.lang.@SourceAnno() Number>>, java.lang.Object>> nestedSuspendAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.@Anno() Map<missing.types.Placeholder, java.lang.@SourceAnno() String> aliasImportedMissing = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.Map<java.lang.@Anno() String, Missing<java.lang.Number>> nestedMissingAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final Missing missingRoot = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.List<Missing> missingArgument = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final Missing<java.lang.String> argumentOfMissingClass = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final Missing<java.lang.String> aliasOfMissingClass = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final Missing<java.util.List<java.lang.String>> chainedMissingAlias = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final MissingContainer<java.lang.String, kotlin.jvm.functions.Function1<java.util.List<? extends Missing>, kotlin.Unit>> missingRootFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.ResolvedContainer<java.lang.String, kotlin.jvm.functions.Function1<java.util.List<? extends java.lang.Number>, kotlin.Unit>> resolvedMissingRootFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public MissingContainer<java.lang.String, kotlin.jvm.functions.Function1<java.util.List<? extends Missing>, kotlin.Unit>> mutableMissingRootFunction;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public org.jetbrains.ResolvedContainer<java.lang.String, kotlin.jvm.functions.Function1<java.util.List<? extends java.lang.Number>, kotlin.Unit>> resolvedMutableMissingRootFunction;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final MissingContainer<java.lang.String, kotlin.jvm.functions.Function1<? super java.util.List<? extends Missing>, ? extends kotlin.Unit>> forcedMissingRootFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.ResolvedContainer<java.lang.String, kotlin.jvm.functions.Function1<? super java.util.List<? extends java.lang.Number>, ? extends kotlin.Unit>> resolvedForcedMissingRootFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final MissingContainer<java.lang.String, kotlin.jvm.functions.Function1<java.util.List<Missing>, kotlin.Unit>> suppressedMissingRootFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.ResolvedContainer<java.lang.String, kotlin.jvm.functions.Function1<java.util.List<java.lang.Number>, kotlin.Unit>> resolvedSuppressedMissingRootFunction = null;
+
+    public FieldTypeAnnotationsErrorTypes() {
+        super();
+    }
+
+    @kotlin.jvm.JvmSuppressWildcards()
+    @java.lang.Deprecated()
+    public static void getDeclarationSuppressedWildcard$annotations() {
+    }
+
+    @kotlin.jvm.JvmSuppressWildcards(suppress = false)
+    @java.lang.Deprecated()
+    public static void getDeclarationForcedWildcard$annotations() {
+    }
+
+    @kotlin.jvm.JvmSuppressWildcards(suppress = false)
+    @java.lang.Deprecated()
+    public static void getForcedMissingRootFunction$annotations() {
+    }
+
+    @kotlin.jvm.JvmSuppressWildcards(suppress = false)
+    @java.lang.Deprecated()
+    public static void getResolvedForcedMissingRootFunction$annotations() {
+    }
+
+    @kotlin.jvm.JvmSuppressWildcards()
+    @java.lang.Deprecated()
+    public static void getSuppressedMissingRootFunction$annotations() {
+    }
+
+    @kotlin.jvm.JvmSuppressWildcards()
+    @java.lang.Deprecated()
+    public static void getResolvedSuppressedMissingRootFunction$annotations() {
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+/**
+ * package {
+ *
+ *   // signature: inferredType()Ljava/util/Map;
+ *   public final fun inferredType(): @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>
+ *
+ *   public typealias AliasFunction<T#0 (* A *), T#1 (* B *)> = kotlin/Function1<T#1, T#0> (* = kotlin/Function1<T#1, T#0> *)
+ *
+ *   public typealias AliasSuspend<T#0 (* A *), T#1 (* B *)> = suspend kotlin/Function2<T#1, kotlin/coroutines/Continuation<kotlin/collections/List<T#0>>, kotlin/Any?> (* = suspend kotlin/Function2<T#1, kotlin/coroutines/Continuation<kotlin/collections/List<T#0>>, kotlin/Any?> *)
+ *
+ *   public typealias AnnotatedAlias<T#0 (* A *)> = @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, kotlin/collections/List<T#0>> (* = @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, kotlin/collections/List<T#0>> *)
+ *
+ *   public typealias ArrayAlias<T#0 (* T *)> = kotlin/Array<kotlin/collections/List<T#0>> (* = kotlin/Array<kotlin/collections/List<T#0>> *)
+ *
+ *   public typealias ArrayOf<T#0 (* A *)> = kotlin/Array<T#0> (* = kotlin/Array<T#0> *)
+ *
+ *   public typealias Chained<T#0 (* A *), T#1 (* B *)> = org/jetbrains/Reversed^<T#1, kotlin/collections/List<T#0>> (* = kotlin/collections/Map<kotlin/collections/List<T#0>, T#1> (* = org/jetbrains/Reversed^<T#1, kotlin/collections/List<T#0>> *) *)
+ *
+ *   public typealias ChainedMissing<T#0 (* A *)> = org/jetbrains/MissingAlias^<kotlin/collections/List<T#0>> (* = error/NonExistentClass (* = org/jetbrains/MissingAlias^<kotlin/collections/List<T#0>> *) *)
+ *
+ *   public typealias Duplicated<T#0 (* A *)> = kotlin/collections/Map<T#0, T#0> (* = kotlin/collections/Map<T#0, T#0> *)
+ *
+ *   public typealias MissingAlias<T#0 (* T *)> = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   public typealias MissingArray<T#0 (* A *)> = kotlin/Array<kotlin/collections/Map<error/NonExistentClass, T#0>> (* = kotlin/Array<kotlin/collections/Map<error/NonExistentClass, T#0>> *)
+ *
+ *   public typealias PrimitiveArrayAlias = kotlin/IntArray (* = kotlin/IntArray *)
+ *
+ *   public typealias Reversed<T#0 (* A *), T#1 (* B *)> = kotlin/collections/Map<T#1, T#0> (* = kotlin/collections/Map<T#1, T#0> *)
+ *
+ *   public typealias SameOrder<T#0 (* A *), T#1 (* B *)> = kotlin/collections/Map<T#0, T#1> (* = kotlin/collections/Map<T#0, T#1> *)
+ *
+ *   public typealias WithGenericMissing<T#0 (* A *)> = kotlin/collections/Map<error/NonExistentClass, T#0> (* = kotlin/collections/Map<error/NonExistentClass, T#0> *)
+ *
+ *   public typealias WithImportedMissing<T#0 (* A *)> = kotlin/collections/Map<error/NonExistentClass, T#0> (* = kotlin/collections/Map<error/NonExistentClass, T#0> *)
+ *
+ *   public typealias WithMissing<T#0 (* T *)> = kotlin/collections/Map<error/NonExistentClass, kotlin/collections/List<T#0>> (* = kotlin/collections/Map<error/NonExistentClass, kotlin/collections/List<T#0>> *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class FieldTypeAnnotationsErrorTypesKt {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.util.@Anno() @SourceAnno() Map<Missing, java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() Number>> inferredType() {
+        return null;
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+/**
+ * public final class org/jetbrains/FinalBox<out T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class FinalBox<T extends java.lang.Object> {
+
+    public FinalBox() {
+        super();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+/**
+ * public final class org/jetbrains/InferredFieldTypeAnnotationsErrorTypes<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: inferred:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val inferred: @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>
+ *     public final get
+ *
+ *   // field: inferredExplicitSuspendStarInput:Lkotlin/jvm/functions/Function3;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val inferredExplicitSuspendStarInput: @org/jetbrains/Anno suspend kotlin/Function3<*, error/NonExistentClass, kotlin/coroutines/Continuation<kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: inferredExplicitSuspendStarReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var inferredExplicitSuspendStarReturn: @org/jetbrains/Anno suspend kotlin/Function2<kotlin/collections/List<error/NonExistentClass>, kotlin/coroutines/Continuation<*>, kotlin/Any?>
+ *     public final get
+ *     public final set
+ *
+ *   // field: inferredLargeFunction:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val inferredLargeFunction: @org/jetbrains/Anno kotlin/Function23<error/NonExistentClass, @org/jetbrains/Anno kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, @org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/String>>
+ *     public final get
+ *
+ *   // field: inferredLargeFunctionNothingReturn:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val inferredLargeFunctionNothingReturn: @org/jetbrains/Anno kotlin/Function23<error/NonExistentClass, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, @org/jetbrains/Anno kotlin/Nothing>
+ *     public final get
+ *
+ *   // field: inferredLargeFunctionWildcards:Lkotlin/jvm/functions/FunctionN;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var inferredLargeFunctionWildcards: @org/jetbrains/Anno kotlin/Function23<error/NonExistentClass, @org/jetbrains/Anno kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, @org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>
+ *     public final get
+ *     public final set
+ *
+ *   // field: inferredNestedLargeFunction:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val inferredNestedLargeFunction: kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/Function23<kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Array<@org/jetbrains/Anno T#0>>>
+ *     public final get
+ *
+ *   // field: inferredNestedSuspend:Lkotlin/jvm/functions/Function1;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val inferredNestedSuspend: kotlin/Function1<error/NonExistentClass, @org/jetbrains/Anno suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Array<@org/jetbrains/Anno T#0>>, kotlin/Any?>>
+ *     public final get
+ *
+ *   // field: inferredSuspend:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val inferredSuspend: suspend kotlin/Function2<error/NonExistentClass, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: inferredSuspendNothingReturn:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val inferredSuspendNothingReturn: @org/jetbrains/Anno suspend kotlin/Function2<error/NonExistentClass, kotlin/coroutines/Continuation<@org/jetbrains/Anno kotlin/Nothing>, kotlin/Any?>
+ *     public final get
+ *
+ *   // field: inferredSuspendWildcards:Lkotlin/jvm/functions/Function2;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var inferredSuspendWildcards: suspend kotlin/Function2<@org/jetbrains/Anno kotlin/collections/List<error/NonExistentClass>, kotlin/coroutines/Continuation<kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>, kotlin/Any?>
+ *     public final get
+ *     public final set
+ *
+ *   // field: mutableInferred:Ljava/util/Map;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var mutableInferred: @org/jetbrains/Anno kotlin/collections/Map<error/NonExistentClass, @org/jetbrains/Anno kotlin/collections/List<@org/jetbrains/Anno kotlin/Number>>
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class InferredFieldTypeAnnotationsErrorTypes<T extends java.lang.Object> {
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.@Anno() @SourceAnno() Map<Missing, java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() Number>> inferred = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.@Anno() @SourceAnno() Map<Missing, ? extends java.util.@Anno() @SourceAnno() List<? extends java.lang.@Anno() @SourceAnno() Number>> mutableInferred;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function2<Missing, kotlin.coroutines.Continuation<? super java.util.@Anno() @SourceAnno() List<? extends java.lang.@Anno() @SourceAnno() Number>>, java.lang.Object> inferredSuspend = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.Function2<? super java.util.@Anno() List<? extends Missing>, ? super kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<? extends java.lang.@Anno() Number>>, ? extends java.lang.Object> inferredSuspendWildcards;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<java.util.@Anno() @SourceAnno() List<java.lang.@Anno() @SourceAnno() String>> inferredLargeFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN<? extends java.util.@Anno() @SourceAnno() List<? extends java.lang.@Anno() @SourceAnno() Number>> inferredLargeFunctionWildcards;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<Missing, kotlin.jvm.functions.@Anno() Function1<kotlin.coroutines.Continuation<? super @Anno() T @SourceAnno() []>, java.lang.Object>> inferredNestedSuspend = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.Map<Missing, kotlin.jvm.functions.@Anno() FunctionN<@Anno() T @SourceAnno() []>> inferredNestedLargeFunction = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() Function2<Missing, kotlin.coroutines.Continuation<?>, java.lang.Object> inferredSuspendNothingReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() @SourceAnno() FunctionN inferredLargeFunctionNothingReturn = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.@Anno() Function3<java.lang.Object, Missing, kotlin.coroutines.Continuation<? super java.util.@SourceAnno() List<? extends java.lang.@Anno() Number>>, java.lang.Object> inferredExplicitSuspendStarInput = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.jvm.functions.@Anno() Function2<? super java.util.@SourceAnno() List<? extends Missing>, ? super kotlin.coroutines.Continuation<java.lang.Object>, ? extends java.lang.Object> inferredExplicitSuspendStarReturn;
+
+    public InferredFieldTypeAnnotationsErrorTypes() {
+        super();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+/**
+ * public final class org/jetbrains/InvariantBox<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class InvariantBox<T extends java.lang.Object> {
+
+    public InvariantBox() {
+        super();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+/**
+ * public final class org/jetbrains/Outer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Outer {
+
+    public Outer() {
+        super();
+    }
+
+    /**
+     * public final class org/jetbrains/Outer.Nested<T#0 (* T *)> : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Nested<T extends java.lang.Object> {
+
+        public Nested() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+/**
+ * public open class org/jetbrains/ResolvedContainer<T#0 (* A *), T#1 (* B *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class ResolvedContainer<A extends java.lang.Object, B extends java.lang.Object> {
+
+    public ResolvedContainer() {
+        super();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+import missing.types.Placeholder;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class org/jetbrains/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}
