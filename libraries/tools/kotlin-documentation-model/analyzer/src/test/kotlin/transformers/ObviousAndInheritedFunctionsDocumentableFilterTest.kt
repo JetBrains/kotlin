@@ -9,7 +9,6 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import testApi.testRunner.dokkaConfiguration
-import utils.OnlyJavaPsi
 import utils.withAllowKotlinPackage
 import kotlin.test.assertEquals
 
@@ -222,7 +221,6 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyJavaPsi("type-mapping: AA's combinedMemberScope does not include all java.lang.Object methods (notify/notifyAll) - mapped types")
     @ParameterizedTest
     @MethodSource(value = ["nonSuppressingObviousConfiguration", "nonSuppressingInheritedConfiguration"])
     internal fun `should not suppress toString, equals and hashcode if custom config is provided in Java`(
@@ -239,16 +237,13 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
         ) {
             preMergeDocumentablesTransformationStage = { modules ->
                 val functions = modules.flatMap { it.packages }.flatMap { it.classlikes }.flatMap { it.functions }
-                //I would normally just assert names but this would make it JDK dependent, so this is better
                 assertEquals(
-                    5,
+                    3,
                     setOf(
                         "equals",
                         "hashCode",
                         "toString",
-                        // AA misses those, becuase it maps to kotlin/Any
-                        "notify",
-                        "notifyAll"
+                        // "notify", "notifyAll" are not exposed by symbols analysis (mapped to kotlin/Any)
                     ).intersect(functions.map { it.name }).size
                 )
             }

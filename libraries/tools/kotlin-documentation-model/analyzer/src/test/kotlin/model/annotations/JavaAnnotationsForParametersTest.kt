@@ -10,7 +10,6 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.utilities.cast
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
-import utils.OnlyJavaPsi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -95,7 +94,6 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
     }
 
     @Test
-    @OnlyJavaPsi("For some reason, JavaPsi mark the bounds as nullable; #4503 will fix")
     fun `function with generic parameter that has annotated bounds`() {
         inlineModelTest(
             """
@@ -113,7 +111,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
         ) {
             with((this / "java" / "Test").cast<DClass>()) {
                 with((this / "foo").cast<DFunction>()) {
-                    val annotations = ((generics.first().bounds.first() as Nullable).inner as GenericTypeConstructor)
+                    val annotations = (generics.first().bounds.first() as GenericTypeConstructor)
                         .extra[Annotations]?.directAnnotations?.flatMap { it.value }
                     val driOfHello = DRI("java", "Hello")
                     val annotationsValues = annotations?.flatMap { it.params.values }?.map { it.toString() }?.toList()
