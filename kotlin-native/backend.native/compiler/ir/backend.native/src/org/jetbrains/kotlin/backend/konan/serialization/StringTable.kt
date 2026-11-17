@@ -25,7 +25,8 @@ internal class ByteArrayStream(val buf: ByteArray) {
         buffer.putInt(value)
     }
 
-    fun readString(length: Int): String {
+    fun readString(): String {
+        val length = readInt()
         val chars = CharArray(length)
         buffer.asCharBuffer().get(chars)
         buffer.position(buffer.position() + chars.size * Char.SIZE_BYTES)
@@ -33,6 +34,7 @@ internal class ByteArrayStream(val buf: ByteArray) {
     }
 
     fun writeString(string: String) {
+        writeInt(string.length)
         val chars = string.toCharArray()
         buffer.asCharBuffer().put(chars)
         buffer.position(buffer.position() + chars.size * Char.SIZE_BYTES)
@@ -74,20 +76,15 @@ internal class StringTable(val indices: Map<String, Int>) {
     val sizeBytes: Int get() = Int.SIZE_BYTES + indices.keys.sumOf { Int.SIZE_BYTES + it.length * Char.SIZE_BYTES }
 
     fun serialize(stream: ByteArrayStream) {
-        val lengths = IntArray(indices.size)
+        stream.writeInt(indices.size)
         val strings = Array(indices.size) { "" }
         indices.forEach { [string, index] ->
-            lengths[index] = string.length
             strings[index] = string
         }
-        stream.writeIntArray(lengths)
         strings.forEach { stream.writeString(it) }
     }
 
     companion object {
-        fun deserialize(stream: ByteArrayStream): Array<String> {
-            val lengths = stream.readIntArray()
-            return Array(lengths.size) { stream.readString(lengths[it]) }
-        }
+        fun deserialize(stream: ByteArrayStream) = Array(stream.readInt()) { stream.readString() }
     }
 }
