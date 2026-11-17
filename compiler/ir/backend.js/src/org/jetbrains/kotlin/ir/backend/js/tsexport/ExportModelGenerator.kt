@@ -222,7 +222,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     }
 
     private val IrValueParameter.hasDefaultValue: Boolean
-        get() = hasDefaultValue { it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER }
+        get() = hasDefaultValue { it.defaultValue != null || it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER }
 
     private fun exportProperty(
         property: IrProperty,

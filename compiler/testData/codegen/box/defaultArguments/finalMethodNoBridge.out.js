@@ -20,12 +20,8 @@ class C1 {
     u = u === VOID ? 20 : u;
     return this.new_C1_todw5y_k$(t + u | 0, $box);
   }
-  bar_y6pwbp_k$(x) {
+  bar_y6pwbp_k$(x = 1) {
     return 'x=' + x;
-  }
-  bar$default_t2ic8p_k$(x, $super) {
-    x = x === VOID ? 1 : x;
-    return $super === VOID ? this.bar_y6pwbp_k$(x) : $super.bar_y6pwbp_k$.call(this, x);
   }
 }
 
@@ -39,8 +35,7 @@ class C2 {
   bar_y6pwbp_k$(x) {
     return 'x=' + x;
   }
-  bar$default_o7tp16_k$(x, $super) {
-    x = x === VOID ? 12 : x;
+  bar$default_1ehwjv_k$(x = 12, $super) {
     return $super === VOID ? this.bar_y6pwbp_k$(x) : $super.bar_y6pwbp_k$.call(this, x);
   }
 }
