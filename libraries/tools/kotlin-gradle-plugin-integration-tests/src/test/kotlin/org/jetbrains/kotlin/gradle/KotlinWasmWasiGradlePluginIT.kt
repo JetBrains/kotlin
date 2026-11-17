@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -30,6 +31,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin.Companion.WASMTIME_VERSION
 
+@MustRunOnChangesInGradle
 @WasmWasiGradlePluginTests
 class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
