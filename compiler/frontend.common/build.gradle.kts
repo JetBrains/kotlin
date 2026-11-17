@@ -7,6 +7,8 @@ plugins {
 
 dependencies {
     api(project(":compiler:config"))
+    api(project(":core:language.syntax"))
+
     api(project(":core:deserialization.common"))
     api(project(":compiler:plugin-api"))
     compileOnly(intellijCore())

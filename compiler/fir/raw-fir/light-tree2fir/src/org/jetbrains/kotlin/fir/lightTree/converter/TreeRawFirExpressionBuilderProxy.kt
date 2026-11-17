@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.SyntaxIdSet
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -430,7 +431,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                     firOperation,
                     leftArgAsFir.annotations,
                     rightArgNode,
-                    leftArgNode?.toTokenId() in unwrappableTokenTypes,
+                    leftArgNode?.toTokenId()?.let { it in unwrappableTokenTypes } == true,
                 ) {
                     getAsFirExpression<FirExpression>(
                         this,
@@ -460,11 +461,11 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     }
 
     companion object {
-        private val unwrappableTokenTypes: Set<SyntaxId> = setOf(
+        private val unwrappableTokenTypes = SyntaxIdSet.of(
             KotlinSyntaxNodeTypeIds.PARENTHESIZED, KotlinSyntaxNodeTypeIds.LABELED_EXPRESSION, KotlinSyntaxNodeTypeIds.ANNOTATED_EXPRESSION
         )
 
-        private val inOperationsId = setOf(KotlinSyntaxTokenIds.IN_MODIFIER, KotlinSyntaxTokenIds.NOT_IN)
+        private val inOperationsId = SyntaxIdSet.of(KotlinSyntaxTokenIds.IN_MODIFIER, KotlinSyntaxTokenIds.NOT_IN)
 
         private val ktTokenToBinaryOperationNameMap: Map<Int, Name> = hashMapOf(
             KotlinSyntaxTokenIds.MUL to OperatorNameConventions.TIMES,
@@ -508,12 +509,12 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             KotlinSyntaxTokenIds.AS_SAFE to FirOperation.SAFE_AS,
         )
 
-        private val incrementOperations: Set<SyntaxId> = setOf(
+        private val incrementOperations = SyntaxIdSet.of(
             KotlinSyntaxTokenIds.PLUSPLUS,
             KotlinSyntaxTokenIds.MINUSMINUS,
         )
 
-        private val comparisonOperationsId: Set<SyntaxId> = hashSetOf(
+        private val comparisonOperationsId = SyntaxIdSet.of(
             KotlinSyntaxTokenIds.LT,
             KotlinSyntaxTokenIds.LTEQ,
             KotlinSyntaxTokenIds.GTEQ,
