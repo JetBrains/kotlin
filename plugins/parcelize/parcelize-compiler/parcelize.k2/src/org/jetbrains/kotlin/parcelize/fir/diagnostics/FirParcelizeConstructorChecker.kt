@@ -18,15 +18,14 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
-import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
+import org.jetbrains.kotlin.parcelize.fir.hasCustomParceler
 import org.jetbrains.kotlin.parcelize.fir.isParcelize
 import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
@@ -41,7 +40,7 @@ object FirParcelizeConstructorChecker : FirConstructorChecker(MppCheckerKind.Pla
         @OptIn(SymbolInternals::class)
         val containingClass = containingClassSymbol.fir
         if (!containingClassSymbol.isParcelize(context.session)
-            || containingClass.hasCustomParceler(context.session)) {
+            || containingClassSymbol.hasCustomParceler(context.session)) {
             return
         }
         if (declaration.valueParameters.isEmpty()) {
@@ -100,13 +99,6 @@ object FirParcelizeConstructorChecker : FirConstructorChecker(MppCheckerKind.Pla
         if (!isParcelize(session)) return false
         return hasCustomParceler(session) || this.resolvedSuperTypeRefs.any {
             it.toRegularClassSymbol(session)?.hasParcelerCompanionInChain(session) == true
-        }
-    }
-
-    private fun FirRegularClassSymbol.hasCustomParceler(session: FirSession): Boolean {
-        val companion = resolvedCompanionObjectSymbol ?: return false
-        return lookupSuperTypes(companion, lookupInterfaces = true, deep = true, useSiteSession = session).any {
-            it.classId in ParcelizeNames.PARCELER_CLASS_IDS
         }
     }
 }
