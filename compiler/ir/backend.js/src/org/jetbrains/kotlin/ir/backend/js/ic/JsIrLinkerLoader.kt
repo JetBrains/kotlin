@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
-import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -96,7 +95,6 @@ internal class LoadedJsIr(
         signatureProvidersImpl.clear()
         linker.drainDeserializationQueue()
         linker.finalizeIrLinkage(irBuiltIns)
-        linker.checkNoUnboundSymbols(linker.symbolTable, "at the end of IR linkage process")
         linker.clear()
     }
 

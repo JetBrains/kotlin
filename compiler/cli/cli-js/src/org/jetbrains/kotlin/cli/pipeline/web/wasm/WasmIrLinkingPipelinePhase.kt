@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -35,7 +34,6 @@ object WasmIrLinkingPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, W
         val allModules = sortedModuleDependencies.allDependencies
         allModules.forEach { it.patchDeclarationParents() }
         irLinker.finalizeIrLinkage(irBuiltIns)
-        irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
         irLinker.clear()
         return WasmLinkedIrPipelineArtifact(
             allModules,
