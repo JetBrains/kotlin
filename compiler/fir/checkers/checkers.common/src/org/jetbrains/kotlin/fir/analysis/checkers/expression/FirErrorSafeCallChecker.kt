@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -22,7 +23,7 @@ object FirErrorSafeCallChecker : FirSafeCallExpressionChecker(MppCheckerKind.Com
     override fun check(expression: FirSafeCallExpression) {
         if (expression.kind == FirSafeCallKind.ErrorSafe && LanguageFeature.RichErrors.isDisabled()) {
             reporter.reportOn(
-                expression.source?.getChild(KotlinSyntaxTokenIds.ERROR_SAFE_ACCESS, depth = 1),
+                withSyntax { expression.source?.getChild(KotlinSyntaxTokenIds.ERROR_SAFE_ACCESS, depth = 1) },
                 FirErrors.UNSUPPORTED_FEATURE,
                 LanguageFeature.RichErrors to context.languageVersionSettings)
         }

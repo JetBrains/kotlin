@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -87,12 +89,12 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         if (symbol.callableId == StandardClassIds.Callables.suspend) {
             if (reference.name != StandardClassIds.Callables.suspend.callableName ||
                 expression.explicitReceiver != null ||
-                expression.formOfSuspendModifierForLambdaOrFun() == null
+                withSyntax { expression.formOfSuspendModifierForLambdaOrFun() } == null
             ) {
                 reporter.reportOn(expression.source, FirErrors.NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND)
             }
         } else if (reference.name == StandardClassIds.Callables.suspend.callableName) {
-            when (expression.formOfSuspendModifierForLambdaOrFun()) {
+            when (withSyntax { expression.formOfSuspendModifierForLambdaOrFun() }) {
                 SuspendCallArgumentKind.FUN -> {
                     reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN_ERROR)
                 }
@@ -106,6 +108,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         }
     }
 
+    context(syntax: FirSyntaxComponent<*>)
     private fun FirQualifiedAccessExpression.formOfSuspendModifierForLambdaOrFun(): SuspendCallArgumentKind? {
         if (this !is FirFunctionCall) return null
         val reference = this.calleeReference
@@ -188,7 +191,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         enclosingSuspendFunction: FirFunctionSymbol<*>,
         calledDeclarationSymbol: FirCallableSymbol<*>,
     ): Boolean {
-        if (expression is FirFunctionCall && isCaseMissedByK1(expression)) {
+        if (expression is FirFunctionCall && withSyntax { isCaseMissedByK1(expression) }) {
             return true
         }
 
@@ -256,6 +259,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
      * an implicit invoke call on a receiver of an extension function type
      * such that the receiver argument is passed as a value argument.
      */
+    context(syntax: FirSyntaxComponent<*>)
     private fun isCaseMissedByK1(expression: FirFunctionCall): Boolean {
         val isInvokeFromExtensionFunctionType = expression is FirImplicitInvokeCall
                 && expression.explicitReceiver?.resolvedType?.isExtensionFunctionType == true

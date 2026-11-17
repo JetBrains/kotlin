@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibi
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
@@ -78,7 +79,9 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         declaration: FirMemberDeclaration,
         source: KtSourceElement,
     ) {
-        val visibilityModifier = source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.getChild(KotlinSyntaxIdSets.VISIBILITY_MODIFIER)
+        val visibilityModifier = withSyntax {
+            source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.getChild(KotlinSyntaxIdSets.VISIBILITY_MODIFIER)
+        }
         if (visibilityModifier != null) return
 
         if (explicitVisibilityIsNotRequired(declaration)) return

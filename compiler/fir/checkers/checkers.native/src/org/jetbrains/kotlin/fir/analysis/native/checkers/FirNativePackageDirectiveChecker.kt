@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -24,11 +25,13 @@ object FirNativePackageDirectiveChecker : FirFileChecker(MppCheckerKind.Common) 
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFile) {
-        declaration.packageDirective.source?.forEachChildOfType(REFERENCE_EXPRESSION_SET, depth = -1) {
-            checkNameAndReport(
-                Name.identifier(it.text.toString()),
-                it
-            )
+        withSyntax {
+            declaration.packageDirective.source?.forEachChildOfType(REFERENCE_EXPRESSION_SET, depth = -1) {
+                checkNameAndReport(
+                    Name.identifier(it.text.toString()),
+                    it
+                )
+            }
         }
     }
 }
