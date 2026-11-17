@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.SyntaxIdSet
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -96,7 +97,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         val kidsArray = getChildrenAsArray()
         for (kid in kidsArray) {
             if (kid == null) break
-            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            if (isIgnoredToken(kid.toTokenId())) continue
             f(kid)
         }
     }
@@ -107,7 +108,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         val container = mutableListOf<T>()
         for (kid in kidsArray) {
             if (kid == null) break
-            if (ignoredTokensId.contains(kid.toTokenId())) continue
+            if (isIgnoredToken(kid.toTokenId())) continue
             f(kid, container)
         }
 
@@ -200,11 +201,13 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     }
 
     companion object {
-        val ignoredTokensId: HashSet<SyntaxId> = hashSetOf(
+        val ignoredTokensId: SyntaxIdSet = SyntaxIdSet.of(
             KotlinSyntaxTokenIds.EOL_COMMENT, KotlinSyntaxTokenIds.BLOCK_COMMENT, KotlinSyntaxTokenIds.DOC_COMMENT, KotlinSyntaxTokenIds.SHEBANG_COMMENT,
             BasicSyntaxElementTypeIds.WHITE_SPACE, BasicSyntaxElementTypeIds.BAD_CHARACTER, BasicSyntaxElementTypeIds.ERROR_ELEMENT,
             KotlinSyntaxTokenIds.SEMICOLON,
-            BasicSyntaxElementTypeIds.NO_ID, // TODO: it should be removed, KT-91283
         )
+
+        // TODO: the `NO_ID` check should be removed, KT-91283
+        fun isIgnoredToken(tokenId: SyntaxId): Boolean = tokenId == BasicSyntaxElementTypeIds.NO_ID || tokenId in ignoredTokensId
     }
 }
