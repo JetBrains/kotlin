@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.isCache
+import org.jetbrains.kotlin.konan.target.isHeaderCache
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.components.irOrFail

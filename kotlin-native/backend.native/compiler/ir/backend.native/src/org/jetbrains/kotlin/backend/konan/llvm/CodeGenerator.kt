@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.ir.OverriddenFunctionInfo
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
-import org.jetbrains.kotlin.backend.konan.isCache
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 
