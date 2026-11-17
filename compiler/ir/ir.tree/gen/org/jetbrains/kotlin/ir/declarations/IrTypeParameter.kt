@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
@@ -20,9 +18,6 @@ import org.jetbrains.kotlin.types.Variance
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeParameter]
  */
 abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: TypeParameterDescriptor
-
     abstract override val symbol: IrTypeParameterSymbol
 
     abstract var variance: Variance

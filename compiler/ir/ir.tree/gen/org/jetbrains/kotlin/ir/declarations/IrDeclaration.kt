@@ -8,17 +8,12 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declaration]
  */
 interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContainer {
-    @ObsoleteDescriptorBasedAPI
-    val descriptor: DeclarationDescriptor
-
     var origin: IrDeclarationOrigin
 
     val factory: IrFactory

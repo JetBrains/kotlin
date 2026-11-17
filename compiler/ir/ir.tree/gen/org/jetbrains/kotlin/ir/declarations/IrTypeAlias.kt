@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
@@ -20,9 +18,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeAlias]
  */
 abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer, IrMetadataSourceOwner {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: TypeAliasDescriptor
-
     abstract override val symbol: IrTypeAliasSymbol
 
     abstract var isActual: Boolean

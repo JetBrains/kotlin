@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 // However, it must be kept in sync with [org.jetbrains.kotlin.ir.generator.IrTree.function].
 sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrDeclarationWithVisibility, IrTypeParametersContainer,
     IrSymbolOwner, IrDeclarationParent, IrReturnTarget, IrMemberWithContainerSource, IrMetadataSourceOwner {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: FunctionDescriptor
-
     abstract override val symbol: IrFunctionSymbol
 
     abstract var isInline: Boolean

@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
@@ -17,9 +15,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constructor]
  */
 abstract class IrConstructor : IrFunction() {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassConstructorDescriptor
-
     abstract override val symbol: IrConstructorSymbol
 
     abstract var isPrimary: Boolean
