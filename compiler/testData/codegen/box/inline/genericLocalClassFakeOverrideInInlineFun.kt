@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, NATIVE, WASM_JS, WASM_WASI
 // MODULE: lib
 // FILE: lib.kt
 open class Base<T>(val value: T) {
