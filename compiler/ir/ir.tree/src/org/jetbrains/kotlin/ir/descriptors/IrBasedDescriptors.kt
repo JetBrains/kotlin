@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -1229,14 +1228,6 @@ private fun IrClassSymbol.toIrBasedDescriptorIfPossible(): ClassDescriptor =
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun IrTypeParameterSymbol.toIrBasedDescriptorIfPossible(): TypeParameterDescriptor =
-    if (isBound) owner.toIrBasedDescriptor() else descriptor
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun IrSimpleFunctionSymbol.toIrBasedDescriptorIfPossible(): FunctionDescriptor =
-    if (isBound) owner.toIrBasedDescriptor() else descriptor
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun IrPropertySymbol.toIrBasedDescriptorIfPossible(): PropertyDescriptor =
     if (isBound) owner.toIrBasedDescriptor() else descriptor
 
 // this is a temporary solution for scripts
