@@ -25,7 +25,6 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.org.jetbrains.annotations)
 
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))

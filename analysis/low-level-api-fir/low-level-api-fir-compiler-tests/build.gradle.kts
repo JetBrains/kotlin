@@ -15,7 +15,6 @@ dependencies {
 
     testFixturesApi(intellijCore())
     testFixturesApi(project(":compiler:fir:resolve"))
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
