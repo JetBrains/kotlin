@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.util.prefixBaseNameIfNot
 import org.jetbrains.kotlin.util.suffixIfNot
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind

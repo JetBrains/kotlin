@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDist
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.konan.target.isFullCache
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary

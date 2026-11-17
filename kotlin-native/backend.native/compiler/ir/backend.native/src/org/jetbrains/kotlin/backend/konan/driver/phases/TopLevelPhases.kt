@@ -40,6 +40,9 @@ import org.jetbrains.kotlin.konan.config.nomain
 import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.isCache
+import org.jetbrains.kotlin.konan.target.isFullCache
+import org.jetbrains.kotlin.konan.target.isHeaderCache
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.util.*
 import org.jetbrains.kotlin.utils.atMostOne
