@@ -13,6 +13,7 @@ import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.IC_EVENT_COLLECTOR
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
+import org.jetbrains.kotlin.buildtools.icevents.encodeIcEvents
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
@@ -85,6 +88,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     } else {
         DoNothingBuildMetricsReporter
     }
+
+    private val icEventCollector = IcEventCollectorImpl()
 
     // the files are backed up in the task action before any changes to the outputs
     private fun initializeBackup(log: KotlinLogger): TaskOutputsBackup? = if (parameters.snapshotsDir.isPresent) {
@@ -186,6 +191,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             workArguments,
             metrics,
             buildSession.kotlinToolchains.compilerReleaseVersion(),
+            icEventCollector,
         )
         val backup = initializeBackup(log)
 
@@ -261,6 +267,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     .reportToIde(it, workArguments.kotlinPluginVersion, logger = printingLogger)
             }
             metrics.endMeasure(RUN_COMPILATION_IN_WORKER)
+            val icEvents = icEventCollector?.collectedEvents ?: emptyList()
+            writeIcEvents(icEvents, printingLogger)
             val result =
                 TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo, icLogLines = printingLogger.capturedLines)
             TaskExecutionResults[workArguments.taskPath] = result
@@ -269,6 +277,21 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             // Replay buffered compiler diagnostics on the worker thread (see ProblemsApiCompilerMessageRenderer).
             // Throws an exception on error, so should be last in `finally` block
             compilerMessageRenderer.replayTo(compilerDiagnosticsProblemsReporter)
+        }
+    }
+
+    private fun writeIcEvents(events: List<IcEvent>, log: KotlinLogger) {
+        if (events.isEmpty()) return
+        val outputDir = workArguments.incrementalCompilationEnvironment?.buildDir?.resolve("json") ?: return
+
+        runCatching {
+            val fileName = "${parameters.buildIdService.get().buildId}.${taskPath.substringAfterLast(':')}.ic-events.json"
+            outputDir.mkdirs()
+            File(outputDir, fileName).writeText(encodeIcEvents(events))
+        }.onFailure { e ->
+            log.warn(
+                "Failed to write IC event files to '${outputDir.absolutePath}': ${e.stackTraceToString()}"
+            )
         }
     }
 
@@ -302,6 +325,7 @@ private fun createRunner(
     workArguments: GradleKotlinCompilerWorkArguments,
     metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     compilerVersion: KotlinReleaseVersion,
+    icEventCollector: IcEventCollectorImpl?,
 ): BtaCompilerRunner<*> {
     val icEnv = workArguments.incrementalCompilationEnvironment
     val outputDirs = workArguments.outputFiles.map(File::toPath)
@@ -309,6 +333,12 @@ private fun createRunner(
     val daemonJvmArgs = workArguments.compilerExecutionSettings.daemonJvmArgs ?: emptyList()
     val compilerArgumentsLogLevel = workArguments.compilerArgumentsLogLevel.toBtaCompilerArgumentsLogLevel()
     val generateCompilerRefIndex = workArguments.compilerExecutionSettings.generateCompilerRefIndex
+
+    val safeIcEventCollector = if (compilerVersion >= IC_EVENT_COLLECTOR.availableSinceVersion) {
+        icEventCollector
+    } else {
+        null
+    }
 
     return when (toolchain) {
         BtaToolchain.JVM -> BtaCompilerRunner(
@@ -320,6 +350,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            safeIcEventCollector,
         )
         BtaToolchain.JS_COMPILATION -> BtaCompilerRunner(
             metrics,
@@ -330,6 +361,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            safeIcEventCollector,
         )
         BtaToolchain.JS_LINKING -> BtaCompilerRunner(
             metrics,
@@ -338,6 +370,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            safeIcEventCollector,
         )
         BtaToolchain.WASM_COMPILATION -> BtaCompilerRunner(
             metrics,
@@ -348,6 +381,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            safeIcEventCollector,
         )
         BtaToolchain.WASM_LINKING -> BtaCompilerRunner(
             metrics,
@@ -356,6 +390,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            safeIcEventCollector,
         )
         BtaToolchain.METADATA -> BtaCompilerRunner(
             metrics,
@@ -364,6 +399,7 @@ private fun createRunner(
             daemonJvmArgs,
             compilerArgumentsLogLevel,
             generateCompilerRefIndex,
+            safeIcEventCollector,
         )
     }
 }
