@@ -8,8 +8,6 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.plugin
 internal object InternalConfiguration {
     private const val ALLOW_KOTLIN_PACKAGE_PROPERTY = "org.jetbrains.dokka.analysis.allowKotlinPackage"
 
-    private const val ENABLE_EXPERIMENTAL_SYMBOLS_JAVA_ANALYSIS = "org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis"
-
     /**
      * Allow analysing code in the 'kotlin' package
      *
@@ -19,14 +17,6 @@ internal object InternalConfiguration {
      */
     val allowKotlinPackage: Boolean
         get() = getBooleanProperty(ALLOW_KOTLIN_PACKAGE_PROPERTY)
-
-    /**
-     * Enable java analysis using [DefaultSymbolToDocumentableTranslator][org.jetbrains.dokka.analysis.kotlin.symbols.translators.DefaultSymbolToDocumentableTranslator]
-     *
-     * Default: false
-     */
-    val enableExperimentalSymbolsJavaAnalysis: Boolean
-        get() = getBooleanProperty(ENABLE_EXPERIMENTAL_SYMBOLS_JAVA_ANALYSIS)
 
     private fun getBooleanProperty(propertyName: String): Boolean {
         return System.getProperty(propertyName) in setOf("1", "true")
