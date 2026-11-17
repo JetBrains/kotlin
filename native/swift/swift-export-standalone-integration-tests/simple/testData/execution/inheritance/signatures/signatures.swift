@@ -39,6 +39,28 @@ func swiftOverridesEachKotlinOverloadSeparately() throws {
 }
 
 @Test
+func swiftOverridesEachKotlinOverloadDifferingInTypeArgumentsSeparately() throws {
+    class SwiftOverloads: TypeArgumentOverloads {
+        override func foo(items: [Int32]) -> String { "swift-ints(\(items.reduce(0, +)))" }
+        override func foo(items: [String]) -> String { "swift-strings(\(items.joined()))" }
+        override func bar(arg: @escaping (Int32) -> String) -> String { "swift-bar-int(\(arg(42)))" }
+        override func bar(arg: @escaping (String) -> String) -> String { "swift-bar-string(\(arg("s")))" }
+    }
+
+    let o = SwiftOverloads()
+    #expect(callFooInts(o: o) == "swift-ints(6)")
+    #expect(callFooStrings(o: o) == "swift-strings(ab)")
+    #expect(callBarInt(o: o) == "swift-bar-int(int:42)")
+    #expect(callBarString(o: o) == "swift-bar-string(string:s)")
+
+    let k = TypeArgumentOverloads()
+    #expect(callFooInts(o: k) == "kotlin-ints(6)")
+    #expect(callFooStrings(o: k) == "kotlin-strings(ab)")
+    #expect(callBarInt(o: k) == "kotlin-bar-int(int:1)")
+    #expect(callBarString(o: k) == "kotlin-bar-string(string:k)")
+}
+
+@Test
 func swiftOverridesEachKotlinInterfaceOverloadSeparately() throws {
     // Same as above for overloads declared in an interface, whose reverse bridges are installed into
     // the interface table rather than the vtable.
