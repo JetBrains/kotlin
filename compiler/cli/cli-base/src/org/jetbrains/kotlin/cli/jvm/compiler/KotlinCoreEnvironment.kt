@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION", "DEPRECATION_ERROR")
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR", "UnstableApiUsage")
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
@@ -20,7 +20,6 @@ import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
@@ -35,7 +34,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNameHelper
 import com.intellij.psi.impl.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.JavaClassSupers
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
@@ -274,15 +272,6 @@ class KotlinCoreEnvironment private constructor(
         project.setupHighestLanguageLevel()
     }
 
-    /** Scope-based factory for the K1 analysis entry points only; K2 code uses the [JvmClasspath] overload. */
-    @K1Deprecation
-    fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
-        return JvmPackagePartProvider(configuration.languageVersionSettings) { it in scope }.apply {
-            addRoots(initialRoots, configuration)
-            packagePartProviders += this
-        }
-    }
-
     fun createPackagePartProvider(classpath: JvmClasspath): JvmPackagePartProvider {
         return JvmPackagePartProvider(configuration.languageVersionSettings, classpath).apply {
             addRoots(initialRoots, configuration)
@@ -372,8 +361,6 @@ class KotlinCoreEnvironment private constructor(
     fun getSourceFiles(): List<KtFile> = sourceFiles
 
     companion object {
-        private val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
-
         @PublishedApi
         internal val APPLICATION_LOCK = Any()
 
@@ -447,16 +434,6 @@ class KotlinCoreEnvironment private constructor(
             return KotlinCoreEnvironment(projectEnvironment, initialConfiguration, extensionConfigs)
         }
 
-        @TestOnly
-        @CoreEnvironmentDeprecation
-        fun createProjectEnvironmentForTests(projectDisposable: Disposable, configuration: CompilerConfiguration): ProjectEnvironment {
-            val appEnv = createApplicationEnvironment(
-                projectDisposable,
-                KotlinCoreApplicationEnvironmentMode.UnitTest,
-            )
-            return ProjectEnvironment(projectDisposable, appEnv, configuration)
-        }
-
         // used in the daemon for jar cache cleanup
         @CoreEnvironmentDeprecation
         val applicationEnvironment: KotlinCoreApplicationEnvironment? get() = ourApplicationEnvironment
@@ -510,11 +487,11 @@ class KotlinCoreEnvironment private constructor(
                         environmentMode,
                     )
                     ourProjectCount = 0
-                    Disposer.register(disposable, Disposable {
+                    Disposer.register(disposable) {
                         synchronized(APPLICATION_LOCK) {
                             ourApplicationEnvironment = null
                         }
-                    })
+                    }
                 }
                 try {
                     val disposeAppEnv =
