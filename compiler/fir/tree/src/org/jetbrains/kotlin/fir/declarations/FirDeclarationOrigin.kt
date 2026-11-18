@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.declarations.utils.FirScriptCustomizationKind
+import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 
 sealed class FirDeclarationOrigin(
     private val displayName: String? = null,
@@ -135,6 +136,12 @@ sealed class FirDeclarationOrigin(
         }
 
         override fun hashCode(): Int = key.hashCode()
+
+        class SharedCompanion
+        /** Must only be created by compiler. */
+        @FirExtensionApiInternals constructor(
+            val keys: Set<GeneratedDeclarationKey>,
+        ) : FirDeclarationOrigin(displayName = "Plugin.Shared[$keys]", generated = true)
     }
 
     override fun toString(): String {
@@ -159,6 +166,7 @@ val FirDeclarationOrigin.isLazyResolvable: Boolean
         is FirDeclarationOrigin.WrappedIntegerOperator,
         is FirDeclarationOrigin.IntersectionOverride,
         is FirDeclarationOrigin.ScriptCustomization,
+        is FirDeclarationOrigin.Plugin.SharedCompanion,
 
             // Synthetic Java declarations (like fake overrides) might have an implicit return type,
             // so lazy resolution is required to calculate it

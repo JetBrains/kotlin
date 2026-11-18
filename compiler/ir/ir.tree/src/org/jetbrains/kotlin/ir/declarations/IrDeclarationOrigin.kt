@@ -157,6 +157,41 @@ interface IrDeclarationOrigin {
 
         override fun hashCode(): Int = pluginKey.hashCode()
     }
+
+    /**
+     * [pluginKeys] may be empty if declaration with this origin was deserialized from klib
+     */
+    class SharedByPlugins private constructor(
+        val pluginIds: Set<String>,
+        val pluginKeys: Set<GeneratedDeclarationKey>,
+    ) : IrDeclarationOrigin {
+        constructor(pluginKeys: Set<GeneratedDeclarationKey>) : this(
+            pluginKeys.mapTo(mutableSetOf()) { it::class.qualifiedName!! },
+            pluginKeys
+        )
+
+        companion object {
+            fun fromSerializedString(name: String): SharedByPlugins? {
+                val pluginIds = name.removeSurrounding("SHARED[", "]").takeIf { it != name } ?: return null
+                return SharedByPlugins(pluginIds.split(",").toSet(), pluginKeys = emptySet())
+            }
+        }
+
+        override val name: String
+            get() = "SHARED[${pluginIds.joinToString(",")}]"
+
+        override fun toString(): String = name
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is SharedByPlugins) return false
+            return pluginIds == other.pluginIds && pluginKeys == other.pluginKeys
+        }
+
+        override fun hashCode(): Int {
+            return 31 * pluginIds.hashCode() + pluginKeys.hashCode()
+        }
+    }
 }
 
 class IrDeclarationOriginImpl(
@@ -192,4 +227,16 @@ class IrDeclarationOriginImpl(
         operator fun provideDelegate(thisRef: Any?, property: KProperty<*>) : Lazy<IrDeclarationOrigin> =
             lazy { IrDeclarationOriginImpl(property.name, isSynthetic = true) }
     }
+}
+
+inline fun IrDeclarationOrigin.toPluginKey(predicate: (GeneratedDeclarationKey) -> Boolean): GeneratedDeclarationKey? {
+    return when (this) {
+        is IrDeclarationOrigin.GeneratedByPlugin -> pluginKey?.takeIf { predicate(it) }
+        is IrDeclarationOrigin.SharedByPlugins -> pluginKeys.singleOrNull { predicate(it) }
+        else -> null
+    }
+}
+
+inline fun <reified T : GeneratedDeclarationKey> IrDeclarationOrigin.toPluginKey(): GeneratedDeclarationKey? {
+    return toPluginKey { it is T }
 }

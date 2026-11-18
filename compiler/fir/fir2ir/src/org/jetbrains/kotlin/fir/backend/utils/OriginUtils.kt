@@ -47,6 +47,7 @@ fun FirClass.irOrigin(): IrDeclarationOrigin = when {
     c.firProvider.getFirClassifierContainerFileIfAny(symbol) != null -> IrDeclarationOrigin.DEFINED
     else -> when (val origin = origin) {
         is FirDeclarationOrigin.Plugin -> GeneratedByPlugin(origin.key)
+        is FirDeclarationOrigin.Plugin.SharedCompanion -> IrDeclarationOrigin.SharedByPlugins(origin.keys)
         is FirDeclarationOrigin.FromOtherReplSnippet -> IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
         else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
     }
@@ -64,6 +65,7 @@ fun FirDeclaration?.computeIrOrigin(
     val firOrigin = origin
     val computed = when {
         firOrigin is FirDeclarationOrigin.Plugin -> GeneratedByPlugin(firOrigin.key)
+        firOrigin is FirDeclarationOrigin.Plugin.SharedCompanion -> IrDeclarationOrigin.SharedByPlugins(firOrigin.keys)
 
         firOrigin is FirDeclarationOrigin.Synthetic.ReplContainerClass -> IrDeclarationOrigin.SCRIPT_CLASS
         firOrigin is FirDeclarationOrigin.Synthetic.ReplEvalFunction -> IrDeclarationOrigin.REPL_EVAL_FUNCTION
@@ -82,6 +84,7 @@ fun FirDeclaration?.computeIrOrigin(
                 IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             }
             symbol.origin is FirDeclarationOrigin.Plugin -> GeneratedByPlugin((symbol.origin as FirDeclarationOrigin.Plugin).key)
+            symbol.origin is FirDeclarationOrigin.Plugin.SharedCompanion -> IrDeclarationOrigin.SharedByPlugins((symbol.origin as FirDeclarationOrigin.Plugin.SharedCompanion).keys)
             else -> null
         }
         else -> null
