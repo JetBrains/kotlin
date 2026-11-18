@@ -848,6 +848,7 @@ class IrDeclarationDeserializer(
     private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOrigin {
         val originName = libraryFile.string(protoName)
         return IrDeclarationOrigin.GeneratedByPlugin.fromSerializedString(originName)
+            ?: IrDeclarationOrigin.SharedByPlugins.fromSerializedString(originName)
             ?: declarationOriginIndex[originName]
             ?: unknownDeclarationOriginCache.getOrPut(originName) { IrDeclarationOriginImpl(originName) }
     }

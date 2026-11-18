@@ -170,6 +170,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     }
 
     is FirDeclarationOrigin.Plugin -> KaSymbolOrigin.PLUGIN
+    is FirDeclarationOrigin.Plugin.SharedCompanion -> KaSymbolOrigin.PLUGIN
     is FirDeclarationOrigin.SubstitutionOverride -> KaSymbolOrigin.SUBSTITUTION_OVERRIDE
     FirDeclarationOrigin.DynamicScope -> KaSymbolOrigin.JS_DYNAMIC
     is FirDeclarationOrigin.ScriptCustomization -> KaSymbolOrigin.PLUGIN
