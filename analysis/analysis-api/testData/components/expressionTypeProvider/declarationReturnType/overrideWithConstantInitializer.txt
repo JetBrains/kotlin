@@ -5,9 +5,9 @@ Base@(1,1)
   longFunction@(6,5) : kotlin.Long
   anyFunction@(7,5) : kotlin.Any
 Derived@(10,1)
-  long@(11,5) : kotlin.Int
-  any@(12,5) : kotlin.Int
-  getter@(13,5) : kotlin.Int
-    KtPropertyAccessor@(13,25) : kotlin.Int
-  longFunction@(14,5) : kotlin.Int
-  anyFunction@(15,5) : kotlin.Int
+  long@(11,5) : kotlin.Int (by PSI)
+  any@(12,5) : kotlin.Int (by PSI)
+  getter@(13,5) : kotlin.Int (by PSI)
+    KtPropertyAccessor@(13,25) : kotlin.Int (by PSI)
+  longFunction@(14,5) : kotlin.Int (by PSI)
+  anyFunction@(15,5) : kotlin.Int (by PSI)

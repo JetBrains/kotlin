@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -70,6 +71,8 @@ internal class KaFirValueParameterSymbol private constructor(
 
     override val returnType: KaType
         get() = withValidityAssertion {
+            backingPsi?.inferReturnTypeByPsi(analysisSession = analysisSession)?.let { return it }
+
             val returnType = firSymbol.resolvedReturnType
             if (firSymbol.isVararg) {
                 builder.typeBuilder.buildKtType(returnType.varargElementType())

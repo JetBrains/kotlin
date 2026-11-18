@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPsiSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -415,14 +416,11 @@ internal fun KaFirKtBasedSymbol<KtTypeParameterListOwner, *>.createKaTypeParamet
         }
     }
 
-internal fun KaFirKtBasedSymbol<KtDeclarationWithBody, FirCallableSymbol<*>>.createReturnType(): KaType {
-    val backingPsi = backingPsi
-    if (backingPsi?.hasBlockBody() == true && !backingPsi.hasDeclaredReturnType()) {
-        return analysisSession.builtinTypes.unit
-    }
-
-    return firSymbol.returnType(builder)
-}
+/**
+ * Returns the return type of the declaration, inferred from its PSI if possible.
+ */
+internal fun KaFirKtBasedSymbol<KtDeclaration, FirCallableSymbol<*>>.createReturnType(): KaType =
+    backingPsi?.inferReturnTypeByPsi(analysisSession = analysisSession) ?: firSymbol.returnType(builder)
 
 /**
  * Callable from libraries don't have the override flag as it is not preserved in the metadata

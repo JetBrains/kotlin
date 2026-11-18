@@ -15,42 +15,43 @@ import org.jetbrains.kotlin.psi.psiUtil.inferClassIdByPsi
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 
 /**
- * Optimization: try to determine the return type of the declaration (function, property, or property getter)
- * by inspecting its body expression if it has an implicit return type.
+ * Optimization: try to determine the return type of the declaration by its PSI if the type is implicit, so FIR doesn't have to be
+ * built and resolved.
  */
 context(analysisSession: KaFirSession)
-internal fun KtDeclarationWithReturnType.inferReturnTypeByPsi(): KaType? {
-    fun KtDeclarationWithReturnType.isPropertyGetter() = this is KtPropertyAccessor && isGetter
-
-    fun KtDeclarationWithReturnType.hasDeclaredReturnType() = when (this) {
-        is KtNamedFunction -> typeReference != null
-        is KtProperty -> typeReference != null || getter?.typeReference != null
-        is KtPropertyAccessor -> typeReference != null || property.typeReference != null
-        else -> false
-    }
-
-    fun KtDeclarationWithReturnType.isEmptyFunction() =
-        this is KtNamedFunction && hasBlockBody() && bodyBlockExpression?.statements?.isEmpty() == true
-
-    if (this !is KtNamedFunction && this !is KtProperty && !isPropertyGetter()) return null
-    if (hasDeclaredReturnType()) return null
-
-    if (isEmptyFunction()) return analysisSession.builtinTypes.unit
-
-    // An anonymous function takes its return type from the expected type, like a lambda
-    if (this is KtNamedFunction && isAnonymous) return null
-
+internal fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
     val singleExpression = when (this) {
-        is KtNamedFunction -> bodyExpression
-        is KtProperty -> initializer ?: getter?.bodyExpression
-        // A getter has the type of its property, which FIR infers from the initializer first
-        is KtPropertyAccessor -> property.initializer ?: bodyExpression
-        else -> null
+        is KtNamedFunction -> when {
+            hasDeclaredReturnType() -> return null
+
+            // A function with a block body returns `Unit` unless it declares the return type
+            hasBlockBody() -> return analysisSession.builtinTypes.unit
+
+            // An anonymous function takes its return type from the expected type, like a lambda
+            isAnonymous -> return null
+
+            else -> bodyExpression
+        }
+
+        // FIR takes the type of the initializer first
+        is KtProperty -> when {
+            typeReference != null || getter?.typeReference != null -> return null
+            else -> initializer ?: getter?.bodyExpression
+        }
+
+        // A setter parameter without a declared type has the type of its property
+        is KtParameter -> return when (val accessor = ownerFunction) {
+            is KtPropertyAccessor if typeReference == null -> accessor.property.inferReturnTypeByPsi()
+            else -> null
+        }
+
+        else -> return null
     }
 
     // Depending on the loop, FIR infers an error type or Unit for a declaration with a loop body
     if (singleExpression?.unwrapParenthesesLabelsAndAnnotations() is KtLoopExpression) return null
 
+    // The body of a declaration with an implicit type has no expected type
     return singleExpression?.getExpressionTypeByPsiOrNull(noExpectedType = true)
 }
 
