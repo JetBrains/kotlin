@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -248,7 +248,6 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
                 if (currentDeclarationIsAbstractOrInterfaceMethod) {
                     declaration.virtualBridgeFunction = virtualBridgeFunction
-                    return null
                 }
 
                 when {
@@ -257,7 +256,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                     // we should generate an implementation bridge containing the logic specific to this class.
                     // To minimize output, we could skip generating such bridge functions for non-interface suspend functions
                     // and the rest classes from the same class hierarchy, since the bridge will be inherited through a prototype chain
-                    declaration.isMemberOfFirstClassOverridingTheOriginalDeclaration -> listOf(
+                    declaration.isMemberOfFirstClassOverridingTheOriginalDeclaration && !currentDeclarationIsAbstractOrInterfaceMethod -> listOf(
                         declaration,
                         generatePromisifiedWrapper(declaration, overriddenSymbols = listOf(promisifiedWrapperFunction.symbol)),
                         generateImplementorBridgeFunction(

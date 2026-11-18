@@ -10,6 +10,7 @@ declare namespace JS_TESTS {
         }
         abstract class Base implements foo.ValueProvider {
             constructor();
+            abstract value(x?: number): Promise<string>;
             readonly __doNotUseOrImplementIt: foo.ValueProvider["__doNotUseOrImplementIt"];
         }
         namespace Base {
