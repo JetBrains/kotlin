@@ -213,7 +213,7 @@
      CONSTRUCTOR visibility:public returnType:<root>.SameContainer [primary]
        BLOCK_BODY
          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-@@ -122,88 +265,441 @@
+@@ -122,108 +265,441 @@
                    ARG resetAtomic: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                        BLOCK_BODY
@@ -349,6 +349,8 @@
 -              receiver: GET_VAR '<this>: <root>.SameContainer declared in <root>.SameContainer.<get-delegatedWithExplicitThis>' type=<root>.SameContainer origin=null
 -      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedWithExplicitThis> visibility:public modality:FINAL returnType:kotlin.Unit
 -        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainer
+-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+-        correspondingProperty: PROPERTY name:delegatedWithExplicitThis visibility:public modality:FINAL [delegated,var]
 +          RETURN type=kotlin.Nothing from='public final fun <get-delegatedExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedExplicit$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=null
@@ -367,7 +369,15 @@
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedExplicit> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
 +        VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
 +        correspondingProperty: PROPERTY name:delegatedExplicit visibility:public modality:FINAL [delegated,var]
-+        BLOCK_BODY
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <set-delegatedWithExplicitThis> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainer'
+-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicProperty$volatile type:kotlin.Int visibility:private declared in <root>.SameContainer' type=kotlin.Unit origin=null
+-              receiver: GET_VAR '<this>: <root>.SameContainer declared in <root>.SameContainer.<set-delegatedWithExplicitThis>' type=<root>.SameContainer origin=null
+-              value: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainer.<set-delegatedWithExplicitThis>' type=kotlin.Int origin=null
+-    PROPERTY name:delegatedWithThis visibility:public modality:FINAL [delegated,var]
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedWithThis> visibility:public modality:FINAL returnType:kotlin.Int
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainer
+-        correspondingProperty: PROPERTY name:delegatedWithThis visibility:public modality:FINAL [delegated,var]
 +          RETURN type=kotlin.Nothing from='public final fun <set-delegatedExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedExplicit$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=null
@@ -390,7 +400,14 @@
 +          CALL 'private final fun <get-atomicInt> (): kotlinx.atomicfu.AtomicInt declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-secondDelegated> visibility:public modality:FINAL returnType:kotlin.Int [companion]
 +        correspondingProperty: PROPERTY name:secondDelegated visibility:public modality:FINAL [delegated,var]
-+        BLOCK_BODY
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <get-delegatedWithThis> (): kotlin.Int declared in <root>.SameContainer'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicProperty$volatile type:kotlin.Int visibility:private declared in <root>.SameContainer' type=kotlin.Int origin=null
+-              receiver: GET_VAR '<this>: <root>.SameContainer declared in <root>.SameContainer.<get-delegatedWithThis>' type=<root>.SameContainer origin=null
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedWithThis> visibility:public modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainer
+-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+-        correspondingProperty: PROPERTY name:delegatedWithThis visibility:public modality:FINAL [delegated,var]
 +          RETURN type=kotlin.Nothing from='public final fun <get-secondDelegated> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:secondDelegated$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=null
@@ -409,7 +426,15 @@
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-secondDelegated> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
 +        VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
 +        correspondingProperty: PROPERTY name:secondDelegated visibility:public modality:FINAL [delegated,var]
-+        BLOCK_BODY
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <set-delegatedWithThis> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainer'
+-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicProperty$volatile type:kotlin.Int visibility:private declared in <root>.SameContainer' type=kotlin.Unit origin=null
+-              receiver: GET_VAR '<this>: <root>.SameContainer declared in <root>.SameContainer.<set-delegatedWithThis>' type=<root>.SameContainer origin=null
+-              value: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainer.<set-delegatedWithThis>' type=kotlin.Int origin=null
+-  CLASS CLASS name:SameContainerCompanionBlock modality:FINAL visibility:public superTypes:[kotlin.Any]
+-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.SameContainerCompanionBlock
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:atomicBool visibility:private modality:FINAL [val]
+-      FIELD ATOMICFU_GENERATED_FIELD name:atomicBool type:java.util.concurrent.atomic.AtomicBoolean visibility:private [final,static]
 +          RETURN type=kotlin.Nothing from='public final fun <set-secondDelegated> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:secondDelegated$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=null
@@ -428,11 +453,19 @@
 +              ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainerCompanionBlock.<set-secondDelegated>' type=kotlin.Int origin=null
 +    PROPERTY name:secondDelegatedExplicit visibility:public modality:FINAL [delegated,var]
 +      FIELD PROPERTY_DELEGATE name:secondDelegatedExplicit$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]
-+        EXPRESSION_BODY
+         EXPRESSION_BODY
+-          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Boolean) declared in java.util.concurrent.atomic.AtomicBoolean' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+-            ARG value: CONST Boolean type=kotlin.Boolean value=false
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-atomicBool> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicBoolean [companion]
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:atomicBool visibility:private modality:FINAL [val]
 +          CALL 'private final fun <get-atomicInt> (): kotlinx.atomicfu.AtomicInt declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-secondDelegatedExplicit> visibility:public modality:FINAL returnType:kotlin.Int [companion]
 +        correspondingProperty: PROPERTY name:secondDelegatedExplicit visibility:public modality:FINAL [delegated,var]
-+        BLOCK_BODY
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-atomicBool> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>.SameContainerCompanionBlock'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicBool type:java.util.concurrent.atomic.AtomicBoolean visibility:private [final,static] declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:atomicInt visibility:private modality:FINAL [val]
+-      FIELD ATOMICFU_GENERATED_FIELD name:atomicInt type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
 +          RETURN type=kotlin.Nothing from='public final fun <get-secondDelegatedExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:secondDelegatedExplicit$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=null
@@ -470,12 +503,20 @@
 +              ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainerCompanionBlock.<set-secondDelegatedExplicit>' type=kotlin.Int origin=null
 +    PROPERTY name:delegatedBool visibility:public modality:FINAL [delegated,var]
 +      FIELD PROPERTY_DELEGATE name:delegatedBool$delegate type:kotlinx.atomicfu.AtomicBoolean visibility:private [final]
-+        EXPRESSION_BODY
+         EXPRESSION_BODY
+-          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-            ARG value: CONST Int type=kotlin.Int value=0
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-atomicInt> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger [companion]
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:atomicInt visibility:private modality:FINAL [val]
 +          CALL 'private final fun <get-atomicBool> (): kotlinx.atomicfu.AtomicBoolean declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicBoolean origin=GET_PROPERTY
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedBool> visibility:public modality:FINAL returnType:kotlin.Boolean
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
 +        correspondingProperty: PROPERTY name:delegatedBool visibility:public modality:FINAL [delegated,var]
-+        BLOCK_BODY
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicInt type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:atomicReference visibility:private modality:FINAL [val]
+-      FIELD ATOMICFU_GENERATED_FIELD name:atomicReference type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static]
 +          RETURN type=kotlin.Nothing from='public final fun <get-delegatedBool> (): kotlin.Boolean declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Boolean declared in kotlinx.atomicfu.AtomicBoolean' type=kotlin.Boolean origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedBool$delegate type:kotlinx.atomicfu.AtomicBoolean visibility:private [final] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicBoolean origin=null
@@ -524,12 +565,18 @@
 +              ARG value: GET_VAR '<set-?>: kotlin.Boolean declared in <root>.SameContainerCompanionBlock.<set-delegatedBool>' type=kotlin.Boolean origin=null
 +    PROPERTY name:delegatedInt visibility:public modality:FINAL [delegated,var]
 +      FIELD PROPERTY_DELEGATE name:delegatedInt$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final]
-+        EXPRESSION_BODY
+         EXPRESSION_BODY
+-          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Any) declared in java.util.concurrent.atomic.AtomicReference' type=java.util.concurrent.atomic.AtomicReference origin=null
+-            ARG value: CONST Null type=kotlin.Nothing? value=null
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-atomicReference> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReference [companion]
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:atomicReference visibility:private modality:FINAL [val]
 +          CALL 'private final fun <get-atomicInt> (): kotlinx.atomicfu.AtomicInt declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedInt> visibility:public modality:FINAL returnType:kotlin.Int
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
 +        correspondingProperty: PROPERTY name:delegatedInt visibility:public modality:FINAL [delegated,var]
-+        BLOCK_BODY
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-atomicReference> (): java.util.concurrent.atomic.AtomicReference declared in <root>.SameContainerCompanionBlock'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicReference type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static] declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicReference origin=null
 +          RETURN type=kotlin.Nothing from='public final fun <get-delegatedInt> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedInt$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=null
@@ -552,18 +599,9 @@
 +                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.<get-delegatedInt>.delegatedInt' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedInt> visibility:public modality:FINAL returnType:kotlin.Unit
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
-         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
--        correspondingProperty: PROPERTY name:delegatedWithExplicitThis visibility:public modality:FINAL [delegated,var]
++        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
 +        correspondingProperty: PROPERTY name:delegatedInt visibility:public modality:FINAL [delegated,var]
-         BLOCK_BODY
--          RETURN type=kotlin.Nothing from='public final fun <set-delegatedWithExplicitThis> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainer'
--            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicProperty$volatile type:kotlin.Int visibility:private declared in <root>.SameContainer' type=kotlin.Unit origin=null
--              receiver: GET_VAR '<this>: <root>.SameContainer declared in <root>.SameContainer.<set-delegatedWithExplicitThis>' type=<root>.SameContainer origin=null
--              value: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainer.<set-delegatedWithExplicitThis>' type=kotlin.Int origin=null
--    PROPERTY name:delegatedWithThis visibility:public modality:FINAL [delegated,var]
--      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedWithThis> visibility:public modality:FINAL returnType:kotlin.Int
--        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainer
--        correspondingProperty: PROPERTY name:delegatedWithThis visibility:public modality:FINAL [delegated,var]
++        BLOCK_BODY
 +          RETURN type=kotlin.Nothing from='public final fun <set-delegatedInt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedInt$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=null
@@ -592,12 +630,7 @@
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedIntExplicit> visibility:public modality:FINAL returnType:kotlin.Int
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
 +        correspondingProperty: PROPERTY name:delegatedIntExplicit visibility:public modality:FINAL [delegated,var]
-         BLOCK_BODY
--          RETURN type=kotlin.Nothing from='public final fun <get-delegatedWithThis> (): kotlin.Int declared in <root>.SameContainer'
--            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicProperty$volatile type:kotlin.Int visibility:private declared in <root>.SameContainer' type=kotlin.Int origin=null
--              receiver: GET_VAR '<this>: <root>.SameContainer declared in <root>.SameContainer.<get-delegatedWithThis>' type=<root>.SameContainer origin=null
--      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedWithThis> visibility:public modality:FINAL returnType:kotlin.Unit
--        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainer
++        BLOCK_BODY
 +          RETURN type=kotlin.Nothing from='public final fun <get-delegatedIntExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedIntExplicit$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=null
@@ -620,18 +653,9 @@
 +                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.<get-delegatedIntExplicit>.delegatedIntExplicit' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedIntExplicit> visibility:public modality:FINAL returnType:kotlin.Unit
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
-         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
--        correspondingProperty: PROPERTY name:delegatedWithThis visibility:public modality:FINAL [delegated,var]
++        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
 +        correspondingProperty: PROPERTY name:delegatedIntExplicit visibility:public modality:FINAL [delegated,var]
-         BLOCK_BODY
--          RETURN type=kotlin.Nothing from='public final fun <set-delegatedWithThis> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainer'
--            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicProperty$volatile type:kotlin.Int visibility:private declared in <root>.SameContainer' type=kotlin.Unit origin=null
--              receiver: GET_VAR '<this>: <root>.SameContainer declared in <root>.SameContainer.<set-delegatedWithThis>' type=<root>.SameContainer origin=null
--              value: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainer.<set-delegatedWithThis>' type=kotlin.Int origin=null
--  CLASS CLASS name:SameContainerCompanionBlock modality:FINAL visibility:public superTypes:[kotlin.Any]
--    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.SameContainerCompanionBlock
--    PROPERTY ATOMICFU_GENERATED_PROPERTY name:atomicProperty visibility:private modality:FINAL [val]
--      FIELD ATOMICFU_GENERATED_FIELD name:atomicProperty type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
++        BLOCK_BODY
 +          RETURN type=kotlin.Nothing from='public final fun <set-delegatedIntExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedIntExplicit$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=null
@@ -655,18 +679,12 @@
 +              ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainerCompanionBlock.<set-delegatedIntExplicit>' type=kotlin.Int origin=null
 +    PROPERTY name:delegatedReference visibility:public modality:FINAL [delegated,var]
 +      FIELD PROPERTY_DELEGATE name:delegatedReference$delegate type:kotlinx.atomicfu.AtomicRef<kotlin.Any?> visibility:private [final]
-         EXPRESSION_BODY
--          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
--            ARG value: CONST Int type=kotlin.Int value=0
--      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-atomicProperty> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger [companion]
--        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:atomicProperty visibility:private modality:FINAL [val]
++        EXPRESSION_BODY
 +          CALL 'private final fun <get-atomicReference> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
 +      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedReference> visibility:public modality:FINAL returnType:kotlin.Any?
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
 +        correspondingProperty: PROPERTY name:delegatedReference visibility:public modality:FINAL [delegated,var]
-         BLOCK_BODY
--          RETURN type=kotlin.Nothing from='private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock'
--            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicProperty type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
++        BLOCK_BODY
 +          RETURN type=kotlin.Nothing from='public final fun <get-delegatedReference> (): kotlin.Any? declared in <root>.SameContainerCompanionBlock'
 +            CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Any? origin=null
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedReference$delegate type:kotlinx.atomicfu.AtomicRef<kotlin.Any?> visibility:private [final] declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=null
@@ -716,154 +734,12 @@
      CONSTRUCTOR visibility:public returnType:<root>.SameContainerCompanionBlock [primary]
        BLOCK_BODY
          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-@@ -221,58 +717,93 @@
-       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-       overridden:
-         public open fun toString (): kotlin.String declared in kotlin.Any
--    FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit [companion]
-+    FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
-+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
-       BLOCK_BODY
-+        VAR name:properties type:kotlin.Array<kotlin.reflect.KMutableProperty0<kotlin.Int>> [val]
-+          CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
-+            TYPE_ARG T: kotlin.reflect.KMutableProperty0<kotlin.Int>
-+            ARG elements: VARARG type=kotlin.Array<out kotlin.reflect.KMutableProperty0<kotlin.Int>> varargElementType=kotlin.reflect.KMutableProperty0<kotlin.Int>
-+              RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final delegatedInt: kotlin.Int declared in <root>.SameContainerCompanionBlock'
-+                bound receiver: GET_VAR '<this>: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test' type=<root>.SameContainerCompanionBlock origin=null
-+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedInt visibility:local modality:FINAL returnType:kotlin.Int
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.SameContainerCompanionBlock
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun delegatedInt (receiver: <root>.SameContainerCompanionBlock): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <get-delegatedInt> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
-+                        ARG <this>: GET_VAR 'receiver: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test.delegatedInt' type=<root>.SameContainerCompanionBlock origin=ADAPTED_FUNCTION_REFERENCE
-+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedInt visibility:local modality:FINAL returnType:kotlin.Unit
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.SameContainerCompanionBlock
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun delegatedInt (receiver: <root>.SameContainerCompanionBlock, value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <set-delegatedInt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
-+                        ARG <this>: GET_VAR 'receiver: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test.delegatedInt' type=<root>.SameContainerCompanionBlock origin=ADAPTED_FUNCTION_REFERENCE
-+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.delegatedInt' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
-+              RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final delegatedIntExplicit: kotlin.Int declared in <root>.SameContainerCompanionBlock'
-+                bound receiver: GET_VAR '<this>: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test' type=<root>.SameContainerCompanionBlock origin=null
-+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedIntExplicit visibility:local modality:FINAL returnType:kotlin.Int
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.SameContainerCompanionBlock
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun delegatedIntExplicit (receiver: <root>.SameContainerCompanionBlock): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <get-delegatedIntExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
-+                        ARG <this>: GET_VAR 'receiver: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test.delegatedIntExplicit' type=<root>.SameContainerCompanionBlock origin=ADAPTED_FUNCTION_REFERENCE
-+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedIntExplicit visibility:local modality:FINAL returnType:kotlin.Unit
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.SameContainerCompanionBlock
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun delegatedIntExplicit (receiver: <root>.SameContainerCompanionBlock, value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <set-delegatedIntExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
-+                        ARG <this>: GET_VAR 'receiver: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test.delegatedIntExplicit' type=<root>.SameContainerCompanionBlock origin=ADAPTED_FUNCTION_REFERENCE
-+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.delegatedIntExplicit' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
-+              RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final delegated: kotlin.Int declared in <root>.SameContainerCompanionBlock'
-+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegated visibility:local modality:FINAL returnType:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun delegated (): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <get-delegated> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
-+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegated visibility:local modality:FINAL returnType:kotlin.Unit
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun delegated (value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <set-delegated> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
-+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.delegated' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
-+              RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final delegatedExplicit: kotlin.Int declared in <root>.SameContainerCompanionBlock'
-+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedExplicit visibility:local modality:FINAL returnType:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun delegatedExplicit (): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <get-delegatedExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
-+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedExplicit visibility:local modality:FINAL returnType:kotlin.Unit
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun delegatedExplicit (value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <set-delegatedExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
-+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.delegatedExplicit' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
-+              RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final secondDelegated: kotlin.Int declared in <root>.SameContainerCompanionBlock'
-+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:secondDelegated visibility:local modality:FINAL returnType:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun secondDelegated (): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <get-secondDelegated> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
-+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:secondDelegated visibility:local modality:FINAL returnType:kotlin.Unit
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun secondDelegated (value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <set-secondDelegated> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
-+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.secondDelegated' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
-+              RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final secondDelegatedExplicit: kotlin.Int declared in <root>.SameContainerCompanionBlock'
-+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:secondDelegatedExplicit visibility:local modality:FINAL returnType:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun secondDelegatedExplicit (): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <get-secondDelegatedExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
-+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:secondDelegatedExplicit visibility:local modality:FINAL returnType:kotlin.Unit
-+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
-+                  BLOCK_BODY
-+                    RETURN type=kotlin.Nothing from='local final fun secondDelegatedExplicit (value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
-+                      CALL 'public final fun <set-secondDelegatedExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
-+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.secondDelegatedExplicit' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
-         BLOCK type=kotlin.Unit origin=FOR_LOOP
-           VAR FOR_LOOP_ITERATOR name:tmp_1 type:kotlin.collections.Iterator<kotlin.reflect.KMutableProperty0<kotlin.Int>> [val]
-             CALL 'public final fun iterator (): kotlin.collections.Iterator<T of kotlin.Array> declared in kotlin.Array' type=kotlin.collections.Iterator<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=FOR_LOOP_ITERATOR
--              ARG <this>: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
--                TYPE_ARG T: kotlin.reflect.KMutableProperty0<kotlin.Int>
--                ARG elements: VARARG type=kotlin.Array<out kotlin.reflect.KMutableProperty0<kotlin.Int>> varargElementType=kotlin.reflect.KMutableProperty0<kotlin.Int>
--                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final delegated: kotlin.Int declared in <root>.SameContainerCompanionBlock'
--                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegated visibility:local modality:FINAL returnType:kotlin.Int
--                      BLOCK_BODY
--                        RETURN type=kotlin.Nothing from='local final fun delegated (): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
--                          CALL 'public final fun <get-delegated> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
--                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegated visibility:local modality:FINAL returnType:kotlin.Unit
--                      VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
--                      BLOCK_BODY
--                        RETURN type=kotlin.Nothing from='local final fun delegated (value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
--                          CALL 'public final fun <set-delegated> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
--                            ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.delegated' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
--                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final delegatedExplicit: kotlin.Int declared in <root>.SameContainerCompanionBlock'
--                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedExplicit visibility:local modality:FINAL returnType:kotlin.Int
--                      BLOCK_BODY
--                        RETURN type=kotlin.Nothing from='local final fun delegatedExplicit (): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
--                          CALL 'public final fun <get-delegatedExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
--                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedExplicit visibility:local modality:FINAL returnType:kotlin.Unit
--                      VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
--                      BLOCK_BODY
--                        RETURN type=kotlin.Nothing from='local final fun delegatedExplicit (value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
--                          CALL 'public final fun <set-delegatedExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
--                            ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.delegatedExplicit' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
--                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final secondDelegated: kotlin.Int declared in <root>.SameContainerCompanionBlock'
--                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:secondDelegated visibility:local modality:FINAL returnType:kotlin.Int
--                      BLOCK_BODY
--                        RETURN type=kotlin.Nothing from='local final fun secondDelegated (): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
--                          CALL 'public final fun <get-secondDelegated> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
--                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:secondDelegated visibility:local modality:FINAL returnType:kotlin.Unit
--                      VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
--                      BLOCK_BODY
--                        RETURN type=kotlin.Nothing from='local final fun secondDelegated (value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
--                          CALL 'public final fun <set-secondDelegated> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
--                            ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.secondDelegated' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
--                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final secondDelegatedExplicit: kotlin.Int declared in <root>.SameContainerCompanionBlock'
--                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:secondDelegatedExplicit visibility:local modality:FINAL returnType:kotlin.Int
--                      BLOCK_BODY
--                        RETURN type=kotlin.Nothing from='local final fun secondDelegatedExplicit (): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
--                          CALL 'public final fun <get-secondDelegatedExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock' type=kotlin.Int origin=null
--                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:secondDelegatedExplicit visibility:local modality:FINAL returnType:kotlin.Unit
--                      VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
--                      BLOCK_BODY
--                        RETURN type=kotlin.Nothing from='local final fun secondDelegatedExplicit (value: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
--                          CALL 'public final fun <set-secondDelegatedExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
--                            ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.SameContainerCompanionBlock.test.secondDelegatedExplicit' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
-+              ARG <this>: GET_VAR 'val properties: kotlin.Array<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.SameContainerCompanionBlock.test' type=kotlin.Array<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
-           WHILE label=null origin=FOR_LOOP_INNER_WHILE
-             condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-               ARG <this>: GET_VAR 'val tmp_1: kotlin.collections.Iterator<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.SameContainerCompanionBlock.test' type=kotlin.collections.Iterator<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
-@@ -286,98 +817,262 @@
+@@ -341,22 +817,21 @@
                    ARG resetAtomic: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                        BLOCK_BODY
 -                        CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
--                          ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-                          ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 -                          ARG newValue: CONST Int type=kotlin.Int value=0
 +                        CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=EQ
 +                          ARG <this>: CALL 'private final fun <get-atomicInt> (): kotlinx.atomicfu.AtomicInt declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
@@ -874,7 +750,7 @@
                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.SameContainerCompanionBlock.test'
 -                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
 -                            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
--                              ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-                              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 +                          CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
 +                            ARG <this>: CALL 'private final fun <get-atomicInt> (): kotlinx.atomicfu.AtomicInt declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
                    ARG incrementAtomic: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
@@ -882,51 +758,166 @@
                        BLOCK_BODY
                          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
 -                          CALL 'public final fun incrementAndGet (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
--                            ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-                            ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
++                          CALL 'public final fun incrementAndGet (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
++                            ARG <this>: CALL 'private final fun <get-atomicInt> (): kotlinx.atomicfu.AtomicInt declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+         CALL 'public final fun testBoolProperty (property: kotlin.reflect.KMutableProperty0<kotlin.Boolean>, getAtomicValue: kotlin.Function0<kotlin.Boolean>, setAtomicValue: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+           ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null reflectionTarget='public final delegatedBool: kotlin.Boolean declared in <root>.SameContainerCompanionBlock'
+             bound receiver: GET_VAR '<this>: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test' type=<root>.SameContainerCompanionBlock origin=null
+@@ -378,16 +853,15 @@
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+               BLOCK_BODY
+                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.SameContainerCompanionBlock.test'
+-                  TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+-                    CALL 'public final fun get (): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Boolean origin=null
+-                      ARG <this>: CALL 'private final fun <get-atomicBool> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicBoolean origin=null
++                  CALL 'public final fun <get-value> (): kotlin.Boolean declared in kotlinx.atomicfu.AtomicBoolean' type=kotlin.Boolean origin=GET_PROPERTY
++                    ARG <this>: CALL 'private final fun <get-atomicBool> (): kotlinx.atomicfu.AtomicBoolean declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicBoolean origin=GET_PROPERTY
+           ARG setAtomicValue: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=LAMBDA
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+               VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Boolean
+               BLOCK_BODY
+-                CALL 'public final fun set (newValue: kotlin.Boolean): kotlin.Unit declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Unit origin=null
+-                  ARG <this>: CALL 'private final fun <get-atomicBool> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+-                  ARG newValue: GET_VAR 'it: kotlin.Boolean declared in <root>.SameContainerCompanionBlock.test.<anonymous>' type=kotlin.Boolean origin=null
++                CALL 'public final fun <set-value> (<set-?>: kotlin.Boolean): kotlin.Unit declared in kotlinx.atomicfu.AtomicBoolean' type=kotlin.Unit origin=EQ
++                  ARG <this>: CALL 'private final fun <get-atomicBool> (): kotlinx.atomicfu.AtomicBoolean declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicBoolean origin=GET_PROPERTY
++                  ARG <set-?>: GET_VAR 'it: kotlin.Boolean declared in <root>.SameContainerCompanionBlock.test.<anonymous>' type=kotlin.Boolean origin=null
+         CALL 'public final fun testRefProperty (property: kotlin.reflect.KMutableProperty0<kotlin.Any?>, getAtomicValue: kotlin.Function0<kotlin.Any?>, setAtomicValue: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+           ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='public final delegatedReference: kotlin.Any? declared in <root>.SameContainerCompanionBlock'
+             bound receiver: GET_VAR '<this>: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test' type=<root>.SameContainerCompanionBlock origin=null
+@@ -409,164 +883,196 @@
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any?
+               BLOCK_BODY
+                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.SameContainerCompanionBlock.test'
+-                  TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                    CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+-                      TYPE_ARG T: <none>
+-                      ARG <this>: CALL 'private final fun <get-atomicReference> (): java.util.concurrent.atomic.AtomicReference declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicReference origin=null
++                  CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Any? origin=GET_PROPERTY
++                    ARG <this>: CALL 'private final fun <get-atomicReference> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
+           ARG setAtomicValue: FUN_EXPR type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+               VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Any?
+               BLOCK_BODY
+-                CALL 'public final fun set <T> (newValue: T of java.util.concurrent.atomic.AtomicReference.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Unit origin=null
+-                  TYPE_ARG T: <none>
+-                  ARG <this>: CALL 'private final fun <get-atomicReference> (): java.util.concurrent.atomic.AtomicReference declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicReference origin=null
+-                  ARG newValue: GET_VAR 'it: kotlin.Any? declared in <root>.SameContainerCompanionBlock.test.<anonymous>' type=kotlin.Any? origin=null
 -    PROPERTY name:delegated visibility:public modality:FINAL [delegated,var]
 -      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegated> visibility:public modality:FINAL returnType:kotlin.Int [companion]
 -        correspondingProperty: PROPERTY name:delegated visibility:public modality:FINAL [delegated,var]
 -        BLOCK_BODY
 -          RETURN type=kotlin.Nothing from='public final fun <get-delegated> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
 -            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
--              ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 -      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegated> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
 -        VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
 -        correspondingProperty: PROPERTY name:delegated visibility:public modality:FINAL [delegated,var]
 -        BLOCK_BODY
 -          RETURN type=kotlin.Nothing from='public final fun <set-delegated> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
 -            CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
--              ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 -              ARG newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainerCompanionBlock.<set-delegated>' type=kotlin.Int origin=null
+-    PROPERTY name:delegatedBool visibility:public modality:FINAL [delegated,var]
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedBool> visibility:public modality:FINAL returnType:kotlin.Boolean
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
+-        correspondingProperty: PROPERTY name:delegatedBool visibility:public modality:FINAL [delegated,var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <get-delegatedBool> (): kotlin.Boolean declared in <root>.SameContainerCompanionBlock'
+-            CALL 'public final fun get (): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Boolean origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicBool> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedBool> visibility:public modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
+-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Boolean
+-        correspondingProperty: PROPERTY name:delegatedBool visibility:public modality:FINAL [delegated,var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <set-delegatedBool> (<set-?>: kotlin.Boolean): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
+-            CALL 'public final fun set (newValue: kotlin.Boolean): kotlin.Unit declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Unit origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicBool> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+-              ARG newValue: GET_VAR '<set-?>: kotlin.Boolean declared in <root>.SameContainerCompanionBlock.<set-delegatedBool>' type=kotlin.Boolean origin=null
 -    PROPERTY name:delegatedExplicit visibility:public modality:FINAL [delegated,var]
 -      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedExplicit> visibility:public modality:FINAL returnType:kotlin.Int [companion]
 -        correspondingProperty: PROPERTY name:delegatedExplicit visibility:public modality:FINAL [delegated,var]
 -        BLOCK_BODY
 -          RETURN type=kotlin.Nothing from='public final fun <get-delegatedExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
 -            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
--              ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 -      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedExplicit> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
 -        VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
 -        correspondingProperty: PROPERTY name:delegatedExplicit visibility:public modality:FINAL [delegated,var]
 -        BLOCK_BODY
 -          RETURN type=kotlin.Nothing from='public final fun <set-delegatedExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
 -            CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
--              ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 -              ARG newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainerCompanionBlock.<set-delegatedExplicit>' type=kotlin.Int origin=null
+-    PROPERTY name:delegatedInt visibility:public modality:FINAL [delegated,var]
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedInt> visibility:public modality:FINAL returnType:kotlin.Int
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
+-        correspondingProperty: PROPERTY name:delegatedInt visibility:public modality:FINAL [delegated,var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <get-delegatedInt> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
+-            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedInt> visibility:public modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
+-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+-        correspondingProperty: PROPERTY name:delegatedInt visibility:public modality:FINAL [delegated,var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <set-delegatedInt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
+-            CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainerCompanionBlock.<set-delegatedInt>' type=kotlin.Int origin=null
+-    PROPERTY name:delegatedIntExplicit visibility:public modality:FINAL [delegated,var]
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedIntExplicit> visibility:public modality:FINAL returnType:kotlin.Int
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
+-        correspondingProperty: PROPERTY name:delegatedIntExplicit visibility:public modality:FINAL [delegated,var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <get-delegatedIntExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
+-            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedIntExplicit> visibility:public modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
+-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+-        correspondingProperty: PROPERTY name:delegatedIntExplicit visibility:public modality:FINAL [delegated,var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <set-delegatedIntExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
+-            CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainerCompanionBlock.<set-delegatedIntExplicit>' type=kotlin.Int origin=null
+-    PROPERTY name:delegatedReference visibility:public modality:FINAL [delegated,var]
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedReference> visibility:public modality:FINAL returnType:kotlin.Any?
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
+-        correspondingProperty: PROPERTY name:delegatedReference visibility:public modality:FINAL [delegated,var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <get-delegatedReference> (): kotlin.Any? declared in <root>.SameContainerCompanionBlock'
+-            CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+-              TYPE_ARG T: <none>
+-              ARG <this>: CALL 'private final fun <get-atomicReference> (): java.util.concurrent.atomic.AtomicReference declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicReference origin=null
+-      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedReference> visibility:public modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SameContainerCompanionBlock
+-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Any?
+-        correspondingProperty: PROPERTY name:delegatedReference visibility:public modality:FINAL [delegated,var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <set-delegatedReference> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
+-            CALL 'public final fun set <T> (newValue: T of java.util.concurrent.atomic.AtomicReference.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Unit origin=null
+-              TYPE_ARG T: <none>
+-              ARG <this>: CALL 'private final fun <get-atomicReference> (): java.util.concurrent.atomic.AtomicReference declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicReference origin=null
+-              ARG newValue: GET_VAR '<set-?>: kotlin.Any? declared in <root>.SameContainerCompanionBlock.<set-delegatedReference>' type=kotlin.Any? origin=null
 -    PROPERTY name:secondDelegated visibility:public modality:FINAL [delegated,var]
 -      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-secondDelegated> visibility:public modality:FINAL returnType:kotlin.Int [companion]
 -        correspondingProperty: PROPERTY name:secondDelegated visibility:public modality:FINAL [delegated,var]
 -        BLOCK_BODY
 -          RETURN type=kotlin.Nothing from='public final fun <get-secondDelegated> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
 -            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
--              ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 -      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-secondDelegated> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
 -        VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
 -        correspondingProperty: PROPERTY name:secondDelegated visibility:public modality:FINAL [delegated,var]
 -        BLOCK_BODY
 -          RETURN type=kotlin.Nothing from='public final fun <set-secondDelegated> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
 -            CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
--              ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 -              ARG newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainerCompanionBlock.<set-secondDelegated>' type=kotlin.Int origin=null
 -    PROPERTY name:secondDelegatedExplicit visibility:public modality:FINAL [delegated,var]
 -      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-secondDelegatedExplicit> visibility:public modality:FINAL returnType:kotlin.Int [companion]
@@ -934,74 +925,15 @@
 -        BLOCK_BODY
 -          RETURN type=kotlin.Nothing from='public final fun <get-secondDelegatedExplicit> (): kotlin.Int declared in <root>.SameContainerCompanionBlock'
 -            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
--              ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 -      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-secondDelegatedExplicit> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
 -        VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
 -        correspondingProperty: PROPERTY name:secondDelegatedExplicit visibility:public modality:FINAL [delegated,var]
 -        BLOCK_BODY
 -          RETURN type=kotlin.Nothing from='public final fun <set-secondDelegatedExplicit> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.SameContainerCompanionBlock'
 -            CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
--              ARG <this>: CALL 'private final fun <get-atomicProperty> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
+-              ARG <this>: CALL 'private final fun <get-atomicInt> (): java.util.concurrent.atomic.AtomicInteger declared in <root>.SameContainerCompanionBlock' type=java.util.concurrent.atomic.AtomicInteger origin=null
 -              ARG newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.SameContainerCompanionBlock.<set-secondDelegatedExplicit>' type=kotlin.Int origin=null
-+                          CALL 'public final fun incrementAndGet (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
-+                            ARG <this>: CALL 'private final fun <get-atomicInt> (): kotlinx.atomicfu.AtomicInt declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
-+        CALL 'public final fun testBoolProperty (property: kotlin.reflect.KMutableProperty0<kotlin.Boolean>, getAtomicValue: kotlin.Function0<kotlin.Boolean>, setAtomicValue: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-+          ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null reflectionTarget='public final delegatedBool: kotlin.Boolean declared in <root>.SameContainerCompanionBlock'
-+            bound receiver: GET_VAR '<this>: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test' type=<root>.SameContainerCompanionBlock origin=null
-+            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedBool visibility:local modality:FINAL returnType:kotlin.Boolean
-+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.SameContainerCompanionBlock
-+              BLOCK_BODY
-+                RETURN type=kotlin.Nothing from='local final fun delegatedBool (receiver: <root>.SameContainerCompanionBlock): kotlin.Boolean declared in <root>.SameContainerCompanionBlock.test'
-+                  CALL 'public final fun <get-delegatedBool> (): kotlin.Boolean declared in <root>.SameContainerCompanionBlock' type=kotlin.Boolean origin=null
-+                    ARG <this>: GET_VAR 'receiver: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test.delegatedBool' type=<root>.SameContainerCompanionBlock origin=ADAPTED_FUNCTION_REFERENCE
-+            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedBool visibility:local modality:FINAL returnType:kotlin.Unit
-+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.SameContainerCompanionBlock
-+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Boolean
-+              BLOCK_BODY
-+                RETURN type=kotlin.Nothing from='local final fun delegatedBool (receiver: <root>.SameContainerCompanionBlock, value: kotlin.Boolean): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
-+                  CALL 'public final fun <set-delegatedBool> (<set-?>: kotlin.Boolean): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
-+                    ARG <this>: GET_VAR 'receiver: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test.delegatedBool' type=<root>.SameContainerCompanionBlock origin=ADAPTED_FUNCTION_REFERENCE
-+                    ARG <set-?>: GET_VAR 'value: kotlin.Boolean declared in <root>.SameContainerCompanionBlock.test.delegatedBool' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
-+          ARG getAtomicValue: FUN_EXPR type=kotlin.Function0<kotlin.Boolean> origin=LAMBDA
-+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
-+              BLOCK_BODY
-+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.SameContainerCompanionBlock.test'
-+                  CALL 'public final fun <get-value> (): kotlin.Boolean declared in kotlinx.atomicfu.AtomicBoolean' type=kotlin.Boolean origin=GET_PROPERTY
-+                    ARG <this>: CALL 'private final fun <get-atomicBool> (): kotlinx.atomicfu.AtomicBoolean declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicBoolean origin=GET_PROPERTY
-+          ARG setAtomicValue: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=LAMBDA
-+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-+              VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Boolean
-+              BLOCK_BODY
-+                CALL 'public final fun <set-value> (<set-?>: kotlin.Boolean): kotlin.Unit declared in kotlinx.atomicfu.AtomicBoolean' type=kotlin.Unit origin=EQ
-+                  ARG <this>: CALL 'private final fun <get-atomicBool> (): kotlinx.atomicfu.AtomicBoolean declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicBoolean origin=GET_PROPERTY
-+                  ARG <set-?>: GET_VAR 'it: kotlin.Boolean declared in <root>.SameContainerCompanionBlock.test.<anonymous>' type=kotlin.Boolean origin=null
-+        CALL 'public final fun testRefProperty (property: kotlin.reflect.KMutableProperty0<kotlin.Any?>, getAtomicValue: kotlin.Function0<kotlin.Any?>, setAtomicValue: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-+          ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='public final delegatedReference: kotlin.Any? declared in <root>.SameContainerCompanionBlock'
-+            bound receiver: GET_VAR '<this>: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test' type=<root>.SameContainerCompanionBlock origin=null
-+            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedReference visibility:local modality:FINAL returnType:kotlin.Any?
-+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.SameContainerCompanionBlock
-+              BLOCK_BODY
-+                RETURN type=kotlin.Nothing from='local final fun delegatedReference (receiver: <root>.SameContainerCompanionBlock): kotlin.Any? declared in <root>.SameContainerCompanionBlock.test'
-+                  CALL 'public final fun <get-delegatedReference> (): kotlin.Any? declared in <root>.SameContainerCompanionBlock' type=kotlin.Any? origin=null
-+                    ARG <this>: GET_VAR 'receiver: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test.delegatedReference' type=<root>.SameContainerCompanionBlock origin=ADAPTED_FUNCTION_REFERENCE
-+            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedReference visibility:local modality:FINAL returnType:kotlin.Unit
-+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.SameContainerCompanionBlock
-+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Any?
-+              BLOCK_BODY
-+                RETURN type=kotlin.Nothing from='local final fun delegatedReference (receiver: <root>.SameContainerCompanionBlock, value: kotlin.Any?): kotlin.Unit declared in <root>.SameContainerCompanionBlock.test'
-+                  CALL 'public final fun <set-delegatedReference> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
-+                    ARG <this>: GET_VAR 'receiver: <root>.SameContainerCompanionBlock declared in <root>.SameContainerCompanionBlock.test.delegatedReference' type=<root>.SameContainerCompanionBlock origin=ADAPTED_FUNCTION_REFERENCE
-+                    ARG <set-?>: GET_VAR 'value: kotlin.Any? declared in <root>.SameContainerCompanionBlock.test.delegatedReference' type=kotlin.Any? origin=ADAPTED_FUNCTION_REFERENCE
-+          ARG getAtomicValue: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
-+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any?
-+              BLOCK_BODY
-+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.SameContainerCompanionBlock.test'
-+                  CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Any? origin=GET_PROPERTY
-+                    ARG <this>: CALL 'private final fun <get-atomicReference> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
-+          ARG setAtomicValue: FUN_EXPR type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
-+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-+              VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Any?
-+              BLOCK_BODY
 +                CALL 'public final fun <set-value> (<set-?>: T of kotlinx.atomicfu.AtomicRef): kotlin.Unit declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Unit origin=EQ
 +                  ARG <this>: CALL 'private final fun <get-atomicReference> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.SameContainerCompanionBlock' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
 +                  ARG <set-?>: GET_VAR 'it: kotlin.Any? declared in <root>.SameContainerCompanionBlock.test.<anonymous>' type=kotlin.Any? origin=null
@@ -1198,7 +1130,7 @@
        CONSTRUCTOR visibility:private returnType:<root>.SameContainerCompanionObject.Companion [primary]
          BLOCK_BODY
            DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-@@ -465,82 +1160,24 @@
+@@ -654,82 +1160,24 @@
                      ARG resetAtomic: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                          BLOCK_BODY
@@ -1289,7 +1221,7 @@
      CONSTRUCTOR visibility:public returnType:<root>.SameContainerCompanionObject [primary]
        BLOCK_BODY
          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-@@ -568,40 +1205,201 @@
+@@ -757,40 +1205,201 @@
          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Enum.BAR'
        class: CLASS ENUM_ENTRY name:BAR modality:FINAL visibility:private superTypes:[<root>.Enum]
          thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Enum.BAR
@@ -1520,7 +1452,7 @@
          CONSTRUCTOR visibility:private returnType:<root>.Enum.BAR [primary]
            BLOCK_BODY
              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Enum'
-@@ -696,25 +1494,24 @@
+@@ -885,25 +1494,24 @@
                        ARG resetAtomic: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                            BLOCK_BODY
@@ -1556,7 +1488,7 @@
          PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
            annotations:
              IntrinsicConstEvaluation
-@@ -733,109 +1530,183 @@
+@@ -922,109 +1530,183 @@
              correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
              overridden:
                public final fun <get-ordinal> (): kotlin.Int declared in <root>.Enum
@@ -1838,7 +1770,7 @@
      CONSTRUCTOR visibility:private returnType:<root>.Enum [primary]
        BLOCK_BODY
          ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
-@@ -940,25 +1811,24 @@
+@@ -1129,25 +1811,24 @@
                    ARG resetAtomic: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                        BLOCK_BODY
@@ -1874,7 +1806,7 @@
      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<<root>.Enum> [companion]
          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-@@ -981,71 +1851,130 @@
+@@ -1170,71 +1851,130 @@
          correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
          overridden:
            public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
@@ -2063,7 +1995,7 @@
      CONSTRUCTOR visibility:private returnType:<root>.SameContainerObject [primary]
        BLOCK_BODY
          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-@@ -1117,63 +2046,24 @@
+@@ -1306,63 +2046,24 @@
                    ARG resetAtomic: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                        BLOCK_BODY
@@ -2135,41 +2067,34 @@
    FUN name:box visibility:public modality:FINAL returnType:kotlin.String
      BLOCK_BODY
        CALL 'public final fun test (): kotlin.Unit declared in <root>.Enum' type=kotlin.Unit origin=null
-@@ -1184,9 +2074,33 @@
-       CALL 'public final fun test (): kotlin.Unit declared in <root>.SameContainerObject' type=kotlin.Unit origin=null
-         ARG <this>: GET_OBJECT 'CLASS OBJECT name:SameContainerObject modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.SameContainerObject
-       CALL 'public final fun test (): kotlin.Unit declared in <root>.SameContainerCompanionBlock' type=kotlin.Unit origin=null
-+        ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.SameContainerCompanionBlock' type=<root>.SameContainerCompanionBlock origin=null
-       CALL 'public final fun testNestedType (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-         CONST String type=kotlin.String value="OK"
-+  FUN name:testBoolProperty visibility:public modality:FINAL returnType:kotlin.Unit [inline]
-+    VALUE_PARAMETER kind:Regular name:property index:0 type:kotlin.reflect.KMutableProperty0<kotlin.Boolean>
-+    VALUE_PARAMETER kind:Regular name:getAtomicValue index:1 type:kotlin.Function0<kotlin.Boolean>
-+    VALUE_PARAMETER kind:Regular name:setAtomicValue index:2 type:kotlin.Function1<kotlin.Boolean, kotlin.Unit>
-+    BLOCK_BODY
-+      CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
-+        ARG <this>: GET_VAR 'setAtomicValue: kotlin.Function1<kotlin.Boolean, kotlin.Unit> declared in <root>.testBoolProperty' type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-+        ARG p1: CONST Boolean type=kotlin.Boolean value=false
+@@ -1385,20 +2086,20 @@
+       CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+         ARG <this>: GET_VAR 'setAtomicValue: kotlin.Function1<kotlin.Boolean, kotlin.Unit> declared in <root>.testBoolProperty' type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+         ARG p1: CONST Boolean type=kotlin.Boolean value=false
+-      CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-        ARG actual: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.Boolean origin=null
 +      CALL 'public final fun assertFalse (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
 +        ARG x: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.Boolean origin=null
-+          ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.testBoolProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
-+      CALL 'public abstract fun set (value: V of kotlin.reflect.KMutableProperty0): kotlin.Unit declared in kotlin.reflect.KMutableProperty0' type=kotlin.Unit origin=null
-+        ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.testBoolProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
-+        ARG value: CONST Boolean type=kotlin.Boolean value=true
+           ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.testBoolProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+       CALL 'public abstract fun set (value: V of kotlin.reflect.KMutableProperty0): kotlin.Unit declared in kotlin.reflect.KMutableProperty0' type=kotlin.Unit origin=null
+         ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.testBoolProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+         ARG value: CONST Boolean type=kotlin.Boolean value=true
+-      CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-        ARG actual: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Boolean origin=INVOKE
 +      CALL 'public final fun assertTrue (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
 +        ARG x: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Boolean origin=INVOKE
-+          ARG <this>: GET_VAR 'getAtomicValue: kotlin.Function0<kotlin.Boolean> declared in <root>.testBoolProperty' type=kotlin.Function0<kotlin.Boolean> origin=VARIABLE_AS_FUNCTION
-+      CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
-+        ARG <this>: GET_VAR 'setAtomicValue: kotlin.Function1<kotlin.Boolean, kotlin.Unit> declared in <root>.testBoolProperty' type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-+        ARG p1: CONST Boolean type=kotlin.Boolean value=false
+           ARG <this>: GET_VAR 'getAtomicValue: kotlin.Function0<kotlin.Boolean> declared in <root>.testBoolProperty' type=kotlin.Function0<kotlin.Boolean> origin=VARIABLE_AS_FUNCTION
+       CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+         ARG <this>: GET_VAR 'setAtomicValue: kotlin.Function1<kotlin.Boolean, kotlin.Unit> declared in <root>.testBoolProperty' type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+         ARG p1: CONST Boolean type=kotlin.Boolean value=false
+-      CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-        ARG actual: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.Boolean origin=null
 +      CALL 'public final fun assertFalse (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
 +        ARG x: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.Boolean origin=null
-+          ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.testBoolProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+           ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.testBoolProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
    FUN name:testIntProperty visibility:public modality:FINAL returnType:kotlin.Unit [inline]
      VALUE_PARAMETER kind:Regular name:property index:0 type:kotlin.reflect.KMutableProperty0<kotlin.Int>
-     VALUE_PARAMETER kind:Regular name:resetAtomic index:1 type:kotlin.Function0<kotlin.Unit>
-@@ -1195,64 +2109,97 @@
+@@ -1408,64 +2109,97 @@
      BLOCK_BODY
        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
          ARG <this>: GET_VAR 'resetAtomic: kotlin.Function0<kotlin.Unit> declared in <root>.testIntProperty' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
@@ -2306,7 +2231,7 @@
          CONSTRUCTOR visibility:public returnType:<root>.testNestedType.Nested [primary]
            BLOCK_BODY
              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-@@ -1270,23 +2217,6 @@
+@@ -1483,23 +2217,6 @@
            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
            overridden:
              public open fun toString (): kotlin.String declared in kotlin.Any
@@ -2330,7 +2255,7 @@
        VAR name:n type:<root>.testNestedType.Nested [val]
          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.testNestedType.Nested' type=<root>.testNestedType.Nested origin=null
        CALL 'public final fun testIntProperty (property: kotlin.reflect.KMutableProperty0<kotlin.Int>, resetAtomic: kotlin.Function0<kotlin.Unit>, getAtomicValue: kotlin.Function0<kotlin.Int>, incrementAtomic: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-@@ -1309,23 +2239,49 @@
+@@ -1522,25 +2239,24 @@
          ARG resetAtomic: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
              BLOCK_BODY
@@ -2363,30 +2288,29 @@
 +                CALL 'public final fun incrementAndGet (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
 +                  ARG <this>: CALL 'public final fun <get-atomicProperty> (): kotlinx.atomicfu.AtomicInt declared in <root>.testNestedType.Nested' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
 +                    ARG <this>: GET_VAR 'val n: <root>.testNestedType.Nested declared in <root>.testNestedType' type=<root>.testNestedType.Nested origin=null
-+  FUN name:testRefProperty visibility:public modality:FINAL returnType:kotlin.Unit [inline]
-+    VALUE_PARAMETER kind:Regular name:property index:0 type:kotlin.reflect.KMutableProperty0<kotlin.Any?>
-+    VALUE_PARAMETER kind:Regular name:getAtomicValue index:1 type:kotlin.Function0<kotlin.Any?>
-+    VALUE_PARAMETER kind:Regular name:setAtomicValue index:2 type:kotlin.Function1<kotlin.Any?, kotlin.Unit>
-+    BLOCK_BODY
-+      CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
-+        ARG <this>: GET_VAR 'setAtomicValue: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.testRefProperty' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-+        ARG p1: CONST Null type=kotlin.Nothing? value=null
-+      CALL 'public final fun assertNull (actual: kotlin.Any?, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
-+        ARG actual: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.Any? origin=null
-+          ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.testRefProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-+      CALL 'public abstract fun set (value: V of kotlin.reflect.KMutableProperty0): kotlin.Unit declared in kotlin.reflect.KMutableProperty0' type=kotlin.Unit origin=null
-+        ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.testRefProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
-+        ARG value: CONST String type=kotlin.String value="Hello World!"
+   FUN name:testRefProperty visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+     VALUE_PARAMETER kind:Regular name:property index:0 type:kotlin.reflect.KMutableProperty0<kotlin.Any?>
+     VALUE_PARAMETER kind:Regular name:getAtomicValue index:1 type:kotlin.Function0<kotlin.Any?>
+@@ -1555,17 +2271,17 @@
+       CALL 'public abstract fun set (value: V of kotlin.reflect.KMutableProperty0): kotlin.Unit declared in kotlin.reflect.KMutableProperty0' type=kotlin.Unit origin=null
+         ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.testRefProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+         ARG value: CONST String type=kotlin.String value="Hello World!"
+-      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
 +      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
-+        TYPE_ARG T: kotlin.Any?
+         TYPE_ARG T: kotlin.Any?
+-        ARG expected: CONST String type=kotlin.String value="Hello World!"
+-        ARG actual: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
 +        ARG a: CONST String type=kotlin.String value="Hello World!"
 +        ARG b: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
-+          ARG <this>: GET_VAR 'getAtomicValue: kotlin.Function0<kotlin.Any?> declared in <root>.testRefProperty' type=kotlin.Function0<kotlin.Any?> origin=VARIABLE_AS_FUNCTION
-+      CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
-+        ARG <this>: GET_VAR 'setAtomicValue: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.testRefProperty' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-+        ARG p1: CONST String type=kotlin.String value="What's up?"
+           ARG <this>: GET_VAR 'getAtomicValue: kotlin.Function0<kotlin.Any?> declared in <root>.testRefProperty' type=kotlin.Function0<kotlin.Any?> origin=VARIABLE_AS_FUNCTION
+       CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+         ARG <this>: GET_VAR 'setAtomicValue: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.testRefProperty' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+         ARG p1: CONST String type=kotlin.String value="What's up?"
+-      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
 +      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
-+        TYPE_ARG T: kotlin.Any?
+         TYPE_ARG T: kotlin.Any?
+-        ARG expected: CONST String type=kotlin.String value="What's up?"
+-        ARG actual: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.Any? origin=null
 +        ARG a: CONST String type=kotlin.String value="What's up?"
 +        ARG b: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.Any? origin=null
-+          ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.testRefProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+           ARG <this>: GET_VAR 'property: kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.testRefProperty' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
