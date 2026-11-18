@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.ir.annotations.Escapes
 import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsTo
 import org.jetbrains.kotlin.backend.konan.ir.annotations.escapes
 import org.jetbrains.kotlin.backend.konan.ir.annotations.pointsTo
+import org.jetbrains.kotlin.backend.konan.ir.hasFinalizer
 import org.jetbrains.kotlin.backend.konan.ir.implementedInterfaces
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
@@ -41,6 +42,7 @@ internal object DataFlowIR {
             val index: Int,
             val isFinal: Boolean,
             val isAbstract: Boolean,
+            val hasFinalizer: Boolean,
             val module: Module?,
             val irClass: IrClass?,
             val name: String?
@@ -50,11 +52,11 @@ internal object DataFlowIR {
         val itable = mutableMapOf<Int, List<FunctionSymbol>>()
 
         // Special marker type forbidding devirtualization on its instances.
-        object Virtual : Type(0, false, true, null, null, "\$VIRTUAL")
+        object Virtual : Type(0, false, true, false, null, null, "\$VIRTUAL")
 
-        class Public(val hash: Long, index: Int, isFinal: Boolean, isAbstract: Boolean,
+        class Public(val hash: Long, index: Int, isFinal: Boolean, isAbstract: Boolean, hasFinalizer: Boolean,
                      module: Module, irClass: IrClass?, name: String? = null)
-            : Type(index, isFinal, isAbstract, module, irClass, name) {
+            : Type(index, isFinal, isAbstract, hasFinalizer, module, irClass, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -71,9 +73,9 @@ internal object DataFlowIR {
             }
         }
 
-        class Private(index: Int, isFinal: Boolean, isAbstract: Boolean,
+        class Private(index: Int, isFinal: Boolean, isAbstract: Boolean, hasFinalizer: Boolean,
                       module: Module, irClass: IrClass?, name: String? = null)
-            : Type(index, isFinal, isAbstract, module, irClass, name) {
+            : Type(index, isFinal, isAbstract, hasFinalizer, module, irClass, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -530,10 +532,10 @@ internal object DataFlowIR {
 
             require(!sealed) { "The symbol table has been sealed. irClass = ${irClass.render()}" }
             val type = if (irClass.isExported)
-                Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract,
+                Type.Public(localHash(name.toByteArray()), privateTypeIndex++, isFinal, isAbstract, irClass.hasFinalizer,
                         module, irClass, takeName { name })
             else
-                Type.Private(privateTypeIndex++, isFinal, isAbstract,
+                Type.Private(privateTypeIndex++, isFinal, isAbstract, irClass.hasFinalizer,
                         module, irClass, takeName { name })
 
             classMap[irClass] = type
@@ -589,6 +591,7 @@ internal object DataFlowIR {
                         primitiveBinaryType.ordinal.toLong(),
                         privateTypeIndex++,
                         true,
+                        false,
                         false,
                         module,
                         null,
