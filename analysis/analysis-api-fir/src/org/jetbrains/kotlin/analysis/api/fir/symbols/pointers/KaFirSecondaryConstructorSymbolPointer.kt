@@ -21,7 +21,8 @@ internal class KaFirSecondaryConstructorSymbolPointer(
     private val signature: FirCallableSignature,
     originalSymbol: KaConstructorSymbol?,
 ) : KaFirMemberSymbolPointer<KaConstructorSymbol>(ownerPointer, originalSymbol = originalSymbol) {
-    override fun KaFirSession.chooseCandidateAndCreateSymbol(
+    context(analysisSession: KaFirSession)
+    override fun chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession,
     ): KaConstructorSymbol? {
@@ -33,7 +34,7 @@ internal class KaFirSecondaryConstructorSymbolPointer(
         // Another pointer covers primary constructors
         if (firConstructor.isPrimary) return null
 
-        return firSymbolBuilder.functionBuilder.buildConstructorSymbol(firConstructor.symbol)
+        return analysisSession.firSymbolBuilder.functionBuilder.buildConstructorSymbol(firConstructor.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = other === this ||

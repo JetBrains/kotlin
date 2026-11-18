@@ -23,14 +23,15 @@ internal class KaFirMemberFunctionSymbolPointer(
     isStatic: Boolean,
     originalSymbol: KaNamedFunctionSymbol?,
 ) : KaFirMemberSymbolPointer<KaNamedFunctionSymbol>(ownerPointer, isStatic, originalSymbol) {
-    override fun KaFirSession.chooseCandidateAndCreateSymbol(
+    context(analysisSession: KaFirSession)
+    override fun chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession
     ): KaNamedFunctionSymbol? {
         val firFunction = candidates.findDeclarationWithSignature<FirNamedFunction>(signature) {
             processFunctionsByName(name, it)
         } ?: return null
-        return firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firFunction.symbol)
+        return analysisSession.firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firFunction.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
