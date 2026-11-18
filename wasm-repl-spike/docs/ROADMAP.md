@@ -9,121 +9,105 @@ layer, measurements — lives in `docs/DESIGN.md`.
 
 A KGP dev task that watches sources → IC-compiles the changed module
 klib → emits a delta wasm built with `-Xwasm-hot-reload` → the dev
-server pushes it → the browser loader instantiates it against the live
-chain and sweeps the slots → the app updates with state intact.
+server pushes it → the browser loader instantiates it against the
+resident base and live chain → the delta's init resolves its bindings
+against the image and the app updates with state intact.
 Everything the prototype validated is the spec for that loop; the
 REPL's remaining hacks are stand-ins for what the compiler/loader owns:
 
 | prototype mechanism (stand-in) | production replacement |
 |---|---|
 | module-per-line generations | patch modules — SHIPPED (browser loop): file-granular deltas over the IC's dirty set; the per-function manifest (§1 below) remains |
-| JS daemon registry + `swap` | the dev-mode loader in the JS glue (instance chain, owner sweep) |
+| REPL's `host` funcref imports | the multimodule `__fn$`/`__vt$`/`__rt$` channel — SHIPPED in both loops |
 | PSI frontend in the compile server | REPL-only; the dev task knows what changed |
 | checker relaxation (any-type `@WasmImport/@WasmExport`) | upstream, flag-gated |
 
 ## What works today
 
-- **Functions**: `-Xwasm-hot-reload` gives every reloadable function a
-  mutable typed-funcref slot, a slot-reading entry under its real key
-  (all call sites, vtables and funcrefs dispatch through it) and an
-  exported setter the engine type-checks. Redefinitions swap the slot;
-  a different signature is a new overload (Julia semantics).
-  Constructors and inline functions are excluded; callable-reference
-  and merged-suspend-lambda classes are excluded to protect link-time
-  dedup. Measured cost ~0.27 ns/call.
-- **Classes**: stable-cell encoding — the class struct is a cell
-  {vtable, itable, rtti, payload}; field changes mint payload VERSIONS
-  chained against the class's history and existing instances MIGRATE
-  lazily in place (CL defclass semantics; back-to-old-shape redefines
-  heal with no migration). Cell-chain changes (gaining a class
-  supertype, finality flips) are engine-rejected — coexistence is the
-  honest semantics for a genuinely new type.
-- **Method additions are hot**: the vtable is behind the same mutable
-  root-typed indirection with a compiler-generated universal stepper;
-  existing instances dispatch a newly added open method after a
-  one-shot vtable migration, overrides still win, and old code keeps
-  working (a grown vtable subtypes the old). Interface default-method
-  BODY changes reach live instances the same way (itable entries read
-  slots) — gated.
-- **The image registry**: every hot module embeds its COMPLETE
-  payload-version table as a `hot-reload-registry` custom section
-  (deltas merge the previous module's table to stay complete); the
-  host ferries it back as one hidden source declaration. It is the
-  compiler's ONLY previous-state input — wiping the IC cache loses
-  nothing (registry_test.py gates both bumps across wipes).
-- **The browser loop** (`browser/`, wasm-js, multimodule patch
-  modules): a page-shaped dev loop with no WASI. The stdlib base loads
-  once — and it is HOT: the same link that builds the patch re-lowers
-  the stdlib once with the flag (its klib ships IR, not wasm), so base
-  and app share ONE encoding — every class cell-built, every function
-  slotted (~2.4k stdlib slots in the base, emitted once and cached; no
-  cell/plain boundary to bridge). Every edit pushes a delta that defines only the IC-modified
-  files, importing clean files' declarations from the live patch chain
-  under the artifact's own module name (no flag, no manifest — the
-  dirty set is the IC's per-file fingerprint comparison). The glue
-  keeps the instance chain (newest-first export resolution, skipping
-  dead definitions — an engine-rejected entry leaves the previous live
-  version running), sweeps every owner instance's setters, and forces
-  a FULL first patch for a fresh chain (the IC cache's "unchanged" is
-  file truth, not image truth). Gated (`browser/test.mjs`, v1–v16):
-  state through swaps, field migration add+delete, hierarchy dispatch
-  with overrides winning, additive methods, engine-rejected shape
-  change with old code running, ghost instances trapping the honest
-  "illegal cast", and the language-feature stress beats.
-- **Language features, stress-verified** (the six-file demo): generics,
-  varargs and extension receivers are slotted and swap hot; cross-file
-  INLINE edits propagate (the IC's inline hashing dirties every
-  caller's file, so the delta re-emits them with the new body
-  inlined); a held top-level lambda re-binds on redefinition (new
-  binding, fresh initializer — CL semantics; the sibling val keeps its
-  value); interface default bodies swap on LIVE instances.
-- **Object state holders are defvar** (the Compose state-holder
-  story): an `object` (or companion) redefined by its own dirty file
-  ADOPTS the previous live instance instead of re-running its
-  initializer (the guarded store fires on the delta's first access of
-  the holder) — the compiler emits a `__hot_adopt$<object>#<hash>` host
-  import as the `boundp` check; the glue
-  eagerly captures the previous live instance's value at patch load
-  (pre-sweep; a null — normal cold init — when no previous binding
-  exists) and the engine type-checks it against the cell type at the JS
-  boundary when wasm receives it, so an incompatible holder change is
-  engine-gated twice: the sweep rejects the new shape's swaps like any
-  cell-chain change (old code keeps running), and any live path that
-  drives the new code's holder access traps at the adoption boundary. Added fields migrate via the payload steppers. Top-level
-  vals/vars are still defparameter (opt-in remains). Gated: state
-  survives redefinition AND field addition; incompatible holders are
-  rejected. The REPL keeps new-binding semantics (its accessor
-  machinery is its own state sharing — the daemon answers null).
-- **The REPL** (`lrepl/`): the semantics lab where the engine behaviors
-  were discovered first — whole-world generations, slots + cells +
-  payload versions, `:dis`, swank frontends. ~0.3 s per line warm.
+The engine and both loops are green on the full gate set (the
+operational notes below name them). Each pointer's DESIGN section owns
+the mechanism; this list owns the status.
 
-## Latency (measured 2026-11-12)
+- **Functions** (DESIGN §5, §15): fdefinition cells — a redefinition
+  is one `struct.set` into the shared cell (load is apply); a different
+  signature is a new overload (Julia semantics); an incompatible
+  redefinition installs and callers trap at their own per-call cast.
+  Defining a function whose simple name matches an already-resolved
+  stdlib import REDEFINES the builtin natively — the driver emits the
+  declaration under the builtin's package (-Xallow-kotlin-package), so
+  its binding key equals the stdlib's and the load installs into the
+  EXISTING cell: already-compiled callers flip with no driver bridge.
+  Constructors and inline functions are excluded.
+- **Classes** (DESIGN §6): cells + payload layouts — one shape per
+  class per compile, no compile-time history anywhere; the `$layout`
+  pointer and the class registry (register IS set-current); the type
+  system as the fast-path check; update-instance + slot-value as the
+  image's generic machinery (retyped slots default, deleted slots
+  throw the catchable unbound-slot, function-typed slots ride the
+  stdlib box). Cell-chain changes are engine-rejected — coexistence
+  for genuinely new types.
+- **Method additions hot** (DESIGN §6): the stdlib stepper installs
+  the class's current vtable + itable from the registry; interface
+  default bodies swap on live instances.
+- **The registry is the whole previous-state story** (DESIGN §6, §16):
+  no dump, no injection, no custom section — wiping the IC cache loses
+  nothing (`registry_test.py`).
+- **The browser loop** (DESIGN §7): file-granular deltas over the IC's
+  dirty set against a hot stdlib base; the glue keeps the instance
+  chain (newest-first; engine-rejected patches never join, old code
+  keeps running). Gated `browser/test.mjs` v1–v16.
+- **Language features, stress-verified**: generics/varargs/extension
+  receivers swap hot; cross-file inline propagates through the IC; a
+  held top-level lambda re-binds; default bodies swap live.
+- **Objects are defvar** (DESIGN §7): redefinition adopts the previous
+  live instance; added fields migrate; incompatible holders are
+  engine-gated twice. Top-level vals/vars remain defparameter (the
+  opt-in is §2 below).
+- **The REPL** (DESIGN §9–§11): the same base+delta architecture — one
+  resident stdlib base owning both tables, 25–50 KB deltas per line —
+  plus `:dis` and the swank/stdio frontends.
+
+## Latency
 
 | loop | warm per-edit | cold boot |
 |---|---|---|
-| REPL (whole-world) | ~0.3 s | ~3 s (IC cache warming) |
+| REPL (25–50 KB deltas over the base) | ~0.3 s | ~3 s (IC cache warming) |
 | browser (delta loop) | ~0.3–0.6 s | ~3 s (first full patch) |
 
-Both loops run on the resident CompileServer (no JVM spawn per edit);
-the browser link skips the byte-identical stdlib base after first
-emission, and delta emission ships only the dirty files. The remaining
+Both loops compile through the official Kotlin compile daemon — the
+same resident service Gradle drives, which already dispatches the wasm
+target — fronted by a protocol shim (no JVM spawn per edit; the daemon
+outlives any one loop run). The browser link skips the byte-identical
+stdlib base after first emission, and delta emission ships only the
+dirty files. The remaining
 lever is the per-function manifest (below) — and at real module scale,
 where clean files' bodies dominate, the size/latency win is much
 larger than the demo's (whose bytes are mostly fixed machinery:
-re-declared types, cell/payload structs, string pool, registry).
+re-declared types, cell/payload structs, string pool).
 
 ## What to do next
 
-### 1. Function-granularity manifest + real-scale proof
+### 1. Function-granularity manifest + real-scale proof — PARKED
 
-File granularity is shipped. What remains: a per-function content-hash
-manifest (post-lowering IR hash riding the registry round-trip) so
-unchanged functions in a DIRTY file import instead of re-emitting; the
-JS IC's inline-function hashing is the precedent and the
-caller-propagation mechanism inline needs. Then prove the size/latency
-win on a module with real bulk. Gate: a redefinition costs a
-function-sized delta (<50 KB, <150 ms).
+The sound design is fully built and parked on branch
+`wasm-hot-reload-manifest-wip` (commit 789dcb8f196f; design summary in
+its message): rows of the `hot-reload-indices` section carry a third
+column (cityHash64 of the binding's rendered wasm body), the skip
+decision runs at LINK time over all linked fragments (emit-then-drop —
+a body's hash must include the CONTENT of non-reloadable module-local
+callees: a constructor keeps its stable signature while a field edit
+changes the shape it constructs), with cycle-poisoning and
+content-rendered pool/global dependencies. One gate beat (browser v3:
+fresh-instance initializer after a field addition) still fails for an
+undetermined reason — the delta provably re-emits the factory and
+constructor, and the trace is correct on paper; it was one diagnosis
+from green when parked.
+
+Why parked: the cost curve (~+800 lines, correctness subtleties
+surfacing per gate beat) outweighed a payoff that is deferred — the
+win only materializes at real-Compose-module scale (upstream-blocked);
+demo-scale deltas are already 38–49 KB, under the 50 KB gate. Resume
+when real-scale need returns; everything learned is in the branch.
 
 ### 2. Top-level val/var opt-in (defvar for non-object holders)
 
@@ -146,19 +130,29 @@ the member set into `interfaceId`. driver5/driver6 are the anchors.
 team; the error overlay. Everything the browser loop proves carries
 over (DESIGN.md §8).
 
-### 5. Migration quality + generation GC (now load-bearing)
+### 5. Migration quality + generation GC
 
 - initforms for new fields (type defaults today);
-- catchable `ObsoleteInstanceException` instead of the raw illegal-cast
-  trampoline, naming class, field, held version;
+- unbound-slot diagnostics: the deleted-slot throw is catchable
+  already, but its message names raw tags — name the class, field and
+  layout; and the retyped-GETTER case is a raw fdefn-cast RuntimeError
+  (the getter's wasm signature changed), not a typed exception;
 - incompatible-signature degradation (sketch, not built): generate a
   same-signature thrower per function and let the host install it into
-  the old slot, so stale call sites raise a catchable exception naming
+  the old cell, so stale call sites raise a catchable exception naming
   the old signature;
-- version pruning for long sessions;
-- **generation GC**: one instance per edit is retained; prune
-  instances whose slots are all swept away and whose globals are
-  unreferenced (track handouts with JS WeakRefs).
+- layout pruning is DONE by construction: the registry keeps ONE entry
+  per class (register IS set-current), and superseded layout objects
+  live only while old instances' `$layout` pointers hold them —
+  native GC;
+- **generation GC**: the fdefn encoding makes it native — a donor module
+  collects once no cell holds its funcrefs (the local `survival/` labs'
+  probes; cells do not pin their defining module). The remaining cap is
+  the V8 cross-instance `call_ref` retention (the gc_probe lab, local
+  scratch, preserved on the `wasm-hot-reload-table-era` branch) —
+  upstream; file it. The
+  instance chains themselves are host-retained by design (export
+  resolution); pruning them is a glue-side policy question.
 
 ### 6. Exception tag export (upstreamable)
 
@@ -169,16 +163,31 @@ Throwable and print it properly.
 ### 7. Upstreaming
 
 The checker relaxation (flag-gated), the exception tag export, and
-long-term slot mode + the cell/payload encoding as experimental modes
-(the multimodule `__fn$/__vt$/__rt$` machinery is precedent).
+long-term hot-reload mode + the cell/payload/fdefn encoding as
+experimental modes (the multimodule `__fn$/__vt$/__rt$` machinery is
+precedent).
 
 ## Operational notes
 
-- After `./gradlew dist`: delete `server.jar` and the IC cache (the
-  compile server embeds the compiler; a warm cache mixes encodings).
+- After `./gradlew dist`: delete the IC caches AND the cached stdlib
+  BASE wasm files (browser: `app/build/kotlin-kotlin-stdlib.*`), and
+  wipe the WHOLE `lrepl/build` — stale `gen*.klib`/`image.klib`
+  fragments from the previous compiler deserialization-trap with
+  `IllegalStateException: UnexpectedEnd` on the first compile (the
+  lrepl base-full stamp re-links automatically). The base is
+  byte-identical across edits but NOT across compiler changes — a
+  stale base links with confusing type-canonicalization errors or
+  traps in init. `server.jar` no longer needs deleting — the shim
+  doesn't embed the compiler; the daemon is keyed on the dist's jars
+  (`CompilerId` + an MD5 classpath watcher) and restarts itself when
+  they change in place. Rebuild server.jar only when the shim source or
+  the daemon-client API changes. Stray daemons: they die on the 2h idle
+  timer, or kill them with `java -cp
+  dist/kotlinc/lib/kotlin-daemon-client.jar
+  org.jetbrains.kotlin.daemon.client.KotlinCompilerClient --stop`.
 - The IC cache root is keyed by a config hash covering the link step's
   `-ir-output-name` — keep link output names stable or every edit pays
-  a cold cache (speed only: payload history lives in the registry).
+  a cold cache (speed only: no state lives anywhere but the image).
 - A fresh image chain (new page, restarted dev server) needs a FULL
   first patch — the loop forces it (`forceFullPatch`); the production
   dev task owns this contract.
@@ -189,8 +198,20 @@ long-term slot mode + the cell/payload encoding as experimental modes
   stdlib-fragment/cache interaction the whole-world path never hits.
 - Concurrent images: `LREPL_WORK=<dir>` per session; cell-built and
   plain-built modules cannot share class types.
+- Before gating, verify the dist jar actually contains the change:
+  grep the new symbol names in `BackendWasmSymbols.class` inside
+  `kotlin-compiler.jar` (Kotlin property access does NOT put a symbol
+  name in the CALLER's class file — grepping BodyGenerator.class for
+  `wasmSymbols` members finds nothing even in green builds), and never
+  read a build's success from a `cmd | grep; echo rc=$?` — that prints
+  GREP's exit code, not the build's.
 - Regression gates per compiler change: `browser/test.mjs` (the full
   v1–v16 delta-loop gate — patches, migration, dispatch, rejections,
-  ghosts, language features), `lrepl/registry_test.py` (image
-  registry), `--demo cells` (versions + migration),
-  `survival/driver7.mjs` (slots), `swank_test.py` (frontend).
+  ghosts, language features), `lrepl/registry_test.py` (the
+  image-resolves-everything acid test: class bumps across IC-cache
+  wipes), `--demo main` (functions, overloads, the stdlib override),
+  `--demo cells` (layouts, migration, retype, funcref slots),
+  `swank_test.py` (frontend).
+  Zero `Traceback`/`AttributeError` in every log — exit 0 alone is not
+  green (`--demo` tolerates per-line errors; the `:dis` probe on an
+  inline stdlib function prints an informational error by design).

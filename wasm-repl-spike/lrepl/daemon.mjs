@@ -1,22 +1,25 @@
 // lrepl daemon: a persistent Node process holding the "live image".
-// - instantiates generation modules,
+// - instantiates the STDLIB BASE once per image (it IS the image: the
+//   stdlib's hotFdefns table owns the fdefinition cells) and then every
+//   generation's app DELTA against it (the ordinary cross-module
+//   `__fn$`/`__vt$`/`__rt$` import channel — the multimodule port),
 // - supplies @WasmImport("host", ...) funcrefs from previously loaded instances,
 // - implements a minimal WASI with *capturing* stdout (expression results are
 //   printed by the __eval thunk and read back by the driver),
 // - speaks JSON lines over stdio with the Python driver.
 //
-// Each instance gets its OWN WASI closure bound to that instance's exported
-// memory: lazy val initializers mean one generation's WASI calls can be
-// triggered from inside another generation's code (e.g. gen2's thunk calls
-// gen1's accessor, which lazily initializes and calls random_get), so WASI
-// functions must always operate on the memory of the module that invoked
-// them — a single shared memory reference would corrupt the wrong image.
+// Only the BASE imports WASI functions — the deltas reach I/O through the
+// base's stdlib — so one WASI closure bound to the BASE's memory captures
+// every generation's output. LOAD IS APPLY: each delta's init resolves
+// its bindings' cells by name against the base's table and installs its
+// impls; the daemon holds NO binding state at all.
 
 import fs from 'node:fs';
 import readline from 'node:readline';
 import { randomFillSync } from 'node:crypto';
 
 const instances = new Map(); // gen -> WebAssembly.Instance
+let base = null; // the resident stdlib instance — the image's table
 let outBuf = [];
 
 // -Xwasm-hot-reload on the wasi target imports its exception tag from
@@ -65,22 +68,33 @@ function makeWasi(memRef) {
     };
 }
 
-function buildImportObject(wasi, imports, adopts = []) {
-    const host = {};
-    for (const [localName, ref] of Object.entries(imports)) {
-        const [gen, exportName] = ref;
-        const inst = instances.get(gen);
-        if (!inst) throw new Error(`daemon: unknown generation ${gen} for import ${localName}`);
-        const fn = inst.exports[exportName];
-        if (typeof fn !== 'function') throw new Error(`daemon: export ${exportName} missing in gen ${gen}`);
-        host[localName] = fn;
+// instantiate a wasm module against the shared tag + a WASI closure bound
+// to the given memory, with object-adoption imports answering null (the
+// REPL's binding machinery IS its state sharing — every adoption is
+// "no previous binding", normal cold init). extraImports carries the
+// multimodule service channels (`<kotlin>` = the base's exports for a
+// delta). Returns [instance, memRef].
+function instantiate(bytes, hostFns, extraImports = {}) {
+    const module = new WebAssembly.Module(bytes);
+    const memRef = { mem: null };
+    const wasi = makeWasi(memRef);
+    const host = { ...hostFns };
+    for (const imp of WebAssembly.Module.imports(module)) {
+        if (imp.module === 'wasi_snapshot_preview1' && !wasi[imp.name]) {
+            wasi[imp.name] = () => 0; // stub the ones we don't implement
+        }
+        if (imp.module === 'host' && imp.name.startsWith('__hot_adopt$')) {
+            host[imp.name] = () => null;
+        }
     }
-    // object-adoption imports answer null here: the REPL's binding
-    // machinery IS its state sharing (objects re-declare per generation;
-    // the driver routes references through accessors), so every adoption
-    // is "no previous binding" — normal cold init, REPL semantics unchanged
-    for (const name of adopts) host[name] = () => null;
-    return { wasi_snapshot_preview1: wasi, intrinsics: { tag: sharedTag }, host };
+    const instance = new WebAssembly.Instance(module, {
+        wasi_snapshot_preview1: wasi,
+        intrinsics: { tag: sharedTag },
+        host,
+        ...extraImports,
+    });
+    memRef.mem = instance.exports.memory || memRef.mem;
+    return [instance, memRef];
 }
 
 const rl = readline.createInterface({ input: process.stdin });
@@ -89,34 +103,40 @@ rl.on('line', (line) => {
     try { msg = JSON.parse(line); } catch { return; }
     Promise.resolve().then(() => {
         if (msg.cmd === 'load') {
-            // the image travels as bytes; the path is a legacy fallback
-            const bytes = msg.wasmB64
-                ? Buffer.from(msg.wasmB64, 'base64')
-                : fs.readFileSync(msg.wasmPath);
-            const module = new WebAssembly.Module(bytes);
-            const memRef = { mem: null };
-            const wasi = makeWasi(memRef);
-            // Stub out any WASI function we don't implement (with errno 0).
-            const adopts = [];
-            for (const imp of WebAssembly.Module.imports(module)) {
-                if (imp.module === 'wasi_snapshot_preview1' && !wasi[imp.name]) {
-                    wasi[imp.name] = () => 0;
-                }
-                if (imp.module === 'host' && imp.name.startsWith('__hot_adopt$')) {
-                    adopts.push(imp.name);
-                }
+            // the stdlib base rides the FIRST load of an image (or any
+            // time a dist rebuild changed it): instantiate once, run its
+            // init — that registers its cells into the image's table
+            if (msg.baseB64) {
+                const [inst] = instantiate(Buffer.from(msg.baseB64, 'base64'), {});
+                const init = inst.exports._initialize;
+                if (typeof init === 'function') init();
+                base = inst;
             }
-            const instance = new WebAssembly.Instance(module, buildImportObject(wasi, msg.imports || {}, adopts));
-            memRef.mem = instance.exports.memory;
-            // val initializers run AFTER wiring this instance's memory into
-            // its WASI closure. New modules are REACTOR-STYLE (hot mode: the
-            // compiler exports init as _initialize and emits no start
-            // section); __lrepl_init is the legacy binary-patched name.
-            const init = typeof instance.exports._initialize === 'function'
-                ? instance.exports._initialize
-                : instance.exports.__lrepl_init
+            if (!base) throw new Error('daemon: no base loaded');
+            // the driver's @WasmImport("host", ...) references: funcrefs
+            // from previously loaded generations
+            const hostFns = {};
+            for (const [localName, ref] of Object.entries(msg.imports || {})) {
+                const [gen, exportName] = ref;
+                const inst = instances.get(gen);
+                if (!inst) throw new Error(`daemon: unknown generation ${gen} for import ${localName}`);
+                const fn = inst.exports[exportName];
+                if (typeof fn !== 'function') throw new Error(`daemon: export ${exportName} missing in gen ${gen}`);
+                hostFns[localName] = fn;
+            }
+            const [instance] = instantiate(Buffer.from(msg.wasmB64, 'base64'), hostFns, {
+                // the multimodule channel: the delta imports the base's
+                // cold code AND the image's fdefinition table through it
+                '<kotlin>': base.exports,
+            });
+            const init = instance.exports._initialize;
             if (typeof init === 'function') {
-                init()
+                try {
+                    init();
+                } catch (e) {
+                    const where = (e && e.stack) ? '\n' + String(e.stack).split('\n').slice(0, 12).join('\n') : '';
+                    return { id: msg.id, ok: false, error: String((e && e.message) || e) + where };
+                }
             }
             instances.set(msg.gen, instance);
             return { id: msg.id, ok: true, exports: Object.keys(instance.exports) };
@@ -133,24 +153,16 @@ rl.on('line', (line) => {
             } catch (e) {
                 // include anything the call printed before failing (e.g. a
                 // redefinition thrower explaining itself via println)
-                return { id: msg.id, ok: false, error: String((e && e.message) || e), stdout: outBuf.join('') };
+                const where = (e && e.stack) ? `\n${String(e.stack).split('\n').slice(0, 14).join('\n')}` : '';
+                return { id: msg.id, ok: false, error: String((e && e.message) || e) + where, stdout: outBuf.join('') };
             }
-        }
-        if (msg.cmd === 'swapDirect') {
-            // Compiler-slot redefinition (-Xwasm-hot-reload): the new
-            // implementation IS the donor's exported entry funcref — install
-            // it directly into the slot owner's compiler-generated setter.
-            const donor = instances.get(msg.newGen);
-            const owner = instances.get(msg.slotGen);
-            if (!donor) throw new Error(`daemon: unknown donor generation ${msg.newGen}`);
-            if (!owner) throw new Error(`daemon: unknown slot generation ${msg.slotGen}`);
-            const impl = donor.exports[msg.newExport];
-            if (typeof impl !== 'function') throw new Error(`daemon: ${msg.newExport} is not a funcref`);
-            owner.exports[msg.slotExport](impl);
-            return { id: msg.id, ok: true };
         }
         if (msg.cmd === 'reset') {
             instances.clear();
+            // the image dies WITH its base: the fdefinition table lives
+            // inside the base instance, so a fresh image starts with a
+            // fresh (empty) table — nothing is baked anywhere else
+            base = null;
             return { id: msg.id, ok: true };
         }
         throw new Error(`daemon: unknown command ${msg.cmd}`);

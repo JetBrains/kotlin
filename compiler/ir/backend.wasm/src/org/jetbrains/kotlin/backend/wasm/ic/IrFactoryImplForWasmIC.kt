@@ -234,6 +234,12 @@ fun overrideBuiltInsSignatures(backendContext: WasmBackendContext) {
         runRootSuites?.owner?.signatureForWasmIC = runRootSuitesBuiltIn.value
         createString.owner.signatureForWasmIC = createStringBuiltIn.value
         registerModuleDescriptor.owner.signatureForWasmIC = registerModuleDescriptorBuiltIn.value
+        // hot-reload runtime: link-emitted code reaches the stdlib's
+        // table functions under the synthetic keys (the remap pairs live
+        // with the symbols — see BackendWasmSymbols.hotRuntimeRemaps)
+        for ([irFunction, builtin] in backendContext.wasmSymbols.hotRuntimeRemaps) {
+            irFunction.owner.signatureForWasmIC = builtin.value
+        }
     }
 
     backendContext.findUnitGetInstanceFunction().signatureForWasmIC = unitGetInstanceBuiltIn.value

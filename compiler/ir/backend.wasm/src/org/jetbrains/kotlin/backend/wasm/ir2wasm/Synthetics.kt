@@ -42,10 +42,6 @@ object Synthetics {
         val associatedObjectGetter = FuncSymbol("tryGetAssociatedObject".toSyntheticSignature())
         val startUnitTestsFunction = FuncSymbol("startUnitTestsFunction".toSyntheticSignature())
         val masterInitFunction = FuncSymbol("masterInitFunction".toSyntheticSignature())
-        // hot-reload vtable stepper (linker-generated, one per module):
-        // (ref null $AnyCell) -> (ref null $vt_root) — installs the current
-        // vtable + itable for the instance's RUNTIME class (RTTI klassId)
-        val hotVtableUpdate = FuncSymbol("hotVtableUpdate".toSyntheticSignature())
 
         val createStringBuiltIn = FuncSymbol("createStringBuiltInFunction".toSyntheticSignature())
         val tryGetAssociatedObjectBuiltIn = FuncSymbol("tryGetAssociatedObjectFunction".toSyntheticSignature())
@@ -54,6 +50,25 @@ object Synthetics {
         val unitGetInstanceBuiltIn = FuncSymbol("unitGetInstanceBuiltInFunction".toSyntheticSignature())
         val runRootSuitesBuiltIn = FuncSymbol("runRootSuitesBuiltInFunction".toSyntheticSignature())
         val registerModuleDescriptorBuiltIn = FuncSymbol("registerModuleDescriptorBuiltInFunction".toSyntheticSignature())
+        // hot-reload runtime (stdlib — the image's fdefinition
+        // table): remapped onto the real functions so link-emitted code
+        // (the resolve helper) can call them under stable keys
+        // hot-reload runtime (stdlib library code — the image's
+        // tables): the fdefinition table's resolve and the class
+        // registry's register/addSlot (the master init calls both).
+        // Every hot module's LINK-GENERATED code calls these through the
+        // ordinary cross-module channel, so the remap, the DCE keep-list
+        // and the reference-tracking sites all iterate THIS list —
+        // adding a runtime function is a one-place change (declare here
+        // + the IR symbol in BackendWasmSymbols).
+        val hotRuntimeBuiltIns = listOf(
+            FuncSymbol("hotFdefnsResolveBuiltInFunction".toSyntheticSignature()),
+            FuncSymbol("hotLayoutsRegisterBuiltInFunction".toSyntheticSignature()),
+            FuncSymbol("hotLayoutsAddSlotBuiltInFunction".toSyntheticSignature()),
+        )
+        val hotFdefnsResolveBuiltIn get() = hotRuntimeBuiltIns[0]
+        val hotLayoutsRegisterBuiltIn get() = hotRuntimeBuiltIns[1]
+        val hotLayoutsAddSlotBuiltIn get() = hotRuntimeBuiltIns[2]
     }
 
     // GLOBALS
@@ -73,7 +88,6 @@ object Synthetics {
     private val byteArraySignature = "byteArray".toSyntheticSignature()
     private val associatedObjectGetterWrapperSignature = "associatedObjectGetterWrapper".toSyntheticSignature()
     private val associatedObjectGetterTypeSignature = "associatedObjectGetterType".toSyntheticSignature()
-    private val hotVtableUpdateTypeSignature = "hotVtableUpdateType".toSyntheticSignature()
     private val stringLiteralFunctionTypeSignature = "stringLiteralFunctionType".toSyntheticSignature()
     private val stringLiteralJsStringFunctionTypeSignature = "stringLiteralJsStringFunctionType".toSyntheticSignature()
     private val parameterlessNoReturnFunctionTypeSignature = "parameterlessNoReturnFunctionTypeSignature".toSyntheticSignature()
@@ -96,7 +110,6 @@ object Synthetics {
         val wasmStringArrayType = GcHeapTypeSymbol(wasmStringArrayTypeSignature)
         val byteArray = GcHeapTypeSymbol(byteArraySignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
-        val hotVtableUpdateType = FunctionHeapTypeSymbol(hotVtableUpdateTypeSignature)
         val associatedObjectGetterWrapper = GcHeapTypeSymbol(associatedObjectGetterWrapperSignature)
         val throwableBuiltInType = GcHeapTypeSymbol(throwableBuiltInTypeSignature)
         val anyBuiltInType = GcHeapTypeSymbol(anyBuiltInTypeSignature)
@@ -123,7 +136,6 @@ object Synthetics {
         val jsExceptionTagFuncType = FunctionHeapTypeSymbol(jsExceptionTagFuncTypeSignature)
         val parameterlessNoReturnFunctionType = FunctionHeapTypeSymbol(parameterlessNoReturnFunctionTypeSignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
-        val hotVtableUpdateType = FunctionHeapTypeSymbol(hotVtableUpdateTypeSignature)
         val wasmContTagFuncType = FunctionHeapTypeSymbol(wasmContTagFuncTypeSignature)
         val boundContFuncType = FunctionHeapTypeSymbol(boundContFuncTypeSignature)
     }

@@ -15,10 +15,10 @@ file's; at this app's two-file scale the byte size barely moves — the
 per-class cell/payload machinery and types dominate — but the clean
 files' bodies are what stops shipping, which scales with real modules).
 This is the harness for the Compose hot-reload work — everything here
-(instantiate against the live chain's exports, sweep every owner's slot
-setters, migrate held objects, ferry the image registry) carries over;
-Compose adds the recomposition invalidation hook and group-key
-stability.
+(instantiate against the live chain's exports, LOAD IS APPLY through
+the fdefinition cells, image-resolved migration of held objects)
+carries over; Compose adds the recomposition invalidation hook and
+group-key stability.
 
 ## Run it
 
@@ -29,22 +29,21 @@ node dev.mjs                 # http://localhost:8123
 
 Then edit a file in `app/src/` and save. The dev server recompiles
 (`-Xwasm-hot-reload`; emission is file-granular — only the edited file
-is defined in the patch), ferries the registry, and the page hot-applies
-it within ~1–2 s. The page's **demo script** panel lists the edits to
+is defined in the patch), and the page hot-applies it within ~1–2 s. The page's **demo script** panel lists the edits to
 try, with what to expect for each — keep it side by side with the code.
 
 ## What each kind of edit does
 
 | edit | mechanism | what you see |
 |---|---|---|
-| body change | new module, same function signatures → the glue sweeps every live `__hot_set$X` setter with the new `__hot_entry$X` | the new body, immediately, on the same instances |
-| behavior change | same — bodies read live state through slots | buttons jump differently; state untouched |
-| field added | payload version chain (registry from the live module's custom section) + compiler-generated stepper; the held instance migrates IN PLACE on first touch | the v1-born instance shows the new field as its type default (`null`); a fresh instance shows the initializer — that contrast is the migration demo |
-| field deleted | migrate again: surviving fields copy, the field is simply gone (nothing is shadowed) | the held instance keeps its other values; old code that still read the deleted field would trap — the invalidation trampoline |
-| base-class body change | vtable entries read slots like everything else | the base instance runs the new body; overrides still win — correct dispatch through the swap, same instances |
+| body change | new module, same function signatures → the load installs the new bodies into the shared fdefinition cells (LOAD IS APPLY — every call site reads the cell) | the new body, immediately, on the same instances |
+| behavior change | same — bodies read live state through the cells | buttons jump differently; state untouched |
+| field added | a new payload SHAPE (content-hashed, sibling to the old) + the image's registered LAYOUT; the held instance migrates IN PLACE on first new-code field access (update-instance copies same-named same-typed slots through the layout's accessor funcrefs) | the v1-born instance shows the new field as its type default (`null`); a fresh instance shows the initializer — that contrast is the migration demo |
+| field deleted | migrate again: surviving fields copy, the field is simply gone (nothing is shadowed) | the held instance keeps its other values; old code that still read the deleted field traps — the honest unbound-slot |
+| base-class body change | vtable entries read cells like everything else | the base instance runs the new body; overrides still win — correct dispatch through the swap, same instances |
 | method added (non-virtual, final class) | never enters the vtable — no type changes; the additive/Julia case | a clean swap; the new method rides along |
-| method added (OPEN, on an open class) | the vtable struct grows (a new type) but the vtable is behind the mutable root-typed cell field — no signature changes; old instances migrate their vtable on next dispatch (the compiler-generated stepper installs the current vtable + itable; a grown vtable is a SUBTYPE of the old, so old code keeps working on migrated instances) | a clean swap; the new method is callable on instances born BEFORE it existed — SBCL's wrapper-update on wasm |
-| class supertype gained (or finality flipped) | the cell SUBTYPING CHAIN is part of every signature mentioning the class → the ENGINE rejects those slots at the setters, for free | a partial patch: what the engine accepted is swapped, the old code keeps running for the rest; the banner lists the rejected slots — revert to recover |
+| method added (OPEN, on an open class) | the vtable struct grows (a new type) but the vtable is behind the mutable root-typed cell field — no signature changes; old instances migrate their vtable on next dispatch (the universal stepper installs the current vtable + itable; a grown vtable is a SUBTYPE of the old, so old code keeps working on migrated instances) | a clean swap; the new method is callable on instances born BEFORE it existed — SBCL's wrapper-update on wasm |
+| class supertype gained (or finality flipped) | the cell SUBTYPING CHAIN is part of every signature mentioning the class → the ENGINE rejects the patch's instantiation, for free | the patch never joins the chain: the previous live version keeps running; the banner names the rejection — revert to recover |
 | compile error | never reaches the engine; the server keeps serving the last good version | the app keeps running; the banner shows the compiler's message |
 | runtime trap in a swapped body | the patch swaps in; the body traps when called | the banner shows the exception while the rest of the app keeps running; fix the body and save |
 
@@ -70,21 +69,19 @@ expectations.
   resolve newest-instance-first, SKIPPING dead definitions — an
   engine-rejected entry means that patch's export of the name can't
   serve the live world and the previous live version keeps running),
-  `readRegistry` via `WebAssembly.Module.customSections`, `applyPatch`
-  (sweeps EVERY live instance's setters — a redefined function's slot
-  lives in whichever generation defined its file last; engine
-  rejections collected per-setter), `applyDelta` (the one call per
-  edit: load, sweep, mark dead, push).
+  `applyDelta` (the one call per edit: load the patch against the
+  base + live chain, run its `_initialize` — LOAD IS APPLY — mark a
+  rejected patch's exports dead, push).
 - `build.mjs` — the shared compile step: the two-step CLI in multimodule
   mode (stable identities; the base emits once into the build dir — the
-  output phase skips it thereafter — and the patch every edit), the
-  registry ferry (read the last patch's custom section, inject
-  `__hotRegistry` into the next source).
+  output phase skips it thereafter — and the patch every edit). The
+  compile consumes NO previous state (the image's layouts table
+  resolves migration at load), so there is no injection of anything.
 - `dev.mjs` — the dev server: static files + `/version` + recompile on
   save (the gate's v1 sources are the COMMITTED src files — the on-disk
   files are your playground).
 - `test.mjs` — the Node gate (same V8; no browser needed):
-  `node test.mjs` runs v1→v8 with held instances — body swap with state
+  `node test.mjs` runs v1→v16 with held instances — body swap with state
   preserved, field addition with in-place migration (fresh instance gets
   the initializer), field deletion, base-class body change with the
   override still winning, an additive method accepted, an OPEN method

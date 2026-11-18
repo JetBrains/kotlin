@@ -24,12 +24,6 @@ enum class ExceptionTagType { WASM_TAG, JS_TAG, TRAP, WASM_SHARED_ANYREF }
 class WasmCompiledModuleFragment(
     private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
     private val isWasmJsTarget: Boolean,
-    /** Hot reload: the previous module's payload registry, ferried in as
-     *  the hidden source object (HOT_RELOAD_PREVIOUS_REGISTRY). Merged
-     *  into the emitted section so it stays COMPLETE — a delta defines
-     *  only its dirty files, so clean files' classes reach the section
-     *  only through this merge. */
-    private val hotReloadPreviousRegistry: Map<IdSignature, WasmTypeDeclaration> = emptyMap(),
 ) {
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
@@ -68,7 +62,7 @@ class WasmCompiledModuleFragment(
         wasmElements: MutableList<WasmElement>,
         exports: MutableList<WasmExport<*>>,
         wasmCommandModuleInitialization: Boolean,
-        emitHotReloadRegistry: Boolean,
+        emitHotRuntime: Boolean,
     ) {
         stringAddressesAndLengthsField(
             definedDeclarations = definedDeclarations,
@@ -90,7 +84,7 @@ class WasmCompiledModuleFragment(
         // refuses either API when both exist. Main is still exported, under
         // the neutral `main`, for hosts that want to run it explicitly.
         val mainExportName = when {
-            emitHotReloadRegistry -> "main"
+            emitHotRuntime -> "main"
             else -> mainFunctionsExportName
         }
         mainFunctions.forEach { mainFunction ->
@@ -166,9 +160,11 @@ class WasmCompiledModuleFragment(
         wasmCommandModuleInitialization: Boolean,
         useStackSwitching: Boolean,
         importWasmMemoryInsteadOfExport: Boolean,
-        emitHotReloadRegistry: Boolean = false,
+        emitHotRuntime: Boolean = false,
     ): WasmModule {
         val definedDeclarations = getDefinedDeclarationsFromFragments()
+
+        val isStdlibOrMonolith = multimoduleOptions?.stdlibModuleNameForImport == null
 
         val data = mutableListOf<WasmData>()
         val stringPoolSize = bindStringPoolSymbolsAndGetSize(data)
@@ -181,7 +177,6 @@ class WasmCompiledModuleFragment(
             exports.addAll(it.exports)
         }
 
-        val isStdlibOrMonolith = multimoduleOptions?.stdlibModuleNameForImport == null
         val memories = createAndExportMemory(
             importWasmMemoryInsteadOfExport = importWasmMemoryInsteadOfExport,
             isStdlibOrMonolith = isStdlibOrMonolith,
@@ -200,6 +195,44 @@ class WasmCompiledModuleFragment(
 
         val elements = getUsedAsWasmRawFunctionReference(definedDeclarations)
 
+        // The fdefn cells (DESIGN §16): collect this module's reloadable
+        // bindings and class LAYOUTS from the klib fragments' linker data,
+        // then register the machinery the master init needs — the
+        // canonical cell struct type, the resolve helper, the exported
+        // cell accessors, and the per-class layout registrations (the
+        // generic migration/slot-value machinery lives in the stdlib).
+        // Nothing here is coordinated with previous generations: the
+        // names and layouts are this module's own description, resolved
+        // against the image at load.
+        val hotReloadCellBindings = mutableListOf<Triple<String, IdSignature, IdSignature>>()
+        // every literal the hot-reload init materializes: binding names
+        // (codegen registered one channel half per target — the imported
+        // JS-string constant on wasm-js, the string pool on wasm-wasi)
+        val hotReloadLiteralIds = mutableMapOf<String, WasmSymbol<Int>>()
+        val hotLayoutBindings = mutableListOf<HotLayoutBinding>()
+        if (emitHotRuntime) {
+            forEachLinkerData { linkerData ->
+                hotReloadCellBindings.addAll(linkerData.hotReloadCellBindings)
+                if (!isStdlibOrMonolith) {
+                    // the STDLIB BASE registers none: its classes' shapes
+                    // are recomputable from current IR and never migrate,
+                    // and every delta re-registers its own (identical
+                    // content — registration is idempotent)
+                    hotLayoutBindings.addAll(linkerData.hotLayoutBindings)
+                }
+                for ([name, id] in linkerData.globalLiteralsId) {
+                    hotReloadLiteralIds.putIfAbsent(name, id)
+                }
+                for ([name, id] in linkerData.stringLiteralId) {
+                    hotReloadLiteralIds.putIfAbsent(name, id)
+                }
+            }
+            if (hotReloadCellBindings.isNotEmpty()) {
+                createFdefnMachinery(definedDeclarations)
+            }
+
+        }
+
         createAndExportServiceFunctions(
             definedDeclarations = definedDeclarations,
             stringEntities = stringEntities,
@@ -208,27 +241,15 @@ class WasmCompiledModuleFragment(
             wasmElements = elements,
             exports = exports,
             wasmCommandModuleInitialization = wasmCommandModuleInitialization,
-            emitHotReloadRegistry = emitHotReloadRegistry,
+            emitHotRuntime = emitHotRuntime,
         )
 
         val masterInitFunction = createMasterInitFunction(
             definedDeclarations = definedDeclarations,
+            hotReloadCellBindings = hotReloadCellBindings,
+            hotReloadLiteralIds = hotReloadLiteralIds,
+            hotLayoutBindings = hotLayoutBindings,
         )
-
-        // Hot reload Stage 3: the universal VTABLE STEPPER, created BEFORE
-        // the function lists are partitioned (it must land in
-        // definedFunctions). Virtual dispatch lowers to
-        // test -> (cast + read slot) | (call this function, retry): it
-        // reads the instance's RTTI klassId (a stable content hash), finds
-        // the class among this module's declared classes, installs the
-        // CURRENT vtable and itable into the (mutable, root-typed) cell
-        // fields, and returns the vtable. A grown vtable is a SUBTYPE of
-        // the old one, so already-compiled code keeps dispatching on
-        // migrated instances for free; only new code on stale instances
-        // arrives here.
-        if (emitHotReloadRegistry) {
-            createHotVtableUpdateFunction(definedDeclarations)
-        }
 
         val globals = getGlobals(definedDeclarations)
 
@@ -258,32 +279,10 @@ class WasmCompiledModuleFragment(
         val recursiveTypeGroups = getTypes(definedDeclarations)
 
         // Hot reload: the registry section is the image's COMPLETE
-        // payload-version table — a delta defines only its dirty files, so
-        // clean files' classes reach the section only by merging the
-        // previous table in (own entries win; the host's ferry would
-        // otherwise silently lose history for a later edit of those files).
-        val customSections = if (emitHotReloadRegistry) {
-            val previousEntries = HotReloadPayloads.collectRegistryEntries(hotReloadPreviousRegistry)
-            val ownEntries = HotReloadPayloads.collectRegistryEntries(definedDeclarations.gcTypes)
-            val registry = previousEntries + ownEntries
-            if (registry.isNotEmpty()) {
-                listOf(
-                    WasmCustomSection(
-                        HotReloadPayloads.REGISTRY_SECTION_NAME,
-                        HotReloadPayloads.serializeRegistry(registry),
-                    )
-                )
-            } else {
-                emptyList()
-            }
-        } else {
-            emptyList()
-        }
-
         // Hot reload: reactor-style output — no start section; init is
         // exported as _initialize so the host controls instantiate ->
         // init -> sweep (and a rejected patch never runs its init).
-        if (emitHotReloadRegistry) {
+        if (emitHotRuntime) {
             exports.add(
                 WasmExport.Function(
                     field = masterInitFunction,
@@ -305,12 +304,12 @@ class WasmCompiledModuleFragment(
             globals = definedGlobals,
             importedGlobals = importedGlobals,
             exports = exports,
-            startFunction = if (emitHotReloadRegistry) null else masterInitFunction,
+            startFunction = if (emitHotRuntime) null else masterInitFunction,
             elements = elements,
             data = data,
             dataCount = true,
             tags = definedTags,
-            customSections = customSections,
+            customSections = emptyList(),
         ).apply { calculateIds() }
     }
 
@@ -478,95 +477,6 @@ class WasmCompiledModuleFragment(
         return recursiveGroups
     }
 
-    /**
-     * The module's universal hot-reload vtable stepper:
-     *   `(ref null $AnyCell) -> (ref null $vt_root)`
-     * generated from the classes this module declares (linker-data
-     * hotReloadableClasses). Semantics: install the current vtable + itable
-     * for the instance's RUNTIME class — a method added by this module
-     * becomes dispatchable on instances created before it existed (SBCL's
-     * wrapper update; here the "wrapper" is the mutable vtable field and
-     * the grown vtable's prefix keeps old code sound).
-     */
-    private fun createHotVtableUpdateFunction(definedDeclarations: DefinedDeclarationsResolver) {
-        val classKeys = mutableSetOf<IdSignature>()
-        forEachLinkerData { classKeys.addAll(it.hotReloadableClasses) }
-        val concreteClasses = classKeys.filter { key ->
-            // classes with a vtable global (concrete); abstract classes
-            // never instantiate
-            definedDeclarations.globalVTables.containsKey(key)
-        }
-        if (concreteClasses.isEmpty()) return
-
-        val anyCellKey = Synthetics.HeapTypes.anyBuiltInType.type
-        val cellGcType = GcTypeSymbol(anyCellKey)
-        val rootVtableHeapType = VTableHeapTypeSymbol(anyCellKey)
-
-        val functionType = WasmFunctionType(
-            parameterTypes = listOf(WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)),
-            resultTypes = listOf(WasmRefNullType(rootVtableHeapType)),
-        )
-        definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.hotVtableUpdateType.type] = functionType
-
-        val serviceCodeLocation = SourceLocation.NoLocation("Hot reload vtable update")
-        val receiverLocal = WasmLocal(0, "cell", WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType), true)
-        val stepper = WasmFunction.Defined(
-            name = "_hot_vtable_update",
-            type = Synthetics.FunctionHeapTypes.hotVtableUpdateType,
-            locals = mutableListOf(receiverLocal),
-        )
-        with(WasmExpressionBuilder(stepper.instructions)) {
-            fun emitClassArm(classKey: IdSignature) {
-                val klassId = cityHash64(classKey.toString().encodeToByteArray()).toLong()
-                // the klassId is on the stack from the arm above (or the
-                // initial read below): compare, and on match install
-                buildConstI64(klassId, serviceCodeLocation)
-                buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
-                buildIf("Class matches")
-                // cell.vtable = $vt<Class> (typed (ref $vt<C>) <: root)
-                buildGetLocal(receiverLocal, serviceCodeLocation)
-                buildGetGlobal(VTableGlobalSymbol(classKey), serviceCodeLocation)
-                buildStructSet(cellGcType, 0, serviceCodeLocation)
-                // cell.itable = $it<Class> (or null when no interfaces)
-                buildGetLocal(receiverLocal, serviceCodeLocation)
-                if (definedDeclarations.globalClassITables.containsKey(classKey)) {
-                    buildGetGlobal(ClassITableGlobalSymbol(classKey), serviceCodeLocation)
-                } else {
-                    buildRefNull(WasmHeapType.Simple.None, serviceCodeLocation)
-                }
-                buildStructSet(cellGcType, 1, serviceCodeLocation)
-                // return the freshly installed vtable — global.get yields
-                // (ref $vt<C>) which is already a subtype of the declared
-                // (ref null $vt_root) result
-                buildGetGlobal(VTableGlobalSymbol(classKey), serviceCodeLocation)
-                buildInstr(WasmOp.RETURN, serviceCodeLocation)
-                buildEnd()
-            }
-            // klassId = cell.rtti.klassId, once; each arm re-pushes it
-            // for the next comparison — mirror of the associated-object
-            // getter's chain (the if-consumed compare value)
-            buildGetLocal(receiverLocal, serviceCodeLocation)
-            buildStructGet(cellGcType, 2, serviceCodeLocation) // rtti
-            buildStructGet(Synthetics.GcTypes.rttiType, BodyGenerator.RTTI_KLASS_ID_FIELD_ID, serviceCodeLocation)
-            for (classKey in concreteClasses) {
-                emitClassArm(classKey)
-                // re-push the klassId for the next arm (the previous
-                // comparison consumed it)
-                buildGetLocal(receiverLocal, serviceCodeLocation)
-                buildStructGet(cellGcType, 2, serviceCodeLocation)
-                buildStructGet(Synthetics.GcTypes.rttiType, BodyGenerator.RTTI_KLASS_ID_FIELD_ID, serviceCodeLocation)
-            }
-            // Unknown class to this module (deleted, or changed beyond
-            // structural identity): return the instance's CURRENT vtable —
-            // the dispatch's own cast is the gate, so compatible vtables keep
-            // dispatching and incompatible ones trap the honest "illegal cast".
-            buildInstr(WasmOp.DROP, serviceCodeLocation)
-            buildGetLocal(receiverLocal, serviceCodeLocation)
-            buildStructGet(cellGcType, 0, serviceCodeLocation)
-        }
-        definedDeclarations.functions[Synthetics.Functions.hotVtableUpdate.value] = stepper
-    }
-
     private fun createAndBindRttiTypeDeclaration(
         definedDeclarations: DefinedDeclarationsResolver,
     ) {
@@ -663,12 +573,128 @@ class WasmCompiledModuleFragment(
         return listOf(memory)
     }
 
+    /** The fdefn era (DESIGN §16): the canonical cell struct type every
+     *  hot module carries. The struct is STANDALONE in the type
+     *  section: a rec group is the canonicalization unit and this type
+     *  references nothing local, so standalone declarations unify
+     *  across modules. */
+    private fun createFdefnMachinery(
+        definedDeclarations: DefinedDeclarationsResolver,
+    ) {
+        definedDeclarations.gcTypes[HotReloadPayloads.FDEFN_TYPE] = WasmStructDeclaration(
+            name = "fdefn",
+            fields = listOf(WasmStructFieldDeclaration("fn", WasmFuncRef, isMutable = true)),
+            superType = null,
+            isFinal = false,
+        )
+    }
+
     private fun createMasterInitFunction(
         definedDeclarations: DefinedDeclarationsResolver,
+        hotReloadCellBindings: List<Triple<String, IdSignature, IdSignature>> = emptyList(),
+        hotReloadLiteralIds: Map<String, WasmSymbol<Int>> = emptyMap(),
+        hotLayoutBindings: List<HotLayoutBinding> = emptyList(),
     ): WasmFunction.Defined {
         val masterInitFunction = WasmFunction.Defined("_initializeModule", Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
+            /** text -> kotlin.String, exactly the way every string literal
+             *  lowers per target: wasm-js passes (id, imported JS-string
+             *  constant) to the js-string loader; wasm-wasi passes just the
+             *  string-pool id (the loader reads its own address+length). */
+            fun buildString(text: String, literalIds: Map<String, WasmSymbol<Int>>) {
+                val poolId = literalIds[text]
+                    ?: error("hot reload: no string-literal id for \"${text.take(40)}\"")
+                buildConstI32Symbol(poolId, serviceCodeLocation)
+                if (isWasmJsTarget) {
+                    buildInstr(
+                        WasmOp.GLOBAL_GET, serviceCodeLocation,
+                        LiteralGlobalSymbol(text),
+                    )
+                    buildCall(FuncSymbol(Synthetics.Functions.createStringLiteralJsString.value), serviceCodeLocation)
+                } else {
+                    val loader =
+                        if (text.fitsLatin1) Synthetics.Functions.createStringLiteralLatin1
+                        else Synthetics.Functions.createStringLiteralUtf16
+                    buildCall(FuncSymbol(loader.value), serviceCodeLocation)
+                }
+            }
+
+            // LAYOUTS FIRST: every allocation of a hot class reads the
+            // module's layout global (the fresh payload's `$layout`),
+            // and the val/object
+            // initializers below allocate — so the layout objects must
+            // exist before they run. Safe before the string pool and the
+            // cells: the registration calls carry no string literals
+            // (class-id constants + ref.funcs), and the cell globals hold
+            // their own impls from instantiation (GENESIS).
+            for (binding in hotLayoutBindings) {
+                // register the class's CURRENT definition (the dispatch halves —
+                // the class's CURRENT vtable and itable, read at
+                // instantiation-initialized globals — then the allocate
+                // closure; the slots one by one after; the register IS
+                // the set-current: load is apply, the newest definition
+                // in the image is live) and store the returned LAYOUT
+                // OBJECT into the module's per-class layout global:
+                // every allocation of the class reads it, stamping it
+                // into the fresh payload's `$layout`
+                buildConstI64(binding.classId, serviceCodeLocation)
+                buildGetGlobal(VTableGlobalSymbol(binding.classKey!!), serviceCodeLocation)
+                if (binding.hasItable) {
+                    buildGetGlobal(ClassITableGlobalSymbol(binding.classKey!!), serviceCodeLocation)
+                } else {
+                    buildRefNull(WasmHeapType.Simple.None, serviceCodeLocation)
+                }
+                buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, FuncSymbol(binding.allocateKey))
+                buildCall(FuncSymbol(Synthetics.Functions.hotLayoutsRegisterBuiltIn.value), serviceCodeLocation)
+                buildInstr(
+                    WasmOp.GLOBAL_SET, serviceCodeLocation,
+                    FieldGlobalSymbol(HotReloadPayloads.layoutGlobalKey(binding.classId)),
+                )
+                for (slot in binding.readerKeys.indices) {
+                    buildConstI64(binding.classId, serviceCodeLocation)
+                    buildConstI64(binding.tags[slot * 2], serviceCodeLocation)
+                    buildConstI64(binding.tags[slot * 2 + 1], serviceCodeLocation)
+                    buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, FuncSymbol(binding.readerKeys[slot]))
+                    buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, FuncSymbol(binding.writerKeys[slot]))
+                    buildCall(FuncSymbol(Synthetics.Functions.hotLayoutsAddSlotBuiltIn.value), serviceCodeLocation)
+                }
+            }
+
+            // _fieldInitialize next: it populates the string POOL
+            // ($_addressesAndLengths starts null — wasm-wasi's binding-name
+            // literals read it), and runs the val/object initializers. Those
+            // initializers may already call this module's bindings — GENESIS
+            // covers that window: every cell global holds its own impl from
+            // instantiation, so pre-resolution calls run the same bodies the
+            // resolution is about to install.
             buildCall(Synthetics.Functions.fieldInitializerFunction, serviceCodeLocation)
+
+            // LOAD IS APPLY: resolve every binding's cell by name and
+            // install THIS module's impl — first definition and
+            // redefinition are the same instruction sequence, and the
+            // newest definition in the image is live.
+            for (binding in hotReloadCellBindings) {
+                buildString(binding.first, hotReloadLiteralIds)
+                buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, FuncSymbol(binding.second))
+                buildCall(FuncSymbol(Synthetics.Functions.hotFdefnsResolveBuiltIn.value), serviceCodeLocation)
+                // the stdlib resolve returns anyref; the cell global is
+                // the raw fdefn struct — the cast is the honest check
+                buildRefCastNullStatic(GcHeapTypeSymbol(HotReloadPayloads.FDEFN_TYPE), serviceCodeLocation)
+                buildInstr(
+                    WasmOp.GLOBAL_SET, serviceCodeLocation,
+                    FieldGlobalSymbol(binding.third),
+                )
+            }
+
+            // The image's CLASS LAYOUTS (the layout era): build this
+            // module's layout structs from the linker data — the slot
+            // descriptor arrays (interleaved name/type tags) plus the
+            // reader/writer/allocate funcrefs the codegen emitted — and
+            // register each into the image's table, then declare the
+            // class's CURRENT layout (load is apply). The STDLIB BASE
+            // registers none: its classes' shapes are recomputable from
+            // current IR and never migrate, and every delta re-registers
+            // its own (a re-registration of a known shape is identical).
 
             if (definedDeclarations.functions.containsKey(Synthetics.Functions.associatedObjectGetter.value)) {
                 buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, Synthetics.Functions.associatedObjectGetter)
@@ -1084,59 +1110,81 @@ class WasmCompiledModuleFragment(
         return resolver
     }
 
-    private fun bindGlobalLiterals(definedDeclarations: DefinedDeclarationsResolver, stringPoolSize: Int): Int {
+    private fun bindGlobalLiterals(
+        definedDeclarations: DefinedDeclarationsResolver,
+        stringPoolSize: Int,
+        extraLiterals: Map<String, WasmSymbol<Int>> = emptyMap(),
+    ): Int {
         var literalCounter = stringPoolSize
         val literalGlobalIdMap = mutableMapOf<String, Int>()
 
+        // one imported JS-string constant global per distinct string (the
+        // import's NAME is the string value; the global's own name is
+        // debug-only), one id per distinct string, both channels shared
+        fun globalFor(string: String): WasmGlobal =
+            definedDeclarations.globalLiteralGlobals.computeIfAbsent(string) {
+                WasmGlobal(
+                    name = "string_${definedDeclarations.globalLiteralGlobals.size}",
+                    type = WasmRefType(WasmHeapType.Simple.Extern),
+                    isMutable = false,
+                    init = emptyList(),
+                    importPair = WasmImportDescriptor(importedStringConstants, WasmSymbol(string))
+                )
+            }
+
+        fun idOf(stringValue: String): Int {
+            var stringId = literalGlobalIdMap[stringValue]
+            if (stringId == null) {
+                stringId = literalCounter
+                literalGlobalIdMap[stringValue] = stringId
+                literalCounter++
+            }
+            return stringId
+        }
+
+        // codegen-registered literals first, then the link-time ones (the
+        // registry entry keys/chunks)
         forEachLinkerData { linkerData ->
-            var globalCounter = 0
-            for (symbol in linkerData.globalLiterals) {
-                definedDeclarations.globalLiteralGlobals.computeIfAbsent(symbol.value) { string ->
-                    WasmGlobal(
-                        name = "string_${globalCounter++}",
-                        type = WasmRefType(WasmHeapType.Simple.Extern),
-                        isMutable = false,
-                        init = emptyList(),
-                        importPair = WasmImportDescriptor(importedStringConstants, WasmSymbol(string))
-                    )
-                }
-            }
+            for (symbol in linkerData.globalLiterals) globalFor(symbol.value)
             for ([stringValue, literalIdSymbol] in linkerData.globalLiteralsId) {
-                var stringId = literalGlobalIdMap[stringValue]
-                if (stringId == null) {
-                    stringId = literalCounter
-                    literalGlobalIdMap[stringValue] = stringId
-                    literalCounter++
-                }
-                literalIdSymbol.bind(stringId)
+                literalIdSymbol.bind(idOf(stringValue))
             }
+        }
+        for ([stringValue, literalIdSymbol] in extraLiterals) {
+            globalFor(stringValue)
+            literalIdSymbol.bind(idOf(stringValue))
         }
         return literalCounter
     }
 
-    private fun bindStringPoolSymbolsAndGetSize(data: MutableList<WasmData>): Int {
+    private fun bindStringPoolSymbolsAndGetSize(
+        data: MutableList<WasmData>,
+        extraLiterals: Map<String, WasmSymbol<Int>> = emptyMap(),
+    ): Int {
         val stringDataSectionBytes = mutableListOf<Byte>()
         var stringDataSectionStart = 0
         val visitedStrings = mutableMapOf<String, Int>()
         val addressesAndLengths = mutableListOf<Long>()
-        forEachLinkerData { linkerData ->
-            for ([string, literalIdSymbol] in linkerData.stringLiteralId.entries) {
-                val visitedStringId = visitedStrings[string]
-                val stringId: Int
-                if (visitedStringId == null) {
-                    stringId = visitedStrings.size
-                    visitedStrings[string] = stringId
 
-                    addressesAndLengths.add(stringDataSectionStart.toLong() or (string.length.toLong() shl 32))
-                    val constData = ConstantDataCharArray(string.toCharArray(), string.fitsLatin1)
-                    stringDataSectionBytes += constData.toBytes().toList()
-                    stringDataSectionStart += constData.sizeInBytes
-                } else {
-                    stringId = visitedStringId
-                }
-                literalIdSymbol.bind(stringId)
+        fun addString(string: String, symbol: WasmSymbol<Int>) {
+            var stringId = visitedStrings[string]
+            if (stringId == null) {
+                stringId = visitedStrings.size
+                visitedStrings[string] = stringId
+                addressesAndLengths.add(stringDataSectionStart.toLong() or (string.length.toLong() shl 32))
+                val constData = ConstantDataCharArray(string.toCharArray(), string.fitsLatin1)
+                stringDataSectionBytes += constData.toBytes().toList()
+                stringDataSectionStart += constData.sizeInBytes
             }
+            symbol.bind(stringId)
         }
+
+        // codegen-registered literals first, then the link-time ones (the
+        // registry entry keys/chunks) — the same pool, the same segments
+        forEachLinkerData { linkerData ->
+            for ([string, symbol] in linkerData.stringLiteralId.entries) addString(string, symbol)
+        }
+        for ([string, symbol] in extraLiterals) addString(string, symbol)
 
         data.add(WasmData(WasmDataMode.Passive, stringDataSectionBytes.toByteArray()))
         val constDataAddressesAndLengths = ConstantDataIntegerArray(addressesAndLengths, LONG_SIZE_BYTES)

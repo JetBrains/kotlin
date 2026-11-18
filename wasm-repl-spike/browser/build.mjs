@@ -9,19 +9,13 @@
 // keys the wasm declarations, and the IC cache's config hash covers the
 // link's -ir-output-name — a fresh cache means re-lowering the stdlib.
 //
-// The registry ferry: read the last patch's custom section (readRegistry
-// from glue.mjs — the one parser), inject __hotRegistry into the next
-// compile's own always-dirty file (the image is the previous-state
-// store).
-
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { CompileServer } from './compile-server.mjs'
-import { readRegistry } from './glue.mjs'
 
 export const HERE = path.dirname(new URL(import.meta.url).pathname)
-export const KOTLIN_DIST = process.env.KOTLIN_DIST || path.join(HERE, '..', '..', 'dist')
+const KOTLIN_DIST = process.env.KOTLIN_DIST || path.join(HERE, '..', '..', 'dist')
 const KOTLINC = path.join(KOTLIN_DIST, 'kotlinc', 'bin', 'kotlinc-wasm')
 const STDLIB = path.join(KOTLIN_DIST, 'kotlinc', 'lib', 'kotlin-stdlib-wasm-js.klib')
 
@@ -36,8 +30,8 @@ const IC_CACHE = path.join(BUILD, 'ic-cache')
 const APP_OUTPUT = 'appimg'
 const APP_WASM = `_${APP_OUTPUT}_.wasm`
 export const APP_PATCH_WASM = APP_WASM
-export const BASE_WASM = 'kotlin-kotlin-stdlib.wasm'
-export const BASE_PATH = path.join(BUILD, BASE_WASM)
+const BASE_WASM = 'kotlin-kotlin-stdlib.wasm'
+const BASE_PATH = path.join(BUILD, BASE_WASM)
 
 fs.mkdirSync(BUILD, { recursive: true })
 
@@ -64,7 +58,6 @@ export function forceFullPatch() {
 }
 
 let version = 0
-let lastPatchBytes = null
 
 // the app's source files, compiled as ONE module (stable names across
 // edits — identity and the IC cache both key on them). Each file is a
@@ -77,23 +70,13 @@ export const SRC_NAMES = ['model.kt', 'zoo.kt', 'lambdas.kt', 'shapes.kt', 'stat
 /** Compile `sources` ({ 'model.kt': text, 'zoo.kt': text }) as the next
  * PATCH (app module only, hot); the stdlib base emits only if absent
  * from the build dir (byte-identical across edits, so it only needs
- * loading once). The registry of the previous patch is ferried
- * automatically — into its own always-dirty file (it is the
- * previous-state channel; its payload is one object + one const).
- * Only CHANGED files are rewritten on disk so identical content never
- * dirties the IC. The FIRST compile of a process forces a full patch
- * (see forceFullPatch). Returns { version, bytes, error }. ASYNC:
- * talks to the resident compile server. */
+ * loading once). Only CHANGED files are rewritten on disk so identical
+ * content never dirties the IC. The FIRST compile of a process forces
+ * a full patch (see forceFullPatch). Returns { version, bytes, error }.
+ * ASYNC: talks to the resident compile server. */
 export async function compileNext(sources) {
     if (version === 0) forceFullPatch()
     version += 1
-    let reg = ''
-    if (lastPatchBytes) {
-        const blob = readRegistry(lastPatchBytes)
-        if (blob) {
-            reg = `internal object __hotRegistry { const val REGISTRY = "${Buffer.from(blob).toString('base64')}" }\n`
-        }
-    }
     const files = []
     for (const name of SRC_NAMES) {
         const text = sources[name]
@@ -106,8 +89,6 @@ export async function compileNext(sources) {
         if (current !== text) fs.writeFileSync(disk, text)
         files.push(disk)
     }
-    fs.writeFileSync(path.join(BUILD, 'registry.kt'), reg)
-    files.push(path.join(BUILD, 'registry.kt'))
     const stepArgs = [
         ['-Xwasm-target=wasm-js', ...files, '-ir-output-dir', BUILD,
          '-ir-output-name', APP_OUTPUT, '-libraries', STDLIB, '-Xwasm-hot-reload',
@@ -116,10 +97,14 @@ export async function compileNext(sources) {
          '-ir-output-dir', BUILD, '-ir-output-name', APP_OUTPUT, '-main', 'noCall',
          '-Xwasm-hot-reload', '-Xwasm-generate-closed-world-multimodule', `-Xcache-directory=${IC_CACHE}`],
     ]
+    // the ONE legitimately-slow compile: a wiped IC cache re-lowers the
+    // whole stdlib (minutes). Everything else must answer in 180s or the
+    // watchdog kills the shim and we fall back to spawning kotlinc.
+    const cold = version === 1 || !fs.existsSync(BASE_PATH)
     for (const args of stepArgs) {
         // the resident server first; the spawn fallback keeps the loop
         // working (just slower) if the server can't start or dies
-        let result = await server.compile(args)
+        let result = await server.compile(args, cold ? 600_000 : undefined)
         if (result === null) {
             const r = spawnSync(KOTLINC, args, { encoding: 'utf-8' })
             result = [r.status === 0, (r.stdout + r.stderr).trim()]
@@ -129,8 +114,7 @@ export async function compileNext(sources) {
             return { version, error: result[1].trim() }
         }
     }
-    lastPatchBytes = fs.readFileSync(path.join(BUILD, APP_WASM))
-    return { version, bytes: lastPatchBytes, error: null }
+    return { version, bytes: fs.readFileSync(path.join(BUILD, APP_WASM)), error: null }
 }
 
 /** The stdlib base wasm bytes (emitted by the same link; identical across

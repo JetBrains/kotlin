@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.wasm.config.wasmDisableCrossFileOptimisations
-import org.jetbrains.kotlin.wasm.ir.WasmStructDeclaration
-import java.util.TreeMap
 
 abstract class WasmCompilerWithIC<TProgramFragments : IrICProgramFragments>(
     val mainModule: IrModuleFragment,
@@ -32,24 +30,13 @@ abstract class WasmCompilerWithIC<TProgramFragments : IrICProgramFragments>(
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> TProgramFragments> {
         //TODO: Lower only needed files but not all loaded by IrLoader KT-71041
 
-        // Hot reload's previous-state store is the IMAGE REGISTRY: the host
-        // ferries the live image's payload-version table (its module's
-        // hot-reload-registry custom section) back into this compilation as
-        // the hidden __hotRegistry source object, parsed here before any
-        // lowering so the const initializer is intact. No CLI args, no
+        // Hot reload consumes NO previous state at compile time (the
+        // layout era): class histories live in the IMAGE — the stdlib's
+        // layouts table, accumulated at load — and migration is resolved
+        // at RUNTIME through each class's registered layout. A compile
+        // is a pure function of the current source; no CLI args, no
         // cache coupling — wiping the IC cache loses nothing (the cache
-        // now serves only compilation speed).
-        if (context.isHotReloadCompilation) {
-            val previousRegistry = HotReloadPayloads.readInjectedRegistry(allModules)
-            // stash the RAW table for the output phase — the delta's
-            // emitted registry must merge it in (see HOT_RELOAD_PREVIOUS_REGISTRY)
-            context.configuration.put(HotReloadPayloads.HOT_RELOAD_PREVIOUS_REGISTRY, previousRegistry)
-            val history = mutableMapOf<String, TreeMap<Int, WasmStructDeclaration>>()
-            for ([classKey, version, struct] in HotReloadPayloads.parsePayloadEntries(previousRegistry)) {
-                history.getOrPut(classKey) { TreeMap() }.putIfAbsent(version, struct)
-            }
-            context.hotReloadPayloadHistory = history
-        }
+        // serves only compilation speed).
 
         context.configuration.wasmDisableCrossFileOptimisations = true
         lowerPreservingTags(
@@ -130,6 +117,18 @@ open class WasmCompilerWithICMultimodule(
             moduleName = irFile.module.name.asString()
         )
 
+        if (context.isHotReloadCompilation) {
+            // The fdefn runtime lives in the STDLIB and every
+            // hot module's link-generated resolve helper calls it (BOTH
+            // targets — the multimodule port unified the resolve flavor);
+            // the reference is invisible to codegen-side tracking (no IR
+            // call site exists), so track it here — the module's
+            // projection then imports it from the resident base, the
+            // image's table.
+            for (builtin in Synthetics.Functions.hotRuntimeBuiltIns) {
+                moduleReferencedDeclarations.functions.add(builtin.value)
+            }
+        }
         return WasmIrProgramFragmentsMultimodule(
             definedTypes = dependencyFileFragment.definedTypes,
             dependencyDeclarations = dependencyFileFragment.definedDeclarations,

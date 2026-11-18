@@ -1,26 +1,27 @@
-// A resident-JVM compile server for the browser loop — the port of the
-// REPL's CompileServer pattern (the easy latency win: the measured 3.1 s
-// per edit is dominated by ~2× kotlinc JVM spawn; a resident JVM looping
-// `CLICompiler.doMainNoExit` per request makes each step ~0.1–0.5 s warm).
+// A resident-JVM compile shim for the browser loop. The shim (lrepl's
+// CompileServer.kt, built into the sibling lrepl/server.jar) forwards each
+// request to the official Kotlin compile daemon — the same resident
+// service Gradle drives, which already speaks the wasm target — so the
+// warm compiler JVM is upstream's, spawned and version-checked by its own
+// client library (a dist rebuild restarts it automatically; no more
+// delete-server.jar-after-dist rule). Protocol: one request per line,
+// arguments joined with \x01; one response line
+// "RESULT <rc> <base64 diagnostics>".
 //
-// The server itself is lrepl's CompileServer.kt, built into the sibling
-// lrepl/server.jar on first use (built from this dist's kotlinc — it must
-// be rebuilt when the dist changes; the jar is deleted then, same
-// operational rule as the REPL). Protocol: one request per line, arguments
-// joined with \x01; one response line "RESULT <rc> <base64 diagnostics>".
-//
-// If the server dies or the jar can't be built, compile() returns null and
-// the caller falls back to spawning kotlinc — the loop keeps working, just
-// slower.
+// If the shim dies or the jar can't be built, compile() returns null and
+// the caller falls back to spawning kotlinc — the loop keeps working,
+// just slower.
 
 import { spawn, spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 
 const HERE = path.dirname(new URL(import.meta.url).pathname)
-export const KOTLIN_DIST = process.env.KOTLIN_DIST || path.join(HERE, '..', '..', 'dist')
+const KOTLIN_DIST = process.env.KOTLIN_DIST || path.join(HERE, '..', '..', 'dist')
 const KOTLINC = path.join(KOTLIN_DIST, 'kotlinc', 'bin', 'kotlinc')
 const COMPILER_JAR = path.join(KOTLIN_DIST, 'kotlinc', 'lib', 'kotlin-compiler.jar')
+const DAEMON_CLIENT_JAR = path.join(KOTLIN_DIST, 'kotlinc', 'lib', 'kotlin-daemon-client.jar')
+const SHIM_CP = `${COMPILER_JAR}:${DAEMON_CLIENT_JAR}`
 const SERVER_JAR = path.join(HERE, '..', 'lrepl', 'server.jar')
 const SERVER_SRC = path.join(HERE, '..', 'lrepl', 'CompileServer.kt')
 
@@ -35,7 +36,7 @@ export class CompileServer {
     ensureJar() {
         if (fs.existsSync(SERVER_JAR)) return true
         const r = spawnSync(
-            KOTLINC, ['-cp', COMPILER_JAR, SERVER_SRC, '-d', SERVER_JAR],
+            KOTLINC, ['-cp', SHIM_CP, SERVER_SRC, '-d', SERVER_JAR],
             { encoding: 'utf-8' },
         )
         return r.status === 0
@@ -45,24 +46,43 @@ export class CompileServer {
         if (this.proc && this.proc.exitCode === null) return true
         if (!this.ensureJar()) return false
         this.proc = spawn(
-            'java', ['-cp', `${SERVER_JAR}:${COMPILER_JAR}`, 'CompileServerKt'],
+            'java', ['-cp', `${SERVER_JAR}:${SHIM_CP}`, 'CompileServerKt'],
             { stdio: ['pipe', 'pipe', 'inherit'] },
         )
         // no startup banner — the server answers request-for-request
         return true
     }
 
-    /** (ok, diagnostics) or null → the caller falls back to spawning. */
-    async compile(args) {
+    /** (ok, diagnostics) or null → the caller falls back to spawning.
+     *  timeoutMs: warm compiles take seconds, so the default is tight;
+     *  pass a long one for the rare legitimately-slow compile (a wiped
+     *  IC cache re-lowers the whole stdlib). */
+    async compile(args, timeoutMs = 180_000) {
         if (!this.ensureRunning()) return null
         try {
             this.proc.stdin.write(args.join(US) + '\n')
-            const line = await this.readLine()
+            // WATCHDOG: the shim is an RMI client of the compile daemon,
+            // and RMI has NO timeout — a daemon death mid-request leaves
+            // the shim blocked forever (the classic wedge: an aborted run
+            // + a dist rebuild). Bound it; on timeout the catch below
+            // kills the shim and the caller falls back to spawning
+            // kotlinc, so the loop always makes progress.
+            const line = await Promise.race([
+                this.readLine(),
+                new Promise((_, reject) => {
+                    this.timeout = setTimeout(
+                        () => reject(new Error(`compile server timed out (${Math.round(timeoutMs / 1000)}s)`)),
+                        timeoutMs,
+                    )
+                }),
+            ])
+            clearTimeout(this.timeout)
             const m = /^RESULT (\d+) (.*)$/.exec(line)
             if (!m) throw new Error('bad server response: ' + line.slice(0, 80))
             const diag = Buffer.from(m[2], 'base64').toString()
             return [Number(m[1]) === 0, diag]
         } catch (e) {
+            clearTimeout(this.timeout)
             try { this.proc.kill() } catch { /* already gone */ }
             this.proc = null
             console.error('[server] fell back to CLI:', String(e).slice(0, 120))

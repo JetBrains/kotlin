@@ -6,6 +6,7 @@ handshake -> connection-info -> ping -> define -> evaluate -> re-define
 (verify the live slot swap) -> completions -> quit.
 """
 
+import os
 import re
 import socket
 import subprocess
@@ -25,16 +26,17 @@ class Client:
         self.sock = socket.create_connection(("127.0.0.1", port), timeout=120)
         self.f = self.sock.makefile("rwb")
 
-    def rex(self, code, ident, as_string=True):
+    def payload(self, code, ident, as_string=True):
         """as_string=True sends the form quoted (string); False sends it as a
         nested list, which is what real SLIME does."""
         if as_string:
             esc = code.replace('\\', '\\\\').replace('"', '\\"')
-            payload = f'(:emacs-rex "{esc}" "lrepl" t {ident} (:protocol-version "2.30"))'
-        else:
-            inner = code.replace('(', ' (').replace(')', ') ')  # spaced for raw embedding
-            payload = f'(:emacs-rex {inner} "lrepl" t {ident} (:protocol-version "2.30"))'
-        self.f.write(frame(payload))
+            return f'(:emacs-rex "{esc}" "lrepl" t {ident} (:protocol-version "2.30"))'
+        inner = code.replace('(', ' (').replace(')', ') ')  # spaced for raw embedding
+        return f'(:emacs-rex {inner} "lrepl" t {ident} (:protocol-version "2.30"))'
+
+    def rex(self, code, ident, as_string=True):
+        self.f.write(frame(self.payload(code, ident, as_string)))
         self.f.flush()
         frames = []
         while True:
@@ -49,13 +51,7 @@ class Client:
     def send(self, code, ident, as_string=True):
         """Send a rex without waiting for its reply (the debugger flow holds
         replies until the popup is quit)."""
-        if as_string:
-            esc = code.replace('\\', '\\\\').replace('"', '\\"')
-            payload = f'(:emacs-rex "{esc}" "lrepl" t {ident} (:protocol-version "2.30"))'
-        else:
-            inner = code.replace('(', ' (').replace(')', ') ')
-            payload = f'(:emacs-rex {inner} "lrepl" t {ident} (:protocol-version "2.30"))'
-        self.f.write(frame(payload))
+        self.f.write(frame(self.payload(code, ident, as_string)))
         self.f.flush()
 
     def read_frames(self, until):
@@ -75,7 +71,8 @@ class Client:
 
 
 def main():
-    proc = subprocess.Popen([sys.executable, "swank.py", str(PORT)])
+    swank_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "swank.py")
+    proc = subprocess.Popen([sys.executable, swank_path, str(PORT)])
     try:
         time.sleep(1.5)  # let the server bind (image/daemon start lazily)
         c = Client(PORT)

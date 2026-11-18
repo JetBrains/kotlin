@@ -81,7 +81,6 @@ object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
         val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
             wasmCompiledFileFragments = wasmCompiledFileFragments,
             isWasmJsTarget = isWasmJsTarget,
-            hotReloadPreviousRegistry = configuration.get(HotReloadPayloads.HOT_RELOAD_PREVIOUS_REGISTRY) ?: emptyMap(),
         )
 
         val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
@@ -94,7 +93,7 @@ object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
             wasmCommandModuleInitialization = wasmCommandModuleInitialization,
             useStackSwitching = useStackSwitching,
             importWasmMemoryInsteadOfExport = isWasmJsTarget,
-            emitHotReloadRegistry = configuration.getBoolean(WasmConfigurationKeys.WASM_HOT_RELOAD),
+            emitHotRuntime = configuration.getBoolean(WasmConfigurationKeys.WASM_HOT_RELOAD),
         )
     }
 

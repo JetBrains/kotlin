@@ -117,10 +117,21 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeEquivalentDeclarations(equivalentTypes)
         serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
         serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
-        serializeList(hotReloadableClasses, ::serializeIdSignature)
         serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
         serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
         serializeSet(wasmReferencedFunctions, ::serializeIdSignature)
+        serializeList(hotReloadCellBindings) {
+            serializeString(it.first); serializeIdSignature(it.second); serializeIdSignature(it.third)
+        }
+        serializeList(hotLayoutBindings) { binding ->
+            serializeIdSignature(binding.classKey!!)
+            serializeLong(binding.classId)
+            serializeBoolean(binding.hasItable)
+            serializeList(binding.tags, ::serializeLong)
+            serializeList(binding.readerKeys, ::serializeIdSignature)
+            serializeList(binding.writerKeys, ::serializeIdSignature)
+            serializeIdSignature(binding.allocateKey)
+        }
     }
 
     private fun serializeWasmFunction(func: WasmFunction) =

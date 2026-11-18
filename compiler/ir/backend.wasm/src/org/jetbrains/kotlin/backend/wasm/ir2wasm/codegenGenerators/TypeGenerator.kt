@@ -89,26 +89,26 @@ class TypeGenerator(
             if (backendContext.isHotReloadCompilation) {
                 // Cell encoding: {vtable, itable, rtti, payload} — the cell
                 // shape never changes, so field/method changes invalidate
-                // nothing already compiled; fields live in versioned payload
-                // structs behind the mutable field (HotReloadPayloads owns
-                // the version model; flat field indices match
-                // ClassMetadata.fields).
-val plan = HotReloadPayloads.payloadPlan(declaration, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer)
-                for ([version, struct] in plan.history) {
-                    typeCodegenContext.definePayloadVersionGcType(symbol, version, struct)
-                }
-                if (plan.currentVersion > (plan.history.lastOrNull()?.first ?: 0)) {
-                    typeCodegenContext.definePayloadVersionGcType(symbol, plan.currentVersion, plan.currentStruct)
-                }
+                // nothing already compiled; fields live in LAYOUT payloads
+                // behind the mutable field (HotReloadPayloads owns the
+                // layout model; flat field indices match
+                // ClassMetadata.fields, +1 past `_hashCode` where the
+                // `$layout` pointer sits). A module declares ONLY its classes'
+                // CURRENT layouts — there is no history to re-emit.
+                val plan = HotReloadPayloads.payloadLayoutPlan(
+                    declaration, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer,
+                )
+                typeCodegenContext.definePayloadLayoutGcType(symbol, plan.currentStruct)
 
                 // The payload field is mutable, and mutable fields are *invariant*
                 // in wasm GC subtyping — so every cell in the hierarchy must declare
-                // the exact same field type. `payload<Any>` is that type: every
-                // payload starts with Any's `_hashCode` (see wasm builtins Any.kt),
-                // so all payload versions and all subclass payloads are subtypes
-                // of it, and the cell subtyping chain stays valid. Field access
-                // down-casts to the declaring class's payload — the cast doubles
-                // as the version check once payload versions exist.
+                // the exact same field type. The ROOT payload (kotlin.Any's —
+                // {_hashCode, $layout}) is that type: every layout payload
+                // restates the root's fields, so all subclass payloads are
+                // subtypes of it and the cell subtyping chain stays valid.
+                // Field access reads the layout pointer through the root
+                // type and casts to the class's current layout
+                // only after equality — old shapes route through the image.
                 fields.add(
                     WasmStructFieldDeclaration(
                         "payload",

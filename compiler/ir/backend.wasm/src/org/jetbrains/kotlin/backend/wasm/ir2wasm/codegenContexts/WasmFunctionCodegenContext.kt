@@ -30,6 +30,10 @@ enum class SyntheticLocalType {
     // uniform shape), the extracted vtable (root-typed), and the looked-up
     // interface itable (anyref — the lookup returns anyref before the cast)
     HOT_DISPATCH_RECEIVER, HOT_DISPATCH_VTABLE, HOT_DISPATCH_ITABLE,
+    // hot-reload slot access: the stashed receiver cell for the layout
+    // check (the fast path re-reads the payload from it; the slow path
+    // hands it to the image's slot-value machinery)
+    HOT_LAYOUT_CELL,
 }
 
 class WasmFunctionCodegenContext(
@@ -43,6 +47,7 @@ class WasmFunctionCodegenContext(
 
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
     private val wasmSyntheticLocals = LinkedHashMap<SyntheticLocalType, WasmLocal>()
+    private val wasmTempLocals = LinkedHashMap<WasmType, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
     private val nonLocalReturnLevels = LinkedHashMap<IrReturnableBlockSymbol, Int>()
 
@@ -105,6 +110,8 @@ class WasmFunctionCodegenContext(
                 // matches the intrinsics' result type (kotlin.wasm.internal
                 // .reftypes.anyref -> the abstract wasm anyref)
                 WasmAnyRef
+            SyntheticLocalType.HOT_LAYOUT_CELL ->
+                WasmRefNullType(typeContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
         }
 
     fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {
@@ -112,6 +119,23 @@ class WasmFunctionCodegenContext(
             wasmFunction.locals.size,
             type.name,
             type.wasmType,
+            isParameter = false
+        ).also {
+            wasmFunction.locals += it
+        }
+    }
+
+    /** A per-TYPE scratch local — hot-reload field stores generate the
+     *  value ONCE into it (before the layout check branches), so both
+     *  the fast path (a typed struct.set) and the slow path (box +
+     *  slot-value write) see the same single evaluation. Sites are
+     *  sequential, never nested, so one local per wasm type serves
+     *  every site in the function. */
+    fun referenceTempLocal(type: WasmType): WasmLocal = wasmTempLocals.getOrPut(type) {
+        WasmLocal(
+            wasmFunction.locals.size,
+            "hot~${type.name}",
+            type,
             isParameter = false
         ).also {
             wasmFunction.locals += it

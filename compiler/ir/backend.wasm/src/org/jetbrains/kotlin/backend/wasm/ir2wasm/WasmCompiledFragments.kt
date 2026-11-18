@@ -52,12 +52,19 @@ class WasmCompiledLinkerDataFileFragment(
     val equivalentTypes: MutableList<Pair<String, IdSignature>> = mutableListOf(),
     val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = mutableSetOf(),
     val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
-    // hot reload: reference keys of the classes this file declares (the
-    // linker generates one universal vtable stepper per module from them)
-    val hotReloadableClasses: MutableList<IdSignature> = mutableListOf(),
     val objectInstanceFieldInitializers: MutableList<IdSignature> = mutableListOf(),
     val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
     val wasmReferencedFunctions: MutableSet<IdSignature> = mutableSetOf(),
+    /** The fdefn era: this file's reloadable bindings, as
+     *  (binding name, impl signature, cell-global key) — the link emits
+     *  the master init's cell resolution + install from these. */
+    val hotReloadCellBindings: MutableList<Triple<String, IdSignature, IdSignature>> = mutableListOf(),
+    /** The layout era: this file's class-layout registrations — the
+     *  slot descriptors (interleaved name/type tags) plus the
+     *  reader/writer/allocate function keys the link builds the layout
+     *  struct's arrays from and the master init registers into the
+     *  image's table. */
+    val hotLayoutBindings: MutableList<HotLayoutBinding> = mutableListOf(),
 )
 
 abstract class WasmCompiledFileFragment(

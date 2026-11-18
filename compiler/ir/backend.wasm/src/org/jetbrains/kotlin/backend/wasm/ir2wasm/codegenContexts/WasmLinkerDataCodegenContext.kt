@@ -52,6 +52,14 @@ open class WasmLinkerDataCodegenContext(
         wasmFileFragment.wasmReferencedFunctions.add(key)
     }
 
+    /** The fdefn era: record this file's binding for the link step —
+     *  the exact name (the image table's key), the impl signature (the
+     *  init installs its ref.func into the cell), and the cell global's
+     *  synthetic key (the init resolves the binding by name at load). */
+    fun addHotReloadCellBinding(name: String, impl: IdSignature, cellKey: IdSignature) {
+        wasmFileFragment.hotReloadCellBindings.add(Triple(name, impl, cellKey))
+    }
+
     fun addJsFun(irFunction: IrFunctionSymbol, importName: WasmSymbol<String>, jsCode: String) {
         wasmFileFragment.jsFuns[irFunction.getReferenceKey()] =
             WasmCompiledModuleFragment.JsCodeSnippet(importName = importName, jsCode = jsCode)
@@ -105,10 +113,11 @@ open class WasmLinkerDataCodegenContext(
         wasmFileFragment.jsModuleAndQualifierReferences.add(reference)
     }
 
-    /** Hot reload: register a class declared by this file — the linker
-     *  generates the module's universal vtable stepper from the collected
-     *  set (klassId -> current vtable + itable). */
-    fun addHotReloadableClass(irClass: IrClassSymbol) {
-        wasmFileFragment.hotReloadableClasses.add(irClass.getReferenceKey())
+    /** Hot reload: record the class's registration into the image's
+     *  CLASS REGISTRY — the class's reference key rides along (the
+     *  init reads the class's vtable/itable globals by it). */
+    fun addHotLayoutBinding(irClass: IrClassSymbol, binding: HotLayoutBinding) {
+        binding.classKey = irClass.getReferenceKey()
+        wasmFileFragment.hotLayoutBindings.add(binding)
     }
 }

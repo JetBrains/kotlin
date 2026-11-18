@@ -45,6 +45,14 @@ private val linkerFunctionSignatures = setOf(
     Synthetics.Functions.jsToKotlinStringAdapterBuiltIn.value,
     Synthetics.Functions.jsToKotlinAnyAdapterBuiltIn.value,
     Synthetics.Functions.runRootSuitesBuiltIn.value,
+    // the hot-reload runtime (stdlib): every hot module's
+    // link-generated resolve calls these, and the reference is invisible
+    // to codegen-side tracking — the projection must keep them so the
+    // resident base defines the image's fdefinition table
+    // the hot-reload runtime (the stdlib's tables): every hot module's
+    // link-generated code calls these — one list, shared with the remap
+    // and reference-tracking sites (see Synthetics.Functions)
+    *Synthetics.Functions.hotRuntimeBuiltIns.map { it.value }.toTypedArray(),
 )
 private val linkerTypeSignatures = setOf(
     Synthetics.HeapTypes.associatedObjectGetterWrapper.type,

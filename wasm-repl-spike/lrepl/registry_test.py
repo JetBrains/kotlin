@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
-"""Gate: the IMAGE registry is the compiler's only previous-state store.
+"""Gate: the IMAGE resolves migration — a compile has NO previous state.
 
-Two scenarios, both with the IC cache wiped at the critical moment (the
-cache serves compilation speed only — the compiler has no IC history
-path):
+The layout era (SBCL layouts/wrappers): a class's shape is a content
+hash (the wrapper id), instances carry theirs in the payload, and the
+image's LAYOUTS table (stdlib, registered at load) holds every
+wrapper's slot descriptors + accessor closures. Migration is
+interpreted at RUNTIME — update-instance copies same-named
+same-typed slots through the layouts' reader/writer funcrefs — so
+wiping any cache loses nothing at all. Both scenarios keep the IC
+cache wiped at the critical moment to prove there is no hidden
+compile-time history:
 
-1. FIRST bump after the wipe: define a class, create an instance, WIPE
-   THE CACHE, redefine the class with an added field. The previous v1
-   shape can only come from the previous generation's hot-reload-registry
-   custom section (the COMPLETE payload table — an unbumped class's
-   current entry). The old instance must migrate lazily on first
-   new-code field access: surviving field preserved, new field defaulted.
-2. SECOND bump after another wipe: redefine further and migrate again —
-   the registry accumulates and re-ferries across generations.
+1. FIRST bump after the wipe: added field — the old instance
+   migrates lazily on first new-code field access; the surviving
+   field is preserved, the added slot reads its type default.
+2. SECOND bump after another wipe: migrate again through the
+   image's accumulated layouts.
 
 Run: LREPL_WORK=<scratch> python3 registry_test.py
 """

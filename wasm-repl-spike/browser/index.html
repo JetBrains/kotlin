@@ -42,7 +42,7 @@
 </head>
 <body>
 <div id="main">
-    <h2>Kotlin/Wasm hot reload <span>— wasm-js, the engine is the only type police</span></h2>
+    <h2>Kotlin/Wasm hot reload <span>— wasm-js</span></h2>
     <div id="banner"><div class="head"><span id="banner-title"></span><button class="x" onclick="dismiss()">✕</button></div><pre id="banner-body"></pre></div>
     <div>live module <span class="ver" id="ver">…</span></div>
 
@@ -58,14 +58,14 @@
             <div><button onclick="bump('new')">bump</button></div>
         </div>
         <div class="card" id="card-zoo">
-            <div class="kind">zoo — every animal born at v1; the chorus speaks through the swap</div>
+            <div class="kind">A zoo of animals</div>
             <div id="zoo-lines"></div>
         </div>
     </div>
     <button onclick="makeFresh()" id="freshBtn" disabled>create fresh Model</button>
 
     <div class="edits">
-        <b>demo script — edit a file in <code>browser/app/src/</code> and save; the page updates in ~1–2 s</b>
+        <b>demo script — edit a file in <code>browser/app/src/</code> and save; the page updates in <0.5s</b>
         <details class="edit">
             <summary>1. change a body (slot swap — no types involved)</summary>
             <pre>fun render(): String = "✨ " + label + ": " + count</pre>
@@ -80,7 +80,7 @@
             <div class="hint">expect: the bump buttons jump by ten — same slots, same instances</div>
         </details>
         <details class="edit">
-            <summary>3. add a field (payload version — held instances MIGRATE in place)</summary>
+            <summary>3. add a field (a new payload shape — held instances MIGRATE in place)</summary>
             <pre>class Model(var count: Int, val label: String) {
     var note: String = "hot"   // ← add this line, and use it in render:
 </pre>
@@ -166,9 +166,9 @@ fun intro(): String = name + " says " + speak() + " (" + pet() + ")"</pre>
             <pre>open class Counted { fun kind() = "counted" }
 
 class Model(var count: Int, val label: String) : Counted() {</pre>
-            <div class="hint">expect: V8 rejects the Model-touching slots at the setters (createModel,
+            <div class="hint">expect: V8 rejects the patch at instantiation (createModel,
             bumpModel, renderModel…) — the cell SUBTYPING CHAIN is part of every wasm signature
-            mentioning Model, so the engine refuses the swapped funcrefs, and the old code keeps
+            mentioning Model, so the engine refuses the whole patch, and the old code keeps
             running. Revert to recover. Gaining an INTERFACE would be additive; a class
             supertype changes the chain (the new Model literally is not the old Model type).
             That's the honest boundary — new instances can be the new type, old code keeps the
@@ -180,7 +180,7 @@ class Model(var count: Int, val label: String) : Counted() {</pre>
 </div>
 
 <script type="module">
-    import { loadBase, liveView, applyDelta, readRegistry } from './glue.mjs'
+    import { loadBase, liveView, applyDelta } from './glue.mjs'
 
     const $ = (id) => document.getElementById(id)
     const model = { old: null, fresh: null }
@@ -190,6 +190,7 @@ class Model(var count: Int, val label: String) : Counted() {</pre>
     const EXTRA_KINDS = [['pig', 'Pig']]   // beat 6: auto-added once the class exists
     let zoo = []
     let base = null
+    let baseBytesLen = 0
     let live = null
     let version = 0
 
@@ -216,12 +217,16 @@ class Model(var count: Int, val label: String) : Counted() {</pre>
     globalThis.dismiss = () => clearBanner()
 
     async function bootOrPatch(target) {
-        const bytes = new Uint8Array(await (await fetch(`/app/build/app-v${target}.wasm`)).arrayBuffer())
-        const reg = readRegistry(bytes)
+        const resp = await fetch(`/app/build/app-v${target}.wasm`)
+        if (!resp.ok) throw new Error(`app-v${target}.wasm: HTTP ${resp.status}`)
+        const bytes = new Uint8Array(await resp.arrayBuffer())
         if (base === null) {
             // the stdlib base is cold code — loaded once per session; every
             // patch (~25 KB) imports it
-            const baseBytes = new Uint8Array(await (await fetch('/app/build/kotlin-kotlin-stdlib.wasm')).arrayBuffer())
+            const baseResp = await fetch('/app/build/kotlin-kotlin-stdlib.wasm')
+            if (!baseResp.ok) throw new Error(`kotlin-kotlin-stdlib.wasm: HTTP ${baseResp.status}`)
+            const baseBytes = new Uint8Array(await baseResp.arrayBuffer())
+            baseBytesLen = baseBytes.byteLength
             base = await loadBase(baseBytes)
         }
         if (live === null) {
@@ -231,9 +236,9 @@ class Model(var count: Int, val label: String) : Counted() {</pre>
         if (live.instances.length === 1) {
             model.old = live.exports.createModel('born-v1')
             zoo = ZOO_KINDS.map(([k, n]) => live.exports.make(k, n))
-            log(`v${target}: live (${bytes.length} B patch over a ${(await (await fetch('/app/build/kotlin-kotlin-stdlib.wasm')).arrayBuffer()).byteLength} B base); instances born`)
+            log(`v${target}: live (${bytes.length} B patch over a ${baseBytesLen} B base); instances born`)
         } else {
-            const { swapped, added, rejected } = result
+            const { applied, added, rejected } = result
             const rejectedNames = [...new Set(rejected.map((r) => r.name))]
             if (rejected.length === 0) {
                 clearBanner()
@@ -246,18 +251,17 @@ class Model(var count: Int, val label: String) : Counted() {</pre>
                         log(`v${target}: the zoo grew — ${k} added (new class, old callers)`)
                     } catch { /* not defined yet — skip */ }
                 }
-                log(`v${target}: hot patch — ${swapped.length} slot(s) swapped` +
-                    (added.length ? `, new: ${added.join(', ')}` : '') +
-                    (reg ? `, registry ${reg.length} B` : ''))
+                log(`v${target}: hot patch — ${applied.length} binding(s) applied` +
+                    (added.length ? `, new: ${added.join(', ')}` : ''))
             } else {
                 banner(
-                    `v${target} rejected ${rejected.length} slot(s) — class shape changed; OLD code is still running`,
-                    `rejected: ${rejectedNames.join(', ')}\n\n${rejected[0].error}\n\n` +
+                    `v${target} rejected — class shape changed; OLD code is still running`,
+                    `${rejected[0].error}\n\n` +
                     `an OPEN method grows the vtable — the cell type changes with it,\n` +
                     `and so does every signature mentioning the class. The engine caught\n` +
-                    `it at the setter. Revert the edit and save to recover.`,
+                    `it at instantiation. Revert the edit and save to recover.`,
                     'warn')
-                log(`v${target}: PARTIAL — ${swapped.length} swapped, ${rejected.length} rejected (shape change)`, 'warn')
+                log(`v${target}: PARTIAL — ${applied.length} applied, ${rejected.length} rejected (shape change)`, 'warn')
             }
             flash($('card-old')); flash($('card-zoo')); if (model.fresh) flash($('card-new'))
         }

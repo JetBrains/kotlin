@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isExplicitlyExported
 import org.jetbrains.kotlin.ir.backend.js.wasm.getWasmExportName
 import org.jetbrains.kotlin.ir.backend.js.wasm.isWasmExportDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.getSourceFile
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isFunction
@@ -59,6 +61,7 @@ import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilderWithOptimizer
 import org.jetbrains.kotlin.wasm.ir.WasmExternRef
+import org.jetbrains.kotlin.wasm.ir.WasmFuncRef
 import org.jetbrains.kotlin.wasm.ir.WasmF32
 import org.jetbrains.kotlin.wasm.ir.WasmF64
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
@@ -67,6 +70,8 @@ import org.jetbrains.kotlin.wasm.ir.WasmGlobal
 import org.jetbrains.kotlin.wasm.ir.WasmHeapType
 import org.jetbrains.kotlin.wasm.ir.WasmI32
 import org.jetbrains.kotlin.wasm.ir.WasmI64
+import org.jetbrains.kotlin.wasm.ir.WasmI8
+import org.jetbrains.kotlin.wasm.ir.WasmI16
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
 import org.jetbrains.kotlin.wasm.ir.WasmImmediate
@@ -250,11 +255,13 @@ class DeclarationGenerator(
 
         expressionBuilder.complete()
 
-        // Hot-reload codegen: route every use of this function — call sites,
-        // vtable/itable entries, function references — through a mutable slot
-        // global, so a host can swap the body at runtime. This includes
-        // method bodies: existing instances dispatch through vtables whose
-        // entries reference the slot-reading entry function below.
+        // Hot-reload codegen: route every use of this function — call
+        // sites, vtable/itable entries, function references — through
+        // its fdefn CELL (one cell-reading entry per function), so the
+        // newest definition in the image is live for every generation
+        // with one struct.set. This includes method bodies: existing
+        // instances dispatch through vtables whose entries reference
+        // the entry function below.
         var hotReloadEntry: WasmFunction.Defined? = null
         if (backendContext.isHotReloadCompilation && isHotReloadableFunction(declaration)) {
             hotReloadEntry = defineHotReloadableFunction(declaration, function, functionTypeSymbol, watName)
@@ -296,36 +303,61 @@ class DeclarationGenerator(
     }
 
     // ------------------------------------------------------------------
-    // Hot reload codegen (-Xwasm-hot-reload)
+    // Hot reload codegen (-Xwasm-hot-reload) — fdefinition cells
+    // (DESIGN.md §16, the fdefn era): SBCL's fdefn object translated to
+    // wasm GC — ONE canonical struct `(struct (field (mut funcref)))`
+    // whose instances live in the image (the host's name -> cell Map)
+    // and cross instance boundaries like any GC object.
     //
     // Layout per reloadable function `f`:
-    //   (global $__slot$f (mut (ref null $funType)) (ref.func $f$impl))
-    //   (func $f$entry (type $funType) local.get.. global.get $__slot$f call_ref)
-    //   (func $__set$f (param (ref null $funType)) local.get 0 global.set $__slot$f)
-    // The entry is registered under `f`'s real reference key, so every call
-    // site, vtable entry and function reference goes through the slot; the
-    // body is only reachable through the slot's initializer. Exports:
-    //   __hot_entry$<fqName>  — the slot-reading entry (for host funcref wiring)
-    //   __hot_set$<fqName>    — the setter (host installs a new body)
+    //   (global $__hot_cell$f (mut (ref null $fdefn))) — resolved by
+    //            name at load, the fasl loader's job (master init)
+    //   (func $__hot_impl$f …the body) — NO export: load IS apply, the
+    //            init installs it into the shared cell
+    //   (func $__hot_entry$f args… global.get $cell struct.get fn
+    //            ref.cast $funType call_ref) — exported (adoption and
+    //            the real export names resolve to it)
+    // The entry is registered under `f`'s real reference key, so every
+    // call site, vtable entry and function reference goes through the
+    // cell. There is NO install-time type police (the fdefinition is
+    // type-erased, exactly SBCL's): an incompatible redefinition
+    // installs and callers trap at the entry's per-call ref.cast.
     // ------------------------------------------------------------------
 
-    private fun hotReloadKeys(watName: String, realKey: IdSignature): HotReloadKeys {
-        fun synthetic(kind: String) = IdSignature.CommonSignature("hot.reload", "$kind<${realKey}>", null, 0, null)
-        return HotReloadKeys(
-            slot = synthetic("slot"),
-            impl = synthetic("impl"),
-            setter = synthetic("setter"),
-        )
+    private fun hotReloadImplKey(watName: String, realKey: IdSignature): IdSignature {
+        // The synthetic key embeds the EXPORT-NAME identity (watName#hash),
+        // NOT realKey's string form — distinct signatures can render equal
+        // strings, which would conflate two bindings' impls onto one key.
+        val uniqueSuffix = Integer.toHexString(realKey.hashCode())
+        return IdSignature.CommonSignature("hot.reload", "impl<${watName}#${uniqueSuffix}>", null, 0, null)
     }
-
-    private class HotReloadKeys(val slot: IdSignature, val impl: IdSignature, val setter: IdSignature)
 
     private fun isHotReloadableFunction(declaration: IrFunction): Boolean {
         if (declaration is IrConstructor) return false
         if (declaration.isInline) return false
+        // Cell-reloadable scope (DESIGN §16): program code AND the
+        // library — EXCEPT the linear-memory interop layer. The hazard
+        // analysis: wasm-wasi's I/O marshals through each instance's
+        // OWN linear memory, and a redefinition installed from ANOTHER
+        // instance would dereference raw pointers in the wrong memory.
+        // Pointer-typed APIs live in kotlin.wasm.unsafe; those stay
+        // module-local (plain calls, per-instance — no cell, so a
+        // redefinition can never move them across instances).
+        // Everything else is safe to share: a shared impl executes
+        // ENTIRELY in its own instance (its callees are plain
+        // module-local calls), and GC values cross the boundary by
+        // construction. Sharing library bodies is what makes the
+        // stdlib-override story work: one struct.set into the shared
+        // cell reaches every generation's callers (NB the lrepl's
+        // patch_builtin_slots), and it makes per-generation state MORE
+        // consistent — a shared kotlin.random impl means one Random
+        // stream for the whole image, where per-instance state would
+        // mint one per generation.
+        val packageFqName = declaration.getPackageFragment().packageFqName
+        if (packageFqName.asString().startsWith("kotlin.wasm.unsafe")) return false
         val parentClass = declaration.parentClassOrNull ?: return true
         // Callable-reference and merged-suspend-lambda classes go through
-        // link-time deduplication; slotting their members would break it.
+        // link-time deduplication; cell-routing their members would break it.
         return parentClass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL &&
                 parentClass.origin != WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS
     }
@@ -339,62 +371,95 @@ class DeclarationGenerator(
         val wasmFunctionType = typeCodegenContext.getWasmFunctionType(declaration.symbol)
             ?: error("hot reload: wasm function type not found for $watName")
         val realKey = declarationCodegenContext.referenceKey(declaration.symbol)
-        val keys = hotReloadKeys(watName, realKey)
+        val implKey = hotReloadImplKey(watName, realKey)
 
         // FQ names are not unique (overloads); disambiguate with the
-        // reference key so slots, entries, setters and their exports are.
+        // reference key so the cell global and its entries are.
         val uniqueSuffix = Integer.toHexString(realKey.hashCode())
-        val slotName = "__slot$" + watName + "#" + uniqueSuffix
-        val entryName = "__hot_entry$" + watName + "#" + uniqueSuffix
-        val setterName = "__hot_set$" + watName + "#" + uniqueSuffix
-        // The compiled body is only reachable through the slot initializer.
-        declarationCodegenContext.defineSyntheticFunction(keys.impl, impl)
-        linkerDataContext.addUsedAsWasmRawFunctionReference(keys.impl)
+        val bindingName = HotReloadPayloads.bindingName(watName, uniqueSuffix)
 
-        // Mutable slot global initialized with the compiled body.
-        val slotGlobal = WasmGlobal(
-            name = slotName,
-            type = WasmRefNullType(functionTypeSymbol),
+        // The fdefn CELL GLOBAL — this module's stand-in for the image's
+        // cell, resolved by name at load (the fasl loader's job) and set
+        // by the master init. Call sites never hold the funcref, only the
+        // cell: one struct.set into the shared cell is visible to every
+        // generation's callers.
+        //
+        // GENESIS (the SBCL core's move): the initializer mints a local
+        // fdefn holding the module's OWN impl instead of null, so every
+        // entry of a freshly instantiated module dereferences a live cell
+        // from the first instant — the module is SELF-HOSTING through its
+        // entire init, before any resolve runs (the runtime machinery
+        // hotFdefnsRegister, the string adapters, everything the
+        // load path itself calls). The master init's resolve then OVERWRITES
+        // the global with the image's shared cell, and the local mint
+        // becomes garbage: for one instant each generation is its own
+        // core, then it joins the image.
+        val cellKey = HotReloadPayloads.cellGlobalKey(bindingName)
+        val cellRefNull = WasmRefNullType(GcHeapTypeSymbol(HotReloadPayloads.FDEFN_TYPE))
+        val cellGlobal = WasmGlobal(
+            name = "__hot_cell$" + bindingName,
+            type = cellRefNull,
             isMutable = true,
-            init = listOf(wasmInstrWithoutLocation(WasmOp.REF_FUNC, FuncSymbol(keys.impl))),
+            init = mutableListOf(
+                wasmInstrWithoutLocation(WasmOp.REF_FUNC, FuncSymbol(implKey)),
+                wasmInstrWithoutLocation(WasmOp.STRUCT_NEW, GcTypeSymbol(HotReloadPayloads.FDEFN_TYPE)),
+            ),
         )
-        declarationCodegenContext.defineSyntheticGlobalField(keys.slot, slotGlobal)
+        declarationCodegenContext.defineSyntheticGlobalField(cellKey, cellGlobal)
 
-        // Slot-reading entry, registered under the function's real key: all
-        // calls, vtable entries and function references resolve to it.
+        // ride the klib fragments to the link step: the master init's cell
+        // resolution + install comes from this
+        linkerDataContext.addHotReloadCellBinding(bindingName, implKey, cellKey)
+        if (backendContext.isWasmJsTarget) {
+            // the init passes the binding NAME as an imported JS-string
+            // constant — register BOTH halves the way const-string
+            // codegen does: the externref constant global (the init
+            // reads it) and its pool id (the helper takes
+            // (poolId, jsString))
+            linkerDataContext.referenceGlobalStringGlobal(bindingName)
+            linkerDataContext.referenceGlobalStringId(bindingName)
+        } else {
+            // wasm-wasi: the name is an ordinary STRING-POOL literal —
+            // the init calls _stringLiteralLatin1/Utf16 with its pool id
+            linkerDataContext.referenceStringLiteralId(bindingName)
+        }
+
+        // The compiled body. NO export, NO writer: LOAD IS APPLY — the
+        // module's init installs this impl into the shared cell (the
+        // newest definition in the image is live).
+        declarationCodegenContext.defineSyntheticFunction(implKey, impl)
+        linkerDataContext.addUsedAsWasmRawFunctionReference(implKey)
+
+        // Cell-reading entry, registered under the function's real key:
+        // all calls, vtable entries and function references resolve to
+        // it. The per-call ref.cast IS the type check — SBCL's contract:
+        // an incompatible redefinition installs and callers trap here.
         val entryInstructions = mutableListOf<WasmInstr>()
         for (i in wasmFunctionType.parameterTypes.indices) {
             entryInstructions.add(wasmInstrWithoutLocation(WasmOp.LOCAL_GET, WasmImmediate.LocalIdx.get(i)))
         }
-        entryInstructions.add(wasmInstrWithoutLocation(WasmOp.GLOBAL_GET, FieldGlobalSymbol(keys.slot)))
+        entryInstructions.add(wasmInstrWithoutLocation(WasmOp.GLOBAL_GET, FieldGlobalSymbol(cellKey)))
+        entryInstructions.add(
+            wasmInstrWithoutLocation(
+                WasmOp.STRUCT_GET,
+                GcTypeSymbol(HotReloadPayloads.FDEFN_TYPE),
+                WasmImmediate.StructFieldIdx.get(HotReloadPayloads.FDEFN_FN_FIELD),
+            )
+        )
+        entryInstructions.add(
+            wasmInstrWithoutLocation(WasmOp.REF_CAST, WasmImmediate.HeapType(functionTypeSymbol))
+        )
         entryInstructions.add(wasmInstrWithoutLocation(WasmOp.CALL_REF, typeCodegenContext.referenceFunctionType(declaration.symbol)))
         // NB: no trailing END — the binary emitter appends the terminator.
         val entry = WasmFunction.Defined(
-            name = entryName,
+            name = "__hot_entry$" + bindingName,
             type = functionTypeSymbol,
             instructions = entryInstructions,
         )
         declarationCodegenContext.defineFunction(declaration.symbol, entry)
         linkerDataContext.addUsedAsWasmRawFunctionReference(realKey)
         linkerDataContext.addExport(
-            WasmExport.Function(field = entry, name = entryName)
-        )
-
-        // Exported setter: installs a new implementation into the slot.
-        val setterType = typeCodegenContext.referenceWasmFunctionHeapType(
-            WasmFunctionType(listOf(WasmRefNullType(functionTypeSymbol)), emptyList())
-        )
-        val setter = WasmFunction.Defined(
-            name = setterName,
-            type = setterType,
-            instructions = mutableListOf(
-                wasmInstrWithoutLocation(WasmOp.LOCAL_GET, WasmImmediate.LocalIdx.get(0)),
-                wasmInstrWithoutLocation(WasmOp.GLOBAL_SET, FieldGlobalSymbol(keys.slot)),
-            ),
-        )
-        declarationCodegenContext.defineSyntheticFunction(keys.setter, setter)
-        linkerDataContext.addExport(
-            WasmExport.Function(field = setter, name = setterName)
+            WasmExport.Function(field = entry, name = entry.name)
         )
 
         return entry
@@ -649,23 +714,50 @@ class DeclarationGenerator(
             createClassITable(metadata)
             createRtti(metadata)
 
-            // Hot reload: register the class for the module's universal
-            // vtable stepper (Stage 3 — method additions). Concrete classes
-            // only: abstract classes and interfaces have no instances.
-            if (backendContext.isHotReloadCompilation && !declaration.isAbstractOrSealed) {
-                linkerDataContext.addHotReloadableClass(declaration.symbol)
-            }
-
-            // Hot-reload payload migration (Stage 2): when the class's
-            // history contains payload versions that fail the current-version
-            // cast, emit the stepper + migrateFrom functions field access
-            // dispatches through. The plan was resolved by the type generator.
-            if (backendContext.isHotReloadCompilation) {
-                HotReloadPayloads.payloadPlan(declaration, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer)
-                    .takeIf { it.migrateFromVersions.isNotEmpty() }
-                    ?.let { plan ->
-                        HotReloadPayloads.generatePayloadFunctions(plan, backendContext, typeCodegenContext, declarationCodegenContext)
-                    }
+            // Hot-reload class layouts: emit the class's reader/writer/
+            // allocate closures — the layout the image's generic
+            // migration dispatches through — and record the binding the
+            // init's registration calls come from. CONCRETE classes
+            // only: a layout is looked up by the CONCRETE class an
+            // instance's RTTI names, and abstract/sealed class ids
+            // never appear there — their layouts were dead weight.
+            // The machinery origins (callable references, merged
+            // suspend lambdas) are excluded too: generation-local
+            // plumbing, never redefined, and their funcref fields
+            // cannot cross the erased channel anyway.
+            if (backendContext.isHotReloadCompilation && HotReloadPayloads.hasLayout(declaration)) {
+                val plan = HotReloadPayloads.payloadLayoutPlan(
+                    declaration, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer,
+                )
+                HotReloadPayloads.generateLayoutFunctions(
+                    plan = plan,
+                    backendContext = backendContext,
+                    typeCodegenContext = typeCodegenContext,
+                    declarationCodegenContext = declarationCodegenContext,
+                    linkerDataContext = linkerDataContext,
+                    transformer = wasmModuleTypeTransformer,
+                )
+                // the per-class MODULE-LOCAL layout-object global: null
+                // until the init stores the layout the load registered;
+                // every allocation reads it (the fresh payload's
+                // `$layout`) — the cell-global pattern (codegen defines,
+                // the init writes)
+                val layoutCellKey = backendContext.idSignatureRetriever
+                    .declarationSignature(backendContext.wasmSymbols.hotLayoutClass.owner)!!
+                declarationCodegenContext.defineSyntheticGlobalField(
+                    HotReloadPayloads.layoutGlobalKey(plan.classId),
+                    WasmGlobal(
+                        name = "hot_layout$" + declaration.name,
+                        type = WasmRefNullType(GcHeapTypeSymbol(layoutCellKey)),
+                        isMutable = true,
+                        init = mutableListOf(
+                            wasmInstrWithoutLocation(
+                                operator = WasmOp.REF_NULL,
+                                immediate1 = WasmImmediate.HeapType(GcHeapTypeSymbol(layoutCellKey)),
+                            ),
+                        ),
+                    ),
+                )
             }
         }
     }
@@ -747,6 +839,10 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
             is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
             is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
+            WasmFuncRef -> g.buildRefNull(WasmHeapType.Simple.Func, location)
+            // packed fields (hot-reload payload layouts can carry them —
+            // e.g. Byte/Short class fields) take an i32 on the stack
+            WasmI8, WasmI16 -> g.buildConstI32(0, location)
             WasmUnreachableType -> error("Unreachable type can't be initialized")
             else -> error("Unknown value type ${type.name}")
         }

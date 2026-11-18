@@ -2,7 +2,7 @@
 // uses only browser APIs). One held Model instance + one held hierarchy
 // pair, across six versions:
 //   v1: create instances, bump twice                       -> "counter: 2"
-//   v2: body-only edit of render() — slot swap             -> "[v2] counter: 2"
+//   v2: body-only edit of render() — cell swap             -> "[v2] counter: 2"
 //   v3: add a field and use it — payload version + MIGRATE  -> "[v3] counter: 2 note=null"
 //   v4: delete the field again — migrate again, field gone   -> "[v4] counter: 2"
 //   v5: base-class body change — override still wins        -> Rex: …hums… / woof
@@ -12,7 +12,7 @@
 // show correct dispatch through the swap; the rejected patch must leave
 // the running behavior unchanged.
 // v9–v16 are the language-feature stress beats: generics/vararg/
-// extension bodies (slotted), cross-file inline propagation through the
+// extension bodies (cell-routed), cross-file inline propagation through the
 // IC, held-lambda re-binding (CL semantics), interface default-method
 // bodies on live instances (itables), and object/companion redefinition
 // — DEFVAR semantics: top-level singleton state survives the object's
@@ -26,7 +26,7 @@
 import { execFileSync } from 'node:child_process'
 import path from 'node:path'
 import { compileNext, baseBytes, SRC_NAMES } from './build.mjs'
-import { loadBase, liveView, applyDelta, readRegistry } from './glue.mjs'
+import { loadBase, liveView, applyDelta } from './glue.mjs'
 
 // v1 is the COMMITTED app — the on-disk src files are the demo playground
 // and may carry live edits from the last session
@@ -94,9 +94,9 @@ const src2 = edit(APP, 'model.kt',
                   'fun render(): String = "[v2] " + label + ": " + count')
 const r2 = await compileNext(src2)
 if (r2.error) fail('v2 compile: ' + r2.error)
-let sweep = await applyDelta(live, r2.bytes, base)
-console.log('v2: swapped', sweep.swapped.length, 'slots, rejected', sweep.rejected.length, '—', r2.bytes.length, 'B delta')
-if (sweep.rejected.length > 0) fail('v2 must be a clean swap')
+let applied = await applyDelta(live, r2.bytes, base)
+console.log('v2: applied', applied.applied.length, 'bindings, rejected', applied.rejected.length, '—', r2.bytes.length, 'B delta')
+if (applied.rejected.length > 0) fail('v2 must be a clean swap')
 s = render(model)
 console.log('v2:', s)
 if (s !== '[v2] counter: 2') fail(`v2 render: ${s} (state must survive)`)
@@ -110,10 +110,8 @@ const src3 = edit(edit(src2, 'model.kt',
     'fun render(): String = "[v3] " + label + ": " + count + " [" + note + "]"')
 const r3 = await compileNext(src3)
 if (r3.error) fail('v3 compile: ' + r3.error)
-const reg = readRegistry(r3.bytes)
-if (!reg || reg.length === 0) fail('v3 has no registry section')
-sweep = await applyDelta(live, r3.bytes, base)
-console.log('v3: swapped', sweep.swapped.length, 'slots; registry', reg.length, 'bytes —', r3.bytes.length, 'B delta')
+applied = await applyDelta(live, r3.bytes, base)
+console.log('v3: applied', applied.applied.length, 'bindings —', r3.bytes.length, 'B delta')
 s = render(model)
 console.log('v3:', s)
 if (s !== '[v3] counter: 2 [null]') fail(`v3 render: ${s} (migration must preserve count)`)
@@ -128,8 +126,8 @@ const src4 = edit(edit(src3, 'model.kt',
     'fun render(): String = "[v4] " + label + ": " + count')
 const r4 = await compileNext(src4)
 if (r4.error) fail('v4 compile: ' + r4.error)
-sweep = await applyDelta(live, r4.bytes, base)
-console.log('v4: swapped', sweep.swapped.length, 'slots —', r4.bytes.length, 'B delta')
+applied = await applyDelta(live, r4.bytes, base)
+console.log('v4: applied', applied.applied.length, 'bindings —', r4.bytes.length, 'B delta')
 s = render(model)
 console.log('v4:', s)
 if (s !== '[v4] counter: 2') fail(`v4 render: ${s} (deletion must preserve surviving fields)`)
@@ -141,8 +139,8 @@ const src5 = edit(src4, 'zoo.kt',
     'open fun speak(): String = "…"', 'open fun speak(): String = "…hums…"')
 const r5 = await compileNext(src5)
 if (r5.error) fail('v5 compile: ' + r5.error)
-sweep = await applyDelta(live, r5.bytes, base)
-console.log('v5: swapped', sweep.swapped.length, 'slots —', r5.bytes.length, 'B delta')
+applied = await applyDelta(live, r5.bytes, base)
+console.log('v5: applied', applied.applied.length, 'bindings —', r5.bytes.length, 'B delta')
 const chorus5 = zoo.map((a) => live.exports.intro(a))
 console.log('v5 zoo:', chorus5.join(' | '))
 if (chorus5[0] !== 'Rex says …hums…') fail('v5 base body: ' + chorus5[0])
@@ -159,9 +157,9 @@ const src6a = edit(src5, 'model.kt',
     'class Model(var count: Int, val label: String) {\n    fun reset() { count = 0 }')
 const r6a = await compileNext(src6a)
 if (r6a.error) fail('v6a compile: ' + r6a.error)
-sweep = await applyDelta(live, r6a.bytes, base)
-console.log('v6a: swapped', sweep.swapped.length, ', rejected', sweep.rejected.length, '—', r6a.bytes.length, 'B delta')
-if (sweep.rejected.length > 0) fail('v6a non-virtual addition must swap cleanly')
+applied = await applyDelta(live, r6a.bytes, base)
+console.log('v6a: applied', applied.applied.length, ', rejected', applied.rejected.length, '—', r6a.bytes.length, 'B delta')
+if (applied.rejected.length > 0) fail('v6a non-virtual addition must swap cleanly')
 s = render(model)
 if (s !== '[v4] counter: 2') fail(`v6a behavior must be unchanged: ${s}`)
 console.log('v6a: additive method accepted (Julia semantics) —', s)
@@ -180,11 +178,11 @@ const src6 = edit(edit(src6a, 'zoo.kt',
     'fun intro(): String = name + " says " + speak() + " (" + pet() + ")"')
 const r6 = await compileNext(src6)
 if (r6.error) fail('v6 compile: ' + r6.error)
-sweep = await applyDelta(live, r6.bytes, base)
-console.log('v6: swapped', sweep.swapped.length, ', rejected', sweep.rejected.length, '—', r6.bytes.length, 'B delta')
-if (sweep.rejected.length > 0) {
+applied = await applyDelta(live, r6.bytes, base)
+console.log('v6: applied', applied.applied.length, ', rejected', applied.rejected.length, '—', r6.bytes.length, 'B delta')
+if (applied.rejected.length > 0) {
     fail('v6 method addition must be ACCEPTED (vtable indirection): ' +
-         [...new Set(sweep.rejected.map((x) => x.name))].join(', '))
+         [...new Set(applied.rejected.map((x) => x.name))].join(', '))
 }
 const chorus6 = zoo.map((a) => live.exports.intro(a))
 console.log('v6 zoo:', chorus6.join(' | '))
@@ -202,27 +200,27 @@ for (let i = 0; i < zoo.length; i++) {
 }
 console.log('v6: old instances vtable-migrated; overrides still win')
 
-// v7 — a REAL shape change remains engine-rejected: give Model a CLASS
-// supertype — the cell subtyping chain is part of every wasm signature
-// mentioning Model, so the swapped funcrefs fail the setter type check
+// v7 — a REAL shape change: give Model a CLASS supertype. The fdefn
+// contract (SBCL's): the incompatible redefinition INSTALLS (the
+// fdefinition is type-erased) and callers trap at their own per-call
+// cast — new-code paths on old instances trap LOUDLY instead of being
+// quietly held at the door by install-time type police.
 const src7 = edit(src6, 'model.kt',
     'class Model(var count: Int, val label: String) {',
     'open class Counted { fun kind() = "counted" }\n\nclass Model(var count: Int, val label: String) : Counted() {')
 const r7 = await compileNext(src7)
 if (r7.error) fail('v7 compile: ' + r7.error)
-sweep = await applyDelta(live, r7.bytes, base)
-console.log('v7: swapped', sweep.swapped.length, ', rejected', sweep.rejected.length, '—', r7.bytes.length, 'B delta')
-if (sweep.rejected.length === 0) fail('v7 cell-chain change must be rejected by the engine')
-const rejected7 = [...new Set(sweep.rejected.map((x) => x.name))]
-if (!rejected7.some((n) => n.startsWith('createModel') || n.startsWith('bumpModel') || n.startsWith('renderModel'))) {
-    fail('v7 must reject Model-touching slots, got: ' + rejected7.join(', '))
-}
-// the OLD code keeps running for the rejected slots: behavior unchanged
-s = render(model)
-if (s !== '[v4] counter: 2') fail(`v7 Model behavior must be unchanged: ${s}`)
+applied = await applyDelta(live, r7.bytes, base)
+console.log('v7: loaded + applied', applied.applied.length, 'bindings —', r7.bytes.length, 'B delta')
+// the newest renderModel entry's signature now carries the NEW Model
+// cell type, which the old held instance fails AT THE JS BOUNDARY —
+// the honest fdefn trap, same place SBCL's type checks bite
+let trap7 = false
+try { render(model) } catch { trap7 = true }
+if (!trap7) fail('v7 the shape-changed entry must trap for the old instance (fdefn contract)')
 const chorus7 = zoo.map((a) => live.exports.intro(a))
 if (chorus7[1] !== 'Rex says woof (pet)') fail('v7 old zoo code must keep running: ' + chorus7[1])
-console.log('v7: engine rejected the cell-chain change; old code still running —', chorus7[1])
+console.log('v7: incompatible redefinition traps at call (SBCL contract); untouched code still running —', chorus7[1])
 
 // v8 — the GHOST INSTANCE: the demo-7d trap, gated (it was a raw
 // `unreachable` in the stepper's fall-through before the fix). Add a Pig
@@ -241,7 +239,7 @@ const src8a = edit(edit(src7, 'zoo.kt',
     '"duck" -> Duck(name.toString())\n    "pig" -> Pig(name.toString())')
 const r8a = await compileNext(src8a)
 if (r8a.error) fail('v8a compile: ' + r8a.error)
-sweep = await applyDelta(live, r8a.bytes, base)
+applied = await applyDelta(live, r8a.bytes, base)
 const pig = live.exports.make('pig', 'Porky')
 const pigIntro = live.exports.intro(pig)
 console.log('v8a pig born:', pigIntro, '—', r8a.bytes.length, 'B delta')
@@ -251,7 +249,7 @@ if (pigIntro !== 'Porky says oink (pet)') fail('v8a pig: ' + pigIntro)
 // pig (its vtable still matches, so it keeps dispatching — no stepper)
 const r8b = await compileNext(src7)
 if (r8b.error) fail('v8b compile: ' + r8b.error)
-sweep = await applyDelta(live, r8b.bytes, base)
+applied = await applyDelta(live, r8b.bytes, base)
 const pigIntro8b = live.exports.intro(pig)
 console.log('v8b ghost pig still speaks (class gone, vtable unchanged):', pigIntro8b, '—', r8b.bytes.length, 'B delta')
 if (pigIntro8b !== 'Porky says oink (pet)') fail('v8b ghost pig: ' + pigIntro8b)
@@ -267,7 +265,7 @@ const src8c = edit(edit(src7, 'zoo.kt',
     'fun intro(): String = name + " says " + speak() + " (" + pet() + "/" + pat() + ")"')
 const r8c = await compileNext(src8c)
 if (r8c.error) fail('v8c compile: ' + r8c.error)
-sweep = await applyDelta(live, r8c.bytes, base)
+applied = await applyDelta(live, r8c.bytes, base)
 let ghostTrap = null
 try {
     live.exports.intro(pig)
@@ -298,7 +296,7 @@ for (let i = 0; i < zoo.length; i++) {
 }
 console.log('v8: ghost instance traps illegal cast (not unreachable); the rest of the zoo migrates')
 
-// v9 — generics, vararg, extension bodies in toolbox.kt — all slotted,
+// v9 — generics, vararg, extension bodies in toolbox.kt — all cell-routed,
 // all must swap hot; and the OBJECT's state must be untouched by this
 // unrelated-file delta (its global stays with its owner by construction)
 const src9 = edit(edit(edit(src8c, 'toolbox.kt',
@@ -312,7 +310,7 @@ const src9 = edit(edit(edit(src8c, 'toolbox.kt',
     'fun sum(vararg xs: Int): Int {\n    var total = 0\n    for (x in xs) total = total + x\n    return total + 1000\n}')
 const r9 = await compileNext(src9)
 if (r9.error) fail('v9 compile: ' + r9.error)
-sweep = await applyDelta(live, r9.bytes, base)
+applied = await applyDelta(live, r9.bytes, base)
 // stateful calls captured ONCE — the counter increments per call, so a
 // log line plus an assertion would double-count (the first version of
 // this beat failed itself, not the compiler)
@@ -324,13 +322,13 @@ if (live.exports.sumAll(1, 2, 3) !== 1006) fail('v9 vararg body must swap hot: '
 if (live.exports.shout('hey') !== 'hey!!') fail('v9 extension body must swap hot: ' + live.exports.shout('hey'))
 if (counter9 !== 3) fail('v9 object state must survive unrelated-file edits: ' + counter9)
 
-// v10 — a plain slotted body edit in lambdas.kt
+// v10 — a plain cell-routed body edit in lambdas.kt
 const src10 = edit(src9, 'lambdas.kt',
     'fun useTwice(n: Int): Int = twice(n)',
     'fun useTwice(n: Int): Int = twice(n) + 1')
 const r10 = await compileNext(src10)
 if (r10.error) fail('v10 compile: ' + r10.error)
-sweep = await applyDelta(live, r10.bytes, base)
+applied = await applyDelta(live, r10.bytes, base)
 if (live.exports.useTwice(21) !== 43) fail('v10 slotted body: ' + live.exports.useTwice(21))
 console.log('v10: useTwice', live.exports.useTwice(21), '—', r10.bytes.length, 'B delta')
 
@@ -344,7 +342,7 @@ const src11 = edit(src10, 'toolbox.kt',
     'inline fun twice(n: Int): Int = n * 3')
 const r11 = await compileNext(src11)
 if (r11.error) fail('v11 compile: ' + r11.error)
-sweep = await applyDelta(live, r11.bytes, base)
+applied = await applyDelta(live, r11.bytes, base)
 console.log('v11: useTwice', live.exports.useTwice(21), '—', r11.bytes.length, 'B delta')
 if (live.exports.useTwice(21) !== 64) fail('v11 inline caller must be dirtied and re-emitted: ' + live.exports.useTwice(21))
 
@@ -357,7 +355,7 @@ const src12 = edit(src11, 'lambdas.kt',
     'val transform: (Int) -> Int = { it * 3 }')
 const r12 = await compileNext(src12)
 if (r12.error) fail('v12 compile: ' + r12.error)
-sweep = await applyDelta(live, r12.bytes, base)
+applied = await applyDelta(live, r12.bytes, base)
 console.log('v12: applyTransform(5)', live.exports.applyTransform(5),
     '| applyAll(1)', live.exports.applyAll(1), '—', r12.bytes.length, 'B delta')
 if (live.exports.applyTransform(5) !== 15) fail('v12 new lambda binding must serve: ' + live.exports.applyTransform(5))
@@ -374,7 +372,7 @@ const src13 = edit(edit(src12, 'shapes.kt',
     'fun greet(name: String): String = prefix() + ", " + name')
 const r13 = await compileNext(src13)
 if (r13.error) fail('v13 compile: ' + r13.error)
-sweep = await applyDelta(live, r13.bytes, base)
+applied = await applyDelta(live, r13.bytes, base)
 console.log('v13: flat', live.exports.greet(flat, 'rex'), '| loud', live.exports.greet(loud, 'rex'),
     '—', r13.bytes.length, 'B delta')
 if (live.exports.greet(flat, 'rex') !== 'hola, rex') fail('v13 held instance must run the new default bodies: ' + live.exports.greet(flat, 'rex'))
@@ -393,7 +391,7 @@ const src14 = edit(src13, 'state.kt',
     'fun hit(): Int {\n        hits = hits + 1\n        return hits + 100\n    }')
 const r14 = await compileNext(src14)
 if (r14.error) fail('v14 compile: ' + r14.error)
-sweep = await applyDelta(live, r14.bytes, base)
+applied = await applyDelta(live, r14.bytes, base)
 // stateful calls captured ONCE (see v9)
 const hit14 = live.exports.hitCounter()
 const tag14 = live.exports.useTagged(tag)
@@ -419,7 +417,7 @@ const src15 = edit(edit(src14, 'state.kt',
     '@WasmExport("counterTag")\nfun counterTag(): String = Counter.tag\n\n@WasmExport("tagsMade")')
 const r15 = await compileNext(src15)
 if (r15.error) fail('v15 compile: ' + r15.error)
-sweep = await applyDelta(live, r15.bytes, base)
+applied = await applyDelta(live, r15.bytes, base)
 const ctag15 = live.exports.counterTag()
 const hit15 = live.exports.hitCounter()
 console.log('v15: counterTag', ctag15, '| hitCounter', hit15, '—', r15.bytes.length, 'B delta')
@@ -431,7 +429,7 @@ if (hit15 !== 105) fail('v15 object state survives a field addition (migration):
 // getInstance, static_init, accessors) are engine-rejected like any
 // cell-chain change (v7). But a signature-COMPATIBLE function whose body
 // merely touches the holder (hitCounter: () -> Int) is accepted by the
-// sweep, serves the new body, and traps LOUDLY at the first holder
+// applied, serves the new body, and traps LOUDLY at the first holder
 // access: the adoption boundary check (the old instance handed to the
 // new cell type), surfaced by the static-init machinery as a catchable
 // ExceptionInInitializerError. Everything not touching the holder
@@ -443,9 +441,8 @@ const src16 = edit(src15, 'state.kt',
 const r16 = await compileNext(src16)
 if (r16.error) fail('v16 compile: ' + r16.error)
 const result16 = await applyDelta(live, r16.bytes, base)
-console.log('v16: incompatible holder —', result16.rejected.length, 'swaps engine-rejected —',
+console.log('v16: incompatible holder — loaded + applied', result16.applied.length, 'bindings —',
     r16.bytes.length, 'B delta')
-if (result16.rejected.length === 0) fail('v16 the cell-chain holder change must be engine-rejected')
 let trapped = false
 try { live.exports.hitCounter() } catch { trapped = true }
 if (!trapped) fail('v16 touching the incompatible holder must trap at the adoption boundary (ExceptionInInitializerError)')

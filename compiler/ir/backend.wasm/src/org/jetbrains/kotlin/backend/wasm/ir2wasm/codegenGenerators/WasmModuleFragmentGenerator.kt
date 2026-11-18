@@ -177,6 +177,18 @@ fun compileIrFile(
     enableMultimoduleExports: Boolean,
     moduleName: String,
 ) {
+    if (backendContext.isHotReloadCompilation) {
+        // the layout key resolver — the ONE choke point where a type
+        // context meets a transformer (all three call paths land here):
+        // the plan is a pure function of the class's IR, so the closure
+        // may run from any file's codegen and resolve the same shape
+        typeContext.hotPayloadLayoutKeyResolver = { symbol ->
+            HotReloadPayloads.payloadLayoutPlan(
+                symbol.owner, typeContext::classReferenceKey, backendContext, wasmModuleTypeTransformer,
+            ).structKey
+        }
+    }
+
     val typeGenerator = TypeGenerator(
         backendContext = backendContext,
         typeCodegenContext = typeContext,

@@ -87,31 +87,142 @@ class BodyGenerator(
         val klass = field.parentAsClass
         val metadata = wasmModuleMetadataCache.getClassMetadata(klass.symbol)
         val fieldId = metadata.fields.indexOf(field)
-        // In hot-reload mode the field lives in the class's *payload* struct,
-        // which has no header fields — the flat ClassMetadata index is the
-        // payload index. Otherwise the field follows the three header fields
-        // (vtable, itable, rtti) of the class struct itself.
-        return if (backendContext.isHotReloadCompilation) fieldId else fieldId + 3
+        // In hot-reload mode the field lives in the class's *payload*
+        // struct — the flat ClassMetadata index, +1 past `_hashCode`
+        // (the payload's `$layout` sits at index 1 of every layout;
+        // `_hashCode` itself stays at 0). Otherwise the field follows
+        // the three header fields (vtable, itable, rtti) of the class
+        // struct itself.
+        return if (backendContext.isHotReloadCompilation) HotReloadPayloads.payloadFieldIndexOf(fieldId) else fieldId + 3
     }
 
-    /** Extracts the payload (statically payload<Any>) and casts to the
-     * declaring class's CURRENT version — the cast is the version check.
-     * Classes with versions that fail it go through the stepper (lazy
-     * in-place migration) instead. */
-private fun generatePayloadExtractAndCast(field: IrField, location: SourceLocation) {
+    /** Hot-reload slot access — the layout check INLINE, as the
+     *  type system (see HotReloadPayloads): test the instance's payload
+     *  against the class's current layout payload type — pass reads
+     *  the slot at full speed; mismatch goes through the image's
+     *  slot-value machinery (old code on newer instances:
+     *  update-instance-to-current, then a BY-NAME read; a deleted or
+     *  retyped slot traps honestly). [visitGetField] has the receiver
+     *  on the stack; leaves the field's value. */
+    private fun generateHotSlotRead(field: IrField, opcode: WasmOp, location: SourceLocation) {
         val klassSymbol = field.parentAsClass.symbol
-        val plan = HotReloadPayloads.payloadPlan(klassSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer)
-        if (plan.migrateFromVersions.isNotEmpty()) {
-            body.buildCall(
-                FuncSymbol(typeCodegenContext.stepperSignature(klassSymbol, plan.currentVersion)),
-                location,
-            )
-        } else {
-            body.buildStructGet(typeCodegenContext.referenceGcType(klassSymbol), CLASS_PAYLOAD_FIELD_ID, location)
-            body.buildRefCastStatic(
-                typeCodegenContext.referencePayloadVersionHeapType(klassSymbol, plan.currentVersion),
-                location,
-            )
+        val plan = HotReloadPayloads.payloadLayoutPlan(
+            klassSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer,
+        )
+        // the slot's VALUE representation — packed fields (i8/i16:
+        // Boolean/Byte/Char/Short) move as i32 on the stack; only the
+        // payload FIELD type is packed, so block results and the
+        // set-site temp must use the unpacked stand-in. The TYPE TAG
+        // derives from the field's declared IR type — the class
+        // identity the layout registered.
+        val fieldStructType = plan.currentStruct.fields[getStructFieldId(field)].type
+        val fieldValueType = HotReloadPayloads.slotValueType(fieldStructType)
+        val cellLocal = functionContext.referenceLocal(SyntheticLocalType.HOT_LAYOUT_CELL)
+        val anyGcType = typeCodegenContext.referenceGcType(irBuiltIns.anyClass)
+        // through the tracked context: the ROOT payload type must land
+        // in the module's referenced set or the IC projection drops it
+        // from files that only access fields
+        typeCodegenContext.referencePayloadHeapType(irBuiltIns.anyClass)
+
+        // THE FAST-PATH TEST IS THE TYPE SYSTEM ITSELF: does the
+        // instance's payload SUBTYPE the static class's current layout?
+        // Same-shape instances (and addition-migrated payloads — they
+        // chain by subtyping) pass and read inline; genuine shape
+        // changes (deletions/retypes mint sibling payloads) fall to the
+        // image's slot-value.
+        body.buildTeeLocal(cellLocal, location)
+        body.buildStructGet(anyGcType, CLASS_PAYLOAD_FIELD_ID, location)
+        body.buildRefTestStatic(typeCodegenContext.referencePayloadLayoutHeapType(klassSymbol), location)
+        body.buildIf(null, fieldValueType)
+        // fast path: the payload IS this layout's shape — read inline
+        body.buildGetLocal(cellLocal, location)
+        body.buildStructGet(anyGcType, CLASS_PAYLOAD_FIELD_ID, location)
+        body.buildRefCastStatic(typeCodegenContext.referencePayloadLayoutHeapType(klassSymbol), location)
+        body.buildInstr(
+            opcode, location,
+            typeCodegenContext.referencePayloadLayoutGcType(klassSymbol),
+            WasmImmediate.StructFieldIdx.get(getStructFieldId(field)),
+        )
+        body.buildElse()
+        // slow path: the image's slot-value, then unbox to the static type
+        body.buildGetLocal(cellLocal, location)
+        body.buildConstI64(HotReloadPayloads.slotNameTag(field), location)
+        body.buildConstI64(
+            HotReloadPayloads.slotTypeTag(field, fieldStructType, typeCodegenContext::classReferenceKey, irBuiltIns),
+            location,
+        )
+        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.hotLayoutsSlotValue), location)
+        body.unboxSlotValue(field, backendContext, typeCodegenContext, declarationCodegenContext, wasmModuleTypeTransformer, location)
+        body.buildEnd()
+    }
+
+    /** The set-site mirror of [generateHotSlotRead]: the receiver is on
+     *  the stack; [value] is generated ONCE (into a per-type scratch
+     *  local, before the layout check — the value's side effects must
+     *  not run twice), then the fast path stores inline and the slow
+     *  path boxes and hands the pair to the image's slot-value write. */
+    private fun generateHotSlotWrite(field: IrField, value: IrExpression, location: SourceLocation) {
+        val klassSymbol = field.parentAsClass.symbol
+        val plan = HotReloadPayloads.payloadLayoutPlan(
+            klassSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer,
+        )
+        // the unpacked VALUE representation (packed fields move as i32);
+        // the TYPE TAG derives from the field's declared IR type (as
+        // the layout registered)
+        val fieldStructType = plan.currentStruct.fields[getStructFieldId(field)].type
+        val fieldValueType = HotReloadPayloads.slotValueType(fieldStructType)
+        val cellLocal = functionContext.referenceLocal(SyntheticLocalType.HOT_LAYOUT_CELL)
+        val tempLocal = functionContext.referenceTempLocal(fieldValueType)
+        val anyGcType = typeCodegenContext.referenceGcType(irBuiltIns.anyClass)
+        // through the tracked context: the ROOT payload type must land
+        // in the module's referenced set or the IC projection drops it
+        // from files that only access fields
+        typeCodegenContext.referencePayloadHeapType(irBuiltIns.anyClass)
+
+        // setLocal, not tee: every later use reads the local — nothing
+        // may keep the receiver on the stack (the value rides below it)
+        body.buildSetLocal(cellLocal, location)
+        generateExpression(value)
+        body.buildSetLocal(tempLocal, location)
+        // the fast-path test is the type system (see generateHotSlotRead)
+        body.buildGetLocal(cellLocal, location)
+        body.buildStructGet(anyGcType, CLASS_PAYLOAD_FIELD_ID, location)
+        body.buildRefTestStatic(typeCodegenContext.referencePayloadLayoutHeapType(klassSymbol), location)
+        body.buildIf(null)
+        // fast path: the payload IS this layout's shape — store inline
+        body.buildGetLocal(cellLocal, location)
+        body.buildStructGet(anyGcType, CLASS_PAYLOAD_FIELD_ID, location)
+        body.buildRefCastStatic(typeCodegenContext.referencePayloadLayoutHeapType(klassSymbol), location)
+        body.buildGetLocal(tempLocal, location)
+        body.buildStructSet(
+            typeCodegenContext.referencePayloadLayoutGcType(klassSymbol),
+            getStructFieldId(field),
+            location,
+        )
+        body.buildElse()
+        // slow path: box the value and hand it to the image's slot-value
+        body.buildGetLocal(cellLocal, location)
+        body.buildConstI64(HotReloadPayloads.slotNameTag(field), location)
+        body.buildConstI64(
+            HotReloadPayloads.slotTypeTag(field, fieldStructType, typeCodegenContext::classReferenceKey, irBuiltIns),
+            location,
+        )
+        boxSlotValueForSlowPath(field, tempLocal, location)
+        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.hotLayoutsSetSlotValue), location)
+        body.buildEnd()
+    }
+
+    /** The SET-site's erasure — the shared raw-wasm boxer (getOrBox for
+     *  Boolean..Long, the ordinary cell box for other inline-like types,
+     *  internalize for externref), pushing the temp local's value
+     *  through it. */
+    private fun boxSlotValueForSlowPath(field: IrField, tempLocal: WasmLocal, location: SourceLocation) {
+        with(HotReloadPayloads) {
+            body.boxSlotValue(
+                field, backendContext, typeCodegenContext, declarationCodegenContext, wasmModuleTypeTransformer, location,
+            ) {
+                buildGetLocal(tempLocal, location)
+            }
         }
     }
 
@@ -126,23 +237,24 @@ private fun generatePayloadExtractAndCast(field: IrField, location: SourceLocati
     private fun hotDispatchVtableLocal(): WasmLocal =
         functionContext.referenceLocal(SyntheticLocalType.HOT_DISPATCH_VTABLE)
 
-    private fun fieldStructGcType(field: IrField): GcTypeSymbol {
-        val klassSymbol = field.parentAsClass.symbol
-        return if (backendContext.isHotReloadCompilation) {
-            val version = HotReloadPayloads.payloadPlan(klassSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer).currentVersion
-            typeCodegenContext.referencePayloadVersionGcType(klassSymbol, version)
-        } else {
-            typeCodegenContext.referenceGcType(klassSymbol)
-        }
+    private fun fieldStructGcType(field: IrField): GcTypeSymbol =
+        typeCodegenContext.referenceGcType(field.parentAsClass.symbol)
+
+    /** Whether [this] class is declared in the same MODULE as the code
+     *  being generated — the layout GLOBAL is module-local (the class's
+     *  declaring file's DeclarationGenerator defines it), so only
+     *  same-module allocations may read it. */
+    private fun IrClass.isDeclaredIn(functionContext: WasmFunctionCodegenContext): Boolean {
+        val currentModule = functionContext.irFunction?.fileOrNull?.module ?: return false
+        return fileOrNull?.module == currentModule
     }
 
-    /** In hot mode the field-value block initializes the current payload
-     * version and the cell wraps it; plain mode initializes the class
-     * struct directly. */
-private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLocation) {
+    /** In hot mode the field-value block initializes the class's CURRENT
+     * layout payload and the cell wraps it; plain mode initializes the
+     * class struct directly. */
+    private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLocation) {
         if (backendContext.isHotReloadCompilation) {
-            val version = HotReloadPayloads.payloadPlan(klassSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer).currentVersion
-            body.buildStructNew(typeCodegenContext.referencePayloadVersionGcType(klassSymbol, version), location)
+            body.buildStructNew(typeCodegenContext.referencePayloadLayoutGcType(klassSymbol), location)
         }
         body.buildStructNew(typeCodegenContext.referenceGcType(klassSymbol), location)
     }
@@ -674,7 +786,9 @@ private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLoca
         }
 
         if (backendContext.isHotReloadCompilation) {
-            generatePayloadExtractAndCast(field, location)
+            generateHotSlotRead(field, opcode, location)
+            body.commentPreviousInstr { "name: ${field.name.asString()}, type: ${field.type.render()}" }
+            return
         }
         body.buildInstr(
             opcode,
@@ -706,16 +820,18 @@ private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLoca
         val location = expression.getSourceLocation()
 
         if (receiver != null) {
-            generateExpression(receiver)
             if (backendContext.isHotReloadCompilation) {
-                generatePayloadExtractAndCast(field, location)
+                generateExpression(receiver)
+                generateHotSlotWrite(field, expression.value, location)
+            } else {
+                generateExpression(receiver)
+                generateExpression(expression.value)
+                body.buildStructSet(
+                    struct = fieldStructGcType(field),
+                    fieldId = getStructFieldId(field),
+                    location
+                )
             }
-            generateExpression(expression.value)
-            body.buildStructSet(
-                struct = fieldStructGcType(field),
-                fieldId = getStructFieldId(field),
-                location
-            )
             body.commentPreviousInstr { "name: ${field.name}, type: ${field.type.render()}" }
         } else {
             generateExpression(expression.value)
@@ -821,6 +937,33 @@ private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLoca
 
         body.buildGetGlobal(declarationCodegenContext.referenceRttiGlobal(klassSymbol), location)
         body.buildConstI32(0, location) // Any::_hashCode
+        if (backendContext.isHotReloadCompilation) {
+            // the payload's `$layout` — the LAYOUT OBJECT, stamped at birth: same-module allocations
+            // read the module's layout global (one instruction); a
+            // module that only INSTANTIATES a foreign class (a stdlib
+            // value-class box, KClassImpl) has no global and asks the
+            // image for the class's CURRENT layout; machinery origins
+            // and classes with no layout stamp null (never migrated)
+            typeCodegenContext.referenceHeapType(backendContext.wasmSymbols.hotLayoutClass)
+            val plan = HotReloadPayloads.payloadLayoutPlan(
+                klassSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer,
+            )
+            when {
+                !HotReloadPayloads.hasLayout(klassSymbol.owner) -> body.buildRefNull(
+                    GcHeapTypeSymbol(
+                        backendContext.idSignatureRetriever
+                            .declarationSignature(backendContext.wasmSymbols.hotLayoutClass.owner)!!
+                    ),
+                    location,
+                )
+                klassSymbol.owner.isDeclaredIn(functionContext) ->
+                    body.buildGetGlobal(FieldGlobalSymbol(HotReloadPayloads.layoutGlobalKey(plan.classId)), location)
+                else -> {
+                    body.buildConstI64(plan.classId, location)
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.hotLayoutsCurrentOf), location)
+                }
+            }
+        }
         body.commentGroupEnd()
     }
 
@@ -915,6 +1058,125 @@ private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLoca
             return
         }
 
+        // ------------------------------------------------ hot-reload
+        // backend primitives (hotReload.kt): each assumes the CELL
+        // encoding — the plain (non-hot) image lowers every one to
+        // `unreachable`, where these functions are dead code. Emission
+        // order is the primitives' own (the call_ref ones push the
+        // payload args first, the funcref last), so these must NOT sit
+        // in a section that pre-generates call arguments.
+        if (call.symbol == wasmSymbols.wasmGetPayload) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            body.buildStructGet(typeCodegenContext.referenceGcType(irBuiltIns.anyClass), CLASS_PAYLOAD_FIELD_ID, location)
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmSetPayload) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            generateExpression(call.arguments[1]!!)
+            // anyref is a SUPERtype of the field's (ref null $payloadRoot):
+            // the null-cast checks the value really is a payload
+            body.buildRefCastNullStatic(GcHeapTypeSymbol(HotReloadPayloads.PAYLOAD_ROOT_TYPE), location)
+            body.buildStructSet(typeCodegenContext.referenceGcType(irBuiltIns.anyClass), CLASS_PAYLOAD_FIELD_ID, location)
+            body.buildGetUnit() // the Unit-typed call leaves the Unit value
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmGetPayloadLayout) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            body.buildRefCastNullStatic(GcHeapTypeSymbol(HotReloadPayloads.PAYLOAD_ROOT_TYPE), location)
+            body.buildStructGet(GcTypeSymbol(HotReloadPayloads.PAYLOAD_ROOT_TYPE), HotReloadPayloads.PAYLOAD_LAYOUT_FIELD_ID, location)
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmGetPayloadHash) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            body.buildRefCastNullStatic(GcHeapTypeSymbol(HotReloadPayloads.PAYLOAD_ROOT_TYPE), location)
+            body.buildStructGet(GcTypeSymbol(HotReloadPayloads.PAYLOAD_ROOT_TYPE), 0, location)
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmSetPayloadHash) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            body.buildRefCastNullStatic(GcHeapTypeSymbol(HotReloadPayloads.PAYLOAD_ROOT_TYPE), location)
+            generateExpression(call.arguments[1]!!)
+            body.buildStructSet(GcTypeSymbol(HotReloadPayloads.PAYLOAD_ROOT_TYPE), 0, location)
+            body.buildGetUnit() // the Unit-typed call leaves the Unit value
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmGetRttiKlassId) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            body.buildStructGet(typeCodegenContext.referenceGcType(irBuiltIns.anyClass), 2, location)
+            body.buildStructGet(Synthetics.GcTypes.rttiType, RTTI_KLASS_ID_FIELD_ID, location)
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmGetCellVtable) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            body.buildStructGet(typeCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_VTABLE_FIELD_ID, location)
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmInstallDispatch) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            // the args cross as anyref (the erased channel); the cell's
+            // fields are typed — the casts ARE the checks
+            val anyCellGcType = typeCodegenContext.referenceGcType(irBuiltIns.anyClass)
+            generateExpression(call.arguments[0]!!)
+            generateExpression(call.arguments[1]!!)
+            body.buildRefCastStatic(typeCodegenContext.referenceVTableHeapType(irBuiltIns.anyClass), location)
+            body.buildStructSet(anyCellGcType, ANY_VTABLE_FIELD_ID, location)
+            generateExpression(call.arguments[0]!!)
+            generateExpression(call.arguments[2]!!)
+            body.buildRefCastNullStatic(Synthetics.HeapTypes.wasmAnyArrayType, location)
+            body.buildStructSet(anyCellGcType, ANY_ITABLE_FIELD_ID, location)
+            generateExpression(call.arguments[1]!!) // the vtable — the retry cast's target
+            return
+        }
+        // the three call_ref primitives — the wasm_call_ref mechanism:
+        // push the payload args FIRST, the funcref LAST, then narrow it
+        // to the erased accessor signature (the cast IS the type check)
+        if (call.symbol == wasmSymbols.wasmCallSlotReader) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[1]!!)
+            generateExpression(call.arguments[0]!!)
+            body.buildRefCastStatic(typeCodegenContext.referenceWasmFunctionHeapType(HotReloadPayloads.SLOT_READER_WASM_TYPE), location)
+            body.buildInstr(WasmOp.CALL_REF, location, typeCodegenContext.referenceWasmFunctionType(HotReloadPayloads.SLOT_READER_WASM_TYPE))
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmCallSlotWriter) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[1]!!)
+            generateExpression(call.arguments[2]!!)
+            generateExpression(call.arguments[0]!!)
+            body.buildRefCastStatic(typeCodegenContext.referenceWasmFunctionHeapType(HotReloadPayloads.SLOT_WRITER_WASM_TYPE), location)
+            body.buildInstr(WasmOp.CALL_REF, location, typeCodegenContext.referenceWasmFunctionType(HotReloadPayloads.SLOT_WRITER_WASM_TYPE))
+            body.buildGetUnit() // the Unit-typed call leaves the Unit value
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmCallSlotAllocate) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            body.buildRefCastStatic(typeCodegenContext.referenceWasmFunctionHeapType(HotReloadPayloads.SLOT_ALLOCATE_WASM_TYPE), location)
+            body.buildInstr(WasmOp.CALL_REF, location, typeCodegenContext.referenceWasmFunctionType(HotReloadPayloads.SLOT_ALLOCATE_WASM_TYPE))
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmFdefnNew) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            body.buildStructNew(GcTypeSymbol(HotReloadPayloads.FDEFN_TYPE), location)
+            return
+        }
+        if (call.symbol == wasmSymbols.wasmFdefnSetFn) {
+            if (!backendContext.isHotReloadCompilation) { body.buildUnreachable(location); return }
+            generateExpression(call.arguments[0]!!)
+            body.buildRefCastNullStatic(GcHeapTypeSymbol(HotReloadPayloads.FDEFN_TYPE), location)
+            generateExpression(call.arguments[1]!!)
+            body.buildStructSet(GcTypeSymbol(HotReloadPayloads.FDEFN_TYPE), HotReloadPayloads.FDEFN_FN_FIELD, location)
+            body.buildGetUnit() // the Unit-typed call leaves the Unit value
+            return
+        }
         if (call.symbol == wasmSymbols.callRef) {
             val resultType = call.typeArguments[0]!!
             val callRefArguments = call.arguments.drop(1)
@@ -1026,7 +1288,7 @@ private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLoca
                     body.buildRefCastStatic(vTableHeapTypeReference, location)
                     body.buildElse()
                     body.buildGetLocal(receiverLocal, location)
-                    body.buildCall(Synthetics.Functions.hotVtableUpdate, location)
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.hotVtableUpdate), location)
                     body.buildRefCastStatic(vTableHeapTypeReference, location)
                     body.buildEnd()
                 } else {
@@ -1128,7 +1390,7 @@ private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLoca
             body.buildRefCastStatic(vTableHeapTypeReference, location)
             body.buildElse()
             body.buildGetLocal(hotDispatchReceiverLocal(), location)
-            body.buildCall(Synthetics.Functions.hotVtableUpdate, location)
+            body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.hotVtableUpdate), location)
             body.buildDrop(location) // the vtable is not needed here; the itable is
             body.buildGetLocal(hotDispatchReceiverLocal(), location)
             // (the arm condition excludes special/functional interfaces, so
@@ -1217,13 +1479,14 @@ private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLoca
         // store contref in WasmContinuationBox (struct field 4 = flat payload
         // field 1 after the three cell headers)
         if (backendContext.isHotReloadCompilation) {
-            val version = HotReloadPayloads.payloadPlan(
-                wasmContBoxTypeSymbol.owner, typeCodegenContext::classReferenceKey, backendContext, wasmModuleTypeTransformer,
-            ).currentVersion
             body.buildStructGet(wasmContBoxGcType, CLASS_PAYLOAD_FIELD_ID, location)
-            body.buildRefCastStatic(typeCodegenContext.referencePayloadVersionHeapType(wasmContBoxTypeSymbol, version), location)
+            body.buildRefCastStatic(typeCodegenContext.referencePayloadLayoutHeapType(wasmContBoxTypeSymbol), location)
             body.buildGetLocal(wasmContinuation, location)
-            body.buildStructSet(typeCodegenContext.referencePayloadVersionGcType(wasmContBoxTypeSymbol, version), 4 - 3, location)
+            body.buildStructSet(
+                typeCodegenContext.referencePayloadLayoutGcType(wasmContBoxTypeSymbol),
+                HotReloadPayloads.payloadFieldIndexOf(1),
+                location,
+            )
         } else {
             body.buildGetLocal(wasmContinuation, location)
             body.buildStructSet(wasmContBoxGcType, 4, location)
@@ -2042,9 +2305,9 @@ private fun buildClassStructNew(klassSymbol: IrClassSymbol, location: SourceLoca
         // holding the per-class payload struct (after vtable/itable/rtti).
         const val CLASS_PAYLOAD_FIELD_ID = 3
         // RTTI field index of the stable content-hash class id (see the
-        // RTTI struct in WasmCompiledModuleFragment). The universal vtable
-        // stepper is registered by the linker under
-        // Synthetics.Functions.hotVtableUpdate.
+        // RTTI struct in WasmCompiledModuleFragment). The dispatch
+        // stepper (the stdlib's hotVtableUpdate) derives an instance's
+        // concrete class from it.
         const val RTTI_KLASS_ID_FIELD_ID = 4
         const val VTABLE_SPECIAL_ITABLE_FIELD_ID = 0
         const val RTTI_IMPLEMENTED_INTERFACES_FIELD_ID = 0

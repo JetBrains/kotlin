@@ -694,10 +694,23 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         equivalentTypes = deserializeEquivalentDeclarations(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
-        hotReloadableClasses = deserializeList(::deserializeIdSignature),
         objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
         nonConstantFieldInitializers = deserializeList(::deserializeIdSignature),
         wasmReferencedFunctions = deserializeWasmReferencedFunctions(),
+        hotReloadCellBindings = deserializeList {
+            Triple(deserializeString(), deserializeIdSignature(), deserializeIdSignature())
+        },
+        hotLayoutBindings = deserializeList {
+            HotLayoutBinding(
+                classKey = deserializeIdSignature(),
+                classId = deserializeLong(),
+                hasItable = deserializeBoolean(),
+                tags = deserializeList(::deserializeLong),
+                readerKeys = deserializeList(::deserializeIdSignature),
+                writerKeys = deserializeList(::deserializeIdSignature),
+                allocateKey = deserializeIdSignature(),
+            )
+        }
     )
 
     private fun deserializeDefinedFunctions() = deserializeMap(::deserializeIdSignature, ::deserializeFunction)

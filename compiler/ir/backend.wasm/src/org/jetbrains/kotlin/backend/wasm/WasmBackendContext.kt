@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.HotReloadPayloads
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
-import org.jetbrains.kotlin.wasm.ir.WasmStructDeclaration
-import java.util.TreeMap
 
 class WasmBackendContext(
     override val irBuiltIns: IrBuiltIns,
@@ -52,8 +50,9 @@ class WasmBackendContext(
     val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
 
     /** Hot-reload codegen (-Xwasm-hot-reload): every reloadable function is
-     *  dispatched through a mutable slot global (with an exported setter),
-     *  so a host can hot-swap function bodies — including virtual method
+     *  dispatched through the shared symbol table (one table-reading entry
+     *  plus an exported writer per function), so a host can hot-swap
+     *  function bodies with one table write — including virtual method
      *  bodies for already-existing instances. */
     val isHotReloadCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_HOT_RELOAD)
 
@@ -66,20 +65,17 @@ class WasmBackendContext(
      *  tag via WebAssembly.JSTag.) */
     val usesAnyrefExceptionTag = isHotReloadCompilation && configuration.wasmTarget != WasmTarget.JS
 
-    /** The previous image's payload structs (class key -> version ->
-     * struct), parsed from the injected registry — the image IS the
-     * previous-state store (no CLI args, no IC coupling). Populated by
-     * [WasmCompilerWithIC.compile]. */
-    var hotReloadPayloadHistory: Map<String, TreeMap<Int, WasmStructDeclaration>> = emptyMap()
-
     /**
-     * Resolved payload plans per class (reference key string -> plan),
-     * computed deterministically from [hotReloadPayloadHistory] and the
-     * class's current fields; shared across files of one compilation so
-     * the declaring file's type generation and any file's field-access
-     * codegen agree regardless of file order.
+     * Resolved LAYOUT plans per class (reference key string -> plan) —
+     * SBCL layouts: the payload struct for the class's CURRENT shape
+     * (a pure function of its fields — there is no compile-time history
+     * anywhere). Shared across
+     * files of one compilation so the declaring file's type generation
+     * and any file's field-access codegen agree regardless of file
+     * order.
      */
-    val hotReloadPayloadPlans = mutableMapOf<String, HotReloadPayloads.PayloadPlan>()
+    val hotReloadPayloadPlans = mutableMapOf<String, HotReloadPayloads.PayloadLayoutPlan>()
+
 
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     override var inVerbosePhase: Boolean = false

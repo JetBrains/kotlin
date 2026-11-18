@@ -49,33 +49,44 @@ open class WasmTypeCodegenContext(
         }
     }
 
-    /** Cells: each class gets a *payload* struct holding its fields
-     * (incl. Any's `_hashCode`); the cell struct — vtable, itable, rtti,
-     * payload — never changes shape. Versioned payload keys live in the
-     * same definedGcTypes map under synthetic signatures (same trick as
-     * the slot globals); v1 keeps this unversioned key. */
-    fun payloadSignature(irClass: IrClassSymbol): IdSignature =
-        IdSignature.CommonSignature("hot.reload.payload", "payload<\$" + irClass.getReferenceKey().toString() + ">", null, 0, null)
+    /** Cells: each class gets a *payload* struct — its fields plus the
+     * `$layout` pointer — whose KEY is a pure function of the class, so
+     * the same shape means the same canonical
+     * wasm type in every module. The class's CURRENT layout key is
+     * resolved by [hotPayloadLayoutKeyResolver] (set by the module
+     * fragment generator — the plan is a pure function of the class's
+     * IR, so file ordering does not matter); the ROOT payload
+     * (kotlin.Any's) is the fixed [HotReloadPayloads.PAYLOAD_ROOT_TYPE],
+     * the type every cell's mutable payload field is invariantly typed
+     * by. */
+    var hotPayloadLayoutKeyResolver: ((IrClassSymbol) -> IdSignature)? = null
 
     fun classReferenceKey(irClass: IrClassSymbol): String = irClass.getReferenceKey().toString()
 
-    fun stepperSignature(irClass: IrClassSymbol, version: Int): IdSignature =
-        HotReloadPayloads.stepperSignature(classReferenceKey(irClass), version)
+    private fun payloadLayoutKey(irClass: IrClassSymbol): IdSignature =
+        hotPayloadLayoutKeyResolver?.invoke(irClass)
+            ?: error("hot reload payload key requested outside a hot compilation: ${classReferenceKey(irClass)}")
 
-    fun definePayloadVersionGcType(irClass: IrClassSymbol, version: Int, wasmType: WasmTypeDeclaration) {
-        val key = HotReloadPayloads.payloadVersionSignature(classReferenceKey(irClass), version)
+    fun definePayloadLayoutGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
+        val key = payloadLayoutKey(irClass)
         if (wasmFileFragment.definedGcTypes.put(key, wasmType) != null) {
             redefinitionError(key, "PayloadGcTypes")
         }
     }
 
-    open fun referencePayloadVersionGcType(irClass: IrClassSymbol, version: Int): GcTypeSymbol =
-        GcTypeSymbol(HotReloadPayloads.payloadVersionSignature(classReferenceKey(irClass), version))
+    /** The class's CURRENT payload layout — field access casts to it,
+     * allocation news with it. */
+    open fun referencePayloadLayoutGcType(irClass: IrClassSymbol): GcTypeSymbol =
+        GcTypeSymbol(payloadLayoutKey(irClass))
 
-    open fun referencePayloadVersionHeapType(irClass: IrClassSymbol, version: Int): GcHeapTypeSymbol =
-        GcHeapTypeSymbol(HotReloadPayloads.payloadVersionSignature(classReferenceKey(irClass), version))
+    open fun referencePayloadLayoutHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol =
+        GcHeapTypeSymbol(payloadLayoutKey(irClass))
 
-    open fun referencePayloadHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol = GcHeapTypeSymbol(payloadSignature(irClass))
+    /** The ROOT payload heap (kotlin.Any's) — the cell's payload field
+     * type and the one static type the generic machinery reads the
+     * layout pointer through. */
+    open fun referencePayloadHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol =
+        GcHeapTypeSymbol(payloadLayoutKey(irClass))
 
     fun defineVTableGcType(irClass: IrClassSymbol, wasmType: WasmStructDeclaration) {
         if (wasmFileFragment.definedVTableGcTypes.put(irClass.getReferenceKey(), wasmType) != null) {

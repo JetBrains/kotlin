@@ -6,24 +6,41 @@
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerId
+import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
+import org.jetbrains.kotlin.daemon.common.configureDaemonOptions
+import org.jetbrains.kotlin.daemon.common.runFilesPathOrDefault
 import org.jetbrains.kotlin.psi.*
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
+import java.io.File
 import java.util.Base64
+import kotlin.system.exitProcess
 
 /**
  * Resident compile/parse server for lrepl.
  *
  * Mode "compile" (default): reads compile requests — arguments joined with
- * the unit separator char () — invokes the wasm compiler in-process
- * (no JVM restart per line), answers `RESULT <exitCode> <base64-diagnostics>`.
+ * the unit separator char () — and forwards each to the official
+ * Kotlin compile daemon (compiler/daemon — the same resident service
+ * Gradle drives; its CompileServiceImpl has a first-class
+ * TargetPlatform.WASM branch). The shim never loads the compiler: the
+ * daemon is spawned with the dist's jars (its -cp IS the CompilerId), so
+ * a dist rebuild is caught by the daemon's classpath watcher and it
+ * restarts itself — server.jar no longer embeds or runs the compiler,
+ * so it no longer needs deleting after `./gradlew dist` (the IC-cache
+ * rule stays: that one is about cache encodings, not the server). If
+ * the daemon can't be reached the shim exits nonzero and the drivers
+ * fall back to spawning kotlinc.
+ * Answers `RESULT <exitCode> <base64-diagnostics>`.
  * Terminate with EXIT.
  *
  * Mode "parse" (`CompileServerKt parse`): a separate process (the IntelliJ
@@ -38,14 +55,13 @@ import java.util.Base64
  *   { "ok": <file parsed cleanly>, "errorMessage": …,
  *     "imports": ["kotlin.math.abs", …],
  *     "decls": [
- *       fun:      { "kind":"fun", "name", "ret", "paramsRaw" (parens stripped),
- *                   "paramList", "params":[{"name","type","vararg","default"}],
- *                   "slotEligible", "body" (rewritten), "text" (whole decl,
- *                   rewritten — registry-only fallback), "used":[bindings] }
+ *       fun:      { "kind":"fun", "name", "ret", "paramList",
+ *                   "params":[{"name","type","vararg","default"}],
+ *                   "text" (whole decl, rewritten), "used":[bindings] }
  *       property: { "kind":"property", "name", "isVar", "declaredType",
  *                   "initializer" (rewritten), "used":[…] }
  *       class:    { "kind":"class"|"typealias", "name", "text" (rewritten),
- *                   "isInterface", "isEnum", "used":[…] }
+ *                   "used":[…] }
  *       object:   { "kind":"object", "name", "classText" (object->class
  *                   transform applied, rewritten), "used":[…] } ],
  *     "asExpression": { "ok", "text" (rewritten), "used":[…] },
@@ -279,68 +295,20 @@ private fun usedJson(used: Set<String>): String =
 // ------------------------------------------------------------------ decls
 
 private fun funJson(d: KtNamedFunction, bindings: Map<String, Bnd>): String {
-    val start = d.textRange.startOffset
-    val block = d.bodyBlockExpression
-    val body = d.bodyExpression
-    val bodyText: String?
-    val bodyBaseAbs: Int
-    val bodyEl: KtExpression?
-    if (block != null) {
-        val t = block.text
-        bodyText = if (t.length <= 2) "" else t.substring(1, t.length - 1)
-        bodyBaseAbs = block.textRange.startOffset + 1
-        bodyEl = block
-    } else if (body != null) {
-        bodyText = body.text
-        bodyBaseAbs = body.textRange.startOffset
-        bodyEl = body
-    } else {
-        bodyText = null
-        bodyBaseAbs = start
-        bodyEl = null
-    }
     val exclude = collectLocalNames(d) + setOfNotNull(d.name)
-
-    var hasUnlabeledReturn = false
-    walk(d) { n -> if (n is KtReturnExpression && !n.text.startsWith("return@")) hasUnlabeledReturn = true }
-    val suspend = d.modifierList?.hasModifier(KtTokens.SUSPEND_KEYWORD) == true
-    val generic = d.typeParameterList != null
-    // NB: receiverTypeReference is statically non-null in this PSI build — a
-    // plain `== null` gets constant-folded by kotlinc; force a nullable view.
-    val receiver: KtTypeReference? = d.receiverTypeReference
-    val vararg = d.valueParameters.any { it.isVarArg }
-    val eligible = !suspend && !generic && receiver == null && !vararg && !hasUnlabeledReturn && d.name != null
-
-    val (bodyRew, bodyUsed) = if (bodyEl != null && bodyText != null)
-        rewriteText(bodyText, collectRefs(bodyEl, bodyBaseAbs), collectAssigns(bodyEl, bodyBaseAbs), bindings, exclude, true)
-    else "" to emptySet<String>()
-    val (declRew, declUsed) = rewriteDeclText(d, bindings, exclude)
-    val used = bodyUsed + declUsed
-
+    val (declRew, used) = rewriteDeclText(d, bindings, exclude)
     val params = d.valueParameters.joinToString(",", "[", "]") { p ->
         "{\"name\":${jstr(p.name)},\"type\":${jstr(p.typeReference?.text)}" +
             ",\"vararg\":${p.isVarArg},\"default\":${p.defaultValue != null}}"
     }
     val paramList = d.valueParameters.joinToString(", ") { p -> "${p.name}: ${p.typeReference?.text ?: ""}" }
-    // rewrite default values in the parameter list too (the slot wrapper
-    // re-declares them, so a default like `n: Int = gold` must become
-    // `gold__get()` for the wrapper to resolve)
-    var paramsRaw = d.valueParameterList?.text?.trim() ?: ""
-    val pl = d.valueParameterList
-    if (pl != null) {
-        val (rew, _) = rewriteText(paramsRaw, collectRefs(pl, pl.textRange.startOffset), collectAssigns(pl, pl.textRange.startOffset), bindings, exclude, true)
-        paramsRaw = rew
-    }
-    if (paramsRaw.startsWith("(") && paramsRaw.endsWith(")")) paramsRaw = paramsRaw.substring(1, paramsRaw.length - 1)
-
     return ("{\"kind\":\"fun\",\"name\":${jstr(d.name)},\"text\":${jstr(declRew)}" +
-        ",\"ret\":${jstr(d.typeReference?.text)},\"paramsRaw\":${jstr(paramsRaw)}" +
-        ",\"paramList\":${jstr(paramList)},\"params\":$params,\"slotEligible\":$eligible" +
-        ",\"body\":${jstr(bodyRew)},\"used\":${usedJson(used)}}")
+        ",\"ret\":${jstr(d.typeReference?.text)}" +
+        ",\"paramList\":${jstr(paramList)},\"params\":$params" +
+        ",\"used\":${usedJson(used)}}")
 }
 
 private fun propertyJson(d: KtProperty, bindings: Map<String, Bnd>): String {
-    val start = d.textRange.startOffset
     val init = d.initializer
     val exclude = collectLocalNames(d) + setOfNotNull(d.name)
     val (initRew, used) = if (init != null)
@@ -355,7 +323,6 @@ private fun propertyJson(d: KtProperty, bindings: Map<String, Bnd>): String {
 private fun classJson(d: KtClass, bindings: Map<String, Bnd>): String {
     val (text, used) = rewriteDeclText(d, bindings, collectLocalNames(d) + setOfNotNull(d.name))
     return ("{\"kind\":\"class\",\"name\":${jstr(d.name)},\"text\":${jstr(text)}" +
-        ",\"isInterface\":${d.isInterface()},\"isEnum\":${d.isEnum()}" +
         ",\"used\":${usedJson(used)}}")
 }
 
@@ -479,6 +446,50 @@ private fun serveParse() {
 }
 
 private fun serveCompile() {
+    System.setProperty("java.rmi.server.hostname", "127.0.0.1")
+
+    // The daemon is spawned with the dist's jars — located by side effect
+    // of the drivers putting kotlin-compiler.jar on this shim's classpath.
+    // Canonicalize: the CompilerId (and the run-file digest the next shim
+    // discovers daemons by) is over the path STRINGS, and the drivers pass
+    // differently-spelled paths (node's path.join normalizes "..", python's
+    // os.path.join does not) — without this, each spelling gets its own
+    // daemon.
+    val libDir = System.getProperty("java.class.path")
+        .split(File.pathSeparator).asSequence()
+        .map(::File).firstOrNull { it.name == "kotlin-compiler.jar" }?.canonicalFile?.parentFile
+    if (libDir == null) {
+        System.err.println("hot shim: kotlin-compiler.jar is not on the classpath")
+        exitProcess(3)
+    }
+    val daemonJars = listOf("kotlin-compiler.jar", "kotlin-daemon.jar", "kotlin-reflect.jar")
+        .map { File(libDir, it) }.filter(File::isFile)
+    if (daemonJars.none { it.name == "kotlin-daemon.jar" }) {
+        System.err.println("hot shim: no kotlin-daemon.jar in $libDir")
+        exitProcess(3)
+    }
+    val compilerId = CompilerId.makeCompilerId(daemonJars)
+
+    // A pinned client-alive file (the default one autodeletes with this
+    // JVM) lets the daemon outlive the shim: the next session's first
+    // compile skips daemon startup. It still dies on the 2h idle timer,
+    // and `KotlinCompilerClient --stop` (or deleting the file) reclaims it.
+    val daemonOptions = configureDaemonOptions()
+    val aliveFlag = File(daemonOptions.runFilesPathOrDefault, "kotlin-hot-shim-alive").apply {
+        parentFile.mkdirs()
+        if (!exists()) createNewFile()
+    }
+    System.setProperty("kotlin.daemon.client.alive.path", aliveFlag.absolutePath)
+    val daemonJvmOptions = configureDaemonJVMOptions(
+        inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true,
+    )
+
+    fun connect(): CompileService? = KotlinCompilerClient.connectToCompileService(
+        compilerId, daemonJvmOptions, daemonOptions,
+        DaemonReportingTargets(out = System.err),
+    )
+
+    var service: CompileService? = null
     val stdin = System.`in`.bufferedReader()
     val stdout = System.out
     while (true) {
@@ -487,21 +498,44 @@ private fun serveCompile() {
         if (line.isBlank()) continue
         val args = line.split('').toTypedArray()
 
-        val oldErr = System.err
-        val buffer = ByteArrayOutputStream()
-        System.setErr(PrintStream(buffer, true))
+        if (service == null) service = connect()
+        if (service == null) exitProcess(3) // drivers fall back to kotlinc
+
+        val diagnostics = StringBuilder()
+        fun run(): Int = KotlinCompilerClient.compile(
+            service!!, CompileService.NO_SESSION, CompileService.TargetPlatform.WASM, args,
+            object : MessageCollector {
+                override fun clear() {}
+                override fun hasErrors() = false
+                override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+                    if (diagnostics.isNotEmpty()) diagnostics.append('\n')
+                    diagnostics.append(
+                        when {
+                            severity.isError -> "error: "
+                            severity.isWarning -> "warning: "
+                            else -> ""
+                        }
+                    ).append(message)
+                    if (location != null) diagnostics.append(" (${location.path}:${location.line}:${location.column})")
+                }
+            },
+        )
         val code = try {
-            CLICompiler.doMainNoExit(KotlinWasmCompiler(), args)
+            run()
         } catch (e: Throwable) {
-            oldErr.println("COMPILE CRASH: $e")
-            org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR
-        } finally {
-            System.setErr(oldErr)
+            // daemon died mid-request (dist rebuild watcher, idle timer):
+            // reconnect once; if that fails, die so the driver falls back
+            System.err.println("hot shim: daemon dropped: $e")
+            service = connect()
+            if (service == null) exitProcess(3)
+            run()
         }
-        val text = Base64.getEncoder().encodeToString(buffer.toByteArray())
-        stdout.println("RESULT ${code.code} $text")
+        val text = Base64.getEncoder().encodeToString(diagnostics.toString().toByteArray(Charsets.UTF_8))
+        stdout.println("RESULT $code $text")
         stdout.flush()
     }
+    // RMI's non-daemon threads would hold the JVM open past stdin EOF
+    exitProcess(0)
 }
 
 fun main(args: Array<String>) {

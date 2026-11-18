@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 
@@ -67,6 +68,49 @@ class BackendWasmSymbols(
 
     internal val callAssociatedObjectGetter by CallableIds.callAssociatedObjectGetter.functionSymbol()
     val registerModuleDescriptor by CallableIds.registerModuleDescriptor.functionSymbol()
+
+    // hot-reload runtime: the image's tables (stdlib library code — the
+    // resident base instance owns them). hotRuntimeRemaps pairs each IR
+    // function with its stable synthetic key so link-generated callers
+    // can reach it through the ordinary cross-module channel.
+    internal val hotFdefnsResolve by CallableIds.hotFdefnsResolve.functionSymbol()
+    internal val hotLayoutsRegister by CallableIds.hotLayoutsRegister.functionSymbol()
+    internal val hotLayoutsAddSlot by CallableIds.hotLayoutsAddSlot.functionSymbol()
+    /** The stdlib's LAYOUT class — the object every payload's `$layout`
+     *  field points at (the class's current definition). */
+    internal val hotLayoutClass: IrClassSymbol = ClassIds.HotLayout.classSymbol()
+    internal val hotLayoutsSlotValue by CallableIds.hotLayoutsSlotValue.functionSymbol()
+    internal val hotLayoutsSetSlotValue by CallableIds.hotLayoutsSetSlotValue.functionSymbol()
+    internal val hotLayoutsCurrentOf by CallableIds.hotLayoutsCurrentOf.functionSymbol()
+    /** the stdlib's dispatch stepper (the class registry installs the
+     *  current vtable + itable — see [hotLayoutsRegister]) */
+    internal val hotVtableUpdate by CallableIds.hotVtableUpdate.functionSymbol()
+    internal val wasmGetCellVtable by CallableIds.wasmGetCellVtable.functionSymbol()
+    internal val wasmInstallDispatch by CallableIds.wasmInstallDispatch.functionSymbol()
+    /** The stdlib's FUNCREF BOX — the vehicle a function-typed slot's
+     *  value rides across the erased channel (funcrefs are not anyref
+     *  subtypes). */
+    internal val hotFnBoxClass: IrClassSymbol = ClassIds.HotFnBox.classSymbol()
+
+    internal val wasmGetPayload by CallableIds.wasmGetPayload.functionSymbol()
+    internal val wasmSetPayload by CallableIds.wasmSetPayload.functionSymbol()
+    internal val wasmGetPayloadLayout by CallableIds.wasmGetPayloadLayout.functionSymbol()
+    internal val wasmGetPayloadHash by CallableIds.wasmGetPayloadHash.functionSymbol()
+    internal val wasmSetPayloadHash by CallableIds.wasmSetPayloadHash.functionSymbol()
+    internal val wasmGetRttiKlassId by CallableIds.wasmGetRttiKlassId.functionSymbol()
+    internal val wasmCallSlotReader by CallableIds.wasmCallSlotReader.functionSymbol()
+    internal val wasmCallSlotWriter by CallableIds.wasmCallSlotWriter.functionSymbol()
+    internal val wasmCallSlotAllocate by CallableIds.wasmCallSlotAllocate.functionSymbol()
+
+    internal val wasmFdefnNew by CallableIds.wasmFdefnNew.functionSymbol()
+    internal val wasmFdefnSetFn by CallableIds.wasmFdefnSetFn.functionSymbol()
+
+    val hotRuntimeRemaps: List<Pair<IrSimpleFunctionSymbol, org.jetbrains.kotlin.backend.wasm.ir2wasm.FuncSymbol>>
+        get() = listOf(
+            hotFdefnsResolve to Synthetics.Functions.hotFdefnsResolveBuiltIn,
+            hotLayoutsRegister to Synthetics.Functions.hotLayoutsRegisterBuiltIn,
+            hotLayoutsAddSlot to Synthetics.Functions.hotLayoutsAddSlotBuiltIn,
+        )
 
     internal val wasmLongImmutableArray = ClassIds.WasmLongImmutableArray.classSymbol()
 
@@ -446,6 +490,8 @@ private object ClassIds {
     // WASM internal class
     private val String.wasmClassId get() = ClassId(WasmStandardClassIds.BASE_WASM_INTERNAL_PACKAGE, Name.identifier(this))
     val TypeInfoData = "TypeInfoData".wasmClassId
+    val HotLayout = "HotLayout".wasmClassId
+    val HotFnBox = "HotFnBox".wasmClassId
     val KClassImpl = "KClassImpl".wasmClassId
     val KClassInterfaceImpl = "KClassInterfaceImpl".wasmClassId
     val KFunctionImpl = "KFunctionImpl".wasmClassId
@@ -516,6 +562,31 @@ private object CallableIds {
     val tryGetAssociatedObject = "tryGetAssociatedObject".wasmCallableId
     val callAssociatedObjectGetter = "callAssociatedObjectGetter".wasmCallableId
     val registerModuleDescriptor = "registerModuleDescriptor".wasmCallableId
+    // hot-reload runtime (the image's fdefinition table, library code —
+    // TOP-LEVEL functions: members would take a module-local receiver)
+    val hotFdefnsResolve = "hotFdefnsResolve".wasmCallableId
+    // hot-reload runtime (the image's class layouts table, same shape)
+    val hotLayoutsRegister = "hotLayoutsRegister".wasmCallableId
+    val hotLayoutsAddSlot = "hotLayoutsAddSlot".wasmCallableId
+    val hotLayoutsSlotValue = "hotLayoutsSlotValue".wasmCallableId
+    val hotLayoutsSetSlotValue = "hotLayoutsSetSlotValue".wasmCallableId
+    val hotLayoutsCurrentOf = "hotLayoutsCurrentOf".wasmCallableId
+    val hotVtableUpdate = "hotVtableUpdate".wasmCallableId
+    val wasmGetCellVtable = "wasmGetCellVtable".wasmCallableId
+    val wasmInstallDispatch = "wasmInstallDispatch".wasmCallableId
+
+    // the hot-reload backend primitives (hotReload.kt)
+    val wasmGetPayload = "wasmGetPayload".wasmCallableId
+    val wasmSetPayload = "wasmSetPayload".wasmCallableId
+    val wasmGetPayloadLayout = "wasmGetPayloadLayout".wasmCallableId
+    val wasmGetPayloadHash = "wasmGetPayloadHash".wasmCallableId
+    val wasmSetPayloadHash = "wasmSetPayloadHash".wasmCallableId
+    val wasmGetRttiKlassId = "wasmGetRttiKlassId".wasmCallableId
+    val wasmCallSlotReader = "wasmCallSlotReader".wasmCallableId
+    val wasmCallSlotWriter = "wasmCallSlotWriter".wasmCallableId
+    val wasmCallSlotAllocate = "wasmCallSlotAllocate".wasmCallableId
+    val wasmFdefnNew = "wasmFdefnNew".wasmCallableId
+    val wasmFdefnSetFn = "wasmFdefnSetFn".wasmCallableId
     val THROW_NPE = "THROW_NPE".wasmCallableId
     val THROW_ISE = "THROW_ISE".wasmCallableId
     val THROW_CCE = "THROW_CCE".wasmCallableId

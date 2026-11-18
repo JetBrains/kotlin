@@ -85,7 +85,8 @@ def enclosing_declaration(text, position):
             depth -= 1
         elif cleaned[i] == '\n' and depth == 0:
             line_start = i + 1
-            line = cleaned[line_start:cleaned.find('\n', line_start) if '\n' in cleaned[line_start:] else n]
+            eol = cleaned.find('\n', line_start)
+            line = cleaned[line_start:eol if eol != -1 else n]
             stripped = line.strip()
             if stripped.startswith('@'):
                 headers.append((line_start + line.index(stripped[0]), True))
@@ -218,7 +219,7 @@ def autodoc_operator(context):
         return None
 
     form = innermost(context) if context else None
-    if form and form and isinstance(form[0], str):
+    if form and isinstance(form[0], str):
         return form[0]
     return None
 

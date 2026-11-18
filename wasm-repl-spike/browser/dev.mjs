@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // The dev server: serves the page, watches app/src/*.kt, recompiles on save
 // (whole module, -Xwasm-hot-reload), and bumps the version the page polls.
-// The registry ferry, section parsing and compile steps live in build.mjs
+// The compile steps live in build.mjs
 // (shared with the Node gate, test.mjs).
 //
 //   node dev.mjs            # http://localhost:8123 — then edit the files in app/src/

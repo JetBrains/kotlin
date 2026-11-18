@@ -18,5 +18,12 @@ ic-cache/
 # hand-written experiment sources (driver8/driver9 wat modules)
 !survival/subtyping/*.wat
 !survival/cells/*.wat
+!survival/symtable/*.wat
+!survival/symtable/*.mjs
+!survival/fdefn/*.wat
+!survival/fdefn/*.mjs
+
+# extracted dists (re-downloadable; never commit)
+compose/t1/
 
 .#*
