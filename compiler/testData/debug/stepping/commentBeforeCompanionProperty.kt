@@ -39,9 +39,7 @@ fun box() {
 
 // EXPECTATIONS WASM_JS
 // test.kt:12 $box (19)
-// test.kt:7 $AWithCompanion$static_init (26)
 // test.kt:7 $AWithCompanion$Companion.<init> (26)
 // test.kt:8 $AWithCompanion$Companion.<init> (5)
-// test.kt:7 $AWithCompanion$static_init (26)
 // test.kt:12 $box (19)
 // test.kt:13 $box (1)
