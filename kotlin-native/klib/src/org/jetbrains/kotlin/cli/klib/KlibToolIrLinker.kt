@@ -52,6 +52,8 @@ internal class KlibToolIrLinker(
         errorCallback = output::logError,
         friendModules = emptyMap(), // We cannot obtain the information about friend modules from Klib alone.
 ) {
+    override val partialLinkageSupport: PartialLinkageSupportForLinker get() = PartialLinkageSupportForLinker.DISABLED
+
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
