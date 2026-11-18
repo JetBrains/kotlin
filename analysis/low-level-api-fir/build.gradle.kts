@@ -5,6 +5,7 @@ plugins {
     id("java-test-fixtures")
     id("test-data-manager")
     id("test-inputs-check")
+    id("generated-sources")
 }
 
 val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
@@ -91,6 +92,19 @@ sourceSets {
     }
     "testFixtures" { projectDefault() }
 }
+
+generatedSourcesTask(
+    taskName = "generateDiagnostics",
+    generatorProject = ":analysis:analysis-api-fir-diagnostics:analysis-api-fir-diagnostics-generator",
+    generatorMainClass = "org.jetbrains.kotlin.analysis.api.fir.generator.MainKt",
+    argsProvider = { generationRoot ->
+        listOf(
+            "org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics",
+            generationRoot.toString(),
+            "low-level-api-fir",
+        )
+    }
+)
 
 kotlin {
     compilerOptions {

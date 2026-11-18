@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.generator
 
+import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.DiagnosticFactoryToPsiElementMapRenderer
 import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.FirDiagnosticToKaDiagnosticConverterRenderer
 import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.KaDiagnosticClassImplementationRenderer
 import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.KaDiagnosticClassRenderer
@@ -45,12 +46,21 @@ object DiagnosticClassGenerator {
                     packageName = packageName,
                 )
             }
+
+            DiagnosticGenerationTarget.LowLevelApiFir -> {
+                DiagnosticFactoryToPsiElementMapRenderer.render(
+                    file = path.resolve("DiagnosticFactoryToPsiElementMap.kt"),
+                    diagnosticList = diagnosticList,
+                    packageName = packageName,
+                    starImportsToAdd = emptySet(),
+                )
+            }
         }
     }
 }
 
 /**
- * The part of the diagnostic hierarchy to generate. Diagnostics are split between two modules, so each of them requests its own part.
+ * The part of the diagnostic-based code to generate. The code is split between several modules, so each of them requests its own part.
  */
 enum class DiagnosticGenerationTarget(val id: String) {
     /** The public `KaFirDiagnostic` interfaces, generated into `analysis-api-fir-diagnostics`. */
@@ -58,6 +68,9 @@ enum class DiagnosticGenerationTarget(val id: String) {
 
     /** The diagnostic implementations and their converters, generated into `analysis-api-fir`. */
     Implementation("implementation"),
+
+    /** The map from diagnostic factories to the PSI element types of their diagnostics, generated into `low-level-api-fir`. */
+    LowLevelApiFir("low-level-api-fir"),
     ;
 
     companion object {

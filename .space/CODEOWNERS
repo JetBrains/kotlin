@@ -83,6 +83,7 @@
 /.junie/ "Kotlin" "Kotlin Analysis API" "Kotlin Build Infrastructure"
 
 /analysis/ "Kotlin Analysis API"
+/analysis/low-level-api-fir/gen/ "Kotlin Analysis API" "Kotlin Frontend"
 /analysis/analysis-api-fir/gen/ "Kotlin Analysis API" "Kotlin Frontend"
 /analysis/analysis-api-fir-diagnostics/gen/ "Kotlin Analysis API" "Kotlin Frontend"
 
