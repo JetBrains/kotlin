@@ -74,6 +74,48 @@ public class FirStandaloneNormalAnalysisSourceModuleFunctionalInterfaceFunctionT
   }
 
   @Test
+  @TestMetadata("localFunInterface.kt")
+  public void testLocalFunInterface() {
+    run("localFunInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("localFunInterfaceInLambda.kt")
+  public void testLocalFunInterfaceInLambda() {
+    run("localFunInterfaceInLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("localFunInterfaceInLocalClass.kt")
+  public void testLocalFunInterfaceInLocalClass() {
+    run("localFunInterfaceInLocalClass.kt");
+  }
+
+  @Test
+  @TestMetadata("localFunInterfaceInMemberFunction.kt")
+  public void testLocalFunInterfaceInMemberFunction() {
+    run("localFunInterfaceInMemberFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("localFunInterfaceWithTypeParameters.kt")
+  public void testLocalFunInterfaceWithTypeParameters() {
+    run("localFunInterfaceWithTypeParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("localTypeAliasToFunInterface.kt")
+  public void testLocalTypeAliasToFunInterface() {
+    run("localTypeAliasToFunInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("localTypeAliasToLocalFunInterface.kt")
+  public void testLocalTypeAliasToLocalFunInterface() {
+    run("localTypeAliasToLocalFunInterface.kt");
+  }
+
+  @Test
   @TestMetadata("regularClass.kt")
   public void testRegularClass() {
     run("regularClass.kt");
