@@ -143,6 +143,5 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             removedVersion = KotlinReleaseVersion.v2_5_0,
         )
-        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 }
