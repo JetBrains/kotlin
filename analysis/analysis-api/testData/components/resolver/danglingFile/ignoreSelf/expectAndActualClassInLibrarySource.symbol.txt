@@ -7,7 +7,7 @@
       symbols = [
         test/Foo
       ]
-    additional: [common.kt]
+    additional: [jvm.kt]
 
 <caret>:
   KtNameReferenceExpression(251,259): 'hashCode'
@@ -16,6 +16,6 @@
     lookupLocally: false
     KaSimpleSymbolResolutionSuccess:
       symbols = [
-        test/Foo.hashCode(<dispatch receiver>: test.Foo): kotlin.Int
+        kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
       ]
-    additional: [common.kt]
+    additional: [kotlin.kotlin_builtins]

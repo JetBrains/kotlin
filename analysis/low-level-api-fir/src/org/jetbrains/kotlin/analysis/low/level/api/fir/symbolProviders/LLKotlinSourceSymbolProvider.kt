@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDe
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -106,6 +108,23 @@ internal class LLKotlinSourceSymbolProvider private constructor(
             extensionTool?.symbolNamesProvider,
         )
     )
+
+    /**
+     * A library source module may contain both the `expect` and the `actual` declaration of a class, e.g., stdlib sources contain common
+     * and JVM sources. The order of such declarations in the [declarationProvider] is arbitrary, so class ID-based lookups prefer a
+     * non-`expect` declaration over an `expect` one, also when an `expect` declaration is passed as the context.
+     *
+     * The symbol provider of a dangling file session doesn't apply this preference. A class ID lookup from a dangling file with a library
+     * source context module gets it once the lookup reaches the symbol provider of the context module. An `expect` class declared in the
+     * dangling file itself is found before that, since the declarations of a
+     * [PREFER_SELF][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode.PREFER_SELF] dangling file take
+     * precedence over the context module.
+     *
+     * This is a workaround for library sources which mix several platforms in one module. If there are several non-`expect` declarations
+     * (e.g., `actual`s for different platforms), the choice among them still depends on the order in the [declarationProvider]. The
+     * structural fix is to represent library sources of different platforms as separate modules (KT-82839).
+     */
+    private val prefersNonExpectClassLikeDeclarations: Boolean = moduleComponents.module is KaLibrarySourceModule
 
     private val classLikeCache =
         LLPsiAwareClassLikeSymbolCache(session, ::computeClassLikeSymbolByClassId) { declaration: KtClassLikeDeclaration, _ ->
@@ -179,10 +198,25 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeSymbol<*>? {
         require(context == null || context.isPhysical)
-        val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
+        val declaration = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
+        val ktClass = if (prefersNonExpectClassLikeDeclarations) findNonExpectClassLikeDeclaration(classId, declaration) else declaration
         if (ktClass.getClassId() == null) return null
 
         return findClassLikeSymbol(classId, ktClass) { FirElementFinder.findClassifierWithClassId(it, classId) }
+    }
+
+    /**
+     * Returns a non-`expect` declaration with the given [classId] if [declaration] is `expect` and such a declaration exists, and
+     * [declaration] otherwise. Classes are preferred over type aliases.
+     *
+     * See [prefersNonExpectClassLikeDeclarations] for why this is needed (KT-82839).
+     */
+    private fun findNonExpectClassLikeDeclaration(classId: ClassId, declaration: KtClassLikeDeclaration): KtClassLikeDeclaration {
+        if (!declaration.isExpectDeclaration()) return declaration
+
+        return declarationProvider.getAllClassesByClassId(classId).firstOrNull { !it.isExpectDeclaration() }
+            ?: declarationProvider.getAllTypeAliasesByClassId(classId).firstOrNull { !it.isExpectDeclaration() }
+            ?: declaration
     }
 
     private fun computeClassLikeSymbolByPsi(declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
