@@ -61,8 +61,6 @@ internal class KlibToolIrLinker(
             partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
     )
 
-    override val returnUnboundSymbolsIfSignatureNotFound get() = true
-
     override fun createModuleDeserializer(
             moduleFragment: IrModuleFragment,
             klib: KotlinLibrary?,
