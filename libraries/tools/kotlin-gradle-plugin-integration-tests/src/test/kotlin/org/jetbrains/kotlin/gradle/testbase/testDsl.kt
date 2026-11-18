@@ -1563,3 +1563,19 @@ private fun Throwable.backtrace(): String = StringWriter().use {
     PrintWriter(it).use(this::printStackTrace)
     it
 }.toString()
+
+
+fun TestProject.applyKotlinEcosystemSettingsPlugin() {
+    addEcosystemPluginToBuildScriptCompilationClasspath()
+    settingsBuildScriptInjection {
+        settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+    }
+}
+
+/**
+ * Sets `kotlin.internal.web.isolatedProjectsSupport=Preview`, which also opts in to the shared npm project.
+ */
+// TODO this should be in BuildOptions
+fun TestProject.enableWebIsolatedProjectsSupportPreview() {
+    gradleProperties.append("\nkotlin.internal.web.isolatedProjectsSupport=Preview\n")
+}
