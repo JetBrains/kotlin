@@ -1455,13 +1455,7 @@ class ComposableFunctionBodyTransformer(
                         callChanged
                     val modifyDirtyFromChangedResult = dirty.irOrSetBitsAtSlot(
                         slotIndex,
-                        irShl(
-                            irPlus(
-                                irReinterpretCast(isChanged, context.irBuiltIns.intType),
-                                irConst(1)
-                            ),
-                            irConst(bitShiftForSlot(slotIndex))
-                        )
+                        irDifferentOrSameBitsAtSlot(slotIndex, isChanged)
                     )
 
                     val skipCondition = irIsUncertain(changedParam, slotIndex)
@@ -1539,20 +1533,16 @@ class ComposableFunctionBodyTransformer(
                 )
 
                 // For varargs, if changed we set ParamState.Different (0b010), else ParamState.Uncertain (0b000).
-                // Shifting (changed as Int) by (bitShift + 1) evaluates to 0b010 when true and 0b000 when false.
                 statements.add(
                     dirty.irOrSetBitsAtSlot(
                         slotIndex,
-                        irShl(
-                            irReinterpretCast(
-                                irChanged(
-                                    irMethodCall(irGet(param), sizeGetter),
-                                    fileContainingValue = fileContainingParameters,
-                                    compareInstanceForFunctionTypes = true
-                                ),
-                                context.irBuiltIns.intType
+                        irDifferentOrUncertainBitsAtSlot(
+                            slotIndex,
+                            irChanged(
+                                irMethodCall(irGet(param), sizeGetter),
+                                fileContainingValue = fileContainingParameters,
+                                compareInstanceForFunctionTypes = true
                             ),
-                            irConst(bitShiftForSlot(slotIndex) + 1)
                         )
                     )
                 )
@@ -1571,10 +1561,7 @@ class ComposableFunctionBodyTransformer(
 
                         dirty.irOrSetBitsAtSlot(
                             slotIndex,
-                            irShl(
-                                irReinterpretCast(changedCall, context.irBuiltIns.intType),
-                                irConst(bitShiftForSlot(slotIndex) + 1)
-                            )
+                            irDifferentOrUncertainBitsAtSlot(slotIndex, changedCall)
                         )
                     }
                 )
@@ -1639,6 +1626,57 @@ class ComposableFunctionBodyTransformer(
 
         return mightSkip
     }
+
+    /**
+     * Returns an expression that evaluates to a mask with zeros at all slots other than slot
+     * [slotIndex], and a value at slot [slotIndex] of [ParamState.Different] if [isChanged] is
+     * true, and [ParamState.Same] otherwise.
+     */
+    private fun irDifferentOrSameBitsAtSlot(slotIndex: Int, isChanged: IrExpression): IrExpression =
+        if (!context.platform.isNative()) {
+            // `ParamState.Same` is 0b001 and `ParamState.Different` is 0b010, so shifting
+            // ((changed as Int) + 1) by bitShiftForSlot produces the desired mask.
+            irShl(
+                irPlus(
+                    irReinterpretCast(isChanged, context.irBuiltIns.intType),
+                    irConst(1)
+                ),
+                irConst(bitShiftForSlot(slotIndex))
+            )
+        } else {
+            // The bits are selected with a branch on Kotlin/Native, because it does not support
+            // `REINTERPRET_CAST`.
+            irIfThenElse(
+                context.irBuiltIns.intType,
+                isChanged,
+                thenPart = irConst(ParamState.Different.bitsForSlot(slotIndex)),
+                elsePart = irConst(ParamState.Same.bitsForSlot(slotIndex))
+            )
+        }
+
+    /**
+     * Returns an expression that evaluates to a mask with zeros at all slots other than slot
+     * [slotIndex], and a value at slot [slotIndex] of [ParamState.Different] if [isChanged] is
+     * true, and [ParamState.Uncertain] otherwise.
+     */
+    private fun irDifferentOrUncertainBitsAtSlot(slotIndex: Int, isChanged: IrExpression): IrExpression =
+        if (!context.platform.isNative()) {
+            // `ParamState.Uncertain` is 0b000 and `ParamState.Different` is 0b010, so shifting
+            // (changed as Int) by (bitShiftForSlot + 1) produces the desired mask.
+            irShl(
+                irReinterpretCast(isChanged, context.irBuiltIns.intType),
+                irConst(bitShiftForSlot(slotIndex) + 1)
+            )
+        } else {
+            // The bits are selected with a branch on Kotlin/Native, because it does not support
+            // `REINTERPRET_CAST`.
+            irIfThenElse(
+                context.irBuiltIns.intType,
+                isChanged,
+                thenPart = irConst(ParamState.Different.bitsForSlot(slotIndex)),
+                elsePart = irConst(ParamState.Uncertain.bitsForSlot(slotIndex))
+            )
+        }
 
     private fun irCallChanged(
         stability: Stability,
