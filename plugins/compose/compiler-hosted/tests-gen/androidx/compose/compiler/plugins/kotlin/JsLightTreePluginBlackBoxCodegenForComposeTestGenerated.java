@@ -52,6 +52,18 @@ public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("testFullValueClassDefaultsJs.kt")
+  public void testTestFullValueClassDefaultsJs() {
+    run("testFullValueClassDefaultsJs.kt");
+  }
+
+  @Test
+  @TestMetadata("testFullValueClassJs.kt")
+  public void testTestFullValueClassJs() {
+    run("testFullValueClassJs.kt");
+  }
+
+  @Test
   @TestMetadata("testGenericComposableLambdaWithLocalDelegate.kt")
   public void testTestGenericComposableLambdaWithLocalDelegate() {
     run("testGenericComposableLambdaWithLocalDelegate.kt");

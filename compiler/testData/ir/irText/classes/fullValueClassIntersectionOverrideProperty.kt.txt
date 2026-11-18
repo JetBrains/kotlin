@@ -1,0 +1,89 @@
+value class Full : Value<List<Int>> {
+  override val value: List<Int>
+    field = value
+    override get
+
+  constructor(value: List<Int>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is Full -> return false
+    }
+    val tmp_0: Full = other /*as Full */
+    when {
+      EQEQ(arg0 = <this>.#value, arg1 = tmp_0.#value).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#value.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Full(" + "value=" + <this>.#value + ")"
+  }
+
+}
+
+value class Inline : Value<List<Int>> {
+  override val value: List<Int>
+    field = value
+    override get
+
+  constructor(value: List<Int>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is Inline -> return false
+    }
+    val tmp_1: Inline = other /*as Inline */
+    when {
+      EQEQ(arg0 = <this>.#value, arg1 = tmp_1.#value).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#value.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Inline(" + "value=" + <this>.#value + ")"
+  }
+
+}
+
+interface Value<out T : Any?> {
+  fun sizeOfFull(): Int {
+    return { // BLOCK
+      val tmp_2: Value<T> = <this>
+      when {
+        tmp_2 is Full -> <this> /*as Full */.<get-value>().<get-size>()
+        else -> -1
+      }
+    }
+  }
+
+  fun sizeOfInline(): Int {
+    return { // BLOCK
+      val tmp_3: Value<T> = <this>
+      when {
+        tmp_3 is Inline -> <this> /*as Inline */.<get-value>().<get-size>()
+        else -> -1
+      }
+    }
+  }
+
+  abstract val value: T
+    abstract get
+
+}

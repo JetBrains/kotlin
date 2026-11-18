@@ -181,6 +181,12 @@ public class LLSerializationBlackBoxTestGenerated extends AbstractLLSerializatio
     }
 
     @Test
+    @TestMetadata("fullValueClassWithoutSupertype.kt")
+    public void testFullValueClassWithoutSupertype() {
+      run("fullValueClassWithoutSupertype.kt");
+    }
+
+    @Test
     @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
     public void testGeneratedClassifiersViaLibraryDependency() {
       run("generatedClassifiersViaLibraryDependency.kt");

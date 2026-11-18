@@ -1,0 +1,304 @@
+// MODULE: lib
+// FILE: Test.kt
+
+val log: MutableList<String>
+  field = mutableListOf<String>()
+  get
+
+value class Full {
+  val i: Int
+    field = i
+    get
+
+  constructor(i: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is Full -> return false
+    }
+    val tmp_0: Full = other /*as Full */
+    when {
+      EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Full(" + "i=" + <this>.#i + ")"
+  }
+
+}
+
+value class Inline {
+  val i: Int
+    field = i
+    get
+
+  constructor(i: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is Inline -> return false
+    }
+    val tmp_1: Inline = other /*as Inline */
+    when {
+      EQEQ(arg0 = <this>.#i, arg1 = tmp_1.#i).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Inline(" + "i=" + <this>.#i + ")"
+  }
+
+}
+
+@Composable
+@FunctionKeyMeta(key = -1769979065, startOffset = 238, endOffset = 340)
+fun Content(/* var */ full: Full, /* var */ inline: Inline, /* var */ $composer: Composer?, $changed: Int, $default: Int) {
+  var full: Full = full
+  var inline: Inline = inline
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = -1769979065)
+    sourceInformation(composer = $composer, sourceInformation = "C(Content)P(0:Full,1:Inline):Test.kt")
+  }
+  val $dirty: Int = $changed
+  when {
+    EQEQ(arg0 = $default.and(other = 1), arg1 = 0).not() -> $dirty = $dirty.or(other = 6)
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = full.<get-i>()) /*=> Int */.plus(other = 1).shl(bitCount = 1))
+  }
+  when {
+    EQEQ(arg0 = $default.and(other = 2), arg1 = 0).not() -> $dirty = $dirty.or(other = 48)
+    EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = inline.<get-i>()) /*=> Int */.plus(other = 1).shl(bitCount = 4))
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+      when {
+        EQEQ(arg0 = $default.and(other = 1), arg1 = 0).not() -> full = Full(i = 1)
+      }
+      when {
+        EQEQ(arg0 = $default.and(other = 2), arg1 = 0).not() -> inline = Inline(i = 2)
+      }
+      when {
+        isTraceInProgress() -> traceEventStart(key = -1769979065, dirty1 = $dirty, dirty2 = -1, info = "Content (Test.kt:13)")
+      }
+      plusAssign<String>(/* <this> = <get-log>(), */ element = "Content(" + full + ", " + inline + ")")
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_2: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_2, arg1 = null) -> null
+        else -> tmp_2.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return Content(full = full, inline = inline, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)), $default = $default)
+        }
+)
+      }
+    }
+  }
+}
+
+@Composable
+@FunctionKeyMeta(key = -1801991513, startOffset = 354, endOffset = 428)
+fun Show(full: Full, inline: Inline, /* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = -1801991513)
+    sourceInformation(composer = $composer, sourceInformation = "C(Show)P(0:Full,1:Inline):Test.kt")
+  }
+  val $dirty: Int = $changed
+  when {
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = full.<get-i>()) /*=> Int */.plus(other = 1).shl(bitCount = 1))
+  }
+  when {
+    EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = inline.<get-i>()) /*=> Int */.plus(other = 1).shl(bitCount = 4))
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = -1801991513, dirty1 = $dirty, dirty2 = -1, info = "Show (Test.kt:17)")
+      }
+      plusAssign<String>(/* <this> = <get-log>(), */ element = "Show(" + full + ", " + inline + ")")
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_3: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_3, arg1 = null) -> null
+        else -> tmp_3.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return Show(full = full, inline = inline, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+// MODULE: main
+// FILE: main.kt
+
+val UnitApplier$stableprop: Int
+  field = 0
+
+internal object ComposableSingletons$MainKt {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  internal val lambda$-824000065: Function2<Composer, Int, Unit>?
+    internal get(): Function2<Composer, Int, Unit> {
+      when {
+        EQEQ(arg0 = <this>.#lambda$-824000065, arg1 = null) -> <this>.#lambda$-824000065 = Function2<Composer, Int, Unit>(
+          /* bound = */ [composableLambdaInstance(key = -824000065, tracked = false, block =           @Composable
+          @FunctionKeyMeta(key = -824000065, startOffset = 930, endOffset = 958)
+local fun <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
+            var $composer: Composer? = $composer
+            sourceInformation(composer = $composer, sourceInformation = "C48@932L24:main.kt")
+            when {
+              $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 3), arg1 = 2).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+                when {
+                  isTraceInProgress() -> traceEventStart(key = -824000065, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$MainKt.<get-lambda$-824000065>.<anonymous> (main.kt:48)")
+                }
+                Test(full = Full(i = 5), inline = Inline(i = 6), $composer = $composer, $changed = 54)
+                when {
+                  isTraceInProgress() -> traceEventEnd()
+                }
+              }
+              else -> $composer.skipToGroupEnd()
+            }
+          }
+)],
+          /* invoke = */          local fun(<this>: ComposableLambda, p0: Composer, p1: Int) {
+            return <this>.invoke(p1 = p0, p2 = p1) /*~> Unit */
+          }
+        )
+
+      }
+      return <this>.#lambda$-824000065
+    }
+
+}
+
+@StabilityInferred(parameters = 1)
+object UnitApplier : AbstractApplier<Unit> {
+  private constructor() /* primary */ {
+    super/*AbstractApplier*/<Unit>(root = Unit)
+    /* <init>() */
+
+  }
+
+  override fun insertBottomUp(index: Int, instance: Unit) {
+  }
+
+  override fun insertTopDown(index: Int, instance: Unit) {
+  }
+
+  override fun move(from: Int, to: Int, count: Int) {
+  }
+
+  protected override fun onClear() {
+  }
+
+  override fun remove(index: Int, count: Int) {
+  }
+
+}
+
+@Deprecated(message = "Synthetic declaration generated by the Compose compiler. Please do not use.", level = DeprecationLevel.HIDDEN)
+fun UnitApplier$stableprop_getter(): Int {
+  return #UnitApplier$stable
+}
+
+@Composable
+@FunctionKeyMeta(key = -2006831541, startOffset = 297, endOffset = 482)
+fun Test(full: Full, inline: Inline, /* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = -2006831541)
+    sourceInformation(composer = $composer, sourceInformation = "C(Test)P(0:Full,1:Inline)30@340L9,31@354L16,32@375L27,33@407L21,34@433L24,35@462L18:main.kt")
+  }
+  val $dirty: Int = $changed
+  when {
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = full.<get-i>()) /*=> Int */.plus(other = 1).shl(bitCount = 1))
+  }
+  when {
+    EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = inline.<get-i>()) /*=> Int */.plus(other = 1).shl(bitCount = 4))
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = -2006831541, dirty1 = $dirty, dirty2 = -1, info = "Test (main.kt:29)")
+      }
+      Content(full = // COMPOSITE {
+      Full(i = 0)
+      // }, inline = // COMPOSITE {
+      Inline(i = 0)
+      // }, $composer = $composer, $changed = 0, $default = 3)
+      Content(full = Full(i = 3), inline = // COMPOSITE {
+      Inline(i = 0)
+      // }, $composer = $composer, $changed = 6, $default = 2)
+      Content(full = // COMPOSITE {
+      Full(i = 0)
+      // }, inline = Inline(i = 4), $composer = $composer, $changed = 48, $default = 1)
+      Content(full = full, inline = inline, $composer = $composer, $changed = 14.and(other = $dirty).or(other = 112.and(other = $dirty)), $default = 0)
+      Show(full = Full(i = 7), inline = Inline(i = 8), $composer = $composer, $changed = 54)
+      Show(full = full, inline = inline, $composer = $composer, $changed = 14.and(other = $dirty).or(other = 112.and(other = $dirty)))
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_0: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> null
+        else -> tmp_0.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return Test(full = full, inline = inline, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+fun box(): String {
+  val composition: Composition = Composition(applier = UnitApplier, parent = Recomposer(effectCoroutineContext = EmptyCoroutineContext))
+  composition.setContent(content = ComposableSingletons$MainKt.<get-lambda$-824000065>())
+  val expected: List<String> = listOf<String>(elements = ["Content(Full(i=1), Inline(i=2))", "Content(Full(i=3), Inline(i=2))", "Content(Full(i=1), Inline(i=4))", "Content(Full(i=5), Inline(i=6))", "Show(Full(i=7), Inline(i=8))", "Show(Full(i=5), Inline(i=6))"])
+  return when {
+    EQEQ(arg0 = <get-log>(), arg1 = expected) -> "OK"
+    else -> "Fail: " + <get-log>()
+  }
+}
+

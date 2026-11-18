@@ -8,6 +8,14 @@ declare namespace JS_TESTS {
         function echoPoints(points: Array<foo.Point>): Array<foo.Point>;
         function echoLabeled<T>(value: foo.Labeled<T>): foo.Labeled<T>;
         function pointAsync(x: number, y: number): Promise<foo.Point>;
+        function createSingle(x: number): foo.Single;
+        function acceptSingle(single: foo.Single): number;
+        function echoNullableSingle(single: Nullable<foo.Single>): Nullable<foo.Single>;
+        function echoSingles(singles: Array<foo.Single>): Array<foo.Single>;
+        function createInlineSingle(x: number): foo.InlineSingle;
+        function acceptInlineSingle(single: foo.InlineSingle): number;
+        function echoNullableInlineSingle(single: Nullable<foo.InlineSingle>): Nullable<foo.InlineSingle>;
+        function echoInlineSingles(singles: Array<foo.InlineSingle>): Array<foo.InlineSingle>;
         class Point {
             constructor(x: number, y: number);
             static createFromValue(value: number): foo.Point;
@@ -68,5 +76,33 @@ declare namespace JS_TESTS {
                 const constructor: abstract new <T>() => Labeled<T>;
             }
         }
+        class Single {
+            constructor(x: number);
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get x(): number;
+        }
+        namespace Single {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Single;
+            }
+        }
+        class InlineSingle {
+            constructor(x: number);
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get x(): number;
+        }
+        namespace InlineSingle {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => InlineSingle;
+            }
+        }
     }
 }
+
+

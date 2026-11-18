@@ -1,0 +1,28 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final value class /Full : /Value<kotlin.collections/List<kotlin/Int>> { // /Full|null[0]
+    final val value // /Full.value|{}value[0]
+        final fun <get-value>(): kotlin.collections/List<kotlin/Int> // /Full.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(kotlin.collections/List<kotlin/Int>) // /Full.<init>|<init>(kotlin.collections.List<kotlin.Int>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Full.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Full.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Full.toString|toString(){}[0]
+}
+final value class /Inline : /Value<kotlin.collections/List<kotlin/Int>> { // /Inline|null[0]
+    final val value // /Inline.value|{}value[0]
+        final fun <get-value>(): kotlin.collections/List<kotlin/Int> // /Inline.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(kotlin.collections/List<kotlin/Int>) // /Inline.<init>|<init>(kotlin.collections.List<kotlin.Int>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Inline.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Inline.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Inline.toString|toString(){}[0]
+}
+abstract interface <#A: out kotlin/Any?> /Value { // /Value|null[0]
+    abstract val value // /Value.value|{}value[0]
+        abstract fun <get-value>(): #A // /Value.value.<get-value>|<get-value>(){}[0]
+    open fun sizeOfFull(): kotlin/Int // /Value.sizeOfFull|sizeOfFull(){}[0]
+    open fun sizeOfInline(): kotlin/Int // /Value.sizeOfInline|sizeOfInline(){}[0]
+}
