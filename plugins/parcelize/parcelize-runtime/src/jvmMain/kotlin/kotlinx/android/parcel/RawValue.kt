@@ -17,8 +17,12 @@
 package kotlinx.android.parcel
 
 /**
- * Write the corresponding property value with [android.os.Parcel.writeValue].
- * Serialization may fail at runtime, depending on actual property value type.
+ * Allows serializing the annotated type even if it is not supported by Parcelize: the parts of the type which cannot be
+ * serialized otherwise are written with [android.os.Parcel.writeValue]. For example, a `@RawValue Any` property is written
+ * with [android.os.Parcel.writeValue], while a `@RawValue String` property is still written with
+ * [android.os.Parcel.writeString], as if it was not annotated.
+ *
+ * Serialization may fail at runtime, depending on the actual value type.
  */
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
