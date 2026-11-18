@@ -54,6 +54,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class StandaloneBehaviorTest : AbstractStandaloneTest() {
@@ -151,9 +152,7 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
     @Test
     fun testCacheCleanerWithoutEnableCacheCleaner() {
         val project = buildProjectForCacheCleanerTest(enableCacheCleaner = false)
-
-        // The cache cleaner should not be registered without `enableCacheCleaner()` (KT-89827).
-        assertNotNull(project.serviceOrNull<KaFirCacheCleaner>())
+        assertNull(project.serviceOrNull<KaFirCacheCleaner>(), "The cache cleaner must not be registered without `enableCacheCleaner()`")
     }
 
     @Test
