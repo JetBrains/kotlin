@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface PartialLinkageSupportForLinker {
-    val isEnabled: Boolean
-
     /**
      * Fast check to determine if the given [declaration] should be skipped from the partial linkage point of view.
      *
@@ -71,7 +69,6 @@ interface PartialLinkageSupportForLinker {
 
     companion object {
         val DISABLED = object : PartialLinkageSupportForLinker {
-            override val isEnabled get() = false
             override fun shouldBeSkipped(declaration: IrDeclaration) = true
             override fun enqueueFile(file: IrFile) = Unit
             override fun enqueueDeclaration(declaration: IrDeclaration) = Unit
