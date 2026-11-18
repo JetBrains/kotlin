@@ -1,4 +1,4 @@
-expression: false
+expression: false (by PSI)
 constant: false
 constantValueKind: BooleanValue
 constantValueSource: BOOLEAN_CONSTANT

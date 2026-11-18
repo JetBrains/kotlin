@@ -1,4 +1,4 @@
-expression: 2147483648
+expression: 2147483648 (by PSI)
 constant: 2147483648
 constantValueKind: LongValue
 constantValueSource: INTEGER_CONSTANT

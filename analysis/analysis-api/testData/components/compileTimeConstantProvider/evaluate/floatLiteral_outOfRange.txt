@@ -1,4 +1,4 @@
-expression: 1e100f
+expression: 1e100f (by PSI)
 constant: Infinityf
 constantValueKind: FloatValue
 constantValueSource: FLOAT_CONSTANT

@@ -1,4 +1,4 @@
-expression: 1u
+expression: 1u (by PSI)
 constant: 1u
 constantValueKind: UIntValue
 constantValueSource: INTEGER_CONSTANT

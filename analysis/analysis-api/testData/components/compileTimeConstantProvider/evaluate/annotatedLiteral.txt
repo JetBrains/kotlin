@@ -1,4 +1,4 @@
-expression: @Suppress("UNUSED") 1L
+expression: @Suppress("UNUSED") 1L (by PSI)
 constant: 1
 constantValueKind: LongValue
 constantValueSource: INTEGER_CONSTANT

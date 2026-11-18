@@ -1,4 +1,4 @@
-expression: $$"a$b"
+expression: $$"a$b" (by PSI)
 constant: "a$b"
 constantValueKind: StringValue
 constantValueSource: STRING_TEMPLATE

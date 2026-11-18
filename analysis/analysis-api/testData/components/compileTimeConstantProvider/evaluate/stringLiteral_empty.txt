@@ -1,4 +1,4 @@
-expression: ""
+expression: "" (by PSI)
 constant: ""
 constantValueKind: StringValue
 constantValueSource: STRING_TEMPLATE

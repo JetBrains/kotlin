@@ -1,4 +1,4 @@
-expression: '\n'
+expression: '\n' (by PSI)
 constant: `
 `
 constantValueKind: CharValue

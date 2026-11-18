@@ -1,4 +1,4 @@
-expression: (1L)
+expression: (1L) (by PSI)
 constant: 1
 constantValueKind: LongValue
 constantValueSource: INTEGER_CONSTANT

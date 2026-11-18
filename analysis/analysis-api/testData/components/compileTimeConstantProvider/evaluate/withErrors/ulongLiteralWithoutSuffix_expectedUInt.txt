@@ -1,4 +1,4 @@
-expression: 4294967296u
+expression: 4294967296u (by PSI)
 constant: 4294967296uL
 constantValueKind: ULongValue
 constantValueSource: INTEGER_CONSTANT

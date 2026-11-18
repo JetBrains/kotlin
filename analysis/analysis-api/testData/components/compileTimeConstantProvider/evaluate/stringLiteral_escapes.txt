@@ -1,4 +1,4 @@
-expression: "a\tb\u0041\$c\""
+expression: "a\tb\u0041\$c\"" (by PSI)
 constant: "a	bA$c""
 constantValueKind: StringValue
 constantValueSource: STRING_TEMPLATE

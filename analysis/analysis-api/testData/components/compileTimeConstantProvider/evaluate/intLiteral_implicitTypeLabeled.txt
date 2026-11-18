@@ -1,4 +1,4 @@
-expression: 1
+expression: 1 (by PSI)
 constant: 1
 constantValueKind: IntValue
 constantValueSource: INTEGER_CONSTANT
