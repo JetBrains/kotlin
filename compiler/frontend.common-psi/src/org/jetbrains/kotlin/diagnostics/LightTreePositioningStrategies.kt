@@ -972,6 +972,17 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val TRY_KEYWORD = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markElement(tree.findChildByType(node, KtTokens.TRY_KEYWORD) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
+
     val ELSE_ENTRY = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

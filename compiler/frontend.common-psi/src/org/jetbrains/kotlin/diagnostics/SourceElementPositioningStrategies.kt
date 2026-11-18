@@ -245,6 +245,11 @@ object SourceElementPositioningStrategies {
         PsiPositioningStrategies.IF_EXPRESSION
     )
 
+    val TRY_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.TRY_KEYWORD,
+        PsiPositioningStrategies.TRY_KEYWORD
+    )
+
     val ELSE_ENTRY = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.ELSE_ENTRY,
         PsiPositioningStrategies.ELSE_ENTRY
