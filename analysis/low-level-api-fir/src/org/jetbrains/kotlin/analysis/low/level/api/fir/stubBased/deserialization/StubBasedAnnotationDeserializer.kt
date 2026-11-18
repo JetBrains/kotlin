@@ -107,7 +107,11 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
     }
 
     /**
-     * Builds the expression [constantValue] stands for, as it is written at [sourceElement].
+     * Builds the expression of the declared [type] that [constantValue] stands for, as it is written at [sourceElement].
+     *
+     * The stubs built by the decompiler already hold an unsigned value for an unsigned declaration. The conversion by [type],
+     * as `FirMemberDeserializer` does for constants, is a defensive check: it guards against a binary that still holds
+     * the signed counterpart, e.g., metadata without `IS_UNSIGNED`.
      */
     fun resolveConstant(sourceElement: PsiElement, constantValue: ConstantValue<*>, type: ConeKotlinType): FirExpression {
         val resultValue = when {
