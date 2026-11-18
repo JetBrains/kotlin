@@ -112,6 +112,23 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
             }
         }
     }
+
+    @JsGradlePluginTests
+    @GradleTest
+    @DisplayName("Compiler version with the Build Tools API disabled for JS reports KotlinCompilerVersionWithoutBuildToolsApi")
+    fun compileJsWithCompilerVersionWithoutBuildToolsApi(gradleVersion: GradleVersion) {
+        project("js-per-file", gradleVersion, compilerVersion = TestVersions.Kotlin.STABLE_RELEASE) {
+            gradleProperties.append("kotlin.js.runViaBuildToolsApi=false")
+            buildAndFail("compileKotlinJs") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.KotlinCompilerVersionWithoutBuildToolsApi,
+                    withSubstring = "Task ':compileKotlinJs' cannot use Kotlin compiler version '${TestVersions.Kotlin.STABLE_RELEASE}'",
+                )
+                // Build fails while the task graph is calculated, before :compileKotlinJs is scheduled.
+                assertTasksAreNotInTaskGraph(":compileKotlinJs")
+            }
+        }
+    }
 }
 
 private const val NON_EXISTENT_COMPILER = "Version.Does.Not.Exist"
