@@ -25,23 +25,8 @@ import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 context(analysisSession: KaFirSession)
 internal fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
     val singleExpression = when (this) {
-        is KtNamedFunction -> when {
-            hasDeclaredReturnType() -> return null
-
-            // A function with a block body returns `Unit` unless it declares the return type
-            hasBlockBody() -> return analysisSession.builtinTypes.unit
-
-            // An anonymous function takes its return type from the expected type, like a lambda
-            isAnonymous -> return null
-
-            else -> bodyExpression
-        }
-
-        // FIR takes the type of the initializer first
-        is KtProperty -> when {
-            typeReference != null || getter?.typeReference != null -> return null
-            else -> initializer ?: getter?.bodyExpression
-        }
+        // A function with a block body returns `Unit` unless it declares the return type
+        is KtNamedFunction if !hasDeclaredReturnType() && hasBlockBody() -> return analysisSession.builtinTypes.unit
 
         // A setter parameter without a declared type has the type of its property
         is KtParameter -> return when (val accessor = ownerFunction) {
@@ -49,15 +34,39 @@ internal fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
             else -> null
         }
 
-        else -> return null
+        else -> implicitTypeSource ?: return null
     }
 
     // Depending on the loop, FIR infers an error type or Unit for a declaration with a loop body
-    if (singleExpression?.unwrapParenthesesLabelsAndAnnotations() is KtLoopExpression) return null
+    if (singleExpression.unwrapParenthesesLabelsAndAnnotations() is KtLoopExpression) return null
 
     // The body of a declaration with an implicit type has no expected type
-    return singleExpression?.inferExpressionTypeByPsi(mayHaveExpectedType = false)
+    return singleExpression.inferExpressionTypeByPsi(mayHaveExpectedType = false)
 }
+
+/**
+ * The initializer or the body that defines the implicit type of this declaration.
+ */
+internal val KtDeclaration.implicitTypeSource: KtExpression?
+    get() = when (this) {
+        is KtNamedFunction -> when {
+            hasDeclaredReturnType() -> null
+            hasBlockBody() -> null
+
+            // An anonymous function takes its return type from the expected type, like a lambda
+            isAnonymous -> null
+
+            else -> bodyExpression
+        }
+
+        // FIR takes the type of the initializer first
+        is KtProperty -> when {
+            typeReference != null || getter?.typeReference != null -> null
+            else -> initializer ?: getter?.bodyExpression
+        }
+
+        else -> null
+    }
 
 /**
  * Optimization: try to determine the type of the expression by its PSI, so FIR doesn't have to be built.
