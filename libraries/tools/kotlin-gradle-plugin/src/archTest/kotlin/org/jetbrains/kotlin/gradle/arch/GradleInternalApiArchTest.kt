@@ -16,7 +16,7 @@ class GradleInternalApiArchTest {
     fun noNewGradleInternalApiUsages() {
         freeze(
             noClasses()
-                .should().dependOnClassesThat().resideInAPackage("org.gradle.internal..")
+                .should().dependOnClassesThat().resideInAPackage("org.gradle..internal..")
                 .because("Gradle internal API is not covered by Gradle compatibility guarantees and may break between Gradle versions.")
         ).check(kgpClasses)
     }
