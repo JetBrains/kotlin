@@ -49,6 +49,10 @@ class InstallationStoreTest {
         override fun installed(id: String, installation: Path) {
             events += "installed $id"
         }
+
+        override fun removed(id: String, installation: Path) {
+            events += "removed $id"
+        }
     }
 
     private fun store(leftoverPolicy: LeftoverPolicy = LeftoverPolicy.REPLACE, markerFileName: String = ".provisioned") =
@@ -461,6 +465,109 @@ class InstallationStoreTest {
     fun `a marker file name with a separator is rejected`() {
         val exception = assertFailsWith<IllegalArgumentException> { InstallationStore(storeDir, markerFileName = "a/b") }
         assertEquals("The marker file name must be a single file name, got 'a/b'", exception.message)
+    }
+
+    @Test
+    fun `a removed installation is gone and the next install produces it again`() {
+        val store = store()
+        store.install("tool-1.0") { writeTool(it, "old") }
+
+        assertTrue(store.remove("tool-1.0"))
+
+        assertNull(store.find("tool-1.0"))
+        assertFalse(Files.exists(storeDir.resolve("tool-1.0")))
+        assertFalse(Files.exists(stagingOf("tool-1.0")), "nothing of the removed installation stays in staging")
+        val installation = store.install("tool-1.0") { writeTool(it, "new") }
+        assertEquals("new", String(Files.readAllBytes(installation.resolve("tool"))))
+        assertEquals(listOf("installed tool-1.0", "removed tool-1.0", "installed tool-1.0"), events)
+    }
+
+    @Test
+    fun `removing an installation that is not there does nothing`() {
+        assertFalse(store().remove("tool-1.0"))
+
+        assertEquals(emptyList(), events)
+        assertFalse(Files.exists(storeDir.resolve(".locks")), "it does not even take the lock")
+    }
+
+    @Test
+    fun `a directory without a marker is removed whatever the leftover policy`() {
+        val leftover = Files.createDirectories(storeDir.resolve("tool-1.0"))
+        Files.write(leftover.resolve("stale"), byteArrayOf(1))
+
+        assertTrue(store(LeftoverPolicy.FAIL).remove("tool-1.0"))
+
+        assertFalse(Files.exists(leftover))
+    }
+
+    @Test
+    fun `removing leaves other installations alone`() {
+        val store = store()
+        store.install("tool-1.0") { writeTool(it) }
+        val other = store.install("tool-2.0") { writeTool(it) }
+
+        store.remove("tool-1.0")
+
+        assertEquals(other, store.find("tool-2.0"))
+    }
+
+    @Test
+    fun `of two callers removing an installation the second waits and finds it gone`() {
+        val moving = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        val waiting = CountDownLatch(1)
+        val store = InstallationStore(
+            storeDir, ".provisioned", LeftoverPolicy.REPLACE, lockTimeoutMillis = null,
+            listener = object : ProvisioningListener {
+                override fun waitingForLock(id: String, lockFile: Path, holder: String?) = waiting.countDown()
+            },
+            move = { source, target ->
+                if (target.fileName.toString() == "removed") {
+                    moving.countDown()
+                    release.await()
+                }
+                Files.move(source, target, StandardCopyOption.ATOMIC_MOVE)
+            },
+            sleep = {},
+        )
+        store.install("tool-1.0") { writeTool(it) }
+        val executor = Executors.newFixedThreadPool(2)
+        try {
+            val first = executor.submit<Boolean> { store.remove("tool-1.0") }
+            assertTrue(moving.await(TIMEOUT_SECONDS, TimeUnit.SECONDS))
+
+            val second = executor.submit<Boolean> { store.remove("tool-1.0") }
+            assertTrue(waiting.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "the second caller waits for the lock")
+            release.countDown()
+
+            assertTrue(first.await())
+            assertFalse(second.await(), "the installation was removed once")
+            assertNull(store.find("tool-1.0"))
+        } finally {
+            release.countDown()
+            executor.shutdownNow()
+        }
+    }
+
+    @Test
+    fun `an installation that cannot be moved away stays complete`() {
+        val sleeps = mutableListOf<Long>()
+        val store = InstallationStore(
+            storeDir, ".provisioned", LeftoverPolicy.REPLACE, lockTimeoutMillis = null, listener = recordingListener,
+            move = { source, target ->
+                if (target.fileName.toString() == "removed") throw AccessDeniedException(source.toString())
+                Files.move(source, target, StandardCopyOption.ATOMIC_MOVE)
+            },
+            sleep = { sleeps += it },
+        )
+        val installation = store.install("tool-1.0") { writeTool(it) }
+
+        assertFailsWith<AccessDeniedException> { store.remove("tool-1.0") }
+
+        assertEquals(listOf(100L, 200L, 300L, 400L), sleeps)
+        assertEquals(installation, store.find("tool-1.0"))
+        assertTrue(Files.exists(installation.resolve("tool")))
+        assertEquals(listOf("installed tool-1.0"), events)
     }
 
     private fun <T> inParallel(threads: Int, action: () -> T): List<T> {

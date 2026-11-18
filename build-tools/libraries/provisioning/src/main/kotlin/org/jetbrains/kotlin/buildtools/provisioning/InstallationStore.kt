@@ -16,14 +16,16 @@ private const val DEFAULT_MARKER_FILE_NAME = ".provisioned"
 private const val LOCKS_DIRECTORY = ".locks"
 private const val STAGING_DIRECTORY = ".staging"
 private const val DOWNLOADS_DIRECTORY = ".downloads"
-private const val PUBLISH_ATTEMPTS = 5
-private const val PUBLISH_RETRY_DELAY_MILLIS = 100L
+private const val REMOVED_DIRECTORY = "removed"
+private const val MOVE_ATTEMPTS = 5
+private const val MOVE_RETRY_DELAY_MILLIS = 100L
 
 /**
  * A directory with installations of one kind, shared by every build on the machine, for example `~/.konan`.
  *
  * Each installation is a subdirectory named by its id. A directory with that name only ever appears complete, with the
- * marker file inside, and is never changed afterwards, so it is safe to read while other installations are being added.
+ * marker file inside, and is never changed afterwards, so it is safe to read while other installations are being added;
+ * the one way an installation goes away is [remove].
  * Installing is safe when several threads, class loaders or processes ask for the same id at once: one of them does the
  * work and the others wait for it and get its result.
  *
@@ -97,29 +99,23 @@ public class InstallationStore internal constructor(
         val installation = installationPath(id)
         if (isComplete(installation)) return installation
 
-        val lockFile = directory.resolve(LOCKS_DIRECTORY).resolve("$id.lock")
-        Files.createDirectories(lockFile.parent)
-        val lock = InstallationLock(
-            lockFile,
-            onWait = { holder -> listener.waitingForLock(id, lockFile, holder) },
-            sleep = sleep,
-            timeoutMillis = lockTimeoutMillis,
-        )
-        return lock.withLock {
+        return lockOf(id).withLock {
             // whoever held the lock before may have installed it
             if (isComplete(installation)) return@withLock installation
 
             removeLeftover(installation)
 
             // Under the lock the staging directory of this id is ours alone. Anything in it is from an attempt that has ended.
-            val staging = directory.resolve(STAGING_DIRECTORY).resolve(id)
+            val staging = stagingDirectory(id)
             deleteRecursively(staging)
             Files.createDirectories(staging)
             try {
                 val root = checkProduced(produce(StagingArea(staging)), staging, id)
                 val marker = root.resolve(markerFileName)
                 if (!Files.exists(marker, LinkOption.NOFOLLOW_LINKS)) Files.createFile(marker)
-                publish(root, installation)
+                // Under the lock the target does not exist, so the move only fails when something holds a file inside 'root'
+                // open. On Windows antivirus and indexers do that to freshly written files for a short while.
+                moveWithRetries(root, installation)
             } catch (e: Throwable) {
                 // the caller has to see what went wrong, not that cleaning up after it failed as well
                 try {
@@ -138,6 +134,57 @@ public class InstallationStore internal constructor(
             installation
         }
     }
+
+    /**
+     * Removes the installation for [id], complete or not, and tells whether there was one. It is meant for an installation
+     * that has to be made again, of a snapshot version for example: the next [install] produces it anew.
+     *
+     * The installation leaves its place in one step, so no caller ever finds a part of it. A build that is running from it
+     * loses its files all the same, which is the caller's risk to take. Callers that install or remove [id] at the same
+     * time take turns. An installation that is still being produced is not in place yet, so there is nothing to remove.
+     *
+     * Must not be called for [id] from inside the producer of its [install].
+     *
+     * @throws InstallationLockTimeoutException if another caller is still installing [id] when the lock timeout runs out.
+     * @throws java.nio.file.FileSystemException if the installation cannot be moved away, on Windows for example while
+     * a process has one of its files open. It is then still in place and complete.
+     */
+    public fun remove(id: String): Boolean {
+        val installation = installationPath(id)
+        if (!Files.exists(installation, LinkOption.NOFOLLOW_LINKS)) return false
+
+        return lockOf(id).withLock {
+            // whoever held the lock before may have removed it
+            if (!Files.exists(installation, LinkOption.NOFOLLOW_LINKS)) return@withLock false
+
+            // Deleting in place would leave a directory that has its marker and only some of its files. Renamed into the
+            // staging directory, which is ours under the lock, it is gone at once and deleted from there.
+            val staging = stagingDirectory(id)
+            deleteRecursively(staging)
+            Files.createDirectories(staging)
+            moveWithRetries(installation, staging.resolve(REMOVED_DIRECTORY))
+            try {
+                deleteRecursively(staging)
+            } catch (e: IOException) {
+                // The installation is out of the way. What could not be deleted goes with the next attempt on this id.
+            }
+            listener.removed(id, installation)
+            true
+        }
+    }
+
+    private fun lockOf(id: String): InstallationLock {
+        val lockFile = directory.resolve(LOCKS_DIRECTORY).resolve("$id.lock")
+        Files.createDirectories(lockFile.parent)
+        return InstallationLock(
+            lockFile,
+            onWait = { holder -> listener.waitingForLock(id, lockFile, holder) },
+            sleep = sleep,
+            timeoutMillis = lockTimeoutMillis,
+        )
+    }
+
+    private fun stagingDirectory(id: String): Path = directory.resolve(STAGING_DIRECTORY).resolve(id)
 
     private fun installationPath(id: String): Path {
         require(isSingleFileName(id) && !id.startsWith(".")) {
@@ -192,17 +239,15 @@ public class InstallationStore internal constructor(
         return root
     }
 
-    private fun publish(root: Path, installation: Path) {
-        // Under the lock the target does not exist, so the move only fails when something holds a file inside 'root' open.
-        // On Windows antivirus and indexers do that to freshly written files for a short while.
+    private fun moveWithRetries(source: Path, target: Path) {
         var attempt = 1
         while (true) {
             try {
-                move(root, installation)
+                move(source, target)
                 return
             } catch (e: AccessDeniedException) {
-                if (attempt == PUBLISH_ATTEMPTS) throw e
-                sleep(PUBLISH_RETRY_DELAY_MILLIS * attempt)
+                if (attempt == MOVE_ATTEMPTS) throw e
+                sleep(MOVE_RETRY_DELAY_MILLIS * attempt)
                 attempt++
             }
         }

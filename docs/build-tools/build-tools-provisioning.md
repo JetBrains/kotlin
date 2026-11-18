@@ -194,7 +194,8 @@ archives may contain.
 ### What this guarantees
 
 * **Readers never see a partial installation.** The installation name appears in one rename, with the marker already inside. An
-  installation is never modified or replaced after that, so a build can read it while other builds install other things.
+  installation is never modified or replaced after that, so a build can read it while other builds install other things. It can
+  only be removed whole, see [Removing an installation](#removing-an-installation).
 * **The work happens once.** Callers that arrive during an installation wait in step 2 and leave in step 3.
 * **Different installations do not wait for each other.** The lock is per id.
 * **A killed process leaves nothing that blocks others.** The operating system releases a file lock when its process dies, and a
@@ -282,6 +283,9 @@ public class InstallationStore(
      * below it. Everything else in the staging directory is deleted.
      */
     public fun install(id: String, produce: (staging: StagingArea) -> Path): Path
+
+    /** Removes the installation for [id], complete or not. Returns whether there was one. */
+    public fun remove(id: String): Boolean
 }
 
 public class StagingArea internal constructor(public val directory: Path)
@@ -290,6 +294,22 @@ public class StagingArea internal constructor(public val directory: Path)
 Letting `produce` return a directory below the staging area covers the usual archive layout, where everything sits in one top-level
 directory. An archive a producer downloads into the staging area disappears with it; `DistributionProvisioner` keeps its downloads
 in `.downloads` instead, so that they can be continued.
+
+### Removing an installation
+
+Some installations have to be made again: a snapshot version gets new content under the same id, and Kotlin/Native has
+`kotlin.native.reinstall` for a distribution that went bad. `remove` is for that, and the next `install` produces the installation
+anew. It is not a step towards cleaning up old installations, which stays an anti-goal.
+
+`remove` takes the lock of the id, renames the installation into the id's staging directory and deletes it there. The rename
+keeps the first guarantee: the installation is there with all its files or it is not there, and never a directory that has its
+marker and half of its content, which deleting in place would leave behind if it failed midway. A build that is running from
+the installation loses its files all the same. The store cannot know about such a build, since readers take no lock, so
+removing is the caller's risk to take. On Windows a file that some process has open cannot be renamed; the removal then fails
+and the installation stays as it was.
+
+When there is no directory with the id's name, `remove` returns false without taking the lock. That includes an installation
+that is still being produced: the caller's next `install` waits for it and gets a fresh one.
 
 ## Downloader
 
@@ -447,6 +467,7 @@ public interface ProvisioningListener {
     public fun downloadRetried(url: URI, attempt: Int, cause: IOException) {}
     public fun extractionStarted(archive: Path, destination: Path) {}
     public fun installed(id: String, installation: Path) {}
+    public fun removed(id: String, installation: Path) {}
     public fun leftoverRemoved(installation: Path) {}
 }
 ```
@@ -544,6 +565,8 @@ of sleeping.
   * ids with spaces and non-ASCII characters; ids with separators or a leading dot (rejected);
   * `find` on missing, partial and complete installations.
   * a denied rename that succeeds on retry, and one that never does.
+  * `remove`: a complete installation and a leftover, a missing one, other ids left alone, two callers removing at once, and a
+    rename that stays denied, after which the installation is still complete.
 * `InstallationStoreProcessesTest` starts four JVMs that install the same id in one store. The one that gets the lock holds it
   until the other three have reported that they wait, so the processes really overlap, and exactly one of them produces. A
   second case kills the JVM that holds the lock in the middle of `produce` and checks that the next one recovers. A third has

@@ -11,8 +11,9 @@ every Kotlin Build Tools library are in [../AGENTS.md](../AGENTS.md); this file 
   thread that holds both the class loader's lock and the JVM-wide monitor, which keeps out copies of the library from other
   class loaders. Both are keyed by the real path of the lock directory, so a store reached through a symlink is the same
   lock. Anything a waiting caller needs to read goes in `<id>.lock.holder`. Lock files are never deleted.
-- **An installation never changes after the rename.** The marker is written into the root before publishing. A feature
-  that needs to write into an installation needs a change to the design first.
+- **An installation never changes after the rename.** The marker is written into the root before publishing. It can only
+  go away whole: `remove` renames it into staging before deleting it. A feature that needs to write into an installation
+  needs a change to the design first.
 - **A leftover is deleted only when its marker is confirmed absent** (`Files.notExists`). A marker that cannot be read is an
   I/O error, never a leftover.
 - **Only the server or the connection is retried.** Wrap a new network call in `transfer {}` so its failure becomes a

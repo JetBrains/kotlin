@@ -89,6 +89,7 @@ public final class org/jetbrains/kotlin/buildtools/provisioning/InstallationStor
 	public final fun find (Ljava/lang/String;)Ljava/nio/file/Path;
 	public final fun getDirectory ()Ljava/nio/file/Path;
 	public final fun install (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/nio/file/Path;
+	public final fun remove (Ljava/lang/String;)Z
 }
 
 public final class org/jetbrains/kotlin/buildtools/provisioning/InvalidDistributionException : org/jetbrains/kotlin/buildtools/provisioning/ProvisioningException {
@@ -122,6 +123,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/provisioning/Pro
 	public fun extractionStarted (Ljava/nio/file/Path;Ljava/nio/file/Path;)V
 	public fun installed (Ljava/lang/String;Ljava/nio/file/Path;)V
 	public fun leftoverRemoved (Ljava/nio/file/Path;)V
+	public fun removed (Ljava/lang/String;Ljava/nio/file/Path;)V
 	public fun waitingForLock (Ljava/lang/String;Ljava/nio/file/Path;Ljava/lang/String;)V
 }
 

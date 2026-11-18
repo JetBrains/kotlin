@@ -28,6 +28,9 @@ public interface ProvisioningListener {
     /** [id] has been installed into [installation] by this caller. */
     public fun installed(id: String, installation: Path) {}
 
+    /** The installation of [id] in [installation] has been removed by this caller, see [InstallationStore.remove]. */
+    public fun removed(id: String, installation: Path) {}
+
     /**
      * A download from [url] starts receiving bytes. [totalBytes] is the size of the whole file when the server announced it.
      * Called once per attempt.
