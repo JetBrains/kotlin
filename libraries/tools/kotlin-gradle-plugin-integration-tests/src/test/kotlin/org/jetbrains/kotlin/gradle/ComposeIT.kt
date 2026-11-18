@@ -760,6 +760,138 @@ class ComposeIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("CMP-9447: composable fun interfaces compile on every target")
+    @GradleTest
+    @OtherGradlePluginTests
+    fun testComposableFunInterfaceOnAllTargets(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            projectName = "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                    version = TestVersions.Kotlin.CURRENT
+                ),
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+            ),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://redirector.kotlinlang.org/maven/compose-dev")),
+            enableGradleDaemonMemoryLimitInMb = 2048,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
+        ) {
+            plugins {
+                id("org.jetbrains.kotlin.plugin.compose")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    // Not an Apple target: those link only on macOS
+                    linuxX64 {
+                        binaries.sharedLib()
+                    }
+                    jvm()
+
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        browser()
+                        binaries.library()
+                    }
+
+                    js {
+                        browser()
+                        binaries.library()
+                    }
+                    sourceSets.commonMain {
+                        compileSource(
+                            //language=kotlin
+                            """
+                            package com.example
+
+                            import androidx.compose.runtime.Composable
+
+                            fun interface Renderer {
+                                @Composable
+                                fun render(text: String)
+                            }
+
+                            fun interface Consumer<T> {
+                                @Composable
+                                fun consume(t: T)
+                            }
+
+                            fun interface Decorator {
+                                @Composable
+                                fun String.decorate()
+                            }
+
+                            @Composable
+                            fun Text(s: String) {}
+
+                            @Composable
+                            fun Show(renderer: Renderer) = renderer.render("a")
+
+                            @Composable
+                            fun Consume(consumer: Consumer<in String>) = consumer.consume("b")
+
+                            @Composable
+                            fun Decorate(decorator: Decorator) = with(decorator) { "c".decorate() }
+
+                            @Composable
+                            fun App(prefix: String) {
+                                Show { text -> Text(text) }
+                                Show { text -> Text(prefix + text) }
+                                Consume { value -> Text(value) }
+                                Decorate { Text(this) }
+                                Show(typedRenderer<String>())
+                            }
+
+                            fun renderer(prefix: String) = Renderer { text -> Text(prefix + text) }
+
+                            inline fun <reified T : Any> typedRenderer() =
+                                Renderer { text -> Text(T::class.simpleName + text) }
+
+                            val topLevelRenderer = Renderer { text -> Text(text) }
+
+                            class RendererHolder(prefix: String) {
+                                val byParameter = Renderer { text -> Text(prefix + text) }
+                                val byInstance = Renderer { text -> Text(toString() + text) }
+
+                                companion object {
+                                    val shared = Renderer { text -> Text(text) }
+                                }
+                            }
+
+                            class InitRendererHolder(prefix: String) {
+                                val renderer: Renderer
+
+                                init {
+                                    val local = prefix
+                                    renderer = Renderer { text -> Text(local + text) }
+                                }
+                            }
+                            """.trimIndent()
+                        )
+                        dependencies {
+                            implementation("org.jetbrains.compose.runtime:runtime:1.9.1")
+                        }
+                    }
+                }
+            }
+
+            build(":linkDebugSharedLinuxX64") {
+                assertTasksExecuted(":compileKotlinLinuxX64", ":linkDebugSharedLinuxX64")
+            }
+            build(":compileProductionLibraryKotlinWasmJs") {
+                assertTasksExecuted(":compileKotlinWasmJs", ":compileProductionLibraryKotlinWasmJs")
+            }
+            build(":compileProductionLibraryKotlinJs") {
+                assertTasksExecuted(":compileKotlinJs", ":compileProductionLibraryKotlinJs")
+            }
+            build(":compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+            }
+        }
+    }
+
     @DisplayName($$"Ensure that older versions of the compiler can access the backing field of a $stable property")
     @GradleAndroidTest
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813, maxVersion = TestVersions.AGP.AGP_813)
