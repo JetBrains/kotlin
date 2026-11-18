@@ -644,6 +644,7 @@ class WasmCompiledModuleFragment(
                 } else {
                     buildRefNull(WasmHeapType.Simple.None, serviceCodeLocation)
                 }
+                buildGetGlobal(RttiGlobalSymbol(binding.classKey!!), serviceCodeLocation)
                 buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, FuncSymbol(binding.allocateKey))
                 buildCall(FuncSymbol(Synthetics.Functions.hotLayoutsRegisterBuiltIn.value), serviceCodeLocation)
                 buildInstr(

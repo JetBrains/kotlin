@@ -47,8 +47,10 @@ the mechanism; this list owns the status.
   stdlib box). Cell-chain changes are engine-rejected — coexistence
   for genuinely new types.
 - **Method additions hot** (DESIGN §6): the stdlib stepper installs
-  the class's current vtable + itable from the registry; interface
-  default bodies swap on live instances.
+  the class's current vtable + itable + RTTI from the registry;
+  interface default bodies swap on live instances, and a class GAINING
+  an interface flips `is` and dispatch on pre-existing instances after
+  one lazy migration.
 - **The registry is the whole previous-state story** (DESIGN §6, §16):
   no dump, no injection, no custom section — wiping the IC cache loses
   nothing (`registry_test.py`).

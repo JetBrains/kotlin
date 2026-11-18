@@ -1494,11 +1494,22 @@ HIERARCHY_DEMO = [
     'f1v.t()',
     'class F1 { fun t(): Int = 2 }',
     'F1().t()',
-    # ---- gaining a supertype = shape change; new instances pass `is`
+    # ---- gaining an INTERFACE supertype: nothing at the type level
+    # changes (interfaces erase from signatures), so the redefinition
+    # LOADS — and old instances follow lazily: `is`/interface dispatch
+    # installs the current RTTI + itable via the stepper and retries,
+    # so a pre-existing instance answers TRUE and dispatches after
+    # one migration.
     'interface An { fun name(): String = "animal" }',
     'class Plain(val v: Int)',
+    'val p1 = Plain(3)',
+    '(p1 as Any) is An',              # false — born before the interface (the
+                                     # Any-typed check keeps the frontend from
+                                     # statically refusing a provable-false)
     'class Plain(val v: Int) : An',
-    'Plain(3).name()',
+    'p1 is An',                       # TRUE — the stepper installed the current RTTI
+    'p1.name()',                      # dispatches through the installed itable
+    'Plain(4).name()',
     # ---- base SHAPE change with a frozen dependent: compile-time refusal
     # (the old subclass text no longer type-checks — honest, nothing corrupts)
     'open class B2(val a: Int) { open fun get(): Int = a }',

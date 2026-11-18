@@ -1131,6 +1131,10 @@ class BodyGenerator(
             generateExpression(call.arguments[2]!!)
             body.buildRefCastNullStatic(Synthetics.HeapTypes.wasmAnyArrayType, location)
             body.buildStructSet(anyCellGcType, ANY_ITABLE_FIELD_ID, location)
+            generateExpression(call.arguments[0]!!)
+            generateExpression(call.arguments[3]!!)
+            body.buildRefCastStatic(Synthetics.HeapTypes.rttiType, location)
+            body.buildStructSet(anyCellGcType, ANY_RTTI_FIELD_ID, location)
             generateExpression(call.arguments[1]!!) // the vtable — the retry cast's target
             return
         }
@@ -1598,23 +1602,61 @@ class BodyGenerator(
             }
 
             wasmSymbols.reflectionSymbols.wasmGetInterfaceVTableBodyImpl -> {
-                //This is implementation of getInterfaceVTable, so argument locals could be used from the call-site
-                //obj.interfacesArray
-                body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
-                body.buildStructGet(typeCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_ITABLE_FIELD_ID, location)
-
-                //wasmArrayAnyIndexOfValue(obj.rtti.interfaceIds)
-                body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
-                body.buildStructGet(typeCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_RTTI_FIELD_ID, location)
+                // NON-HOT: the original body — obj.itable[indexOf(ids, id)]
+                // (static typing guarantees the id is present; the miss
+                // paths are unreachable). HOT: a miss renders NULL so the
+                // dispatch arm's ref.test routes to the stepper and
+                // retries — a stale cell may hold an older RTTI/itable
+                // that lacks the interface.
+                if (!backendContext.isHotReloadCompilation) {
+                    body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
+                    body.buildStructGet(typeCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_ITABLE_FIELD_ID, location)
+                    body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
+                    body.buildStructGet(typeCodegenContext.referenceGcType(irBuiltIns.anyClass), ANY_RTTI_FIELD_ID, location)
+                    body.buildStructGet(Synthetics.GcTypes.rttiType, RTTI_IMPLEMENTED_INTERFACES_FIELD_ID, location)
+                    body.buildGetLocal(functionContext.referenceLocal(1), location) //interfaceId
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.wasmArrayAnyIndexOfValue), location)
+                    body.buildInstr(WasmOp.ARRAY_GET, location, Synthetics.GcTypes.wasmAnyArrayType)
+                } else {
+                // getInterfaceVTable's body: the interface's itable slot —
+                // obj.itable[obj.rtti.ids.indexOf(interfaceId)] — with a
+                // MISS rendered as NULL (a stale cell may hold an older
+                // RTTI/itable that lacks the interface; the hot dispatch
+                // arm's ref.test then routes to the stepper and retries)
+                val anyCellGcType = typeCodegenContext.referenceGcType(irBuiltIns.anyClass)
+                val itableLocal = functionContext.referenceTempLocal(WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType))
+                val idsLocal = functionContext.referenceTempLocal(WasmRefNullType(Synthetics.HeapTypes.wasmLongArray))
+                val idxLocal = functionContext.referenceTempLocal(WasmI32)
+                val anyrefNull = WasmRefNullType(WasmHeapType.Simple.Any)
+                // itable = obj.itable
+                body.buildGetLocal(functionContext.referenceLocal(0), location)
+                body.buildStructGet(anyCellGcType, ANY_ITABLE_FIELD_ID, location)
+                body.buildSetLocal(itableLocal, location)
+                // ids = obj.rtti.ids — null means no interfaces at all
+                body.buildGetLocal(functionContext.referenceLocal(0), location)
+                body.buildStructGet(anyCellGcType, ANY_RTTI_FIELD_ID, location)
                 body.buildStructGet(Synthetics.GcTypes.rttiType, RTTI_IMPLEMENTED_INTERFACES_FIELD_ID, location)
-                body.buildGetLocal(functionContext.referenceLocal(1), location) //interfaceId
+                body.buildTeeLocal(idsLocal, location)
+                body.buildInstr(WasmOp.REF_IS_NULL, location)
+                body.buildIf(null, anyrefNull)
+                body.buildRefNull(WasmHeapType.Simple.Any, location)
+                body.buildElse()
+                // idx = indexOf(ids, interfaceId) — -1 means not gained yet
+                body.buildGetLocal(idsLocal, location)
+                body.buildGetLocal(functionContext.referenceLocal(1), location)
                 body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.wasmArrayAnyIndexOfValue), location)
-
-                body.buildInstr(
-                    WasmOp.ARRAY_GET,
-                    location,
-                    Synthetics.GcTypes.wasmAnyArrayType
-                )
+                body.buildTeeLocal(idxLocal, location)
+                body.buildConstI32(0, location)
+                body.buildInstr(WasmOp.I32_GE_S, location)
+                body.buildIf(null, anyrefNull)
+                body.buildGetLocal(itableLocal, location)
+                body.buildGetLocal(idxLocal, location)
+                body.buildInstr(WasmOp.ARRAY_GET, location, Synthetics.GcTypes.wasmAnyArrayType)
+                body.buildElse()
+                body.buildRefNull(WasmHeapType.Simple.Any, location)
+                body.buildEnd()
+                body.buildEnd()
+                }
             }
 
             wasmSymbols.wasmGetObjectRtti -> {
@@ -1691,8 +1733,36 @@ class BodyGenerator(
                         }
                     } else {
                         body.commentGroupStart { "Check interface supported" }
-                        body.buildConstI64(linkerDataContext.referenceTypeId(irInterface.symbol), location)
-                        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.isSupportedInterface), location)
+                        if (backendContext.isHotReloadCompilation) {
+                            // hot: a miss may mean the cell holds an OLDER
+                            // RTTI — the class GAINED the interface. Migrate
+                            // via the stepper (installs the current RTTI)
+                            // and rescan once; a genuinely unsupported
+                            // interface rescans false. Non-hot codegen is
+                            // untouched — the stdlib scan stays mode-agnostic.
+                            val receiverLocal = functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER)
+                            body.buildSetLocal(receiverLocal, location)
+                            body.buildGetLocal(receiverLocal, location)
+                            body.buildConstI64(linkerDataContext.referenceTypeId(irInterface.symbol), location)
+                            body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.isSupportedInterface), location)
+                            val resLocal = functionContext.referenceTempLocal(WasmI32)
+                            body.buildSetLocal(resLocal, location)
+                            body.buildGetLocal(resLocal, location)
+                            body.buildIf(null)
+                            body.buildElse()
+                            body.buildGetLocal(receiverLocal, location)
+                            body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.hotVtableUpdate), location)
+                            body.buildDrop(location) // the vtable is not needed here
+                            body.buildGetLocal(receiverLocal, location)
+                            body.buildConstI64(linkerDataContext.referenceTypeId(irInterface.symbol), location)
+                            body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.isSupportedInterface), location)
+                            body.buildSetLocal(resLocal, location)
+                            body.buildEnd()
+                            body.buildGetLocal(resLocal, location)
+                        } else {
+                            body.buildConstI64(linkerDataContext.referenceTypeId(irInterface.symbol), location)
+                            body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.isSupportedInterface), location)
+                        }
                     }
                 }
                 body.commentGroupEnd()

@@ -90,10 +90,13 @@ internal fun hotFdefnsResolve(name: String, impl: funcref): anyref {
 internal class HotSlot(val nameTag: Long, val typeTag: Long, val reader: funcref, val writer: funcref)
 
 internal class HotLayout(
-    /** the class's CURRENT vtable and itable — the dispatch half of
-     *  the class's definition ([hotVtableUpdate] installs them) */
+    /** the class's CURRENT vtable, itable and RTTI — the dispatch half
+     *  of the class's definition ([hotVtableUpdate] installs them; the
+     *  RTTI rides along so a class GAINING an interface flips `is` and
+     *  interface dispatch on stale instances after one migration) */
     val vtable: anyref,
     val itable: anyref?,
+    val rtti: anyref,
     val allocate: funcref,
     val slots: ArrayList<HotSlot>,
 )
@@ -105,8 +108,8 @@ private val hotLayoutsCurrent = HashMap<Long, HotLayout>()
  *  into its per-class layout global, so this module's allocations
  *  stamp it into every fresh payload's `$layout`. */
 @UsedFromCompilerGeneratedCode
-internal fun hotLayoutsRegister(classId: Long, vtable: anyref, itable: anyref?, allocate: funcref): HotLayout {
-    val layout = HotLayout(vtable, itable, allocate, ArrayList())
+internal fun hotLayoutsRegister(classId: Long, vtable: anyref, itable: anyref?, rtti: anyref, allocate: funcref): HotLayout {
+    val layout = HotLayout(vtable, itable, rtti, allocate, ArrayList())
     hotLayoutsCurrent[classId] = layout
     return layout
 }
@@ -125,7 +128,7 @@ internal fun hotLayoutsAddSlot(classId: Long, nameTag: Long, typeTag: Long, read
 internal fun hotLayoutsCurrentOf(classId: Long): HotLayout? = hotLayoutsCurrent[classId]
 
 /** The dispatch stepper — SBCL's wrapper update for METHODS: install
- *  the class's CURRENT vtable and itable into the cell, so a method
+ *  the class's CURRENT vtable, itable and RTTI into the cell, so a method
  *  added by a newer generation is dispatchable on instances born
  *  before it existed (a grown vtable is a SUBTYPE — old callers'
  *  retry casts still pass), and return the vtable. A class the image
@@ -135,7 +138,7 @@ internal fun hotLayoutsCurrentOf(classId: Long): HotLayout? = hotLayoutsCurrent[
 internal fun hotVtableUpdate(cell: Any?): anyref {
     val layout = hotLayoutsCurrent[wasmGetRttiKlassId(cell)]
         ?: return wasmGetCellVtable(cell)
-    return wasmInstallDispatch(cell, layout.vtable, layout.itable)
+    return wasmInstallDispatch(cell, layout.vtable, layout.itable, layout.rtti)
 }
 
 /**
@@ -235,11 +238,11 @@ internal fun wasmGetPayload(cell: Any?): anyref = implementedAsIntrinsic
 @UsedFromCompilerGeneratedCode
 internal fun wasmGetCellVtable(cell: Any?): anyref = implementedAsIntrinsic
 
-/** Install a vtable and itable into the cell's two mutable
+/** Install the vtable, itable and RTTI into the cell's three mutable
  *  dispatch fields; returns the vtable. */
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
-internal fun wasmInstallDispatch(cell: Any?, vtable: anyref, itable: anyref?): anyref = implementedAsIntrinsic
+internal fun wasmInstallDispatch(cell: Any?, vtable: anyref, itable: anyref?, rtti: anyref): anyref = implementedAsIntrinsic
 
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode

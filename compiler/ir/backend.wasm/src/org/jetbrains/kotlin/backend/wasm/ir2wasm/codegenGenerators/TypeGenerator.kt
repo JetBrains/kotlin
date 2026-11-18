@@ -137,6 +137,16 @@ class TypeGenerator(
                     WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType),
                     isMutable = true,
                 )
+                // The RTTI too: a class GAINING an interface changes only
+                // runtime DATA (the RTTI's id list, the itable's slots), so
+                // the stepper installs the current RTTI alongside the
+                // vtable and itable — old instances answer `is` and
+                // interface dispatch after one lazy migration
+                fields[2] = WasmStructFieldDeclaration(
+                    "rtti",
+                    WasmRefType(Synthetics.HeapTypes.rttiType),
+                    isMutable = true,
+                )
             } else {
                 declaration.allFields(irBuiltIns).mapTo(fields) {
                     WasmStructFieldDeclaration(

@@ -254,7 +254,8 @@ bookkeeping at all — loading applies):
 | **back to a previous shape** | the payload type re-declares the old shape — the engine's content canonicalization makes it the SAME canonical type the old code expects | migrate (update-instance to the re-registered layout) — same state, no trap | work as when the shape was first current |
 | **add an OPEN method** | vtable struct grows, but it's behind the root-typed mutable field — no signature changes; virtual dispatch lowers to test → (cast + read slot) \| (call the stdlib `hotVtableUpdate(cell)`, retry), which derives the class from the RTTI klassId and installs the CURRENT vtable + itable from the class registry | migrate their vtable on next dispatch — the new method is callable on instances born before it existed; overrides still win | keep working: a grown vtable is a SUBTYPE of the old one |
 | **add an interface default method** | same stepper (the itable installs with the vtable) — retroactive interfaces reach old instances | migrate on next interface dispatch | keep working |
-| **method signature change, class-supertype gain, finality flip** | real shape changes: the cell SUBTYPING CHAIN is part of every signature mentioning the class — the engine rejects the swap; that rejection IS the change detector. Bindings typed at the old version are reported stranded | remain the old type, usable by old-version code | can't touch them; `is` agrees |
+| **gain an interface supertype** | nothing at the type level (interfaces erase from every signature) — the class's RTTI id list and itable slots are runtime DATA; `is` and interface dispatch install the current RTTI + itable via the stepper and retry | migrate on first `is`/interface dispatch — a pre-existing instance answers `is I` true and dispatches after one migration | keep working |
+| **method signature change, class-supertype gain, finality flip** | real shape changes: the cell SUBTYPING CHAIN is part of every signature mentioning the class. Precision: the redefinition module itself loads (the new chain is self-consistent) — the rejection fires at the NEXT module importing a stranded binding (its old-typed funcref fails the engine's import check); that rejection IS the change detector | remain the old type, usable by old-version code | can't touch them; `is` agrees |
 
 **The CL correspondence, per mechanism** — CLOS/AMOP class redefinition
 rebuilt on wasm GC types:
@@ -270,7 +271,7 @@ rebuilt on wasm GC types:
 | the LAYOUT: the class's current vtable, itable, slot descriptors and accessor closures, registered in the image's registry at load | SBCL's wrapper+layout pair, fused; `find-class` is a table lookup |
 | update-instance: allocate-with-defaults, copy same-named same-TAGGED slots through the layouts' closures, swap in place, one shot | `update-instance-for-redefined-class`: obsolete instances update on **first access**, never eagerly |
 | slot-value / (setf slot-value): update-to-current, then a BY-NAME read/write; a deleted slot throws a catchable exception | obsolete code touching a discarded slot errors; no shadow reads |
-| `hotVtableUpdate`: test → miss → install current vtable → retry | method addition invalidates the generic function's discriminating function; the next call recomputes it |
+| `hotVtableUpdate`: test → miss → install current vtable + itable + RTTI → retry | method addition invalidates the generic function's discriminating function; the next call recomputes it |
 
 The one deliberate divergence: CL layouts add and drop slots freely (the
 AMOP update passes both lists); wasm subtyping can only extend field
