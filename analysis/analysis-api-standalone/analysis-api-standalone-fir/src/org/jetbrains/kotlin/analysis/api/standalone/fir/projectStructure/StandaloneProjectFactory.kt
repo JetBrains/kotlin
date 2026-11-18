@@ -82,7 +82,7 @@ object StandaloneProjectFactory {
         applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
     ): KotlinCoreProjectEnvironment {
         @OptIn(CoreEnvironmentDeprecation::class)
-        val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(
+        val applicationEnvironment = KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(
             projectDisposable = projectDisposable,
             applicationEnvironmentMode,
         )

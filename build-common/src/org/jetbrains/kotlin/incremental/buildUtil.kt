@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.build.isModuleMappingFile
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -309,7 +309,7 @@ fun withSubtypes(
 fun clearJarCaches() {
     ZipHandler.clearFileAccessorCache()
     @OptIn(CoreEnvironmentDeprecation::class)
-    KotlinCoreEnvironment.applicationEnvironment?.apply {
+    KotlinCoreApplicationEnvironment.instance?.apply {
         (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
         (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()
         idleCleanup()

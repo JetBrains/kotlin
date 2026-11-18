@@ -17,7 +17,6 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiElementFinder
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.extensionsStorage
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment.Companion.underApplicationLock
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode.Production
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode.UnitTest
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -331,9 +329,6 @@ class KotlinCoreEnvironment private constructor(
         projectEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
     companion object {
-        private var ourApplicationEnvironment: KotlinCoreApplicationEnvironment? = null
-        private var ourProjectCount = 0
-
         @JvmStatic
         @CoreEnvironmentDeprecation
         fun createForProduction(
@@ -394,18 +389,14 @@ class KotlinCoreEnvironment private constructor(
             return KotlinCoreEnvironment(projectEnvironment, initialConfiguration)
         }
 
-        // used in the daemon for jar cache cleanup
-        @CoreEnvironmentDeprecation
-        val applicationEnvironment: KotlinCoreApplicationEnvironment? get() = ourApplicationEnvironment
-
         @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironmentForProduction(projectDisposable: Disposable): KotlinCoreApplicationEnvironment {
-            return getOrCreateApplicationEnvironment(projectDisposable, Production)
+            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable, Production)
         }
 
         @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironmentForTests(projectDisposable: Disposable): KotlinCoreApplicationEnvironment {
-            return getOrCreateApplicationEnvironment(projectDisposable, UnitTest)
+            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable, UnitTest)
         }
 
         /**
@@ -420,69 +411,7 @@ class KotlinCoreEnvironment private constructor(
                 false -> Production
                 true -> UnitTest
             }
-            return getOrCreateApplicationEnvironment(projectDisposable, mode)
-        }
-
-        @CoreEnvironmentDeprecation
-        fun getOrCreateApplicationEnvironment(
-            projectDisposable: Disposable,
-            environmentMode: KotlinCoreApplicationEnvironmentMode,
-        ): KotlinCoreApplicationEnvironment {
-            underApplicationLock {
-                if (ourApplicationEnvironment == null) {
-                    val disposable = Disposer.newDisposable("Disposable for the KotlinCoreApplicationEnvironment")
-                    ourApplicationEnvironment = KotlinCoreApplicationEnvironment.create(disposable, environmentMode)
-                    ourProjectCount = 0
-                    Disposer.register(disposable) {
-                        underApplicationLock {
-                            ourApplicationEnvironment = null
-                        }
-                    }
-                }
-                try {
-                    val disposeAppEnv =
-                        CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true
-                    // Disposer uses identity of passed object to deduplicate registered disposables
-                    // We should everytime pass new instance to avoid un-registering from previous one
-                    @Suppress("ObjectLiteralToLambda")
-                    Disposer.register(projectDisposable, object : Disposable {
-                        override fun dispose() {
-                            underApplicationLock {
-                                // Build-systems may run many instances of the compiler in parallel
-                                // All projects share the same ApplicationEnvironment, and when the last project is disposed,
-                                // the ApplicationEnvironment is disposed as well
-                                if (--ourProjectCount <= 0) {
-                                    // Do not use this property unless you sure need it, causes Application to MEMORY LEAK
-                                    // Only valid use-case is when Application should be cached to avoid
-                                    // initialization costs
-                                    if (disposeAppEnv) {
-                                        disposeApplicationEnvironment()
-                                    } else {
-                                        ourApplicationEnvironment?.idleCleanup()
-                                    }
-                                }
-                            }
-                        }
-                    })
-                } finally {
-                    ourProjectCount++
-                }
-
-                return ourApplicationEnvironment!!
-            }
-        }
-
-        /**
-         * This method is also used in Gradle after configuration phase finished.
-         */
-        @JvmStatic
-        @CoreEnvironmentDeprecation
-        fun disposeApplicationEnvironment() {
-            underApplicationLock {
-                val environment = ourApplicationEnvironment ?: return
-                ourApplicationEnvironment = null
-                environment.dispose()
-            }
+            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable, mode)
         }
 
         @JvmStatic
