@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
-import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.name.ClassId
 
@@ -26,7 +26,7 @@ object FirNativeEagerInitializationChecker : FirPropertyChecker(MppCheckerKind.P
     override fun check(declaration: FirProperty) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         if (!context.isTopLevel || declaration.initializer == null) {
-            reporter.reportIfHasAnnotation(declaration, eagerInitializationClassId, FirNativeErrors.INAPPLICABLE_EAGER_INITIALIZATION)
+            reporter.reportIfHasAnnotation(declaration, eagerInitializationClassId, FirErrors.INAPPLICABLE_EAGER_INITIALIZATION)
         }
     }
 }

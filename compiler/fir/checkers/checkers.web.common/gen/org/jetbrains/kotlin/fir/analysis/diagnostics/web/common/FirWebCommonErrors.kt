@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.web.common
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature.ForbidNonTopLevelEagerInitialization
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJsQualifierOnMembersAndNonExternals
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitVarInJsModuleFile
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
@@ -41,8 +42,8 @@ object FirWebCommonErrors : KtDiagnosticsContainer() {
     val JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL", ProhibitJsQualifierOnMembersAndNonExternals, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL", ProhibitJsQualifierOnMembersAndNonExternals, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val INAPPLICABLE_EAGER_INITIALIZATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("INAPPLICABLE_EAGER_INITIALIZATION", ForbidNonTopLevelEagerInitialization, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE: KtDiagnosticFactoryForDeprecation1<String> = KtDiagnosticFactoryForDeprecation1("JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE", ProhibitVarInJsModuleFile, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtElement::class, getRendererFactory())
 
     // Externals
     val NESTED_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())

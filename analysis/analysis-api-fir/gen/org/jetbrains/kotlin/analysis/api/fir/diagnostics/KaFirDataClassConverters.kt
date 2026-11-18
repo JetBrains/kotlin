@@ -2369,7 +2369,7 @@ private fun KaDiagnosticConverterBuilder.addConversions48() {
             token,
         )
     }
-    add(FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION.warningFactory) { firDiagnostic ->
+    add(FirErrors.INAPPLICABLE_EAGER_INITIALIZATION.warningFactory) { firDiagnostic ->
         InapplicableEagerInitializationWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -2456,8 +2456,9 @@ private fun KaDiagnosticConverterBuilder.addConversions49() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions50() {
-    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.errorFactory) { firDiagnostic ->
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.errorFactory) { firDiagnostic ->
         JsModuleProhibitedOnVarInModuleFileErrorImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4630,8 +4631,9 @@ private fun KaDiagnosticConverterBuilder.addConversions98() {
             token,
         )
     }
-    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.warningFactory) { firDiagnostic ->
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.warningFactory) { firDiagnostic ->
         JsModuleProhibitedOnVarInModuleFileWarningImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -5146,7 +5148,7 @@ private fun KaDiagnosticConverterBuilder.addConversions108() {
             token,
         )
     }
-    add(FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION.errorFactory) { firDiagnostic ->
+    add(FirErrors.INAPPLICABLE_EAGER_INITIALIZATION.errorFactory) { firDiagnostic ->
         InapplicableEagerInitializationErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,

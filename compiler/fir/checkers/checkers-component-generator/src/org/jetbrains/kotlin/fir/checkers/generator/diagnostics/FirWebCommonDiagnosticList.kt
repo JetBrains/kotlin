@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature.*
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJsQualifierOnMembersAndNonExternals
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -36,9 +37,15 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
         val JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER by error<KtElement>()
         val JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL by deprecationError<KtElement>(ProhibitJsQualifierOnMembersAndNonExternals)
         val JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL by deprecationError<KtElement>(ProhibitJsQualifierOnMembersAndNonExternals)
-        val INAPPLICABLE_EAGER_INITIALIZATION by deprecationError<KtElement>(ForbidNonTopLevelEagerInitialization)
         val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN by error<KtElement> {
             parameter<ConeKotlinType>("type")
+        }
+
+        val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE by deprecationError<KtElement>(
+            LanguageFeature.ProhibitVarInJsModuleFile,
+            PositioningStrategy.VAL_OR_VAR_NODE,
+        ) {
+            parameter<String>("message")
         }
     }
 

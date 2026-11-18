@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonVarInJsModuleFileChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -15,8 +13,8 @@ import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
 
 object FirWasmJsVarInJsModuleFileChecker : FirWebCommonVarInJsModuleFileChecker() {
-    override val diagnostic: KtDiagnosticFactoryForDeprecation0 =
-        FirWasmErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE
+    override val message: String
+        get() = "'var' declarations are prohibited in files annotated with '@JsModule' without '@JsQualifier'. Instead, use 'val' or add '@JsQualifier'."
 
     context(context: CheckerContext)
     override fun isNonWritableModuleImport(property: FirProperty): Boolean {
