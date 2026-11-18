@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.isCompilerGeneratedCompanion
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -126,8 +128,11 @@ private class FirApplySupertypesTransformer(
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         applyResolvedSupertypesToClass(regularClass)
-
-        return transformDeclarationContent(regularClass, null) as FirRegularClass
+        val result = transformDeclarationContent(regularClass, null) as FirRegularClass
+        if (result.companionObjectSymbol?.isCompilerGeneratedCompanion() == true) {
+            result.companionObjectSymbol?.fir?.transformSingle(this, data)
+        }
+        return result
     }
 
     private fun applyResolvedSupertypesToClass(firClass: FirClass) {
@@ -321,6 +326,9 @@ open class FirSupertypeResolverVisitor(
         withClass(regularClass) {
             resolveSpecificClassLikeSupertypes(regularClass, regularClass.superTypeRefs, resolveRecursively = true)
             visitDeclarationContent(regularClass, null)
+            if (regularClass.companionObjectSymbol?.isCompilerGeneratedCompanion() == true) {
+                regularClass.companionObjectSymbol?.fir?.accept(this, data)
+            }
         }
     }
 
