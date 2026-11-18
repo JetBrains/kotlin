@@ -6,3 +6,7 @@
 class B {
 
 }
+
+fun main() {
+
+}
