@@ -357,6 +357,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
   }
 
   @Test
+  @TestMetadata("substitutionOverridesWithSameTypeArguments.kt")
+  public void testSubstitutionOverridesWithSameTypeArguments() {
+    run("substitutionOverridesWithSameTypeArguments.kt");
+  }
+
+  @Test
   @TestMetadata("typealias.kt")
   public void testTypealias() {
     run("typealias.kt");
