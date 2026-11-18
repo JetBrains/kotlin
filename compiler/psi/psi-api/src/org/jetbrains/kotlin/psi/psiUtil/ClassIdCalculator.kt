@@ -63,23 +63,26 @@ internal object ClassIdCalculator {
      */
     fun inferConstantExpressionClassIdByPsi(expression: KtConstantExpression): ClassId? {
         val elementType = expression.iElementType
+        val text = expression.text
         val convertedText: Any? = when (elementType) {
             KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> {
                 val isFloatingPoint = elementType == KtNodeTypes.FLOAT_CONSTANT
-                if (hasIllegallyPositionedUnderscore(expression.text, isFloatingPoint)) return null
-                parseNumericLiteral(expression.text, isFloatingPoint)
+                if (hasIllegallyPositionedUnderscore(text, isFloatingPoint)) return null
+                parseNumericLiteral(text, isFloatingPoint)
             }
 
-            KtNodeTypes.BOOLEAN_CONSTANT -> parseBooleanLiteral(expression.text)
+            KtNodeTypes.BOOLEAN_CONSTANT -> parseBooleanLiteral(text)
             else -> null
         }
 
         return when (elementType) {
             KtNodeTypes.INTEGER_CONSTANT -> when {
                 convertedText !is Long -> null
-                hasUnsignedLongNumericLiteralSuffix(expression.text) -> StandardClassIds.ULong
-                hasLongNumericLiteralSuffix(expression.text) -> StandardClassIds.Long
-                hasUnsignedNumericLiteralSuffix(expression.text) -> {
+                // The compiler rejects leading zeros, such as in `01`, and the lowercase long suffix
+                text.hasLeadingZeros || text.endsWith('l') -> null
+                hasUnsignedLongNumericLiteralSuffix(text) -> StandardClassIds.ULong
+                hasLongNumericLiteralSuffix(text) -> StandardClassIds.Long
+                hasUnsignedNumericLiteralSuffix(text) -> {
                     if (convertedText.toULong() > UInt.MAX_VALUE || convertedText.toULong() < UInt.MIN_VALUE) {
                         StandardClassIds.ULong
                     } else {
@@ -94,10 +97,17 @@ internal object ClassIdCalculator {
                 }
             }
 
-            KtNodeTypes.FLOAT_CONSTANT -> if (convertedText is Float) StandardClassIds.Float else StandardClassIds.Double
+            KtNodeTypes.FLOAT_CONSTANT -> when (convertedText) {
+                is Float -> StandardClassIds.Float
+                is Double -> StandardClassIds.Double
+                else -> null
+            }
             KtNodeTypes.CHARACTER_CONSTANT -> StandardClassIds.Char
             KtNodeTypes.BOOLEAN_CONSTANT -> StandardClassIds.Boolean
             else -> null
         }
     }
+
+    private val String.hasLeadingZeros: Boolean
+        get() = length > 1 && this[0] == '0' && (this[1].isDigit() || this[1] == '_')
 }
