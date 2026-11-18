@@ -271,6 +271,15 @@ constructor(
     val isStaticFramework: Boolean by lazyConvention { binary.let { it is Framework && it.isStatic } }
 
     @get:Input
+    internal val mergeableFramework: Provider<Boolean> = when (binary) {
+        is Framework -> binary.mergeable
+        else -> objectFactory.property(false)
+    }
+
+    private val mergeableFrameworkLinkerOpts: List<String>
+        get() = if (mergeableFramework.get() && !isStaticFramework) listOf(MAKE_MERGEABLE_LINKER_OPTION) else emptyList()
+
+    @get:Input
     val exportKdoc: Provider<Boolean> = when (binary) {
         is Framework -> binary.exportKdoc
         else -> objectFactory.property(false)
@@ -322,7 +331,7 @@ constructor(
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
             args.generateTestRunner = processTests
             args.mainPackage = entryPoint
-            args.singleLinkerArguments = (linkerOpts + additionalLinkerOpts).toTypedArray()
+            args.singleLinkerArguments = (linkerOpts + additionalLinkerOpts + mergeableFrameworkLinkerOpts).toTypedArray()
             args.binaryOptions = binaryOptions.map { (key, value) -> "$key=$value" }.toTypedArray()
             args.staticFramework = isStaticFramework
             args.konanDataDir = kotlinNativeProvider.get().konanDataDir.orNull
@@ -552,6 +561,8 @@ constructor(
 }
 
 internal val String.asValidFrameworkName get() = replace('-', '_')
+
+internal const val MAKE_MERGEABLE_LINKER_OPTION = "-make_mergeable"
 
 private val KotlinNativeLink.hasDisabledNativeCache get() = disableCacheSettings.get().isNotEmpty()
 private val KotlinNativeLink.hasIncompatibleConfiguration get() = (debuggable && optimized) || (!debuggable && !optimized)
