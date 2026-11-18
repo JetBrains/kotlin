@@ -1,0 +1,43 @@
+FILE: sharedBuilderClassFieldTypeClash_kotlin.kt
+    public final class Clash : R|kotlin/Any| {
+        @R|lombok/Builder|(builderMethodName = String(first) [evaluated = String(first)]) public constructor(x: R|kotlin/String|): R|Clash| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/Builder|(builderMethodName = String(second) [evaluated = String(second)]) public constructor(x: R|kotlin/Int|): R|Clash| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun first(): R|Clash.ClashBuilder|
+
+            @R|kotlin/jvm/JvmStatic|() public final fun second(): R|Clash.ClashBuilder|
+
+            private constructor(): R|Clash.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open class ClashBuilder : R|kotlin/Any| {
+            public open fun build(): R|Clash|
+
+            public open fun x(x: R|kotlin/String|): R|Clash.ClashBuilder|
+
+            public open fun x(x: R|kotlin/Int|): R|Clash.ClashBuilder|
+
+            private final var x: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            private final var x: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            internal constructor(): R|Clash.ClashBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

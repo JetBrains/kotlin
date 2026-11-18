@@ -172,8 +172,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         session.firCachesFactory.createCache(::extractBuilderDescriptions)
 
     protected class GeneratedCallables(
-        val functions: Map<Name, FirNamedFunctionSymbol>,
-        val variables: Map<Name, FirVariableSymbol<*>>,
+        val functions: Map<Name, List<FirNamedFunctionSymbol>>,
+        val variables: Map<Name, List<FirVariableSymbol<*>>>,
     )
 
     // Lombok doesn't add a new function/field/property if a declaration with the same name already exists disregarding parameters.
@@ -193,7 +193,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     /**
      * Returns (name to symbol) mapping for functions that are specific to a particular builder (`@Builder` or `@SuperBuilder`)
      */
-    protected abstract fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
+    protected abstract fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addSpecialBuilderMethods(
         builder: T,
         builderSymbol: FirClassSymbol<*>,
         ownerDeclaration: FirDeclaration,
@@ -335,7 +335,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val classSymbol = context?.owner ?: return emptyList()
         return callablesCache.getValue(classSymbol, context)?.let {
-            it.functions[callableId.callableName]?.let { function -> listOf(function) }
+            it.functions[callableId.callableName]
         } ?: emptyList()
     }
 
@@ -354,7 +354,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     ): List<V> {
         val classSymbol = context?.owner ?: return emptyList()
         return callablesCache.getValue(classSymbol, context)?.let {
-            (it.variables[callableId.callableName] as? V)?.let { variable -> listOf(variable) }
+            it.variables[callableId.callableName]?.filterIsInstance<V>()
         } ?: emptyList()
     }
 
@@ -427,8 +427,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
         }
 
-        val generatedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()
-        val generatedVariables = mutableMapOf<Name, FirVariableSymbol<*>>()
+        val generatedFunctions = mutableMapOf<Name, MutableList<FirNamedFunctionSymbol>>()
+        val generatedVariables = mutableMapOf<Name, MutableList<FirVariableSymbol<*>>>()
 
         if (!classSymbol.isCompanion) {
             // Builder functions always belong to builder class in Java and Kotlin.
@@ -452,7 +452,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     @OptIn(SymbolInternals::class)
-    context(generatedFunctions: MutableMap<Name, FirNamedFunctionSymbol>, generatedVariables: MutableMap<Name, FirVariableSymbol<*>>)
+    context(generatedFunctions: MutableMap<Name, MutableList<FirNamedFunctionSymbol>>, generatedVariables: MutableMap<Name, MutableList<FirVariableSymbol<*>>>)
     private fun addBuilderCallables(
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
@@ -460,8 +460,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     ) {
         val builderFir = builderSymbol.fir as? FirRegularClass
         val isExplicitBuilder = builderSymbol.generatedBuilderClassKey == null
+        val builderClassNames = hashSetOf<String>()
 
         for ((builder, ownerDeclaration, items) in builderSymbol.getDescriptionsOfBuilderClass()) {
+            val builderClassName = builder.builderClassName ?: session.lombokService.config.builderClassName
+            val allowSetterClashes = !builderSymbol.isJavaOrEnhancement && builderClassName !in builderClassNames
+            builderClassNames += builderClassName
+
             val typeParametersMapping =
                 ownerDeclaration.extractTypeParametersMapping(newContainingDeclarationSymbol = builderSymbol, existingDeclaration = true)
             val substitutor = substitutorByMap(typeParametersMapping.entries.associate { it.key.symbol to it.value.toConeType() }, session)
@@ -480,7 +485,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 val singular = item.singular
                 val newSource = item.variable.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
 
-                generatedVariables.addIfNonClashing(itemName, existingVariableNames) {
+                generatedVariables.addVariableIfNonClashingWithSources(itemName, existingVariableNames) {
                     val key = BuilderGeneratorKey(BuilderDeclarationType.Field)
                     if (builderSymbol.hasJavaOrigin) {
                         buildJavaField {
@@ -526,7 +531,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 }
 
                 if (item.hasDefaultField(builderSymbol)) {
-                    generatedVariables.addIfNonClashing(itemName.toDefaultFieldName(), existingVariableNames) {
+                    generatedVariables.addVariableIfNonClashingWithSources(itemName.toDefaultFieldName(), existingVariableNames) {
                         createMemberProperty(
                             owner = builderSymbol,
                             key = BuilderGeneratorKey(BuilderDeclarationType.DefaultFlagField(itemName)),
@@ -542,14 +547,22 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 }
 
                 when (singular) {
-                    null -> generatedFunctions.addSetterMethod(builder, itemSymbol, substitutor, builderSymbol, existingFunctionNames)
+                    null -> generatedFunctions.addSetterMethod(
+                        builder,
+                        itemSymbol,
+                        substitutor,
+                        builderSymbol,
+                        existingFunctionNames,
+                        allowSetterClashes,
+                    )
                     else -> generatedFunctions.addMethodsForSingularFields(
                         builder,
                         singular,
                         itemSymbol,
                         substitutor,
                         builderSymbol,
-                        existingFunctionNames
+                        existingFunctionNames,
+                        allowSetterClashes,
                     )
                 }
             }
@@ -557,7 +570,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
-    private fun MutableMap<Name, FirNamedFunctionSymbol>.addEntityMethods(
+    private fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addEntityMethods(
         builderDescriptions: List<BuilderDescription<T>>,
         entitySymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
@@ -595,7 +608,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             val isStaticBuilderFunction = ownerDeclaration.isStaticDeclaration
             val builderFactoryName = builder.getBuilderFactoryName(ownerDeclaration, containingClassSymbol)
             if (builderFactoryName != null) {
-                addIfNonClashing(builderFactoryName, existingFunctionNames) { name ->
+                addFunctionIfNotClashingWithSources(builderFactoryName, existingFunctionNames, allowGeneratedClash = false) { name ->
                     val key = BuilderGeneratorKey(BuilderDeclarationType.Function.Builder)
                     if (containingClassSymbol.hasJavaOrigin) {
                         val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
@@ -649,7 +662,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
 
             if (builder.generatesToBuilder(containingClassSymbol)) {
-                addIfNonClashing(TO_BUILDER, existingFunctionNames) { name ->
+                addFunctionIfNotClashingWithSources(TO_BUILDER, existingFunctionNames, allowGeneratedClash = false) { name ->
                     // toBuilder() is always an instance method, so the class type parameters are
                     // already provided by the dispatch receiver. The method must not introduce its
                     // own independent type parameters — otherwise call-site inference would fail.
@@ -886,19 +899,20 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             !builderSymbol.hasJavaOrigin && hasBuilderDefault && singular == null
     }
 
-    private fun MutableMap<Name, FirNamedFunctionSymbol>.addSetterMethod(
+    private fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addSetterMethod(
         builder: AbstractBuilder,
         item: FirVariableSymbol<*>,
         substitutor: ConeSubstitutor,
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
+        allowSetterClashes: Boolean,
     ) {
         val fieldName = item.name
         val setterName = fieldName.toMethodName(builder)
         val builderType = getBuilderType(builderSymbol) ?: return
         val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
-        addIfNonClashing(setterName, existingFunctionNames) {
+        addFunctionIfNotClashingWithSources(setterName, existingFunctionNames, allowGeneratedClash = allowSetterClashes) {
             @OptIn(SymbolInternals::class)
             createJavaOrKotlinMemberFunction(
                 owner = builderSymbol,
@@ -971,13 +985,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         ) ?: this
     }
 
-    private fun MutableMap<Name, FirNamedFunctionSymbol>.addMethodsForSingularFields(
+    private fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addMethodsForSingularFields(
         builder: AbstractBuilder,
         singular: Singular,
         item: FirVariableSymbol<*>,
         substitutor: ConeSubstitutor,
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
+        allowSetterClashes: Boolean,
     ) {
         @OptIn(SymbolInternals::class) val typeRef = if (builderSymbol.hasJavaOrigin) item.fir.returnTypeRef else item.resolvedReturnTypeRef
 
@@ -1045,7 +1060,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         // Early return in case of `AccessLevel.NONE` is used (it means not generating anything at all)
         val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
-        addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
+        val singularSetterName = nameInSingularForm.toMethodName(builder)
+        addFunctionIfNotClashingWithSources(singularSetterName, existingFunctionNames, allowGeneratedClash = allowSetterClashes) {
             createJavaOrKotlinMemberFunction(
                 owner = builderSymbol,
                 name = it,
@@ -1058,7 +1074,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             )
         }
 
-        addIfNonClashing(item.name.toMethodName(builder), existingFunctionNames) { name ->
+        val pluralSetterName = item.name.toMethodName(builder)
+        addFunctionIfNotClashingWithSources(pluralSetterName, existingFunctionNames, allowGeneratedClash = allowSetterClashes) { name ->
             val addMultipleParameterTypeRef: FirTypeRef = if (builderSymbol.hasJavaOrigin) {
                 // Lombok uses runtime checks instead of @Nullable/@NotNull annotations.
                 // We include these annotations to enable static analysis and improve the developer experience.
@@ -1100,7 +1117,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             )
         }
 
-        addIfNonClashing(item.name.toClearMethodName(), existingFunctionNames) {
+        val clearMethodName = item.name.toClearMethodName()
+        addFunctionIfNotClashingWithSources(clearMethodName, existingFunctionNames, allowGeneratedClash = false) {
             createJavaOrKotlinMemberFunction(
                 owner = builderSymbol,
                 name = it,
@@ -1115,17 +1133,68 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     /**
-     * Lombok doesn't add a generated function/field if a class already has a declaration with the same name.
+     * Add new Lombok-generated function, if it doesn't clash with existing source functions by name,
+     * or with existing Lombok-generated functions by parameter list.
+     *
+     * Lombok doesn't add a generated function if a class already has a declaration with the same name,
+     * [existingSourceNames] is used to check this.
      * The number and types of parameters don't matter, see https://projectlombok.org/features/Builder#overview
-     * "Each listed generated element will be silently skipped if that element already exists (disregarding parameter counts and looking only at names)"
+     * "Each listed generated element will be silently skipped if that element already exists
+     * (disregarding parameter counts and looking only at names)"
+     *
+     * However, Lombok is allowed to add more than one generated functions with the same names
+     * if their signatures differ, e.g. different setters in singular case (see KT-91440).
+     * In case signatures clash, we either generate both to report conflict later (e.g. setters),
+     * or generate only first function ignoring all next (e.g. builder), depending on [allowGeneratedClash] flag.
      */
-    protected inline fun <K : FirCallableSymbol<*>> MutableMap<Name, K>.addIfNonClashing(
+    @OptIn(SymbolInternals::class)
+    @JvmName("addIfNonClashingList")
+    protected inline fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addFunctionIfNotClashingWithSources(
         name: Name,
-        existingNames: Set<Name>,
-        createCallable: (name: Name) -> K
+        existingSourceNames: Set<Name>,
+        allowGeneratedClash: Boolean,
+        createCallable: (name: Name) -> FirNamedFunctionSymbol
     ) {
-        if (name !in existingNames) {
-            val _ = getOrPut(name) { createCallable(name) }
+        if (name !in existingSourceNames) {
+            getOrPut(name) { mutableListOf() }.apply {
+                val functionSymbol = createCallable(name)
+                if (allowGeneratedClash || none {
+                        it.clashesByParametersWith(session, functionSymbol)
+                    }
+                ) {
+                    add(functionSymbol)
+                }
+            }
+        }
+    }
+
+    /**
+     * Add new Lombok-generated field/property, if it doesn't clash with existing fields/properties by name,
+     * no matter if they are from source or also Lombok-generated.
+     *
+     * Lombok doesn't add a generated field/property if a class already has a declaration with the same name,
+     * [existingSourceNames] is used to check this.
+     *
+     * For generated properties the situation is a little bit different.
+     * If Lombok wishes to generate e.g. two state-storage fields with same names but different types,
+     * conflict should be reported. If types are also the same, the second one is just skipped.
+     */
+    @OptIn(SymbolInternals::class)
+    protected inline fun MutableMap<Name, MutableList<FirVariableSymbol<*>>>.addVariableIfNonClashingWithSources(
+        name: Name,
+        existingSourceNames: Set<Name>,
+        createCallable: (name: Name) -> FirVariableSymbol<*>
+    ) {
+        if (name !in existingSourceNames) {
+            getOrPut(name) { mutableListOf() }.apply {
+                val variableSymbol = createCallable(name)
+                if (none {
+                        it.fir.returnTypeRef.equalWhenResolved(session, variableSymbol.fir.returnTypeRef)
+                    }
+                ) {
+                    add(variableSymbol)
+                }
+            }
         }
     }
 

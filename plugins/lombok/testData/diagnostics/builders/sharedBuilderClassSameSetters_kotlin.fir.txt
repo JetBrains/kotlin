@@ -1,0 +1,114 @@
+FILE: sharedBuilderClassSameSetters_kotlin.kt
+    public final class Shared : R|kotlin/Any| {
+        @R|lombok/Builder|(builderMethodName = String(first) [evaluated = String(first)]) public constructor(x: R|kotlin/String|): R|Shared| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/Builder|(builderMethodName = String(second) [evaluated = String(second)]) public constructor(x: R|kotlin/String|, y: R|kotlin/Int|): R|Shared| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun first(): R|Shared.SharedBuilder|
+
+            @R|kotlin/jvm/JvmStatic|() public final fun second(): R|Shared.SharedBuilder|
+
+            private constructor(): R|Shared.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open class SharedBuilder : R|kotlin/Any| {
+            public open fun build(): R|Shared|
+
+            public open fun x(x: R|kotlin/String|): R|Shared.SharedBuilder|
+
+            private final var x: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            public open fun y(y: R|kotlin/Int|): R|Shared.SharedBuilder|
+
+            private final var y: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            internal constructor(): R|Shared.SharedBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class SharedWithoutFactory : R|kotlin/Any| {
+        @R|lombok/Builder|(builderMethodName = String() [evaluated = String()]) public constructor(x: R|kotlin/String|): R|SharedWithoutFactory| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/Builder|(builderMethodName = String() [evaluated = String()]) public constructor(x: R|kotlin/String|, y: R|kotlin/Int|): R|SharedWithoutFactory| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class SharedWithoutFactoryBuilder : R|kotlin/Any| {
+            public open fun build(): R|SharedWithoutFactory|
+
+            public open fun x(x: R|kotlin/String|): R|SharedWithoutFactory.SharedWithoutFactoryBuilder|
+
+            private final var x: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            public open fun y(y: R|kotlin/Int|): R|SharedWithoutFactory.SharedWithoutFactoryBuilder|
+
+            private final var y: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            internal constructor(): R|SharedWithoutFactory.SharedWithoutFactoryBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class SharedSameFactory : R|kotlin/Any| {
+        @R|lombok/Builder|() public constructor(x: R|kotlin/String|): R|SharedSameFactory| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/Builder|() public constructor(x: R|kotlin/String|, y: R|kotlin/Int|): R|SharedSameFactory| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun builder(): R|SharedSameFactory.SharedSameFactoryBuilder|
+
+            private constructor(): R|SharedSameFactory.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open class SharedSameFactoryBuilder : R|kotlin/Any| {
+            public open fun build(): R|SharedSameFactory|
+
+            public open fun x(x: R|kotlin/String|): R|SharedSameFactory.SharedSameFactoryBuilder|
+
+            private final var x: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            public open fun y(y: R|kotlin/Int|): R|SharedSameFactory.SharedSameFactoryBuilder|
+
+            private final var y: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            internal constructor(): R|SharedSameFactory.SharedSameFactoryBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

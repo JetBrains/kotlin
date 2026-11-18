@@ -1,0 +1,3 @@
+/builderSingularSameNameAsOtherProperty_kotlin.kt:11:7: error: Some Lombok-generated declarations have conflicting signatures:
+fun oneSheep(oneSheep: String): SingularConflict.SingularConflictBuilder
+fun oneSheep(oneSheep: String): SingularConflict.SingularConflictBuilder

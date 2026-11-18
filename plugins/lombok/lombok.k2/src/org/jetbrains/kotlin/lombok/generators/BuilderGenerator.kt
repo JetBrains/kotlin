@@ -65,7 +65,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         return builderSymbol.defaultType()
     }
 
-    override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
+    override fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addSpecialBuilderMethods(
         builder: Builder,
         builderSymbol: FirClassSymbol<*>,
         ownerDeclaration: FirDeclaration,
@@ -74,7 +74,8 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
     ) {
         val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
-        addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
+        val buildMethodName = Name.identifier(builder.buildMethodName)
+        addFunctionIfNotClashingWithSources(buildMethodName, existingFunctionNames, allowGeneratedClash = false) { name ->
             val declaredReturnTypeRef = when (ownerDeclaration) {
                 is FirRegularClass -> ownerDeclaration.defaultType().toFirResolvedTypeRef()
                 is FirNamedFunction -> ownerDeclaration.returnTypeRef

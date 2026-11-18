@@ -6,54 +6,38 @@
 package org.jetbrains.kotlin.lombok.checkers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
-import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NotIncludedReason
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.config.lombokService
-import org.jetbrains.kotlin.lombok.generators.AbstractBuilderGenerator
-import org.jetbrains.kotlin.lombok.generators.Singulars
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.kotlin.promotedPropertiesByName
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
-    private val BUILDER_FIELD_ANNOTATION_IDS = listOf(LombokNames.BUILDER_DEFAULT_ID, LombokNames.SINGULAR_ID)
-
+object FirLombokBuilderClassChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val lombokService = context.session.lombokService
 
-        checkBuilderFieldAnnotationsOnBodyProperties(declaration)
-
         val classBuilder = lombokService.getBuilder(declaration.symbol) ?: lombokService.getSuperBuilder(declaration.symbol)
-        // A Java class builds out of its fields and so is never short of anything to build from; only a Kotlin
-        // class goes through the primary constructor, exactly as `AbstractBuilderGenerator` splits the two.
-        if (classBuilder != null && declaration !is FirJavaClass && declaration.isBuilderCapableClass) {
+        if (classBuilder != null && declaration.isBuilderCapableClass) {
             val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
             if (primaryConstructor == null) {
                 val annotationName = classBuilder.annotation.toAnnotationClassId(context.session)?.shortClassName
@@ -67,7 +51,6 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 }
             } else {
                 checkPrimaryConstructorParameters(declaration, primaryConstructor, lombokService)
-                checkBodyBuilderProperties(declaration, primaryConstructor)
                 checkToBuilderCanObtainValues(declaration, classBuilder, primaryConstructor)
             }
         }
@@ -94,14 +77,14 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             // again, nothing is generated for it, leaving the checks below nothing to say. A function builder
             // is untouched by this: it builds whatever the function returns, which need not be this class.
             if (functionSymbol is FirConstructorSymbol) {
-                declaration.uninstantiableClassModifier()?.let { modifier ->
+                UNINSTANTIABLE_CLASS_MODIFIERS.firstOrNull { declaration.hasModifier(it) }?.let { modifier ->
                     val annotationName = builder.annotation.toAnnotationClassId(context.session)?.shortClassName
                     if (annotationName != null) {
                         reporter.reportOn(
                             builder.annotation.source,
                             LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS,
                             annotationName,
-                            modifier.presentation,
+                            modifier.value,
                             context,
                         )
                     }
@@ -116,6 +99,8 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             }
         }
     }
+
+    private val UNINSTANTIABLE_CLASS_MODIFIERS = setOf(KtTokens.INNER_KEYWORD, KtTokens.ABSTRACT_KEYWORD, KtTokens.SEALED_KEYWORD)
 
     /**
      * `toBuilder()` fills each builder field from the entity's property of that name - see
@@ -144,102 +129,6 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             if (parameter.name.isSpecial || parameter.name in declaredPropertyNames) continue
 
             reporter.reportOn(parameter.source, LombokFirDiagnostics.TO_BUILDER_CANNOT_OBTAIN, parameter.name, context)
-        }
-    }
-
-    private val FirRegularClass.isBuilderCapableClass: Boolean
-        get() = classKind == ClassKind.CLASS && !isLocal && uninstantiableClassModifier() == null
-
-    /**
-     * A Kotlin class whose primary constructor has no value parameters builds out of the mutable properties declared
-     * in its body instead - see `AbstractBuilderGenerator.calculateBuilderVariables`. The builder members are generated
-     * before an implicit type is resolved, so `AbstractBuilderGenerator.addBuilderCallables` leaves out a property without
-     * an explicit type, and its builder field and setter are silently missing (KT-90508).
-     *
-     * `build()` evaluates the initializer of a `@Builder.Default` body property itself when its setter was not called -
-     * see `BuilderBodyBuilder.buildDefaultOrSetValue` - before the entity is constructed, so such an initializer
-     * cannot use the entity instance (KT-90590). A constructor parameter's default value has no such restriction:
-     * its references to earlier parameters are resolved to their already computed values.
-     *
-     * Any other property declared in the body - a read-only one, or any one at all when the primary constructor has
-     * value parameters - is not a builder field, which is reported as well (KT-90879). A property without a backing field
-     * holds no state of its own for a builder to set, and one named after a constructor parameter receives its value
-     * from that parameter's builder field (and is what `toBuilder()` reads it back from), so both are left alone.
-     */
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkBodyBuilderProperties(declaration: FirRegularClass, primaryConstructor: FirConstructorSymbol) {
-        val parameterNames = primaryConstructor.valueParameterSymbols.mapTo(mutableSetOf()) { it.name }
-
-        declaration.processAllDeclarations(context.session) { symbol ->
-            val property = symbol as? FirPropertySymbol ?: return@processAllDeclarations
-            val name = property.name
-            if (property.fromPrimaryConstructor || name.isSpecial) return@processAllDeclarations
-            if (property.origin != FirDeclarationOrigin.Source) return@processAllDeclarations
-
-            val whyNotIncluded = with(AbstractBuilderGenerator) {
-                property.whyNotIncludedInBuilder(parameterNames, resolveInProcess = false)
-            }
-
-            if (whyNotIncluded != null && whyNotIncluded != NotIncludedReason.NOT_REPORTED) {
-                val diagnostic = if (whyNotIncluded == HAS_IMPLICIT_RETURN_TYPE) {
-                    LombokFirDiagnostics.BUILDER_PROPERTY_NOT_INCLUDED_ERROR
-                } else {
-                    LombokFirDiagnostics.BUILDER_PROPERTY_NOT_INCLUDED
-                }
-                reporter.reportOn(property.source, diagnostic, name, whyNotIncluded, context)
-                return@processAllDeclarations
-            }
-
-            if (property.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID) == null) return@processAllDeclarations
-            val initializer = property.resolvedInitializer ?: return@processAllDeclarations
-            if (initializer.usesInstanceOf(declaration.symbol)) {
-                reporter.reportOn(initializer.source, LombokFirDiagnostics.BUILDER_DEFAULT_INITIALIZER_USES_INSTANCE, context)
-            }
-        }
-    }
-
-    /**
-     * Whether [this] expression reads a `this` of [classSymbol], explicitly or as an implicit receiver. A lambda
-     * counts even when it is not called in place: it still captures the instance when it is created, and `build()`
-     * creates it with no instance to capture.
-     */
-    private fun FirExpression.usesInstanceOf(classSymbol: FirRegularClassSymbol): Boolean {
-        var found = false
-        accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                if (found) return
-                if (element is FirThisReceiverExpression && element.calleeReference.boundSymbol == classSymbol) {
-                    found = true
-                    return
-                }
-                element.acceptChildren(this)
-            }
-        })
-        return found
-    }
-
-    /**
-     * `@Builder.Default` and `@Singular` shape a builder field, and a Kotlin class's builder fields are the value
-     * parameters of the constructor or function that `build()` calls. A property declared in the class body is
-     * therefore never one.
-     */
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkBuilderFieldAnnotationsOnBodyProperties(declaration: FirRegularClass) {
-        declaration.processAllDeclarations(context.session) { symbol ->
-            val property = symbol as? FirPropertySymbol ?: return@processAllDeclarations
-            // A promoted property *is* a primary constructor value parameter, and so is a builder field - the
-            // one shape both annotations are for. `checkPrimaryConstructorParameters` validates those.
-            if (property.fromPrimaryConstructor || property.isVar) return@processAllDeclarations
-
-            for (annotationClassId in BUILDER_FIELD_ANNOTATION_IDS) {
-                val annotation = property.findAnnotationOnPropertyOrField(annotationClassId) ?: continue
-                reporter.reportOn(
-                    annotation.source,
-                    LombokFirDiagnostics.BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY,
-                    annotationClassId.relativeClassName.asString(),
-                    context,
-                )
-            }
         }
     }
 
@@ -324,53 +213,6 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 reporter.reportOn(defaultValueSource, LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION, context)
             }
         }
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkSingular(variable: FirVariableSymbol<*>, singularAnnotation: FirAnnotation, lombokService: LombokService) {
-        val singular = ConeLombokAnnotations.Singular.extract(singularAnnotation, context.session)
-        val source = singularAnnotation.source
-
-        if (singular.singularName == null) {
-            if (!lombokService.config.singularAuto) {
-                reporter.reportOn(source, LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME, context)
-            } else if (Singulars.autoSingularize(variable.name.identifier) == null) {
-                reporter.reportOn(source, LombokFirDiagnostics.CANNOT_SINGULARIZE_NAME, context)
-            }
-        }
-
-        val classId = variable.resolvedReturnType.classId
-        if (classId != null &&
-            classId !in LombokNames.SUPPORTED_COLLECTION_IDS &&
-            classId !in LombokNames.SUPPORTED_MAP_IDS &&
-            classId !in LombokNames.SUPPORTED_TABLE_IDS
-        ) {
-            reporter.reportOn(source, LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE, variable.resolvedReturnType, context)
-        } else if (classId != null && lombokService.config.singularUseGuava) {
-            // Lombok's Guava singularizers build the field with a Guava immutable collection, so without Guava on the
-            // classpath javac rejects what Lombok generates, and this mirrors its error.
-            val immutableClassId = useGuavaImmutableClassId(classId)
-            if (immutableClassId != null && context.session.symbolProvider.getClassLikeSymbolByClassId(immutableClassId) == null) {
-                reporter.reportOn(source, LombokFirDiagnostics.SINGULAR_REQUIRES_GUAVA, immutableClassId.asSingleFqName(), context)
-            }
-        }
-    }
-
-    /**
-     * The Guava immutable class `lombok.singular.useGuava` builds a `@Singular` field declared with [classId] as, the
-     * same mapping as `BuilderBodyBuilder` uses, or `null` for a field declared with a Guava type already.
-     */
-    private fun useGuavaImmutableClassId(classId: ClassId): ClassId? = when (classId) {
-        in LombokNames.SUPPORTED_GUAVA_COLLECTION_IDS,
-        in LombokNames.SUPPORTED_TABLE_IDS,
-        LombokNames.IMMUTABLE_MAP_ID, LombokNames.IMMUTABLE_BI_MAP_ID, LombokNames.IMMUTABLE_SORTED_MAP_ID,
-            -> null
-        LombokNames.JAVA_SORTED_SET_ID, LombokNames.JAVA_NAVIGABLE_SET_ID -> LombokNames.IMMUTABLE_SORTED_SET_ID
-        LombokNames.JAVA_SORTED_MAP_ID, LombokNames.JAVA_NAVIGABLE_MAP_ID -> LombokNames.IMMUTABLE_SORTED_MAP_ID
-        in LombokNames.SUPPORTED_MAP_IDS -> LombokNames.IMMUTABLE_MAP_ID
-        StandardClassIds.Set, StandardClassIds.MutableSet, LombokNames.JAVA_SET_ID -> LombokNames.IMMUTABLE_SET_ID
-        in LombokNames.SUPPORTED_COLLECTION_IDS -> LombokNames.IMMUTABLE_LIST_ID
-        else -> null
     }
 
     /**

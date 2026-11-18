@@ -64,7 +64,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         return builderSymbol.typeParameterSymbols.elementAtOrNull(builderSymbol.typeParameterSymbols.size - BUILDER_TYPE_PARAMETER_INDEX_FROM_END)?.defaultType
     }
 
-    override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
+    override fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addSpecialBuilderMethods(
         builder: SuperBuilder,
         builderSymbol: FirClassSymbol<*>,
         ownerDeclaration: FirDeclaration,
@@ -78,7 +78,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             builderSymbol.typeParameterSymbols.elementAtOrNull(builderSymbol.typeParameterSymbols.size - CLASS_TYPE_PARAMETER_INDEX_FROM_END)?.defaultType
                 ?: return
 
-        addIfNonClashing(SELF, existingFunctionNames) {
+        addFunctionIfNotClashingWithSources(SELF, existingFunctionNames, allowGeneratedClash = false) {
             builderSymbol.createJavaMethod(
                 it,
                 valueParameters = emptyList(),
@@ -88,7 +88,8 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 key = BuilderGeneratorKey(BuilderDeclarationType.Function.Self)
             ).symbol
         }
-        addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) {
+        val buildMethodName = Name.identifier(builder.buildMethodName)
+        addFunctionIfNotClashingWithSources(buildMethodName, existingFunctionNames, allowGeneratedClash = false) {
             builderSymbol.createJavaMethod(
                 it,
                 valueParameters = emptyList(),

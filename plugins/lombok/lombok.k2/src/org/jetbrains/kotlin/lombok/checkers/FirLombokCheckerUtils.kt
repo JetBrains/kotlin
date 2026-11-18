@@ -88,11 +88,6 @@ private fun FirRegularClass.classModifiers(): Set<ClassModifier> = buildSet {
     }
 }
 
-fun FirRegularClass.uninstantiableClassModifier(): ClassModifier? =
-    classModifiers().firstOrNull { it in UNINSTANTIABLE_CLASS_MODIFIERS }
-
-private val UNINSTANTIABLE_CLASS_MODIFIERS = setOf(ClassModifier.INNER, ClassModifier.ABSTRACT, ClassModifier.SEALED)
-
 /**
  * Whether an annotation written on an element of [this] shape lands on one of [targets].
  *
