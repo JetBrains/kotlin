@@ -16866,8 +16866,14 @@
                                             }
                                         },
                                         "valueDescription": {
-                                            "current": "std | mimalloc | custom",
-                                            "valueInVersions": []
+                                            "current": "std | custom",
+                                            "valueInVersions": [
+                                                {
+                                                    "minReleaseVersion": "1.5.20",
+                                                    "maxReleaseVersion": "2.5.0",
+                                                    "value": "std | mimalloc | custom"
+                                                }
+                                            ]
                                         },
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "1.5.20",
@@ -17957,8 +17963,14 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.",
-                                            "valueInVersions": []
+                                            "current": "GC to use – 'noop', 'stms', and 'cms' are currently supported.",
+                                            "valueInVersions": [
+                                                {
+                                                    "minReleaseVersion": "1.5.30",
+                                                    "maxReleaseVersion": "2.5.0",
+                                                    "value": "GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'."
+                                                }
+                                            ]
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
@@ -17981,7 +17993,7 @@
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "1.5.30",
                                             "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
+                                            "deprecatedVersion": "1.9.20",
                                             "removedVersion": null
                                         },
                                         "argumentType": {
@@ -17995,7 +18007,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "deprecatedMessage": null
+                                        "deprecatedMessage": "Use '-Xbinary=gc=<gc>'"
                                     },
                                     {
                                         "name": "Xheader-klib-path",
@@ -20123,8 +20135,14 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Choose the memory model to be used – 'strict' and 'experimental' are currently supported.",
-                                            "valueInVersions": []
+                                            "current": "Choose the memory model to be used – only 'experimental' is supported.",
+                                            "valueInVersions": [
+                                                {
+                                                    "minReleaseVersion": "1.5.20",
+                                                    "maxReleaseVersion": "2.5.0",
+                                                    "value": "Choose the memory model to be used – 'strict' and 'experimental' are currently supported."
+                                                }
+                                            ]
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
@@ -20147,7 +20165,7 @@
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": "1.5.20",
-                                            "deprecatedVersion": null,
+                                            "deprecatedVersion": "1.9.20",
                                             "removedVersion": null
                                         },
                                         "argumentType": {
@@ -20161,7 +20179,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "deprecatedMessage": null
+                                        "deprecatedMessage": "The legacy memory model is no longer supported, 'experimental' is the only available one"
                                     },
                                     {
                                         "name": "module-name",
