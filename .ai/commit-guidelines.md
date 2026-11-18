@@ -4,10 +4,12 @@
 
 IMPORTANT formatting rules:
 
-- Reference relevant YouTrack issues with `^KT-XXXXX`, placed as a trailer at the very end of the commit message — after the body, separated by a blank line.
+- Reference relevant YouTrack issues with `^KT-XXXXX`, placed in a paragraph of their own after the body, separated from it by a blank line.
   - Put each reference on its own line, one issue per line.
   - Use a bare `^KT-XXXXX` to link an issue or append a YouTrack command such as `^KT-XXXXX Fixed` to also change the issue's state.
-  - Within the body text, a plain `KT-XXXXX` (no `^`) is fine when mentioning an issue inside a sentence. Reserve the `^KT-XXXXX` trailer for the issue(s) the commit actually addresses.
+  - Within the body text, a plain `KT-XXXXX` (no `^`) is fine when mentioning an issue inside a sentence. Reserve the `^KT-XXXXX` reference for the issue(s) the commit actually addresses.
+- Put git trailers (`Co-Authored-By:`, `Signed-off-by:`, etc.), if any, in the very last paragraph — after the `^KT-XXXXX` references, separated from them by a blank line.
+  - `^KT-XXXXX` is not a git trailer. Git reads trailers only from the last paragraph, and stops recognizing them when they share it with `^KT-XXXXX` lines, so never merge the two paragraphs or put the references last.
 - Prefix the subject line with an appropriate tag for the subsystem (such as, but not exhaustive, `[FIR]`, `[K/N]`, or `[BTA]`).
   - Consult the Subsystem Tags list below for the most popular tags.
 - Keep the subject line to 72 columns (including the `[Tag]` prefix).
@@ -28,6 +30,8 @@ unblocks KT-99999, which can now be revisited.
 
 ^KT-12345 Fixed
 ^KT-67890
+
+Co-Authored-By: Name <name@example.com>
 ```
 
 ## Subsystem Tags
