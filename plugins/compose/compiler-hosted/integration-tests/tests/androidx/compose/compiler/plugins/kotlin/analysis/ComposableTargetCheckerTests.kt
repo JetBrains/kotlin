@@ -454,6 +454,24 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
     )
 
     @Test
+    fun testOpenOverrideAccessorTargetsMustAgree() = check(
+        """
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.ComposableTarget
+
+        abstract class Base {
+          abstract val p: Int
+            @Composable @ComposableTarget("N") get
+        }
+
+        class Invalid : Base() {
+          override val p: Int
+            ${"<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>"}@Composable @ComposableTarget("M") get() = 1${"<!>"}
+        }
+        """
+    )
+
+    @Test
     fun testOpenOverrideInferredToAgree() = check(
         """
         import androidx.compose.runtime.Composable
