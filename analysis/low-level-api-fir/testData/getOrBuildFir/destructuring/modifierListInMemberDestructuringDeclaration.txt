@@ -1,10 +1,9 @@
 KT element: KtDeclarationModifierList
-FIR element: FirPropertyImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: null
+FIR source kind: null
 
 FIR element rendered:
-@R|Anno|[Types]() private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
-    private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+null
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] modifierListInMemberDestructuringDeclaration.kt
