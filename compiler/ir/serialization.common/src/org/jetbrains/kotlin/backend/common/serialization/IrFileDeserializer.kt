@@ -178,16 +178,14 @@ class FileDeserializationStateImpl(
         needToDeserializeFakeOverrides = { clazz ->
             !linker.fakeOverrideBuilder.platformSpecificClassFilter.needToConstructFakeOverrides(clazz)
         },
-        specialProcessingForMismatchedSymbolKind = runIf(linker.partialLinkageSupport.isEnabled) {
-            { deserializedSymbol, fallbackSymbolKind ->
-                referenceDeserializedSymbol(
-                    symbolTable = linker.symbolTable,
-                    fileSymbol = null,
-                    symbolKind = fallbackSymbolKind ?: error("No fallback symbol kind specified for symbol $deserializedSymbol"),
-                    idSig = deserializedSymbol.signature?.takeIf { it.isPubliclyVisible }
-                        ?: error("No public signature for symbol $deserializedSymbol")
-                )
-            }
+        specialProcessingForMismatchedSymbolKind = { deserializedSymbol, fallbackSymbolKind ->
+            referenceDeserializedSymbol(
+                symbolTable = linker.symbolTable,
+                fileSymbol = null,
+                symbolKind = fallbackSymbolKind ?: error("No fallback symbol kind specified for symbol $deserializedSymbol"),
+                idSig = deserializedSymbol.signature?.takeIf { it.isPubliclyVisible }
+                    ?: error("No public signature for symbol $deserializedSymbol")
+            )
         },
         irInterner = linker.irInterner,
         fileEntryDeserializer = linker.fileEntryDeserializer,
