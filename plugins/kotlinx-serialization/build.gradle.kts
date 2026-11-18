@@ -14,6 +14,7 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 val jsonJsIrRuntimeForTests = configurations.create("jsonJsIrRuntimeForTests") {
@@ -155,6 +156,10 @@ artifacts {
     add(distCompat.name, layout.buildDirectory.dir("libsCompat").map { it.file("$archiveCompatName-$version.jar") }) {
         builtBy(runtimeJar, compatJar)
     }
+}
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlinx.serialization")
 }
 
 projectTests {

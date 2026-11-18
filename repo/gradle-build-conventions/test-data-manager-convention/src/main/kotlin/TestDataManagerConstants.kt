@@ -32,4 +32,5 @@ internal object TestDataManagerOption {
     const val PROJECT_DIR = "$testDataManagerOptionsPrefix.projectDir"
     const val ROOT_DIR = "$testDataManagerOptionsPrefix.rootDir"
     const val REPORT_DIR = "$testDataManagerOptionsPrefix.reportDir"
+    const val TEST_PACKAGES = "$testDataManagerOptionsPrefix.testPackages"
 }

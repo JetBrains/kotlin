@@ -84,6 +84,7 @@ internal fun validateConflicts(tests: List<DiscoveredTest>): List<VariantChainCo
  * - `runId` - the id of the run, naming its report `<runId>.json` (optional, a UUIDv7 by default)
  * - `rerunId` - the id of the earlier run this one reruns; the rotation of old reports keeps its report (optional)
  * - `output` - `verbose` for the progress of every group and pass (optional, compact by default)
+ * - `testPackages` - comma-separated packages of the managed tests (optional, [DEFAULT_TEST_PACKAGE] by default)
  *
  * The tasks also pass `rootDir` (the repository root), `projectDir`, `projectName` and `reportDir`.
  *
@@ -94,6 +95,11 @@ internal object TestDataManagerRunner {
 
     /** How many lines of each list (problems, errors, changed files) the compact output prints. */
     private const val COMPACT_LIST_LIMIT = 50
+
+    /**
+     * The package of the managed tests of a module which doesn't declare its own ones (`testDataManager { testPackages }`).
+     */
+    internal const val DEFAULT_TEST_PACKAGE = "org.jetbrains.kotlin"
 
     /**
      * Holds timing measurements collected during test data manager execution.
@@ -122,6 +128,7 @@ internal object TestDataManagerRunner {
         val testClassPattern = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_CLASS_PATTERN)
         val goldenOnly = System.getProperty(TEST_DATA_MANAGER_OPTIONS_GOLDEN_ONLY)?.toBooleanStrictOrNull() ?: false
         val incremental = System.getProperty(TEST_DATA_MANAGER_OPTIONS_INCREMENTAL)?.toBooleanStrictOrNull() ?: false
+        val testPackages = parseTestPackages(System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_PACKAGES))
         val requestedRunId = System.getProperty(TEST_DATA_MANAGER_OPTIONS_RUN_ID)?.takeIf(String::isNotBlank)
         val runIdError = requestedRunId?.let(TestDataManagerReport::runIdError)
         val runId = requestedRunId?.takeIf { runIdError == null } ?: Uuid.generateV7().toString()
@@ -146,6 +153,7 @@ internal object TestDataManagerRunner {
                 println("  testClassPattern: ${testClassPattern ?: "NOT SET"}")
                 println("  goldenOnly: $goldenOnly")
                 println("  incremental: $incremental")
+                println("  testPackages: ${testPackages.joinToString()}")
             } else {
                 val project = report.project?.let { "$it " }.orEmpty()
                 println("Test data manager: $project${mode ?: "mode not set"}, runId $runId")
@@ -170,6 +178,7 @@ internal object TestDataManagerRunner {
                             testDataPath,
                             goldenOnly,
                             incremental,
+                            testPackages,
                             rootDir = rootDir,
                             projectDir = projectDir,
                             launcherSession = launcherSession,
@@ -272,8 +281,9 @@ internal object TestDataManagerRunner {
      *
      * @param testDataPath the comma-separated `testDataPath` option, resolved against [rootDir] if it is set:
      *                     a path that doesn't exist fails the run, see [resolveTestDataPaths]
+     * @param testPackages the packages to discover the tests in, see [buildDiscoveryRequest]
      * @param projectDir the module directory, to suggest the repository-relative form of a module-relative path
-     * @param additionalFilters discovery filters on top of the options, e.g., to restrict the run to some packages in tests
+     * @param additionalFilters discovery filters on top of the options, e.g., to exclude some packages in tests
      */
     context(launcherSession: LauncherSession)
     internal fun discoverAndRunTests(
@@ -281,6 +291,7 @@ internal object TestDataManagerRunner {
         testDataPath: String?,
         goldenOnly: Boolean = false,
         incremental: Boolean = false,
+        testPackages: List<String> = listOf(DEFAULT_TEST_PACKAGE),
         vararg additionalFilters: Filter<*>,
         rootDir: Path? = null,
         projectDir: Path? = null,
@@ -299,7 +310,7 @@ internal object TestDataManagerRunner {
 
         val timingStats = TimingStats()
         val launcher = launcherSession.launcher
-        val request = buildDiscoveryRequest(testClassPattern, testDataPaths, goldenOnly, *additionalFilters)
+        val request = buildDiscoveryRequest(testClassPattern, testDataPaths, goldenOnly, testPackages, *additionalFilters)
 
         // Phase 1: Discover tests with variant chains
         (val discoveredTests = value, val discoveryTime = duration) = measureTimedValue {
@@ -451,14 +462,21 @@ internal object TestDataManagerRunner {
         )
     }
 
+    /**
+     * Parses the comma-separated [value] of the `testPackages` option.
+     */
+    internal fun parseTestPackages(value: String?): List<String> =
+        value?.split(",")?.map(String::trim)?.filter(String::isNotEmpty)?.takeIf { it.isNotEmpty() } ?: listOf(DEFAULT_TEST_PACKAGE)
+
     internal fun buildDiscoveryRequest(
         testClassPattern: String? = null,
         testDataPaths: List<TestMetadataPath>? = null,
         goldenOnly: Boolean = false,
+        testPackages: List<String> = listOf(DEFAULT_TEST_PACKAGE),
         vararg additionalFilters: Filter<*>,
     ): LauncherDiscoveryRequest {
         val builder = LauncherDiscoveryRequestBuilder.request()
-            .selectors(DiscoverySelectors.selectPackage("org.jetbrains.kotlin"))
+            .selectors(testPackages.map(DiscoverySelectors::selectPackage))
             .filters(
                 EngineFilter.includeEngines("junit-jupiter"),
                 // Only generated tests are included to significantly reduce the number of candidates
