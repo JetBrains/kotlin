@@ -177,6 +177,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("destructuringEntriesFromScript.kt")
+  public void testDestructuringEntriesFromScript() {
+    run("destructuringEntriesFromScript.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringEntriesFromSeveralDependencies.kt")
+  public void testDestructuringEntriesFromSeveralDependencies() {
+    run("destructuringEntriesFromSeveralDependencies.kt");
+  }
+
+  @Test
   @TestMetadata("duplicatedCallableWithImplicitType.kt")
   public void testDuplicatedCallableWithImplicitType() {
     run("duplicatedCallableWithImplicitType.kt");
