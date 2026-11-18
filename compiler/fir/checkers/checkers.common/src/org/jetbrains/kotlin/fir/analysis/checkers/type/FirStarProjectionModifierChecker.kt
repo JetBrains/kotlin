@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirStarProjection
@@ -25,7 +25,7 @@ object FirStarProjectionModifierChecker : FirResolvedTypeRefChecker(MppCheckerKi
             for (typeArgument in part.typeArgumentList.typeArguments) {
                 if (typeArgument !is FirStarProjection) continue
                 val source = typeArgument.source?.takeIf { it.kind is KtRealSourceElementKind } ?: continue
-                val modifierList = source.getModifierList() ?: continue
+                val modifierList = source.extractModifierList() ?: continue
 
                 for (modifier in modifierList.modifiers) {
                     reporter.reportOn(
