@@ -48,7 +48,6 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         configuration: CompilerConfiguration,
     ): AllModulesFrontendOutput {
         val groupedSources = collectSources(configuration, environment)
-        val sourceFiles = groupedSources.commonSources + groupedSources.platformSources
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
 
         // FIR
@@ -72,15 +71,13 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         }
 
         val sessionsWithSources = prepareNativeSessions(
-            sourceFiles,
+            groupedSources,
             configuration,
             mainModuleName,
             config.loadedKlibs.all,
             dependencyList,
             extensionRegistrars,
             metadataCompilationMode = config.metadataKlib,
-            isCommonSource = groupedSources::isCommonSource,
-            fileBelongsToModule = groupedSources::fileBelongsToModule,
         )
 
         val outputs = sessionsWithSources.map { (val session, val sources = files) ->

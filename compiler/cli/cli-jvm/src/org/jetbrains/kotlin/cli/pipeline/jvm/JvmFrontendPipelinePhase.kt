@@ -134,15 +134,12 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         )
 
         val sessionsWithSources = prepareJvmSessions(
-            files = allSources,
+            sources = sources,
             rootModuleName = Name.special("<$moduleName>"),
             configuration = configuration,
             projectEnvironment = environment,
             librariesClasspath = librariesClasspath,
             libraryList = libraryList,
-            isCommonSource = sources::isCommonSource,
-            isScript = { it.isScript() },
-            fileBelongsToModule = sources::fileBelongsToModule,
             incrementalCompilationContext,
         )
 
@@ -238,18 +235,15 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         return libraryList
     }
 
-    fun <F> prepareJvmSessions(
-        files: List<F>,
+    fun prepareJvmSessions(
+        sources: GroupedKtSources,
         rootModuleName: Name,
         configuration: CompilerConfiguration,
         projectEnvironment: VfsBasedProjectEnvironment,
         librariesClasspath: JvmClasspath,
         libraryList: DependencyListForCliModule,
-        isCommonSource: (F) -> Boolean,
-        isScript: (F) -> Boolean,
-        fileBelongsToModule: (F, String) -> Boolean,
         incrementalCompilationContext: IncrementalCompilationContext?,
-    ): List<SessionWithSources<F>> {
+    ): List<SessionWithSources> {
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
 
         /*
@@ -269,8 +263,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         )
 
         return SessionConstructionUtils.prepareSessions(
-            files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
-            metadataCompilationMode = false, libraryList, extensionRegistrars, isCommonSource, isScript, fileBelongsToModule,
+            sources, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
+            metadataCompilationMode = false, libraryList, extensionRegistrars, createSeparateSessionForScripts = true,
             createMetadataSessionFactoryContextForHmppCommonLibrarySession = {
                 AbstractFirMetadataSessionFactory.Context(
                     createJvmContext = { context },

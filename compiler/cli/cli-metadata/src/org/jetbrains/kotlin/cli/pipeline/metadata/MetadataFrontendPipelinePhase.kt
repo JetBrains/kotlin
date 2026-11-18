@@ -73,7 +73,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val sourceFiles = groupedSources.commonSources + groupedSources.platformSources
 
         val sessionsWithSources = prepareMetadataSessions(
-            sourceFiles,
+            groupedSources,
             configuration,
             projectEnvironment,
             rootModuleName,
@@ -81,8 +81,6 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             librariesClasspath,
             libraryList,
             resolvedLibraries = klibs,
-            isCommonSource = groupedSources::isCommonSource,
-            fileBelongsToModule = groupedSources::fileBelongsToModule,
             incrementalCompilationContext,
         )
 

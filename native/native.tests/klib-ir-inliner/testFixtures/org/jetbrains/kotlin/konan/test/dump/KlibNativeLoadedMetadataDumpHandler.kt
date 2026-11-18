@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.dump
 
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
+import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.common.prepareNativeSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.AbstractLoadedMetadataDumpHandler
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -38,18 +38,16 @@ class KlibNativeLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
         environment: VfsBasedProjectEnvironment,
         moduleName: Name,
         libraryList: DependencyListForCliModule,
-    ): List<SessionWithSources<KtFile>> {
+    ): List<SessionWithSources> {
         val klibs = loadNativeKlibs(configuration, testServices.nativeEnvironmentConfigurator.getNativeTarget(module))
 
         return prepareNativeSessions(
-            files = emptyList(),
+            sources = GroupedKtSources.EMPTY,
             configuration,
             moduleName,
             klibs.all,
             libraryList,
             extensionRegistrars = emptyList(),
-            isCommonSource = { false },
-            fileBelongsToModule = { _, _ -> false },
             metadataCompilationMode = false,
         )
     }

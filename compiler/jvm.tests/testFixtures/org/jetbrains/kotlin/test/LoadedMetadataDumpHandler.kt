@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
+import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.common.prepareJsSessions
 import org.jetbrains.kotlin.cli.common.prepareWasmSessions
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.PLATFORM_DEPENDANT_METADATA
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES
@@ -74,7 +74,7 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
         environment: VfsBasedProjectEnvironment,
         moduleName: Name,
         libraryList: DependencyListForCliModule,
-    ): List<SessionWithSources<KtFile>> {
+    ): List<SessionWithSources> {
         return prepareJvmSessionsWithoutFiles(configuration, environment, moduleName, libraryList)
     }
 
@@ -83,17 +83,14 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
         environment: VfsBasedProjectEnvironment,
         moduleName: Name,
         libraryList: DependencyListForCliModule
-    ): List<SessionWithSources<KtFile>> {
+    ): List<SessionWithSources> {
         return JvmFrontendPipelinePhase.prepareJvmSessions(
-            files = emptyList(),
+            sources = GroupedKtSources.EMPTY,
             rootModuleName = moduleName,
             configuration = configuration,
             projectEnvironment = environment,
             librariesClasspath = JvmClasspath.ProjectLibraries(),
             libraryList = libraryList,
-            isCommonSource = { false },
-            isScript = { false },
-            fileBelongsToModule = { _, _ -> false },
             incrementalCompilationContext = null,
         )
     }
@@ -114,21 +111,19 @@ class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoad
         environment: VfsBasedProjectEnvironment,
         moduleName: Name,
         libraryList: DependencyListForCliModule,
-    ): List<SessionWithSources<KtFile>> {
+    ): List<SessionWithSources> {
         val klibs = loadWebKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.JS,
         )
 
         return prepareJsSessions(
-            files = emptyList(),
+            sources = GroupedKtSources.EMPTY,
             configuration,
             moduleName,
             klibs.all,
             libraryList,
             extensionRegistrars = emptyList(),
-            isCommonSource = { false },
-            fileBelongsToModule = { _, _ -> false },
             incrementalDataProvider = null
         )
     }
@@ -149,21 +144,19 @@ class KlibWasmJsLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
         environment: VfsBasedProjectEnvironment,
         moduleName: Name,
         libraryList: DependencyListForCliModule,
-    ): List<SessionWithSources<KtFile>> {
+    ): List<SessionWithSources> {
         val klibs = loadWebKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
         )
 
         return prepareWasmSessions(
-            files = emptyList(),
+            sources = GroupedKtSources.EMPTY,
             configuration,
             moduleName,
             klibs.all,
             libraryList,
             extensionRegistrars = emptyList(),
-            isCommonSource = { false },
-            fileBelongsToModule = { _, _ -> false },
             incrementalDataProvider = null
         )
     }
@@ -236,7 +229,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         environment: VfsBasedProjectEnvironment,
         moduleName: Name,
         libraryList: DependencyListForCliModule,
-    ): List<SessionWithSources<KtFile>>
+    ): List<SessionWithSources>
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val actualText = if (dumper.isEmpty()) null else dumper.generateResultingDump()
