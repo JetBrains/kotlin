@@ -10,7 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeDistributionInstaller
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -143,7 +143,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
                 assertOutputContains("Unpack Kotlin/Native compiler to ")
 
                 val distributionDir = buildOptions.konanDataDir!!.resolve(prebuiltDistributionDirName)
-                assertFileExists(distributionDir.resolve(NativeVersionValueSource.MARKER_FILE))
+                assertFileExists(distributionDir.resolve(KotlinNativeDistributionInstaller.MARKER_FILE))
             }
 
             // the toolchain has to leave that installation alone. Unpacking on top of it happens in place, so

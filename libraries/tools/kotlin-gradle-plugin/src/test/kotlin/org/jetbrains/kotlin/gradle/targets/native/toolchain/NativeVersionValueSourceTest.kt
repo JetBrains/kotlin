@@ -17,8 +17,6 @@ import java.io.FileOutputStream
 import java.util.zip.GZIPOutputStream
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
-import kotlin.io.path.createDirectory
-import kotlin.io.path.createFile
 import kotlin.io.path.exists
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,19 +26,6 @@ class NativeVersionValueSourceTest : WithTemporaryFolder {
 
     @field:TempDir
     override lateinit var temporaryFolder: Path
-
-    @Test
-    fun testMoveToNonEmptyDir() {
-        val nativeDir = newTempDirectory().resolve("native_dir").also { it.createDirectories() }
-        val versionDir = nativeDir.resolve("version").also { it.createDirectory() }
-        versionDir.resolve("A.kt").createFile()
-        versionDir.resolve("C.kt").createFile()
-
-        NativeVersionValueSource.copyNativeBundleDistribution(createTarGz(), versionDir.toFile())
-        assertEquals("class A {}", versionDir.resolve("A.kt").toFile().readText())
-        assertTrue("File B.kt should be copied from directory") { versionDir.resolve("B.kt").exists() }
-        assertTrue("Marker file should be created") { versionDir.resolve(NativeVersionValueSource.Companion.MARKER_FILE).exists() }
-    }
 
     @Test
     fun testUnzipTarGz() {

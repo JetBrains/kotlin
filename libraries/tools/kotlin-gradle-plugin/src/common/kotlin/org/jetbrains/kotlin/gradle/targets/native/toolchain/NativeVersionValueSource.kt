@@ -9,8 +9,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
-import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
-import org.jetbrains.kotlin.gradle.targets.native.internal.unzipTo
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -28,68 +26,24 @@ internal abstract class NativeVersionValueSource :
 
     override fun obtain(): String {
         val kotlinNativeVersion = parameters.kotlinNativeVersion.get()
-        prepareKotlinNativeBundle(
-            parameters.kotlinNativeCompilerConfiguration.get(),
-            kotlinNativeVersion,
-            File(parameters.bundleDirectory.get()),
-            parameters.reinstallBundle.get(),
-        )
-        return kotlinNativeVersion
-    }
+        val bundleDir = File(parameters.bundleDirectory.get())
+        val installer = KotlinNativeDistributionInstaller()
 
-    /**
-     * This function downloads and installs a Kotlin Native bundle if needed
-     * and then prepares its platform libraries if needed.
-     *
-     * @param project The Gradle project object.
-     * @param kotlinNativeBundleConfiguration Gradle configuration for Kotlin Native Bundle
-     * @param kotlinNativeVersion The version of Kotlin/Native to install
-     * @param bundleDir The directory to store the Kotlin/Native bundle.
-     * @param reinstallFlag A flag indicating whether to reinstall the bundle.
-     * @param konanTargets The set of KonanTarget objects representing the targets for the Kotlin/Native bundle.
-     * @return kotlin native version if toolchain was used, path to konan home if konan home was used
-     */
-    private fun prepareKotlinNativeBundle(
-        kotlinNativeBundleConfiguration: ConfigurableFileCollection,
-        kotlinNativeVersion: String,
-        bundleDir: File,
-        reinstallFlag: Boolean,
-    ) {
-        processToolchain(bundleDir, reinstallFlag, kotlinNativeVersion, kotlinNativeBundleConfiguration)
-    }
-
-    private fun processToolchain(
-        bundleDir: File,
-        reinstallFlag: Boolean,
-        kotlinNativeVersion: String,
-        kotlinNativeBundleConfiguration: ConfigurableFileCollection,
-    ) {
-        bundleLock(bundleDir).withLock {
-            val needToReinstall = isSnapshotVersion(parameters.simpleKotlinNativeVersion.get())
-            if (needToReinstall) {
-                logger.debug("Snapshot version could be changed, to be sure that up-to-date version is used, Kotlin/Native should be reinstalled")
-            }
-
-            removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
-
-            if (!isProvisioned(bundleDir)) {
-                val gradleCachesKotlinNativeDir =
-                    resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
-
-                copyNativeBundleDistribution(gradleCachesKotlinNativeDir, bundleDir)
-            }
+        val needToReinstall = isSnapshotVersion(parameters.simpleKotlinNativeVersion.get())
+        if (needToReinstall) {
+            logger.debug("Snapshot version could be changed, to be sure that up-to-date version is used, Kotlin/Native should be reinstalled")
         }
-    }
-
-    private fun removeBundleIfNeeded(
-        reinstallFlag: Boolean,
-        bundleDir: File,
-    ) {
-        if (reinstallFlag && canBeReinstalled) {
+        if ((parameters.reinstallBundle.get() || needToReinstall) && canBeReinstalled) {
             logger.info("Removing Kotlin/Native bundle")
-            bundleDir.deleteRecursively()
+            installer.remove(bundleDir)
             canBeReinstalled = false // we don't need to reinstall k/n if it was reinstalled once during the same build
         }
+
+        // The archive is resolved, which may download it, only by the build that unpacks it.
+        installer.install(bundleDir) {
+            resolveKotlinNativeConfiguration(kotlinNativeVersion, parameters.kotlinNativeCompilerConfiguration.get())
+        }
+        return kotlinNativeVersion
     }
 
     private fun resolveKotlinNativeConfiguration(
@@ -107,56 +61,8 @@ internal abstract class NativeVersionValueSource :
 
     companion object {
         private var canBeReinstalled: Boolean = true // we can reinstall a k/n bundle once during the build
-        internal const val MARKER_FILE = "provisioned.ok"
         val logger = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.targets.native.toolchain")
         internal fun isSnapshotVersion(kotlinNativeVersion: String): Boolean =
             KotlinToolingVersion(kotlinNativeVersion).maturity == KotlinToolingVersion.Maturity.SNAPSHOT
-
-        internal fun copyNativeBundleDistribution(
-            fromDirectory: File,
-            toDirectory: File,
-        ) {
-            logger.info("Moving Kotlin/Native bundle from  $fromDirectory to ${toDirectory.absolutePath}")
-            if (!toDirectory.list().isNullOrEmpty()) {
-                logger.warn("Kotlin/Native bundle directory ${toDirectory.absolutePath} is not empty. Native bundle files will be overwritten.")
-            }
-            unzipTo(fromDirectory, toDirectory.parentFile)
-
-            checkKotlinNativeVersionWasDownloaded(toDirectory)
-
-            markAsProvisioned(toDirectory)
-
-            logger.info("Moved Kotlin/Native bundle from $fromDirectory to ${toDirectory.absolutePath}")
-        }
-
-        private fun checkKotlinNativeVersionWasDownloaded(
-            gradleKotlinNativeDir: File,
-        ) {
-            //check that native was actually downloaded and unpacked and there is something except .lock file
-            if (!gradleKotlinNativeDir.exists() || (gradleKotlinNativeDir.list().size <= 1)) {
-                error(
-                    "Kotlin Native bundle dependency was used. " +
-                            "Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
-                )
-            }
-        }
-
-        private fun provisionedMarkerFile(bundleDir: File): File = bundleDir.resolve(MARKER_FILE)
-
-        /** Whether [bundleDir] holds a complete distribution. The marker is the last thing an installation writes. */
-        internal fun isProvisioned(bundleDir: File): Boolean = provisionedMarkerFile(bundleDir).exists()
-
-        // The toolchain unpacks in place, so its lock lives inside the distribution directory.
-        private fun bundleLock(bundleDir: File) =
-            KotlinInterprocessDirectoryLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
-
-        /** Waits for a toolchain installation of [bundleDir] that may be running, then tells whether it is complete. */
-        internal fun isProvisionedOnceToolchainIsDone(bundleDir: File): Boolean =
-            bundleLock(bundleDir).withLock { isProvisioned(bundleDir) }
-
-        // both provisioners have to agree on what a finished installation looks like, see KT-86251
-        internal fun markAsProvisioned(bundleDir: File) {
-            provisionedMarkerFile(bundleDir).createNewFile()
-        }
     }
 }
