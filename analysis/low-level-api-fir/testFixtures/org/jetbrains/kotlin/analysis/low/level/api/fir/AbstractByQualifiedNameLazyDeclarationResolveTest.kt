@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
@@ -16,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
@@ -31,7 +35,13 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
         val allDirectives = testServices.moduleStructure.allDirectives
         val classId = allDirectives.singleValue(Directives.CLASS_ID).let(ClassId::fromString)
         val resolutionFacade = LLResolutionFacadeService.getInstance(psiFile.project).getResolutionFacade(mainModule.ktModule)
-        val classDeclaration = findRegularClass(
+        val expectClassDeclaration = if (Directives.EXPECT_CLASS in allDirectives) {
+            findExpectClassDeclaration(classId, mainModule.ktModule, psiFile.project)
+        } else {
+            null
+        }
+
+        val classDeclaration = expectClassDeclaration ?: findRegularClass(
             classId = classId,
             module = mainModule.ktModule,
             resolutionFacade = resolutionFacade,
@@ -39,7 +49,8 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
 
         val file = classDeclaration.containingFile as KtFile
         doLazyResolveTest(file, testServices, outputRenderingMode) { firSession ->
-            val regularClass = findRegularClass(classId, mainModule.ktModule, firSession)
+            val regularClass = expectClassDeclaration?.resolveToFirSymbolOfType<FirRegularClassSymbol>(firSession)
+                ?: findRegularClass(classId, mainModule.ktModule, firSession)
             val declarationToResolve = chooseMemberDeclarationIfNeeded(regularClass, allDirectives, firSession)
             declarationToResolve.fir to fun(phase: FirResolvePhase) {
                 declarationToResolve.lazyResolveToPhase(phase)
@@ -53,7 +64,19 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
         return resolutionFacade.getSessionFor(module).getRegularClassSymbolByClassId(classId) ?: error("'$classId' is not found")
     }
 
+    private fun findExpectClassDeclaration(classId: ClassId, module: KaModule, project: Project): KtClassOrObject {
+        return project.createDeclarationProvider(module.contentScope, module)
+            .getAllClassesByClassId(classId)
+            .singleOrNull { it.isExpectDeclaration() }
+            ?: error("A single `expect` declaration of '$classId' is expected")
+    }
+
     private object Directives : SimpleDirectivesContainer() {
         val CLASS_ID by stringDirective("ClassId of expected class")
+
+        val EXPECT_CLASS by directive(
+            "Resolve the `expect` declaration of the class by its PSI, as a class ID lookup in library sources may return " +
+                    "the non-`expect` declaration"
+        )
     }
 }
