@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.generator
 
 import org.jetbrains.kotlin.analysis.api.fir.generator.DiagnosticClassGenerator.generate
 import org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WEB_COMMON_DIAGNOSTICS_LIST
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.*
 import java.nio.file.Paths
 
 fun main(args: Array<String>) {
@@ -27,7 +24,14 @@ fun main(args: Array<String>) {
     val target = requireNotNull(DiagnosticGenerationTarget.findById(args[2])) {
         "Unknown generation target '${args[2]}', expected one of: ${DiagnosticGenerationTarget.entries.joinToString { it.id }}"
     }
-    val diagnostics = DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST + JS_DIAGNOSTICS_LIST + SYNTAX_DIAGNOSTIC_LIST +
-            WEB_COMMON_DIAGNOSTICS_LIST
+    val diagnostics = listOf(
+        DIAGNOSTICS_LIST,
+        JVM_DIAGNOSTICS_LIST,
+        JS_DIAGNOSTICS_LIST,
+        SYNTAX_DIAGNOSTIC_LIST,
+        WEB_COMMON_DIAGNOSTICS_LIST,
+        NATIVE_DIAGNOSTICS_LIST,
+        WASM_DIAGNOSTICS_LIST,
+    ).reduce { acc, list -> acc + list }
     generate(rootPath, diagnostics, packageName, target)
 }

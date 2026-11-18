@@ -10235,9 +10235,566 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonExternalTypeExtendsExternalType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<NonExternalTypeExtendsExternalType>
+            get() = NonExternalTypeExtendsExternalType::class
+
+        public val superType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WrongJsInteropType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WrongJsInteropType>
+            get() = WrongJsInteropType::class
+
+        public val type: KaType
+        public val place: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface JscodeArgumentNonConstExpression : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<JscodeArgumentNonConstExpression>
             get() = JscodeArgumentNonConstExpression::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JscodeWrongContext : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JscodeWrongContext>
+            get() = JscodeWrongContext::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JscodeUnsupportedFunctionKind : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JscodeUnsupportedFunctionKind>
+            get() = JscodeUnsupportedFunctionKind::class
+
+        public val place: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JscodeInvalidParameterName : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JscodeInvalidParameterName>
+            get() = JscodeInvalidParameterName::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ThrowsListEmpty : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ThrowsListEmpty>
+            get() = ThrowsListEmpty::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IncompatibleThrowsOverride : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IncompatibleThrowsOverride>
+            get() = IncompatibleThrowsOverride::class
+
+        public val containingClass: KaClassLikeSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IncompatibleThrowsInherited : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<IncompatibleThrowsInherited>
+            get() = IncompatibleThrowsInherited::class
+
+        public val containingClasses: List<KaClassLikeSymbol>
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MissingExceptionInThrowsOnSuspend : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<MissingExceptionInThrowsOnSuspend>
+            get() = MissingExceptionInThrowsOnSuspend::class
+
+        public val exceptionName: FqName
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableSharedImmutableProperty : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableSharedImmutableProperty>
+            get() = InapplicableSharedImmutableProperty::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableSharedImmutableTopLevel : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableSharedImmutableTopLevel>
+            get() = InapplicableSharedImmutableTopLevel::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableThreadLocal : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableThreadLocal>
+            get() = InapplicableThreadLocal::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableThreadLocalTopLevel : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableThreadLocalTopLevel>
+            get() = InapplicableThreadLocalTopLevel::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InvalidCharactersNativeError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<InvalidCharactersNativeError>
+            get() = InvalidCharactersNativeError::class
+
+        public val message: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface RedundantSwiftRefinement : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<RedundantSwiftRefinement>
+            get() = RedundantSwiftRefinement::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IncompatibleObjcRefinementOverride : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IncompatibleObjcRefinementOverride>
+            get() = IncompatibleObjcRefinementOverride::class
+
+        public val declaration: KaSymbol
+        public val containingClasses: List<KaClassLikeSymbol>
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableObjcName : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableObjcName>
+            get() = InapplicableObjcName::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InvalidObjcName : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InvalidObjcName>
+            get() = InvalidObjcName::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InvalidObjcNameChars : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InvalidObjcNameChars>
+            get() = InvalidObjcNameChars::class
+
+        public val characters: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InvalidObjcNameFirstChar : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InvalidObjcNameFirstChar>
+            get() = InvalidObjcNameFirstChar::class
+
+        public val characters: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface EmptyObjcName : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<EmptyObjcName>
+            get() = EmptyObjcName::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IncompatibleObjcNameOverride : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IncompatibleObjcNameOverride>
+            get() = IncompatibleObjcNameOverride::class
+
+        public val declaration: KaSymbol
+        public val containingClasses: List<KaClassLikeSymbol>
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableExactObjcName : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableExactObjcName>
+            get() = InapplicableExactObjcName::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MissingExactObjcName : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<MissingExactObjcName>
+            get() = MissingExactObjcName::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonLiteralObjcNameArg : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<NonLiteralObjcNameArg>
+            get() = NonLiteralObjcNameArg::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InvalidObjcHidesTargets : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InvalidObjcHidesTargets>
+            get() = InvalidObjcHidesTargets::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InvalidRefinesInSwiftTargets : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InvalidRefinesInSwiftTargets>
+            get() = InvalidRefinesInSwiftTargets::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface SubtypeOfHiddenFromObjc : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<SubtypeOfHiddenFromObjc>
+            get() = SubtypeOfHiddenFromObjc::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CannotCheckForForwardDeclaration : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<CannotCheckForForwardDeclaration>
+            get() = CannotCheckForForwardDeclaration::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface UncheckedCastToForwardDeclaration : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<UncheckedCastToForwardDeclaration>
+            get() = UncheckedCastToForwardDeclaration::class
+
+        public val sourceType: KaType
+        public val destinationType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ForwardDeclarationAsReifiedTypeArgument : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ForwardDeclarationAsReifiedTypeArgument>
+            get() = ForwardDeclarationAsReifiedTypeArgument::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ForwardDeclarationAsClassLiteral : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ForwardDeclarationAsClassLiteral>
+            get() = ForwardDeclarationAsClassLiteral::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface TwoOrLessParametersAreSupportedHere : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<TwoOrLessParametersAreSupportedHere>
+            get() = TwoOrLessParametersAreSupportedHere::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface PropertyMustBeVar : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<PropertyMustBeVar>
+            get() = PropertyMustBeVar::class
+
+        public val annotationName: FqName
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MustNotHaveExtensionReceiver : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<MustNotHaveExtensionReceiver>
+            get() = MustNotHaveExtensionReceiver::class
+
+        public val annotationKind: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MustBeObjcObjectType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<MustBeObjcObjectType>
+            get() = MustBeObjcObjectType::class
+
+        public val annotationName: String
+        public val unexpectedType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MustBeUnitType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<MustBeUnitType>
+            get() = MustBeUnitType::class
+
+        public val annotationKind: String
+        public val unexpectedType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ConstructorOverridesAlreadyOverriddenObjcInitializer : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ConstructorOverridesAlreadyOverriddenObjcInitializer>
+            get() = ConstructorOverridesAlreadyOverriddenObjcInitializer::class
+
+        public val annotation: FqName
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ConstructorDoesNotOverrideAnySuperConstructor : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ConstructorDoesNotOverrideAnySuperConstructor>
+            get() = ConstructorDoesNotOverrideAnySuperConstructor::class
+
+        public val annotation: FqName
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ConstructorMatchesSeveralSuperConstructors : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ConstructorMatchesSeveralSuperConstructors>
+            get() = ConstructorMatchesSeveralSuperConstructors::class
+
+        public val annotation: FqName
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ConflictingObjcOverloads : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<ConflictingObjcOverloads>
+            get() = ConflictingObjcOverloads::class
+
+        public val conflictingOverloads: List<KaSymbol>
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableObjcOverride : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<InapplicableObjcOverride>
+            get() = InapplicableObjcOverride::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NativeSpecificAtomic : KaFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass: KClass<NativeSpecificAtomic>
+            get() = NativeSpecificAtomic::class
+
+        public val name: Name
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentityHashCodeOnValueType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IdentityHashCodeOnValueType>
+            get() = IdentityHashCodeOnValueType::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VariadicFunctionPointersAreNotSupported : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<VariadicFunctionPointersAreNotSupported>
+            get() = VariadicFunctionPointersAreNotSupported::class
+
+        public val function: KaSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface OverridingVariadicObjectiveCMethodsIsNotSupported : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<OverridingVariadicObjectiveCMethodsIsNotSupported>
+            get() = OverridingVariadicObjectiveCMethodsIsNotSupported::class
+
+        public val method: KaSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CallableReferencesToVariadicCFunctionsAreNotSupported : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<CallableReferencesToVariadicCFunctionsAreNotSupported>
+            get() = CallableReferencesToVariadicCFunctionsAreNotSupported::class
+
+        public val function: KaSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CallableReferencesToVariadicObjectiveCMethodsAreNotSupported : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<CallableReferencesToVariadicObjectiveCMethodsAreNotSupported>
+            get() = CallableReferencesToVariadicObjectiveCMethodsAreNotSupported::class
+
+        public val function: KaSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface StringAsVariadicObjcParamIsAmbiguous : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<StringAsVariadicObjcParamIsAmbiguous>
+            get() = StringAsVariadicObjcParamIsAmbiguous::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VariadicObjcSpreadIsSupportedOnlyForArrayof : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<VariadicObjcSpreadIsSupportedOnlyForArrayof>
+            get() = VariadicObjcSpreadIsSupportedOnlyForArrayof::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VariadicCSpreadIsSupportedOnlyForArrayof : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<VariadicCSpreadIsSupportedOnlyForArrayof>
+            get() = VariadicCSpreadIsSupportedOnlyForArrayof::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WrongJsFunTarget : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<WrongJsFunTarget>
+            get() = WrongJsFunTarget::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NestedWasmExport : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<NestedWasmExport>
+            get() = NestedWasmExport::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WasmExportOnExternalDeclaration : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WasmExportOnExternalDeclaration>
+            get() = WasmExportOnExternalDeclaration::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WasmExportUnsupportedFunctionKind : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WasmExportUnsupportedFunctionKind>
+            get() = WasmExportUnsupportedFunctionKind::class
+
+        public val kind: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsAndWasmExportsOnSameDeclaration : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsAndWasmExportsOnSameDeclaration>
+            get() = JsAndWasmExportsOnSameDeclaration::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NestedWasmImport : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<NestedWasmImport>
+            get() = NestedWasmImport::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WasmImportOnNonExternalDeclaration : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WasmImportOnNonExternalDeclaration>
+            get() = WasmImportOnNonExternalDeclaration::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WasmImportExportParameterDefaultValue : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WasmImportExportParameterDefaultValue>
+            get() = WasmImportExportParameterDefaultValue::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WasmImportExportVarargParameter : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WasmImportExportVarargParameter>
+            get() = WasmImportExportVarargParameter::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WasmImportExportUnsupportedParameterType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WasmImportExportUnsupportedParameterType>
+            get() = WasmImportExportUnsupportedParameterType::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WasmImportExportUnsupportedReturnType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WasmImportExportUnsupportedReturnType>
+            get() = WasmImportExportUnsupportedReturnType::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ExternalDeclarationWithContextParameters : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ExternalDeclarationWithContextParameters>
+            get() = ExternalDeclarationWithContextParameters::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ExportDeclarationWithContextParameters : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ExportDeclarationWithContextParameters>
+            get() = ExportDeclarationWithContextParameters::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ReservedWordAsJsExportName : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ReservedWordAsJsExportName>
+            get() = ReservedWordAsJsExportName::class
+
+        public val name: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InternalWasmExportNameAsJsExportName : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InternalWasmExportNameAsJsExportName>
+            get() = InternalWasmExportNameAsJsExportName::class
+
+        public val name: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WasiExternalNotTopLevelFunction : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WasiExternalNotTopLevelFunction>
+            get() = WasiExternalNotTopLevelFunction::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WasiExternalFunctionWithoutImport : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WasiExternalFunctionWithoutImport>
+            get() = WasiExternalFunctionWithoutImport::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface AssociatedObjectInvalidBinding : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<AssociatedObjectInvalidBinding>
+            get() = AssociatedObjectInvalidBinding::class
     }
 
 }

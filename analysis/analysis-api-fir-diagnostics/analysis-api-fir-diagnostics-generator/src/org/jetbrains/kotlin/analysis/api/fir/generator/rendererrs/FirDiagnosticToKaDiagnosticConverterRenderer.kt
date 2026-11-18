@@ -94,5 +94,7 @@ object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
         "org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors",
+        "org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors",
+        "org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors",
     )
 }
