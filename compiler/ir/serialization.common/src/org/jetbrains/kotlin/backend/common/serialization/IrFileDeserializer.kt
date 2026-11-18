@@ -50,7 +50,11 @@ abstract class IrFileDeserializer {
      */
     abstract fun deserializeFileImplicitDataIfFirstUse(): Boolean
 
-    abstract fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature>
+    abstract fun collectAllMatchingSignatures(
+        callableId: CallableId,
+        signatureKind: BinarySymbolData.SymbolKind,
+        output: MutableCollection<IdSignature>,
+    )
 }
 
 class IrFileDeserializerImpl(
@@ -99,19 +103,21 @@ class IrFileDeserializerImpl(
         return false
     }
 
-    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
-        val topLevelCallableSignature = callableIdToSignature[callableId] ?: return emptyList()
-        return buildList {
-            for (topLevelSignature in topLevelCallableSignature) {
-                val index = reversedSignatureIndex[topLevelSignature] ?: continue
-                val protoKind = libraryFile.declarationKind(index)
-                when (signatureKind) {
-                    BinarySymbolData.SymbolKind.FUNCTION_SYMBOL ->
-                        if (protoKind == ProtoDeclaration.DeclaratorCase.IR_FUNCTION) add(topLevelSignature)
-                    BinarySymbolData.SymbolKind.PROPERTY_SYMBOL ->
-                        if (protoKind == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) add(topLevelSignature)
-                    else -> error("Unexpected signature kind: $signatureKind")
-                }
+    override fun collectAllMatchingSignatures(
+        callableId: CallableId,
+        signatureKind: BinarySymbolData.SymbolKind,
+        output: MutableCollection<IdSignature>,
+    ) {
+        val topLevelCallableSignature = callableIdToSignature[callableId] ?: return
+        for (topLevelSignature in topLevelCallableSignature) {
+            val index = reversedSignatureIndex[topLevelSignature] ?: continue
+            val protoKind = libraryFile.declarationKind(index)
+            when (signatureKind) {
+                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL ->
+                    if (protoKind == ProtoDeclaration.DeclaratorCase.IR_FUNCTION) output += topLevelSignature
+                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL ->
+                    if (protoKind == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) output += topLevelSignature
+                else -> error("Unexpected signature kind: $signatureKind")
             }
         }
     }

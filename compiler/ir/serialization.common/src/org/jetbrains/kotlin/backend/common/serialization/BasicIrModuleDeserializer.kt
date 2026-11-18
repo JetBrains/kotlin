@@ -88,8 +88,15 @@ abstract class BasicIrModuleDeserializer(
         }
     }
 
-    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> =
-        fileDeserializersByPackage[callableId.packageName]?.flatMap { it.getAllMatchingSignatures(callableId, signatureKind) }.orEmpty()
+    override fun collectAllMatchingSignatures(
+        callableId: CallableId,
+        signatureKind: BinarySymbolData.SymbolKind,
+        output: MutableCollection<IdSignature>,
+    ) {
+        fileDeserializersByPackage[callableId.packageName]?.forEach { fileDeserializer ->
+            fileDeserializer.collectAllMatchingSignatures(callableId, signatureKind, output)
+        }
+    }
 
     // TODO: fix to topLevel checker
     override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
