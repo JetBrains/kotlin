@@ -14,9 +14,9 @@ public final class IntroducedAfterBase /* IntroducedAfterBase*/ {
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getText();//  getText()
 
-  public  IntroducedAfterBase();//  .ctor()
+  private  IntroducedAfterBase(java.lang.String, int, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(java.lang.String, int, kotlin.jvm.internal.BoxingConstructorMarker)
 
-  public  IntroducedAfterBase(@org.jetbrains.annotations.NotNull() java.lang.String, @kotlin.IntroducedAt(version = "3") int);//  .ctor(java.lang.String, int)
+  public  IntroducedAfterBase();//  .ctor()
 
   public final int getValue-pVg5ArA();//  getValue-pVg5ArA()
 }
@@ -31,7 +31,7 @@ public final class IntroducedOnly /* IntroducedOnly*/ {
   @kotlin.jvm.JvmExposeBoxed()
   public  IntroducedOnly(@kotlin.IntroducedAt(version = "3") @org.jetbrains.annotations.NotNull() kotlin.UInt);//  .ctor(kotlin.UInt)
 
-  public  IntroducedOnly(@kotlin.IntroducedAt(version = "3") int);//  .ctor(int)
+  private  IntroducedOnly(int, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(int, kotlin.jvm.internal.BoxingConstructorMarker)
 
   public final int getValue-pVg5ArA();//  getValue-pVg5ArA()
 }

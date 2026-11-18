@@ -320,7 +320,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     companion object {
-        private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
+        internal val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
 
         @JvmField
         val LOCAL_PROPERTY_SIGNATURE = "<v#(\\d+)>".toRegex()
