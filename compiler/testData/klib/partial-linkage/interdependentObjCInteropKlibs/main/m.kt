@@ -23,7 +23,9 @@ fun box() = abiTest {
 
     expectSuccess { lib2.RemovedClassWrapper(); "OK" }
 
-    // This should fail with abstract-method-not-implemented error: KT-91550.
+    // This call succeeds, because while `method` should not have an implementation from the interop Klib point of view,
+    // it is still implemented in the binary. Note that if it was also removed from the binary, it would fail to link at runtime,
+    // but with an Objective-C exception which we are not able to catch here. See KT-91550 for detauls.
     expectSuccess(40) { lib2.ClassWithBaseClassToProtocol().method(40) }
 }
 
