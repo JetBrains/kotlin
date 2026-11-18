@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.parseCharacter
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -300,12 +301,21 @@ internal class KaFirExpressionTypeProvider(
         if (hasDeclaredReturnType()) return null
 
         if (isEmptyFunction()) return analysisSession.builtinTypes.unit
+
+        // An anonymous function takes its return type from the expected type, like a lambda
+        if (this is KtNamedFunction && isAnonymous) return null
+
         val singleExpression = when (this) {
             is KtNamedFunction -> bodyExpression
             is KtProperty -> initializer ?: getter?.bodyExpression
-            is KtPropertyAccessor -> bodyExpression
+            // A getter has the type of its property, which FIR infers from the initializer first
+            is KtPropertyAccessor -> property.initializer ?: bodyExpression
             else -> null
         }
+
+        // Depending on the loop, FIR infers an error type or Unit for a declaration with a loop body
+        if (singleExpression?.unwrapParenthesesLabelsAndAnnotations() is KtLoopExpression) return null
+
         return singleExpression?.getExpressionTypeByPsiOrNull(noExpectedType = true)
     }
 
@@ -314,6 +324,7 @@ internal class KaFirExpressionTypeProvider(
         return with(analysisSession.builtinTypes) {
             when (unwrappedExpression) {
                 is KtStringTemplateExpression -> string
+                // A loop statement has the Unit type, but a declaration with a loop body is left to FIR
                 is KtConstructorDelegationReferenceExpression, is KtLoopExpression -> unit
                 is KtBinaryExpression -> {
                     when (unwrappedExpression.operationToken) {
@@ -331,6 +342,10 @@ internal class KaFirExpressionTypeProvider(
                     -> nothing
                 is KtConstantExpression -> {
                     val classId = unwrappedExpression.inferClassIdByPsi()
+
+                    // The raw FIR builder converts a malformed character literal, such as `'ab'`, into an error expression
+                    if (classId == StandardClassIds.Char && unwrappedExpression.text.parseCharacter().value == null) return null
+
                     /**
                      * Type of [int] literals is defined by their expected types:
                      * ```kotlin
@@ -352,6 +367,8 @@ internal class KaFirExpressionTypeProvider(
         }
     }
 
+    // Unsigned literals are left to FIR, which takes their type from the expected type, as in `val x: ULong = 1u`, and infers an
+    // error type if any unsigned type is missing
     private val primitiveTypesMap: Map<ClassId, Lazy<KaType>> = mapOf(
         StandardClassIds.Int to lazy { analysisSession.builtinTypes.int },
         StandardClassIds.Long to lazy { analysisSession.builtinTypes.long },
@@ -359,8 +376,6 @@ internal class KaFirExpressionTypeProvider(
         StandardClassIds.Double to lazy { analysisSession.builtinTypes.double },
         StandardClassIds.Char to lazy { analysisSession.builtinTypes.char },
         StandardClassIds.Boolean to lazy { analysisSession.builtinTypes.boolean },
-        StandardClassIds.UInt to lazy { analysisSession.buildClassType(StandardClassIds.UInt) },
-        StandardClassIds.ULong to lazy { analysisSession.buildClassType(StandardClassIds.ULong) },
     )
 
     override fun functionType(function: KtFunction): KaType = function.withPsiValidityAssertion {

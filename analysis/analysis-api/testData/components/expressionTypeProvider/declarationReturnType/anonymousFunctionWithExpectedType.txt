@@ -4,20 +4,20 @@ takeAny@(3,1) : kotlin.Unit
   f@(3,13) : kotlin.Any
 container@(5,1) : kotlin.Unit
   long@(6,5) : () -> kotlin.Long
-    KtNamedFunction@(6,28) : kotlin.Int (symbol: kotlin.Long)
+    KtNamedFunction@(6,28) : kotlin.Long
   byte@(7,5) : () -> kotlin.Byte
-    KtNamedFunction@(7,28) : kotlin.Int (symbol: kotlin.Byte)
+    KtNamedFunction@(7,28) : kotlin.Byte
   nullableInt@(8,5) : () -> kotlin.Int?
-    KtNamedFunction@(8,35) : kotlin.Int (symbol: kotlin.Int?)
+    KtNamedFunction@(8,35) : kotlin.Int?
   any@(9,5) : () -> kotlin.Any
-    KtNamedFunction@(9,26) : kotlin.Int (symbol: kotlin.Any)
+    KtNamedFunction@(9,26) : kotlin.Any
   string@(10,5) : () -> kotlin.CharSequence
-    KtNamedFunction@(10,38) : kotlin.String (symbol: kotlin.CharSequence)
+    KtNamedFunction@(10,38) : kotlin.CharSequence
   unit@(11,5) : () -> kotlin.Unit
-    KtNamedFunction@(11,28) : kotlin.Int (symbol: kotlin.Unit)
+    KtNamedFunction@(11,28) : kotlin.Unit
   blockBody@(12,5) : () -> kotlin.Int
     KtNamedFunction@(12,32) : kotlin.Unit
   blockBodyWithReturn@(13,5) : () -> kotlin.Int
     KtNamedFunction@(13,42) : kotlin.Unit
-  KtNamedFunction@(15,14) : kotlin.Int (symbol: kotlin.Long)
+  KtNamedFunction@(15,14) : kotlin.Long
   KtNamedFunction@(16,13) : kotlin.Int

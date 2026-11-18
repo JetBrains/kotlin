@@ -1,2 +1,2 @@
-uInt@(1,1) : kotlin.UInt (symbol: ERROR)
-uLong@(2,1) : kotlin.ULong (symbol: ERROR)
+uInt@(1,1) : ERROR
+uLong@(2,1) : ERROR
