@@ -196,7 +196,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
             )
         }
 
-        linker.deserializeAllReachableTopLevels()
+        linker.drainDeserializationQueue()
 
         // Most declarations of a C-interop library are not reachable from the module fragment, see `externalPackageFragment`.
         val interopExternalPackageFragment = linker.allModuleDeserializers
