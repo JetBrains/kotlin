@@ -221,11 +221,9 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
     /**
      * Whether the class uses Kotlin's single-field [inline value class](https://kotlinlang.org/docs/inline-classes.html) representation.
      *
-     * This is a declaration-level property. It does not predict whether a value is boxed at a particular use site, nor whether a backend
-     * can optimize a compatible
-     * [full value class](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
-     * to an unboxed form. In particular, a full value class with exactly one primary property still returns `false`. Use [isValue] to
-     * recognize both inline and full value classes.
+     * This is a declaration-level property. A `true` value does not mean that values of the class are unboxed at every use site: an
+     * inline value class may still be boxed, for example where a type parameter or a supertype such as `Any` is expected, or in some
+     * nullable positions.
      *
      * For valid declarations, this property is `true` for all of the following:
      *
@@ -236,8 +234,11 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
      * - An unannotated single-property `value class` on Common or a non-JVM target with `FullValueClasses` disabled.
      * - The deprecated `inline class` form on every target, with `FullValueClasses` either enabled or disabled.
      *
-     * This property is `false` for full value classes and value objects. With `FullValueClasses` enabled, a `value class` with neither the
-     * `inline` modifier nor `@JvmInline` uses the full representation on every target, even if it has exactly one primary property.
+     * This property is `false` for
+     * [full value classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
+     * and value objects. With `FullValueClasses` enabled, a `value class` with neither the `inline` modifier nor `@JvmInline` uses the
+     * full representation on every target, even if it has exactly one primary property. Use [isValue] to recognize both inline and
+     * full value classes.
      *
      * @see isValue
      */
