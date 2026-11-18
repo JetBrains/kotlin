@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProv
 import org.jetbrains.kotlin.fir.lightTree.isScript
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -60,8 +62,6 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
-import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
@@ -213,14 +213,15 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 val projectEnvironment = kotlinCoreEnvironment.toVfsBasedProjectEnvironment()
 
                 val sources = {
-                    val ktFiles = kotlinCoreEnvironment.getSourceFiles()
+                    val ktFiles = projectEnvironment.computeKtSources(configuration)
+                    configuration.perfManager?.addSourcesStats(ktFiles.size, ktFiles.countLinesOfCode())
                     ktFiles.forEach { SyntaxErrorReporter.reportSyntaxErrors(it, diagnosticReporter) }
                     groupKtFiles(ktFiles)
                 }
 
                 EnvironmentAndSources(projectEnvironment, sources)
             }
-        }.takeUnless { CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrors(configuration) }
+        }.takeUnless { CheckDiagnosticCollector.checkHasErrors(configuration) }
     }
 
     private fun groupKtFiles(ktFiles: List<KtFile>): GroupedKtSources {
@@ -789,9 +790,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             rootDisposable,
             configuration
         )
-
-        val sourceFiles = environment.getSourceFiles()
-        perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
 
         return if (CheckDiagnosticCollector.checkHasErrors(configuration)) null else environment
     }

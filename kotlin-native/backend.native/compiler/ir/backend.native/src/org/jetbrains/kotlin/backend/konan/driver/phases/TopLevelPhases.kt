@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
@@ -58,14 +57,14 @@ import kotlin.io.path.writeLines
 
 private fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc").toFile()
 
-internal fun PhaseEngine<NativeBackendPhaseContext>.runK1Frontend(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): K1FrontendPhaseOutput? {
+internal fun PhaseEngine<NativeBackendPhaseContext>.runK1Frontend(config: NativeSecondStageCompilationConfig): K1FrontendPhaseOutput? {
     val languageVersion = config.languageVersionSettings.languageVersion
-    val kotlinSourceRoots = environment.configuration.kotlinSourceRoots
+    val kotlinSourceRoots = config.configuration.kotlinSourceRoots
     if (languageVersion.usesK2 && kotlinSourceRoots.isNotEmpty()) {
         throw Error("Attempt to run K1 from unsupported LV=${languageVersion}")
     }
 
-    return useContext(BasicNativeBackendPhaseContext(config)) { it.runPhase(K1FrontendPhase, environment) }
+    return useContext(BasicNativeBackendPhaseContext(config)) { it.runPhase(K1FrontendPhase, input = null) }
 }
 
 internal fun PhaseEngine<NativeBackendPhaseContext>.linkKlibs(frontendOutput: K1FrontendPhaseOutput): LinkKlibsOutput {

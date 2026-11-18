@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
@@ -279,7 +280,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     ) {
         val perfManager = configuration.perfManager
 
-        val konanDriver = KonanDriver(environment.project, environment, configuration, perfManager) { arguments, setupConfiguration ->
+        val konanDriver = KonanDriver(environment.project, environment.toVfsBasedProjectEnvironment(), configuration, perfManager) { arguments, setupConfiguration ->
             val spawnedArguments = K2NativeCompilerArguments()
             parseCommandLineArguments(arguments, spawnedArguments)
             val spawnedConfiguration = CompilerConfiguration.create()

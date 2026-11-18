@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
-import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -24,14 +23,13 @@ import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
@@ -83,8 +81,8 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
 
         val sourceFiles = when {
             parserMode.treeBased -> groupedSources.let { it.commonSources + it.platformSources }.toList()
-            else -> environment.getSourceFiles().also { ktFiles ->
-                perfManager?.addSourcesStats(ktFiles.size, environment.countLinesOfCode(ktFiles))
+            else -> projectEnvironment.computeKtSources(configuration).also { ktFiles ->
+                perfManager?.addSourcesStats(ktFiles.size, ktFiles.countLinesOfCode())
                 for (ktFile in ktFiles) {
                     SyntaxErrorReporter.reportSyntaxErrors(ktFile, diagnosticsReporter)
                 }

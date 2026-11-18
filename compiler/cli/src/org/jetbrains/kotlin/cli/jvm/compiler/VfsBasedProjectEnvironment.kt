@@ -18,6 +18,7 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
 import java.nio.file.InvalidPathException
@@ -234,6 +236,13 @@ fun VfsBasedProjectEnvironment.psiJavaInterop(
     }
 }
 
+fun VfsBasedProjectEnvironment.computeKtSources(configuration: CompilerConfiguration): List<KtFile> {
+    return createSourceFilesFromSourceRoots(
+        configuration,
+        project,
+        getSourceRootsCheckingForDuplicates(configuration),
+    )
+}
 
 fun KotlinCoreEnvironment.toVfsBasedProjectEnvironment(): VfsBasedProjectEnvironment {
     val coreEnvironment = this

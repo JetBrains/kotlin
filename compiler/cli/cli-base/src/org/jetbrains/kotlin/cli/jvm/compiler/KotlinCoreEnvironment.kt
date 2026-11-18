@@ -25,7 +25,6 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.pom.java.InternalPersistentJavaLanguageLevelReaderService
@@ -66,7 +65,6 @@ import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
@@ -181,7 +179,6 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
 
     val packagePartProviders: List<JvmPackagePartProvider>
@@ -193,15 +190,6 @@ class KotlinCoreEnvironment private constructor(
     init {
         projectEnvironment.configureProjectEnvironment(configuration)
         val project = projectEnvironment.project
-
-        sourceFiles += createSourceFilesFromSourceRoots(
-            configuration, project,
-            getSourceRootsCheckingForDuplicates(configuration)
-        )
-
-        if (!configuration.dontSortSourceFiles) {
-            sourceFiles.sortBy { it.virtualFile.path }
-        }
 
         val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
@@ -286,12 +274,6 @@ class KotlinCoreEnvironment private constructor(
     val project: Project
         get() = projectEnvironment.project
 
-    fun countLinesOfCode(sourceFiles: List<KtFile>): Int =
-        sourceFiles.sumBy { sourceFile ->
-            val text = sourceFile.text
-            StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
-        }
-
     /**
      * The classpath roots this compilation indexed, in classpath order. A root is named by its identity
      * (`JvmClasspathRootId`) rather than by a location, so a classpath can be described without accessing a file
@@ -358,8 +340,6 @@ class KotlinCoreEnvironment private constructor(
 
     private fun findJarRoot(file: File): VirtualFile? =
         projectEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
-
-    fun getSourceFiles(): List<KtFile> = sourceFiles
 
     companion object {
         @PublishedApi

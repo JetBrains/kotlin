@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.konan.sourcesModules
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
@@ -47,18 +47,18 @@ import kotlin.io.path.writeLines
 
 data class K1FrontendPhaseOutput(val moduleDescriptor: ModuleDescriptor)
 
-internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, KotlinCoreEnvironment, K1FrontendPhaseOutput?> = createSimpleNamedCompilerPhase(
+internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, Nothing?, K1FrontendPhaseOutput?> = createSimpleNamedCompilerPhase(
         "Frontend",
         outputIfNotEnabled = { _, _, _, _ -> null }
-) { context, input: KotlinCoreEnvironment ->
-    val sourceFiles = input.getSourceFiles()
+) { context, _ ->
+    val sourceFiles = context.config.configuration.kotlinSourceRoots
 
     check(context.config.produce != CompilerOutputKind.LIBRARY) {
         "Internal error: An attempt to run the 2nd compilation stage to produce ${CompilerOutputKind.LIBRARY}"
     }
 
     check(sourceFiles.isEmpty()) {
-        "Internal error: no source files should have been passed here (${sourceFiles.first().virtualFilePath} in particular)\n" +
+        "Internal error: no source files should have been passed here (${sourceFiles.first()} in particular)\n" +
                 "to produce binary (e.g. a ${context.config.produce.name.toLowerCaseAsciiOnly()})\n" +
                 "KonanDriver.kt::splitOntoTwoStages() must transform such compilation into two-stage compilation. Please report this here: https://kotl.in/issue"
     }

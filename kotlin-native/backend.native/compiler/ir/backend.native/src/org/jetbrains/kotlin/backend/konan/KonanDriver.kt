@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.computeKtSources
+import org.jetbrains.kotlin.cli.jvm.compiler.countLinesOfCode
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
@@ -46,7 +48,7 @@ fun interface CompilationSpawner {
 
 class KonanDriver(
         val project: Project,
-        val environment: KotlinCoreEnvironment,
+        val environment: VfsBasedProjectEnvironment,
         val configuration: CompilerConfiguration,
         val performanceManager: PerformanceManager?,
         val compilationSpawner: CompilationSpawner
@@ -124,11 +126,11 @@ class KonanDriver(
 
         ensureModuleName(config)
 
-        val sourcesFiles = environment.getSourceFiles()
+        val sourcesFiles = environment.computeKtSources(configuration)
         performanceManager?.apply {
             targetDescription = config.moduleId
             this.outputKind = config.produce.name
-            addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
+            addSourcesStats(sourcesFiles.size, sourcesFiles.countLinesOfCode())
             // Finishing initialization phase before cache setup. Otherwise, cache building time will be counted as initialization phase.
             // Since cache builders use PerformanceManager to report precise phases, the only timing we lose is "calculating what to cache".
             notifyPhaseFinished(PhaseType.Initialization)
@@ -159,11 +161,11 @@ class KonanDriver(
         if (!config.produce.isCache)
             replayPartialLinkageIssuesFromCaches(config, cacheBuilder::wasRebuiltInThisRun)
 
-        NativeCompilerDriver(performanceManager).run(config, environment)
+        NativeCompilerDriver(performanceManager).run(config)
     }
 
     private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {
-        if (environment.getSourceFiles().isEmpty()) {
+        if (configuration.kotlinSourceRoots.isEmpty()) {
             // Note: The order of libraries is not important.
             val libraries = config.loadedKlibs.all
             val moduleName = config.moduleId

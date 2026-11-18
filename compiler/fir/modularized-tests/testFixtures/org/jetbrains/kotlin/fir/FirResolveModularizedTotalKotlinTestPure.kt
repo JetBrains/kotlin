@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import com.sun.management.HotSpotDiagnosticMXBean
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtPsiSourceFile
@@ -14,11 +13,10 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
-import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.ParserMode
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.parserMode
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.computeKtSources
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsReporterImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -34,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -63,16 +62,16 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
     private val asyncProfilerControl = AsyncProfilerControl()
 
     @OptIn(ObsoleteTestInfrastructure::class)
-    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
+    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment, configuration: CompilerConfiguration) {
 
         val projectEnvironment = environment.toVfsBasedProjectEnvironment()
 
-        val sourceFiles: Collection<KtSourceFile> = when (environment.configuration.parserMode) {
+        val sourceFiles: Collection<KtSourceFile> = when (configuration.parserMode) {
             Psi -> {
-                environment.getSourceFiles().map { KtPsiSourceFile(it) }
+                projectEnvironment.computeKtSources(configuration).map { KtPsiSourceFile(it) }
             }
             LightTree -> {
-                collectSources(environment.configuration, projectEnvironment).platformSources
+                collectSources(configuration, projectEnvironment).platformSources
             }
             KmpTree -> TODO("KT-91322")
         }
@@ -80,11 +79,11 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
         val session =
             FirTestSessionFactoryHelper.createSessionForTests(
                 projectEnvironment,
-                environment.configuration,
+                configuration,
                 JvmClasspath.ProjectLibraries(),
                 moduleData.qualifiedName,
                 moduleData.friendDirs.map { it.toPath() },
-                environment.configuration.languageVersionSettings
+                configuration.languageVersionSettings
             )
 
         val scopeSession = ScopeSession()
@@ -124,7 +123,7 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration)
         try {
-            runAnalysis(moduleData, environment)
+            runAnalysis(moduleData, environment, configuration)
         } finally {
             environment.projectEnvironment.environment.application.runWriteAction {
                 Disposer.dispose(disposable)
