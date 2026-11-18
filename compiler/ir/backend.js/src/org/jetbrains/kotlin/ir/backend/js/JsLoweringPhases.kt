@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.TailrecCheckerLowering
@@ -39,14 +38,6 @@ private fun createInventNamesForLocalFunctionsPhase(context: JsIrBackendContext)
     return KlibInventNamesForLocalFunctions(suggestUniqueNames = false)
 }
 
-private fun createKotlinNothingValueExceptionPhase(context: CommonBackendContext): KotlinNothingValueExceptionLowering {
-    return KotlinNothingValueExceptionLowering(context)
-}
-
-private fun createJsCodeOutliningPhaseOnSecondStage(context: LoweringContext): JsCodeOutliningLowering {
-    return JsCodeOutliningLowering(context)
-}
-
 private fun createJsCodeOutliningPhaseOnFirstStage(context: JsPreSerializationLoweringContext): JsCodeOutliningLowering {
     return JsCodeOutliningLowering(context) { jsCall, valueDeclaration, container ->
         context.diagnosticReporter.at(jsCall, container)
@@ -54,27 +45,11 @@ private fun createJsCodeOutliningPhaseOnFirstStage(context: JsPreSerializationLo
     }
 }
 
-private fun createSharedVariablesLoweringPhase(context: LoweringContext): SharedVariablesLowering {
-    return SharedVariablesLowering(context)
-}
-
-private fun createSyntheticAccessorGenerationPhase(context: LoweringContext): SyntheticAccessorLowering {
-    return SyntheticAccessorLowering(context)
-}
-
 private fun createUpgradeCallableReferences(context: LoweringContext): UpgradeCallableReferences {
     return UpgradeCallableReferences(
         context,
         upgradeSamConversions = false,
     )
-}
-
-private fun createLocalDeclarationsLoweringPhase(context: LoweringContext): LocalDeclarationsLowering {
-    return LocalDeclarationsLowering(context)
-}
-
-private fun createDefaultParameterCleanerPhase(context: CommonBackendContext): DefaultParameterCleaner {
-    return DefaultParameterCleaner(context)
 }
 
 private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): AutoboxingTransformer {
@@ -106,14 +81,14 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::IrValidationBeforeLoweringsKlibSecondStagePhase,
     ::InlineCallCycleCheckerLowering,
     ::createUpgradeCallableReferences,
-    ::createJsCodeOutliningPhaseOnSecondStage,
+    ::JsCodeOutliningLowering,
     ::LateinitLowering,
-    ::createSharedVariablesLoweringPhase,
+    ::SharedVariablesLowering,
     ::LocalClassesInInlineLambdasLowering,
     ::ArrayConstructorLowering,
     ::JsPrivateFunctionInlining,
     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
-    ::createSyntheticAccessorGenerationPhase,
+    ::SyntheticAccessorLowering,
     ::IrValidationAfterInliningPrivateFunctionsKlibPhase,
     ::JsAllFunctionInlining,
     ::RedundantCastsRemoverLowering,
@@ -147,7 +122,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::EnumClassConstructorBodyTransformer,
     ::LocalDelegatedPropertiesLowering,
     ::createInventNamesForLocalFunctionsPhase,
-    ::createLocalDeclarationsLoweringPhase,
+    ::LocalDeclarationsLowering,
     ::LocalDeclarationPopupLowering,
     ::InnerClassesLowering,
     ::InnerClassesMemberBodyLowering,
@@ -166,7 +141,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::JsStaticInitializersUsageLowering,
     ::JsInitializersLowering,
     ::JsInitializersCleanupLowering,
-    ::createKotlinNothingValueExceptionPhase,
+    ::KotlinNothingValueExceptionLowering,
     ::CollectClassDefaultConstructorsLowering,
     ::EnumWhenLowering,
     ::EnumUsageLowering,
@@ -186,7 +161,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::JsDefaultArgumentStubGenerator,
     ::JsDefaultParameterPatchOverridenSymbolsLowering,
     ::JsDefaultParameterInjector,
-    ::createDefaultParameterCleanerPhase,
+    ::DefaultParameterCleaner,
     ::JsPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
     ::JsPropertyAccessorInlineLowering,
