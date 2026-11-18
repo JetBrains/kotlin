@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -30,12 +29,12 @@ internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
             val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
             val owner = ownerSymbol.firSymbol as? FirClassSymbol ?: return null
             val scope = getSearchScope(analysisSession, owner) ?: return null
-            chooseCandidateAndCreateSymbol(scope, analysisSession.firSession)
+            chooseCandidateAndCreateSymbol(scope, owner)
         }
     }
 
     context(analysisSession: KaFirSession)
-    protected abstract fun chooseCandidateAndCreateSymbol(candidates: FirScope, firSession: FirSession): S?
+    protected abstract fun chooseCandidateAndCreateSymbol(candidates: FirScope, owner: FirClassSymbol<*>): S?
 
     protected open fun getSearchScope(analysisSession: KaFirSession, owner: FirClassSymbol<*>): FirScope? {
         val firSession = analysisSession.firSession
