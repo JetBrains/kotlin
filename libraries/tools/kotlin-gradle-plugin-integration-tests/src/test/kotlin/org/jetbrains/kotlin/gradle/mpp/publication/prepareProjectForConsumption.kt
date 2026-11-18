@@ -15,13 +15,12 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.testbase.GradleProjectBuildScriptInjectionContext
 import org.jetbrains.kotlin.gradle.testbase.GradleProject
+import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.io.Serializable
-import java.nio.file.Path
-import kotlin.io.path.absolutePathString
 
 /**
  * A single (producer, consumer configuration) pair to be checked inside one consumer build.
@@ -44,15 +43,14 @@ internal data class ResolutionProbe(
     val reportPath get() = "$producerId/$mirroredConfiguration.txt"
 }
 
-fun GradleProject.prepareConsumerProject(
+fun TestProject.prepareConsumerProject(
     consumer: Scenario.Project,
     producers: List<Scenario.Project>,
-    localRepoDir: Path,
 ) {
     settingsGradleKts.replaceText("""dependencyResolutionManagement {""", """
         dependencyResolutionManagement {
             repositories {
-                maven("${localRepoDir.absolutePathString().replace("\\", "\\\\")}")
+                maven($localRepositoryReference)
             }
                 
     """.trimIndent())

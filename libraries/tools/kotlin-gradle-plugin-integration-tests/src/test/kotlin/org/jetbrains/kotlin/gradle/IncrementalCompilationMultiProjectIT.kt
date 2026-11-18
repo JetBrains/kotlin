@@ -992,8 +992,9 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             """
                 
             $compileKotlinTaskName {
+                def lookupFile = file("${lookupFile.relativeTo(gradleProject.projectPath).invariantSeparatorsPathString}")
                 doLast {
-                    new File("${lookupFile.toFile().invariantSeparatorsPath}").write("Invalid contents")
+                    lookupFile.write("Invalid contents")
                 }
             }
             """.trimIndent()

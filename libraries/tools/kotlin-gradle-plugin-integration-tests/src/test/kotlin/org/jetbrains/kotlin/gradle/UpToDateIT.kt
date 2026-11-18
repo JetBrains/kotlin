@@ -5,7 +5,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.firstSupported
-import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -152,7 +151,7 @@ class UpToDateIT : KGPBaseTest() {
                     val file = File(it)
                     val newFile = projectPath.resolve(file.nameWithoutExtension + "-1.jar").toFile()
                     file.copyTo(newFile)
-                    newFile.normalizedAbsolutePath().toString()
+                    newFile.name
                 }.reversed()
 
                 it.replace(

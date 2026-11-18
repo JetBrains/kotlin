@@ -647,8 +647,9 @@ class BuildReportsIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                     tasks.named("compileKotlin") {
+                        def lookupsTab = file("${lookupsTab.relativeTo(projectPath).invariantSeparatorsPathString}")
                         doLast {
-                            new File("${lookupsTab.toUri().path}").write("Invalid contents")
+                            lookupsTab.write("Invalid contents")
                         }
                     }
                 """.trimIndent()
@@ -732,8 +733,9 @@ class BuildReportsIT : KGPBaseTest() {
                 //language=groovy
                 """
                 |tasks.named("compileKotlin") {
+                |    def lookupsTab = file("${lookupsTab.relativeTo(projectPath).invariantSeparatorsPathString}")
                 |    doLast {
-                |       new File("${lookupsTab.toUri().path}").write("Invalid contents")
+                |       lookupsTab.write("Invalid contents")
                 |   }
                 |}
                 """.trimMargin()

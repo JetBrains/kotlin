@@ -7,8 +7,16 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.intellij.lang.annotations.Language
-import java.nio.file.Path
-import kotlin.io.path.absolutePathString
+
+/**
+ * Gradle property that carries the test's local Maven repository, see [TestProject.pathReference].
+ */
+internal const val LOCAL_REPOSITORY_GRADLE_PROPERTY = "test_local_repo"
+
+/**
+ * A Groovy and Kotlin script expression that reads the Gradle property [name].
+ */
+internal fun gradlePropertyReference(name: String) = "providers.gradleProperty(\"$name\").get()"
 
 @Language("Groovy")
 internal val DEFAULT_GROOVY_SETTINGS_FILE =
@@ -71,19 +79,19 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
 internal fun getGroovyDependencyManagementBlock(
     gradleRepositoriesMode: RepositoriesMode,
     additionalDependencyRepositories: Set<String>,
-    localRepo: Path? = null,
+    useLocalRepository: Boolean = false,
 ): String =
     //language=Groovy
     """    
     |dependencyResolutionManagement {
-    |    ${getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo)}
+    |    ${getGroovyRepositoryBlock(additionalDependencyRepositories, useLocalRepository)}
     |    repositoriesMode.set(${mapRepositoryModeToString(gradleRepositoriesMode)})
     |}
     """.trimMargin()
 
 internal fun getGroovyRepositoryBlock(
     additionalDependencyRepositories: Set<String>,
-    localRepo: Path? = null,
+    useLocalRepository: Boolean = false,
 ): String =
     //language=Groovy
     """
@@ -174,7 +182,7 @@ internal fun getGroovyRepositoryBlock(
     |            url = "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
     |        }
     |        ${additionalDependencyRepositories.map { repo -> "maven{ url = \"$repo\" }" }.joinToString("\n")}
-    |        ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = \"${repo.replace("\\", "\\\\")}\" }" } ?: ""}
+    |        ${if (useLocalRepository) "maven{ url = ${gradlePropertyReference(LOCAL_REPOSITORY_GRADLE_PROPERTY)} }" else ""}
     |    }
     """.trimMargin()
 
@@ -242,19 +250,19 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
 internal fun getKotlinDependencyManagementBlock(
     gradleRepositoriesMode: RepositoriesMode,
     additionalDependencyRepositories: Set<String>,
-    localRepo: Path? = null,
+    useLocalRepository: Boolean = false,
 ): String =
     //language=kotlin
     """    
     |dependencyResolutionManagement {
-    |    ${getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo)}
+    |    ${getKotlinRepositoryBlock(additionalDependencyRepositories, useLocalRepository)}
     |    repositoriesMode.set(${mapRepositoryModeToString(gradleRepositoriesMode)})
     |}
     """.trimMargin()
 
 internal fun getKotlinRepositoryBlock(
     additionalDependencyRepositories: Set<String>,
-    localRepo: Path? = null,
+    useLocalRepository: Boolean = false,
 ): String =
     //language=kotlin
     """
@@ -357,7 +365,7 @@ internal fun getKotlinRepositoryBlock(
     |            url = uri("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/")
     |        }
     |        ${additionalDependencyRepositories.map { repo -> "maven{ url = uri(\"$repo\") }" }.joinToString("\n")}
-    |        ${localRepo?.absolutePathString()?.let { repo -> "maven{ url = uri(\"${repo.replace("\\", "\\\\")}\") }" } ?: ""}
+    |        ${if (useLocalRepository) "maven{ url = uri(${gradlePropertyReference(LOCAL_REPOSITORY_GRADLE_PROPERTY)}) }" else ""}
     |    }
     """.trimMargin()
 
