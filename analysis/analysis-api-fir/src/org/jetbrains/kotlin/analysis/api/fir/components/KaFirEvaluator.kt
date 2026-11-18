@@ -44,14 +44,8 @@ internal class KaFirEvaluator(
                     KaErrorConstantValueImpl(e.localizedMessage, sourcePsi)
                 }
             }
-            // For invalid code like the following,
-            // ```
-            // when {
-            //   true, false -> {}
-            // }
-            // ```
-            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned. In this
-            // case, we simply report null since FIR does not know about it.
+            // For invalid code without FIR, such as the default value of a function type parameter, `getOrBuildFir` returns the FIR
+            // of an enclosing element, here `FirFunctionTypeParameter`.
             else -> null
         }
     }
