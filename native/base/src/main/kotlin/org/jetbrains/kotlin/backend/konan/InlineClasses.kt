@@ -232,7 +232,6 @@ object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, Ko
         else type.constructor.supertypes.asSequence().flatMap { computeFullErasure(it) }
     }
 
-    // Like `IrTypeInlineClassesSupport`, this treats full value classes compatible with inline classes as inline classes.
     @OptIn(ValueClassBackendAgnosticApi::class)
     override fun hasInlineModifier(clazz: ClassDescriptor): Boolean =
         clazz.valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatCompatibleFullValueClassesAsInline = true) {

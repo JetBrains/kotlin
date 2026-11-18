@@ -2,9 +2,8 @@
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
 // FILECHECK_STAGE: CStubs
-// Checks that the representation of a value class does not depend on the module it is used from: off JVM, a single-field full
-// value class from another module is compared like an inline class: without allocations and calls of `equals` on JS and Native,
-// and with boxing in place on Wasm, which unwraps only inline classes when comparing (KT-86967).
+// Checks that the representation of a value class does not depend on the module it is used from: a single-field full
+// value class from another module is allocated and compared with `equals`, an inline class is compared without them.
 
 // MODULE: lib
 // FILE: lib.kt
@@ -17,12 +16,15 @@ inline fun <T> same(a: T, b: T): Boolean = a == b
 // MODULE: main(lib)
 // FILE: main.kt
 // CHECK-LABEL: define {{.*}}@"kfun:#fullEquals(kotlin.Int;kotlin.Int){}kotlin.Boolean"
-// CHECK-NOT: <Full-box>
-// CHECK-NOT: #equals(kotlin.Any?){}kotlin.Boolean
+// CHECK: Full#<init>(kotlin.Int){}
+// CHECK: Full#<init>(kotlin.Int){}
+// CHECK: #equals(kotlin.Any?){}kotlin.Boolean
 // CHECK-LABEL: epilogue:
-// CHECK_NOT_CALLED_IN_SCOPE: scope=fullEquals function=equals
-// CHECK_NEW_COUNT: function=fullEquals count=0 TARGET_BACKENDS=JS_IR
-// WASM_COUNT_INSTRUCTION_IN_FUNCTION: instruction=struct.new inFunction=fullEquals count=2
+// CHECK_CALLED_IN_SCOPE: scope=fullEquals function=equals
+// CHECK_NEW_COUNT: function=fullEquals count=2 TARGET_BACKENDS=JS_IR
+// WASM_CHECK_CALLED_IN_FUNCTION: shouldBeCalled="Full.<init>" inFunction=fullEquals
+// WASM_CHECK_CALLED_IN_FUNCTION: shouldBeCalled="Full.equals" inFunction=fullEquals
+// WASM_COUNT_INSTRUCTION_IN_FUNCTION: instruction=struct.new inFunction=fullEquals count=0
 fun fullEquals(x: Int, y: Int): Boolean = Full(x) == Full(y)
 
 // CHECK-LABEL: define {{.*}}@"kfun:#inlineEquals(kotlin.Int;kotlin.Int){}kotlin.Boolean"

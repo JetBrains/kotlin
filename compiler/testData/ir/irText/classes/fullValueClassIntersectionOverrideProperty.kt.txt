@@ -67,7 +67,7 @@ interface Value<out T : Any?> {
     return { // BLOCK
       val tmp_2: Value<T> = <this>
       when {
-        tmp_2 is Full -> <this> /*as Full */.<get-value>().<get-size>()
+        tmp_2 is Full -> <this> /*as Full */.<get-value>() /*as List<Int> */.<get-size>()
         else -> -1
       }
     }

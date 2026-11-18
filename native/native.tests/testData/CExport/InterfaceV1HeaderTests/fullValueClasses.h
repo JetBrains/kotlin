@@ -113,6 +113,14 @@ typedef struct {
     struct {
       struct {
         fullValueClasses_KType* (*_type)(void);
+        fullValueClasses_kref_Meters (*Meters)(fullValueClasses_KInt value);
+        fullValueClasses_KInt (*get_value)(fullValueClasses_kref_Meters thiz);
+        fullValueClasses_KBoolean (*equals)(fullValueClasses_kref_Meters thiz, fullValueClasses_kref_kotlin_Any other);
+        fullValueClasses_KInt (*hashCode)(fullValueClasses_kref_Meters thiz);
+        const char* (*toString)(fullValueClasses_kref_Meters thiz);
+      } Meters;
+      struct {
+        fullValueClasses_KType* (*_type)(void);
         fullValueClasses_kref_Point (*Point)(fullValueClasses_KInt x, fullValueClasses_KInt y);
         fullValueClasses_KInt (*get_x)(fullValueClasses_kref_Point thiz);
         fullValueClasses_KInt (*get_y)(fullValueClasses_kref_Point thiz);
@@ -120,14 +128,14 @@ typedef struct {
         fullValueClasses_KInt (*hashCode)(fullValueClasses_kref_Point thiz);
         const char* (*toString)(fullValueClasses_kref_Point thiz);
       } Point;
-      fullValueClasses_KInt (*get_zero)();
+      fullValueClasses_kref_Meters (*get_zero)();
       fullValueClasses_KInt (*get_zeroInline)();
       fullValueClasses_kref_Meters (*nullable)(fullValueClasses_kref_Meters meters);
       fullValueClasses_kref_InlineMeters (*nullableInline)(fullValueClasses_kref_InlineMeters meters);
       fullValueClasses_KInt (*sum)(fullValueClasses_kref_Point point);
-      fullValueClasses_KInt (*twice)(fullValueClasses_KInt meters);
+      fullValueClasses_kref_Meters (*twice)(fullValueClasses_kref_Meters meters);
       fullValueClasses_KInt (*twiceInline)(fullValueClasses_KInt meters);
-      fullValueClasses_KInt (*doubled)(fullValueClasses_KInt thiz);
+      fullValueClasses_KInt (*doubled)(fullValueClasses_kref_Meters thiz);
       fullValueClasses_KInt (*doubledInline)(fullValueClasses_KInt thiz);
     } root;
   } kotlin;

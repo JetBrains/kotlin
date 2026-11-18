@@ -183,9 +183,10 @@ FILE fqName:<root> fileName:/fullValueClassIntersectionOverrideProperty.kt
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.Full
                   GET_VAR 'val tmp_2: <root>.Value<T of <root>.Value> declared in <root>.Value.sizeOfFull' type=<root>.Value<T of <root>.Value> origin=null
                 then: CALL 'public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.List' type=kotlin.Int origin=GET_PROPERTY
-                  ARG <this>: CALL 'public open fun <get-value> (): kotlin.collections.List<kotlin.Int> declared in <root>.Full' type=kotlin.collections.List<kotlin.Int> origin=GET_PROPERTY
-                    ARG <this>: TYPE_OP type=<root>.Full origin=IMPLICIT_CAST typeOperand=<root>.Full
-                      GET_VAR '<this>: <root>.Value<T of <root>.Value> declared in <root>.Value.sizeOfFull' type=<root>.Value<T of <root>.Value> origin=IMPLICIT_ARGUMENT
+                  ARG <this>: TYPE_OP type=kotlin.collections.List<kotlin.Int> origin=IMPLICIT_CAST typeOperand=kotlin.collections.List<kotlin.Int>
+                    CALL 'public open fun <get-value> (): kotlin.collections.List<kotlin.Int> declared in <root>.Full' type=kotlin.Any origin=GET_PROPERTY
+                      ARG <this>: TYPE_OP type=<root>.Full origin=IMPLICIT_CAST typeOperand=<root>.Full
+                        GET_VAR '<this>: <root>.Value<T of <root>.Value> declared in <root>.Value.sizeOfFull' type=<root>.Value<T of <root>.Value> origin=IMPLICIT_ARGUMENT
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Int type=kotlin.Int value=-1

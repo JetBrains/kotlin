@@ -11,12 +11,7 @@ inline value class C(val x: Int = 4)
 fun box(): String {
     require(A::class.createInstance().x == 1) { "A().x == 1" }
     require(A::class.createInstance().y == 2) { "A().y == 2" }
-    // A single-field full value class is treated like an inline class, for which `createInstance` does not work (KT-85456)
-    try {
-        B::class.createInstance()
-        return "Fail: B::class.createInstance() is expected to throw"
-    } catch (_: IllegalArgumentException) {
-    }
+    require(B::class.createInstance().x == 3) { "B().x == 3" }
     // `createInstance` does not work for an inline class (KT-85456)
     try {
         C::class.createInstance()

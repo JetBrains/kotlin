@@ -222,7 +222,6 @@ internal class ClassifierExplorer(
 
     @OptIn(ValueClassBackendAgnosticApi::class)
     private val IrClass.isInlineClass: Boolean
-        // does not really matter if the flag is true or false here, as compatible full value classes don't have superclasses anyway.
         get() = isInlineClass(treatCompatibleFullValueClassesAsInline = true)
 
 

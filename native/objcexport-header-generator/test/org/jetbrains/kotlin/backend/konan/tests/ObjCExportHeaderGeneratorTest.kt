@@ -486,11 +486,9 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     /**
-     * A single-field full value class is exported as its underlying type, like an inline value class.
-     * The Analysis API based generator already exports it as a class, like a multi-field one (KT-91357).
+     * A single-field full value class is exported as a class, like a multi-field one, and an inline value class as its underlying type.
      */
     @Test
-    @TodoAnalysisApi
     fun `test - fullValueClasses`() {
         doTest(headersTestDataDir.resolve("fullValueClasses"))
     }

@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JS_IR, JS_IR_ES6, NATIVE
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
 
@@ -66,16 +65,16 @@ fun box(): String {
     if (encodedInlineRadius != expectedInlineRadius) return "encoded inline radius: $encodedInlineRadius"
     if (Json.decodeFromString<InlineRadius>(encodedInlineRadius) != inlineRadius) return "decoded inline radius"
 
-    // Off JVM, a single-field full value class without a supertype is serialized like an inline value class
+    // A full value class is serialized like a regular class on every platform, even with a single field
     val radius = Radius(3)
     val encodedRadius = Json.encodeToString(radius)
-    val expectedRadius = """3"""
+    val expectedRadius = """{"radius":3}"""
     if (encodedRadius != expectedRadius) return "encoded radius: $encodedRadius"
     if (Json.decodeFromString<Radius>(encodedRadius) != radius) return "decoded radius"
 
     val holder = Holder(InlineRadius(1), listOf(InlineRadius(2), InlineRadius(3)), Radius(4), listOf(Radius(5), Radius(6)))
     val encodedHolder = Json.encodeToString(holder)
-    val expectedHolder = """{"inlineRadius":1,"inlineRadii":[2,3],"radius":4,"radii":[5,6]}"""
+    val expectedHolder = """{"inlineRadius":1,"inlineRadii":[2,3],"radius":{"radius":4},"radii":[{"radius":5},{"radius":6}]}"""
     if (encodedHolder != expectedHolder) return "encoded holder: $encodedHolder"
     val decodedHolder = Json.decodeFromString<Holder>(encodedHolder)
     if (decodedHolder.inlineRadius != holder.inlineRadius || decodedHolder.inlineRadii != holder.inlineRadii) return "decoded inline radii"
@@ -84,13 +83,13 @@ fun box(): String {
     // The same holds for a full value class in a nullable position, with a nullable field and with a type parameter
     val nullableRadius = NullableRadius(null)
     val encodedNullableRadius = Json.encodeToString(nullableRadius)
-    val expectedNullableRadius = """null"""
+    val expectedNullableRadius = """{"radius":null}"""
     if (encodedNullableRadius != expectedNullableRadius) return "encoded nullable radius: $encodedNullableRadius"
     if (Json.decodeFromString<NullableRadius>(encodedNullableRadius) != nullableRadius) return "decoded nullable radius"
 
     val box = Box(Radius(5))
     val encodedBox = Json.encodeToString(box)
-    val expectedBox = """5"""
+    val expectedBox = """{"value":{"radius":5}}"""
     if (encodedBox != expectedBox) return "encoded box: $encodedBox"
     if (Json.decodeFromString<Box<Radius>>(encodedBox) != box) return "decoded box"
 
@@ -106,8 +105,8 @@ fun box(): String {
     )
     val encodedGenericAndNullableHolder = Json.encodeToString(genericAndNullableHolder)
     val expectedGenericAndNullableHolder =
-        """{"radius":1,"absentRadius":null,"nullableRadius":2,"emptyNullableRadius":null,""" +
-                """"boxOfInt":3,"boxOfRadius":4,"boxOfNullable":null,"nullableBox":null}"""
+        """{"radius":{"radius":1},"absentRadius":null,"nullableRadius":{"radius":2},"emptyNullableRadius":{"radius":null},""" +
+                """"boxOfInt":{"value":3},"boxOfRadius":{"value":{"radius":4}},"boxOfNullable":{"value":null},"nullableBox":null}"""
     if (encodedGenericAndNullableHolder != expectedGenericAndNullableHolder) {
         return "encoded generic and nullable holder: $encodedGenericAndNullableHolder"
     }
@@ -149,25 +148,25 @@ fun box(): String {
     }
     if (decodedInlineHolder.nullableBox != null) return "decoded inline nullable box"
 
-    // Off JVM, a full value class is unboxed inside an inline class and the other way around
+    // Only the full value class is serialized as an object when it wraps an inline class or is wrapped by one
     val mixedHolder = MixedHolder(InlineBox(Radius(1)), Box(InlineRadius(2)))
     val encodedMixedHolder = Json.encodeToString(mixedHolder)
-    val expectedMixedHolder = """{"inlineBoxOfRadius":1,"boxOfInlineRadius":2}"""
+    val expectedMixedHolder = """{"inlineBoxOfRadius":{"radius":1},"boxOfInlineRadius":{"value":2}}"""
     if (encodedMixedHolder != expectedMixedHolder) return "encoded mixed holder: $encodedMixedHolder"
     val decodedMixedHolder = Json.decodeFromString<MixedHolder>(encodedMixedHolder)
     if (decodedMixedHolder.inlineBoxOfRadius != mixedHolder.inlineBoxOfRadius) return "decoded inline box of radius"
     if (decodedMixedHolder.boxOfInlineRadius != mixedHolder.boxOfInlineRadius) return "decoded box of inline radius"
 
     if (!InlineRadius.serializer().descriptor.isInline) return "descriptor of inline radius is not inline"
-    if (!Radius.serializer().descriptor.isInline) return "descriptor of radius is not inline"
+    if (Radius.serializer().descriptor.isInline) return "descriptor of radius is inline"
 
     val encodedInlineDefaultRadius = Json.encodeToString(InlineDefaultRadius())
     if (encodedInlineDefaultRadius != """1""") return "encoded inline default radius: $encodedInlineDefaultRadius"
     if (Json.decodeFromString<InlineDefaultRadius>(encodedInlineDefaultRadius) != InlineDefaultRadius()) return "decoded inline default radius"
 
-    // Off JVM, the default value of the only field of a full value class is encoded, like the one of an inline class
+    // The default value of the only field of a full value class is omitted, like the one of a regular class, unlike the one of an inline class
     val encodedDefaultRadius = Json.encodeToString(DefaultRadius())
-    if (encodedDefaultRadius != """1""") return "encoded default radius: $encodedDefaultRadius"
+    if (encodedDefaultRadius != """{}""") return "encoded default radius: $encodedDefaultRadius"
     if (Json.decodeFromString<DefaultRadius>(encodedDefaultRadius) != DefaultRadius()) return "decoded default radius"
 
     return "OK"

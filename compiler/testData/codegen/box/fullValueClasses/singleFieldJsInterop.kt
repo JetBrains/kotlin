@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
 // Checks how instances of a single-field full value class and of an inline value class are passed to JavaScript:
 // to an external function, to a function with a `js(...)` body and through `dynamic`.
-// An inline class instance is passed unboxed where its type is known, and so is a single-field full value class instance.
+// An inline class instance is passed unboxed where its type is known, a full value class instance is always an object.
 
 // FILE: main.kt
 value class Full(val x: Int)
@@ -31,10 +31,10 @@ fun box(): String {
     val full = Full(1)
     val inline = Inline(2)
 
-    if (typeOfFullInExternal(full) != "number") return "Fail 1: ${typeOfFullInExternal(full)}"
+    if (typeOfFullInExternal(full) != "object") return "Fail 1: ${typeOfFullInExternal(full)}"
     if (typeOfInlineInExternal(inline) != "number") return "Fail 2: ${typeOfInlineInExternal(inline)}"
 
-    if (typeOfFullInJsCode(full) != "number") return "Fail 3: ${typeOfFullInJsCode(full)}"
+    if (typeOfFullInJsCode(full) != "object") return "Fail 3: ${typeOfFullInJsCode(full)}"
     if (typeOfInlineInJsCode(inline) != "number") return "Fail 4: ${typeOfInlineInJsCode(inline)}"
 
     if (typeOfDynamic(full) != "object") return "Fail 5: ${typeOfDynamic(full)}"

@@ -40,13 +40,10 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
 }
 
 /**
- * Checks if the class is an inline class or if [treatCompatibleFullValueClassesAsInline] is `true` and
- * the class is a full value class compatible with inline classes.
+ * Checks if the class is an inline class. A full value class is never an inline class,
+ * so [treatCompatibleFullValueClassesAsInline] is unused.
  *
- * See [ValueClassRepresentation] documentation for more details about value class types and their compatibility.
- *
- * @return `true` if the class is an inline class or if [treatCompatibleFullValueClassesAsInline] is `true` and
- * the class is a full value class compatible with inline classes; otherwise, `false`.
+ * See [ValueClassRepresentation] documentation for more details about value class types.
  */
 @ValueClassBackendAgnosticApi
 fun IrClass.isInlineClass(treatCompatibleFullValueClassesAsInline: Boolean): Boolean =
@@ -75,11 +72,10 @@ val IrFunction.isPropertyAccessor: Boolean
     get() = this is IrSimpleFunction && correspondingPropertySymbol != null
 
 /**
- * Retrieves an [InlineClassRepresentation] of the [IrClass] if the class is an inline class or
- * computes an [InlineClassRepresentation] if [treatCompatibleFullValueClassesAsInline] is `true` and
- * the class is a compatible full value class.
+ * Retrieves an [InlineClassRepresentation] of the [IrClass] if the class is an inline class.
+ * A full value class is never an inline class, so [treatCompatibleFullValueClassesAsInline] is unused.
  *
- * See [ValueClassRepresentation] documentation for more details about value class types and their compatibility.
+ * See [ValueClassRepresentation] documentation for more details about value class types.
  *
  * @return An [InlineClassRepresentation] or `null`.
  */
