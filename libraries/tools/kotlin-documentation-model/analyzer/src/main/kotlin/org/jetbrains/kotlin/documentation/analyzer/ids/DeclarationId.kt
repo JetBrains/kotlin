@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import java.net.URLEncoder
-import java.util.Base64
+import kotlin.io.encoding.Base64
 
 /**
  * Generates an opaque identifier, or null for unsupported or local symbols.
@@ -35,11 +35,11 @@ import java.util.Base64
  *   `enum-entry`, `function`; constructors are `function` and synthetic Java properties are `property`.
  *   The kind participates in the ID only through the signature hash. Property accessors have no ID.
  *
- * By default, [hashSignature] replaces the readable signature with an unpadded URL-safe Base64 encoding
- * of the full FNV-1 64-bit hash of it.
- * Set it to false to inspect the signature used to calculate the digest, which starts with the
- * callable's kind, e.g. `kotlin.text#repeat#kind=function; receiver=kotlin/String; parameters=[kotlin/Int];`
- * for `fun String.repeat(n: Int): String`. Package and classifier IDs are unaffected.
+ * For callables, when [hashSignature] is true (default), the callable part of the signature is hashed with FNV-1 64
+ * and encoded as unpadded URL-safe Base64. When false, the readable signature is kept instead,
+ * e.g. `kotlin.text#repeat#kind=function; receiver=kotlin/String; parameters=[kotlin/Int];`
+ * for `fun String.repeat(n: Int): String`. The flag does not affect package and classifier IDs.
+ *
  * Return types, ordinary parameter names, annotations, and expect/actual modifiers do not participate
  * in the signature. The exception is callables imported from ObjC — those annotated with
  * `kotlinx.cinterop.ObjCMethod`/`ObjCConstructor`/`ObjCFactory`, or overriding one that is — whose
@@ -62,7 +62,9 @@ internal fun generateDeclarationId(
     is KaNamedClassSymbol -> symbol.takeUnless { it.isLocal }?.classId?.escape()
     is KaTypeAliasSymbol -> symbol.takeUnless { it.isLocal }?.classId?.escape()
     is KaCallableSymbol -> generateCallableId(symbol, typeAliasClassId, hashSignature)
-    else -> throw IllegalArgumentException("Unknown symbol kind: $symbol")
+    else -> throw IllegalArgumentException(
+        "Unknown symbol kind: $symbol"
+    )
 }
 
 context(session: KaSession)
@@ -70,9 +72,9 @@ private fun generateCallableId(
     symbol: KaCallableSymbol,
     typeAliasClassId: ClassId?,
     hashSignature: Boolean,
-): String? {
-    val kind = callableKind(symbol) ?: return null
-    val prefix = callableIdPrefix(symbol, typeAliasClassId) ?: return null
+): String {
+    val kind = callableKind(symbol)
+    val prefix = callableIdPrefix(symbol, typeAliasClassId)
     val signature = callableSignature(symbol, kind)
     return "$prefix#${if (hashSignature) signature.shortHash() else signature}"
 }
@@ -88,17 +90,18 @@ internal enum class CallableKind(val id: String) {
     FUNCTION("function"),
 }
 
-private fun callableKind(symbol: KaCallableSymbol): CallableKind? = when (symbol) {
-    is KaConstructorSymbol -> CallableKind.FUNCTION
-    is KaNamedFunctionSymbol -> CallableKind.FUNCTION
-    is KaSyntheticJavaPropertySymbol -> CallableKind.PROPERTY
-    is KaPropertySymbol -> CallableKind.PROPERTY
-    is KaJavaFieldSymbol -> CallableKind.FIELD
-    is KaEnumEntrySymbol -> CallableKind.ENUM_ENTRY
-    else -> null
+context(session: KaSession)
+private fun callableKind(symbol: KaCallableSymbol): CallableKind = when (symbol) {
+    is KaFunctionSymbol -> FUNCTION
+    is KaPropertySymbol -> PROPERTY
+    is KaJavaFieldSymbol -> FIELD
+    is KaEnumEntrySymbol -> ENUM_ENTRY
+    is KaBackingFieldSymbol, is KaLocalVariableSymbol, is KaContextParameterSymbol, is KaReceiverParameterSymbol, is KaValueParameterSymbol -> throw IllegalArgumentException(
+        "Unknown symbol kind: ${@OptIn(KaExperimentalApi::class) symbol.render()}"
+    )
 }
 
-private fun callableIdPrefix(declaration: KaCallableSymbol, typeAliasClassId: ClassId?): String? {
+private fun callableIdPrefix(declaration: KaCallableSymbol, typeAliasClassId: ClassId?): String {
     require(typeAliasClassId?.isLocalClassId != true) { "Type alias class ID cannot be local" }
 
     val classId = when (declaration) {
@@ -106,7 +109,7 @@ private fun callableIdPrefix(declaration: KaCallableSymbol, typeAliasClassId: Cl
         else -> declaration.callableId?.classId
     }
     val callableId = declaration.callableId
-    if (classId?.isLocalClassId == true || (classId == null && callableId == null)) return null
+    if (classId?.isLocalClassId == true || (classId == null && callableId == null)) throw IllegalStateException("")
 
     val owner = (typeAliasClassId ?: classId)?.escape() ?: callableId!!.packageName.escape()
     val name = if (declaration is KaConstructorSymbol) CONSTRUCTOR_NAME else callableId!!.callableName.asString()
@@ -140,36 +143,34 @@ private fun typeParameterIdName(symbol: KaTypeParameterSymbol): String {
 context(session: KaSession)
 private fun callableSignature(declaration: KaCallableSymbol, kind: CallableKind): String {
 
+    fun <T> StringBuilder.printList(list: List<T>, name: String, transform: ((T) -> CharSequence)? = null) {
+        if (list.isNotEmpty()) {
+            append(name)
+            append("=")
+            list.joinTo(this, prefix = "[", postfix = "]") { transform?.invoke(it) ?: it.toString() }
+            append("; ")
+        }
+    }
+
     fun render(type: KaType): String =
         @OptIn(KaExperimentalApi::class) type.render(idTypeRenderer, Variance.INVARIANT)
 
     return buildString {
         append("kind=").append(kind.id).append("; ")
 
-        if (declaration.typeParameters.isNotEmpty()) {
-            append("typeParameters=")
-            declaration.typeParameters.joinTo(this, prefix = "[", postfix = "]") { parameter ->
-                val bounds = parameter.upperBounds.map { render(it) }.sorted().joinToString(" & ")
-                "${typeParameterIdName(parameter)}: $bounds"
-            }
-            append("; ")
+        printList(declaration.typeParameters, "typeParameters") { parameter ->
+            val bounds = parameter.upperBounds.map { render(it) }.sorted().joinToString(" & ")
+            "${typeParameterIdName(parameter)}: $bounds"
         }
-
-        if (declaration.typeParameters.isNotEmpty()) {
-            append("context=")
-            declaration.contextParameters.joinTo(this, prefix = "[", postfix = "]") { render(it.returnType) }
-            append("; ")
+        printList(declaration.contextParameters, "contextParameters") { parameter ->
+            render(parameter.returnType)
         }
 
         declaration.receiverType?.let { append("receiver=").append(render(it)) }
 
         val parameters = (declaration as? KaFunctionSymbol)?.valueParameters.orEmpty()
-        if (parameters.isNotEmpty()) {
-            append("parameters=")
-            parameters.joinTo(this, prefix = "[", postfix = "]") {
-                (if (it.isVararg) "vararg " else "") + render(it.returnType)
-            }
-            append("; ")
+        printList(parameters, "parameters") { parameter ->
+            (if (parameter.isVararg) "vararg " else "") + render(parameter.returnType)
         }
 
         if ((declaration as? KaNamedFunctionSymbol)?.isSuspend == true) append(" suspend;")
@@ -179,24 +180,24 @@ private fun callableSignature(declaration: KaCallableSymbol, kind: CallableKind)
         // ObjC overload resolution is selector-based, so two overloads can differ only in parameter
         // names (unlike ordinary Kotlin overloads, where names never affect binary compatibility).
         if (declaration is KaFunctionSymbol && hasObjCSelectorNames(declaration)) {
-            append("objcParameterNames=")
-            parameters.joinTo(this, prefix = "[", postfix = "]") { it.name.asString().escapeName() }
+            printList(parameters, "objcParameterNames") {
+                it.name.asString().escapeName()
+            }
         }
     }
 }
 
-
 /** Unpadded URL-safe Base64 encoding of the big-endian bytes of the full FNV-1 64-bit hash. */
 private fun String.shortHash(): String {
     val hash = fnv1Hash64()
-    return Base64.getUrlEncoder().withoutPadding()
-        .encodeToString(ByteArray(Long.SIZE_BYTES) { (hash shr (8 * (Long.SIZE_BYTES - 1 - it))).toByte() })
+    val bytes = ByteArray(ULong.SIZE_BYTES) { (hash shr (8 * (Long.SIZE_BYTES - 1 - it))).toByte() }
+    return Base64.UrlSafe.encode(bytes).trimEnd('=')
 }
 
-/** FNV-1 64-bit hash (offset basis 14695981039346656037, prime 1099511628211) of the UTF-8 bytes. */
+/** FNV-1 64-bit hash of the UTF-8 bytes. */
 private fun String.fnv1Hash64(): ULong {
     var hash = 0xcbf29ce484222325UL
-    for (byte in toByteArray(Charsets.UTF_8)) {
+    for (byte in encodeToByteArray()) {
         hash = (hash * 0x100000001b3UL) and 0xffffffffffffffffUL
         hash = hash xor (byte.toULong() and 0xffUL)
     }
