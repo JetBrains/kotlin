@@ -1,0 +1,18 @@
+KtNameReferenceExpression(175,183): 'hashCode'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = test/Foo
+        type = test.Foo
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = test/Foo.hashCode(<dispatch receiver>: test.Foo): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = test/Foo.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

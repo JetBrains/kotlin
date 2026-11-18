@@ -1,0 +1,20 @@
+KtNameReferenceExpression(210,218): 'hashCode'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = nested
+        isSafeNavigation = false
+        type = test.Foo.Nested
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = test/Foo.Nested.hashCode(<dispatch receiver>: test.Foo.Nested): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = test/Foo.Nested.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true

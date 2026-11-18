@@ -24,6 +24,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("actualAndExpectClassDefaultValueInLibrarySource.kt")
+  public void testActualAndExpectClassDefaultValueInLibrarySource() {
+    run("actualAndExpectClassDefaultValueInLibrarySource.kt");
+  }
+
+  @Test
+  @TestMetadata("actualAndExpectClassInLibrarySource.kt")
+  public void testActualAndExpectClassInLibrarySource() {
+    run("actualAndExpectClassInLibrarySource.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInSingleByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
   }
@@ -488,6 +500,24 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   @TestMetadata("EqualsOperatorNoInfix.kt")
   public void testEqualsOperatorNoInfix() {
     run("EqualsOperatorNoInfix.kt");
+  }
+
+  @Test
+  @TestMetadata("expectAndActualClassInLibrarySource.kt")
+  public void testExpectAndActualClassInLibrarySource() {
+    run("expectAndActualClassInLibrarySource.kt");
+  }
+
+  @Test
+  @TestMetadata("expectAndActualNestedClassInLibrarySource.kt")
+  public void testExpectAndActualNestedClassInLibrarySource() {
+    run("expectAndActualNestedClassInLibrarySource.kt");
+  }
+
+  @Test
+  @TestMetadata("expectClassAndActualTypeAliasInLibrarySource.kt")
+  public void testExpectClassAndActualTypeAliasInLibrarySource() {
+    run("expectClassAndActualTypeAliasInLibrarySource.kt");
   }
 
   @Test
@@ -2166,6 +2196,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
       @TestMetadata("ContextFunctionCall.kt")
       public void testContextFunctionCall() {
         run("ContextFunctionCall.kt");
+      }
+
+      @Test
+      @TestMetadata("ExpectAndActualClassInLibrarySource.kt")
+      public void testExpectAndActualClassInLibrarySource() {
+        run("ExpectAndActualClassInLibrarySource.kt");
       }
 
       @Test
