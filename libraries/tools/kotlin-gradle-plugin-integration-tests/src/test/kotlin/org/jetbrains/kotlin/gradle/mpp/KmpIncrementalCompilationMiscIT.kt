@@ -32,8 +32,8 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             enableJvmIncrementalCompilationOfCommonSources = true,
-            enableJsUnsafeIncrementalCompilationForMultiplatform = true,
-            enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJsIncrementalCompilationOfCommonSources = true,
+            enableWasmIncrementalCompilationOfCommonSources = true,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @Disabled("Broken, see KT-59153")
@@ -172,8 +172,8 @@ class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copy(
             // it's more convenient to set up the test project using common sourceset
             enableJvmIncrementalCompilationOfCommonSources = true,
-            enableJsUnsafeIncrementalCompilationForMultiplatform = true,
-            enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJsIncrementalCompilationOfCommonSources = true,
+            enableWasmIncrementalCompilationOfCommonSources = true,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Inline cycle with monotonous expansion")

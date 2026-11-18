@@ -663,15 +663,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     /**
      * When disabled: in k2, if a common source is dirty, the whole module is rebuilt.
-     * When enabled: regular IC logic is used, and common sources might see platform declarations. There is no
-     * counterpart of [enableJvmClasspathMetadata] to prevent this. See KT-62686.
+     * When enabled: common sources are compiled incrementally, and the common fragment metadata stored in the
+     * incremental compilation cache keeps them from seeing platform declarations. See KT-90585.
      */
-    val enableJsUnsafeOptimizationsForMultiplatform: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
+    val enableJsIncrementalCompilationOfCommonSources: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_JS_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
 
-    /** See [enableJsUnsafeOptimizationsForMultiplatform] */
-    val enableWasmUnsafeOptimizationsForMultiplatform: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
+    /** See [enableJsIncrementalCompilationOfCommonSources] */
+    val enableWasmIncrementalCompilationOfCommonSources: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_WASM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
 
     /**
      * Context: assume that incremental compilation of a.kt makes b.kt dirty (for example, because some function needs to be re-inlined)
@@ -1045,6 +1045,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
         val KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
             property("kotlin.jvm.enableIncrementalCompilationOfCommonSources")
+        val KOTLIN_JS_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
+            property("kotlin.js.enableIncrementalCompilationOfCommonSources")
+        val KOTLIN_WASM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
+            property("kotlin.wasm.enableIncrementalCompilationOfCommonSources")
         val KOTLIN_JVM_ENABLE_ERROR_RECOVERY_ROUND = property("kotlin.jvm.enableErrorRecoveryRound")
         val KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.unresolvedDependenciesDiagnostic")
         val KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.eagerUnresolvedDependenciesDiagnostic")
@@ -1072,10 +1076,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("$KOTLIN_INTERNAL_NAMESPACE.mpp.createArchiveTasksForCustomCompilations")
         val KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL = property("$KOTLIN_INTERNAL_NAMESPACE.compiler.arguments.log.level")
 
-        val KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.js.enableUnsafeOptimizationsForMultiplatform")
-        val KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.wasm.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA =
             property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableKmpClasspathMetadataForIncrementalCompilation")
         val KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION = property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableMonotonousCompileSetExpansion")
