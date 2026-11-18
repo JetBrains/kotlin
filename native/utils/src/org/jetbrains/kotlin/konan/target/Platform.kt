@@ -78,8 +78,9 @@ class PlatformManager private constructor(private val serialized: Serialized) :
         }
         check(isAvailable) {
             val howToCache = if (isStaticCache && hostIsLinux && target in appleTargets) {
-                ". To build caches for it on this host, copy 'konan/targets/${target.visibleName}' into this distribution " +
-                        "from a distribution of the same compiler version built on macOS"
+                ". Building its caches here needs its runtime, 'konan/targets/${target.visibleName}', " +
+                        "which released distributions contain but this one does not. " +
+                        "It can also be copied from the macOS distribution of the same version"
             } else ""
             "Target ${target.visibleName} is not available for output kind '$outputKind' on the $hostName host$howToCache"
         }

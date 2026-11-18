@@ -21,11 +21,13 @@ import java.io.File
 /**
  * "crossBundle" stands for the K/N distribution (bundle) that contains all platform klibs, including
  * for cross-targets. Simply speaking, for MacOS "crossBundle" is the same as the usual "bundle", but for
- * Linux/Win it's a "bundle" + Darwin-specific klibs like `Foundation`.
+ * Linux/Win it's a "bundle" + Darwin-specific klibs like `Foundation`. Linux also gets the runtime of Darwin
+ * targets, so that it can build their caches.
  *
  * The process of building "crossBundle" is intuitively a merge of "Darwin-dist" ([PATH_TO_DARWIN_DIST_PROPERTY]) into
  * "Host-dist" ([PATH_TO_HOST_DIST_PROPERTY]) without overwriting.
- * To be more precise, we copy only klib/platform/<darwin-specific-targets> from Darwin-dist into Host-dist
+ * To be more precise, we copy only klib/platform/<darwin-specific-targets> from Darwin-dist into Host-dist,
+ * and on Linux konan/targets/<darwin-specific-targets> too.
  *
  * The result is packed into archive as usual `bundlePrebuilt` tasks do.
  *
@@ -59,7 +61,13 @@ fun Project.setupMergeCrossBundleTask(): TaskProvider<Task>? {
             distName = "Darwin",
             source = tarTree(darwinDistFile),
             dependency = checkPreconditions,
-            includes = getDarwinOnlyTargets().map { "*/klib/platform/${it.name}/**" }
+            includes = getDarwinOnlyTargets().flatMap { target ->
+                listOfNotNull(
+                    "*/klib/platform/${target.name}/**",
+                    // Linux builds caches for Darwin targets from their runtime: see PlatformManager.cacheOnlyTargets.
+                    "*/konan/targets/${target.name}/**".takeIf { HostManager.hostIsLinux },
+                )
+            }
     )
 
     return tasks.register("mergeCrossBundle") {
