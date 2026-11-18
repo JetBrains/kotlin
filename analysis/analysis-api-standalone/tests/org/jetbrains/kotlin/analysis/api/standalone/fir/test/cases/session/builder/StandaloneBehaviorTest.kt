@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiPackage
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.expressions.returnType
+import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -51,6 +53,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class StandaloneBehaviorTest : AbstractStandaloneTest() {
@@ -144,6 +147,35 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
 
     private fun PsiPackage.annotationQualifiedNames(): List<String?> =
         annotationList?.annotations.orEmpty().map { it.qualifiedName }
+
+    @Test
+    fun testCacheCleanerWithoutEnableCacheCleaner() {
+        val project = buildProjectForCacheCleanerTest(enableCacheCleaner = false)
+
+        // The cache cleaner should not be registered without `enableCacheCleaner()` (KT-89827).
+        assertNotNull(project.serviceOrNull<KaFirCacheCleaner>())
+    }
+
+    @Test
+    fun testCacheCleanerWithEnableCacheCleaner() {
+        val project = buildProjectForCacheCleanerTest(enableCacheCleaner = true)
+        assertNotNull(project.serviceOrNull<KaFirCacheCleaner>(), "The cache cleaner must be registered with `enableCacheCleaner()`")
+    }
+
+    private fun buildProjectForCacheCleanerTest(enableCacheCleaner: Boolean): Project {
+        lateinit var project: Project
+        buildStandaloneAnalysisAPISession(disposable) {
+            project = this.project
+            if (enableCacheCleaner) {
+                enableCacheCleaner()
+            }
+
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+            }
+        }
+        return project
+    }
 
     @Test
     fun testNestedTypeAliasIndexing() {
