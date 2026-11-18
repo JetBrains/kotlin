@@ -329,12 +329,9 @@ class KotlinCoreEnvironment private constructor(
     companion object {
         @JvmStatic
         @CoreEnvironmentDeprecation
-        fun createForProduction(
-            projectDisposable: Disposable,
-            configuration: CompilerConfiguration,
-        ): KotlinCoreEnvironment {
+        fun create(projectDisposable: Disposable, configuration: CompilerConfiguration): KotlinCoreEnvironment {
             setupIdeaStandaloneExecution()
-            val appEnv = getOrCreateApplicationEnvironment(projectDisposable, configuration)
+            val appEnv = KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable)
             val projectEnv = ProjectEnvironment(projectDisposable, appEnv, configuration)
             val environment = KotlinCoreEnvironment(projectEnv, configuration)
 
@@ -343,69 +340,8 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         @CoreEnvironmentDeprecation
-        fun createForProduction(
-            projectEnvironment: ProjectEnvironment,
-            configuration: CompilerConfiguration,
-        ): KotlinCoreEnvironment {
+        fun create(projectEnvironment: ProjectEnvironment, configuration: CompilerConfiguration): KotlinCoreEnvironment {
             return KotlinCoreEnvironment(projectEnvironment, configuration)
-        }
-
-        @TestOnly
-        @JvmStatic
-        @CoreEnvironmentDeprecation
-        fun createForTests(
-            parentDisposable: Disposable,
-            initialConfiguration: CompilerConfiguration,
-        ): KotlinCoreEnvironment {
-            val configuration = initialConfiguration.copy()
-            // Tests are supposed to create a single project and dispose it right after use
-            val appEnv = KotlinCoreApplicationEnvironment.create(parentDisposable)
-            val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
-            return KotlinCoreEnvironment(projectEnv, configuration)
-        }
-
-        @TestOnly
-        @JvmStatic
-        @CoreEnvironmentDeprecation
-        fun createForParallelTests(
-            projectDisposable: Disposable,
-            initialConfiguration: CompilerConfiguration,
-        ): KotlinCoreEnvironment {
-            val configuration = initialConfiguration.copy()
-            val appEnv = getOrCreateApplicationEnvironmentForTests(projectDisposable)
-            val projectEnv = ProjectEnvironment(projectDisposable, appEnv, configuration)
-            return KotlinCoreEnvironment(projectEnv, configuration)
-        }
-
-        @TestOnly
-        @JvmStatic
-        @CoreEnvironmentDeprecation
-        fun createForTests(
-            projectEnvironment: ProjectEnvironment,
-            initialConfiguration: CompilerConfiguration,
-        ): KotlinCoreEnvironment {
-            return KotlinCoreEnvironment(projectEnvironment, initialConfiguration)
-        }
-
-        @CoreEnvironmentDeprecation
-        fun getOrCreateApplicationEnvironmentForProduction(projectDisposable: Disposable): KotlinCoreApplicationEnvironment {
-            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable)
-        }
-
-        @CoreEnvironmentDeprecation
-        fun getOrCreateApplicationEnvironmentForTests(projectDisposable: Disposable): KotlinCoreApplicationEnvironment {
-            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable)
-        }
-
-        /**
-         * Test or Production mode is determined by [CLIConfigurationKeys.TEST_ENVIRONMENT] configuration key
-         */
-        @CoreEnvironmentDeprecation
-        fun getOrCreateApplicationEnvironment(
-            projectDisposable: Disposable,
-            configuration: CompilerConfiguration,
-        ): KotlinCoreApplicationEnvironment {
-            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable)
         }
 
         @JvmStatic

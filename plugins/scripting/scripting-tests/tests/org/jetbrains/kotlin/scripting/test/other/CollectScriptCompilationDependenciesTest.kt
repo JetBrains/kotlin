@@ -112,7 +112,7 @@ class CollectScriptCompilationDependenciesTest {
         }
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration)
+        val environment = KotlinCoreEnvironment.create(testRootDisposable, configuration)
 
         val updatedClasspath = mutableListOf<File>()
         val baseProjectEnvironment = environment.toVfsBasedProjectEnvironment()

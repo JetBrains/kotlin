@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 class PsiTestParser(disposable: Disposable) : AbstractTestParser<PsiElement>(ParseMode.Full) {
     @OptIn(CoreEnvironmentDeprecation::class)
     private val environment: KotlinCoreEnvironment =
-        KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.create())
+        KotlinCoreEnvironment.create(disposable, CompilerConfiguration.create())
     private val ktPsiFactory = KtPsiFactory(environment.project)
 
     override fun parse(fileName: String, text: String): TestParseNode<out PsiElement> {

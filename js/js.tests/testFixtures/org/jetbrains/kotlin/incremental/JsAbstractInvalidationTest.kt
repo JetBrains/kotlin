@@ -74,7 +74,7 @@ abstract class JsAbstractInvalidationTest(
 
     override val environment: KotlinCoreEnvironment =
         @OptIn(CoreEnvironmentDeprecation::class)
-        KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration.create())
+        KotlinCoreEnvironment.create(rootDisposable, CompilerConfiguration.create())
 
     override fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration =
         JsCompilerInvocationTestConfiguration(buildDir, AbstractJsCompilerInvocationTest.CompilerType.WITH_IC)

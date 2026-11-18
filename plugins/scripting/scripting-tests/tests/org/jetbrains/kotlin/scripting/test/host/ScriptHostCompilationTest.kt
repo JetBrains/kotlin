@@ -173,7 +173,7 @@ class ScriptHostCompilationTest {
             loadScriptingPlugin(this, testRootDisposable)
         }
         @OptIn(CoreEnvironmentDeprecation::class)
-        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration)
+        return KotlinCoreEnvironment.create(testRootDisposable, configuration)
     }
 
     private fun runCompiler(
@@ -208,7 +208,7 @@ class ScriptHostCompilationTest {
         }
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration)
+        val environment = KotlinCoreEnvironment.create(testRootDisposable, configuration)
 
         return compileAndExecuteScript(script.toScriptSource(), environment, args) to collector
     }

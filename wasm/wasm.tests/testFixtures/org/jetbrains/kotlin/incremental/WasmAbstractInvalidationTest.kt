@@ -191,7 +191,7 @@ abstract class WasmAbstractInvalidationTest(
 
     @OptIn(CoreEnvironmentDeprecation::class)
     override val environment: KotlinCoreEnvironment =
-        KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration.create())
+        KotlinCoreEnvironment.create(rootDisposable, CompilerConfiguration.create())
 
     override fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration =
         WasmCompilerInvocationTestConfiguration(buildDir, AbstractWasmPartialLinkageTestCase.CompilerType.WITH_IC)

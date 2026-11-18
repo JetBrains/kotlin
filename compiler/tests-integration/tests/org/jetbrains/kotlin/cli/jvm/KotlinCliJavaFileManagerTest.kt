@@ -216,10 +216,7 @@ class KotlinCliJavaFileManagerTest {
         )
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment =  KotlinCoreEnvironment.createForParallelTests(
-            testRootDisposable,
-            configuration
-        )
+        val environment = KotlinCoreEnvironment.create(testRootDisposable, configuration)
         return environment.project
     }
 

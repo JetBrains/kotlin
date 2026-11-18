@@ -45,7 +45,7 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         configuration: CompilerConfiguration
     ): KotlinCoreEnvironment {
         @OptIn(CoreEnvironmentDeprecation::class)
-        return KotlinCoreEnvironment.createForProduction(projectEnvironment, configuration)
+        return KotlinCoreEnvironment.create(projectEnvironment, configuration)
     }
 
     override fun createScriptEvaluator(): ScriptEvaluator {

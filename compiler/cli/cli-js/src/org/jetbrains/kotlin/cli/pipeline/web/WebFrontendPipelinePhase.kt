@@ -52,7 +52,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         val configuration = input.configuration
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environmentForJS = KotlinCoreEnvironment.createForProduction(input.rootDisposable, configuration)
+        val environmentForJS = KotlinCoreEnvironment.create(input.rootDisposable, configuration)
         configuration.perfManager?.let {
             @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
             it.notifyCurrentPhaseFinishedIfNeeded()

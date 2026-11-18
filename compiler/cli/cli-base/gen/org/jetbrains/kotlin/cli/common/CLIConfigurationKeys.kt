@@ -69,7 +69,7 @@ object CLIConfigurationKeys {
     @JvmField
     val DEFAULT_EXTENSION_FOR_SCRIPTS = CompilerConfigurationKey.create<String>("DEFAULT_EXTENSION_FOR_SCRIPTS")
 
-    // Defines what kind of application environment should be created. Should be set to `true` only in tests
+    // Indicates that the compiler invocation happens in tests
     @JvmField
     val TEST_ENVIRONMENT = CompilerConfigurationKey.create<Boolean>("TEST_ENVIRONMENT")
 

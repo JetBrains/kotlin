@@ -91,9 +91,7 @@ class LightTreeParsingTest {
         runWithDisposable { testRootDisposable ->
             // environment is needed to setup the parser
             @OptIn(CoreEnvironmentDeprecation::class)
-            KotlinCoreEnvironment.createForTests(
-                testRootDisposable, CompilerConfiguration.create()
-            )
+            KotlinCoreEnvironment.create(testRootDisposable, CompilerConfiguration.create())
             block()
         }
     }

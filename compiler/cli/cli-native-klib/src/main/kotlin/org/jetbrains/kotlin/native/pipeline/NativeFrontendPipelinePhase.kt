@@ -38,10 +38,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         val phaseContext = NativeFirstStagePhaseContext(config)
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForProduction(
-            rootDisposable,
-            configuration
-        )
+        val environment = KotlinCoreEnvironment.create(rootDisposable, configuration)
 
         val firOutput = phaseContext.firFrontend(environment.toVfsBasedProjectEnvironment(), configuration)
         return NativeFrontendArtifact(

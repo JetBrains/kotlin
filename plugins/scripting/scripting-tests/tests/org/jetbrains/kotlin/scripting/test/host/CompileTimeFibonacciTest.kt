@@ -126,7 +126,7 @@ class CompileTimeFibonacciTest {
         }
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration)
+        val environment = KotlinCoreEnvironment.create(testRootDisposable, configuration)
         val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
         val scriptDefinition = environment.configuration.getCompilerExtensions(ScriptDefinitionProvider).first().findDefinition(script)!!
 

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.util.getChildren
 class LightTreeTestParser(disposable: Disposable) : AbstractTestParser<LighterASTNode>(ParseMode.NoKDoc) {
     init {
         @OptIn(CoreEnvironmentDeprecation::class)
-        KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.create())
+        KotlinCoreEnvironment.create(disposable, CompilerConfiguration.create())
     }
 
     private val builderFactoryInstance: PsiBuilderFactory = PsiBuilderFactory.getInstance()

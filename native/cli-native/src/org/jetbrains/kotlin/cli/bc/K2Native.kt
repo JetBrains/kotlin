@@ -260,10 +260,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         rootDisposable: Disposable,
     ): KotlinCoreEnvironment {
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForProduction(
-            rootDisposable,
-            configuration
-        )
+        val environment = KotlinCoreEnvironment.create(rootDisposable, configuration)
 
         configuration.phaseConfig = createPhaseConfig(arguments)
 

@@ -77,10 +77,7 @@ internal fun <S : AbstractScriptingCompilerState<*>> createIsolatedScriptingStat
         )
     kotlinCompilerConfiguration.configureCompiler()
     @OptIn(CoreEnvironmentDeprecation::class)
-    val environment =
-        KotlinCoreEnvironment.createForProduction(
-            parentDisposable, kotlinCompilerConfiguration
-        )
+    val environment = KotlinCoreEnvironment.create(parentDisposable, kotlinCompilerConfiguration)
 
     return createState(
         initialScriptCompilationConfiguration, kotlinCompilerConfiguration, environment.toVfsBasedProjectEnvironment(),

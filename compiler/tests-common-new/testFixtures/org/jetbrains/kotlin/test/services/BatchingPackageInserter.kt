@@ -192,7 +192,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         val configuration = CompilerConfiguration.create()
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForProduction(
+        val environment = KotlinCoreEnvironment.create(
             projectDisposable = testServices.compilerConfigurationProvider.testRootDisposable,
             configuration = configuration
         )
