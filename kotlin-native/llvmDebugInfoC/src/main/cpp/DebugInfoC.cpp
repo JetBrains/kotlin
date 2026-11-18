@@ -90,11 +90,7 @@ static DISubprogramRef DICreateFunctionShared(DIBuilderRef builderRef, DIScopeOp
   auto spFlags = llvm::DISubprogram::toSPFlags(false, true, false);
 
   if (isTransparentStepping != 0) {
-#ifdef __APPLE__
     spFlags |= llvm::DISubprogram::SPFlagIsTransparentStepping;
-#else
-    assert(false);
-#endif
   }
 
   auto subprogram = builder->createFunction(llvm::unwrap(scope),
