@@ -21,45 +21,32 @@ object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalType
         element: FirFunctionTypeParameter,
         source: KtSourceElement,
     ) {
-        checkModifiers(source)
-        checkAnnotations(source)
-        checkValOrVarKeyword(source)
-    }
+        val modifiersList = source.extractModifierList()
 
-    context(reporter: DiagnosticReporter, context: CheckerContext)
-    private fun checkValOrVarKeyword(source: KtSourceElement) {
-        val keyword = withSyntax { source.findValOrVarKeywordSource() } ?: return
+        if (modifiersList != null) {
+            for (modifier in modifiersList.modifiers) {
+                reporter.reportOn(
+                    modifier.source,
+                    FirErrors.UNSUPPORTED,
+                    "Function type parameters cannot have modifiers."
+                )
+            }
 
-        reporter.reportOn(
-            keyword,
-            FirErrors.UNSUPPORTED,
-            "Function type parameters cannot be 'val' or 'var'."
-        )
-    }
+            for (annSource in modifiersList.annotationSources) {
+                reporter.reportOn(
+                    annSource,
+                    FirErrors.UNSUPPORTED,
+                    "Function type parameters cannot have annotations."
+                )
+            }
+        }
 
-    context(reporter: DiagnosticReporter, context: CheckerContext)
-    private fun checkModifiers(source: KtSourceElement): Boolean {
-        val modifiersList = source.extractModifierList() ?: return true
-        for (modifier in modifiersList.modifiers) {
+        withSyntax { source.findValOrVarKeywordSource() }?.let {
             reporter.reportOn(
-                modifier.source,
+                it,
                 FirErrors.UNSUPPORTED,
-                "Function type parameters cannot have modifiers."
+                "Function type parameters cannot be 'val' or 'var'."
             )
         }
-        return false
-    }
-
-    context(reporter: DiagnosticReporter, context: CheckerContext)
-    private fun checkAnnotations(source: KtSourceElement): Boolean {
-        val commonModifiersList = source.extractModifierList() ?: return true
-        for (ann in commonModifiersList.annotationSources) {
-            reporter.reportOn(
-                ann,
-                FirErrors.UNSUPPORTED,
-                "Function type parameters cannot have annotations."
-            )
-        }
-        return false
     }
 }
