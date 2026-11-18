@@ -381,6 +381,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
         val restoredPointers = mutableListOf<KaSymbolPointer<*>>()
         val nonRestoredSymbols = mutableListOf<String>()
+        var hasRenderedWrongRestore = false
 
         val restored = analyzeForTest(analyzeContext ?: ktFile) {
             pointersWithRendered.mapNotNull { (val pointer, val expectedRender = rendered, val shouldBeRendered, val psiOnly) ->
@@ -391,6 +392,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                 }
 
                 val restored = pointer?.let { restoreSymbol(it, disablePsiBasedLogic) }
+                val actualRender = restored?.let { renderSymbolForComparison(it, directives) }
                 if (restored != null) {
                     if (psiOnly && disablePsiBasedLogic) {
                         fail(
@@ -399,22 +401,18 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         )
                     }
 
-                    restoredPointers += pointer
+                    // A pointer that restores another symbol skips `compareRestoredSymbols` and `compareCachedSymbols` but needs a
+                    // restoration directive. A rendered symbol isn't listed as non-restored, as `.restored.txt` shows the other one.
+                    when {
+                        actualRender == expectedRender -> restoredPointers += pointer
+                        shouldBeRendered -> hasRenderedWrongRestore = true
+                        else -> addNonRestoredSymbol()
+                    }
                 } else {
                     addNonRestoredSymbol()
                 }
 
-                val actualRender = restored?.let { renderSymbolForComparison(it, directives) }
-
-                when {
-                    shouldBeRendered -> actualRender ?: expectedRender
-                    actualRender != null && actualRender != expectedRender -> {
-                        addNonRestoredSymbol()
-                        null
-                    }
-
-                    else -> null
-                }
+                if (shouldBeRendered) actualRender ?: expectedRender else null
             }
         }
 
@@ -425,7 +423,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         val actual = restored.renderAsDeclarations()
-        val hasNonRestorable = nonRestoredSymbols.isNotEmpty()
+        val hasNonRestorable = nonRestoredSymbols.isNotEmpty() || hasRenderedWrongRestore
         val nonRestorableActual = nonRestoredSymbols.ifNotEmpty { joinToString(separator = "\n\n").trimEnd() }
         assertEqualsToTestOutputFile(
             actual = nonRestorableActual,
@@ -450,7 +448,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                 DO_NOT_REQUIRE_SYMBOL_RESTORATION
             }
 
-            fail("Some symbols are non-restorable. Add // $directive directive.")
+            fail("Some symbols are non-restorable or restored as other symbols. Add // $directive directive.")
         }
 
         if (directiveToIgnore != null && !hasNonRestorable) {
