@@ -136,15 +136,11 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::JsInteropFunctionsLowering,
 
     ::ObjectDeclarationLowering, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
-    ::WasmStaticInitializersDeclarationLowering,
-    ::WasmStaticInitializersUsageLowering,
 
     ::EnumUsageLowering,
     ::EnumClassRemoveEntriesLowering,
 
     ::WasmSuspendFunctionsLowering,
-    ::WasmInitializersLowering,
-    ::WasmInitializersCleanupLowering,
 
     ::WasmAddContinuationToNonLocalSuspendFunctionsLowering,
     ::WasmAddContinuationToFunctionCallsLowering,
@@ -169,6 +165,12 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::WasmDefaultParameterPatchOverridenSymbolsLowering,
     ::WasmDefaultParameterInjector,
     ::DefaultParameterCleaner,
+
+    ::WasmStaticInitializersDeclarationLowering,
+    ::WasmStaticInitializersUsageLowering,
+
+    ::WasmInitializersLowering,
+    ::WasmInitializersCleanupLowering,
 
     ::WasmPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
