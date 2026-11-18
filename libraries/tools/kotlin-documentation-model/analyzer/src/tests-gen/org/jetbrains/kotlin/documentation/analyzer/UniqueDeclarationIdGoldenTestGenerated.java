@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.documentation.analyzer;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -91,5 +92,73 @@ public class UniqueDeclarationIdGoldenTestGenerated extends AbstractUniqueDeclar
   @TestMetadata("valueClassOverload.kt")
   public void testValueClassOverload() {
     run("valueClassOverload.kt");
+  }
+
+  @Nested
+  @TestMetadata("libraries/tools/kotlin-documentation-model/analyzer/src/test/resources/testData/analyzer/declarationIds/declarationIdErrors")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DeclarationIdErrors {
+    private void run(String fileName) {
+      runTest("libraries/tools/kotlin-documentation-model/analyzer/src/test/resources/testData/analyzer/declarationIds/declarationIdErrors/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInDeclarationIdErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlin-documentation-model/analyzer/src/test/resources/testData/analyzer/declarationIds/declarationIdErrors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("boundsNormalizationDNN.kt")
+    public void testBoundsNormalizationDNN() {
+      run("boundsNormalizationDNN.kt");
+    }
+
+    @Test
+    @TestMetadata("clashingCallables.kt")
+    public void testClashingCallables() {
+      run("clashingCallables.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultBoundNormalization.kt")
+    public void testDefaultBoundNormalization() {
+      run("defaultBoundNormalization.kt");
+    }
+
+    @Test
+    @TestMetadata("erroneousDeclarations.kt")
+    public void testErroneousDeclarations() {
+      run("erroneousDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionReceiverClash.kt")
+    public void testExtensionReceiverClash() {
+      run("extensionReceiverClash.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmNameClash.kt")
+    public void testJvmNameClash() {
+      run("jvmNameClash.kt");
+    }
+
+    @Test
+    @TestMetadata("reifiedClash.kt")
+    public void testReifiedClash() {
+      run("reifiedClash.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterRename.kt")
+    public void testTypeParameterRename() {
+      run("typeParameterRename.kt");
+    }
+
+    @Test
+    @TestMetadata("varargArrayClash.kt")
+    public void testVarargArrayClash() {
+      run("varargArrayClash.kt");
+    }
   }
 }

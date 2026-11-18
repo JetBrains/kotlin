@@ -1,3 +1,4 @@
+// LANGUAGE: +CompanionBlocks
 // MODULE: main
 // FILE: sample/Companions.kt
 package sample

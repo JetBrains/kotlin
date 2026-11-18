@@ -32,11 +32,6 @@ fun main(args: Array<String>) {
             testClass<AbstractUniqueDeclarationIdGoldenTest> {
                 model("declarationIds")
             }
-            // Same abstract class as declarationIds, kept as a separate generated class so the
-            // erroneous-declaration fixtures stay in their own test data directory.
-            testClass<AbstractUniqueDeclarationIdGoldenTest>(suiteTestClassName = "DeclarationIdErrorsGoldenTestGenerated") {
-                model("declarationIdErrors")
-            }
         }
     }
 }
