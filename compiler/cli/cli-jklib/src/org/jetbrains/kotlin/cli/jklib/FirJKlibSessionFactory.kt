@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jklib
 
+import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.cli.common.SessionConstructionUtils
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -270,9 +271,9 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
  * - legacy (one platform and one common module)
  * - HMPP (multiple number of modules)
  */
-internal fun <F> prepareJKlibSessions(
+internal fun prepareJKlibSessions(
     projectEnvironment: VfsBasedProjectEnvironment,
-    files: List<F>,
+    sources: GroupedKtSources,
     configuration: CompilerConfiguration,
     rootModuleName: Name,
     resolvedLibraries: List<KotlinLibrary>,
@@ -280,24 +281,20 @@ internal fun <F> prepareJKlibSessions(
     extensionRegistrars: List<FirExtensionRegistrar>,
     metadataCompilationMode: Boolean,
     librariesClasspath: JvmClasspath,
-    isCommonSource: (F) -> Boolean,
-    fileBelongsToModule: (F, String) -> Boolean,
-): List<SessionWithSources<F>> {
+): List<SessionWithSources> {
     val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
     val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesClasspath)
     val javaInterop = projectEnvironment.javaInterop(configuration)
 
     return SessionConstructionUtils.prepareSessions(
-        files,
+        sources,
         configuration,
         rootModuleName,
         JvmPlatforms.unspecifiedJvmPlatform,
         metadataCompilationMode,
         libraryList,
         extensionRegistrars,
-        isCommonSource,
-        isScript = { false },
-        fileBelongsToModule,
+        createSeparateSessionForScripts = false,
         createSharedLibrarySession = {
             FirJKlibSessionFactory.createSharedLibrarySession(
                 rootModuleName,

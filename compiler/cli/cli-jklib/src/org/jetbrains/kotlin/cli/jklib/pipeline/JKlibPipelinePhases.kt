@@ -232,7 +232,6 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
 
         val resolvedLibraries = klibLoadingResult.librariesStdlibFirst
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
-        val sourceFiles = groupedSources.commonSources + groupedSources.platformSources
 
         val moduleName = configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
 
@@ -249,15 +248,13 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
 
         val sessionsWithSources = prepareJKlibSessions(
             projectEnvironment,
-            sourceFiles,
+            groupedSources,
             configuration,
             rootModuleName,
             resolvedLibraries,
             libraryList,
             extensionRegistrars,
             metadataCompilationMode = false,
-            isCommonSource = groupedSources::isCommonSource,
-            fileBelongsToModule = groupedSources::fileBelongsToModule,
             librariesClasspath = librariesClasspath,
         )
 

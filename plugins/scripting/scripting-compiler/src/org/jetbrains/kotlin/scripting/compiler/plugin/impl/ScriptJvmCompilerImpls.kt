@@ -5,10 +5,12 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.GroupedKtSources
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
@@ -22,16 +24,13 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.kotlinFqName
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name.special
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
@@ -223,14 +222,20 @@ private fun doCompileWithK2(
     val [librariesClasspath, incrementalCompilationContext] =
         prepareIncrementalCompilationContextAndLibrariesClasspath(configuration, projectEnvironment)
 
-    val session = prepareJvmSessionsForScripting(
-        projectEnvironment,
+    val session = JvmFrontendPipelinePhase.prepareJvmSessions(
+        // We need a single session for all scripts here. So the session factory is invoked
+        // without sources at all in order to prevent creating separate sessions for sources
+        // and scripts.
+        sources = GroupedKtSources.EMPTY,
+        rootModuleName = Name.special("<${targetId.name}>"),
         configuration,
-        ktFiles,
-        rootModuleNameAsString = targetId.name,
-        friendPaths = emptyList(),
+        projectEnvironment,
         librariesClasspath,
-        isScript = { false },
+        libraryList = createLibraryListForJvm(
+            moduleName = targetId.name,
+            configuration = configuration,
+            friendPaths = emptyList()
+        ),
         incrementalCompilationContext,
     ).single().session
 
@@ -309,7 +314,6 @@ private fun doCompileWithK2(
     }
 }
 
-@OptIn(UnsafeDuringIrConstructionAPI::class)
 internal fun extractResultFields(irModule: IrModuleFragment): MutableMap<FqName, ScriptResultFieldData> {
     val resultFields = mutableMapOf<FqName, ScriptResultFieldData>()
     irModule.files.forEach { file ->
@@ -320,30 +324,4 @@ internal fun extractResultFields(irModule: IrModuleFragment): MutableMap<FqName,
         }
     }
     return resultFields
-}
-
-private fun prepareJvmSessionsForScripting(
-    projectEnvironment: VfsBasedProjectEnvironment,
-    configuration: CompilerConfiguration,
-    files: List<KtFile>,
-    rootModuleNameAsString: String,
-    friendPaths: List<String>,
-    librariesClasspath: JvmClasspath,
-    isScript: (KtFile) -> Boolean,
-    incrementalCompilationContext: IncrementalCompilationContext?,
-): List<SessionWithSources<KtFile>> {
-    val libraryList = createLibraryListForJvm(rootModuleNameAsString, configuration, friendPaths)
-    val rootModuleName = special("<$rootModuleNameAsString>")
-    return JvmFrontendPipelinePhase.prepareJvmSessions(
-        files,
-        rootModuleName,
-        configuration,
-        projectEnvironment,
-        librariesClasspath,
-        libraryList,
-        isCommonSourceForPsi,
-        isScript,
-        fileBelongsToModuleForPsi,
-        incrementalCompilationContext,
-    )
 }

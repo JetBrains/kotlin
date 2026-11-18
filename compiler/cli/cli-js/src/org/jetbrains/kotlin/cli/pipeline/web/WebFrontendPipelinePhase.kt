@@ -109,21 +109,16 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             // TODO: !!! dependencies module data?
         }
 
-        val sourceFiles = groupedSources.commonSources + groupedSources.platformSources
         val sessionsWithSources = if (useWasmPlatform) {
             prepareWasmSessions(
-                sourceFiles, configuration, escapedMainModuleName,
+                groupedSources, configuration, escapedMainModuleName,
                 resolvedLibraries, dependencyList, extensionRegistrars,
-                isCommonSource = groupedSources::isCommonSource,
-                fileBelongsToModule = groupedSources::fileBelongsToModule,
                 incrementalDataProvider = incrementalDataProvider
             )
         } else {
             prepareJsSessions(
-                sourceFiles, configuration, escapedMainModuleName,
+                groupedSources, configuration, escapedMainModuleName,
                 resolvedLibraries, dependencyList, extensionRegistrars,
-                isCommonSource = groupedSources::isCommonSource,
-                fileBelongsToModule = groupedSources::fileBelongsToModule,
                 incrementalDataProvider = incrementalDataProvider
             )
         }

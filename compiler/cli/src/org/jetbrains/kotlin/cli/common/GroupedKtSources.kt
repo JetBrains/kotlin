@@ -49,6 +49,10 @@ data class GroupedKtSources(
     fun fileBelongsToModule(file: KtSourceFile, moduleName: String): Boolean {
         return sourcesByModuleName[moduleName]?.contains(file) == true
     }
+
+    companion object {
+        val EMPTY = GroupedKtSources(emptyList(), emptyList(), emptyMap())
+    }
 }
 
 val GroupedKtSources.allFiles: List<KtSourceFile>
