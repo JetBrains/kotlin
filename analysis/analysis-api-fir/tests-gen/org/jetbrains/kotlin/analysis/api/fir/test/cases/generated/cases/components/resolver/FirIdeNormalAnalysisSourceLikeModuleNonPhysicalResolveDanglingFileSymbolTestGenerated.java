@@ -63,6 +63,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleNonPhysicalResolveDanglingFileS
   }
 
   @Test
+  @TestMetadata("expectAndActualClassInLibrarySource.kt")
+  public void testExpectAndActualClassInLibrarySource() {
+    run("expectAndActualClassInLibrarySource.kt");
+  }
+
+  @Test
   @TestMetadata("functionDifferentFile.kt")
   public void testFunctionDifferentFile() {
     run("functionDifferentFile.kt");
@@ -109,6 +115,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleNonPhysicalResolveDanglingFileS
     @TestMetadata("constructorValueParameterFromPrecedingParameterDefaultValue.kt")
     public void testConstructorValueParameterFromPrecedingParameterDefaultValue() {
       run("constructorValueParameterFromPrecedingParameterDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("expectAndActualClassInLibrarySource.kt")
+    public void testExpectAndActualClassInLibrarySource() {
+      run("expectAndActualClassInLibrarySource.kt");
     }
 
     @Test
@@ -237,6 +249,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleNonPhysicalResolveDanglingFileS
     @TestMetadata("companionObject.kt")
     public void testCompanionObject() {
       run("companionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("expectAndActualClassInLibrarySource.kt")
+    public void testExpectAndActualClassInLibrarySource() {
+      run("expectAndActualClassInLibrarySource.kt");
     }
 
     @Test
