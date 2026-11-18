@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -739,6 +739,18 @@ class WasmIrToBinary(
             // Store resolved annotations for later section emission
             if (annotations != null) {
                 resolvedAnnotationsByFunction.add(FunctionResolvedAnnotations(functionIndex, annotations))
+            }
+
+            if (!shouldWriteLocationBeforeFunctionHeader) {
+                // Make sure the function body has at least one (albeit dummy) mapping, so that the `SourceLocation.NextLocation`
+                // generated previously doesn't point outside the function.
+                debugInformationGenerator?.addSourceLocation(
+                    SourceLocationMappingToBinary(
+                        sourceLocation = SourceLocation.IgnoredLocation,
+                        codeSectionOffset = codeSectionOffset,
+                        offset = b.written
+                    )
+                )
             }
 
             debugInformationGenerator?.endFunction(getCurrentSourceLocationMapping(function.endLocation))
