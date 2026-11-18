@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.parserMode
@@ -46,7 +45,7 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         configuration: CompilerConfiguration
     ): KotlinCoreEnvironment {
         @OptIn(CoreEnvironmentDeprecation::class)
-        return KotlinCoreEnvironment.createForProduction(projectEnvironment, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForProduction(projectEnvironment, configuration)
     }
 
     override fun createScriptEvaluator(): ScriptEvaluator {

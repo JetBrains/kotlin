@@ -10,7 +10,6 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -422,7 +421,7 @@ class ScriptTemplateTest {
             loadScriptingPlugin(configuration, rootDisposable)
 
             @OptIn(CoreEnvironmentDeprecation::class)
-            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration)
 
             return try {
                 val res = compileScript(

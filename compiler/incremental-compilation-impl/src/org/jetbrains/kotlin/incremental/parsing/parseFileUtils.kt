@@ -48,10 +48,9 @@ private fun classesFqNames(kotlinFiles: Collection<File>, disposable: Disposable
     @OptIn(MessageCollectorAccess::class) // write access
     config.messageCollector = MessageCollector.NONE
     config.configureJdkClasspathRoots()
-    val configFiles = EnvironmentConfigFiles.JVM_CONFIG_FILES
 
     @OptIn(CoreEnvironmentDeprecation::class)
-    val environment = KotlinCoreEnvironment.createForProduction(disposable, config, configFiles)
+    val environment = KotlinCoreEnvironment.createForProduction(disposable, config)
     val psiManager = PsiManager.getInstance(environment.project)
     val fileManager = VirtualFileManager.getInstance()
     val localFS = fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL) as KotlinLocalFileSystem

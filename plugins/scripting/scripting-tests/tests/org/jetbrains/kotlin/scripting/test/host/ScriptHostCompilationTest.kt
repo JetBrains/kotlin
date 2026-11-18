@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -174,7 +173,7 @@ class ScriptHostCompilationTest {
             loadScriptingPlugin(this, testRootDisposable)
         }
         @OptIn(CoreEnvironmentDeprecation::class)
-        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration)
     }
 
     private fun runCompiler(
@@ -209,7 +208,7 @@ class ScriptHostCompilationTest {
         }
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration)
 
         return compileAndExecuteScript(script.toScriptSource(), environment, args) to collector
     }

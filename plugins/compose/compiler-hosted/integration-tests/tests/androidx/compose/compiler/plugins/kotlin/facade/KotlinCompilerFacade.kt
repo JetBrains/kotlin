@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -130,7 +129,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
 
             @OptIn(CoreEnvironmentDeprecation::class)
             val environment = KotlinCoreEnvironment.createForTests(
-                disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
+                disposable, configuration
             )
 
             ComposePluginRegistrar.checkCompilerConfiguration(configuration)

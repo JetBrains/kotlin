@@ -61,8 +61,7 @@ class CoreJrtFsTest {
 
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
-            this.testRootDisposable,
-            configuration
+            this.testRootDisposable
         )
 
         val jrt = environment.jrtFileSystem ?: error("No jrt-fs configured")

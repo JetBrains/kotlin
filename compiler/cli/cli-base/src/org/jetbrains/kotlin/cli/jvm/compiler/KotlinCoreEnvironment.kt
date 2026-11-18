@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.extensionsStorage
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode.Production
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode.UnitTest
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
@@ -72,8 +74,7 @@ import java.io.File
 @OptIn(K1Deprecation::class, CoreEnvironmentDeprecation::class)
 class KotlinCoreEnvironment private constructor(
     val projectEnvironment: ProjectEnvironment,
-    val configuration: CompilerConfiguration,
-    configFiles: EnvironmentConfigFiles
+    val configuration: CompilerConfiguration
 ) {
 
     class ProjectEnvironment(
@@ -375,12 +376,11 @@ class KotlinCoreEnvironment private constructor(
         fun createForProduction(
             projectDisposable: Disposable,
             configuration: CompilerConfiguration,
-            configFiles: EnvironmentConfigFiles,
         ): KotlinCoreEnvironment {
             setupIdeaStandaloneExecution()
             val appEnv = getOrCreateApplicationEnvironment(projectDisposable, configuration)
             val projectEnv = ProjectEnvironment(projectDisposable, appEnv, configuration)
-            val environment = KotlinCoreEnvironment(projectEnv, configuration, configFiles)
+            val environment = KotlinCoreEnvironment(projectEnv, configuration)
 
             return environment
         }
@@ -390,25 +390,25 @@ class KotlinCoreEnvironment private constructor(
         fun createForProduction(
             projectEnvironment: ProjectEnvironment,
             configuration: CompilerConfiguration,
-            configFiles: EnvironmentConfigFiles,
         ): KotlinCoreEnvironment {
-            return KotlinCoreEnvironment(projectEnvironment, configuration, configFiles)
+            return KotlinCoreEnvironment(projectEnvironment, configuration)
         }
 
         @TestOnly
         @JvmStatic
         @CoreEnvironmentDeprecation
         fun createForTests(
-            parentDisposable: Disposable, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
+            parentDisposable: Disposable,
+            initialConfiguration: CompilerConfiguration,
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
             // Tests are supposed to create a single project and dispose it right after use
             val appEnv = createApplicationEnvironment(
                 parentDisposable,
-                KotlinCoreApplicationEnvironmentMode.UnitTest,
+                UnitTest,
             )
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
-            return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
+            return KotlinCoreEnvironment(projectEnv, configuration)
         }
 
         @TestOnly
@@ -417,21 +417,21 @@ class KotlinCoreEnvironment private constructor(
         fun createForParallelTests(
             projectDisposable: Disposable,
             initialConfiguration: CompilerConfiguration,
-            extensionConfigs: EnvironmentConfigFiles,
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
-            val appEnv = getOrCreateApplicationEnvironmentForTests(projectDisposable, configuration)
+            val appEnv = getOrCreateApplicationEnvironmentForTests(projectDisposable)
             val projectEnv = ProjectEnvironment(projectDisposable, appEnv, configuration)
-            return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
+            return KotlinCoreEnvironment(projectEnv, configuration)
         }
 
         @TestOnly
         @JvmStatic
         @CoreEnvironmentDeprecation
         fun createForTests(
-            projectEnvironment: ProjectEnvironment, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
+            projectEnvironment: ProjectEnvironment,
+            initialConfiguration: CompilerConfiguration,
         ): KotlinCoreEnvironment {
-            return KotlinCoreEnvironment(projectEnvironment, initialConfiguration, extensionConfigs)
+            return KotlinCoreEnvironment(projectEnvironment, initialConfiguration)
         }
 
         // used in the daemon for jar cache cleanup
@@ -439,24 +439,14 @@ class KotlinCoreEnvironment private constructor(
         val applicationEnvironment: KotlinCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
         @CoreEnvironmentDeprecation
-        fun getOrCreateApplicationEnvironmentForProduction(
-            projectDisposable: Disposable,
-            configuration: CompilerConfiguration,
-        ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(
-            projectDisposable,
-            configuration,
-            KotlinCoreApplicationEnvironmentMode.Production,
-        )
+        fun getOrCreateApplicationEnvironmentForProduction(projectDisposable: Disposable): KotlinCoreApplicationEnvironment {
+            return getOrCreateApplicationEnvironment(projectDisposable, Production)
+        }
 
         @CoreEnvironmentDeprecation
-        fun getOrCreateApplicationEnvironmentForTests(
-            projectDisposable: Disposable,
-            configuration: CompilerConfiguration,
-        ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(
-            projectDisposable,
-            configuration,
-            KotlinCoreApplicationEnvironmentMode.UnitTest,
-        )
+        fun getOrCreateApplicationEnvironmentForTests(projectDisposable: Disposable): KotlinCoreApplicationEnvironment {
+            return getOrCreateApplicationEnvironment(projectDisposable, UnitTest)
+        }
 
         /**
          * Test or Production mode is determined by [CLIConfigurationKeys.TEST_ENVIRONMENT] configuration key
@@ -467,16 +457,15 @@ class KotlinCoreEnvironment private constructor(
             configuration: CompilerConfiguration,
         ): KotlinCoreApplicationEnvironment {
             val mode = when (configuration.testEnvironment) {
-                false -> KotlinCoreApplicationEnvironmentMode.Production
-                true -> KotlinCoreApplicationEnvironmentMode.UnitTest
+                false -> Production
+                true -> UnitTest
             }
-            return getOrCreateApplicationEnvironment(projectDisposable, configuration, mode)
+            return getOrCreateApplicationEnvironment(projectDisposable, mode)
         }
 
         @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironment(
             projectDisposable: Disposable,
-            configuration: CompilerConfiguration,
             environmentMode: KotlinCoreApplicationEnvironmentMode,
         ): KotlinCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {

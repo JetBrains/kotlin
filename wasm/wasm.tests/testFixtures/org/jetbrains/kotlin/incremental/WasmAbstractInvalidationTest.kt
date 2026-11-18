@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICWholeWorld
 import org.jetbrains.kotlin.backend.wasm.ic.*
 import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -192,7 +191,7 @@ abstract class WasmAbstractInvalidationTest(
 
     @OptIn(CoreEnvironmentDeprecation::class)
     override val environment: KotlinCoreEnvironment =
-        KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration.create(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+        KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration.create())
 
     override fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration =
         WasmCompilerInvocationTestConfiguration(buildDir, AbstractWasmPartialLinkageTestCase.CompilerType.WITH_IC)

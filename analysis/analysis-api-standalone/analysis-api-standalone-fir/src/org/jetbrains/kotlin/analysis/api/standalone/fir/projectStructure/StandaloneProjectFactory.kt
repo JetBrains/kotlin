@@ -80,12 +80,10 @@ object StandaloneProjectFactory {
     fun createProjectEnvironment(
         projectDisposable: Disposable,
         applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
-        compilerConfiguration: CompilerConfiguration = CompilerConfiguration.create(),
     ): KotlinCoreProjectEnvironment {
         @OptIn(CoreEnvironmentDeprecation::class)
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(
             projectDisposable = projectDisposable,
-            compilerConfiguration,
             applicationEnvironmentMode,
         )
 

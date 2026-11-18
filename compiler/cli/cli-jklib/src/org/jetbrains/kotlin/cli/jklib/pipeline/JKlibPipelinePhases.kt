@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.cli.jklib.config.jklibManifestProperties
 import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
 import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.configureJdkHomeFromSystemProperty
 import org.jetbrains.kotlin.cli.pipeline.*
@@ -213,7 +212,6 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
         val projectEnvironment = JvmFrontendPipelinePhase.createProjectEnvironment(
             configuration,
             rootDisposable,
-            EnvironmentConfigFiles.JVM_CONFIG_FILES,
         )
         val groupedSources = collectSources(configuration, projectEnvironment)
 

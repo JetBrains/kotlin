@@ -200,8 +200,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             true -> {
                 val environment = createProjectEnvironment(
                     configuration,
-                    rootDisposable,
-                    EnvironmentConfigFiles.JVM_CONFIG_FILES
+                    rootDisposable
                 )
                 val sources = { collectSources(configuration, environment) }
                 EnvironmentAndSources(environment, sources)
@@ -595,7 +594,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     fun createProjectEnvironment(
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
-        configFiles: EnvironmentConfigFiles,
     ): VfsBasedProjectEnvironment {
         setupIdeaStandaloneExecution()
 
@@ -789,8 +787,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForProduction(
             rootDisposable,
-            configuration,
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
+            configuration
         )
 
         val sourceFiles = environment.getSourceFiles()

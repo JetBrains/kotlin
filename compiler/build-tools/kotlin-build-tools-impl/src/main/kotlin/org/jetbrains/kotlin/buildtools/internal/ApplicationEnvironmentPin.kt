@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.buildtools.internal
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.incremental.clearJarCaches
 
 internal object ApplicationEnvironmentPinProvider {
@@ -25,9 +23,7 @@ private class ApplicationEnvironmentPin : AutoCloseable {
     init {
         setupIdeaStandaloneExecution()
         @OptIn(CoreEnvironmentDeprecation::class)
-        KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(
-            disposable, CompilerConfiguration.create()
-        )
+        KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(disposable)
     }
 
     override fun close() {

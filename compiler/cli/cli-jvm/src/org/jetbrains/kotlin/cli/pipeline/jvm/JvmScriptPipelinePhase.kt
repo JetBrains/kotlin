@@ -33,7 +33,7 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
             KotlinCoreEnvironment.ProjectEnvironment(
                 rootDisposable,
                 @OptIn(CoreEnvironmentDeprecation::class)
-                KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration),
+                KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable),
                 configuration
             ).also {
                 it.registerExtensionsFromPlugins(configuration)

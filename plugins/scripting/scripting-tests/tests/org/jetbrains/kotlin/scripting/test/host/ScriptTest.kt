@@ -11,7 +11,6 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.net.URLClassLoader
@@ -149,7 +147,7 @@ class ScriptTest {
             loadScriptingPlugin(configuration, rootDisposable)
 
             @OptIn(CoreEnvironmentDeprecation::class)
-            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration)
 
             try {
                 return compileScript(
