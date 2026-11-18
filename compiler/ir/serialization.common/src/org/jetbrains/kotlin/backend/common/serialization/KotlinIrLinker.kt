@@ -135,6 +135,7 @@ abstract class KotlinIrLinker(
     // In case if a symbol was asked after deserialization, we would like to make sure that it is correctly and fully linked.
     private var finished = false
 
+    // TODO(KT-90301): Drop this function. Call `KotlinIrLinker.findAndEnqueueSymbolOrNull()` instead!
     @IrLinkerInternalApi
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
         idSignature: IdSignature,
@@ -145,57 +146,24 @@ abstract class KotlinIrLinker(
             "An attempt to run a lookup in IR linker for a signature that is supposed to be limited to the single file: ${idSignature::class.java.simpleName}, ${idSignature.render()}"
         }
 
-        val topLevelSignature: IdSignature = idSignature.topLevelSignature()
+        val signatureAndKind = SignatureAndKind(idSignature, symbolKind)
+        val symbol = findAndEnqueueSymbolOrNull(signatureAndKind)
 
-        // Note: The top-level symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
-        // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
-        // handle such situation appropriately. See KT-41378.
-
-        var currentModuleIfSearched: IrModuleDeserializer? = null
-        var actualModuleDeserializer: IrModuleDeserializer? = null
-        if (moduleDeserializer.preferLinkingToTheCurrentModule) {
-            // First, look for the declaration in the current module (the module with a use-site of this signature).
-            // This influences how duplicated declarations are handled. Longer explanation:
-            //
-            // At first, this was done as an optimization. Any given symbol is most likely to be found in the same Klib as it is used from.
-            // So it made sense to check it first, only then iterate over all other Klibs.
-            // Now, with an introduction of package index (KT-84837), this optimization becomes mostly unnecessary. We expect it's OK to
-            // iterate over all Klibs to define a given package, as usually there should be only one or very few.
-            // So this logic could be removed. However, we keep it to preserve the old behavior when two Klibs define the same declaration
-            // (even though that behavior is very much imperfect) until we have a definite answer to this problem (KT-82172).
-            // Hence, this logic could be theoretically removed. However, we keep it to preserve the old behavior when two Klibs define the
-            // same declaration (even though the behavior is very much imperfect) until we have a definite answer to this problem (KT-82172).
-            // It goes like this: Assuming there are two Klibs, libA and libB, both defining a class C, then:
-            // - If both libA and libB reference class C, each will try to link to "their own" version of the class. In practice,
-            //      this will usually fail, with the second deserialization call failing with an exception like "Class C is already bound".
-            // - If only libA or libB reference class C, and that reference is the first one met by the linker, the corresponding version
-            //     of class C will be linked.
-            // - Otherwise, class C will be arbitrarily linked from either libA or libB.
-            if (topLevelSignature in moduleDeserializer) {
-                actualModuleDeserializer = moduleDeserializer
-            }
-            currentModuleIfSearched = moduleDeserializer
-        }
-        if (actualModuleDeserializer == null) {
-            actualModuleDeserializer = firstModuleDeserializerOrNull(topLevelSignature.packageFqName()) {
-                it != currentModuleIfSearched && topLevelSignature in it
+        // Note: This is a workaround that we need to maintain temporarily until signature indices are implemented for
+        // Kotlin/JS and Kotlin/Wasm (KT-89836) and the topo-sorting method is switched to KLIB DAG (KT-90301).
+        if (symbol != null) {
+            if (moduleDependencyTracker !== IrModuleDependencyTracker.DISABLED) {
+                val toModuleDeserializer = firstModuleDeserializerOrNull(idSignature.packageFqName()) { idSignature in it }
+                if (toModuleDeserializer != null) {
+                    moduleDependencyTracker.trackDependency(
+                        fromModule = moduleDeserializer.moduleFragment,
+                        toModule = toModuleDeserializer.moduleFragment
+                    )
+                }
             }
         }
 
-        // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
-        // Then the `actualModuleDeserializer` will be non-null, but `actualModuleDeserializer.tryDeserializeIrSymbol()` call
-        // might return null (like KonanInteropModuleDeserializer does) or non-null unbound symbol (like JsModuleDeserializer does).
-        val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
-
-        return if (symbol != null) {
-            moduleDependencyTracker.trackDependency(
-                fromModule = moduleDeserializer.moduleFragment,
-                toModule = actualModuleDeserializer.moduleFragment
-            )
-
-            symbol
-        } else
-            referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
+        return symbol ?: referenceDeserializedSymbol(symbolTable, signatureAndKind)
     }
 
     private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? =
