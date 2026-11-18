@@ -1,12 +1,12 @@
 package one
 
-/* ClassId: one/MyEnum [PsiFqName: one.EnumEntryScript.MyEnum] */enum class MyEnum {
-    /* ClassId: null [PsiFqName: one.EnumEntryScript.MyEnum.Entry] */Entry {
+/* ClassId: one/MyEnum */enum class MyEnum {
+    /* ClassId: null [PsiFqName: one.MyEnum.Entry] */Entry {
         fun foo() = Unit
         /* ClassId: null */class ClassInsideEntry
     },
-    /* ClassId: null [PsiFqName: one.EnumEntryScript.MyEnum.Entry2] */Entry2,
-    /* ClassId: null [PsiFqName: one.EnumEntryScript.MyEnum.Entry3] */Entry3 {
+    /* ClassId: null [PsiFqName: one.MyEnum.Entry2] */Entry2,
+    /* ClassId: null [PsiFqName: one.MyEnum.Entry3] */Entry3 {
 
     }
 }

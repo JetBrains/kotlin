@@ -1,8 +1,8 @@
-/* ClassId: /TopLevelObject [PsiFqName: ClassWithMembersScript.TopLevelObject] */object TopLevelObject
+/* ClassId: /TopLevelObject */object TopLevelObject
 
-/* ClassId: /A [PsiFqName: ClassWithMembersScript.A] */class A constructor(a: Int) {
-    /* ClassId: /A.B [PsiFqName: ClassWithMembersScript.A.B] */class B {
-        /* ClassId: /A.B.C [PsiFqName: ClassWithMembersScript.A.B.C] */inner class C {
+/* ClassId: /A */class A constructor(a: Int) {
+    /* ClassId: /A.B */class B {
+        /* ClassId: /A.B.C */inner class C {
             fun foo() {
                 /* ClassId: null */typealias F = C
 
@@ -16,14 +16,13 @@
         /* ClassId: null */typealias B = A
     }
 
-    /* ClassId: /A.NestedTypeAlias [PsiFqName: ClassWithMembersScript.A.NestedTypeAlias] */typealias NestedTypeAlias = B
+    /* ClassId: /A.NestedTypeAlias */typealias NestedTypeAlias = B
 }
 
-/* ClassId: /TopLevelAlias [PsiFqName: ClassWithMembersScript.TopLevelAlias] */typealias TopLevelAlias
+/* ClassId: /TopLevelAlias */typealias TopLevelAlias
 
 foo {
     /* ClassId: null */class E
 }
 
-// IGNORE_CONSISTENCY_CHECK: KT-61887
 // IGNORE_TREE_ACCESS: KT-89820
