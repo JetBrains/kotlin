@@ -192,6 +192,10 @@ internal class CallGraphBuilder(
         ) { handleRoot(it) }
     }
 
+    private val unitType: DataFlowIR.Type by lazy {
+        moduleDFG.symbolTable.mapType(context.irBuiltIns.unitType)
+    }
+
     private inner class FunctionStack {
         private val stack = mutableListOf<DataFlowIR.Function>()
 
@@ -260,7 +264,7 @@ internal class CallGraphBuilder(
                         block(DataFlowIR.Node.Call(
                                 callee = node.callee,
                                 arguments = listOf(node.array, node.index, node.value),
-                                returnType = moduleDFG.symbolTable.mapType(context.irBuiltIns.unitType),
+                                returnType = unitType,
                                 irCallSite = null),
                                 node
                         )
