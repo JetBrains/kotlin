@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,7 +30,7 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
     skipInlineMethods = false,
     skipExternalMethods = false
 ) {
-    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+    override fun transformFlat(declaration: IrDeclaration): List<IrFunction>? {
         if (declaration is IrFunction &&
             declaration !is IrConstructor &&
             declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)

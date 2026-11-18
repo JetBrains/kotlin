@@ -237,6 +237,19 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
+        name = "Xes-default-parameters"
+        compilerName = "useEsDefaultParameters"
+        description =
+            "Compile functions with default arguments using the ES2015 default parameter syntax. Enabled by default in case of ES2015 target usage".asReleaseDependent()
+        valueType = BooleanType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
+
+    compilerArgument {
         name = "Xes-long-as-bigint"
         compilerName = "compileLongAsBigInt"
         description = "Compile Long values as ES2020 bigint instead of object.".asReleaseDependent()

@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import java.io.StringWriter
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Binds all arguments represented in the IR to the parameters of the accessed function.
@@ -1039,6 +1041,15 @@ object SetDeclarationsParentVisitor : IrVisitor<Unit, IrDeclarationParent>() {
 
 val IrFunction.isStatic: Boolean
     get() = parent is IrClass && dispatchReceiverParameter == null && this.visibility != DescriptorVisibilities.LOCAL
+
+val IrFunction.isInstanceMethod: Boolean
+    @OptIn(ExperimentalContracts::class)
+    get() {
+        contract {
+            returns(true) implies (this@isInstanceMethod is IrSimpleFunction)
+        }
+        return this is IrSimpleFunction && parent is IrClass && dispatchReceiverParameter != null
+    }
 
 val IrDeclaration.isTopLevel: Boolean
     get() {

@@ -204,6 +204,10 @@ object JSConfigurationKeys {
     @JvmField
     val DCE_UNUSED_PROPERTIES = CompilerConfigurationKey.create<Boolean>("DCE_UNUSED_PROPERTIES")
 
+    // Compile functions with default arguments using the ES6 default parameter syntax
+    @JvmField
+    val USE_ES6_DEFAULT_ARGS = CompilerConfigurationKey.create<Boolean>("USE_ES6_DEFAULT_ARGS")
+
 }
 
 var CompilerConfiguration.wasmCompilation: Boolean
@@ -409,4 +413,8 @@ var CompilerConfiguration.exportUntypedAsUnknown: Boolean
 var CompilerConfiguration.dceUnusedProperties: Boolean
     get() = getBoolean(JSConfigurationKeys.DCE_UNUSED_PROPERTIES)
     set(value) { put(JSConfigurationKeys.DCE_UNUSED_PROPERTIES, value) }
+
+var CompilerConfiguration.useEs6DefaultArgs: Boolean
+    get() = getBoolean(JSConfigurationKeys.USE_ES6_DEFAULT_ARGS)
+    set(value) { put(JSConfigurationKeys.USE_ES6_DEFAULT_ARGS, value) }
 
