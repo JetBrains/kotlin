@@ -76,6 +76,20 @@ object KotlinUsages {
      */
     internal const val KOTLIN_NPM_RUNTIME_DEPENDENCIES = "kotlin-npm-runtime-dependencies"
 
+    /**
+     * WIT declarations of a Wasm WASI project, offered to the projects that depend on it.
+     *
+     * NOTE: This usage is compatible with [KOTLIN_RUNTIME], so that dependencies without their own WIT declarations variant,
+     * such as published libraries, resolve to their klib, from which
+     * [org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitExtractionTransform] extracts the WIT declarations.
+     *
+     * It is also compatible with [JAVA_RUNTIME], like the Wasm runtime classpath.
+     *
+     * Producers of the plain [KOTLIN_RUNTIME] usage, on the other hand, never see variants with this usage,
+     * so the WIT declarations can't be selected instead of the klib.
+     */
+    internal const val KOTLIN_WIT_RUNTIME_DEPENDENCIES = "kotlin-wit-runtime-dependencies"
+
     // Following two constants were removed in Gradle 8.0 from 'Usages' class
     private const val JAVA_RUNTIME_CLASSES = "java-runtime-classes"
     private const val JAVA_RUNTIME_RESOURCES = "java-runtime-resources"
@@ -169,11 +183,12 @@ object KotlinUsages {
         }
     }
 
-    private val npmRuntimeDependenciesFallbacks = listOf(KOTLIN_RUNTIME, JAVA_RUNTIME)
+    /** Usages that [KOTLIN_NPM_RUNTIME_DEPENDENCIES] and [KOTLIN_WIT_RUNTIME_DEPENDENCIES] consumers fall back to, in order of preference. */
+    private val runtimeDependenciesFallbacks = listOf(KOTLIN_RUNTIME, JAVA_RUNTIME)
 
     private class KotlinNpmRuntimeDependenciesCompatibility : AttributeCompatibilityRule<Usage> {
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
-            if (consumerValue?.name == KOTLIN_NPM_RUNTIME_DEPENDENCIES && producerValue?.name in npmRuntimeDependenciesFallbacks) {
+            if (consumerValue?.name == KOTLIN_NPM_RUNTIME_DEPENDENCIES && producerValue?.name in runtimeDependenciesFallbacks) {
                 compatible()
             }
         }
@@ -183,7 +198,26 @@ object KotlinUsages {
         override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
             if (consumerValue?.name == KOTLIN_NPM_RUNTIME_DEPENDENCIES) {
                 val candidateNames = getCandidateNames()
-                (listOf(KOTLIN_NPM_RUNTIME_DEPENDENCIES) + npmRuntimeDependenciesFallbacks)
+                (listOf(KOTLIN_NPM_RUNTIME_DEPENDENCIES) + runtimeDependenciesFallbacks)
+                    .firstOrNull { it in candidateNames }
+                    ?.let { chooseCandidateByName(it) }
+            }
+        }
+    }
+
+    private class KotlinWitRuntimeDependenciesCompatibility : AttributeCompatibilityRule<Usage> {
+        override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
+            if (consumerValue?.name == KOTLIN_WIT_RUNTIME_DEPENDENCIES && producerValue?.name in runtimeDependenciesFallbacks) {
+                compatible()
+            }
+        }
+    }
+
+    private class KotlinWitRuntimeDependenciesDisambiguation : AttributeDisambiguationRule<Usage> {
+        override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
+            if (consumerValue?.name == KOTLIN_WIT_RUNTIME_DEPENDENCIES) {
+                val candidateNames = getCandidateNames()
+                (listOf(KOTLIN_WIT_RUNTIME_DEPENDENCIES) + runtimeDependenciesFallbacks)
                     .firstOrNull { it in candidateNames }
                     ?.let { chooseCandidateByName(it) }
             }
@@ -261,6 +295,9 @@ object KotlinUsages {
 
             strategy.compatibilityRules.add(KotlinNpmRuntimeDependenciesCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinNpmRuntimeDependenciesDisambiguation::class.java)
+
+            strategy.compatibilityRules.add(KotlinWitRuntimeDependenciesCompatibility::class.java)
+            strategy.disambiguationRules.add(KotlinWitRuntimeDependenciesDisambiguation::class.java)
         }
     }
 }
