@@ -87,19 +87,21 @@ class IrFileDeserializer(
         return false
     }
 
-    internal fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
-        val topLevelCallableSignature = callableIdToSignature[callableId] ?: return emptyList()
-        return buildList {
-            for (topLevelSignature in topLevelCallableSignature) {
-                val index = reversedSignatureIndex[topLevelSignature] ?: continue
-                val protoKind = libraryFile.declarationKind(index)
-                when (signatureKind) {
-                    BinarySymbolData.SymbolKind.FUNCTION_SYMBOL ->
-                        if (protoKind == ProtoDeclaration.DeclaratorCase.IR_FUNCTION) add(topLevelSignature)
-                    BinarySymbolData.SymbolKind.PROPERTY_SYMBOL ->
-                        if (protoKind == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) add(topLevelSignature)
-                    else -> error("Unexpected signature kind: $signatureKind")
-                }
+    internal fun collectAllMatchingSignatures(
+        callableId: CallableId,
+        signatureKind: BinarySymbolData.SymbolKind,
+        output: MutableCollection<IdSignature>,
+    ) {
+        val topLevelCallableSignature = callableIdToSignature[callableId] ?: return
+        for (topLevelSignature in topLevelCallableSignature) {
+            val index = reversedSignatureIndex[topLevelSignature] ?: continue
+            val protoKind = libraryFile.declarationKind(index)
+            when (signatureKind) {
+                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL ->
+                    if (protoKind == ProtoDeclaration.DeclaratorCase.IR_FUNCTION) output += topLevelSignature
+                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL ->
+                    if (protoKind == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) output += topLevelSignature
+                else -> error("Unexpected signature kind: $signatureKind")
             }
         }
     }

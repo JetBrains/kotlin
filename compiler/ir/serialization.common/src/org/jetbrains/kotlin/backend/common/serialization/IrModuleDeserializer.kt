@@ -119,7 +119,11 @@ abstract class IrModuleDeserializer(
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
-    open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> = emptyList()
+    open fun collectAllMatchingSignatures(
+        callableId: CallableId,
+        signatureKind: BinarySymbolData.SymbolKind,
+        output: MutableCollection<IdSignature>,
+    ) = Unit
 }
 
 fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol =
@@ -246,8 +250,12 @@ class IrModuleDeserializerWithBuiltIns(
         irBuiltIns.functionFactory = syntheticFunctionClassGenerator
     }
 
-    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
-        irBuiltInsCallableIdMap[callableId]?.let { return it }
-        return delegate.getAllMatchingSignatures(callableId, signatureKind)
+    override fun collectAllMatchingSignatures(
+        callableId: CallableId,
+        signatureKind: BinarySymbolData.SymbolKind,
+        output: MutableCollection<IdSignature>,
+    ) {
+        irBuiltInsCallableIdMap[callableId]?.let { output += it }
+        delegate.collectAllMatchingSignatures(callableId, signatureKind, output)
     }
 }
