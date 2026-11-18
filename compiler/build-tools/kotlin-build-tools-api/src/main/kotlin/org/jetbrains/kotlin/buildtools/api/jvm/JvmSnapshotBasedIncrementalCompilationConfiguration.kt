@@ -453,9 +453,13 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncremental
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
 
         /**
-         * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
-         * Keeping this option disabled provides consistent builds at the cost of compilation speed. (See KT-62686 for the underlying issue.)
-         * Enabling this option brings back pre-K2 behavior and may potentially introduce incorrect incremental builds.
+         * Controls incremental compilation of common sources in Kotlin Multiplatform modules.
+         *
+         * When this option is disabled, the whole module is recompiled if any common sources are recompiled.
+         * When this option is enabled, common sources are compiled incrementally, like any other sources.
+         *
+         * Also pass the `-Xuse-metadata-on-incremental-classpath` compiler argument. Without it, recompiled common sources
+         * can see platform declarations, which may produce incorrect incremental builds (see KT-62686).
          */
         @JvmField
         @ExperimentalCompilerArgument
