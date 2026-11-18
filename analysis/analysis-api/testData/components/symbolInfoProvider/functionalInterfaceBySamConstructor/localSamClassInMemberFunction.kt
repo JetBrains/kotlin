@@ -1,4 +1,3 @@
-// IGNORE_FIR
 class Owner {
     fun usage() {
         fun interface IntPredicate {

@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // LANGUAGE: +LocalTypeAliases
 fun usage() {
     fun interface IntPredicate {

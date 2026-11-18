@@ -1,4 +1,3 @@
-// IGNORE_FIR
 fun usage() {
     class Local {
         fun interface IntPredicate {

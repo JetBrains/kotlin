@@ -1,4 +1,3 @@
-// IGNORE_FIR
 fun usage() {
     fun interface Predicate<A> {
         fun accept(value: A): Boolean
