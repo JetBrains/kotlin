@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.syntax
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
@@ -77,17 +76,12 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
         val annotationSources = mutableListOf<KtSourceElement>()
         for (node in modifierList.node.children()) {
             when (val elementType = node.elementType) {
-                in MODIFIER_KEYWORD_SET -> {
-                    val token = elementType as KtModifierKeywordToken
-                    modifiers += FirModifier(token.tokenId, token.value, node.psi.toKtPsiSourceElement())
-                }
+                is KtModifierKeywordToken -> modifiers += FirModifier(elementType.tokenId, elementType.value, node.psi.toKtPsiSourceElement())
                 KtNodeTypes.ANNOTATION_ENTRY -> annotationSources += KtRealPsiSourceElement(node.psi)
             }
         }
         return FirModifierList(modifiers, annotationSources)
     }
-
-    private val MODIFIER_KEYWORD_SET = TokenSet.orSet(KtTokens.SOFT_KEYWORDS, TokenSet.create(KtTokens.IN_KEYWORD, KtTokens.FUN_KEYWORD))
 
     override fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement> {
         return unwrap().psi.getChildOfType<KtModifierList>()?.contextParameterLists?.map { it.toKtPsiSourceElement() }.orEmpty()
