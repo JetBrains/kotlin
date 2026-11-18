@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
-import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
 
@@ -69,11 +68,7 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
 }
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.isInlineClass get() = isInlineClass(treatCompatibleFullValueClassesAsInline = true)
+val IrClass.isInlineClass get() = isInlineClass()
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = true)
-
-@OptIn(ValueClassBackendAgnosticApi::class)
-fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType =
-    getInlineClassUnderlyingType(irClass, treatCompatibleFullValueClassesAsInline = true)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation()

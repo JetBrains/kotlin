@@ -222,7 +222,7 @@ internal class ClassifierExplorer(
 
     @OptIn(ValueClassBackendAgnosticApi::class)
     private val IrClass.isInlineClass: Boolean
-        get() = isInlineClass(treatCompatibleFullValueClassesAsInline = true)
+        get() = isInlineClass()
 
 
     companion object {

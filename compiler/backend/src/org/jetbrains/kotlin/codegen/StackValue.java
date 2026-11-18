@@ -280,7 +280,7 @@ public abstract class StackValue {
 
     private static boolean isTypeOfInlineClass(@NotNull IrType type) {
         IrClass irClass = IrTypesKt.getClass(type);
-        return irClass != null && IrDeclarationsKt.isInlineClass(irClass, false);
+        return irClass != null && IrDeclarationsKt.isInlineClass(irClass);
     }
 
     private static boolean isUnboxedInlineClass(

@@ -116,7 +116,7 @@ class IrPreGenerator(
         if (irClass.hasCompanionObjectAsSerializer && irClass.companionObject()
                 ?.findPluginGeneratedMethod(SerialEntityNames.LOAD) == null
         ) return
-        if (irClass.isInlineClass(treatCompatibleFullValueClassesAsInline = !compilerContext.platform.isJvm())) return
+        if (irClass.isInlineClass()) return
         if (irClass.findSerializableSyntheticConstructor() != null) return
         val ctor = irClass.addConstructor {
             origin = SERIALIZATION_PLUGIN_ORIGIN

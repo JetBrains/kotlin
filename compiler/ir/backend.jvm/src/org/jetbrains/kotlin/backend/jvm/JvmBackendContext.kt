@@ -116,7 +116,7 @@ class JvmBackendContext(
         state.inlineClassUnboxer = { boxedType ->
             val irClass = state.jvmBackendClassResolver.resolveToClasses(boxedType).singleOrNull()?.takeIf {
                 @OptIn(ValueClassBackendAgnosticApi::class)
-                it.isInlineClass(treatCompatibleFullValueClassesAsInline = false)
+                it.isInlineClass()
             }
             irClass?.defaultType?.let(defaultTypeMapper::mapType)
         }

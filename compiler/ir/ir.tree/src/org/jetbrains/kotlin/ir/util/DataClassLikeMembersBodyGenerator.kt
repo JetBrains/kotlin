@@ -114,9 +114,7 @@ abstract class DataClassLikeMembersBodyGenerator(
         @OptIn(ValueClassBackendAgnosticApi::class)
         private fun IrSimpleFunction.isTypedEqualsInValueClass() =
             name == OperatorNameConventions.EQUALS
-                    // Explicit Inline classes are going to be introduced before custom equals,
-                    // so there is no big difference what treatCompatibleFullValueClassesAsInline is
-                    && irClass.isInlineClass(treatCompatibleFullValueClassesAsInline = false)
+                    && irClass.isInlineClass()
                     && hasShape(dispatchReceiver = true, regularParameters = 1)
                     && parameters[1].type.classifierOrNull == irClass.symbol
 

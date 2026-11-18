@@ -588,11 +588,7 @@ fun IrMutableAnnotationContainer.copyAnnotationsAndAddJavaLangDeprecated(source:
 }
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.isInlineClass: Boolean get() = isInlineClass(treatCompatibleFullValueClassesAsInline = false)
+val IrClass.isInlineClass: Boolean get() = isInlineClass()
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = false)
-
-@OptIn(ValueClassBackendAgnosticApi::class)
-fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType =
-    getInlineClassUnderlyingType(irClass, treatCompatibleFullValueClassesAsInline = false)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation()

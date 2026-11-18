@@ -305,9 +305,9 @@ fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(isJvm: Boolean, functionPresenceChecker: () -> IrSimpleFunction?) =
-    !isInlineClass(treatCompatibleFullValueClassesAsInline = !isJvm) && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
+    !isInlineClass() && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
 
 // Only inline classes are serialized as inline classes. A full value class is serialized like a regular class, through its primary constructor.
 @OptIn(ValueClassBackendAgnosticApi::class)
 internal fun IrClass.isSerializedAsInlineClass(isJvm: Boolean): Boolean =
-    isInlineClass(treatCompatibleFullValueClassesAsInline = !isJvm && superTypes.all { it.isAny() })
+    isInlineClass()

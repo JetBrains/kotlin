@@ -19,7 +19,7 @@ abstract class KotlinTypeMapper {
         fun mapUnderlyingTypeOfInlineClassType(irType: IrType, typeMapper: KotlinTypeMapperBase): Type {
             @OptIn(ValueClassBackendAgnosticApi::class)
             val underlyingType = irType.classOrNull?.owner?.let {
-                getInlineClassUnderlyingType(it, treatCompatibleFullValueClassesAsInline = false)
+                getInlineClassUnderlyingType(it)
             } ?: throw IllegalStateException("There should be underlying type for inline class type: $irType")
             return typeMapper.mapType(underlyingType, TypeMappingMode.DEFAULT)
         }

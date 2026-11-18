@@ -15,15 +15,14 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 
 /**
  * Retrieves the underlying type of the [irClass] if the class is an inline class.
- * A full value class is never an inline class, so [treatCompatibleFullValueClassesAsInline] is unused.
  *
  * See [ValueClassRepresentation] documentation for more details about value class types.
  *
  * @return The underlying type of the inline class, if it exists, otherwise throws an error.
  */
-@ValueClassBackendAgnosticApi
-fun getInlineClassUnderlyingType(irClass: IrClass, treatCompatibleFullValueClassesAsInline: Boolean): IrSimpleType {
-    val representation = irClass.inlineClassRepresentation(treatCompatibleFullValueClassesAsInline)
+@OptIn(ValueClassBackendAgnosticApi::class)
+fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType {
+    val representation = irClass.inlineClassRepresentation()
         ?: error("Not an inline class: ${irClass.render()}")
     return representation.underlyingType
 }
