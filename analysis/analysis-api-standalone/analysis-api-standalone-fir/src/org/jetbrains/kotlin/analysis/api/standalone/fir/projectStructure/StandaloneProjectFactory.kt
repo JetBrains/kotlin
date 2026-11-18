@@ -121,7 +121,7 @@ object StandaloneProjectFactory {
     @OptIn(KtPlatformInterface::class)
     private fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
         val application = applicationEnvironment.application
-        KotlinCoreEnvironment.underApplicationLock {
+        KotlinCoreApplicationEnvironment.underApplicationLock {
             if (application.getServiceIfCreated(KotlinStandaloneIndexCache::class.java) != null) {
                 // application services already registered by som other threads, tests
                 return
@@ -150,7 +150,7 @@ object StandaloneProjectFactory {
     private fun registerApplicationExtensionPoints(applicationEnvironment: KotlinCoreApplicationEnvironment) {
         val applicationArea = applicationEnvironment.application.extensionArea
         if (!applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) {
-            KotlinCoreEnvironment.underApplicationLock {
+            KotlinCoreApplicationEnvironment.underApplicationLock {
                 if (applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) return@underApplicationLock
                 CoreApplicationEnvironment.registerApplicationExtensionPoint(
                     ClassTypePointerFactory.EP_NAME,
