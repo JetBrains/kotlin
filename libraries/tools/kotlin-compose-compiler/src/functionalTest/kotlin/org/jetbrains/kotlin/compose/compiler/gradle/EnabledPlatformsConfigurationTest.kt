@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.tasks.BaseKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.named
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class EnabledPlatformsConfigurationTest {
@@ -47,12 +48,34 @@ class EnabledPlatformsConfigurationTest {
                 project.tasks.named<BaseKotlinCompile>(it).get().composeOptions().isNotEmpty(),
                 "'$it' task does not contain compose plugin options"
             )
+            val options = project.tasks.named<BaseKotlinCompile>(it).get().composeOptions().toMap()
+            val expected = (it == "compileKotlinJvm").toString()
+            assertEquals(expected, options["sourceInformation"], it)
+            assertEquals(expected, options["traceMarkersEnabled"], it)
         }
 
         assertTrue(
             project.tasks.named<KotlinNativeCompile>("compileKotlinLinuxX64").get().composeOptions().isNotEmpty(),
             "'compileKotlinLinuxX64' task does not contain compose plugin options"
         )
+        val nativeOptions = project.tasks.named<KotlinNativeCompile>("compileKotlinLinuxX64").get().composeOptions().toMap()
+        assertEquals("false", nativeOptions["sourceInformation"])
+        assertEquals("false", nativeOptions["traceMarkersEnabled"])
+    }
+
+    @Test
+    fun nativeToolingOptionsCanBeEnabled() {
+        val project = buildProjectWithMPP {
+            extensions.getByType(KotlinMultiplatformExtension::class.java).linuxX64()
+            extensions.getByType(ComposeCompilerGradlePluginExtension::class.java).apply {
+                includeSourceInformation.set(true)
+                includeTraceMarkers.set(true)
+            }
+        }
+        project.evaluate()
+        val options = project.tasks.named<KotlinNativeCompile>("compileKotlinLinuxX64").get().composeOptions().toMap()
+        assertEquals("true", options["sourceInformation"])
+        assertEquals("true", options["traceMarkersEnabled"])
     }
 
     @OptIn(ExperimentalWasmDsl::class)

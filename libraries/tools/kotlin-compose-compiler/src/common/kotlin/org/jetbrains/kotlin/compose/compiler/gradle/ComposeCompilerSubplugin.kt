@@ -60,11 +60,15 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
             }
         }
 
+        // Resolve unset options per compilation so explicit user values take precedence.
+        val isAndroidOrJvm = kotlinCompilation.platformType == KotlinPlatformType.jvm ||
+                kotlinCompilation.platformType == KotlinPlatformType.androidJvm
+
         val allPluginProperties = project.objects
             .listProperty(SubpluginOption::class.java)
             .apply {
                 if (!composeWithAgpConfig.isDisableIncludeSourceInformationForAgp) {
-                    add(composeExtension.includeSourceInformation.map {
+                    add(composeExtension.includeSourceInformation.orElse(isAndroidOrJvm).map {
                         SubpluginOption("sourceInformation", it.toString())
                     })
                 }
@@ -85,7 +89,7 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                     paths.map { FilesSubpluginOption("stabilityConfigurationPath", listOf(it.asFile)) }
                 }.orElse(emptyList()))
 
-                add(composeExtension.includeTraceMarkers.map {
+                add(composeExtension.includeTraceMarkers.orElse(isAndroidOrJvm).map {
                     SubpluginOption("traceMarkersEnabled", it.toString())
                 })
 
