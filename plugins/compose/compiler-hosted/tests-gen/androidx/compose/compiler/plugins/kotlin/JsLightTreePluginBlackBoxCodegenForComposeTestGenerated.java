@@ -28,6 +28,12 @@ public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("composableLambdaCapturingLocalOfInitializer.kt")
+  public void testComposableLambdaCapturingLocalOfInitializer() {
+    run("composableLambdaCapturingLocalOfInitializer.kt");
+  }
+
+  @Test
   @TestMetadata("testAbstractComposableWithDefaultParamCrossModule.kt")
   public void testTestAbstractComposableWithDefaultParamCrossModule() {
     run("testAbstractComposableWithDefaultParamCrossModule.kt");
