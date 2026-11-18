@@ -85,7 +85,9 @@ projectTests {
         dependsOn(":dist")
         dependsOn(":compileAll")
         workingDir = rootDir
-        jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
+
+        withJvmStdlibAndReflect()
+        withTestJar()
 
         jvmArgumentProviders.add(objects.newInstance<TestSystemPropertiesProvider>().apply {
             spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
@@ -118,10 +120,6 @@ projectTests {
             includeTags("codebaseNightly")
         }
     }
-
-    withJvmStdlibAndReflect()
-    withScriptRuntime()
-    withTestJar()
 }
 
 
