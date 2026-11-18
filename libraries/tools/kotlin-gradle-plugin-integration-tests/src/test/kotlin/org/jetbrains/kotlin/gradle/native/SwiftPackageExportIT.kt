@@ -217,6 +217,53 @@ class SwiftPackageExportIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-91285: A consumer depends on the product by its custom name")
+    @GradleTest
+    fun testCustomProductName(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    sourceSets.commonMain.get().compileSource("fun sharedApi(): Int = 1")
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    swiftPackageIntegration {
+                        outputDirectory.set(project.layout.projectDirectory.dir("package"))
+                        // Not a Swift identifier: a product name doesn't have to be one.
+                        productName.set("Shared-Kit")
+                    }
+                }
+            }
+
+            build(":exportDebugSwiftPackage")
+
+            val exportedPackage = projectPath.resolve("package/Debug")
+            assertEquals(listOf("Shared-Kit"), describeSwiftPackage(exportedPackage).products.map { it.name })
+
+            val consumer = consumerOf(
+                exportedPackage,
+                """
+                import Shared
+
+                print(sharedApi())
+                """,
+                productName = "Shared-Kit",
+            )
+            consumer.swiftBuild(SwiftDestination.IOS_SIMULATOR).assertProcessRunResult {
+                assertTrue(isSuccessful, "The consumer of the product with a custom name failed to build")
+            }
+        }
+    }
+
     @DisplayName("Targets that export different Swift modules share a package")
     @GradleTest
     fun testPerTargetApiDependencies(
@@ -839,7 +886,7 @@ class SwiftPackageExportIT : KGPBaseTest() {
     }
 
     /** A consumer package that depends on the exported package at [packagePath] and runs [main]. */
-    private fun TestProject.consumerOf(packagePath: Path, main: String): Path {
+    private fun TestProject.consumerOf(packagePath: Path, main: String, productName: String = "SharedLibrary"): Path {
         val consumer = projectPath.resolve("consumer")
         consumer.resolve("Sources/Consumer").createDirectories()
         consumer.resolve("Package.swift").writeText(
@@ -851,7 +898,7 @@ class SwiftPackageExportIT : KGPBaseTest() {
                 platforms: [.iOS("18.0"), .macOS("15.0")],
                 dependencies: [.package(name: "Shared", path: "${packagePath.toAbsolutePath()}")],
                 targets: [
-                    .executableTarget(name: "Consumer", dependencies: [.product(name: "SharedLibrary", package: "Shared")])
+                    .executableTarget(name: "Consumer", dependencies: [.product(name: "$productName", package: "Shared")])
                 ]
             )
             """.trimIndent()

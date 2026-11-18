@@ -1888,6 +1888,20 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftPackageBlankProductName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param project the path of the project that exports the Swift package
+         */
+        operator fun invoke(project: String) = build {
+            title("Blank Swift Package Product Name")
+                .description("The Swift package product name of project '$project' is blank.")
+                .solution(
+                    "Set 'productName' in the 'swiftPackageIntegration' DSL to a name that is not blank, " +
+                            "or remove it to use the default one."
+                )
+        }
+    }
+
     object SwiftExportReservedModuleName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         /**
          * @param reservedModuleName the reserved Swift module name
