@@ -24,8 +24,6 @@ Another one representation is JSON-based that is bundled into a published jar as
     - Add optional `restrictedToCompilerPhase` that may specify that an argument is only valid for a given compiler phase.
     - Add optional `deprecatedMessage` that may specify a deprecation message for the argument (`null` if it isn't deprecated).
 - `6`:
-    - Used only by Kotlin 2.5.0-Beta1 for the `ValhallaSupportModeType` enum type, which was reverted afterwards.
-- `7`:
     - Extended `AllKotlinArgumentTypes` with new enum types: `CompilerOutputKind`, `KonanTarget`, `NativeAllocationMode`, `NativeGcMode`, `NativeMemoryModel`, `EnableDisableMode`.
     - New argument value types: `CompilerOutputKindType`, `KonanTargetType`, `KonanTargetListType`, `NativeAllocationModeType`, `NativeGcModeType`, `NativeMemoryModelType`, `EnableDisableModeType`.
     - Add enum types to relevant Native compiler arguments.
