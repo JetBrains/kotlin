@@ -1,5 +1,5 @@
 expression: +128
-constant: -128
-constantValueKind: ByteValue
+constant: 128
+constantValueKind: IntValue
 constantValueSource: PREFIX_EXPRESSION
 constantValueSourceText: +128

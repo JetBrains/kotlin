@@ -1,5 +1,5 @@
 expression: 32768
-constant: -32768
-constantValueKind: ShortValue
+constant: 32768
+constantValueKind: IntValue
 constantValueSource: INTEGER_CONSTANT
 constantValueSourceText: 32768

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.DuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.builder.toFirOperationOrNull
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.*
@@ -102,11 +103,12 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     }
 
     /**
-     * Caches the integer literal inside [foldedLiteral], into which raw FIR folds it together with the unary minuses and pluses around
-     * it, such as `-(+1)` with [prefixExpression] as its source.
+     * Caches [foldedLiteral], into which raw FIR folds an integer literal together with the unary minuses and pluses around it,
+     * such as `-(+1)` with [prefixExpression] as its source.
      *
-     * The integer literal is mapped to a copy of [foldedLiteral] with its own value, and [KtToFirMapping] represents the prefix
-     * expressions of the chain as fake operator calls on that copy (KT-70774).
+     * [prefixExpression] is mapped to [foldedLiteral], and each expression inside it, an inner prefix expression or the integer
+     * literal, to a copy with its own value, see [withoutSigns]. [KtToFirMapping] represents each prefix expression as a fake
+     * operator call of the type of its literal (KT-70774).
      */
     private fun cacheFoldedLiteral(
         prefixExpression: KtPrefixExpression,
@@ -121,15 +123,52 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         }
 
         val constantExpression = current as? KtConstantExpression ?: return
-        val isNegated = prefixExpressions.count { it.operationToken == KtTokens.MINUS } % 2 == 1
-        val sourceElement = constantExpression.toKtPsiSourceElement()
-        val literalWithoutSigns = if (isNegated) {
-            foldedLiteral.kind.reverseConverted(original = foldedLiteral, sourceElement = sourceElement)
-        } else {
-            foldedLiteral.copy(newValue = foldedLiteral.value, newSource = sourceElement)
-        } ?: return
+        cache(prefixExpression, foldedLiteral, data)
 
-        cache(constantExpression, literalWithoutSigns, data)
+        // Each inner expression gets the folded value with the signs above it undone
+        var isNegated = false
+        val innerExpressions = prefixExpressions.drop(1) + constantExpression
+        for ([outerExpression, innerExpression] in prefixExpressions.zip(innerExpressions)) {
+            if (outerExpression.operationToken == KtTokens.MINUS) isNegated = !isNegated
+            val literal = foldedLiteral.withoutSigns(isNegated, innerExpression.toKtPsiSourceElement()) ?: return
+            cache(innerExpression, literal, data)
+        }
+    }
+
+    /**
+     * Returns a copy of this folded literal for an expression inside it, with the value negated if [isNegated].
+     *
+     * A value that doesn't fit the folded kind, such as `2147483648` in `-2147483648` or `128` in `val b: Byte = -128`,
+     * gets the `Int` or the `Long` kind.
+     */
+    private fun FirLiteralExpression.withoutSigns(isNegated: Boolean, source: KtSourceElement): FirLiteralExpression? {
+        if (!isNegated) return buildResolvedLiteral(source, kind, value, resolvedType)
+
+        val negatedValue = (value as? Long)?.let { -it } ?: return null
+        val kindWithoutSigns = when (kind) {
+            ConstantValueKind.IntegerLiteral, ConstantValueKind.Long -> kind
+            ConstantValueKind.Byte -> if (negatedValue in Byte.MIN_VALUE..Byte.MAX_VALUE) kind else ConstantValueKind.Int
+            ConstantValueKind.Short -> if (negatedValue in Short.MIN_VALUE..Short.MAX_VALUE) kind else ConstantValueKind.Int
+            ConstantValueKind.Int -> if (negatedValue in Int.MIN_VALUE..Int.MAX_VALUE) kind else ConstantValueKind.Long
+            else -> return null
+        }
+
+        val typeWithoutSigns = when (kindWithoutSigns) {
+            kind -> resolvedType
+            ConstantValueKind.Int -> StandardTypes.Int
+            else -> StandardTypes.Long
+        }
+
+        return buildResolvedLiteral(source, kindWithoutSigns, negatedValue, typeWithoutSigns)
+    }
+
+    private fun buildResolvedLiteral(
+        source: KtSourceElement,
+        kind: ConstantValueKind,
+        value: Any?,
+        type: ConeKotlinType,
+    ): FirLiteralExpression = buildLiteralExpression(source, kind, value, setType = false).also {
+        it.replaceConeTypeOrNull(type)
     }
 
     //@formatter:off
@@ -160,33 +199,6 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     protected fun cacheElement(element: FirElement, cache: MutableMap<KtElement, FirElement>) {
         val psi = element.anchorPsi as? KtElement ?: return
         cache(psi, element, cache)
-    }
-
-    private fun ConstantValueKind.reverseConverted(original: FirLiteralExpression, sourceElement: KtSourceElement?): FirLiteralExpression? {
-        val value = original.value as? Number ?: return null
-        val convertedValue: Any = when (this) {
-            ConstantValueKind.Byte -> value.toByte().unaryMinus()
-            ConstantValueKind.Double -> value.toDouble().unaryMinus()
-            ConstantValueKind.Float -> value.toFloat().unaryMinus()
-            ConstantValueKind.Int, ConstantValueKind.IntegerLiteral -> value.toInt().unaryMinus()
-            ConstantValueKind.Long -> value.toLong().unaryMinus()
-            ConstantValueKind.Short -> value.toShort().unaryMinus()
-            else -> null
-        } ?: return null
-
-        return original.copy(newValue = convertedValue, newSource = sourceElement)
-    }
-
-    private fun FirLiteralExpression.copy(
-        newValue: Any?,
-        newSource: KtSourceElement?,
-    ): FirLiteralExpression = buildLiteralExpression(
-        newSource,
-        kind,
-        newValue,
-        setType = false
-    ).also {
-        it.replaceConeTypeOrNull(resolvedType)
     }
 
     private fun recordTypeQualifiers(resolvedTypeRef: FirResolvedTypeRef, data: MutableMap<KtElement, FirElement>) {
