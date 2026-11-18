@@ -225,6 +225,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated 
   }
 
   @Test
+  @TestMetadata("expectedUByteUnsignedLiteral.kt")
+  public void testExpectedUByteUnsignedLiteral() {
+    run("expectedUByteUnsignedLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("expectedULongUnsignedLiteral.kt")
+  public void testExpectedULongUnsignedLiteral() {
+    run("expectedULongUnsignedLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("float.kt")
   public void testFloat() {
     run("float.kt");
@@ -417,6 +429,30 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated 
   }
 
   @Test
+  @TestMetadata("malformedCharacterLiteral.kt")
+  public void testMalformedCharacterLiteral() {
+    run("malformedCharacterLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedDoubleLiteral.kt")
+  public void testMalformedDoubleLiteral() {
+    run("malformedDoubleLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedLongLiteral.kt")
+  public void testMalformedLongLiteral() {
+    run("malformedLongLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedLongLiteralWithLeadingZeros.kt")
+  public void testMalformedLongLiteralWithLeadingZeros() {
+    run("malformedLongLiteralWithLeadingZeros.kt");
+  }
+
+  @Test
   @TestMetadata("methodReference_instance_convertedTo_Runnable.kt")
   public void testMethodReference_instance_convertedTo_Runnable() {
     run("methodReference_instance_convertedTo_Runnable.kt");
@@ -588,6 +624,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated 
   @TestMetadata("unresolvedSuper_singleSuperType.kt")
   public void testUnresolvedSuper_singleSuperType() {
     run("unresolvedSuper_singleSuperType.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedLongLiteralWithoutStdlib.kt")
+  public void testUnsignedLongLiteralWithoutStdlib() {
+    run("unsignedLongLiteralWithoutStdlib.kt");
+  }
+
+  @Test
+  @TestMetadata("unterminatedCharacterLiteral.kt")
+  public void testUnterminatedCharacterLiteral() {
+    run("unterminatedCharacterLiteral.kt");
   }
 
   @Test

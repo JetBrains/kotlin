@@ -1,0 +1,46 @@
+stringTemplate@(1,1) : kotlin.String
+  x@(2,20) : kotlin.Int
+multilineString@(3,1) : kotlin.String
+comparison@(4,1) : kotlin.Boolean
+  a@(4,16) : kotlin.Int
+  b@(4,24) : kotlin.Int
+equality@(5,1) : kotlin.Boolean
+  a@(5,14) : kotlin.Any
+  b@(5,22) : kotlin.Any
+identity@(6,1) : kotlin.Boolean
+  a@(6,14) : kotlin.Any
+  b@(6,22) : kotlin.Any
+conjunction@(7,1) : kotlin.Boolean
+  a@(7,17) : kotlin.Boolean
+  b@(7,29) : kotlin.Boolean
+disjunction@(8,1) : kotlin.Boolean
+  a@(8,17) : kotlin.Boolean
+  b@(8,29) : kotlin.Boolean
+isCheck@(9,1) : kotlin.Boolean
+  a@(9,13) : kotlin.Any
+notIsCheck@(10,1) : kotlin.Boolean
+  a@(10,16) : kotlin.Any
+throwing@(11,1) : kotlin.Nothing
+parenthesized@(12,1) : kotlin.Int
+annotated@(13,1) : kotlin.Int
+labeled@(14,1) : kotlin.Int
+unresolvedComparison@(16,1) : kotlin.Boolean
+unresolvedEquality@(17,1) : kotlin.Boolean
+unresolvedIsCheck@(18,1) : kotlin.Boolean
+  a@(18,23) : kotlin.Any
+incompleteComparison@(19,1) : kotlin.Boolean
+  a@(19,26) : kotlin.Int
+whileLoop@(20,1) : kotlin.Unit (symbol: ERROR)
+doWhileLoop@(21,1) : kotlin.Unit (symbol: ERROR)
+forLoop@(22,1) : kotlin.Unit
+  i@(22,22) : kotlin.Int
+returning@(23,1) : kotlin.Nothing
+breaking@(24,1) : kotlin.Nothing
+continuing@(25,1) : kotlin.Nothing
+comparisonProperty@(27,1) : kotlin.Boolean
+throwingGetter@(28,1) : kotlin.Nothing
+  KtPropertyAccessor@(28,20) : kotlin.Nothing
+container@(30,1) : kotlin.Unit
+  equalityLocal@(31,5) : kotlin.Boolean
+  stringTemplateLocal@(32,5) : kotlin.String
+  throwingLocal@(33,5) : kotlin.Nothing

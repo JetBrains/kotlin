@@ -1,0 +1,40 @@
+leadingZeros@(1,1) : kotlin.Int (symbol: ERROR)
+leadingZerosWithUnderscore@(4,1) : kotlin.Int (symbol: ERROR)
+lowercaseLongSuffix@(5,1) : kotlin.Long (symbol: ERROR)
+lowercaseUnsignedLongSuffix@(6,1) : kotlin.ULong (symbol: ERROR)
+outOfLongRange@(7,1) : ERROR
+illegalUnderscore@(8,1) : ERROR
+emptyExponent@(9,1) : kotlin.Double (symbol: ERROR)
+emptyFloatExponent@(10,1) : kotlin.Double (symbol: ERROR)
+emptyCharacter@(11,1) : kotlin.Char (symbol: ERROR)
+tooManyCharacters@(12,1) : kotlin.Char (symbol: ERROR)
+illegalEscape@(13,1) : kotlin.Char (symbol: ERROR)
+incompleteUnicodeEscape@(14,1) : kotlin.Char (symbol: ERROR)
+leadingZerosFunction@(16,1) : kotlin.Int (symbol: ERROR)
+lowercaseLongSuffixFunction@(17,1) : kotlin.Long (symbol: ERROR)
+emptyExponentFunction@(18,1) : kotlin.Double (symbol: ERROR)
+tooManyCharactersFunction@(19,1) : kotlin.Char (symbol: ERROR)
+leadingZerosGetter@(21,1) : kotlin.Int (symbol: ERROR)
+  KtPropertyAccessor@(21,24) : kotlin.Int (symbol: ERROR)
+tooManyCharactersGetter@(22,1) : kotlin.Char (symbol: ERROR)
+  KtPropertyAccessor@(22,29) : kotlin.Char (symbol: ERROR)
+container@(24,1) : kotlin.Unit
+  leadingZerosLocal@(25,5) : kotlin.Int (symbol: ERROR)
+  tooManyCharactersLocal@(26,5) : kotlin.Char (symbol: ERROR)
+  lowercaseLongSuffixLocal@(27,5) : kotlin.Long (symbol: ERROR)
+zero@(30,1) : kotlin.Int
+hexZero@(32,1) : kotlin.Int
+binary@(33,1) : kotlin.Int
+intMaxValue@(34,1) : kotlin.Int
+intMaxValuePlusOne@(35,1) : kotlin.Long
+longMaxValue@(36,1) : kotlin.Long
+uintMaxValue@(37,1) : kotlin.UInt
+uintMaxValuePlusOne@(38,1) : kotlin.ULong
+ulongMaxValue@(39,1) : kotlin.ULong
+upperCaseFloatSuffix@(40,1) : kotlin.Float
+exponent@(41,1) : kotlin.Double
+floatExponent@(42,1) : kotlin.Float
+floatOutOfRange@(43,1) : kotlin.Float
+doubleOutOfRange@(44,1) : kotlin.Double
+escapedCharacter@(45,1) : kotlin.Char
+unicodeEscape@(46,1) : kotlin.Char
