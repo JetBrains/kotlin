@@ -25,6 +25,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.btapi.checkKotlinCompilerVersionResolves
+import org.jetbrains.kotlin.compilerRunner.btapi.checkKotlinCompilerVersionWithoutBuildToolsApi
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -201,7 +202,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                     }
                 )
                 val compilerVersionCheck = project.provider {
-                    if (task.runViaBuildToolsApi.get()) project.checkKotlinCompilerVersionResolves(pluginVersion)
+                    if (task.runViaBuildToolsApi.get()) {
+                        project.checkKotlinCompilerVersionResolves(pluginVersion)
+                    } else {
+                        project.checkKotlinCompilerVersionWithoutBuildToolsApi(task, pluginVersion)
+                    }
                     // Empty files for dependsOn in both branches of if else with empty file list.
                     project.files()
                 }
