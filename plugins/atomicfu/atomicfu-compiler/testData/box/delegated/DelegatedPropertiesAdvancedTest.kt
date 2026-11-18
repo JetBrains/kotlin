@@ -1,5 +1,6 @@
 // DUMP_IR_DIFFERENCE: NATIVE, JS_IR
 // ISSUE: KT-90507
+// ISSUE: KT-91662
 // LANGUAGE: +CompanionBlocks
 // FILE: Containers.kt
 import kotlin.reflect.KMutableProperty0
