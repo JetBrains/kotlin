@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.findSyntheticJavaPropertyAccessor
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.fir.toKaImplementationState
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
@@ -33,9 +32,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -63,8 +61,7 @@ internal class KaFirSymbolRelationProvider(
     }
 
     override fun samConstructor(symbol: KaClassLikeSymbol): KaSamConstructorSymbol? = withValidityAssertion {
-        val classId = symbol.classId ?: return null
-        val owner = analysisSession.getClassLikeSymbol(classId) ?: return null
+        val owner = symbol.firSymbol.fir
         val firSession = analysisSession.firSession
         val resolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
         return resolver.getSamConstructor(owner)?.let {
@@ -73,8 +70,7 @@ internal class KaFirSymbolRelationProvider(
     }
 
     override fun functionalInterfaceFunction(symbol: KaClassLikeSymbol): KaNamedFunctionSymbol? = withValidityAssertion {
-        val classId = symbol.classId ?: return null
-        val firClassOrTypeAlias = analysisSession.getClassLikeSymbol(classId) ?: return null
+        val firClassOrTypeAlias = symbol.firSymbol.fir
         val firSession = analysisSession.firSession
         val resolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
         val samFunction = resolver.getSamFunction(firClassOrTypeAlias) ?: return null
@@ -82,7 +78,7 @@ internal class KaFirSymbolRelationProvider(
     }
 
     override fun functionalInterface(symbol: KaSamConstructorSymbol): KaClassLikeSymbol = withValidityAssertion {
-        symbol.firSymbol.fir.returnTypeRef.coneType.classId?.toLookupTag()?.let {
+        symbol.firSymbol.resolvedReturnType.classLikeLookupTagIfAny?.let {
             analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByLookupTag(it)
         } ?: errorWithAttachment("Cannot retrieve functional interface for KaSamConstructorSymbol") {
             withSymbolAttachment("KaSamConstructorSymbol", analysisSession, symbol)

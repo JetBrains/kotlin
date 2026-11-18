@@ -15,12 +15,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.reflect.KClass
@@ -90,9 +88,6 @@ internal inline fun <reified D : FirCallableDeclaration> Collection<FirCallableS
 
     return null
 }
-
-internal fun KaFirSession.getClassLikeSymbol(classId: ClassId) =
-    firSession.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
 
 context(sessionOwner: KaFirSymbol<*>)
 internal inline fun <reified T : KaSymbol> KaSymbol.createOwnerPointer(): KaSymbolPointer<T> {

@@ -1,4 +1,3 @@
-// IGNORE_FIR
 val usage = {
     fun interface IntPredicate {
         fun accept(i: Int): Boolean
