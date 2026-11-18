@@ -149,7 +149,7 @@ internal class StandaloneAnalysisAPISessionBuilderImpl(
             )
 
             if (!isCacheCleanerEnabled) {
-                project.picoContainer.unregisterComponent(KaFirCacheCleaner::class.java)
+                project.picoContainer.unregisterComponent(KaFirCacheCleaner::class.java.name)
             }
         }
     }
