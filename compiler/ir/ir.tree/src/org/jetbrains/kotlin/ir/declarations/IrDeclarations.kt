@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.IrElement
@@ -42,7 +41,6 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
  *
  * See [ValueClassRepresentation] documentation for more details about value class types.
  */
-@ValueClassBackendAgnosticApi
 fun IrClass.isInlineClass(): Boolean =
     inlineClassRepresentation() != null
 
@@ -75,7 +73,6 @@ val IrFunction.isPropertyAccessor: Boolean
  *
  * @return An [InlineClassRepresentation] or `null`.
  */
-@ValueClassBackendAgnosticApi
 fun IrClass.inlineClassRepresentation(): InlineClassRepresentation<IrSimpleType>? =
     valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
 

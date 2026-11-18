@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.codegen.state.AllowedOnlyInTestsAPI
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -115,7 +114,6 @@ class JvmBackendContext(
     init {
         state.inlineClassUnboxer = { boxedType ->
             val irClass = state.jvmBackendClassResolver.resolveToClasses(boxedType).singleOrNull()?.takeIf {
-                @OptIn(ValueClassBackendAgnosticApi::class)
                 it.isInlineClass()
             }
             irClass?.defaultType?.let(defaultTypeMapper::mapType)

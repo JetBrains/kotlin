@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
  *
  * @return The underlying type of the inline class, if it exists, otherwise throws an error.
  */
-@OptIn(ValueClassBackendAgnosticApi::class)
 fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType {
     val representation = irClass.inlineClassRepresentation()
         ?: error("Not an inline class: ${irClass.render()}")

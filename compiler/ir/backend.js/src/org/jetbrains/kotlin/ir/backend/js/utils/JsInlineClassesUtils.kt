@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.JsCommonInlineClassesUtils
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -67,8 +66,6 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
     fun getRuntimeClassFor(type: IrType): IrClass? = type.erasedUpperBound.takeIf { !it.isInterface }
 }
 
-@OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.isInlineClass get() = isInlineClass()
 
-@OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.inlineClassRepresentation get() = inlineClassRepresentation()

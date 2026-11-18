@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.getStringConstArgument
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -303,11 +302,5 @@ fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
     }
 }
 
-@OptIn(ValueClassBackendAgnosticApi::class)
 internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> IrSimpleFunction?) =
     !isInlineClass() && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
-
-// Only inline classes are serialized as inline classes. A full value class is serialized like a regular class, through its primary constructor.
-@OptIn(ValueClassBackendAgnosticApi::class)
-internal fun IrClass.isSerializedAsInlineClass(): Boolean =
-    isInlineClass()

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLink
 import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Usable
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -220,7 +219,6 @@ internal class ClassifierExplorer(
         return null
     }
 
-    @OptIn(ValueClassBackendAgnosticApi::class)
     private val IrClass.isInlineClass: Boolean
         get() = isInlineClass()
 

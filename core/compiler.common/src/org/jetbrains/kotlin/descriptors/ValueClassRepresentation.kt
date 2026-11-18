@@ -38,7 +38,3 @@ sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
             FullValueClassRepresentation(underlyingPropertyNamesToTypes?.map { [name, type] -> name to transform(type) })
     }
 }
-
-
-@RequiresOptIn("Use backend-specific APIs instead of this one. See usages for examples.")
-annotation class ValueClassBackendAgnosticApi

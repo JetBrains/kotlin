@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.InlineClassesUtils
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -51,7 +50,6 @@ interface JsCommonBackendContext : CommonBackendContext {
 }
 
 interface JsCommonInlineClassesUtils : InlineClassesUtils {
-    @OptIn(ValueClassBackendAgnosticApi::class)
     override fun isClassInlineLike(klass: IrClass): Boolean =
         klass.isInlineClass()
 

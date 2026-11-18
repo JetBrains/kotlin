@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -457,7 +456,6 @@ class ComposerParamTransformer(
     //  method, which is only available on the JVM backend. On the JS and Native backends we
     //  don't have access to that so instead we are just going to construct the inline class
     //  itself and hope that it gets lowered properly.
-    @OptIn(ValueClassBackendAgnosticApi::class)
     private fun IrType.defaultValue(
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET,

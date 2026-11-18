@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.LoggingContext
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.*
@@ -64,7 +63,6 @@ internal class NativeBackendContext(
 
     override val optimizeLoopsOverUnsignedArrays = true
 
-    @OptIn(ValueClassBackendAgnosticApi::class)
     override val inlineClassesUtils: InlineClassesUtils = object : InlineClassesUtils {
         override fun isClassInlineLike(klass: IrClass): Boolean =
                 klass.isInlineClass()

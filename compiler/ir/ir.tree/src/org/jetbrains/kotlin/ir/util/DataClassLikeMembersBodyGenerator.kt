@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.irEquals
 import org.jetbrains.kotlin.ir.declarations.*
@@ -111,7 +110,6 @@ abstract class DataClassLikeMembersBodyGenerator(
             )
         }
 
-        @OptIn(ValueClassBackendAgnosticApi::class)
         private fun IrSimpleFunction.isTypedEqualsInValueClass() =
             name == OperatorNameConventions.EQUALS
                     && irClass.isInlineClass()
