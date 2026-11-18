@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline.metadata
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.cli.metadata.AbstractMetadataSerializer.OutputInfo
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -44,6 +43,8 @@ data class MetadataSerializationArtifact(
     override val configuration: CompilerConfiguration,
     val destination: String,
 ) : PipelineArtifact() {
+    data class OutputInfo(val totalSize: Int, val totalFiles: Int)
+
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataSerializationArtifact {
         return copy(configuration = newConfiguration)
