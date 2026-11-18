@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -105,18 +104,19 @@ abstract class BasicIrModuleDeserializer(
         }
     }
 
-    // TODO: fix to topLevel checker
-    override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
+    override fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol? {
+        val topLevel = signatureAndKind.topLevelOrNull() ?: return null
 
-    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-        val topLevelSignature = idSig.topLevelSignature()
-        val fileLocalDeserializationState = moduleReversedFileIndex[topLevelSignature] ?: return null
+        val fileLocalDeserializationState = moduleReversedFileIndex[topLevel.signature] ?: return null
 
-        fileLocalDeserializationState.addIdSignature(topLevelSignature)
+        fileLocalDeserializationState.addIdSignature(topLevel.signature)
         moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
 
-        return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(idSig, symbolKind)
+        return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(signatureAndKind.signature, signatureAndKind.kind)
     }
+
+    // TODO: fix to topLevel checker
+    override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing {
         error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module ${moduleFragment.name}")

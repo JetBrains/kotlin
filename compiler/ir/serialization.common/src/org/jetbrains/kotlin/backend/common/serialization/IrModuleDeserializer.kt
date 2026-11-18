@@ -69,6 +69,7 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
     }
 }
 
+@OptIn(IrLinkerInternalApi::class)
 abstract class IrModuleDeserializer(
     val moduleFragment: IrModuleFragment,
     val libraryAbiVersion: KotlinAbiVersion,
@@ -87,8 +88,23 @@ abstract class IrModuleDeserializer(
 
     open val preferLinkingToTheCurrentModule: Boolean get() = true
 
+    /**
+     * Looks up the symbol with the given [SignatureAndKind.signature] and [SignatureAndKind.kind] in this module and schedules
+     * the corresponding declaration for deserialization.
+     *
+     * The declaration is not necessarily deserialized by this call, so the returned symbol may be unbound.
+     * It becomes bound when the deserialization queue of this module is processed, see [deserializeReachableDeclarations].
+     *
+     * @return The symbol, or `null` if this module does not contain a declaration with the given [signatureAndKind].
+     */
+    @IrLinkerInternalApi
+    abstract fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol?
+
     abstract operator fun contains(idSig: IdSignature): Boolean
-    abstract fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol?
+
+    fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? =
+        findAndEnqueueSymbolOrNull(idSig and symbolKind)
+
     abstract fun deserializedSymbolNotFound(idSig: IdSignature): Nothing
 
     open fun declareIrSymbol(symbol: IrSymbol) {
@@ -170,10 +186,13 @@ class IrModuleDeserializerWithBuiltIns(
         )
     }
 
-    private val irBuiltInsMap = syntheticProvider.operatorsPackageFragment.declarations.associate {
+    private val irBuiltInsMap: Map<SignatureAndKind, IrSymbol> = syntheticProvider.operatorsPackageFragment.declarations.associate {
         val symbol = (it as IrSymbolOwner).symbol
-        symbol.signature to symbol
+        symbol.signatureAndKind to symbol
     }
+
+    // TODO(KT-91417): Drop this legacy map after completely migrating to signature+symbolKind addressing scheme.
+    private val legacyIrBuiltInsMap: Map<IdSignature, IrSymbol> = irBuiltInsMap.mapKeys { it.key.signature }
 
     override val contributedPackageNames: Set<FqName> = buildSet {
         this += syntheticProvider.operatorsPackageFragment.packageFqName
@@ -189,9 +208,21 @@ class IrModuleDeserializerWithBuiltIns(
         }
     }
 
+    override fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol? {
+        irBuiltInsMap[signatureAndKind]?.let { return it }
+
+        val [topLevelSignature, topLevelKind] = signatureAndKind.topLevelOrNull() ?: return null
+        if (checkIsFunctionInterface(topLevelSignature) && topLevelKind == CLASS_SYMBOL) {
+            computeFunctionClass(topLevelSignature)
+            return referenceDeserializedSymbol(symbolTable, signatureAndKind)
+        }
+
+        return delegate.findAndEnqueueSymbolOrNull(signatureAndKind)
+    }
+
     override operator fun contains(idSig: IdSignature): Boolean {
         val topLevel = idSig.topLevelSignature()
-        if (topLevel in irBuiltInsMap) return true
+        if (topLevel in legacyIrBuiltInsMap) return true
 
         return checkIsFunctionInterface(topLevel) || idSig in delegate
     }
@@ -216,18 +247,6 @@ class IrModuleDeserializerWithBuiltIns(
                 else -> functionN(arity)
             }
         }
-    }
-
-    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-        irBuiltInsMap[idSig]?.let { return it }
-
-        val topLevel = idSig.topLevelSignature()
-        if (checkIsFunctionInterface(topLevel)) {
-            computeFunctionClass(topLevel)
-            return referenceDeserializedSymbol(symbolTable, null, symbolKind, idSig)
-        }
-
-        return delegate.tryDeserializeIrSymbol(idSig, symbolKind)
     }
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = delegate.deserializedSymbolNotFound(idSig)
