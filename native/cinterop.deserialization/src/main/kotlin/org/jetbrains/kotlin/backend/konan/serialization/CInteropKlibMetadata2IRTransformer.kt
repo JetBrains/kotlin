@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import kotlinx.metadata.klib.annotations
 import kotlinx.metadata.klib.compileTimeValue
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -687,27 +688,27 @@ class CInteropKlibMetadata2IRTransformer(
     /** Used to track the declarations that were deserialized during conversion from kotlinx-metadata to IR. */
     open class DeclarationTracker {
         /** The cache of the deserialized declarations. */
-        val deserializedDeclarations: Map<IdSignature, IrDeclaration>
-            field = mutableMapOf<IdSignature, IrDeclaration>()
+        val deserializedDeclarations: Map<SignatureAndKind, IrDeclaration>
+            field = mutableMapOf<SignatureAndKind, IrDeclaration>()
 
         open fun onNewClass(clazz: IrClass) {
-            deserializedDeclarations[clazz.symbol.signature!!] = clazz
+            deserializedDeclarations[SignatureAndKind(clazz.symbol.signature!!, BinarySymbolData.SymbolKind.CLASS_SYMBOL)] = clazz
         }
 
         fun onNewEnumEntry(enumEntry: IrEnumEntry) {
-            deserializedDeclarations[enumEntry.symbol.signature!!] = enumEntry
+            deserializedDeclarations[SignatureAndKind(enumEntry.symbol.signature!!, BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL)] = enumEntry
         }
 
         open fun onNewFunction(function: IrSimpleFunction) {
-            deserializedDeclarations[function.symbol.signature!!] = function
+            deserializedDeclarations[SignatureAndKind(function.symbol.signature!!, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)] = function
         }
 
         open fun onNewProperty(property: IrProperty) {
-            deserializedDeclarations[property.symbol.signature!!] = property
+            deserializedDeclarations[SignatureAndKind(property.symbol.signature!!, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL)] = property
         }
 
         fun onNewClassConstructor(constructor: IrConstructor) {
-            deserializedDeclarations[constructor.symbol.signature!!] = constructor
+            deserializedDeclarations[SignatureAndKind(constructor.symbol.signature!!, BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL)] = constructor
         }
     }
 

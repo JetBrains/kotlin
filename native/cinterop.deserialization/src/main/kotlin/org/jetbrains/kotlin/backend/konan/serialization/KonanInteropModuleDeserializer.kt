@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.referenceDeserializedSymbol
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
@@ -157,6 +159,66 @@ class KonanInteropModuleDeserializer(
 
     private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
 
+    @IrLinkerInternalApi
+    override fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol? {
+        if (!signatureAndKind.signature.isInteropSignature() || signatureAndKind.packageFqName != definedPackageFqName)
+            return null
+
+        declarationTracker.deserializedDeclarations[signatureAndKind]?.let {
+            // The signature may have been already deserialized, just return it.
+            return it.symbol
+        }
+
+        // Whether the declaration represented by the given signature and kind can be a member or a nested declaration of an (outer) class.
+        var isNestedInClass = false
+
+
+        // Compute the signature and the kind of the top-level declaration to deserialize.
+        // When looking for a property's accessor, try to deserialize the property instead.
+        // Doing so will, in turn, deserialize its accessors.
+        val propertyOfSelf = signatureAndKind.propertyIfAccessor() ?: signatureAndKind
+
+        val topLevel = propertyOfSelf.topLevel() ?: return null
+        if (topLevel != propertyOfSelf) {
+            // If the signature is still not a signature of a top-level declaration, then the top-level declaration is a class.
+            isNestedInClass = true
+        }
+
+        val topLevelSignature = topLevel.signature as? IdSignature.CommonSignature
+            // If the top-level signature is something different from `IdSignature.CommonSignature`,
+            // we don't even have to attempt to deserialize it.
+            ?: return null
+
+        val topLevelDeclarationId = MetadataDeclarationId(
+            kind = topLevel.kind,
+            packageFqName = topLevelSignature.packageFqName(),
+            relativeDeclarationName = FqName(topLevelSignature.declarationFqName)
+        )
+
+        if (topLevelDeclarationId !in metadataReader.getDeclaredDeclarationIds()) {
+            // There is definitely no such a declaration.
+            return null
+        }
+
+        // Trigger the deserialization.
+        deserializeTopLevelDeclarations(topLevelDeclarationId)
+
+        // If the deserialization process above found a declaration with the requested signature, it should be stored it in this map.
+        declarationTracker.deserializedDeclarations[signatureAndKind]?.let {
+            return it.symbol
+        }
+
+        if (isNestedInClass) {
+            // There are two possible cases:
+            // 1. A function/property was not found inside a class because the signature actually refers to a fake override.
+            //    Fake overrides are not present in Klib and will be created later, but the symbol must be created right now.
+            // 2. A nested declaration of a class that was removed in a newer version of C-interop library (partial linkage case).
+            return referenceDeserializedSymbol(symbolTable, signatureAndKind)
+        }
+
+        return null
+    }
+
     override fun contains(idSig: IdSignature): Boolean {
         if (!idSig.isInteropSignature()) {
             return false
@@ -195,7 +257,9 @@ class KonanInteropModuleDeserializer(
     }
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-        declarationTracker.deserializedDeclarations[idSig]?.let {
+        val signatureAndKind = SignatureAndKind(idSig, symbolKind)
+
+        declarationTracker.deserializedDeclarations[signatureAndKind]?.let {
             // The signature may have been already deserialized, just return it.
             return it.symbol
         }
@@ -236,7 +300,7 @@ class KonanInteropModuleDeserializer(
         }
 
         // If the deserialization process above found a declaration with the requested signature, it should store it in this map.
-        declarationTracker.deserializedDeclarations[idSig]?.let {
+        declarationTracker.deserializedDeclarations[signatureAndKind]?.let {
             return it.symbol
         }
 
