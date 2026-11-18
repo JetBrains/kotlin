@@ -72,7 +72,7 @@ plugins {
     `jvm-toolchains`
     alias(libs.plugins.gradle.node) apply false
     id("gradle-plugins-documentation") apply false
-    id("com.autonomousapps.dependency-analysis")
+    id("build-health-convention")
     id("project-tests-convention") apply false
     id("test-federation-convention") apply false
     id("nodejs-configuration") apply false
