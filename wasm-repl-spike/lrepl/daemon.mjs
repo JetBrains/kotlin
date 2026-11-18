@@ -1,7 +1,7 @@
 // lrepl daemon: a persistent Node process holding the "live image".
 // - instantiates the STDLIB BASE once per image (it IS the image: the
 //   stdlib's hotFdefns table owns the fdefinition cells) and then every
-//   generation's app DELTA against it (the ordinary cross-module
+//   load's app DELTA against it (the ordinary cross-module
 //   `__fn$`/`__vt$`/`__rt$` import channel — the multimodule port),
 // - supplies @WasmImport("host", ...) funcrefs from previously loaded instances,
 // - implements a minimal WASI with *capturing* stdout (expression results are
@@ -10,7 +10,7 @@
 //
 // Only the BASE imports WASI functions — the deltas reach I/O through the
 // base's stdlib — so one WASI closure bound to the BASE's memory captures
-// every generation's output. LOAD IS APPLY: each delta's init resolves
+// every load's output. LOAD IS APPLY: each delta's init resolves
 // its bindings' cells by name against the base's table and installs its
 // impls; the daemon holds NO binding state at all.
 
@@ -24,8 +24,8 @@ let outBuf = [];
 
 // -Xwasm-hot-reload on the wasi target imports its exception tag from
 // "intrinsics"."tag" (anyref-typed). One tag object shared by every
-// generation: exceptions thrown by any generation are catchable Kotlin
-// exceptions in every other generation.
+// module: exceptions thrown by any module are catchable Kotlin
+// exceptions in every other.
 const sharedTag = new WebAssembly.Tag({ parameters: ['anyref'] });
 
 function makeWasi(memRef) {
@@ -114,12 +114,12 @@ rl.on('line', (line) => {
             }
             if (!base) throw new Error('daemon: no base loaded');
             // the driver's @WasmImport("host", ...) references: funcrefs
-            // from previously loaded generations
+            // from previously loaded modules
             const hostFns = {};
             for (const [localName, ref] of Object.entries(msg.imports || {})) {
                 const [gen, exportName] = ref;
                 const inst = instances.get(gen);
-                if (!inst) throw new Error(`daemon: unknown generation ${gen} for import ${localName}`);
+                if (!inst) throw new Error(`daemon: unknown module ${gen} for import ${localName}`);
                 const fn = inst.exports[exportName];
                 if (typeof fn !== 'function') throw new Error(`daemon: export ${exportName} missing in gen ${gen}`);
                 hostFns[localName] = fn;
@@ -144,7 +144,7 @@ rl.on('line', (line) => {
         if (msg.cmd === 'call') {
             outBuf = [];
             const inst = instances.get(msg.gen);
-            if (!inst) throw new Error(`daemon: unknown generation ${msg.gen}`);
+            if (!inst) throw new Error(`daemon: unknown module ${msg.gen}`);
             const fn = inst.exports[msg.fn];
             if (typeof fn !== 'function') throw new Error(`daemon: no export '${msg.fn}' in gen ${msg.gen}`);
             try {

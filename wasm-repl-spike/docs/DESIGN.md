@@ -27,15 +27,15 @@ Three engine/toolchain properties do the heavy lifting (all validated in
   into whichever module defined their class — position-independent by
   construction.
 - **The host owns the linking.** Instantiation imports are plain JS
-  values; the host supplies *wasm funcrefs* (older generations' exports)
+  values; the host supplies *wasm funcrefs* (older modules' exports)
   where `@WasmImport` declarations expect them, and V8 type-checks every
   supplied funcref against the declared (canonically-unified) signature at
   instantiation. Incompatible redefinitions are not representable — they
   fail loudly.
 
-## 2. The generation model
+## 2. The load model
 
-Every submission becomes one wasm module ("generation"):
+Every submission becomes one wasm module — one LOAD:
 
 ```kotlin
 @file:OptIn(kotlin.wasm.ExperimentalWasmInterop::class)
@@ -47,11 +47,11 @@ Every submission becomes one wasm module ("generation"):
 ```
 
 Compiled (klib step, then `-Xinclude` link), instantiated, initialized
-— and that is the whole story: LOAD IS APPLY. The generation's init
+— and that is the whole story: LOAD IS APPLY. The module's init
 resolves its bindings' fdefinition cells BY NAME against the image's
 table and installs its impls (§15), so the newest definition is live the
 moment loading finishes. Nothing is re-run and nothing is swept; the
-generation is neither the state owner (the image's tables are — §15)
+load is neither the state owner (the image's tables are — §15)
 nor the identity owner (the shared cell is). Cost today: ~0.3 s and
 25–50 KB per line over the once-per-dist base (§7).
 
@@ -59,13 +59,13 @@ nor the identity owner (the shared cell is). Cost today: ~0.3 s and
 
 In Common Lisp the compiler lives *in the image*: `compile` links into
 mutable function cells (`setf symbol-function`), classes redefine in
-place behind stable wrappers, and there are no "generations" because
+place behind stable wrappers, and nothing is chained because
 loading code never mints a new runtime. V8 has no such instruction: new
 code must arrive as a new `WebAssembly.Instance`, and a wasm global
-cannot move between instances — the bindings and objects a generation
-defines live *in* it. So a generation is one `compile-file` + `load`,
+cannot move between instances — the bindings and objects a load
+defines live *in* it. So a submission is one `compile-file` + `load`,
 made visible only because wasm makes the loader's unit explicit; the
-chain of generations *behaves* as one image.
+chain of instances *behaves* as one image.
 
 The row-by-row correspondence is §6's CL table. At the image level:
 fdefinition cells (§5, §15) for mutable function cells, the class
@@ -81,14 +81,14 @@ shrink the chain toward "one base + the last patch" (§7).
 
 | kind | how it lives in the image |
 |---|---|
-| `class` | frozen text re-declared per generation; identity via rec-group unification (§6) |
+| `class` | frozen text re-declared per load; identity via rec-group unification (§6) |
 | `fun` | cell-backed (§5): the cell-reading entry is the ABI for all callers |
-| `val`/`var` | real top-level property in its defining generation + exported `name__get` (`name__set` for var) accessors; later references are rewritten to accessor calls |
+| `val`/`var` | real top-level property in its defining load + exported `name__get` (`name__set` for var) accessors; later references are rewritten to accessor calls |
 | `object` | rewritten to `class Foo__obj { … }` + a single shared instance treated like a val |
 
 - **Vals are lazy** (`WasmPropertyLazyInitLowering`): an initializer can
-  first run inside a *later* generation — any WASI it uses must run
-  against the *defining* generation's memory (§9). **Val redefinition**
+  first run inside a *later* load — any WASI it uses must run
+  against the *defining* load's memory (§9). **Val redefinition**
   registers a new binding; the old object stays reachable through the old
   accessor (Lisp-image semantics). Var state is shared via get/set.
 - **Type recovery**: an un-annotated val's type is read back from the
@@ -124,7 +124,7 @@ reads the CELL per call — never the funcref. The cell belongs to the
 IMAGE: the stdlib's fdefinition table owns it, and each module's cell
 global is a stand-in resolved by name at load (the fasl loader's patched
 fdefn addresses — SBCL's model). A redefinition is one `struct.set` into
-the shared cell, visible to every generation's callers; there are no
+the shared cell, visible to every caller, present and future; there are no
 setters, no sweeps and no writers, and first definition and redefinition
 are the same instruction sequence (LOAD IS APPLY).
 
@@ -292,7 +292,7 @@ init that names the module's own declarations are link-emitted
 previous state: wiping any cache changes nothing but compile speed
 (`lrepl/registry_test.py` gates two shape bumps across cache wipes).
 Pinning: the table holds the defining module's funcrefs, so the image
-retains every generation that still has live instances — the same
+retains every module that still has live instances — the same
 retention shape as the fdefinition cells. Known gap, accepted: the type
 defaults of migration are NOT the class's initializers yet (the
 initform refinement bakes them into the allocate closure — a listed
@@ -354,7 +354,7 @@ The vtable stepper is STDLIB KOTLIN (`hotVtableUpdate`), like the rest
 of the generic machinery: it looks the class up in the registry (the
 same classId → layout map) and installs the
 registered vtable + itable — old instances' dispatch keeps working
-from any generation. Reactor init ordering is preserved: the glue
+from any load. Reactor init ordering is preserved: the glue
 controls instantiate → init → push (load is apply), and a patch whose
 instantiation traps never inits.
 
@@ -502,7 +502,7 @@ verdict, old code keeps running.
 
 Deliberately REPL-only: the PSI rewrite frontend (the product's Gradle
 task knows what changed), mini-WASI shims, `:dis`/binding-table UX, the
-per-line generation model. Nothing load-bearing depends on them; the
+per-line load model. Nothing load-bearing depends on them; the
 REPL stays the semantics lab where engine behaviors get discovered first.
 
 ## 9. The runtime (daemon.mjs, REPL only)
@@ -525,11 +525,11 @@ architecture as the browser loop:
   warm IC cache the link otherwise skips emitting the base entirely
   (the emission skip keys on the IC cache's module info, not the
   output file).
-- **Registry of generations** — one `WebAssembly.Instance` per app
+- **The instance chain** — one `WebAssembly.Instance` per app
   delta, instantiated against `<kotlin>` = the base's exports plus the
   driver's `host` funcrefs (previous bindings' accessors), retained
   forever (their objects and exports may be referenced by any later
-  generation).
+  load).
 - **Mini-WASI** — hand-implemented `fd_write` (captured per-call stdout;
   the *only* result channel — Kotlin `String` is an opaque GC object on
   every target, §13), `random_get`, clock, environ stubs; any other WASI
@@ -617,7 +617,7 @@ operational notes.
   A *null* String prints as nothing — concatenate instead of printing
   raw nullable strings.
 - Top-level vals are lazy ⇒ initializers can fire inside other
-  generations ⇒ per-instance WASI memory.
+  loads ⇒ per-instance WASI memory.
 - Kotlin/Wasm wasi modules declare `(memory 0)` — 0 pages; the scoped
   allocator grows it via the `wasm_memory_grow` intrinsic on first use.
 - Wasm exception tags are **module-local** ⇒ JS cannot extract Kotlin
@@ -707,7 +707,7 @@ another instance would dereference raw pointers in the wrong memory),
 and the callable-reference /
 merged-suspend-lambda classes that link-time deduplication owns.
 Sharing library bodies is what makes the stdlib-override story work:
-one write into the shared cell reaches every generation's callers.
+one write into the shared cell reaches every caller.
 
 ## 16. The emitted-vs-stdlib split
 

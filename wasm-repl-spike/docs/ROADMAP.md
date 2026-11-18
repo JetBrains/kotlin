@@ -17,7 +17,7 @@ REPL's remaining hacks are stand-ins for what the compiler/loader owns:
 
 | prototype mechanism (stand-in) | production replacement |
 |---|---|
-| module-per-line generations | patch modules — SHIPPED (browser loop): file-granular deltas over the IC's dirty set; the per-function manifest (§1 below) remains |
+| module-per-line loads | patch modules — SHIPPED (browser loop): file-granular deltas over the IC's dirty set; the per-function manifest (§1 below) remains |
 | REPL's `host` funcref imports | the multimodule `__fn$`/`__vt$`/`__rt$` channel — SHIPPED in both loops |
 | PSI frontend in the compile server | REPL-only; the dev task knows what changed |
 | checker relaxation (any-type `@WasmImport/@WasmExport`) | upstream, flag-gated |
@@ -130,7 +130,7 @@ the member set into `interfaceId`. driver5/driver6 are the anchors.
 team; the error overlay. Everything the browser loop proves carries
 over (DESIGN.md §8).
 
-### 5. Migration quality + generation GC
+### 5. Migration quality + module GC
 
 - initforms for new fields (type defaults today);
 - unbound-slot diagnostics: the deleted-slot throw is catchable
@@ -145,7 +145,7 @@ over (DESIGN.md §8).
   per class (register IS set-current), and superseded layout objects
   live only while old instances' `$layout` pointers hold them —
   native GC;
-- **generation GC**: the fdefn encoding makes it native — a donor module
+- **module GC**: the fdefn encoding makes it native — a donor module
   collects once no cell holds its funcrefs (the local `survival/` labs'
   probes; cells do not pin their defining module). The remaining cap is
   the V8 cross-instance `call_ref` retention (the gc_probe lab, local
@@ -170,7 +170,7 @@ precedent).
 ### 8. Foreign-binding entries — kill the host funcref channel — PARKED
 
 The last driver→runtime move: a delta referencing an older
-generation's binding emits `@WasmImport("host", …)` and the driver
+load's binding emits `@WasmImport("host", …)` and the driver
 supplies the old instance's exported funcref at instantiation
 (daemon.mjs's `hostFns` loop, glue.mjs's host proxy, lrepl's
 `gen_import_lines`/`find_export` — ~80 lines across both loops). The

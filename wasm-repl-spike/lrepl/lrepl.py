@@ -2,10 +2,10 @@
 """
 lrepl — Lisp-like live-image REPL for Kotlin/Wasm.
 
-Each REPL submission becomes one tiny wasm module ("generation") that
+Each REPL submission becomes one tiny wasm module that
 re-declares every class seen so far, @WasmImport's the previous bindings it
 references from the daemon's registry, and declares only the new code.
-Redefining a function loads a new generation whose cells make the new body
+Redefining a function loads a new module whose cells make the new body
 live for every caller (load IS apply). No Gradle anywhere.
 
 The driver is deliberately thin: parsing and rewriting happen in the
@@ -223,7 +223,7 @@ class Image:
         self.class_refs = {}      # class name -> binding names it references
         self.bindings = {}         # name -> dict(kind, gen, sig, kotlin_type, export)
         self.gen = 0
-        self.last_wasm_bytes = None   # newest generation's DELTA bytes (sent to the daemon for load)
+        self.last_wasm_bytes = None   # newest load's DELTA bytes (sent to the daemon for load)
         self.base_bytes = None     # the multimodule STDLIB BASE's bytes (byte-identical across gens)
         self.pkg_overrides = {}    # (package, name, sig) -> decl text — builtin redefinitions
         self.base_sent = None      # the base bytes the daemon last instantiated
@@ -378,7 +378,7 @@ class Image:
     # ---- compile pipeline
 
     def compile_module(self, body_lines, imports_needed, exclude_classes=frozenset()):
-        """Assemble, klib-compile, link and patch one generation."""
+        """Assemble, klib-compile, link and patch one LOAD."""
         ok, err = self._ensure_base()
         if not ok:
             return False, err, getattr(self, "gen", 0)
@@ -393,7 +393,7 @@ class Image:
         # wasm IC cache accumulates the file's history — the previous
         # compilation's fragments (old payload structs) become a compiler
         # input, which is how the backend chains payload versions for
-        # redefined classes (DESIGN §4b; no CLI args involved). Per-generation
+        # redefined classes (DESIGN §4b; no CLI args involved). Per-load
         # names would give the cache a fresh library every line — history
         # would never accumulate.
         src_path = os.path.join(WORK, "image.kt")
@@ -434,9 +434,9 @@ class Image:
         # fdefn mode (BOTH targets now): every reloadable function dispatches
         # through its fdefinition cell (load is apply), and the link emits
         # MULTIMODULE output — the resident STDLIB BASE (byte-identical
-        # across generations, instantiated once per image: the base IS the
+        # across loads, instantiated once per image: the base IS the
         # image, its stdlib owns the fdefinition table) plus this
-        # generation's app DELTA.
+        # load's app DELTA.
         # gen 1 (or a fresh cache) re-lowers the stdlib once — minutes;
         # every other line is warm and must answer in 180s
         compile_timeout = 600 if (self.gen == 1 or not self.ic_cache) else 180
@@ -444,8 +444,8 @@ class Image:
             ["-Xwasm-target=wasm-wasi", src_path, *pkg_files, "-ir-output-dir", WORK,
              "-ir-output-name", "image", "-libraries", STDLIB, *hot, *kotlin_pkg, *ic],
             # NB the link step's -ir-output-name must be STABLE across
-            # generations: it participates in the IC cache's config hash, so
-            # a per-generation name gives every generation a fresh cache and
+            # loads: it participates in the IC cache's config hash, so
+            # a per-load name gives every load a fresh cache and
             # the payload version history never accumulates. The delta wasm
             # (named after the app klib's module identity, not the link
             # name) is renamed to gen{N}.wasm after the link.
@@ -511,7 +511,7 @@ class Image:
         self.last_load_exports = resp.get("exports") or []
         self.gen_exports[gen] = self.last_load_exports
         # NB builtin overrides persist in the image's fdefinition table:
-        # a later generation re-declaring the same binding key resolves
+        # a later load re-declaring the same binding key resolves
         # the SAME cell, so the override holds (DESIGN §15)
         return True, None
 
@@ -533,7 +533,7 @@ class Image:
             self.wats[gen] = r.stdout if r.returncode == 0 else ""
         return self.wats[gen]
 
-    # ---- source generation helpers
+    # ---- source assembly helpers
 
     def gen_import_lines(self, needed):
         lines = []
@@ -642,7 +642,7 @@ def extract_dis_all(image, name, gen):
 
 
 def extract_dis(image, name, gen):
-    """Slice a function (and its type) out of a generation's wat text."""
+    """Slice a function (and its type) out of a module's wat text."""
     blocks = extract_dis_all(image, name, gen)
     return (blocks[0], gen) if blocks else (None, None)
 
@@ -716,7 +716,7 @@ class Lrepl:
             return (True, wat_txt) if wat_txt else (False, f"no function '{arg}' found")
 
         # not a binding: any function by wasm name (stdlib, overloads).
-        # DCE links only what each generation uses, so search newest to oldest.
+        # DCE links only what each load uses, so search newest to oldest.
         for gen in range(img.gen, 0, -1):
             if gen not in img.gen_exports:
                 continue
@@ -725,7 +725,7 @@ class Lrepl:
                 head = f"gen {gen}: {len(blocks)} function(s) named {arg}"
                 return True, head + "\n\n" + "\n\n".join(blocks)
 
-        # not linked anywhere yet: compile a probe generation that force-links
+        # not linked anywhere yet: compile a probe load that force-links
         # it (an exported stub call — exports are DCE roots, and the slot chain
         # drags the callee in), then disassemble from the probe.
         if arg in img.dis_probes:
@@ -751,7 +751,7 @@ class Lrepl:
                        "qualified name (e.g. :dis kotlin.math.sin)")
 
     def dis_class(self, name):
-        """The whole class from the newest generation's wat: the cell struct,
+        """The whole class from the newest module's wat: the cell struct,
         its payload LAYOUT struct (the class's current shape — the
         payload type key is the class key), the vtable type, the slot/RTTI globals,
         and every function belonging to the class — the constructor,
@@ -761,7 +761,7 @@ class Lrepl:
         img = self.image
         klass = name if name in img.classes else f"{name}__obj"
         lines = img.wat(img.gen).splitlines()
-        out = [f"class {klass} — generation {img.gen}"]
+        out = [f"class {klass} — load {img.gen}"]
 
         def type_lines(pat):
             cre = re.compile(pat)
@@ -772,7 +772,7 @@ class Lrepl:
         # #typeNNN <classVTable> — found via the cell's own vtable field)
         cell = type_lines(rf'^\s*\(type \${esc} \(;')
         if not cell:
-            return False, f"class {klass} not linked in generation {img.gen}"
+            return False, f"class {klass} not linked in load {img.gen}"
         out.append("\n  ;; cell struct (stable forever: vtable, itable, rtti, payload)")
         out.extend(cell)
         payloads = type_lines(rf'^\s*\(type \$"?#?(?:type\d+ )?{esc}\$payload')
@@ -827,7 +827,7 @@ class Lrepl:
 
     def dis_fun_binding(self, name, b):
         """Show every method's body: the impl the binding's cell holds
-        lives in the generation that defined it, under its plain wasm
+        lives in the module that defined it, under its plain wasm
         name (the entry export name carries the binding key; the impl
         carries the name — entries read the cell, the impl IS the body)."""
         img = self.image
@@ -856,12 +856,9 @@ class Lrepl:
         import_line = "import " + fq_or_simple if "." in fq_or_simple else None
         if import_line:
             img.extra_imports.add(import_line)
-        # NB probe generations are LOADED like any other: in the shared-
-        # table era every compiled generation's init PUBLISHES its binding
-        # assignments, and its IC-cached fragments carry baked table
-        # indices — an unloaded compile would poison the cache with
-        # assignments the live image never made (entries reading
-        # the image). Probes are just more image history.
+        # NB probe loads are LOADED because they are CALLED — an
+        # uninstantiated module's exports cannot answer; the probe's
+        # fragments are one more (harmless) entry of image history.
         found_gens = []
         any_compiled = False
         # "unresolved '<simple>'" with a resolving import = extension mis-call
@@ -908,7 +905,7 @@ class Lrepl:
         if p.get("imports"):
             image.extra_imports.update(f"import {i}" for i in p["imports"])
             if not p.get("decls"):
-                return True, "import noted — applies to all subsequent generations"
+                return True, "import noted — applies to all subsequent loads"
 
         if p.get("ok") and p.get("decls"):
             outs = []
@@ -973,7 +970,7 @@ class Lrepl:
         method name segments in export names) and orchestration:
 
         - body-only redefinition (same fields, same method signatures): the
-          new generation's method entries are the same bindings — the load
+          new load's method entries are the same bindings — the load
           applies its bodies, and EXISTING INSTANCES run them via their
           vtables (vtable entries read the fdefn cells);
         - any shape change (fields, method signatures/set, supertypes): the
@@ -993,7 +990,7 @@ class Lrepl:
                 return f"declared {d['kind']} {name}"
             image.classes[name] = new_text
             image.class_refs[name] = used
-            # LOAD IS APPLY: the generation's init already installed its
+            # LOAD IS APPLY: the load's init already installed its
             # method bodies into the cells (the newest definitions are
             # live, unconditionally — the fdefinition is type-erased)
             report = (f"redefined class {name} — the load applied its method bodies; "
@@ -1010,7 +1007,7 @@ class Lrepl:
     def handle_object_ast(self, d):
         """Object redefinition = class redefinition of <name>__obj with the
         binding's accessor kept stable: the singleton the registry points at
-        is the OLD generation's instance, so the method-slot sweep is what
+        is the OLD module's instance, so the method-slot sweep is what
         makes its bodies update (same engine-judged rules as classes)."""
         image = self.image
         name = d["name"]
@@ -1124,7 +1121,7 @@ class Lrepl:
         method = {"gen": gen, "export": new_entry, "fn_type": fn_type, "sig": sig}
 
         if existing is not None and fn_type in existing["methods"]:
-            # ---- REPLACE the method: the generation's LOAD already
+            # ---- REPLACE the method: the LOAD already
             # installed the new body into the binding's cell — every
             # caller reads the cell and now runs it (LOAD IS APPLY).
             existing["methods"][fn_type] = method
@@ -1175,7 +1172,7 @@ class Lrepl:
         # compile exists to RECOVER the type from the wat — and in the
         # shared-table era it is LOADED like every compile (its fragments
         # carry baked table indices; an unload would poison the IC cache).
-        # The recovery generation is just more (harmless) image history.
+        # The recovery load is just more (harmless) image history.
         body = body_with()
         ok, err, gen = image.compile_module(body, refs)
         if not ok:
@@ -1188,7 +1185,7 @@ class Lrepl:
             t = image.recover_val_type(gen, f"{name}__get")
             if not t:
                 return False, (
-                    f"cannot recover the type of '{name}' for cross-generation access; "
+                    f"cannot recover the type of '{name}' for access from later loads; "
                     "annotate it explicitly (var x: Int = ...)"
                 )
             body = body_with(get_only_type=t)
@@ -1218,7 +1215,7 @@ class Lrepl:
         # symbol table keys bindings by name+signature, and every eval
         # thunk declaring `__eval()` would collide with the first one's
         # table index — its entry would run the FIRST thunk's body (DESIGN
-        # §15). Thunks are ephemeral and never called across generations.
+        # §15). Thunks are ephemeral and never called across loads.
         body = [line.replace("__eval", f"__eval{image.gen + 1}") for line in body]
         refs = set(refs) | image.all_class_refs()
         ok, err, gen = image.compile_module(body, refs)
@@ -1247,7 +1244,7 @@ class Lrepl:
 # ---------------------------------------------------------------- UI
 
 BANNER = """\
-lrepl — live-image Kotlin/Wasm REPL (each line = one wasm generation).
+lrepl — live-image Kotlin/Wasm REPL (each line = one wasm load).
 Commands: :q :reset :list :dis NAME   (definitions have Julia semantics: new signature = new overload)
 Notes: class body-only redefinitions are live; shape changes mint a new payload shape."""
 
@@ -1468,7 +1465,7 @@ HIERARCHY_DEMO = [
     'class Cat : Animal { override fun speak(): String = "meow" }',
     'pat(Cat())',
     # ---- constructor changes affect only NEW instances (constructors are
-    # per-generation and not slotted); field/getter bodies swap normally
+    # per-load and not slotted); field/getter bodies swap normally
     'class C5(val n: Int = 5)',
     'val c1 = C5()',
     'c1.n',

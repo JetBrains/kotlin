@@ -442,18 +442,18 @@ class SwankServer:
             if b.get("kind") == "fun":
                 lines.append(f"{name} is a function (Julia-style generic).")
                 for key, m in sorted(b["methods"].items()):
-                    lines.append(f"  method {m['sig']}  [defined in generation {m['gen']}]")
+                    lines.append(f"  method {m['sig']}  [defined by load {m['gen']}]")
                 lines.append("A same-signature definition swaps the live slot; every")
                 lines.append("already-compiled caller runs the new body immediately.")
             elif b.get("kind") == "obj":
                 lines.append(f"{name} is an object; its live singleton (created in")
-                lines.append(f"generation {b['gen']}) is shared across the image;")
+                lines.append(f"load {b['gen']}) is shared across the image;")
                 lines.append("redefinitions update its method bodies and keep its state.")
             else:
                 lines.append(f"{name} is a {b['kind']} of type {b.get('kotlin_type')}")
-                lines.append(f"  (defined in generation {b['gen']}; state is shared across the image).")
+                lines.append(f"  (defined by load {b['gen']}; state is shared across the image).")
         if name in image.classes:
-            lines.append(f"{name} is a class. Current definition (generation {image.gen}):")
+            lines.append(f"{name} is a class. Current definition (load {image.gen}):")
             for ln in image.classes[name].splitlines():
                 lines.append("  " + ln)
         if not lines:
@@ -470,9 +470,9 @@ class SwankServer:
         return SwankResponse(self.describe_symbol(args[0] if args and isinstance(args[0], str) else ""))
 
     def op_find_definitions(self, args):
-        """M-.: locate the defining generation file. Every submission is
+        """M-.: locate the defining file. Every submission is
         written to build/image.kt (one evolving source path), so the image's record of a binding (its
-        defining generation) or a class (its current text) pins the file."""
+        defining load) or a class (its current text) pins the file."""
         name = args[0] if args and isinstance(args[0], str) else ""
         image = self.repl.image
 
