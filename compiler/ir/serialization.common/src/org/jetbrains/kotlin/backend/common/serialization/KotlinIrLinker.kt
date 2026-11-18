@@ -118,9 +118,6 @@ abstract class KotlinIrLinker(
 
     open val partialLinkageSupport: PartialLinkageSupportForLinker get() = PartialLinkageSupportForLinker.DISABLED
 
-    open val returnUnboundSymbolsIfSignatureNotFound: Boolean
-        get() = partialLinkageSupport.isEnabled
-
     open val moduleDependencyTracker: IrModuleDependencyTracker get() = IrModuleDependencyTracker.DISABLED
 
     // Represents the fact that the linkage process was finished.
@@ -174,20 +171,15 @@ abstract class KotlinIrLinker(
         // might return null (like KonanInteropModuleDeserializer does) or non-null unbound symbol (like JsModuleDeserializer does).
         val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
 
-        if (symbol != null) {
+        return if (symbol != null) {
             moduleDependencyTracker.trackDependency(
                 fromModule = moduleDeserializer.moduleFragment,
                 toModule = actualModuleDeserializer.moduleFragment
             )
 
-            return symbol
-        } else if (returnUnboundSymbolsIfSignatureNotFound)
-            return referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
-        else
-            SignatureIdNotFoundInModuleWithDependencies(
-                idSignature = idSignature,
-                problemModuleDeserializer = moduleDeserializer,
-            ).raiseIssue(errorCallback)
+            symbol
+        } else
+            referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
     }
 
     private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? =
