@@ -1,0 +1,26 @@
+FILE: explicitCompanionAddDiamondSupertypes.kt
+    public abstract interface Left : R|kotlin/Any| {
+        public open fun value(): R|kotlin/String| {
+            ^value String(Left)
+        }
+
+    }
+    public abstract interface Right : R|kotlin/Any| {
+        public open fun value(): R|kotlin/String| {
+            ^value String(Right)
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/WithCompanion|(supertypes = vararg(<getClass>(Q|Left|), <getClass>(Q|Right|)) [evaluated = vararg(<getClass>(Q|Left|), <getClass>(Q|Right|))]) public final class Owner : R|kotlin/Any| {
+        public constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any|, R|Left|, R|Right| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

@@ -1,0 +1,31 @@
+FILE: implicitCompanionAddSealedSupertype.kt
+    public sealed interface Base : R|kotlin/Any| {
+        public final object Known : R|Base| {
+            private constructor(): R|Base.Known| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/WithCompanion|(supertypes = vararg(<getClass>(Q|Base|)) [evaluated = vararg(<getClass>(Q|Base|))]) public final class Owner : R|kotlin/Any| {
+        public constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any|, R|Base| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun describe(base: R|Base|): R|kotlin/String| {
+        ^describe when (lval <when-subject>: R|Base| = R|<local>/base|) {
+            ==($subj$, Q|Base.Known|) ->  {
+                String(Known)
+            }
+        }
+
+    }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.js.test.runners.AbstractLightTreeJsIrTextTest
 import org.jetbrains.kotlin.js.test.runners.AbstractLoadCompiledJsKotlinTest
 import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
+import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.ENABLE_SANDBOX
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -173,6 +174,7 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration(dumpFir: B
     enableLazyResolvePhaseChecking()
 
     defaultDirectives {
+        +ENABLE_SANDBOX
         +ENABLE_PLUGIN_PHASES
         if (dumpFir) {
             +FIR_DUMP
@@ -195,7 +197,7 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration(dumpFir: B
 
 fun TestConfigurationBuilder.commonWithoutPluginConfiguration() {
     defaultDirectives {
-        +PluginSandboxDirectives.DISABLE_PLUGIN
+        -ENABLE_SANDBOX
         TestDumpDirectives.DUMP_CLASSIFIER with "withoutPlugin"
     }
 

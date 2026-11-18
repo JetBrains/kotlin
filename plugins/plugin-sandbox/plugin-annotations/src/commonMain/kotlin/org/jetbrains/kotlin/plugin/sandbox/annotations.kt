@@ -31,6 +31,9 @@ annotation class NestedClassAndMaterializeMember
 annotation class MyInterfaceSupertype
 annotation class CompanionWithFoo
 
+@Target(AnnotationTarget.CLASS)
+annotation class WithCompanion(vararg val supertypes: KClass<*>)
+
 annotation class MySerializable
 annotation class CoreSerializer
 

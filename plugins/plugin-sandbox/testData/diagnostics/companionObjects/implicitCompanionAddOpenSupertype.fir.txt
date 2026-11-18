@@ -1,0 +1,28 @@
+FILE: implicitCompanionAddOpenSupertype.kt
+    public abstract class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun value(): R|kotlin/String| {
+            ^value String(OK)
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/WithCompanion|(supertypes = vararg(<getClass>(Q|Base|)) [evaluated = vararg(<getClass>(Q|Base|))]) public final class Owner : R|kotlin/Any| {
+        public constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any|, R|Base| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval <unused var>: R|kotlin/String| = Q|Owner|.R|/Base.value|()
+        lval <unused var>: R|kotlin/String| = Q|Owner.Companion|.R|/Base.value|()
+    }

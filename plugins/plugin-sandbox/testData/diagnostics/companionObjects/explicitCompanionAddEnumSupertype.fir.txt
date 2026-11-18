@@ -1,0 +1,30 @@
+FILE: explicitCompanionAddEnumSupertype.kt
+    public final enum class Base : R|kotlin/Enum<Base>| {
+        private constructor(): R|Base| {
+            super<R|kotlin/Enum<Base>|>()
+        }
+
+        public final static enum entry Known: R|Base|
+        public final static fun values(): R|kotlin/Array<Base>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Base| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Base>|
+            public static get(): R|kotlin/enums/EnumEntries<Base>|
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/WithCompanion|(supertypes = vararg(<getClass>(Q|Base|)) [evaluated = vararg(<getClass>(Q|Base|))]) public final class Owner : R|kotlin/Any| {
+        public constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any|, R|Base| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

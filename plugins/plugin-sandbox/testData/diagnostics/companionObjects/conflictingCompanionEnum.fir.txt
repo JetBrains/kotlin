@@ -1,0 +1,32 @@
+FILE: conflictingCompanionEnum.kt
+    public abstract interface Base : R|kotlin/Any| {
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/WithCompanion|(supertypes = vararg(<getClass>(Q|Base|)) [evaluated = vararg(<getClass>(Q|Base|))]) public final class Owner : R|kotlin/Any| {
+        public constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final enum class Companion : R|kotlin/Enum<Owner.Companion>| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Enum<Owner.Companion>|>()
+            }
+
+            public final static fun values(): R|kotlin/Array<Owner.Companion>| {
+            }
+
+            public final static fun valueOf(value: R|kotlin/String|): R|Owner.Companion| {
+            }
+
+            public final static val entries: R|kotlin/enums/EnumEntries<Owner.Companion>|
+                public static get(): R|kotlin/enums/EnumEntries<Owner.Companion>|
+
+        }
+
+        public final companion object Companion : R|kotlin/Any|, R|Base| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
