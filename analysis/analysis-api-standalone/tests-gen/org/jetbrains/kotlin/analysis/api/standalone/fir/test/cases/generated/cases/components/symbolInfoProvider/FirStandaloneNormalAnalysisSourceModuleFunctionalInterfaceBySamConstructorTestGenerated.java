@@ -50,6 +50,48 @@ public class FirStandaloneNormalAnalysisSourceModuleFunctionalInterfaceBySamCons
   }
 
   @Test
+  @TestMetadata("localSamClass.kt")
+  public void testLocalSamClass() {
+    run("localSamClass.kt");
+  }
+
+  @Test
+  @TestMetadata("localSamClassInLambda.kt")
+  public void testLocalSamClassInLambda() {
+    run("localSamClassInLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("localSamClassInLocalClass.kt")
+  public void testLocalSamClassInLocalClass() {
+    run("localSamClassInLocalClass.kt");
+  }
+
+  @Test
+  @TestMetadata("localSamClassInMemberFunction.kt")
+  public void testLocalSamClassInMemberFunction() {
+    run("localSamClassInMemberFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("localSamClassWithTypeArguments.kt")
+  public void testLocalSamClassWithTypeArguments() {
+    run("localSamClassWithTypeArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("localTypeAliasToLocalSamClass.kt")
+  public void testLocalTypeAliasToLocalSamClass() {
+    run("localTypeAliasToLocalSamClass.kt");
+  }
+
+  @Test
+  @TestMetadata("localTypeAliasToSamClass.kt")
+  public void testLocalTypeAliasToSamClass() {
+    run("localTypeAliasToSamClass.kt");
+  }
+
+  @Test
   @TestMetadata("samClass.kt")
   public void testSamClass() {
     run("samClass.kt");
@@ -59,5 +101,11 @@ public class FirStandaloneNormalAnalysisSourceModuleFunctionalInterfaceBySamCons
   @TestMetadata("samClassWithTypeArguments.kt")
   public void testSamClassWithTypeArguments() {
     run("samClassWithTypeArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasToSamClass.kt")
+  public void testTypeAliasToSamClass() {
+    run("typeAliasToSamClass.kt");
   }
 }

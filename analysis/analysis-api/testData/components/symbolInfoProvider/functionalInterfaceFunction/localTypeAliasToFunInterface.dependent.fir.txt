@@ -1,0 +1,41 @@
+CLASS:
+  KaTypeAliasSymbol:
+  anchorPsi: KtTypeAlias
+  annotations: []
+  classId: null
+  expandedType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: IntPredicate
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: IntPredicate
+        symbol: KaNamedClassSymbol(IntPredicate)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(IntPredicate)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  isActual: false
+  isExpect: false
+  isExternal: false
+  location: LOCAL
+  modality: FINAL
+  name: IntPredicateAlias
+  origin: SOURCE
+  psi: KtTypeAlias
+  realPsi: KtTypeAlias
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(localTypeAliasToFunInterface.kt)
+  getContainingModule: KaDanglingFileModule "Temporary file"
+  deprecation: null
+  importableFqName: null
+
+FUNCTIONAL INTERFACE FUNCTION:
+  null
+
+SAM CONSTRUCTOR:
+  null
