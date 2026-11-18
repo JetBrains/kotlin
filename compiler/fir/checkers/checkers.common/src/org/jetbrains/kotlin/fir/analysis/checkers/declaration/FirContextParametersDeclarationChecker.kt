@@ -91,7 +91,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
                 }
 
                 parameter.source?.getModifierList()?.modifiers?.forEach { modifier ->
-                    if (modifier.token !in allowedInContextParameters) {
+                    if (modifier.token.tokenId !in allowedInContextParameters) {
                         reporter.reportOn(modifier.source, FirErrors.WRONG_MODIFIER_TARGET, modifier.tokenName, "context parameter")
                     }
                 }
