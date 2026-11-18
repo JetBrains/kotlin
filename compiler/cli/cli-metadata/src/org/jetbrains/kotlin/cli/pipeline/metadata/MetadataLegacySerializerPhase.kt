@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.cli.pipeline.metadata
 
 import org.jetbrains.kotlin.cli.common.metadataDestinationDirectory
-import org.jetbrains.kotlin.cli.metadata.AbstractMetadataSerializer.OutputInfo
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataSerializationArtifact.OutputInfo
 import org.jetbrains.kotlin.codegen.ModuleNameUtil
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -116,7 +116,7 @@ abstract class MetadataLegacySerializerPhaseBase(
         analysisResult: List<SingleModuleFrontendOutput>,
         destDir: File,
         metadataVersion: BinaryVersion,
-    ): OutputInfo?
+    ): OutputInfo
 
     protected data class PackageContent(
         val classes: MutableList<FirRegularClass> = mutableListOf(),
