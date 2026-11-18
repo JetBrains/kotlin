@@ -263,28 +263,28 @@ class BuildSessionApplicationEnvironmentReuseTest : BaseCompilationTest() {
      * IntelliJ `Disposer`/`Disposable` types are not the ones on this test's own class path. Everything here
      * is therefore resolved reflectively: the environment state comes from the compiler [Companion][companionInstance],
      * and the `Disposable`/`Disposer` types are recovered — with their real relocated names and class loader — from
-     * the signature of the compiler's own `getOrCreateApplicationEnvironmentForProduction` method.
+     * the signature of the compiler's own `getOrCreateApplicationEnvironment` method.
      */
     private object EnvironmentDisposal {
         private val kotlinCoreEnvironmentClass: Class<*> =
-            btaClassloader.loadClass("org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment")
+            btaClassloader.loadClass("org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment")
 
         // The `Companion` object holds the shared-environment state and the public `applicationEnvironment` accessor.
         private val companionInstance: Any =
             kotlinCoreEnvironmentClass.getField("Companion").get(null)
 
         private val getApplicationEnvironment =
-            companionInstance.javaClass.getMethod("getApplicationEnvironment")
+            companionInstance.javaClass.getMethod("getInstance")
 
         /**
          * The IntelliJ `Disposable` interface, taken from the first parameter of the compiler's
-         * `getOrCreateApplicationEnvironmentForProduction(Disposable, CompilerConfiguration)` — this yields the exact
+         * `getOrCreateApplicationEnvironment(Disposable, CompilerConfiguration)` — this yields the exact
          * class, loaded by the exact class loader the compiler uses.
          * Used to derive Disposer class regardless of the package relocation to not hardcode relocated FQN.
          */
         private val disposableInterface: Class<*> =
             companionInstance.javaClass.methods
-                .first { it.name == "getOrCreateApplicationEnvironmentForProduction" }
+                .first { it.name == "getOrCreateApplicationEnvironment" }
                 .parameterTypes[0]
 
         private val disposerRegister =
