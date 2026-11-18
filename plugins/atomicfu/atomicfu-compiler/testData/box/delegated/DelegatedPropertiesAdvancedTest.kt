@@ -6,6 +6,15 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.test.*
 import kotlinx.atomicfu.atomic
 
+inline fun testBoolProperty(property: KMutableProperty0<Boolean>, getAtomicValue: () -> Boolean, setAtomicValue: (Boolean) -> Unit) {
+    setAtomicValue(false)
+    assertFalse(property.get())
+    property.set(true)
+    assertTrue(getAtomicValue())
+    setAtomicValue(false)
+    assertFalse(property.get())
+}
+
 inline fun testIntProperty(property: KMutableProperty0<Int>, resetAtomic: () -> Unit, getAtomicValue: () -> Int, incrementAtomic: () -> Unit) {
     resetAtomic()
     assertEquals(0, property.get())
@@ -13,6 +22,15 @@ inline fun testIntProperty(property: KMutableProperty0<Int>, resetAtomic: () -> 
     assertEquals(1, getAtomicValue())
     incrementAtomic()
     assertEquals(2, property.get())
+}
+
+inline fun testRefProperty(property: KMutableProperty0<Any?>, getAtomicValue: () -> Any?, setAtomicValue: (Any?) -> Unit) {
+    setAtomicValue(null)
+    assertNull(property.get())
+    property.set("Hello World!")
+    assertEquals("Hello World!", getAtomicValue())
+    setAtomicValue("What's up?")
+    assertEquals("What's up?", property.get())
 }
 
 enum class Enum {
@@ -91,22 +109,35 @@ object SameContainerObject {
 
 class SameContainerCompanionBlock {
     companion {
-        private val atomicProperty = atomic(0)
-        var delegated: Int by atomicProperty
-        var delegatedExplicit by SameContainerCompanionBlock.atomicProperty
+        private val atomicBool = atomic(false)
+        private val atomicInt = atomic(0)
+        private val atomicReference = atomic<Any?>(null)
+        var delegated: Int by atomicInt
+        var delegatedExplicit by SameContainerCompanionBlock.atomicInt
     }
 
     companion {
-        var secondDelegated: Int by atomicProperty
-        var secondDelegatedExplicit by SameContainerCompanionBlock.atomicProperty
+        var secondDelegated: Int by atomicInt
+        var secondDelegatedExplicit by SameContainerCompanionBlock.atomicInt
     }
 
-    companion {
-        fun test() {
-            for (property in arrayOf(::delegated, ::delegatedExplicit, ::secondDelegated, ::secondDelegatedExplicit)) {
-                testIntProperty(property, { atomicProperty.value = 0 }, { atomicProperty.value }, { atomicProperty.incrementAndGet() })
-            }
+    var delegatedBool by atomicBool
+    var delegatedInt by atomicInt
+    var delegatedIntExplicit by SameContainerCompanionBlock.atomicInt
+    var delegatedReference by atomicReference
+
+    fun test() {
+        val properties = arrayOf(
+            this::delegatedInt, this::delegatedIntExplicit, SameContainerCompanionBlock::delegated,
+            SameContainerCompanionBlock::delegatedExplicit, SameContainerCompanionBlock::secondDelegated,
+            SameContainerCompanionBlock::secondDelegatedExplicit,
+        )
+
+        for (property in properties) {
+            testIntProperty(property, { atomicInt.value = 0 }, { atomicInt.value }, { atomicInt.incrementAndGet() })
         }
+        testBoolProperty(this::delegatedBool, { atomicBool.value }, { atomicBool.value = it })
+        testRefProperty(this::delegatedReference, { atomicReference.value }, { atomicReference.value = it })
     }
 }
 
@@ -126,7 +157,7 @@ fun box(): String {
     SameContainer().test()
     SameContainerCompanionObject.test()
     SameContainerObject.test()
-    SameContainerCompanionBlock.test()
+    SameContainerCompanionBlock().test()
     testNestedType()
 
     return "OK"

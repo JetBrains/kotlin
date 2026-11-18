@@ -63,8 +63,7 @@ class CompanionBlockMint {
     }
 
     private val coinsAtomicInstance = atomic(0)
-    //TODO(KT-91662) This should stop being an error.
-    var <!INSTANCE_PROPERTIES_DELEGATED_TO_ATOMICS_CAN_ONLY_ACCESS_SAME_INSTANCE!>companionSeen<!> by coinsAtomic
+    var companionSeen by coinsAtomic
 }
 
 enum class EnumMint {
