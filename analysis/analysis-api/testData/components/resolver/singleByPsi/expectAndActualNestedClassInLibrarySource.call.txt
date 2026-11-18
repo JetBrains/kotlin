@@ -11,9 +11,9 @@ KtNameReferenceExpression(210,218): 'hashCode'
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
-        symbol = test/Foo.Nested.hashCode(<dispatch receiver>: test.Foo.Nested): kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
         valueParameters = []
         contextParameters = []
-        callableId = test/Foo.Nested.hashCode
+        callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
       valueArgumentMapping = {}

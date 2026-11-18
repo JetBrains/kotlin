@@ -6,14 +6,14 @@ KtNameReferenceExpression(196,204): 'hashCode'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = foo
         isSafeNavigation = false
-        type = test.Foo
+        type = {test.Foo=} test.FooImpl
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
-        symbol = test/Foo.hashCode(<dispatch receiver>: test.Foo): kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
         valueParameters = []
         contextParameters = []
-        callableId = test/Foo.hashCode
+        callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
       valueArgumentMapping = {}

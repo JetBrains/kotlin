@@ -25,7 +25,8 @@ internal interface LLKnownClassDeclarationSymbolProvider<E : PsiElement> {
      * Furthermore, the function does not guarantee that a symbol for exactly [classLikeDeclaration] will be returned, as this parameter is
      * only used for optimization. This is in line with the contracts of [FirSymbolProvider.getClassLikeSymbolByClassId], which only
      * considers the [ClassId] itself and operates on a first-come, first-serve basis. The first [KtClassLikeDeclaration] passed to this
-     * function or fetched by the symbol provider itself becomes the basis of the class-like symbol for that class ID.
+     * function or fetched by the symbol provider itself becomes the basis of the class-like symbol for that class ID. In library sources,
+     * an `expect` declaration passed to this function may be replaced with a non-`expect` declaration of the same class ID.
      *
      * To find a symbol for a specific PSI declaration, use [LLPsiAwareSymbolProvider.getClassLikeSymbolByPsi].
      */

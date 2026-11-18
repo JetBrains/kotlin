@@ -4,5 +4,5 @@ KtNameReferenceExpression(160,168): 'hashCode'
   lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      test/Foo.hashCode(<dispatch receiver>: test.Foo): kotlin.Int
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
     ]
