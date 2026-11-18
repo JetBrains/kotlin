@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -21,7 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class UnsafeOptimizationsForMultiplatformTest {
+class IncrementalCompilationOfCommonSourcesTest {
 
     @Test
     fun disabledByDefaultForEveryTarget() {
@@ -42,7 +42,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun jsPropertyAffectsOnlyJsTasks() {
         assertEnabledTargets(
-            properties = mapOf(KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true),
+            properties = mapOf(KOTLIN_JS_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to true),
             expectedJvm = false, expectedJs = true, expectedWasm = false,
         )
     }
@@ -50,7 +50,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     @Test
     fun wasmPropertyAffectsOnlyWasmTasks() {
         assertEnabledTargets(
-            properties = mapOf(KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true),
+            properties = mapOf(KOTLIN_WASM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to true),
             expectedJvm = false, expectedJs = false, expectedWasm = true,
         )
     }
@@ -69,8 +69,8 @@ class UnsafeOptimizationsForMultiplatformTest {
             properties = mapOf(
                 KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true,
                 KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to false,
-                KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to false,
-                KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to false,
+                KOTLIN_JS_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to false,
+                KOTLIN_WASM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to false,
             ),
             expectedJvm = false, expectedJs = false, expectedWasm = false,
         )
