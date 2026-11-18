@@ -177,6 +177,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpressionTypeTestGenerated ext
   }
 
   @Test
+  @TestMetadata("comparisonInCatchParameterDefaultValue.kt")
+  public void testComparisonInCatchParameterDefaultValue() {
+    run("comparisonInCatchParameterDefaultValue.kt");
+  }
+
+  @Test
   @TestMetadata("constructorDelegationExpression.kt")
   public void testConstructorDelegationExpression() {
     run("constructorDelegationExpression.kt");
@@ -276,6 +282,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpressionTypeTestGenerated ext
   @TestMetadata("functionDeclaration.kt")
   public void testFunctionDeclaration() {
     run("functionDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitConstructorDelegationReference.kt")
+  public void testImplicitConstructorDelegationReference() {
+    run("implicitConstructorDelegationReference.kt");
   }
 
   @Test
@@ -411,6 +423,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpressionTypeTestGenerated ext
   }
 
   @Test
+  @TestMetadata("labelDefinition.kt")
+  public void testLabelDefinition() {
+    run("labelDefinition.kt");
+  }
+
+  @Test
+  @TestMetadata("labelReferenceInQualifiedThis.kt")
+  public void testLabelReferenceInQualifiedThis() {
+    run("labelReferenceInQualifiedThis.kt");
+  }
+
+  @Test
   @TestMetadata("largeIntLiteralWithByteExpectedType.kt")
   public void testLargeIntLiteralWithByteExpectedType() {
     run("largeIntLiteralWithByteExpectedType.kt");
@@ -438,6 +462,66 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpressionTypeTestGenerated ext
   @TestMetadata("list_mutableListOf.kt")
   public void testList_mutableListOf() {
     run("list_mutableListOf.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInConstructorParameterAnnotationWithUseSiteTarget.kt")
+  public void testLiteralInConstructorParameterAnnotationWithUseSiteTarget() {
+    run("literalInConstructorParameterAnnotationWithUseSiteTarget.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInContextParameterDefaultValue.kt")
+  public void testLiteralInContextParameterDefaultValue() {
+    run("literalInContextParameterDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInContractEffectList.kt")
+  public void testLiteralInContractEffectList() {
+    run("literalInContractEffectList.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInExpectEnumEntryArgument.kt")
+  public void testLiteralInExpectEnumEntryArgument() {
+    run("literalInExpectEnumEntryArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInFunctionTypeContextParameterDefaultValue.kt")
+  public void testLiteralInFunctionTypeContextParameterDefaultValue() {
+    run("literalInFunctionTypeContextParameterDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInFunctionTypeParameterAnnotation.kt")
+  public void testLiteralInFunctionTypeParameterAnnotation() {
+    run("literalInFunctionTypeParameterAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInFunctionTypeParameterDefaultValue.kt")
+  public void testLiteralInFunctionTypeParameterDefaultValue() {
+    run("literalInFunctionTypeParameterDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInPlaceholderTypeArgumentAnnotation.kt")
+  public void testLiteralInPlaceholderTypeArgumentAnnotation() {
+    run("literalInPlaceholderTypeArgumentAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInSetterWithoutBodyParameterAnnotation.kt")
+  public void testLiteralInSetterWithoutBodyParameterAnnotation() {
+    run("literalInSetterWithoutBodyParameterAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("literalInTypeConstraintWithoutSubject.kt")
+  public void testLiteralInTypeConstraintWithoutSubject() {
+    run("literalInTypeConstraintWithoutSubject.kt");
   }
 
   @Test

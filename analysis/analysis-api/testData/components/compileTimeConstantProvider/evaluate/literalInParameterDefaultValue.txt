@@ -1,0 +1,5 @@
+expression: "a"
+constant: "a"
+constantValueKind: StringValue
+constantValueSource: STRING_TEMPLATE
+constantValueSourceText: "a"
