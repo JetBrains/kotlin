@@ -39,5 +39,5 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val FREE_ARGS_FOR_SCRIPT by key<List<String>>()
     val DEFAULT_EXTENSION_FOR_SCRIPTS by key<String>(throwOnNull = false)
 
-    val TEST_ENVIRONMENT by key<Boolean>("Defines what kind of application environment should be created. Should be set to `true` only in tests")
+    val TEST_ENVIRONMENT by key<Boolean>("Indicates that the compiler invocation happens in tests")
 }

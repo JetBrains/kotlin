@@ -147,7 +147,7 @@ class ScriptTest {
             loadScriptingPlugin(configuration, rootDisposable)
 
             @OptIn(CoreEnvironmentDeprecation::class)
-            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration)
+            val environment = KotlinCoreEnvironment.create(rootDisposable, configuration)
 
             try {
                 return compileScript(

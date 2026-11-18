@@ -40,8 +40,6 @@ abstract class KotlinTestWithEnvironment {
 
     private fun createEnvironment(): KotlinCoreEnvironment {
         @OptIn(CoreEnvironmentDeprecation::class)
-        return KotlinCoreEnvironment.createForParallelTests(
-            testRootDisposable, KotlinTestUtils.newConfiguration()
-        )
+        return KotlinCoreEnvironment.create(testRootDisposable, KotlinTestUtils.newConfiguration())
     }
 }

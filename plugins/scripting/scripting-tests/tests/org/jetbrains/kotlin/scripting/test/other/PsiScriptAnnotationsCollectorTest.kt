@@ -142,6 +142,6 @@ class PsiScriptAnnotationsCollectorTest {
             loadScriptingPlugin(this, testRootDisposable)
         }
         @OptIn(CoreEnvironmentDeprecation::class)
-        return KotlinCoreEnvironment.createForTests(testRootDisposable, compilerConfiguration)
+        return KotlinCoreEnvironment.create(testRootDisposable, compilerConfiguration)
     }
 }

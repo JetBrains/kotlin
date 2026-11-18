@@ -10,7 +10,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.KtAssert.assertEquals
@@ -60,9 +60,7 @@ class CoreJrtFsTest {
         configuration.put(JVMConfigurationKeys.JDK_HOME, jdkHome)
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
-            this.testRootDisposable
-        )
+        val environment = KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(testRootDisposable)
 
         val jrt = environment.jrtFileSystem ?: error("No jrt-fs configured")
 

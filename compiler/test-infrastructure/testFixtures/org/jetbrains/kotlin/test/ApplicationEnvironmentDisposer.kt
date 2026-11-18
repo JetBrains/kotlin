@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.services.ApplicationDisposableProvider
 import org.junit.platform.launcher.TestExecutionListener
 import org.junit.platform.launcher.TestPlan
@@ -48,5 +47,5 @@ class ExecutionListenerBasedDisposableProvider : ApplicationDisposableProvider()
  */
 @OptIn(CoreEnvironmentDeprecation::class)
 fun pinApplicationEnvironment(parentDisposable: Disposable) {
-    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(parentDisposable)
+    KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(parentDisposable)
 }

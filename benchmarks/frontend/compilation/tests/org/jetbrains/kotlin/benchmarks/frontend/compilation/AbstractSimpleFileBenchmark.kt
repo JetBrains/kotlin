@@ -75,10 +75,7 @@ abstract class AbstractSimpleFileBenchmark {
     @Setup(Level.Trial)
     fun setUp() {
         @OptIn(CoreEnvironmentDeprecation::class)
-        env = KotlinCoreEnvironment.createForTests(
-            myDisposable,
-            newConfiguration()
-        )
+        env = KotlinCoreEnvironment.create(myDisposable, newConfiguration())
 
         file = createFile(
             "test.kt",

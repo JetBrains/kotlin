@@ -326,7 +326,7 @@ class IncrementalCompilationCustomScopeTest {
             configure()
         }
 
-        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration)
+        val environment = KotlinCoreEnvironment.create(disposable, configuration)
         projectEnvironment = environment.toVfsBasedProjectEnvironment()
         return prepareIncrementalCompilationContextAndLibrariesClasspath(configuration, projectEnvironment)
     }

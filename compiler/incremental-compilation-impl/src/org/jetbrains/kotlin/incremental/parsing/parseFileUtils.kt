@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -50,7 +49,7 @@ private fun classesFqNames(kotlinFiles: Collection<File>, disposable: Disposable
     config.configureJdkClasspathRoots()
 
     @OptIn(CoreEnvironmentDeprecation::class)
-    val environment = KotlinCoreEnvironment.createForProduction(disposable, config)
+    val environment = KotlinCoreEnvironment.create(disposable, config)
     val psiManager = PsiManager.getInstance(environment.project)
     val fileManager = VirtualFileManager.getInstance()
     val localFS = fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL) as KotlinLocalFileSystem

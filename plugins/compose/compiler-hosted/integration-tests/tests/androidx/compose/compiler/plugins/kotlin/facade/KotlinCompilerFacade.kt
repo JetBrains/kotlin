@@ -128,9 +128,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
             }
 
             @OptIn(CoreEnvironmentDeprecation::class)
-            val environment = KotlinCoreEnvironment.createForTests(
-                disposable, configuration
-            )
+            val environment = KotlinCoreEnvironment.create(disposable, configuration)
 
             ComposePluginRegistrar.checkCompilerConfiguration(configuration)
 

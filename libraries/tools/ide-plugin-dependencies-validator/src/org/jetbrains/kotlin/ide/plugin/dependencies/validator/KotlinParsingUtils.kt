@@ -42,7 +42,7 @@ private fun Path.parseAsKtFile(project: Project): KtFile {
 
 private fun createProjectForParsing(): Project {
     @OptIn(CoreEnvironmentDeprecation::class)
-    return KotlinCoreEnvironment.createForProduction(
+    return KotlinCoreEnvironment.create(
         Disposer.newDisposable("Disposable for project of ${ExperimentalOptInUsageInSourceChecker::class.simpleName}"),
         CompilerConfiguration.create()
     ).project

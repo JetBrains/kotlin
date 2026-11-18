@@ -50,9 +50,7 @@ abstract class KtParsingTestCase protected constructor(@NonNls dataPath: String,
     fun setUp() {
         val configuration = CompilerConfiguration.create()
         @OptIn(CoreEnvironmentDeprecation::class)
-        myEnvironment = KotlinCoreEnvironment.createForParallelTests(
-            testRootDisposable, configuration
-        )
+        myEnvironment = KotlinCoreEnvironment.create(testRootDisposable, configuration)
     }
 
     @AfterEach

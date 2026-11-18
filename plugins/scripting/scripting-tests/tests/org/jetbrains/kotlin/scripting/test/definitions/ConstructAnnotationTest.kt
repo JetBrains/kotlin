@@ -233,10 +233,9 @@ class ConstructAnnotationTest {
             loadScriptingPlugin(this, testRootDisposable)
         }
         val messageCollector = ScriptDiagnosticsMessageCollector(null)
+
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForTests(
-            testRootDisposable, compilationConfiguration
-        )
+        val environment = KotlinCoreEnvironment.create(testRootDisposable, compilationConfiguration)
         val context = createCompilationContextFromEnvironment(configuration, environment, messageCollector)
         val ktFile = getScriptKtFile(source, configuration, context.environment.project, messageCollector).valueOr { return it }
         if (messageCollector.hasErrors()) {

@@ -128,8 +128,7 @@ internal class PsiFilesHolder(private val compilerConfiguration: CompilerConfigu
             Disposer.newDisposable("Disposable for PSI file factory of ${IncrementalJvmCompilerRunner::class.simpleName}")
                 .also { this.rootDisposableForPsiFileFactory = it }
         val configuration = compilerConfiguration
-        val environment =
-            KotlinCoreEnvironment.createForProduction(rootDisposable, configuration)
+        val environment = KotlinCoreEnvironment.create(rootDisposable, configuration)
         val project = environment.project
         PsiFileFactory.getInstance(project)
     }

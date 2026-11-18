@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.setupKlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK
@@ -64,17 +65,12 @@ open class CompilerConfigurationProviderImpl(
 
     protected open fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         @OptIn(CoreEnvironmentDeprecation::class)
-        val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
-            testRootDisposable
-        )
+        val applicationEnvironment = KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(testRootDisposable)
         val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        return KotlinCoreEnvironment.createForTests(
-            projectEnv,
-            configuration
-        ).also {
+        return KotlinCoreEnvironment.create(projectEnv, configuration).also {
             val extensionStorage = it.configuration.extensionsStorage!!
             registerCompilerExtensions(extensionStorage, module, configuration)
             if (!testServices.cliBasedFacadesEnabled) {

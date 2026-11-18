@@ -61,10 +61,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val perfManager = configuration.perfManager
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForProduction(
-            rootDisposable,
-            configuration
-        )
+        val environment = KotlinCoreEnvironment.create(rootDisposable, configuration)
         perfManager?.let {
             @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
             it.notifyCurrentPhaseFinishedIfNeeded()

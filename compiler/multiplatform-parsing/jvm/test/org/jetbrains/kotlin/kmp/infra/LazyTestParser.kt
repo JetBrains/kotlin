@@ -38,7 +38,7 @@ class LazyTestParser(disposable: Disposable) : AbstractTestParser<SyntaxNode>(Pa
     init {
         // `KmpSyntaxNode` requests extensions from the IntelliJ application if it's in the classpath
         @OptIn(CoreEnvironmentDeprecation::class)
-        KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.create())
+        KotlinCoreEnvironment.create(disposable, CompilerConfiguration.create())
         val extensionArea = ApplicationManager.getApplication().extensionArea
         if (!extensionArea.hasExtensionPoint(CANCELLATION_PROVIDER_EP_NAME)) {
             CoreApplicationEnvironment.registerApplicationExtensionPoint(

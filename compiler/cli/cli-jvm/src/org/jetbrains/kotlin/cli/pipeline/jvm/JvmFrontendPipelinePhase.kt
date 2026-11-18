@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -599,7 +600,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         setupIdeaStandaloneExecution()
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(parentDisposable, configuration)
+        val appEnv = KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(parentDisposable)
         // TODO: get rid of projEnv too - seems that all needed components could be easily extracted
         val projectEnvironment = KotlinCoreEnvironment.ProjectEnvironment(parentDisposable, appEnv, configuration)
 
@@ -786,10 +787,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         if (CheckDiagnosticCollector.checkHasErrors(configuration)) return null
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForProduction(
-            rootDisposable,
-            configuration
-        )
+        val environment = KotlinCoreEnvironment.create(rootDisposable, configuration)
 
         return if (CheckDiagnosticCollector.checkHasErrors(configuration)) null else environment
     }

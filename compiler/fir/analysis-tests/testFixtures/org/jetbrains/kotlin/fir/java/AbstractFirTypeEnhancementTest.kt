@@ -85,7 +85,7 @@ abstract class AbstractFirTypeEnhancementTest {
         }
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        return KotlinCoreEnvironment.createForTests(
+        return KotlinCoreEnvironment.create(
             testRootDisposable,
             newConfiguration(
                 ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.FULL_JDK, classpath, listOf(javaFilesDir)

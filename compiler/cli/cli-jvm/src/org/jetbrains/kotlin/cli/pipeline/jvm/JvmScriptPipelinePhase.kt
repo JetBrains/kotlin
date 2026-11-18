@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.freeArgsForScript
 import org.jetbrains.kotlin.cli.common.scriptMode
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -33,7 +34,7 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
             KotlinCoreEnvironment.ProjectEnvironment(
                 rootDisposable,
                 @OptIn(CoreEnvironmentDeprecation::class)
-                KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable),
+                KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(rootDisposable),
                 configuration
             ).also {
                 it.registerExtensionsFromPlugins(configuration)
