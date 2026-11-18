@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
@@ -114,7 +115,7 @@ internal fun generateCodeFromIr(
     environment: ModuleCompilerEnvironment
 ): GenerationState {
     val generationState = GenerationState(
-        environment.projectEnvironment.project,
+        VirtualFileFinder.getInstance(environment.projectEnvironment.project),
         input.irModuleFragment.descriptor,
         input.configuration,
         ClassBuilderFactories.BINARIES,

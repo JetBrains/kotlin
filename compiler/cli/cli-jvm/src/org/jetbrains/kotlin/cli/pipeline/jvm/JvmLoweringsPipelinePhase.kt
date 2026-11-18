@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -108,7 +109,7 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
         backendClassResolver: JvmBackendClassResolver,
     ): JvmIrCodegenFactory.CodegenInput {
         val state = GenerationState(
-            project,
+            VirtualFileFinder.getInstance(project),
             moduleDescriptor,
             configuration,
             builderFactory = configuration.get(customClassBuilderFactory, ClassBuilderFactories.BINARIES),

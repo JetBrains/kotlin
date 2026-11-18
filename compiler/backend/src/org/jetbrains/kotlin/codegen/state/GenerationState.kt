@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorAdapter
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
 import org.jetbrains.kotlin.backend.jvm.extensions.DelegatingClassBuilderAdapter
@@ -24,13 +23,14 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
 class GenerationState(
-    val project: Project,
+    val virtualFileFinder: VirtualFileFinder,
     val module: ModuleDescriptor,
     configuration: CompilerConfiguration,
     builderFactory: ClassBuilderFactory = ClassBuilderFactories.BINARIES,
