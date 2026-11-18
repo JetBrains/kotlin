@@ -1365,7 +1365,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         ) as FirFunctionCall
     }
 
-    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {
+    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression): FirTypeRef {
         val type = coneTypeSafe<ConeClassLikeType>()?.fullyExpandedClassLikeType() ?: return this
         if (type.typeArguments.isNotEmpty()) return this // TODO: Incorrect for local classes, KT-59686
         // TODO: Check equality of size of arguments and parameters?
@@ -1377,16 +1377,17 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             components.context.inferenceSession.getAndSemiFixCurrentResultIfTypeVariable(it) ?: it
         }
 
-        val outerClasses by lazy(LazyThreadSafetyMode.NONE) { firClass.symbol.getClassAndItsOuterClassesWhenLocal(session) }
         val newType = components.computeRepresentativeTypeForBareType(type, originalType)
-            ?: if (
-                firClass.isLocal && firClass.typeParameters.none { it.symbol.containingDeclarationSymbol in outerClasses } &&
-                (operation == NOT_IS || operation == IS || operation == AS || operation == SAFE_AS)
-            ) {
-                firClass.defaultType()
-            } else return buildErrorTypeRef {
-                source = this@withTypeArgumentsForBareType.source
-                diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
+            ?: run {
+                val outerClasses = firClass.symbol.getClassAndItsOuterClassesWhenLocal(session)
+                if (firClass.isLocal && firClass.typeParameters.none { it.symbol.containingDeclarationSymbol in outerClasses }) {
+                    firClass.defaultType()
+                } else {
+                    return buildErrorTypeRef {
+                        source = this@withTypeArgumentsForBareType.source
+                        diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
+                    }
+                }
             }
         return if (newType.typeArguments.isEmpty()) this else withReplacedConeType(newType)
     }
@@ -1412,7 +1413,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             resolved.prepareCSRHintForTypeOperatorIfNeeded()
         }
 
-        val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
+        val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument)
         resolved.replaceConversionTypeRef(conversionTypeRef)
 
         when (resolved.operation) {
