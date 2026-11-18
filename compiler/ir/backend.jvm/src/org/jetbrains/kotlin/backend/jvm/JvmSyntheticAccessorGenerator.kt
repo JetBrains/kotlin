@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.inline.SyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -213,6 +214,46 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
     // no need to duplicate it.
     private fun IrConstructor.hasIntroducedAtAnnotatedParameter(): Boolean =
         parameters.any { it.hasAnnotation(StandardClassIds.Annotations.IntroducedAt) }
+
+    // E.g. `class C(x: Int, @IntroducedAt("2") n: NonNegative = NonNegative(0))`, where `NonNegative` is a value class.
+    // `C(int, int)` is not hidden (see `isOrShouldBeHiddenSinceHasMangledParams`), so Java could call `new C(1, -5)`
+    // and bypass the `init` of `NonNegative`. Callers compiled by 2.5.0 link to `C(int, int)`, so it must remain:
+    // it becomes a synthetic accessor, which javac does not resolve, of a private `C(int, int, BoxingConstructorMarker)`.
+    // See compiler/testData/codegen/boxJvm/versionOverloads/valueClassConstructor.kt
+    fun shouldBecomeAccessorOfConstructorWithBoxingMarker(constructor: IrConstructor): Boolean =
+        constructor.isOrShouldBeHiddenDueToOrigin &&
+                !DescriptorVisibilities.isPrivate(constructor.visibility) &&
+                !constructor.constructedClass.isInlineClass &&
+                constructor.constructedClass.modality != Modality.SEALED &&
+                constructor.hasMangledParameters() &&
+                constructor.hasIntroducedAtAnnotatedParameter() &&
+                !constructor.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
+                !constructor.constructedClass.isAnonymousObject
+
+    fun moveBodyToConstructorWithBoxingMarker(declaration: IrConstructor): IrConstructor =
+        context.irFactory.buildConstructor {
+            updateFrom(declaration)
+            returnType = declaration.returnType
+            visibility = DescriptorVisibilities.PRIVATE
+            isPrimary = false
+        }.also { constructor ->
+            constructor.parent = declaration.parent
+            constructor.copyParametersFrom(declaration)
+            constructor.parameters.forEach { it.annotations = emptyList() }
+            constructor.body = declaration.moveBodyTo(constructor)
+
+            val delegatingCall = createDelegatingConstructorCall(declaration, constructor.symbol)
+            constructor.addValueParameter(
+                "boxing_marker".synthesizedString,
+                context.symbols.boxingConstructorMarkerClass.defaultType.makeNullable(),
+                IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
+            )
+            delegatingCall.arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
+            declaration.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(delegatingCall))
+            declaration.origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR
+            // Checks its parameters for null like a hidden constructor (KT-53492)
+            constructor.hiddenConstructorMangledParams = declaration
+        }
 
     fun isOrShouldBeHiddenAsSealedClassConstructor(constructor: IrConstructor): Boolean {
         if (constructor.hiddenConstructorOfSealedClass != null) return true

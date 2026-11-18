@@ -1,0 +1,111 @@
+@kotlin.Metadata
+public final class Clash {
+    // source: 'valueClassConstructor.kt'
+    private final field n: int
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public synthetic method <init>(p0: java.lang.String, @kotlin.IntroducedAt(version="2") p1: int): void
+    public synthetic method <init>(p0: java.lang.String, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic deprecated method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getN-X68VEag(): int
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ClashTwice {
+    // source: 'valueClassConstructor.kt'
+    private final field n: int
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    private final field u: int
+    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level=ERROR) method <init>(p0: java.lang.String, @kotlin.IntroducedAt(version="2") p1: int): void
+    public synthetic method <init>(p0: java.lang.String, @kotlin.IntroducedAt(version="2") p1: int, @kotlin.IntroducedAt(version="3") p2: int): void
+    public synthetic method <init>(p0: java.lang.String, p1: int, p2: int, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: java.lang.String, p1: int, p2: int, p3: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic deprecated method <init>(p0: java.lang.String, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic deprecated method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getN-X68VEag(): int
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    public final method getU-pVg5ArA(): int
+}
+
+@kotlin.Metadata
+public final class DataNoDefault {
+    // source: 'valueClassConstructor.kt'
+    private final field n: int
+    private final field x: int
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(p0: int): void
+    public synthetic method <init>(p0: int, @kotlin.IntroducedAt(version="2") p1: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public final method component1(): int
+    public final method component2-X68VEag(): int
+    public synthetic deprecated static method copy$default(p0: DataNoDefault, p1: int, p2: int, p3: java.lang.Object): DataNoDefault
+    public deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) @org.jetbrains.annotations.NotNull method copy(p0: int): DataNoDefault
+    public synthetic static method copy-VLXnhQM$default(p0: DataNoDefault, p1: int, p2: int, p3: int, p4: java.lang.Object): DataNoDefault
+    public final @org.jetbrains.annotations.NotNull method copy-VLXnhQM(p0: int, @kotlin.IntroducedAt(version="2") p1: int): DataNoDefault
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getN-X68VEag(): int
+    public final method getX(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class IntroducedPlainInt {
+    // source: 'valueClassConstructor.kt'
+    private final field n: int
+    private final field y: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, @kotlin.IntroducedAt(version="2") p1: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getN-X68VEag(): int
+    public final method getY(): int
+}
+
+@kotlin.Metadata
+public final class NoDefault {
+    // source: 'valueClassConstructor.kt'
+    private final field n: int
+    private final field x: int
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(p0: int): void
+    public synthetic method <init>(p0: int, @kotlin.IntroducedAt(version="2") p1: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public final method getN-X68VEag(): int
+    public final method getX(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class NonNegative {
+    // source: 'valueClassConstructor.kt'
+    private final field v: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): NonNegative
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getV(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class ValueClassConstructorKt {
+    // source: 'valueClassConstructor.kt'
+    private final static field defaultConstructorMarker: java.lang.Class
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public varargs final static method javaSeesRawConstructor(@org.jetbrains.annotations.NotNull p0: java.lang.Class, @org.jetbrains.annotations.NotNull p1: java.lang.Class[]): boolean
+}

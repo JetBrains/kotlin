@@ -295,7 +295,12 @@ private class SyntheticAccessorTransformer(
                 declaration.visibility = DescriptorVisibilities.PRIVATE
             }
         }
-        return super.visitConstructor(declaration)
+        val result = super.visitConstructor(declaration)
+        // After the body is lowered, so that the new delegating call is not redirected
+        if (accessorGenerator.shouldBecomeAccessorOfConstructorWithBoxingMarker(declaration)) {
+            accessorGenerator.moveBodyToConstructorWithBoxingMarker(declaration).save()
+        }
+        return result
     }
 }
 

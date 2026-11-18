@@ -38,15 +38,11 @@ public final class EverythingC {
         super();
     }
 
-    @java.lang.Deprecated()
-    public EverythingC(int a, @kotlin.IntroducedAt(version = "2")
-    int a1) {
+    private EverythingC(int a, int a1, kotlin.jvm.internal.BoxingConstructorMarker $boxing_marker) {
         super();
     }
 
-    public EverythingC(int a, @kotlin.IntroducedAt(version = "2")
-    int a1, @kotlin.IntroducedAt(version = "3")
-    boolean b) {
+    private EverythingC(int a, int a1, boolean b, kotlin.jvm.internal.BoxingConstructorMarker $boxing_marker) {
         super();
     }
 

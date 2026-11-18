@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.utils.genericParameterTypesWithEnclosingThis
 import java.lang.reflect.Member
 import java.lang.reflect.Type
 import kotlin.jvm.internal.CallableReference
+import kotlin.reflect.jvm.internal.KDeclarationContainerImpl
 import java.lang.reflect.Constructor as ReflectConstructor
 import java.lang.reflect.Field as ReflectField
 import java.lang.reflect.Method as ReflectMethod
@@ -54,11 +55,13 @@ internal sealed class CallerImpl<out M : Member>(
         constructor: ReflectConstructor<*>
     ) : CallerImpl<ReflectConstructor<*>>(
         constructor, constructor.declaringClass,
-        constructor.genericParameterTypes.dropLast()
+        constructor.genericParameterTypes.dropLast(constructor.markerCount)
     ) {
+        private val markers = arrayOfNulls<Any>(constructor.markerCount)
+
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return member.newInstance(*args, null)
+            return member.newInstance(*args, *markers)
         }
     }
 
@@ -67,11 +70,13 @@ internal sealed class CallerImpl<out M : Member>(
         private val boundReceiver: Any?
     ) : CallerImpl<ReflectConstructor<*>>(
         constructor, constructor.declaringClass,
-        constructor.genericParameterTypes.dropFirstAndLast()
+        constructor.genericParameterTypes.dropFirstAndLast(constructor.markerCount)
     ) {
+        private val markers = arrayOfNulls<Any>(constructor.markerCount)
+
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return member.newInstance(boundReceiver, *args, null)
+            return member.newInstance(boundReceiver, *args, *markers)
         }
     }
 
@@ -279,11 +284,16 @@ internal sealed class CallerImpl<out M : Member>(
             if (size <= 1) emptyArray() else copyOfRange(1, size) as Array<T>
 
         @Suppress("UNCHECKED_CAST")
-        inline fun <reified T> Array<out T>.dropLast(): Array<T> =
-            if (size <= 1) emptyArray() else copyOfRange(0, size - 1) as Array<T>
+        inline fun <reified T> Array<out T>.dropLast(count: Int): Array<T> =
+            if (size <= count) emptyArray() else copyOfRange(0, size - count) as Array<T>
 
         @Suppress("UNCHECKED_CAST")
-        inline fun <reified T> Array<out T>.dropFirstAndLast(): Array<T> =
-            if (size <= 2) emptyArray() else copyOfRange(1, size - 1) as Array<T>
+        inline fun <reified T> Array<out T>.dropFirstAndLast(lastCount: Int): Array<T> =
+            if (size <= lastCount + 1) emptyArray() else copyOfRange(1, size - lastCount) as Array<T>
+
+        // The accessor of a hidden constructor ends with a marker, unless it keeps the constructor's signature
+        // (constructors with `@IntroducedAt` parameters, and those compiled by 2.5.0, which were not hidden)
+        private val ReflectConstructor<*>.markerCount: Int
+            get() = parameterTypes.reversed().takeWhile { it == KDeclarationContainerImpl.DEFAULT_CONSTRUCTOR_MARKER }.size
     }
 }
