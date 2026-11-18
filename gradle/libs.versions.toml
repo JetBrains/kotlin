@@ -104,6 +104,7 @@ bytebuddy = "1.18.9"
 playwright = "1.61.0"
 fileLeakDetector = "1.21"
 jmh = "0.7.3"
+dependency-analysis = "3.19.2"
 
 analysis-api-kotlin = "2.3.21"
 
@@ -243,6 +244,8 @@ bouncycastle-bcpg-jdk18on = { module = "org.bouncycastle:bcpg-jdk18on", version.
 bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
 bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
 
+dependencyAnalysis-gradlePlugin = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependency-analysis" }
+
 gradlePlugin-gradle-node = { module = "com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin", version.ref = "gradle-node-plugin" }
 
 playwright = { module = "com.microsoft.playwright:playwright", version.ref = "playwright" }
@@ -263,3 +266,4 @@ kotlinx-bcv = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", ver
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
 gradle-crypto-checksum = { id = "org.gradle.crypto.checksum", version.ref = "gradle-crypto-checksum" }
 jmh = { id = "me.champeau.jmh", version.ref = "jmh" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }

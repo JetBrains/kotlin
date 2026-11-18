@@ -76,6 +76,7 @@ dependencies {
 
     implementation(libs.shadow.gradlePlugin)
     implementation(libs.proguard.gradlePlugin)
+    implementation(libs.dependencyAnalysis.gradlePlugin)
 
     implementation(libs.jetbrains.ideaExt.gradlePlugin)
 
