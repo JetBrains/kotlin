@@ -52,6 +52,11 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.lexer")
+    testPackages.add("org.jetbrains.kotlin.psi")
+}
+
 projectTests {
     testTask()
 
