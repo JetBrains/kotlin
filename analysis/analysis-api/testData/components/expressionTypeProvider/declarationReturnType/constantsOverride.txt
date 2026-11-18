@@ -19,4 +19,4 @@ C@(15,1)
   long@(22,5) : kotlin.Long
   uInt@(23,5) : kotlin.UInt
   uLong@(24,5) : kotlin.ULong
-  unit@(25,5) : kotlin.Unit
+  unit@(25,5) : kotlin.Unit (by PSI)

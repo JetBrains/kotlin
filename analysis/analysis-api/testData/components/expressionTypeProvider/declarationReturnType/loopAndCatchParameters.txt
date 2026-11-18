@@ -1,4 +1,4 @@
-test@(1,1) : kotlin.Unit
+test@(1,1) : kotlin.Unit (by PSI)
   list@(2,10) : kotlin.collections.List<kotlin.String>
   map@(2,30) : kotlin.collections.Map<kotlin.Int, kotlin.String>
   element@(3,10) : kotlin.String

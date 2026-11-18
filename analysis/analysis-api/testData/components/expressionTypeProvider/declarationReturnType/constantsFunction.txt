@@ -8,7 +8,7 @@ long@(8,1) : kotlin.Long
 uint@(9,1) : kotlin.UInt
 ulong@(10,1) : kotlin.ULong
 ulong2@(11,1) : kotlin.ULong
-unit@(12,1) : kotlin.Unit
+unit@(12,1) : kotlin.Unit (by PSI)
 intExplicit@(14,1) : kotlin.Int?
 stringExplicit@(15,1) : kotlin.String?
 booleanExplicit@(16,1) : kotlin.Boolean?
