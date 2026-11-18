@@ -50,7 +50,7 @@ class IrPreGenerator(
 
         val serializerClass = irClass.findSerializerForGeneratedMethods(compilerContext)?.owner ?: return
 
-        if (!irClass.shouldHaveSpecificSyntheticMethods(isJvm = compilerContext.platform.isJvm()) {
+        if (!irClass.shouldHaveSpecificSyntheticMethods {
                 serializerClass.findPluginGeneratedMethod(SerialEntityNames.SAVE)
             }) return
         if (irClass.findWriteSelfMethod() != null) return

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
@@ -4086,11 +4087,11 @@ class ComposableFunctionBodyTransformer(
 
             private fun parameterInformation(): String =
                 if (!transformer.emitParameterNames) {
-                    function.parameterInformation(transformer.context.platform.isJvm())
+                    function.parameterInformation()
                 } else {
                     // D8 removes all parameter information when processing invokedynamic.
                     // It does not sort parameters by name though, so we only need the parameter names here.
-                    function.parameterNameInformation(transformer.context.platform.isJvm())
+                    function.parameterNameInformation()
                 }
 
             override fun sourceLocationOf(call: IrElement): SourceLocation {
@@ -4925,7 +4926,7 @@ private fun IrFunction.callInformation(): String =
 // of the parameter information that implies the rest of the parameters are in order.
 // If the parameter information is missing it implies "P()" which implies all the
 // parameters are in sorted order.
-private fun IrFunction.parameterInformation(isJvm: Boolean): String {
+private fun IrFunction.parameterInformation(): String {
     val builder = StringBuilder("P(")
     val parameters = namedParameters.filter {
         !it.name.asString().startsWith("$")
@@ -4955,7 +4956,7 @@ private fun IrFunction.parameterInformation(isJvm: Boolean): String {
 
     parameters.fastForEachIndexed { originalIndex, parameter ->
         if (expectedIndexes.first() == sortIndex[originalIndex] &&
-            !parameter.type.isInlineClassType(isJvm)
+            !parameter.type.isInlineClassType()
         ) {
             run++
             expectedIndexes.removeAt(0)
@@ -4965,7 +4966,7 @@ private fun IrFunction.parameterInformation(isJvm: Boolean): String {
             val index = sortIndex[originalIndex]
             builder.append(index)
             expectedIndexes.remove(index)
-            if (parameter.type.isInlineClassType(isJvm)) {
+            if (parameter.type.isInlineClassType()) {
                 builder.appendParameterType(parameter)
             }
             parameterEmitted = true
@@ -4981,7 +4982,7 @@ private fun IrFunction.parameterInformation(isJvm: Boolean): String {
 //   parameters: "N(" <name> [":" <inline-class>] ["," <name> [":" <inline-class>]]* ")"
 //   name, inline-class: <chars not "," or ":">
 //
-private fun IrFunction.parameterNameInformation(isJvm: Boolean): String {
+private fun IrFunction.parameterNameInformation(): String {
     val sourceParameters = namedParameters.filter {
         !it.name.asString().startsWith("$")
     }
@@ -4992,7 +4993,7 @@ private fun IrFunction.parameterNameInformation(isJvm: Boolean): String {
                 if (i > 0) append(',')
                 val p = sourceParameters[i]
                 append(p.name.asString())
-                if (p.type.isInlineClassType(isJvm)) {
+                if (p.type.isInlineClassType()) {
                     appendParameterType(p)
                 }
             }

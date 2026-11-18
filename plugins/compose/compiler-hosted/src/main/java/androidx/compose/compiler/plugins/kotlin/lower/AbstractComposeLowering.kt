@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -166,7 +167,7 @@ abstract class AbstractComposeLowering(
     fun IrType.unboxType(): IrType? {
         val klass = classOrNull?.owner ?: return null
         val representation = klass.inlineClassRepresentation() ?: return null
-        if (!isInlineClassType()) return null
+        require(isInlineClassType())
 
         // TODO: Apply type substitutions
         val underlyingType = representation.underlyingType.unboxInlineClass()
@@ -1816,8 +1817,6 @@ abstract class AbstractComposeLowering(
         this is IrSimpleFunction &&
                 (isVirtualFunctionWithDefaultParam == true ||
                         overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
-
-    fun IrType.isInlineClassType(): Boolean = isInlineClassType(isJvm = context.platform.isJvm())
 }
 
 private val unsafeSymbolsRegex = "[ <>]".toRegex()
@@ -1911,16 +1910,6 @@ fun IrSimpleFunction.lambdaInvokeWithComposerParam(context: IrPluginContext): Ir
 
 fun IrFunction.isExternalFunction(): Boolean =
     origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin == IrDeclarationOrigin.FAKE_OVERRIDE && getPackageFragment() is IrExternalPackageFragment
-
-@OptIn(ValueClassBackendAgnosticApi::class)
-fun IrType.isInlineClassType(isJvm: Boolean): Boolean {
-    // Workaround for KT-69856
-    return if (this is IrSimpleType && classifier.owner is IrScript) {
-        false
-    } else {
-        erasedUpperBound.isInlineClass()
-    }
-}
 
 fun IrFunction.isLambdaInvoke(): Boolean =
     name == OperatorNameConventions.INVOKE &&
