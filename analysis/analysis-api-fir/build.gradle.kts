@@ -69,6 +69,10 @@ sourceSets {
 
 optInToUnsafeDuringIrConstructionAPI()
 
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.analysis.api.fir.test.cases")
+}
+
 projectTests {
     testTask(
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_21_0)

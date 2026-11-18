@@ -2,7 +2,9 @@
 
 Automated system for managing test data files across multiple test configurations.
 
-It supports only tests which implement `ManagedTest` interface and are generated (`*Generated` suffix).
+It supports only tests which implement `ManagedTest` interface and are generated (`*Generated` suffix). It discovers them in
+`org.jetbrains.kotlin`, or in the packages the module declares in `testDataManager { testPackages }` (see the
+[convention plugin](../../repo/gradle-build-conventions/test-data-manager-convention/README.md#test-packages)).
 
 ## Core Concepts
 

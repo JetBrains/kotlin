@@ -29,6 +29,18 @@ Both accept their options only via `-P` Gradle properties (not `--option` CLI fl
 [Configuration Cache](#configuration-cache) for why. There is no global orchestrator task — Gradle's task-name matching runs the task in every
 applicable module.
 
+### Test packages
+
+The tasks discover the managed tests in the packages the module declares and their subpackages, `org.jetbrains.kotlin` if it declares
+none. A module declares the narrowest packages that contain all its generated tests, managed or not: a new test next to them is still
+found, and the discovery doesn't scan the rest of the test classpath. For example:
+
+```kotlin
+testDataManager {
+    testPackages.add("org.jetbrains.kotlinx.serialization")
+}
+```
+
 ## Usage
 
 ### Per-Module Execution

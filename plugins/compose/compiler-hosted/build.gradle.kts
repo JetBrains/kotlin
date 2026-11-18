@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm")
     id("d8-configuration")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 repositories {
@@ -171,6 +172,10 @@ publish {
 val runtimeJar = runtimeJar()
 sourcesJar()
 javadocJar()
+
+testDataManager {
+    testPackages.add("androidx.compose.compiler.plugins.kotlin")
+}
 
 projectTests {
     testTask(

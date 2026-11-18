@@ -43,6 +43,10 @@ kotlin {
     }
 }
 
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.analysis.low.level.api.fir")
+}
+
 projectTests {
     testTask(
         maxHeapSize = testMaxHeapSizeLarge,
