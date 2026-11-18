@@ -55,7 +55,7 @@ internal sealed class KaFirLocalOrErrorVariableSymbol(
         get() = withValidityAssertion { emptyList() }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = withValidityAssertion { createReturnType() }
 
     override val isLateInit: Boolean
         // Note that for loop parameters having the `lateinit` keyword, the NON-PSI version returns `false`.

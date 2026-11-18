@@ -1,46 +1,46 @@
-stringTemplate@(1,1) : kotlin.String
+stringTemplate@(1,1) : kotlin.String (by PSI)
   x@(2,20) : kotlin.Int
-multilineString@(3,1) : kotlin.String
-comparison@(4,1) : kotlin.Boolean
+multilineString@(3,1) : kotlin.String (by PSI)
+comparison@(4,1) : kotlin.Boolean (by PSI)
   a@(4,16) : kotlin.Int
   b@(4,24) : kotlin.Int
-equality@(5,1) : kotlin.Boolean
+equality@(5,1) : kotlin.Boolean (by PSI)
   a@(5,14) : kotlin.Any
   b@(5,22) : kotlin.Any
-identity@(6,1) : kotlin.Boolean
+identity@(6,1) : kotlin.Boolean (by PSI)
   a@(6,14) : kotlin.Any
   b@(6,22) : kotlin.Any
-conjunction@(7,1) : kotlin.Boolean
+conjunction@(7,1) : kotlin.Boolean (by PSI)
   a@(7,17) : kotlin.Boolean
   b@(7,29) : kotlin.Boolean
-disjunction@(8,1) : kotlin.Boolean
+disjunction@(8,1) : kotlin.Boolean (by PSI)
   a@(8,17) : kotlin.Boolean
   b@(8,29) : kotlin.Boolean
-isCheck@(9,1) : kotlin.Boolean
+isCheck@(9,1) : kotlin.Boolean (by PSI)
   a@(9,13) : kotlin.Any
-notIsCheck@(10,1) : kotlin.Boolean
+notIsCheck@(10,1) : kotlin.Boolean (by PSI)
   a@(10,16) : kotlin.Any
-throwing@(11,1) : kotlin.Nothing
-parenthesized@(12,1) : kotlin.Int
-annotated@(13,1) : kotlin.Int
-labeled@(14,1) : kotlin.Int
-unresolvedComparison@(16,1) : kotlin.Boolean
-unresolvedEquality@(17,1) : kotlin.Boolean
-unresolvedIsCheck@(18,1) : kotlin.Boolean
+throwing@(11,1) : kotlin.Nothing (by PSI)
+parenthesized@(12,1) : kotlin.Int (by PSI)
+annotated@(13,1) : kotlin.Int (by PSI)
+labeled@(14,1) : kotlin.Int (by PSI)
+unresolvedComparison@(16,1) : kotlin.Boolean (by PSI)
+unresolvedEquality@(17,1) : kotlin.Boolean (by PSI)
+unresolvedIsCheck@(18,1) : kotlin.Boolean (by PSI)
   a@(18,23) : kotlin.Any
-incompleteComparison@(19,1) : kotlin.Boolean
+incompleteComparison@(19,1) : kotlin.Boolean (by PSI)
   a@(19,26) : kotlin.Int
 whileLoop@(20,1) : ERROR
 doWhileLoop@(21,1) : ERROR
 forLoop@(22,1) : kotlin.Unit
   i@(22,22) : kotlin.Int
-returning@(23,1) : kotlin.Nothing
-breaking@(24,1) : kotlin.Nothing
-continuing@(25,1) : kotlin.Nothing
-comparisonProperty@(27,1) : kotlin.Boolean
-throwingGetter@(28,1) : kotlin.Nothing
-  KtPropertyAccessor@(28,20) : kotlin.Nothing
+returning@(23,1) : kotlin.Nothing (by PSI)
+breaking@(24,1) : kotlin.Nothing (by PSI)
+continuing@(25,1) : kotlin.Nothing (by PSI)
+comparisonProperty@(27,1) : kotlin.Boolean (by PSI)
+throwingGetter@(28,1) : kotlin.Nothing (by PSI)
+  KtPropertyAccessor@(28,20) : kotlin.Nothing (by PSI)
 container@(30,1) : kotlin.Unit (by PSI)
-  equalityLocal@(31,5) : kotlin.Boolean
-  stringTemplateLocal@(32,5) : kotlin.String
-  throwingLocal@(33,5) : kotlin.Nothing
+  equalityLocal@(31,5) : kotlin.Boolean (by PSI)
+  stringTemplateLocal@(32,5) : kotlin.String (by PSI)
+  throwingLocal@(33,5) : kotlin.Nothing (by PSI)
