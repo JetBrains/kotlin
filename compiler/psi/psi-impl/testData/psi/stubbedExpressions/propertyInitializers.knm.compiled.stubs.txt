@@ -113,6 +113,37 @@ FILE[kind=File[packageFqName=test]]
         REFERENCE_EXPRESSION[referencedName=UShort]
           isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=65535u]
+  PROPERTY[fqName=test.uInt, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uInt]
+    constantInitializer: -1.toUInt()
+    MODIFIER_LIST[public const]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=UInt]
+          isClassRef: true
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4294967295u]
+  PROPERTY[fqName=test.uLong, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uLong]
+    constantInitializer: -1.toULong()
+    MODIFIER_LIST[public const]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=ULong]
+          isClassRef: true
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=18446744073709551615uL]
+  PROPERTY[fqName=test.aliasedUInt, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=aliasedUInt]
+    constantInitializer: -1.toUInt()
+    MODIFIER_LIST[public const]
+    TYPE_REFERENCE
+      USER_TYPE
+        abbreviatedType: test.UIntAlias
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=UInt]
+          isClassRef: true
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4294967295u]
   PROPERTY[fqName=test.negative, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
     constantInitializer: -7
     MODIFIER_LIST[public const]
@@ -240,6 +271,14 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
+  TYPEALIAS[classId=test/UIntAlias, fqName=test.UIntAlias, isTopLevel=true, name=UIntAlias]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=UInt]
           isClassRef: true
   OBJECT_DECLARATION[classId=test/Holder, fqName=test.Holder, isObjectLiteral=false, isTopLevel=true, name=Holder, superNames=[]]
     MODIFIER_LIST[public]

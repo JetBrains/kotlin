@@ -9,4 +9,9 @@ object Consts {
     const val short: Short = 2
     const val uByte: UByte = UByte.MAX_VALUE
     const val uShort: UShort = UShort.MAX_VALUE
+    const val uInt: UInt = UInt.MAX_VALUE
+    const val uLong: ULong = ULong.MAX_VALUE
+    const val aliasedUInt: UIntAlias = UInt.MAX_VALUE
 }
+
+typealias UIntAlias = UInt

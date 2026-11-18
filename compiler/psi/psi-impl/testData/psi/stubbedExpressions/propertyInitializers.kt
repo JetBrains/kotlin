@@ -12,6 +12,11 @@ const val char: Char = 'c'
 const val string: String = "s"
 const val uByte: UByte = UByte.MAX_VALUE
 const val uShort: UShort = UShort.MAX_VALUE
+const val uInt: UInt = UInt.MAX_VALUE
+const val uLong: ULong = ULong.MAX_VALUE
+const val aliasedUInt: UIntAlias = UInt.MAX_VALUE
+
+typealias UIntAlias = UInt
 
 const val negative: Int = -7
 const val sum: Int = 1 + 2

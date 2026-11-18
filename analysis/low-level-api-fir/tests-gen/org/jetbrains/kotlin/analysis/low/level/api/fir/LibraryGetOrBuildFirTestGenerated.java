@@ -413,6 +413,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("unsignedAnnotationDefaultsFromOldMetadata.kt")
+  public void testUnsignedAnnotationDefaultsFromOldMetadata() {
+    run("unsignedAnnotationDefaultsFromOldMetadata.kt");
+  }
+
+  @Test
   @TestMetadata("unsignedConst.kt")
   public void testUnsignedConst() {
     run("unsignedConst.kt");
