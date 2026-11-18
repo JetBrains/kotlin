@@ -14,10 +14,7 @@ import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
-import org.jetbrains.kotlin.constant.AnnotationValue
-import org.jetbrains.kotlin.constant.ArrayValue
-import org.jetbrains.kotlin.constant.ConstantValue
-import org.jetbrains.kotlin.constant.KClassValue
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.*
@@ -26,11 +23,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.ClassIdBasedLocality
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.psi.stubs.impl.createConstantValue
@@ -188,6 +181,11 @@ private class JvmClsAnnotationLoader(
         super.noClassAnnotationsInBytecode(classFlags) && !Flags.IS_VALUE_CLASS.get(classFlags)
 
     override fun loadPropertyInitializer(container: ProtoContainer, proto: ProtoBuf.Property): ConstantValue<*>? {
+        val initializer = loadStoredPropertyInitializer(container, proto) ?: return null
+        return normalizePropertyInitializer(initializer, proto.returnType(container.typeTable), container.nameResolver)
+    }
+
+    private fun loadStoredPropertyInitializer(container: ProtoContainer, proto: ProtoBuf.Property): ConstantValue<*>? {
         val specialCase = getSpecialCaseContainerClass(
             container, property = true, field = true,
             isConst = Flags.IS_CONST.get(proto.flags),
@@ -375,5 +373,25 @@ private fun normalizeFieldInitializer(desc: String, initializer: Any): Any {
         "B" -> intValue.toByte()
         "S" -> intValue.toShort()
         else -> initializer
+    }
+}
+
+/**
+ * Returns [value] normalized to the property [type]: a class file stores an unsigned constant as its underlying signed primitive.
+ * Other values are returned as is. The compiler converts by the property type too: `FirMemberDeserializer` for constants
+ * and `JvmBinaryAnnotationDeserializer.loadAnnotationPropertyDefaultValue` for annotation defaults.
+ */
+private fun normalizePropertyInitializer(value: ConstantValue<*>, type: ProtoBuf.Type, nameResolver: NameResolver): ConstantValue<*> {
+    if (!type.hasClassName()) {
+        return value
+    }
+
+    val classId = nameResolver.getClassId(type.className)
+    return when {
+        value is ByteValue && classId == StandardClassIds.UByte -> UByteValue(value.value)
+        value is ShortValue && classId == StandardClassIds.UShort -> UShortValue(value.value)
+        value is IntValue && classId == StandardClassIds.UInt -> UIntValue(value.value)
+        value is LongValue && classId == StandardClassIds.ULong -> ULongValue(value.value)
+        else -> value
     }
 }
