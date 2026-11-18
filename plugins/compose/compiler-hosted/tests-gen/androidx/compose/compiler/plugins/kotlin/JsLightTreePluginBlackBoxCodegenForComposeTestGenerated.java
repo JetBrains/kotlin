@@ -28,6 +28,12 @@ public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("composableFunInterfaceFromAnonymousFunctionAtMaskBoundary.kt")
+  public void testComposableFunInterfaceFromAnonymousFunctionAtMaskBoundary() {
+    run("composableFunInterfaceFromAnonymousFunctionAtMaskBoundary.kt");
+  }
+
+  @Test
   @TestMetadata("composableLambdaCapturingLocalOfInitializer.kt")
   public void testComposableLambdaCapturingLocalOfInitializer() {
     run("composableLambdaCapturingLocalOfInitializer.kt");
