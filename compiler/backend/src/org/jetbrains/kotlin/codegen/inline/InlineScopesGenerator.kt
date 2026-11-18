@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
 import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode
@@ -76,6 +78,16 @@ class InlineScopesGenerator {
             val labelToIndex = methodNode.getLabelToIndexMap()
             val sortedVariables = localVariables.sortedBy { labelToIndex[it.start.label] }
 
+            // A lambda parameter has the same depth as the scope the lambda is called from, so it can only be told apart
+            // from the variables of that scope by its range (KT-91573): it starts right before the marker variable of the
+            // lambda, with only the initialization of the marker in between, and ends together with it.
+            val markersByEnd = sortedVariables
+                .filter { JvmAbi.isFakeLocalVariableForInline(it.name) }
+                .groupBy { it.end.label }
+
+            fun LocalVariableNode.isParameterOfFollowingScope(): Boolean =
+                markersByEnd[end.label]?.any { it.startsRightAfter(this) } == true
+
             // A non-local return through a `finally` block splits the LVT ranges of the variables around the copied `finally`
             // code (KT-91572). The later ranges of a variable belong to the scope of its first range. Unlike for a new variable
             // with the same name and slot, nothing is stored into the slot between such a range and the previous one.
@@ -126,7 +138,7 @@ class InlineScopesGenerator {
                     currentNode.variables.addAll(variablesWithNotMatchingDepth)
                     variablesWithNotMatchingDepth.clear()
                 } else if (!currentNode.isRoot || !shouldSkipVariable(variable)) {
-                    if (variable.belongsToInlineScope(currentNode)) {
+                    if (variable.belongsToInlineScope(currentNode) && !variable.isParameterOfFollowingScope()) {
                         currentNode.variables.add(variable)
                     } else {
                         variablesWithNotMatchingDepth.add(variable)
@@ -417,6 +429,18 @@ fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
         return newName
     }
     return newName.addScopeInfo(surroundingScopeNumber)
+}
+
+// Only the initialization of this marker variable lies between the start of `variable` and the start of this marker.
+private fun LocalVariableNode.startsRightAfter(variable: LocalVariableNode): Boolean {
+    var insn: AbstractInsnNode? = variable.start
+    while (insn != null && insn != start) {
+        val isMarkerInitialization =
+            insn.opcode == Opcodes.ICONST_0 || insn is VarInsnNode && insn.opcode == Opcodes.ISTORE && insn.`var` == index
+        if (insn.isMeaningful && !isMarkerInitialization) return false
+        insn = insn.next
+    }
+    return insn == start
 }
 
 internal fun MethodNode.getLabelToIndexMap(): Map<Label, Int> =
