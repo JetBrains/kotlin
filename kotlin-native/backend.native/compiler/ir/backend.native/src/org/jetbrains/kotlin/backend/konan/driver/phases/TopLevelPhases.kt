@@ -110,9 +110,6 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                         generationStateEngine.runAndMeasurePhase(BuildAdditionalCacheInfoPhase, module)
                         if (context.config.produce.isHeaderCache) return@newEngine
                     }
-                    if (context.config.produce == CompilerOutputKind.PROGRAM) {
-                        generationStateEngine.runAndMeasurePhase(EntryPointPhase, module)
-                    }
                 }
                 return generationState
             } catch (t: Throwable) {
@@ -121,45 +118,45 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             }
         }
 
-        fun NativeGenerationState.runEngineForLowerings(block: PhaseEngine<NativeGenerationState>.() -> Unit) {
-            try {
-                newEngine(this) { generationStateEngine ->
-                    generationStateEngine.block()
+        fun List<Pair<BackendJobFragment, NativeGenerationState>>.runEngineForLowerings(block: PhaseEngine<NativeGenerationState>.(IrModuleFragment) -> Unit) =
+                forEach { [fragment, state] ->
+                    try {
+                        newEngine(state) { generationStateEngine ->
+                            generationStateEngine.block(fragment.irModule)
+                        }
+                    } catch (t: Throwable) {
+                        state.dispose()
+                        throw t
+                    }
                 }
-            } catch (t: Throwable) {
-                this.dispose()
-                throw t
-            }
-        }
 
         fun List<Pair<BackendJobFragment, NativeGenerationState>>.runSpecifiedLowerings(loweringsToLaunch: LoweringList) =
-                forEach { [fragment, state] ->
-                    state.runEngineForLowerings {
-                        val module = fragment.irModule
-                        partiallyLowerModuleWithDependencies(module, loweringsToLaunch)
-                    }
+                runEngineForLowerings { module ->
+                    partiallyLowerModuleWithDependencies(module, loweringsToLaunch)
                 }
 
         fun List<Pair<BackendJobFragment, NativeGenerationState>>.runSpecifiedLowering(phase: (NativeLoweringContext) -> ModuleLoweringPass) =
-                forEach { [fragment, state] ->
-                    state.runEngineForLowerings {
-                        val module = fragment.irModule
-                        partiallyLowerModuleWithDependencies(module, createModulePhases(phase).first())
-                    }
+                runEngineForLowerings { module ->
+                    partiallyLowerModuleWithDependencies(module, createModulePhases(phase).first())
                 }
 
         fun List<Pair<BackendJobFragment, NativeGenerationState>>.finalizeLowerings() =
-                forEach { [fragment, state] ->
-                    state.runEngineForLowerings {
-                        val module = fragment.irModule
-                        val dependenciesToCompile = findDependenciesToCompile()
-                        mergeDependencies(module, dependenciesToCompile)
-                    }
+                runEngineForLowerings { module ->
+                    val dependenciesToCompile = findDependenciesToCompile()
+                    mergeDependencies(module, dependenciesToCompile)
                 }
 
         fun List<BackendJobFragment>.runAllLowerings(): List<NativeGenerationState> {
             val generationStates = this.map { fragment -> createGenerationState(fragment) }
             val fragmentWithState = this.zip(generationStates)
+
+            if (context.config.produce == CompilerOutputKind.PROGRAM) {
+                // Cannot use `runSpecifiedLowering`, because we really need to run this lowering on a single module, not on the module
+                // and all of its dependencies.
+                fragmentWithState.runEngineForLowerings { module ->
+                    runModuleWisePhase(createModulePhases(::EntryPointLowering).first(), listOf(module))
+                }
+            }
 
             // In Kotlin/Native, lowerings are run not over modules, but over individual files.
             // This means that there is no guarantee that after running a lowering in file A, the same lowering has already been run in file B,
