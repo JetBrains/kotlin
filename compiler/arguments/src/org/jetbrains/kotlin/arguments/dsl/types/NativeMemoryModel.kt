@@ -21,6 +21,7 @@ enum class NativeMemoryModel(
         modelName = "relaxed",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_7_20,
             removedVersion = KotlinReleaseVersion.v1_9_20,
         )
@@ -31,6 +32,7 @@ enum class NativeMemoryModel(
         modelName = "strict",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_9_0,
             removedVersion = KotlinReleaseVersion.v1_9_20,
         )
@@ -41,6 +43,7 @@ enum class NativeMemoryModel(
         modelName = "experimental",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_9_20,
         )
     );

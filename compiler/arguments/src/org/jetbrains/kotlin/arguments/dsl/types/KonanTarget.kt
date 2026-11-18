@@ -21,6 +21,7 @@ enum class KonanTarget(
         targetName = "android_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -29,6 +30,7 @@ enum class KonanTarget(
         targetName = "android_x86",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -37,6 +39,7 @@ enum class KonanTarget(
         targetName = "android_arm32",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -45,6 +48,7 @@ enum class KonanTarget(
         targetName = "android_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -53,6 +57,7 @@ enum class KonanTarget(
         targetName = "ios_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -61,6 +66,7 @@ enum class KonanTarget(
         targetName = "ios_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -69,6 +75,7 @@ enum class KonanTarget(
         targetName = "ios_simulator_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -77,6 +84,7 @@ enum class KonanTarget(
         targetName = "watchos_arm32",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -85,6 +93,7 @@ enum class KonanTarget(
         targetName = "watchos_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -93,6 +102,7 @@ enum class KonanTarget(
         targetName = "watchos_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v2_3_20,
         )
     ),
@@ -102,6 +112,7 @@ enum class KonanTarget(
         targetName = "watchos_simulator_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -110,6 +121,7 @@ enum class KonanTarget(
         targetName = "watchos_device_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_8_0,
         )
     ),
 
@@ -118,6 +130,7 @@ enum class KonanTarget(
         targetName = "tvos_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -126,6 +139,7 @@ enum class KonanTarget(
         targetName = "tvos_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v2_3_20,
         )
     ),
@@ -135,6 +149,7 @@ enum class KonanTarget(
         targetName = "tvos_simulator_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -143,6 +158,7 @@ enum class KonanTarget(
         targetName = "linux_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -151,6 +167,7 @@ enum class KonanTarget(
         targetName = "mingw_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -159,6 +176,7 @@ enum class KonanTarget(
         targetName = "macos_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v2_3_20,
         )
     ),
@@ -168,6 +186,7 @@ enum class KonanTarget(
         targetName = "macos_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -176,6 +195,7 @@ enum class KonanTarget(
         targetName = "linux_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -184,6 +204,7 @@ enum class KonanTarget(
         targetName = "linux_arm32_hfp",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_8_20,
         )
     ),
@@ -193,6 +214,7 @@ enum class KonanTarget(
         targetName = "ios_arm32",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_8_20,
             removedVersion = KotlinReleaseVersion.v1_9_20,
         )
@@ -203,6 +225,7 @@ enum class KonanTarget(
         targetName = "watchos_x86",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_8_20,
             removedVersion = KotlinReleaseVersion.v1_9_20,
         )
@@ -213,6 +236,7 @@ enum class KonanTarget(
         targetName = "linux_mips32",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_8_20,
             removedVersion = KotlinReleaseVersion.v1_9_20,
         )
@@ -223,6 +247,7 @@ enum class KonanTarget(
         targetName = "linux_mipsel32",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_8_20,
             removedVersion = KotlinReleaseVersion.v1_9_20,
         )
@@ -233,6 +258,7 @@ enum class KonanTarget(
         targetName = "mingw_x86",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_8_20,
             removedVersion = KotlinReleaseVersion.v1_9_20,
         )
@@ -243,111 +269,9 @@ enum class KonanTarget(
         targetName = "wasm32",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v1_8_20,
             removedVersion = KotlinReleaseVersion.v1_9_20,
-        )
-    ),
-
-    // The entries below are not targets themselves: `host` and the aliases are resolved to one of the targets above.
-    // They are accepted by `-target` only when compiling a binary, not when compiling a klib,
-    // and are not valid values for `-Xmanifest-native-targets`.
-
-    @SerialName("host")
-    HOST(
-        targetName = "host",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    ),
-
-    @SerialName("linux")
-    LINUX(
-        targetName = "linux",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    ),
-
-    @SerialName("macbook")
-    MACBOOK(
-        targetName = "macbook",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    ),
-
-    @SerialName("macos")
-    MACOS(
-        targetName = "macos",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    ),
-
-    @SerialName("imac")
-    IMAC(
-        targetName = "imac",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    ),
-
-    @SerialName("raspberrypi")
-    RASPBERRYPI(
-        targetName = "raspberrypi",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
-        )
-    ),
-
-    @SerialName("iphone32")
-    IPHONE32(
-        targetName = "iphone32",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
-            removedVersion = KotlinReleaseVersion.v1_9_20,
-        )
-    ),
-
-    @SerialName("iphone")
-    IPHONE(
-        targetName = "iphone",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    ),
-
-    @SerialName("ipad")
-    IPAD(
-        targetName = "ipad",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    ),
-
-    @SerialName("ios")
-    IOS(
-        targetName = "ios",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    ),
-
-    @SerialName("iphone_sim")
-    IPHONE_SIM(
-        targetName = "iphone_sim",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    ),
-
-    @SerialName("mingw")
-    MINGW(
-        targetName = "mingw",
-        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
     );
 

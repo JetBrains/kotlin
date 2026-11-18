@@ -21,6 +21,7 @@ enum class CompilerOutputKind(
         kindName = "program",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -29,6 +30,7 @@ enum class CompilerOutputKind(
         kindName = "static",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -37,6 +39,7 @@ enum class CompilerOutputKind(
         kindName = "dynamic",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -45,6 +48,7 @@ enum class CompilerOutputKind(
         kindName = "framework",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -53,6 +57,7 @@ enum class CompilerOutputKind(
         kindName = "library",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     ),
 
@@ -61,6 +66,7 @@ enum class CompilerOutputKind(
         kindName = "bitcode",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
     );
 
