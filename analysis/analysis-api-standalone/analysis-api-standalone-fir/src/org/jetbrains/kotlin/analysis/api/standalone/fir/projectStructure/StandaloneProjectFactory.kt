@@ -3,11 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure
 
+import com.intellij.DynamicBundle
+import com.intellij.codeInsight.ContainerProvider
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
+import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.core.CoreApplicationEnvironment.registerApplicationExtensionPoint
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.core.CorePackageIndex
 import com.intellij.ide.highlighter.JavaFileType
@@ -25,8 +31,10 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiJavaModuleModificationTracker
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.PsiClassReferenceTypePointerFactory
+import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
 import com.intellij.psi.impl.smartPointers.SmartPointerManagerImpl
 import com.intellij.psi.impl.smartPointers.SmartTypePointerManagerImpl
+import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_PROTOCOL
@@ -159,12 +167,19 @@ object StandaloneProjectFactory {
         if (!applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) {
             KotlinCoreApplicationEnvironment.underApplicationLock {
                 if (applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) return@underApplicationLock
-                CoreApplicationEnvironment.registerApplicationExtensionPoint(
+                registerApplicationExtensionPoint(
                     ClassTypePointerFactory.EP_NAME,
                     ClassTypePointerFactory::class.java
                 )
                 applicationArea.getExtensionPoint(ClassTypePointerFactory.EP_NAME)
                     .registerExtension(PsiClassReferenceTypePointerFactory(), applicationEnvironment.application)
+
+                registerApplicationExtensionPoint(DynamicBundle.LanguageBundleEP.EP_NAME, DynamicBundle.LanguageBundleEP::class.java)
+                registerApplicationExtensionPoint(FileContextProvider.EP_NAME, FileContextProvider::class.java)
+                registerApplicationExtensionPoint(MetaDataContributor.EP_NAME, MetaDataContributor::class.java)
+                registerApplicationExtensionPoint(JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
+                registerApplicationExtensionPoint(ContainerProvider.EP_NAME, ContainerProvider::class.java)
+                registerApplicationExtensionPoint(SmartPointerAnchorProvider.EP_NAME, SmartPointerAnchorProvider::class.java)
             }
         }
     }
