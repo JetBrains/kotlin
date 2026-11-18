@@ -2,6 +2,8 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("UnstableApiUsage", "DEPRECATION")
+
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.DynamicBundle
@@ -10,23 +12,37 @@ import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.lang.MetaLanguage
+import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.application.TransactionGuardImpl
+import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.ThrowableComputable
+import com.intellij.openapi.vfs.VirtualFileSetFactory
 import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.impl.ZipHandler
+import com.intellij.pom.java.InternalPersistentJavaLanguageLevelReaderService
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.JavaModuleGraphHelper
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.codeStyle.JavaFileCodeStyleFacadeFactory
+import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
 import com.intellij.psi.meta.MetaDataContributor
+import com.intellij.psi.util.JavaClassSupers
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.IdeaExtensionPoints.registerVersionSpecificAppExtensionPoints
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 
 sealed interface KotlinCoreApplicationEnvironmentMode {
     object Production : KotlinCoreApplicationEnvironmentMode
@@ -75,7 +91,7 @@ class KotlinCoreApplicationEnvironment private constructor(
 
     val fastJarFileSystem: FastJarFileSystem?
         get() {
-            synchronized(KotlinCoreEnvironment.APPLICATION_LOCK) {
+            underApplicationLock {
                 if (!fastJarFileSystemFieldInitialized) {
 
                     // may return null e.g. on the old JDKs, therefore fastJarFileSystemFieldInitialized flag is needed
@@ -94,22 +110,23 @@ class KotlinCoreApplicationEnvironment private constructor(
         fastJarFileSystemField?.clearHandlersCache()
     }
 
+    @CoreEnvironmentDeprecation
+    fun dispose() {
+        Disposer.dispose(parentDisposable)
+        resetApplicationManager(application)
+        ZipHandler.clearFileAccessorCache()
+    }
+
     override fun createLocalFileSystem(): KotlinLocalFileSystem {
         return KotlinLocalFileSystem()
     }
 
     companion object {
-        @Deprecated(
-            message = "The `unitTestMode` flag is deprecated in favor of `KotlinCoreApplicationEnvironmentMode` configuration.",
-            replaceWith = ReplaceWith("create(parentDisposable, KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode))"),
-            level = DeprecationLevel.ERROR,
-        )
-        fun create(
-            parentDisposable: Disposable,
-            unitTestMode: Boolean,
-        ): KotlinCoreApplicationEnvironment {
-            return create(parentDisposable, KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode))
-        }
+        @PublishedApi
+        internal val APPLICATION_LOCK = Any()
+
+        inline fun <R> underApplicationLock(action: () -> R): R =
+            synchronized(APPLICATION_LOCK) { action() }
 
         fun create(
             parentDisposable: Disposable,
@@ -117,6 +134,8 @@ class KotlinCoreApplicationEnvironment private constructor(
         ): KotlinCoreApplicationEnvironment {
             val environment = KotlinCoreApplicationEnvironment(parentDisposable, environmentMode)
             registerExtensionPoints()
+            registerApplicationServicesForCLI(environment)
+            registerApplicationServices(environment)
             return environment
         }
 
@@ -131,6 +150,52 @@ class KotlinCoreApplicationEnvironment private constructor(
             registerApplicationExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage::class.java)
             registerApplicationExtensionPoint(SmartPointerAnchorProvider.EP_NAME, SmartPointerAnchorProvider::class.java)
             registerVersionSpecificAppExtensionPoints(ApplicationManager.getApplication().extensionArea)
+        }
+
+        private fun registerApplicationServicesForCLI(applicationEnvironment: KotlinCoreApplicationEnvironment) {
+            // ability to get text from annotations xml files
+            applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml")
+            applicationEnvironment.registerParserDefinition(JavaParserDefinition())
+        }
+
+        private fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
+            with(applicationEnvironment) {
+                registerFileType(KotlinFileType.INSTANCE, "kt")
+                registerFileType(KotlinFileType.INSTANCE, KotlinParserDefinition.STD_SCRIPT_SUFFIX)
+                registerParserDefinition(KotlinParserDefinition())
+                application.registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
+                application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
+                application.registerService(TransactionGuard::class.java, TransactionGuardImpl::class.java)
+                application.registerService(VirtualFileSetFactory::class.java, KotlinCoreVirtualFileSetFactory)
+                application.registerService(InternalPersistentJavaLanguageLevelReaderService::class.java, InternalPersistentJavaLanguageLevelReaderService.DefaultImpl())
+            }
+        }
+
+        /**
+         * Resets the application managed by [ApplicationManager] to `null`. If [applicationToReset] is specified, [resetApplicationManager]
+         * will only reset the application if it's the expected one. Otherwise, the application will already have been changed to another
+         * application. For example, application disposal can trigger one of the disposables registered via
+         * [ApplicationManager.setApplication], which reset the managed application to the previous application.
+         */
+        @JvmStatic
+        @CoreEnvironmentDeprecation
+        fun resetApplicationManager(applicationToReset: Application? = null) {
+            val currentApplication = ApplicationManager.getApplication() ?: return
+            if (applicationToReset != null && applicationToReset != currentApplication) {
+                return
+            }
+
+            try {
+                val ourApplicationField = ApplicationManager::class.java.getDeclaredField("ourApplication")
+                ourApplicationField.isAccessible = true
+                ourApplicationField.set(null, null)
+            } catch (exception: Exception) {
+                // Resetting the application manager is not critical in a production context. If the reflective access fails, we shouldn't
+                // expose the user to the failure.
+                if (currentApplication.isUnitTestMode) {
+                    throw exception
+                }
+            }
         }
     }
 }

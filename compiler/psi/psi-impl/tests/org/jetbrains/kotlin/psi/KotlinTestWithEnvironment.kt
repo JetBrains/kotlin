@@ -8,6 +8,7 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
@@ -32,7 +33,7 @@ abstract class KotlinTestWithEnvironment {
      */
     @Suppress("UnstableApiUsage")
     protected fun registerApplicationExtensionPoint(name: String, extensionClass: Class<*>) {
-        KotlinCoreEnvironment.underApplicationLock {
+        KotlinCoreApplicationEnvironment.underApplicationLock {
             CoreApplicationEnvironment.registerApplicationDynamicExtensionPoint(name, extensionClass)
         }
     }

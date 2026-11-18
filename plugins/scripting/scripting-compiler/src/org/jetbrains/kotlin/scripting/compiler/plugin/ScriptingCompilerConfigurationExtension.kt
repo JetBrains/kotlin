@@ -10,7 +10,7 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.kotlinPaths
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.*
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
-import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.fileExtension
+import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getRefinementEnvironment
 import kotlin.script.experimental.jvm.util.KotlinJars
@@ -45,7 +47,7 @@ class ScriptingCompilerConfigurationExtension(
             // Register new file extensions
             val fileTypeRegistry = FileTypeRegistry.getInstance() as CoreFileTypeRegistry
 
-            KotlinCoreEnvironment.underApplicationLock {
+            KotlinCoreApplicationEnvironment.underApplicationLock {
                 scriptDefinitionProvider.getKnownFilenameExtensions().filter {
                     fileTypeRegistry.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
                 }.forEach {
