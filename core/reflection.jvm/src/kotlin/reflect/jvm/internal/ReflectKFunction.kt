@@ -48,8 +48,8 @@ internal class DescriptorPatchingResult(val newDescriptor: String, val boxedIndi
 internal fun patchJvmDescriptorByExtraBoxing(function: ReflectKFunction, jvmDescriptor: String): DescriptorPatchingResult {
 
     val parsedDescriptor = parseJvmDescriptor(jvmDescriptor)
-    val hasDefaultMarker = parsedDescriptor.parameters.lastOrNull() == DefaultConstructorMarkerDescriptor
-    val valueParamCount = function.valueParameters.size + if (hasDefaultMarker) 1 else 0
+    val markerCount = parsedDescriptor.parameters.asReversed().takeWhile { it == DefaultConstructorMarkerDescriptor }.size
+    val valueParamCount = function.valueParameters.size + markerCount
 
     val boxedIndices = mutableSetOf<Int>()
     val newParameters = mutableListOf<String>()
@@ -65,7 +65,7 @@ internal fun patchJvmDescriptorByExtraBoxing(function: ReflectKFunction, jvmDesc
             }
         }
 
-    if (hasDefaultMarker) {
+    repeat(markerCount) {
         newParameters.add(DefaultConstructorMarkerDescriptor)
     }
 

@@ -463,7 +463,8 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
 
         newExpression.copyTypeArgumentsFrom(oldExpression, shift = capturedTypeParameters.size)
         val newExpressionArguments = if (accessorSymbol is IrConstructorSymbol) {
-            oldExpression.arguments + createAccessorMarkerArgument()
+            val markerCount = accessorSymbol.owner.parameters.size - oldExpression.arguments.size
+            oldExpression.arguments + List(markerCount) { createAccessorMarkerArgument() }
         } else {
             oldExpression.arguments
         }
