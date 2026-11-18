@@ -28,6 +28,12 @@ public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("composableFunInterfaceFromAnonymousFunctionAtMaskBoundary.kt")
+  public void testComposableFunInterfaceFromAnonymousFunctionAtMaskBoundary() {
+    run("composableFunInterfaceFromAnonymousFunctionAtMaskBoundary.kt");
+  }
+
+  @Test
   @TestMetadata("composableFunInterfaceOutsideCompositionIsSingleton.kt")
   public void testComposableFunInterfaceOutsideCompositionIsSingleton() {
     run("composableFunInterfaceOutsideCompositionIsSingleton.kt");
