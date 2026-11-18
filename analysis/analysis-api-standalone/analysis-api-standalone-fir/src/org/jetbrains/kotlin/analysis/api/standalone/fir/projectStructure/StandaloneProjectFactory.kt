@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
+import org.jetbrains.kotlin.analysis.api.standalone.fir.KotlinCoreApplicationEnvironmentForAnalysisApiTests
 import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneIndexCache
 import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneJvmDependenciesIndex
 import org.jetbrains.kotlin.analysis.api.standalone.fir.java.KotlinStandaloneJavaModuleAccessibilityChecker
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCa
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
@@ -79,12 +81,17 @@ import kotlin.io.path.isDirectory
 object StandaloneProjectFactory {
     fun createProjectEnvironment(
         projectDisposable: Disposable,
-        applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
+        unitTestMode: Boolean,
     ): KotlinCoreProjectEnvironment {
+        val environmentFactory = when (unitTestMode) {
+            false -> KotlinCoreApplicationEnvironment.environmentFactoryForProduction
+            true -> ::KotlinCoreApplicationEnvironmentForAnalysisApiTests
+        }
+
         @OptIn(CoreEnvironmentDeprecation::class)
         val applicationEnvironment = KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(
             projectDisposable = projectDisposable,
-            applicationEnvironmentMode,
+            environmentFactory,
         )
 
         // JAR/klib files used in the Standalone Analysis API session remain open because of a global ZIP cache in IntelliJ.

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.Standal
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
@@ -46,7 +45,7 @@ class AnalysisApiEnvironmentManagerImpl(
     private val _projectEnvironment: KotlinCoreProjectEnvironment by lazy {
         StandaloneProjectFactory.createProjectEnvironment(
             testRootDisposable,
-            KotlinCoreApplicationEnvironmentMode.UnitTest,
+            unitTestMode = true
         )
     }
 

@@ -8,19 +8,11 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.internals.KaInternalsProvider
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder
-import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.builder.KtLibraryModuleBuilderImpl
-import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.builder.KtLibrarySourceModuleBuilderImpl
-import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.builder.KtScriptModuleBuilderImpl
-import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.builder.KtSdkModuleBuilderImpl
-import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.builder.KtSourceModuleBuilderImpl
-import org.jetbrains.kotlin.analysis.project.structure.builder.KtLibraryModuleBuilder
-import org.jetbrains.kotlin.analysis.project.structure.builder.KtLibrarySourceModuleBuilder
-import org.jetbrains.kotlin.analysis.project.structure.builder.KtScriptModuleBuilder
-import org.jetbrains.kotlin.analysis.project.structure.builder.KtSdkModuleBuilder
-import org.jetbrains.kotlin.analysis.project.structure.builder.KtSourceModuleBuilder
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.builder.*
+import org.jetbrains.kotlin.analysis.api.standalone.internals.KaInternalsProvider
+import org.jetbrains.kotlin.analysis.project.structure.builder.*
 
 @KaImplementationDetail
 internal object KaInternalsProviderImpl : KaInternalsProvider {

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.fir.services.LLStandaloneFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -63,10 +63,7 @@ internal class StandaloneAnalysisAPISessionBuilderImpl(
     }
 
     private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment =
-        StandaloneProjectFactory.createProjectEnvironment(
-            projectDisposable,
-            KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode),
-        )
+        StandaloneProjectFactory.createProjectEnvironment(projectDisposable, unitTestMode)
 
     private val serviceRegistrars = listOf(FirStandaloneServiceRegistrar, StandaloneSessionServiceRegistrar)
 
