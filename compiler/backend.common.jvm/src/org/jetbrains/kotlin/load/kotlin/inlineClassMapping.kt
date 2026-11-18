@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 internal fun TypeSystemCommonBackendContext.shouldUseUnderlyingType(inlineClassType: KotlinTypeMarker): Boolean {
-    val underlyingType = inlineClassType.getUnsubstitutedUnderlyingTypeInJvm() ?: return false
+    val underlyingType = inlineClassType.getUnsubstitutedUnderlyingType() ?: return false
 
     return !inlineClassType.isMarkedNullable() ||
             !underlyingType.isNullableType() && !(underlyingType is SimpleTypeMarker && underlyingType.isPrimitiveType())

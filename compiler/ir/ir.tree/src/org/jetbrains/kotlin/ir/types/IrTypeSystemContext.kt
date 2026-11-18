@@ -474,7 +474,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         } ?: owner.superTypes.first()
 
     @OptIn(ValueClassBackendAgnosticApi::class)
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingTypeInJvm(): KotlinTypeMarker? =
+    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
         (this as IrType).classOrNull?.owner?.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic)?.underlyingType
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
