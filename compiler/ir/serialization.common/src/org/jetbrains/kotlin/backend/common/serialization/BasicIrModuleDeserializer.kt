@@ -100,12 +100,13 @@ abstract class BasicIrModuleDeserializer(
 
     override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
         val topLevelSignature = signature.topLevelSignature()
-        val fileLocalDeserializationState = moduleReversedFileIndex[topLevelSignature] ?: return null
+        val fileDeserializationState = moduleReversedFileIndex[topLevelSignature] ?: return null
 
-        fileLocalDeserializationState.addIdSignature(topLevelSignature)
-        moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
+        if (fileDeserializationState.addTopLevelSignatureToQueue(topLevelSignature)) {
+            moduleDeserializationState.enqueueFile(fileDeserializationState)
+        }
 
-        return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(signature, kind)
+        return fileDeserializationState.fileDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(signature, kind)
     }
 
     // TODO: fix to topLevel checker
@@ -115,8 +116,9 @@ abstract class BasicIrModuleDeserializer(
         val topLevelSignature = idSig.topLevelSignature()
         val fileLocalDeserializationState = moduleReversedFileIndex[topLevelSignature] ?: return null
 
-        fileLocalDeserializationState.addIdSignature(topLevelSignature)
-        moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
+        if (fileLocalDeserializationState.addTopLevelSignatureToQueue(topLevelSignature)) {
+            moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
+        }
 
         return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(idSig, symbolKind)
     }
@@ -202,7 +204,7 @@ abstract class BasicIrModuleDeserializer(
          * Enqueue the given file for deserialization of (some) top-level declarations.
          *
          * Note: The declarations that need to be deserialized should be enqueued separately using
-         * [FileDeserializationState.addIdSignature] call.
+         * [FileDeserializationState.addTopLevelSignatureToQueue] call.
          */
         fun enqueueFile(fileDeserializationState: FileDeserializationState) {
             filesWithPendingTopLevels.add(fileDeserializationState)

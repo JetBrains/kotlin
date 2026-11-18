@@ -136,6 +136,12 @@ abstract class FileDeserializationState {
     abstract fun addIdSignature(topLevelDeclarationSignature: IdSignature)
 
     /**
+     * Schedule deserialization of a top-level declaration with the given signature in the current file.
+     * Returns `true` if a signature has not been already in the queue.
+     */
+    abstract fun addTopLevelSignatureToQueue(topLevelSignature: IdSignature): Boolean
+
+    /**
      * Schedule deserialization of all top-level declarations in this file.
      */
     abstract fun enqueueAllDeclarations()
@@ -202,7 +208,7 @@ class FileDeserializationStateImpl(
     /**
      * This is the queue of top-level declarations in the current file to be deserialized.
      *
-     * A declaration can be enqueued using one of the available ways: [addIdSignature], [enqueueAllDeclarations].
+     * A declaration can be enqueued using one of the available ways: [addTopLevelSignatureToQueue], [enqueueAllDeclarations].
      * The deserialization happens on invocation of [deserializeAllFileReachableTopLevel].
      *
      * Note 1: The signature is removed from the queue during deserialization of the corresponding declaration.
@@ -228,6 +234,8 @@ class FileDeserializationStateImpl(
     override fun addIdSignature(topLevelDeclarationSignature: IdSignature) {
         reachableTopLevels.add(topLevelDeclarationSignature)
     }
+
+    override fun addTopLevelSignatureToQueue(topLevelSignature: IdSignature): Boolean = reachableTopLevels.add(topLevelSignature)
 
     override fun enqueueAllDeclarations() {
         reachableTopLevels.addAll(fileDeserializer.reversedSignatureIndex.keys)
