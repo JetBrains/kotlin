@@ -79,6 +79,23 @@ internal class SwiftExportBuildOutputs(
 )
 
 /**
+ * The name of the exported Swift module: [moduleName] from the DSL, or the project's name made into an identifier.
+ * It is a setting of the project, so every target and build type has the same one.
+ *
+ * @param moduleNameDsl the DSL snippet that sets [moduleName], for diagnostics
+ */
+internal fun Project.swiftApiModuleName(moduleName: Provider<String>, moduleNameDsl: String): Provider<String> =
+    moduleName.orElse(provider {
+        project.name.normalizedSwiftExportModuleName.also {
+            validateSwiftExportModuleIdentifier(it, project.path, moduleNameDsl)
+            validateSwiftExportModuleName(it, project.path)
+        }
+    })
+
+/** The name of the library product in the generated package, unless the integration has a name of its own. */
+internal fun swiftApiLibraryName(swiftApiModuleName: Provider<String>): Provider<String> = swiftApiModuleName.map { it + "Library" }
+
+/**
  * The names an integration gives to its Swift Export [run], its bridge [compilation] and its static library
  * [binary], how the integration is called in task descriptions, and its [integrationDsl] block for diagnostics.
  * Two integrations with different names have nothing in common.
@@ -117,17 +134,9 @@ internal fun Project.registerSwiftExportRunAndBinary(
     buildType: NativeBuildType,
     target: KotlinNativeTarget,
     names: SwiftExportNames,
+    swiftApiModuleName: Provider<String> = swiftApiModuleName(swiftExportConfiguration.moduleName, swiftExportConfiguration.moduleNameDsl),
 ): SwiftExportBuildOutputs {
     val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-
-    val swiftApiModuleName = swiftExportConfiguration
-        .moduleName
-        .orElse(provider {
-            project.name.normalizedSwiftExportModuleName.also {
-                validateSwiftExportModuleIdentifier(it, project.path, swiftExportConfiguration.moduleNameDsl)
-                validateSwiftExportModuleName(it, project.path)
-            }
-        })
 
     val taskNamePrefix = lowerCamelCaseName(
         target.disambiguationClassifier ?: target.name,
@@ -183,7 +192,7 @@ internal fun Project.registerSwiftExportTask(
     val swiftExportTask = outputs.swiftExportTask
     val staticLibrary = outputs.staticLibrary
     val buildConfiguration = buildType.configuration
-    val swiftApiLibraryName = swiftApiModuleName.map { it + "Library" }
+    val swiftApiLibraryName = swiftApiLibraryName(swiftApiModuleName)
 
     val packageGenerationTask = registerPackageGeneration(
         taskNamePrefix = taskNamePrefix,
