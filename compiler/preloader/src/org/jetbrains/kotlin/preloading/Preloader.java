@@ -28,6 +28,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Note: this is a legacy thin proxy to kotlin-compiler.jar.
+ * It effectively does nothing meaningful, just a leftover
+ * of KT-91624 to avoid changing koltinc.bat and kotlinc.sh.
+ * Will be fixed along with AOT/CDS
+ */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class Preloader {
     public static final int DEFAULT_CLASS_NUMBER_ESTIMATE = 4096;
