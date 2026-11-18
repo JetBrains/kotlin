@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.code
 
 import org.gradle.testkit.runner.GradleRunner
-import org.jetbrains.kotlin.testFederation.NightlyTest
 import org.junit.jupiter.api.Disabled
 import java.io.File
 import kotlin.test.Test
 
 @Disabled
-@CodebaseNightlyTest
 class BootstrapLocalTest {
 
     /**
