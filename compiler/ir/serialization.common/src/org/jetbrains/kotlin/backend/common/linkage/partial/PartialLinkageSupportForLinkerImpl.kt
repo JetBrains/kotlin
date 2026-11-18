@@ -63,8 +63,6 @@ internal class PartialLinkageSupportForLinkerImpl(
     /** The queue of IR declarations to be processed/patched by the PL engine. */
     private val declarationsEnqueuedForProcessing = hashSetOf<IrDeclaration>()
 
-    override val isEnabled get() = true
-
     override fun shouldBeSkipped(declaration: IrDeclaration) = patcher.shouldBeSkipped(declaration)
 
     override fun enqueueFile(file: IrFile) {
