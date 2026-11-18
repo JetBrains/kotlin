@@ -96,8 +96,8 @@ fun mint() {
 class SameContainer {
     private val atomicProperty = atomic(0)
     var delegated: Int by atomicProperty
-    var delegatedWithThis by this.<!UNRESOLVED_REFERENCE!>coinsAtomic<!>
-    var delegatedWithExplicitThis by this<!UNRESOLVED_LABEL!>@ClassMint<!>.coinsAtomic
+    var delegatedWithThis by this.atomicProperty
+    var delegatedWithExplicitThis by this@SameContainer.atomicProperty
 }
 
 class SameContainerCompanionObject {

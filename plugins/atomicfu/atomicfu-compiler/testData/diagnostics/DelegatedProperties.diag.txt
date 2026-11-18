@@ -29,9 +29,5 @@
 /Mint.kt:91:4: error: Local properties delegated to kotlinx.atomicfu.Atomic* values are unsupported.
 
 /Mint.kt:92:4: error: Local properties delegated to kotlinx.atomicfu.Atomic* values are unsupported.
-
-/Mint.kt:99:35: error: Unresolved reference 'coinsAtomic' on receiver of type 'SameContainer'.
-
-/Mint.kt:100:42: error: Unresolved label.
 /TopLevel.kt:138:9: error: Property delegated to atomic property 'topLevelAtomic' must be declared at the top level of the same file as 'topLevelAtomic'.
 /OtherFile.kt:142:5: error: Property delegated to atomic property 'topLevelAtomic' must be declared at the top level of the same file as 'topLevelAtomic'.
