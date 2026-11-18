@@ -1876,6 +1876,30 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     public void testFullValueClassDestructuring() {
       run("fullValueClassDestructuring.kt");
     }
+
+    @Test
+    @TestMetadata("modifierListInDestructuringDeclaration.kt")
+    public void testModifierListInDestructuringDeclaration() {
+      run("modifierListInDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("modifierListInMemberDestructuringDeclaration.kt")
+    public void testModifierListInMemberDestructuringDeclaration() {
+      run("modifierListInMemberDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("modifierListInScriptDestructuringDeclaration.kts")
+    public void testModifierListInScriptDestructuringDeclaration() {
+      run("modifierListInScriptDestructuringDeclaration.kts");
+    }
+
+    @Test
+    @TestMetadata("modifierListInTopLevelDestructuringDeclaration.kt")
+    public void testModifierListInTopLevelDestructuringDeclaration() {
+      run("modifierListInTopLevelDestructuringDeclaration.kt");
+    }
   }
 
   @Nested
