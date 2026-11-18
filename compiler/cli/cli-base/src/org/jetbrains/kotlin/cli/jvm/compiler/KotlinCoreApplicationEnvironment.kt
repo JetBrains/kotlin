@@ -13,16 +13,13 @@ import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
-import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
 import com.intellij.openapi.fileTypes.PlainTextFileType
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VirtualFileSetFactory
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.impl.ZipHandler
@@ -45,17 +42,6 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-
-sealed interface KotlinCoreApplicationEnvironmentMode {
-    object Production : KotlinCoreApplicationEnvironmentMode
-
-    object UnitTest : KotlinCoreApplicationEnvironmentMode
-
-    companion object {
-        fun fromUnitTestModeFlag(isUnitTestMode: Boolean): KotlinCoreApplicationEnvironmentMode =
-            if (isUnitTestMode) UnitTest else Production
-    }
-}
 
 open class KotlinCoreApplicationEnvironment protected constructor(
     parentDisposable: Disposable,
@@ -122,15 +108,19 @@ open class KotlinCoreApplicationEnvironment protected constructor(
 
         private var ourProjectCount = 0
 
+        val environmentFactoryForProduction: (Disposable) -> KotlinCoreApplicationEnvironment get() = {
+            KotlinCoreApplicationEnvironment(it, unitTestMode = false)
+        }
+
         @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironment(
             projectDisposable: Disposable,
-            environmentMode: KotlinCoreApplicationEnvironmentMode,
+            environmentFactory: (Disposable) -> KotlinCoreApplicationEnvironment = environmentFactoryForProduction,
         ): KotlinCoreApplicationEnvironment {
             underApplicationLock {
                 if (instance == null) {
                     val disposable = Disposer.newDisposable("Disposable for the KotlinCoreApplicationEnvironment")
-                    instance = create(disposable, environmentMode)
+                    instance = create(disposable, environmentFactory)
                     ourProjectCount = 0
                     Disposer.register(disposable) {
                         underApplicationLock {
@@ -174,10 +164,9 @@ open class KotlinCoreApplicationEnvironment protected constructor(
 
         fun create(
             parentDisposable: Disposable,
-            // TODO: replace with coreApplicationEnvironmentModeFactory parameter in the following commit
-            environmentMode: KotlinCoreApplicationEnvironmentMode,
+            environmentFactory: (Disposable) -> KotlinCoreApplicationEnvironment = environmentFactoryForProduction,
         ): KotlinCoreApplicationEnvironment {
-            val environment = KotlinCoreApplicationEnvironment(parentDisposable, unitTestMode = false)
+            val environment = environmentFactory(parentDisposable)
             registerExtensionPoints()
             registerApplicationServicesForCLI(environment)
             registerApplicationServices(environment)

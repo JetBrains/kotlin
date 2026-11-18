@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.extensionsStorage
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode.Production
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode.UnitTest
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
@@ -361,7 +359,7 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
             // Tests are supposed to create a single project and dispose it right after use
-            val appEnv = KotlinCoreApplicationEnvironment.create(parentDisposable, UnitTest)
+            val appEnv = KotlinCoreApplicationEnvironment.create(parentDisposable)
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
             return KotlinCoreEnvironment(projectEnv, configuration)
         }
@@ -391,12 +389,12 @@ class KotlinCoreEnvironment private constructor(
 
         @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironmentForProduction(projectDisposable: Disposable): KotlinCoreApplicationEnvironment {
-            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable, Production)
+            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable)
         }
 
         @CoreEnvironmentDeprecation
         fun getOrCreateApplicationEnvironmentForTests(projectDisposable: Disposable): KotlinCoreApplicationEnvironment {
-            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable, UnitTest)
+            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable)
         }
 
         /**
@@ -407,11 +405,7 @@ class KotlinCoreEnvironment private constructor(
             projectDisposable: Disposable,
             configuration: CompilerConfiguration,
         ): KotlinCoreApplicationEnvironment {
-            val mode = when (configuration.testEnvironment) {
-                false -> Production
-                true -> UnitTest
-            }
-            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable, mode)
+            return KotlinCoreApplicationEnvironment.getOrCreateApplicationEnvironment(projectDisposable)
         }
 
         @JvmStatic
