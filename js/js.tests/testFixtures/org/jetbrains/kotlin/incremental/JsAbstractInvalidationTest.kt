@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsIncrementalBuildingPhase
@@ -75,7 +74,7 @@ abstract class JsAbstractInvalidationTest(
 
     override val environment: KotlinCoreEnvironment =
         @OptIn(CoreEnvironmentDeprecation::class)
-        KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration.create(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+        KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration.create())
 
     override fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration =
         JsCompilerInvocationTestConfiguration(buildDir, AbstractJsCompilerInvocationTest.CompilerType.WITH_IC)

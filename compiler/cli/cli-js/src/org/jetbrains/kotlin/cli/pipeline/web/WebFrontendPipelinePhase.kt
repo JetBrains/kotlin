@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.js.platformChecker
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
@@ -52,7 +51,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         val configuration = input.configuration
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environmentForJS = KotlinCoreEnvironment.createForProduction(input.rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
+        val environmentForJS = KotlinCoreEnvironment.createForProduction(input.rootDisposable, configuration)
         configuration.perfManager?.let {
             @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
             it.notifyCurrentPhaseFinishedIfNeeded()

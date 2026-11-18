@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.CliBinaryClassFileIndex
 import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
@@ -327,7 +326,7 @@ class IncrementalCompilationCustomScopeTest {
             configure()
         }
 
-        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration)
         projectEnvironment = environment.toVfsBasedProjectEnvironment()
         return prepareIncrementalCompilationContextAndLibrariesClasspath(configuration, projectEnvironment)
     }

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.*
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
@@ -80,7 +79,7 @@ internal fun <S : AbstractScriptingCompilerState<*>> createIsolatedScriptingStat
     @OptIn(CoreEnvironmentDeprecation::class)
     val environment =
         KotlinCoreEnvironment.createForProduction(
-            parentDisposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
+            parentDisposable, kotlinCompilerConfiguration
         )
 
     return createState(

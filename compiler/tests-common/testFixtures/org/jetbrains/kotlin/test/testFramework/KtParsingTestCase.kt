@@ -27,7 +27,6 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesWithFile
@@ -52,8 +51,7 @@ abstract class KtParsingTestCase protected constructor(@NonNls dataPath: String,
         val configuration = CompilerConfiguration.create()
         @OptIn(CoreEnvironmentDeprecation::class)
         myEnvironment = KotlinCoreEnvironment.createForParallelTests(
-            testRootDisposable, configuration,
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
+            testRootDisposable, configuration
         )
     }
 

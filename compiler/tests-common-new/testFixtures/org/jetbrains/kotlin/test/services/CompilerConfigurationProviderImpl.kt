@@ -63,13 +63,9 @@ open class CompilerConfigurationProviderImpl(
     }
 
     protected open fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
-        val platform = module.targetPlatform(testServices)
-        val configFiles = platform.platformToEnvironmentConfigFiles()
-
         @OptIn(CoreEnvironmentDeprecation::class)
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
-            testRootDisposable,
-            CompilerConfiguration.create()
+            testRootDisposable
         )
         val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
@@ -77,8 +73,7 @@ open class CompilerConfigurationProviderImpl(
         @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.createForTests(
             projectEnv,
-            configuration,
-            configFiles
+            configuration
         ).also {
             val extensionStorage = it.configuration.extensionsStorage!!
             registerCompilerExtensions(extensionStorage, module, configuration)

@@ -122,7 +122,7 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
         configuration.parserMode = if (USE_LIGHT_TREE) ParserMode.LightTree else ParserMode.Psi
 
         @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration)
         try {
             runAnalysis(moduleData, environment)
         } finally {

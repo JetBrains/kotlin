@@ -89,8 +89,7 @@ abstract class AbstractFirTypeEnhancementTest {
             testRootDisposable,
             newConfiguration(
                 ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.FULL_JDK, classpath, listOf(javaFilesDir)
-            ),
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
+            )
         )
     }
 

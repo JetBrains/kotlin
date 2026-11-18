@@ -21,7 +21,6 @@ import com.intellij.platform.syntax.tree.*
 import com.intellij.platform.syntax.util.cancellation.CancellationProviderExtension
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kmp.lexer.KotlinLexer
@@ -39,7 +38,7 @@ class LazyTestParser(disposable: Disposable) : AbstractTestParser<SyntaxNode>(Pa
     init {
         // `KmpSyntaxNode` requests extensions from the IntelliJ application if it's in the classpath
         @OptIn(CoreEnvironmentDeprecation::class)
-        KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.create(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.create())
         val extensionArea = ApplicationManager.getApplication().extensionArea
         if (!extensionArea.hasExtensionPoint(CANCELLATION_PROVIDER_EP_NAME)) {
             CoreApplicationEnvironment.registerApplicationExtensionPoint(

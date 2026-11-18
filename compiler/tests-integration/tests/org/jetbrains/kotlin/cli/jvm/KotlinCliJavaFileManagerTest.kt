@@ -24,7 +24,6 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.search.GlobalSearchScope
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -219,8 +218,7 @@ class KotlinCliJavaFileManagerTest {
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment =  KotlinCoreEnvironment.createForParallelTests(
             testRootDisposable,
-            configuration,
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
+            configuration
         )
         return environment.project
     }
