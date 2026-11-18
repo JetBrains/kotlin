@@ -1,0 +1,97 @@
+FILE: declarations.kt
+    public final data class X : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/String|): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/String| = R|<local>/b|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/String|
+
+        public final fun copy(a: R|kotlin/Int| = this@R|/X|.R|/X.a|, b: R|kotlin/String| = this@R|/X|.R|/X.b|): R|X|
+
+    }
+    public final class NoComponents : R|kotlin/Any| {
+        public constructor(): R|NoComponents| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+        private get(): R|X|
+    public final val topA: R|kotlin/Int| = R|/<destruct>|.R|/X.component1|()
+        public get(): R|kotlin/Int|
+    public final val topB: R|kotlin/String| = R|/<destruct>|.R|/X.component2|()
+        public get(): R|kotlin/String|
+    public final val topA: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+        private get(): R|X|
+    public final val topC: R|kotlin/Int| = R|/<destruct>|.R|/X.component1|()
+        public get(): R|kotlin/Int|
+    public final val topD: R|kotlin/String| = R|/<destruct>|.R|/X.component2|()
+        public get(): R|kotlin/String|
+    private final val <destruct>: R|NoComponents| = R|/NoComponents.NoComponents|()
+        private get(): R|NoComponents|
+    public final val topE: <ERROR TYPE REF: Unresolved name: component1> = R|/<destruct>|.<Unresolved name: component1>#()
+        public get(): <ERROR TYPE REF: Unresolved name: component1>
+    public final val topF: <ERROR TYPE REF: Unresolved name: component2> = R|/<destruct>|.<Unresolved name: component2>#()
+        public get(): <ERROR TYPE REF: Unresolved name: component2>
+    private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+        private get(): R|X|
+    public final var topG: R|kotlin/Int| = R|/<destruct>|.R|/X.component1|()
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+    public final var topH: R|kotlin/String| = R|/<destruct>|.R|/X.component2|()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+            private get(): R|X|
+
+        public final val a: R|kotlin/Int| = R|/C.<destruct>|.R|/X.component1|()
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/String| = R|/C.<destruct>|.R|/X.component2|()
+            public get(): R|kotlin/String|
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+            private get(): R|X|
+
+        public final val c: R|kotlin/Int| = R|/C.<destruct>|.R|/X.component1|()
+            public get(): R|kotlin/Int|
+
+        public final val d: R|kotlin/String| = R|/C.<destruct>|.R|/X.component2|()
+            public get(): R|kotlin/String|
+
+        public final fun use(): R|kotlin/Unit| {
+            <Ambiguity: a, [/C.a, /C.a]>#.<Unresolved name: length>#
+            this@R|/C|.R|/C.b|.R|kotlin/String.length|
+            this@R|/C|.R|/C.c|.R|kotlin/Int.inc|()
+            this@R|/C|.R|/C.d|.R|kotlin/String.length|
+        }
+
+    }
+FILE: usages.kt
+    public final fun use(c: R|C|): R|kotlin/Unit| {
+        <Ambiguity: topA, [/topA, /topA]>#.<Unresolved name: length>#
+        <Unresolved name: topB>#.<Unresolved name: length>#
+        <Unresolved name: topC>#.<Unresolved name: inc>#()
+        <Unresolved name: topG># = Int(1)
+        R|<local>/c|.<Ambiguity: a, [/C.a, /C.a]>#.<Unresolved name: length>#
+        R|<local>/c|.R|/C.b|.R|kotlin/String.length|
+        R|<local>/c|.R|/C.d|.R|kotlin/String.length|
+    }
