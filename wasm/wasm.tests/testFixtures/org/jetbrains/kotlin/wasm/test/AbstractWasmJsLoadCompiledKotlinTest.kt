@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives.DUMP_CLASSIFIER
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWasmTest
 
@@ -33,8 +34,9 @@ abstract class AbstractWasmJsLoadCompiledKotlinTest : AbstractKotlinCompilerWasm
             pathToTestDir = "compiler/testData/codegen/box/",
             testGroupOutputDirPrefix = "codegen/loadCompiledWasm/",
         )
-        builder.defaultDirectives {
+        defaultDirectives {
             FIR_PARSER with FirParser.LightTree
+            DUMP_CLASSIFIER with "klib"
         }
 
         configureKlibArtifactsHandlersStep {

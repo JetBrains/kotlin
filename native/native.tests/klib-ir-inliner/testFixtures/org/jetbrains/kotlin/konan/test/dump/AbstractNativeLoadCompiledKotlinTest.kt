@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives.DUMP_CLASSIFIER
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.ArtifactKind
@@ -48,6 +49,7 @@ abstract class AbstractNativeLoadCompiledKotlinTest : AbstractKotlinCompilerNati
         }
         defaultDirectives {
             +WITH_STDLIB
+            DUMP_CLASSIFIER with "klib"
         }
 
         configureFirParser(FirParser.LightTree)
