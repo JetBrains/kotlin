@@ -609,7 +609,7 @@ class MethodInliner(
             }
 
             private fun calculateNewNameUsingScopeNumbers(name: String): String {
-                if (name.startsWith(AsmUtil.THIS)) {
+                if (name.dropInlineScopeInfo() == AsmUtil.THIS) {
                     val scopeNumber = name.getInlineScopeInfo()?.scopeNumber ?: return AsmUtil.INLINE_DECLARATION_SITE_THIS
                     return "${AsmUtil.INLINE_DECLARATION_SITE_THIS}$INLINE_SCOPE_NUMBER_SEPARATOR$scopeNumber"
                 }
