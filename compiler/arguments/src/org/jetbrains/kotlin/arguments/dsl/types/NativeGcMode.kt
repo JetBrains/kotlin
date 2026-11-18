@@ -36,7 +36,7 @@ enum class NativeGcMode(
     CMS(
         modeName = "cms",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_30,
+            introducedVersion = KotlinReleaseVersion.v1_6_20,
         )
     );
 

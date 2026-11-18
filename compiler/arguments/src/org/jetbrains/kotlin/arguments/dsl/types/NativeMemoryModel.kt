@@ -16,12 +16,23 @@ enum class NativeMemoryModel(
     val modelName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("relaxed")
+    RELAXED(
+        modelName = "relaxed",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_7_20,
+            removedVersion = KotlinReleaseVersion.v1_9_20,
+        )
+    ),
+
     @SerialName("strict")
     STRICT(
         modelName = "strict",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_9_0,
+            removedVersion = KotlinReleaseVersion.v1_9_20,
         )
     ),
 
@@ -30,7 +41,7 @@ enum class NativeMemoryModel(
         modelName = "experimental",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
-            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_9_20,
         )
     );
 

@@ -21,6 +21,7 @@ enum class NativeAllocationMode(
         modeName = "std",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
 
@@ -29,6 +30,8 @@ enum class NativeAllocationMode(
         modeName = "mimalloc",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_2_0,
         )
     ),
 
@@ -36,7 +39,7 @@ enum class NativeAllocationMode(
     CUSTOM(
         modeName = "custom",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
         )
     );
 

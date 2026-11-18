@@ -93,6 +93,7 @@ enum class KonanTarget(
         targetName = "watchos_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_3_20,
         )
     ),
 
@@ -108,7 +109,7 @@ enum class KonanTarget(
     WATCHOS_DEVICE_ARM64(
         targetName = "watchos_device_arm64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            introducedVersion = KotlinReleaseVersion.v1_8_0,
         )
     ),
 
@@ -125,6 +126,7 @@ enum class KonanTarget(
         targetName = "tvos_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_3_20,
         )
     ),
 
@@ -157,6 +159,7 @@ enum class KonanTarget(
         targetName = "macos_x64",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_3_20,
         )
     ),
 
@@ -179,6 +182,170 @@ enum class KonanTarget(
     @SerialName("linux_arm32_hfp")
     LINUX_ARM32_HFP(
         targetName = "linux_arm32_hfp",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+        )
+    ),
+
+    @SerialName("ios_arm32")
+    IOS_ARM32(
+        targetName = "ios_arm32",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+            removedVersion = KotlinReleaseVersion.v1_9_20,
+        )
+    ),
+
+    @SerialName("watchos_x86")
+    WATCHOS_X86(
+        targetName = "watchos_x86",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+            removedVersion = KotlinReleaseVersion.v1_9_20,
+        )
+    ),
+
+    @SerialName("linux_mips32")
+    LINUX_MIPS32(
+        targetName = "linux_mips32",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+            removedVersion = KotlinReleaseVersion.v1_9_20,
+        )
+    ),
+
+    @SerialName("linux_mipsel32")
+    LINUX_MIPSEL32(
+        targetName = "linux_mipsel32",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+            removedVersion = KotlinReleaseVersion.v1_9_20,
+        )
+    ),
+
+    @SerialName("mingw_x86")
+    MINGW_X86(
+        targetName = "mingw_x86",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+            removedVersion = KotlinReleaseVersion.v1_9_20,
+        )
+    ),
+
+    @SerialName("wasm32")
+    WASM32(
+        targetName = "wasm32",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+            removedVersion = KotlinReleaseVersion.v1_9_20,
+        )
+    ),
+
+    // The entries below are not targets themselves: `host` and the aliases are resolved to one of the targets above.
+    // They are accepted by `-target` only when compiling a binary, not when compiling a klib,
+    // and are not valid values for `-Xmanifest-native-targets`.
+
+    @SerialName("host")
+    HOST(
+        targetName = "host",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
+    ),
+
+    @SerialName("linux")
+    LINUX(
+        targetName = "linux",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
+    ),
+
+    @SerialName("macbook")
+    MACBOOK(
+        targetName = "macbook",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
+    ),
+
+    @SerialName("macos")
+    MACOS(
+        targetName = "macos",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
+    ),
+
+    @SerialName("imac")
+    IMAC(
+        targetName = "imac",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
+    ),
+
+    @SerialName("raspberrypi")
+    RASPBERRYPI(
+        targetName = "raspberrypi",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+        )
+    ),
+
+    @SerialName("iphone32")
+    IPHONE32(
+        targetName = "iphone32",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_8_20,
+            removedVersion = KotlinReleaseVersion.v1_9_20,
+        )
+    ),
+
+    @SerialName("iphone")
+    IPHONE(
+        targetName = "iphone",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
+    ),
+
+    @SerialName("ipad")
+    IPAD(
+        targetName = "ipad",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
+    ),
+
+    @SerialName("ios")
+    IOS(
+        targetName = "ios",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
+    ),
+
+    @SerialName("iphone_sim")
+    IPHONE_SIM(
+        targetName = "iphone_sim",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
+    ),
+
+    @SerialName("mingw")
+    MINGW(
+        targetName = "mingw",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
