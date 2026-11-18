@@ -42,6 +42,7 @@ dependencies {
     runtimeOnly(libs.maven.xml.impl)
     implementation(libs.spdx.gradlePlugin)
     implementation(libs.shadow.gradlePlugin)
+    implementation(libs.dev.publish.gradlePlugin)
 
     // Bump a transitive slf4j version to a version in verification-metadata.xml
     implementation("org.slf4j:slf4j-api:2.0.17")
