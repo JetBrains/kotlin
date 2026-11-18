@@ -39,5 +39,3 @@ fun withParentheses() {
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 annotation class Anno
-
-// IGNORE_STABILITY: candidates
