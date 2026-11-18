@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -16,12 +17,12 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.dontSortSourceFiles
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.modules.Module
@@ -37,7 +38,6 @@ class SourceFileWithModule<T>(val sourceFiles: Iterable<T>, val isCommon: Boolea
 fun List<KotlinSourceRoot>.forAllFiles(
     configuration: CompilerConfiguration,
     project: Project,
-    reportLocation: CompilerMessageLocation? = null,
     body: (VirtualFile, Boolean, moduleName: String?) -> Unit
 ) {
     if (isEmpty()) return
@@ -57,14 +57,13 @@ fun List<KotlinSourceRoot>.forAllFiles(
 
     allSourceFilesSequence(
         configuration,
-        reportLocation,
         findVirtualFile = { localFileSystem.findFileByPath(it.normalize().path) },
         filter = { virtualFile, isExplicit ->
             if (virtualFile.extension != KotlinFileType.EXTENSION)
                 ensurePluginsConfigured()
             val isKotlin = virtualFile.extension == KotlinFileType.EXTENSION || virtualFile.fileType == KotlinFileType.INSTANCE
             if (isExplicit && !isKotlin) {
-                configuration.report(ROOTS_RESOLUTION_ERROR, "Source entry is not a Kotlin file: ${virtualFile.path}", reportLocation)
+                configuration.report(ROOTS_RESOLUTION_ERROR, "Source entry is not a Kotlin file: ${virtualFile.path}")
             }
             isKotlin
         },
@@ -82,7 +81,6 @@ fun interface ValidSourceFilesFilter<VirtualFile> {
 
 fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
     configuration: CompilerConfiguration,
-    reportLocation: CompilerMessageLocation? = null,
     findVirtualFile: (File) -> VirtualFile?,
     filter: ValidSourceFilesFilter<VirtualFile>,
     convertToSourceFiles: (VirtualFile) -> Iterable<Source>,
@@ -101,7 +99,7 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
                     .warn("$message\n\nbuild file path: $buildFilePath\ncontent:\n${buildFilePath.readText()}")
             }
 
-            configuration.report(ROOTS_RESOLUTION_ERROR, message, reportLocation)
+            configuration.report(ROOTS_RESOLUTION_ERROR, message, location = null)
             continue
         }
 
@@ -123,11 +121,10 @@ fun createSourceFilesFromSourceRoots(
     configuration: CompilerConfiguration,
     project: Project,
     sourceRoots: List<KotlinSourceRoot>,
-    reportLocation: CompilerMessageLocation? = null
 ): MutableList<KtFile> {
     val psiManager = PsiManager.getInstance(project)
     val result = mutableListOf<KtFile>()
-    sourceRoots.forAllFiles(configuration, project, reportLocation) { virtualFile, isCommon, moduleName ->
+    sourceRoots.forAllFiles(configuration, project) { virtualFile, isCommon, moduleName ->
         psiManager.findFile(virtualFile)?.let {
             @OptIn(KtImplementationDetail::class)
             if (it is KtFile) {
@@ -138,6 +135,9 @@ fun createSourceFilesFromSourceRoots(
                 result.add(it)
             }
         }
+    }
+    if (!configuration.dontSortSourceFiles) {
+        result.sortBy { it.virtualFile.path }
     }
     return result
 }
@@ -173,4 +173,9 @@ fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration): L
     return result
 }
 
-
+fun List<KtFile>.countLinesOfCode(): Int {
+    return sumOf { sourceFile ->
+        val text = sourceFile.text
+        StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
+    }
+}

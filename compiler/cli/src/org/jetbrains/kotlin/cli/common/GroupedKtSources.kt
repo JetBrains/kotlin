@@ -75,7 +75,6 @@ fun collectSources(
     getSourceRootsCheckingForDuplicates(compilerConfiguration)
         .allSourceFilesSequence(
             compilerConfiguration,
-            reportLocation = null,
             findVirtualFile = ::findVirtualFile,
             filter = { virtualFile, isExplicit ->
                 when (virtualFile.extension) {

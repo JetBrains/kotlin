@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -44,7 +43,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
             configuration
         )
 
-        val firOutput = phaseContext.firFrontend(environment, configuration)
+        val firOutput = phaseContext.firFrontend(environment.toVfsBasedProjectEnvironment(), configuration)
         return NativeFrontendArtifact(
             firOutput,
             configuration = configuration,
@@ -108,12 +107,12 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
     }
 
     private fun NativeFirstStagePhaseContext.firFrontendWithPsi(
-        input: KotlinCoreEnvironment,
+        environment: VfsBasedProjectEnvironment,
         configuration: CompilerConfiguration,
     ): AllModulesFrontendOutput {
         val perfManager = configuration.perfManager
-        val ktFiles = input.getSourceFiles()
-        perfManager?.addSourcesStats(ktFiles.size, input.countLinesOfCode(ktFiles))
+        val ktFiles = environment.computeKtSources(configuration)
+        perfManager?.addSourcesStats(ktFiles.size, ktFiles.countLinesOfCode())
         return firFrontend(
             configuration,
             ktFiles,
@@ -129,15 +128,12 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
     }
 
     private fun NativeFirstStagePhaseContext.firFrontendWithLightTree(
-        input: KotlinCoreEnvironment,
+        environment: VfsBasedProjectEnvironment,
         configuration: CompilerConfiguration,
     ): AllModulesFrontendOutput {
         // FIR
 
-        val groupedSources = collectSources(
-            configuration,
-            input.toVfsBasedProjectEnvironment()
-        )
+        val groupedSources = collectSources(configuration, environment)
 
         val ktSourceFiles = mutableListOf<KtSourceFile>().apply {
             addAll(groupedSources.commonSources)
@@ -159,13 +155,13 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
     }
 
     private fun NativeFirstStagePhaseContext.firFrontend(
-        input: KotlinCoreEnvironment,
+        environment: VfsBasedProjectEnvironment,
         configuration: CompilerConfiguration
     ): AllModulesFrontendOutput {
         var output = if (configuration.parserMode.treeBased) {
-            firFrontendWithLightTree(input, configuration)
+            firFrontendWithLightTree(environment, configuration)
         } else {
-            firFrontendWithPsi(input, configuration)
+            firFrontendWithPsi(environment, configuration)
         }
         output = FrontendFilesForPluginsGenerationPipelinePhase.createFilesWithGeneratedDeclarations(output)
         return output
