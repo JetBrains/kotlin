@@ -84,11 +84,13 @@ class A {
 // test.kt:14 test
 // test.kt:6 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:5 box
 // test.kt:21 <init>
+// EXPECTATIONS JS_IR
 // test.kt:16 <init>
 // test.kt:8 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:5 box
 // test.kt:11 test
 // test.kt:11 test
@@ -101,7 +103,7 @@ class A {
 // test.kt:14 test
 // test.kt:6 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box (4)
 // test.kt:29 $A.<init> (1)
 // test.kt:21 $A$static_init (32)

@@ -132,18 +132,17 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
         }
 
         fun getTranslationModesForTest(testServices: TestServices, module: TestModule): Set<TranslationMode> {
-            val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in module.directives
+            val onlyDev = JsEnvironmentConfigurationDirectives.ONLY_DEV in module.directives
             val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in module.directives
             val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
             val perFileOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
             val isEsModules = getModuleKind(testServices, module) == ModuleKind.ES
-            // If runIrDce then include DCE results
             // If perModuleOnly then skip whole program
             // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
             return TranslationMode.entries
                 .filter {
                     (it.production || !onlyIrDce) &&
-                            (!it.production || runIrDce) &&
+                            (!it.production || !onlyDev) &&
                             (!perModuleOnly || it.granularity == JsGenerationGranularity.PER_MODULE) &&
                             (!perFileOnly || it.granularity == JsGenerationGranularity.PER_FILE)
                 }

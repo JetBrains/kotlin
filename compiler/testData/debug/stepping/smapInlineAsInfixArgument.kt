@@ -60,7 +60,7 @@ fun fail() : String {
 // test.kt:4 execute
 // test.kt:12 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:7 box
 // test.kt:19 fail
 // test.kt:7 box
@@ -71,7 +71,7 @@ fun fail() : String {
 // test.kt:4 execute
 // test.kt:12 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:7 $box (4)
 // test.kt:15 $box (11, 4)
 // test.kt:8 $box (12)

@@ -33,6 +33,7 @@ fun TestConfigurationBuilder.configureLineNumberTests(createLineNumberHandler: (
 
 fun TestConfigurationBuilder.configureSteppingTests() {
     defaultDirectives {
+        +JsEnvironmentConfigurationDirectives.ONLY_DEV
         +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
     }
     useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)

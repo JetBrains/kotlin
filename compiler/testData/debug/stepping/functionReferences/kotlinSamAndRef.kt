@@ -55,7 +55,7 @@ fun box(): String {
 
 // test.kt:25 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:11 $box (17, 29, 33, 29)
 // test.kt:11 $strToStr.invoke (17)
 // test.kt:3 $strToStr (32, 35, 32, 37)
@@ -93,7 +93,6 @@ fun box(): String {
 // test.kt:13 box
 // test.kt:14 box
 // test.kt:14 box
-
 // test.kt:3 strToStr
 // test.kt:17 box
 // test.kt:18 box
@@ -101,12 +100,32 @@ fun box(): String {
 // test.kt:3 strToStr
 // test.kt:21 box
 // test.kt:23 box
-
 // test.kt:23 box
 // test.kt:3 strToStr
 // test.kt:25 box
 
-
+// EXPECTATIONS JS_IR_ES6
+// test.kt:11 box
+// test.kt:11 box
+// test.kt:11 <init>
+// test.kt:11 box
+// test.kt:3 strToStr
+// test.kt:13 box
+// test.kt:13 box
+// test.kt:11 <init>
+// test.kt:14 box
+// test.kt:3 strToStr
+// test.kt:17 box
+// test.kt:17 box
+// test.kt:11 <init>
+// test.kt:18 box
+// test.kt:3 strToStr
+// test.kt:21 box
+// test.kt:21 box
+// test.kt:11 <init>
+// test.kt:23 box
+// test.kt:3 strToStr
+// test.kt:25 box
 
 // EXPECTATIONS NATIVE
 // test.kt:11 box

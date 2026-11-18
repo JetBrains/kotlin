@@ -149,7 +149,7 @@ fun box() {
 // test.kt:27 stringSwitch
 // test.kt:34 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:30 box
 // test.kt:5 stringSwitch
 // test.kt:6 stringSwitch
@@ -184,7 +184,7 @@ fun box() {
 // test.kt:27 stringSwitch
 // test.kt:34 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:30 $box (17, 4)
 // test.kt:6 $stringSwitch (8, 13, 8, 20)
 // test.kt:5 $stringSwitch (12)

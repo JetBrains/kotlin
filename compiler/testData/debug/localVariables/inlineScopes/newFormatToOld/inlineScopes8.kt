@@ -412,7 +412,7 @@ fun box() {
 // library.kt:54 box: $i$f$foo\56\65:int=0:int, array\56:java.lang.Integer[]=java.lang.Integer[], myClass\56:MyClass=MyClass
 // test.kt:66 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:64 $box: $array:(ref null $kotlin.Array)=null, $myClass:(ref null $MyClass)=null, $testVal:i32=0:i32, $item:(ref null $kotlin.Any)=null, $element:(ref null $kotlin.Any)=null (4)
 // library.kt:21 $box: $array:(ref null $kotlin.Array)=null, $myClass:(ref null $MyClass)=null, $testVal:i32=0:i32, $item:(ref null $kotlin.Any)=null, $element:(ref null $kotlin.Any)=null (24, 24, 24, 24, 24, 24, 24, 27, 27, 27, 24, 24, 24, 16, 16, 16, 16, 16)
 // library.kt:22 $box: $array:(ref $kotlin.Array)=(ref $kotlin.Array), $myClass:(ref null $MyClass)=null, $testVal:i32=0:i32, $item:(ref null $kotlin.Any)=null, $element:(ref null $kotlin.Any)=null (18, 18)

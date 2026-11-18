@@ -50,7 +50,7 @@ fun box() {
 // test.kt:16 box: x=2:number, z=2:number, y=12:number
 // test.kt:17 box: x=2:number, z=2:number, y=12:number
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:6 $box: $x:i32=0:i32, $z:i32=0:i32, $y:i32=0:i32 (10, 10)
 // test.kt:8 $box: $x:i32=0:i32, $z:i32=0:i32, $y:i32=0:i32 (14, 14)
 // test.kt:9 $box: $x:i32=1:i32, $z:i32=2:i32, $y:i32=0:i32 (25, 25, 25, 26, 26, 26, 26, 26, 26, 25, 25, 10)
