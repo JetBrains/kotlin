@@ -194,6 +194,31 @@ audit: lrepl's `reset()` still wipes the IC cache on table-era "baked
 indices" grounds — with nothing baked anymore, the wipe (and the slow
 `:reset`) may be unnecessary.
 
+### 9. String-free emitted init (hash the binding key) — PARKED
+
+After the move wrapper's death, the binding NAME pushed into each
+resolve call is the last string in emitted hot code — the only
+wasi-vs-js divergence left (JS-string import constants vs the string
+pool `_fieldInitialize` populates, which is why the resolve loop must
+follow it). Hashing the fdefn table's key (cityHash64, the classId
+and slot-name-tag channel) would make the emitted init string-free:
+resolve could run FIRST, the two targets' inits would be literally
+identical, and GENESIS would be deletable (cell globals init to null;
+the resolve stores the shared cell before any initializer runs) —
+one minted fdefn per binding per module gone.
+
+PARKED on the identity trade: the table's keys are exact strings
+today — collision-free by construction — and the user does not want
+a content hash as binding identity (the classId and slot-tag hashes
+were accepted for NAMING and copy-guarding, not as the fdefinition
+table's key; a collision there shares a cell silently, and the keys'
+readability — `(room: inspect)` — dies too). Any future unification
+must find a string-preserving channel instead (an early-available
+stdlib string interner, or a differently-shaped ordering), not
+hashing. The audit fact that makes this worth revisiting: the resolve
+BuiltIn calls are direct remaps, not cell-routed — resolve-first has
+no bootstrap circle.
+
 ## Operational notes
 
 - After `./gradlew dist`: delete the IC caches AND the cached stdlib
