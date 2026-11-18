@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.diagnosticFactoryToPsiElementMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -44,9 +45,10 @@ private fun KtDiagnosticWithSource.checkPsiTypeConsistency() {
     if (CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS) {
         val element = this.element as? KtPsiSourceElement ?: return
         val psiElement = element.psi
+        val expectedPsiType = diagnosticFactoryToPsiElementMap[factory] ?: return
         requireWithAttachment(
-            factory.psiType.isInstance(psiElement),
-            { "${psiElement::class} is not a subtype of ${factory.psiType} for factory $factory" }
+            expectedPsiType.isInstance(psiElement),
+            { "${psiElement::class} is not a subtype of $expectedPsiType for factory $factory" }
         ) {
             withPsiEntry("psi", psiElement)
             withPsiEntry("file", psiElement.containingFile)
