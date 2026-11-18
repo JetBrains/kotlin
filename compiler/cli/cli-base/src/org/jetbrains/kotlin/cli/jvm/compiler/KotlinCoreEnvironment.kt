@@ -10,9 +10,10 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
 import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.core.CoreApplicationEnvironment.registerExtensionPoint
 import com.intellij.core.CoreJavaFileManager
-import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionsArea
@@ -25,7 +26,6 @@ import com.intellij.psi.PsiNameHelper
 import com.intellij.psi.impl.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.util.io.URLUtil
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.CliDiagnostics.INITIALIZATION_WARNING
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
@@ -64,8 +63,7 @@ class KotlinCoreEnvironment private constructor(
         disposable: Disposable,
         applicationEnvironment: KotlinCoreApplicationEnvironment,
         configuration: CompilerConfiguration
-    ) :
-        KotlinCoreProjectEnvironment(disposable, applicationEnvironment) {
+    ) : KotlinCoreProjectEnvironment(disposable, applicationEnvironment) {
 
         val jarFileSystem: VirtualFileSystem
 
@@ -352,9 +350,6 @@ class KotlinCoreEnvironment private constructor(
                 .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
 
             registerExtensionsFromPlugins(configuration)
-
-            registerProjectServicesForCLI(this)
-
             registerProjectServices(project)
 
             for (extension in configuration.getCompilerExtensions(CompilerConfigurationExtension)) {
@@ -362,7 +357,7 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
+        private fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
             fun createErrorMessage(extension: Any): String {
                 return "The provided plugin ${extension.javaClass.name} is not compatible with this version of compiler"
             }
@@ -379,27 +374,9 @@ class KotlinCoreEnvironment private constructor(
         @JvmStatic
         @CoreEnvironmentDeprecation
         fun registerProjectExtensionPoints(area: ExtensionsArea) {
-            CoreApplicationEnvironment.registerExtensionPoint(
-                area, PsiTreeChangePreprocessor.EP.name, PsiTreeChangePreprocessor::class.java
-            )
-            CoreApplicationEnvironment.registerExtensionPoint(area, PsiElementFinder.EP.name, PsiElementFinder::class.java)
-
-            IdeaExtensionPoints.registerVersionSpecificProjectExtensionPoints(area)
-        }
-
-        // made public for Upsource
-        @JvmStatic
-        @Deprecated(
-            "Use registerProjectServices(project) instead.",
-            ReplaceWith("registerProjectServices(projectEnvironment.project)"),
-            level = DeprecationLevel.ERROR,
-        )
-        @CoreEnvironmentDeprecation
-        fun registerProjectServices(
-            projectEnvironment: JavaCoreProjectEnvironment,
-            @Suppress("UNUSED_PARAMETER") messageCollector: MessageCollector?
-        ) {
-            registerProjectServices(projectEnvironment.project)
+            registerExtensionPoint(area, PsiTreeChangePreprocessor.EP.name, PsiTreeChangePreprocessor::class.java)
+            registerExtensionPoint(area, PsiElementFinder.EP.name, PsiElementFinder::class.java)
+            registerExtensionPoint(area, JvmElementProvider.EP_NAME, JvmElementProvider::class.java)
         }
 
         // made public for Android Lint
@@ -414,14 +391,6 @@ class KotlinCoreEnvironment private constructor(
                     registerService(PsiNameHelper::class.java, PsiNameHelperImpl::class.java)
                 }
             }
-        }
-
-        @CoreEnvironmentDeprecation
-        fun registerProjectServicesForCLI(@Suppress("UNUSED_PARAMETER") projectEnvironment: JavaCoreProjectEnvironment) {
-            /**
-             * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
-             * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.
-             */
         }
     }
 }
