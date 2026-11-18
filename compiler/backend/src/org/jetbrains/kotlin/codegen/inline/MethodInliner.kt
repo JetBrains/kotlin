@@ -491,7 +491,11 @@ class MethodInliner(
 
         for (variable in resultNodeLocalVariables) {
             val name = variable.name
-            if (JvmAbi.isFakeLocalVariableForInline(name) && name in markerVariableNamesFromInlinedNode) {
+            // Mapping a line registers it in the SMAP. The markers of code that was removed, e.g., as dead code after
+            // a call returning `Nothing`, are dropped before emitting, so their call site lines must not be mapped.
+            if (JvmAbi.isFakeLocalVariableForInline(name) && name in markerVariableNamesFromInlinedNode &&
+                InsnSequence(variable.start, variable.end).any { it.isMeaningful }
+            ) {
                 variable.name = updateCallSiteLineNumber(name) { sourceMapper.mapLineNumber(it) }
             }
         }
