@@ -463,6 +463,29 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-multiplatform-app-project")
+    @DisplayName("delegated transpilation works without test sources")
+    @GradleTest
+    fun testDelegatedTranspilationWithoutTestSources(gradleVersion: GradleVersion) {
+        project("kotlin-js-multiplatform-app-project", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.js.delegated.transpilation=true
+                """.trimMargin()
+            )
+            projectPath.resolve("src/jsTest").deleteRecursively()
+
+            build("jsNodeTest") {
+                assertTasksNoSource(
+                    ":compileTestDevelopmentExecutableKotlinJs",
+                    ":jsNodeTestDevelopmentTranspileWithSwc",
+                )
+                assertTasksSkipped(":jsNodeTest")
+            }
+        }
+    }
+
     @TestMetadata("kotlin-js-multiplatform-library-project")
     @DisplayName("delegated transpilation works for library project if it's turned on")
     @GradleTest
