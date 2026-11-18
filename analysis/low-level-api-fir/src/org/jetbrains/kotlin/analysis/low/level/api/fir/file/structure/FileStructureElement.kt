@@ -86,15 +86,23 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
         }
 
         /**
-         * Int literals desugars their unary operators right away, so the mapper has to restore them manually.
+         * Returns a fake `unaryMinus()` or `unaryPlus()` call for [expression], a prefix expression of an integer literal folded with
+         * unary signs, or `null` for any other prefix expression.
          *
-         * Details: [FirElementsRecorder.visitLiteralExpression], KT-70774.
+         * Raw FIR folds an integer literal and the unary signs around it into one literal, so the prefix expressions have no FIR of
+         * their own (KT-70774). The call takes the type of the literal that [FirElementsRecorder] maps [expression] to. For example,
+         * `val b: Byte = -(+128)` has the folded literal `-128` of type `Byte`, and:
+         *
+         * - `-(+128)` becomes `(+128).unaryMinus()` of type `Byte`, the type that the compiler reports for the folded literal, though
+         *   both its receiver and `Int.unaryMinus` have the type `Int`;
+         * - `+128` becomes `128.unaryPlus()` of type `Int`, the type of its own value, as `128` doesn't fit into `Byte`.
          */
         context(session: FirSession)
         private fun fakeCallForIntLiteralWithUnaryExpression(
             expression: KtPrefixExpression,
             mapping: Map<KtElement, FirElement>,
         ): FirElement? {
+            val literal = mapping[expression] as? FirLiteralExpression ?: return null
             val operatorExpression = expression.operationReference
             val operatorName = when (operatorExpression.getReferencedNameElementType()) {
                 KtTokens.PLUS -> OperatorNameConventions.UNARY_PLUS
@@ -117,26 +125,28 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 dispatchReceiver = firReceiver
                 explicitReceiver = firReceiver
 
-                coneTypeOrNull = firReceiver.resolvedType
+                coneTypeOrNull = literal.resolvedType
             }
         }
 
         /**
          * Resolves the FIR receiver for [fakeCallForIntLiteralWithUnaryExpression] strictly downwards.
          *
-         * The operand of a desugared unary integer literal is either the recorded (folded) literal itself,
-         * or another desugared `+`/`-` unary prefix. Resolving it via the general parent-walking [getFir]
-         * would climb back up to the enclosing prefix expression and recurse infinitely (KT-87131), since
-         * the folded prefix has no FIR mapping of its own. Descending into [operand] is guaranteed to
-         * terminate because the PSI tree is finite.
+         * The operand of a desugared unary integer literal is either another desugared `+`/`-` unary prefix,
+         * or the recorded integer literal itself. Resolving it via the general parent-walking [getFir]
+         * could climb back up to the enclosing prefix expression and recurse infinitely (KT-87131).
+         * Descending into [operand] is guaranteed to terminate because the PSI tree is finite.
          */
         context(session: FirSession)
         private fun firReceiverForUnaryIntLiteral(
             operand: KtElement,
             mapping: Map<KtElement, FirElement>,
         ): FirExpression? {
-            val fir = mapping[operand]
-                ?: (operand as? KtPrefixExpression)?.let { fakeCallForIntLiteralWithUnaryExpression(it, mapping) }
+            val fir = if (operand is KtPrefixExpression) {
+                fakeCallForIntLiteralWithUnaryExpression(operand, mapping)
+            } else {
+                mapping[operand]
+            }
 
             return fir as? FirExpression
         }
@@ -230,6 +240,15 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
         }
 
         fun getFir(element: KtElement, session: FirSession, mapping: Map<KtElement, FirElement>): FirElement? {
+            // The prefix expressions of a folded integer literal are mapped to literals, so the fake call goes first
+            if (element is KtPrefixExpression) {
+                fakeCallForIntLiteralWithUnaryExpression(
+                    expression = element,
+                    mapping = mapping,
+                    session = session,
+                )?.let { return it }
+            }
+
             var current: PsiElement? = element
             while (
                 current == element ||
@@ -241,19 +260,9 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 // We are still referring to the same element with possible type parameter/name qualification/nullability,
                 // hence it is always correct to return a corresponding element if present
                 if (current is KtElement) mapping[current]?.let { return it }
-                when (current) {
-                    is KtCallExpression -> {
-                        fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
-                            return it
-                        }
-                    }
-
-                    is KtPrefixExpression -> {
-                        fakeCallForIntLiteralWithUnaryExpression(
-                            expression = current,
-                            mapping = mapping,
-                            session = session,
-                        )?.let { return it }
+                if (current is KtCallExpression) {
+                    fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
+                        return it
                     }
                 }
 

@@ -420,7 +420,7 @@ KtPrefixExpression(203,214): '-2147483648'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2147483648
         isSafeNavigation = false
-        type = kotlin.Int
+        type = kotlin.Long
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -440,7 +440,7 @@ KtOperationReferenceExpression(203,204): '-'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2147483648
         isSafeNavigation = false
-        type = kotlin.Int
+        type = kotlin.Long
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -475,7 +475,7 @@ KtPrefixExpression(233,237): '-128'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 128
         isSafeNavigation = false
-        type = kotlin.Byte
+        type = kotlin.Int
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -495,7 +495,7 @@ KtOperationReferenceExpression(233,234): '-'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 128
         isSafeNavigation = false
-        type = kotlin.Byte
+        type = kotlin.Int
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -926,7 +926,7 @@ KtPrefixExpression(345,359): '-(+2147483648)'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = +2147483648
         isSafeNavigation = false
-        type = kotlin.Int
+        type = kotlin.Long
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -946,7 +946,7 @@ KtOperationReferenceExpression(345,346): '-'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = +2147483648
         isSafeNavigation = false
-        type = kotlin.Int
+        type = kotlin.Long
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -969,7 +969,7 @@ KtPrefixExpression(347,358): '+2147483648'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2147483648
         isSafeNavigation = false
-        type = kotlin.Int
+        type = kotlin.Long
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -989,7 +989,7 @@ KtOperationReferenceExpression(347,348): '+'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2147483648
         isSafeNavigation = false
-        type = kotlin.Int
+        type = kotlin.Long
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1024,7 +1024,7 @@ KtPrefixExpression(379,387): '-(32768)'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 32768
         isSafeNavigation = false
-        type = kotlin.Short
+        type = kotlin.Int
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1044,7 +1044,7 @@ KtOperationReferenceExpression(379,380): '-'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 32768
         isSafeNavigation = false
-        type = kotlin.Short
+        type = kotlin.Int
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1170,7 +1170,7 @@ KtPrefixExpression(441,448): '-(+128)'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = +128
         isSafeNavigation = false
-        type = kotlin.Byte
+        type = kotlin.Int
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1190,7 +1190,7 @@ KtOperationReferenceExpression(441,442): '-'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = +128
         isSafeNavigation = false
-        type = kotlin.Byte
+        type = kotlin.Int
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1213,7 +1213,7 @@ KtPrefixExpression(443,447): '+128'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 128
         isSafeNavigation = false
-        type = kotlin.Byte
+        type = kotlin.Int
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1233,7 +1233,7 @@ KtOperationReferenceExpression(443,444): '+'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 128
         isSafeNavigation = false
-        type = kotlin.Byte
+        type = kotlin.Int
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1299,7 +1299,7 @@ KtPrefixExpression(455,466): '-2147483648'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2147483648
         isSafeNavigation = false
-        type = kotlin.Int
+        type = kotlin.Long
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1319,7 +1319,7 @@ KtOperationReferenceExpression(455,456): '-'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 2147483648
         isSafeNavigation = false
-        type = kotlin.Int
+        type = kotlin.Long
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
