@@ -836,15 +836,33 @@ class ComposeIT : KGPBaseTest() {
                             fun Decorate(decorator: Decorator) = with(decorator) { "c".decorate() }
 
                             @Composable
+                            fun Wrap(content: @Composable () -> Unit) = content()
+
+                            @Composable
                             fun App(prefix: String) {
                                 Show { text -> Text(text) }
                                 Show { text -> Text(prefix + text) }
                                 Consume { value -> Text(value) }
                                 Decorate { Text(this) }
                                 Show(typedRenderer<String>())
+                                Show(plainRenderer())
+                                Show(inlineRenderer())
+                                Show(wrappingRenderer())
+                                Consume(consumer())
                             }
 
                             fun renderer(prefix: String) = Renderer { text -> Text(prefix + text) }
+
+                            fun plainRenderer() = Renderer { text -> Text(text) }
+
+                            inline fun inlineRenderer() = Renderer { text -> Text(text) }
+
+                            fun wrappingRenderer() = Renderer { text ->
+                                Wrap { Text(text) }
+                                Wrap { Text("d") }
+                            }
+
+                            fun <T> consumer() = Consumer<T> { value -> Text(value.toString()) }
 
                             inline fun <reified T : Any> typedRenderer() =
                                 Renderer { text -> Text(T::class.simpleName + text) }
