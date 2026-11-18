@@ -87,6 +87,17 @@ abstract class IrModuleDeserializer(
 
     open val preferLinkingToTheCurrentModule: Boolean get() = true
 
+    /**
+     * Looks up the symbol with the given [signature] and [kind] in this module and schedules the corresponding
+     * declaration for deserialization.
+     *
+     * The declaration is not necessarily deserialized by this call, so the returned symbol may be unbound.
+     * It becomes bound when the deserialization queue of this module is processed, see [deserializeReachableDeclarations].
+     *
+     * @return The symbol, or `null` if this module does not contain a declaration with the given [signature].
+     */
+    abstract fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol?
+
     abstract operator fun contains(idSig: IdSignature): Boolean
     abstract fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol?
     abstract fun deserializedSymbolNotFound(idSig: IdSignature): Nothing
@@ -175,6 +186,18 @@ class IrModuleDeserializerWithBuiltIns(
                 getOrPut(callableId) { mutableListOf() } += symbol.signature!!
             }
         }
+    }
+
+    override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
+        irBuiltInsMap[signature]?.let { return it }
+
+        val topLevelSignature = signature.topLevelSignature()
+        if (checkIsFunctionInterface(topLevelSignature)) {
+            computeFunctionClass(topLevelSignature)
+            return referenceDeserializedSymbol(symbolTable, null, kind, signature)
+        }
+
+        return delegate.getSymbolAndPutIntoQueue(signature, kind)
     }
 
     override operator fun contains(idSig: IdSignature): Boolean {

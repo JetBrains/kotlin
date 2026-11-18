@@ -130,6 +130,90 @@ class KonanInteropModuleDeserializer(
 
     private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
 
+    override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
+        when {
+            !signature.isInteropSignature() -> {
+                // We can't deserialize non-interop declaration.
+                return null
+            }
+
+            signature.packageFqName() != definedPackageFqName -> {
+                // That signature definitely belongs to another module.
+                return null
+            }
+
+            kind != BinarySymbolData.SymbolKind.CLASS_SYMBOL &&
+                    kind != BinarySymbolData.SymbolKind.FUNCTION_SYMBOL &&
+                    kind != BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> {
+                // Unsupported kind.
+                return null
+            }
+        }
+
+        declarationTracker.deserializedDeclarations[signature]?.let {
+            // The signature may have been already deserialized, just return it.
+            return it.symbol
+        }
+
+        // Whether the callable represented by the given signature and kind can be a fake override.
+        var canBeFakeOverride = false
+
+        // Compute the signature and the kind of the top-level declaration to deserialize.
+        var topLevelSignature: IdSignature = signature
+        var topLevelKind: BinarySymbolData.SymbolKind = kind
+
+        if (topLevelSignature is IdSignature.AccessorSignature) {
+            // When looking for a property's accessor, try to deserialize the property instead.
+            // Doing so will, in turn, deserialize its accessors.
+            topLevelSignature = topLevelSignature.propertySignature
+            topLevelKind = BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
+        }
+
+        if (topLevelSignature.hasTopLevel) {
+            // If the signature is still not a signature of a top-level declaration, then the top-level declaration is a class.
+            canBeFakeOverride = true
+            topLevelSignature = topLevelSignature.topLevelSignature()
+            topLevelKind = BinarySymbolData.SymbolKind.CLASS_SYMBOL
+        }
+
+        if (topLevelSignature !is IdSignature.CommonSignature) {
+            // If the top-level signature is something different from `IdSignature.CommonSignature`,
+            // we don't even have to attempt to deserialize it.
+            return null
+        }
+
+        val topLevelDeclarationId = MetadataDeclarationId(
+            kind = topLevelKind,
+            packageFqName = topLevelSignature.packageFqName(),
+            relativeDeclarationName = FqName(topLevelSignature.declarationFqName)
+        )
+
+        if (topLevelDeclarationId !in metadataReader.getDeclaredDeclarationIds()) {
+            // There is definitely no such a declaration.
+            return null
+        }
+
+        // Trigger the deserialization.
+        deserializeTopLevelDeclarations(topLevelDeclarationId)
+
+        // If the deserialization process above found a declaration with the requested signature, it should be stored it in this map.
+        declarationTracker.deserializedDeclarations[signature]?.let {
+            return it.symbol
+        }
+
+        if (canBeFakeOverride) {
+            // If a member was not found inside a class, it may be because the signature actually refers to a fake override.
+            // F/Os are not present in Klib and will be created later, but the symbol for it must be created here.
+            return when (kind) {
+                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> symbolTable.referenceSimpleFunction(signature)
+                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> symbolTable.referenceProperty(signature)
+                else -> null
+            }
+        }
+
+        return null
+    }
+
     override fun contains(idSig: IdSignature): Boolean {
         if (!idSig.isInteropSignature()) {
             return false

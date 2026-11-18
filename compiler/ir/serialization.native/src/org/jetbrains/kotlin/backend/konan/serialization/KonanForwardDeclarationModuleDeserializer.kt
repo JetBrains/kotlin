@@ -45,10 +45,21 @@ internal class KonanForwardDeclarationModuleDeserializer(
     private val declaredClasses = mutableMapOf<IdSignature.CommonSignature, IrClass?>()
     private val declaredPackageFragments = mutableMapOf<FqName, IrExternalPackageFragment>()
 
+    override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
+        if (kind != BinarySymbolData.SymbolKind.CLASS_SYMBOL) return null
+
+        val packageFqName = (signature as? IdSignature.CommonSignature)?.packageFqName() ?: return null
+        if (packageFqName !in NativeForwardDeclarationKind.packageFqNameToKind) return null
+
+        return declaredClasses.computeIfAbsent(signature) {
+            buildForwardDeclarationClassStub(it)
+        }?.symbol
+    }
+
     override fun contains(idSig: IdSignature): Boolean =
         idSig is IdSignature.CommonSignature && idSig.packageFqName() in NativeForwardDeclarationKind.packageFqNameToKind
 
-    override val contributedPackageNames: Set<FqName> = NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet()
+    override val contributedPackageNames: Set<FqName> = NativeForwardDeclarationKind.packageFqNameToKind.keys
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
         require(symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL) {
