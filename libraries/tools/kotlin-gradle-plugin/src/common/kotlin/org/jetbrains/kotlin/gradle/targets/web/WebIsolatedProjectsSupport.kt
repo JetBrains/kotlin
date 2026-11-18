@@ -35,6 +35,10 @@ internal enum class WebIsolatedProjectsSupport {
      * Per-project tool provisioning (Node.js, D8, Binaryen, Swc, Wasmtime) is compatible with Isolated Projects,
      * so it is still applied.
      *
+     * The exception is the shared npm project (KT-90504): [Preview] temporarily opts in to it, until the settings DSL replaces this (KT-91658).
+     * The `org.jetbrains.kotlin.ecosystem` settings plugin applies [org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin] to the root project,
+     * and without the settings plugin KGP falls back to applying it (see [org.jetbrains.kotlin.gradle.targets.web.npm.shared.applySharedNpmProjectWithoutEcosystemPlugin]).
+     *
      * Intended to help test Isolated Projects support KT-80311.
      * Until KT-80311 is complete it is expected that [Preview] will break builds.
      */

@@ -39,6 +39,8 @@ internal val SetupNpmDependencyReportSideEffect = KotlinTargetSideEffect { targe
     val project = target.project
     val platformDirectoryName = platform.platformName
 
+    project.registerWithSharedNpmProjectsRegistry(platform)
+    project.applySharedNpmProjectWithoutEcosystemPlugin()
     val npmDependenciesReport = project.maybeCreateNpmDependenciesReport(platform)
 
     target.compilations.all { compilation ->

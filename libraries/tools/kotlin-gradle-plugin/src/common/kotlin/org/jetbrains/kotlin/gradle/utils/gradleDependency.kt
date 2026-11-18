@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.util.GradleVersion
 
 /**
  * Convert a [Dependency] to a GAV string.
@@ -15,3 +17,13 @@ internal fun Dependency.stringCoordinates(): String = buildString {
     append(name)
     version?.let { append(':').append(it) }
 }
+
+/**
+ * Create a [Dependency] of the subproject at [projectPath].
+ */
+internal fun DependencyHandler.projectCompat(projectPath: String): Dependency =
+    if (GradleVersion.current() >= GradleVersion.version("9.5")) {
+        project(projectPath)
+    } else {
+        project(mapOf("path" to projectPath))
+    }
