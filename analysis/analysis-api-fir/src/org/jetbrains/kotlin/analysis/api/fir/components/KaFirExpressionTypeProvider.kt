@@ -64,20 +64,8 @@ internal class KaFirExpressionTypeProvider(
             }
         }
 
-        // There are various cases where we have no corresponding fir due to invalid code
-        // Some examples:
-        // ```
-        // when {
-        //   true, false -> {}
-        // }
-        // ```
-        // `false` does not have a corresponding element on the FIR side,
-        // and hence the containing `FirWhenBranch` is returned.
-        // ```
-        // @Volatile
-        // private var
-        // ```
-        // Volatile does not have a corresponding element, so `FirFileImpl` is returned
+        // For invalid code without FIR, such as the default value of a function type parameter, `getOrBuildFir` returns the FIR
+        // of an enclosing element, here `FirFunctionTypeParameter`
         val fir = unwrappedElement.getOrBuildFir(resolutionFacade) ?: return null
         return try {
             getKtExpressionType(expression, fir)
