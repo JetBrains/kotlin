@@ -457,6 +457,8 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
 
                 val ifNull1 = insn.next as JumpInsnNode
                 val ifNullLabel = ifNull1.label
+                // The hoisted value is never read when the null path diverges, so keeping it alive is pure overhead.
+                if (ifNullLabel.endsWithReturnOrThrow()) continue
                 val predecessors = cfg.getAllPredecessors(ifNullLabel)
                 if (predecessors.all { isRewritableSafeCallPart(it) }) {
                     predecessors.forEach { rewriteSafeCallPart(it, insnList) }
@@ -468,6 +470,18 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
         }
 
         cfg.methodNode.maxStack += maxStackIncrement
+    }
+
+    private fun AbstractInsnNode.endsWithReturnOrThrow(): Boolean {
+        var insn: AbstractInsnNode? = this.next
+        while (insn != null) {
+            when {
+                insn.opcode == Opcodes.ATHROW || insn.opcode in Opcodes.IRETURN..Opcodes.RETURN -> return true
+                insn.nodeType == AbstractInsnNode.JUMP_INSN || insn is LabelNode -> return false
+            }
+            insn = insn.next
+        }
+        return false
     }
 
     private fun isRewritableSafeCallPart(branchInsn: AbstractInsnNode): Boolean {
