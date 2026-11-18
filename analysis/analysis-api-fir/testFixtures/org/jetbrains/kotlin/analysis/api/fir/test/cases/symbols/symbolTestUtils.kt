@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirBasePropertyAccessorSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiSymbol
 import org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -107,3 +109,14 @@ internal fun KaSymbol.dropBackingPsi() {
     // Drop backing PSI to trigger non-psi implementation
     field.set(this, null)
 }
+
+/**
+ * Whether this symbol has built its FIR symbol, which a PSI-based symbol does lazily, only once PSI isn't enough.
+ * An accessor takes its FIR symbol from its property.
+ */
+internal val KaSymbol.hasBuiltFirSymbol: Boolean
+    get() = when (this) {
+        is KaFirBasePropertyAccessorSymbol -> owningKaProperty.hasBuiltFirSymbol
+        is KaFirPsiSymbol<*, *> -> lazyFirSymbol.isInitialized()
+        else -> true
+    }

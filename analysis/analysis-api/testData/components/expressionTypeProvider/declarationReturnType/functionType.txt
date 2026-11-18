@@ -8,9 +8,9 @@ f4@(4,1) : kotlin.Int.(T) -> kotlin.String
   KtParameter@(4,20) : T
   <anonymous>@(4,35) : kotlin.String
 f5@(5,1) : (kotlin.Int) -> kotlin.Unit
-  KtNamedFunction@(5,10) : kotlin.Unit
+  KtNamedFunction@(5,10) : kotlin.Unit (by PSI)
     x@(5,14) : kotlin.Int
 f6@(6,1) : () -> kotlin.Unit
-  KtNamedFunction@(6,10) : kotlin.Unit
+  KtNamedFunction@(6,10) : kotlin.Unit (by PSI)
 f7@(7,1) : () -> kotlin.Unit
-  KtNamedFunction@(7,22) : kotlin.Unit
+  KtNamedFunction@(7,22) : kotlin.Unit (by PSI)
