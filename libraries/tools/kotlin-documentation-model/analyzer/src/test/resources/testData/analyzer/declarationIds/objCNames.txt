@@ -12,15 +12,15 @@ kotlin.native/ObjCName#name#kind=property;
 kotlin.native/ObjCName#swiftName#kind=property;
 kotlin.native/ObjCName#exact#kind=property;
 sample
-sample#plain#kind=function; parameters=[kotlin/String, kotlin/Int]; objcParameterNames=[first, second]
-sample#create#kind=function; parameters=[kotlin/Int, kotlin/Int]; objcParameterNames=[first, second]
+sample#plain#kind=function; parameters=[kotlin/String, kotlin/Int]; objcParameterNames=[first, second];
+sample#create#kind=function; parameters=[kotlin/Int, kotlin/Int]; objcParameterNames=[first, second];
 sample/Base
-sample/Base#foo#kind=function; parameters=[kotlin/String, kotlin/String]; objcParameterNames=[first, second]
+sample/Base#foo#kind=function; parameters=[kotlin/String, kotlin/String]; objcParameterNames=[first, second];
 sample/Base##kind=function;
 sample/Derived
-sample/Derived#foo#kind=function; parameters=[kotlin/String, kotlin/String]; objcParameterNames=[first, second]
+sample/Derived#foo#kind=function; parameters=[kotlin/String, kotlin/String]; objcParameterNames=[first, second];
 sample/Derived##kind=function;
 sample/Constructed
-sample/Constructed##kind=function; parameters=[kotlin/Int, kotlin/Int]; objcParameterNames=[first, second]
+sample/Constructed##kind=function; parameters=[kotlin/Int, kotlin/Int]; objcParameterNames=[first, second];
 sample#power#kind=function; parameters=[kotlin/Int, kotlin/Int];
 sample#control#kind=function; parameters=[kotlin/Int];

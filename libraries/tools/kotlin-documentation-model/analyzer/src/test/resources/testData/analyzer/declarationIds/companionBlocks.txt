@@ -4,7 +4,7 @@ sample/Outer#sameName#kind=function; parameters=[kotlin/Int];
 sample/Outer#CONSTANT#kind=property; companion;
 sample/Outer#mutable#kind=property; companion;
 sample/Outer#sameName#kind=function; companion;
-sample/Outer#genericMember#kind=function; typeParameters=[<T1_0>: ]; context=[]; parameters=[<T1_0>]; companion;
+sample/Outer#genericMember#kind=function; typeParameters=[<T1_0>: ]; parameters=[<T1_0>]; companion;
 sample/Outer##kind=function;
 sample/Named
 sample/Named#namedMember#kind=function; companion;
@@ -16,6 +16,6 @@ sample/TwoBlocks#Dimensions#kind=property; companion;
 sample/TwoBlocks##kind=function;
 sample/WithCompanion
 sample/WithCompanion#interfaceCompanionMember#kind=function; companion;
-sample#topLevelExtension#kind=function; receiver=sample/Outercompanion;
-sample#topLevelExtensionProperty#kind=property; receiver=sample/Outercompanion;
-sample#extensionOnNamed#kind=function; receiver=sample/Namedcompanion;
+sample#topLevelExtension#kind=function; receiver=sample/Outercompanion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
+sample#topLevelExtensionProperty#kind=property; receiver=sample/Outercompanion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
+sample#extensionOnNamed#kind=function; receiver=sample/Namedcompanion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION

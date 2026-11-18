@@ -52,13 +52,6 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
             override val testPrefixes: List<String> = emptyList()
         }
 
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        builder.defaultDirectives {
-            LanguageSettingsDirectives.LANGUAGE with listOf("+CompanionBlocks", "+CompanionExtensions")
-        }
-    }
-
     override fun doTestByMainModuleAndOptionalMainFile(
         mainFile: KtFile?,
         mainModule: KtTestModule,
@@ -126,7 +119,6 @@ internal fun dumpUnhashedIds(
     fun KaSymbol.sourceOrderKey(): Int = realPsi?.textOffset ?: Int.MAX_VALUE
 
     fun walkDeclaration(symbol: KaDeclarationSymbol) {
-        // Property accessors are not walked: they have no declaration ID of their own.
         add(symbol)
         if (symbol is KaNamedClassSymbol) {
             val scope = symbol.combinedDeclaredMemberScope
