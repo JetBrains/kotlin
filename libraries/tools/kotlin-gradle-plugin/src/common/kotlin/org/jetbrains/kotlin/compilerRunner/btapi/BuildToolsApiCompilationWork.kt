@@ -237,6 +237,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             reportArgumentsRejected(buildSession, e.message)
             throw FailedCompilationException(e.message.orEmpty(), e)
         } catch (e: UnsupportedToolchainException) {
+            // The diagnostic is fatal, so reporting it fails the task
             parameters.toolingDiagnosticsCollector.orNull?.report(
                 parameters,
                 KotlinToolingDiagnostics.KotlinCompilerPlatformUnsupported(
@@ -244,9 +245,11 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     workArguments.btaToolchain?.platformName ?: e.toolchainType.simpleName,
                     e.compilerVersion,
                     workArguments.kotlinPluginVersion,
+                    e,
                 ),
             )
-            throw FailedCompilationException(e.message.orEmpty(), e)
+            // Tasks created via KotlinJvmFactory and the Wasm binary transform have no collector
+            throw e
         } catch (e: FailedCompilationException) {
             // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
             backup?.tryRestoringOnRecoverableException(e) { restoreAction ->

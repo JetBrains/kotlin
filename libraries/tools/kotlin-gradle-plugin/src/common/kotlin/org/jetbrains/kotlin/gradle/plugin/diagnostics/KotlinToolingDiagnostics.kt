@@ -2604,8 +2604,14 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object KotlinCompilerPlatformUnsupported : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(taskPath: String, platform: String, compilerVersion: String, pluginVersion: String) = build {
+    internal object KotlinCompilerPlatformUnsupported : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            taskPath: String,
+            platform: String,
+            compilerVersion: String,
+            pluginVersion: String,
+            cause: Throwable? = null,
+        ) = build(throwable = cause) {
             title { "Kotlin compiler version does not support the platform" }
                 .description {
                     "Task '$taskPath' cannot run because Kotlin compiler version '$compilerVersion' " +
