@@ -2,24 +2,24 @@ FILE[kind=Script[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   SCRIPT[fqName=AnnotationOnFullNameBasedDestructuringScript, fqName=AnnotationOnFullNameBasedDestructuringScript, name=AnnotationOnFullNameBasedDestructuringScript]
-    CLASS[classId=/Ann, fqName=AnnotationOnFullNameBasedDestructuringScript.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Ann, superNames=[]]
+    CLASS[classId=/Ann, fqName=Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Ann, superNames=[]]
       MODIFIER_LIST[annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Ann]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=AnnotationOnFullNameBasedDestructuringScript.Ann.x, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=x]
+          VALUE_PARAMETER[fqName=Ann.x, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=x]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=String]
             STRING_TEMPLATE
-    CLASS[classId=/Foo, fqName=AnnotationOnFullNameBasedDestructuringScript.Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Foo, superNames=[]]
+    CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Foo, superNames=[]]
       MODIFIER_LIST[data]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=AnnotationOnFullNameBasedDestructuringScript.Foo.first, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=first]
+          VALUE_PARAMETER[fqName=Foo.first, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=first]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=String]
-    PROPERTY[fqName=AnnotationOnFullNameBasedDestructuringScript.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+    PROPERTY[fqName=x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
       CALL_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=Foo]
         VALUE_ARGUMENT_LIST

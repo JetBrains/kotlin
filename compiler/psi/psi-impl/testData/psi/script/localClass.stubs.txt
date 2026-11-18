@@ -2,8 +2,8 @@ FILE[kind=Script[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   SCRIPT[fqName=LocalClass, fqName=LocalClass, name=LocalClass]
-    CLASS[classId=/TopLevelClass, fqName=LocalClass.TopLevelClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=TopLevelClass, superNames=[]]
-    FUNCTION[fqName=LocalClass.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+    CLASS[classId=/TopLevelClass, fqName=TopLevelClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=TopLevelClass, superNames=[]]
+    FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=action]
           TYPE_REFERENCE

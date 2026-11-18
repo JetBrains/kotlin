@@ -2,25 +2,25 @@ FILE[kind=Script[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   SCRIPT[fqName=TopLevelPropertiesWithGetSet, fqName=TopLevelPropertiesWithGetSet, name=TopLevelPropertiesWithGetSet]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testVal]
+    PROPERTY[fqName=testVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testVal]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValSemiSameLine, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValSemiSameLine]
+    PROPERTY[fqName=testValSemiSameLine, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValSemiSameLine]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValNoType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValNoType]
+    PROPERTY[fqName=testValNoType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValNoType]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=testExtVal]
+    PROPERTY[fqName=testExtVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=testExtVal]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
@@ -30,14 +30,14 @@ FILE[kind=Script[packageFqName=<root>]]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtValNoType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=false, isVar=false, name=testExtValNoType]
+    PROPERTY[fqName=testExtValNoType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=false, isVar=false, name=testExtValNoType]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVar]
+    PROPERTY[fqName=testVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVar]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
@@ -47,89 +47,7 @@ FILE[kind=Script[packageFqName=<root>]]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVar]
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=String]
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
-        VALUE_PARAMETER_LIST
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreak, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreak]
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
-        VALUE_PARAMETER_LIST
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakNoType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakNoType]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
-        VALUE_PARAMETER_LIST
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemi, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemi]
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Int]
-    SCRIPT_INITIALIZER
-      BINARY_EXPRESSION
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION[referencedName=get]
-          VALUE_ARGUMENT_LIST
-        OPERATION_REFERENCE[operationToken=EQ, referencedName==]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiComment1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment1]
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Int]
-    SCRIPT_INITIALIZER
-      BINARY_EXPRESSION
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION[referencedName=get]
-          VALUE_ARGUMENT_LIST
-        OPERATION_REFERENCE[operationToken=EQ, referencedName==]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiComment2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment2]
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Int]
-    SCRIPT_INITIALIZER
-      BINARY_EXPRESSION
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION[referencedName=get]
-          VALUE_ARGUMENT_LIST
-        OPERATION_REFERENCE[operationToken=EQ, referencedName==]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiComment3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment3]
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
-        VALUE_PARAMETER_LIST
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiNoType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiNoType]
-    SCRIPT_INITIALIZER
-      BINARY_EXPRESSION
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION[referencedName=get]
-          VALUE_ARGUMENT_LIST
-        OPERATION_REFERENCE[operationToken=EQ, referencedName==]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVarLineBreak, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVarLineBreak]
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
-        VALUE_PARAMETER_LIST
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtVarLineBreak, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVarLineBreak]
+    PROPERTY[fqName=testExtVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVar]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
@@ -142,7 +60,89 @@ FILE[kind=Script[packageFqName=<root>]]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVarLineBreakSemi, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVarLineBreakSemi]
+    PROPERTY[fqName=testValLineBreak, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreak]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+        VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+    PROPERTY[fqName=testValLineBreakNoType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakNoType]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+        VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+    PROPERTY[fqName=testValLineBreakSemi, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemi]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    SCRIPT_INITIALIZER
+      BINARY_EXPRESSION
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=get]
+          VALUE_ARGUMENT_LIST
+        OPERATION_REFERENCE[operationToken=EQ, referencedName==]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+    PROPERTY[fqName=testValLineBreakSemiComment1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment1]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    SCRIPT_INITIALIZER
+      BINARY_EXPRESSION
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=get]
+          VALUE_ARGUMENT_LIST
+        OPERATION_REFERENCE[operationToken=EQ, referencedName==]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+    PROPERTY[fqName=testValLineBreakSemiComment2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment2]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    SCRIPT_INITIALIZER
+      BINARY_EXPRESSION
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=get]
+          VALUE_ARGUMENT_LIST
+        OPERATION_REFERENCE[operationToken=EQ, referencedName==]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+    PROPERTY[fqName=testValLineBreakSemiComment3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment3]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+        VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+    PROPERTY[fqName=testValLineBreakSemiNoType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiNoType]
+    SCRIPT_INITIALIZER
+      BINARY_EXPRESSION
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=get]
+          VALUE_ARGUMENT_LIST
+        OPERATION_REFERENCE[operationToken=EQ, referencedName==]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+    PROPERTY[fqName=testVarLineBreak, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVarLineBreak]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+        VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+    PROPERTY[fqName=testExtVarLineBreak, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVarLineBreak]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+        VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+    PROPERTY[fqName=testVarLineBreakSemi, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVarLineBreakSemi]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
@@ -160,7 +160,7 @@ FILE[kind=Script[packageFqName=<root>]]
           VALUE_ARGUMENT[isSpread=false]
             REFERENCE_EXPRESSION[referencedName=value]
         LAMBDA_ARGUMENT[isSpread=false]
-    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtVarLineBreakSemi, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVarLineBreakSemi]
+    PROPERTY[fqName=testExtVarLineBreakSemi, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVarLineBreakSemi]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]

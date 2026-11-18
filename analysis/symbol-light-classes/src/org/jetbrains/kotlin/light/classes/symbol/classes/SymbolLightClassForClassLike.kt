@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.asJava.getLightClassQualifiedName
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.light.classes.symbol.utils.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -166,14 +168,13 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
 
     /**
-     * [org.jetbrains.kotlin.psi.KtNamedDeclarationStub.getFqName] is needed to properly cover the case
-     * with the class inside a script.
-     * In this case the qualified name has to include the script name.
+     * @see getLightClassQualifiedName
      */
     override fun getQualifiedName(): String? = _qualifiedName
 
+    @OptIn(KtImplementationDetail::class)
     private val _qualifiedName: String? by lazyPub {
-        classOrObjectDeclaration?.fqName?.asString() ?: withClassSymbol { it.classId?.asFqNameString() }
+        classOrObjectDeclaration?.getLightClassQualifiedName() ?: withClassSymbol { it.classId?.asFqNameString() }
     }
 
     override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)
