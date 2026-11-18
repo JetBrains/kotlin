@@ -586,7 +586,3 @@ fun IrMutableAnnotationContainer.copyAnnotationsAndAddJavaLangDeprecated(source:
     annotations = filterOutAnnotations(JvmStandardClassIds.Annotations.Java.Deprecated, source.annotations) +
             irBuilder.irAnnotation(irBuilder.irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
 }
-
-val IrClass.isInlineClass: Boolean get() = isInlineClass()
-
-val IrClass.inlineClassRepresentation get() = inlineClassRepresentation()

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
  * @return The underlying type of the inline class, if it exists, otherwise throws an error.
  */
 fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType {
-    val representation = irClass.inlineClassRepresentation()
+    val representation = irClass.inlineClassRepresentation
         ?: error("Not an inline class: ${irClass.render()}")
     return representation.underlyingType
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -63,10 +62,6 @@ internal class NativeBackendContext(
 
     override val optimizeLoopsOverUnsignedArrays = true
 
-    override val inlineClassesUtils: InlineClassesUtils = object : InlineClassesUtils {
-        override fun isClassInlineLike(klass: IrClass): Boolean =
-                klass.isInlineClass()
-    }
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
     override val bridgesSupport by lazy { BridgesSupport(irBuiltIns, symbols, irFactory) }
     override val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }

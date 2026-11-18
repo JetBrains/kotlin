@@ -219,10 +219,6 @@ internal class ClassifierExplorer(
         return null
     }
 
-    private val IrClass.isInlineClass: Boolean
-        get() = isInlineClass()
-
-
     companion object {
         private val IrClass.annotationConstructorsIfApplicable: Sequence<IrConstructor>?
             get() = if (isAnnotationClass) constructors else null

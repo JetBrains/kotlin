@@ -303,4 +303,4 @@ fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
 }
 
 internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> IrSimpleFunction?) =
-    !isInlineClass() && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
+    !isInlineClass && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)

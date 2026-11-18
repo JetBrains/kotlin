@@ -164,7 +164,7 @@ abstract class AbstractComposeLowering(
     // this one makes sure to bind the symbol if it is unbound, so is a bit safer to use.
     fun IrType.unboxType(): IrType? {
         val klass = classOrNull?.owner ?: return null
-        val representation = klass.inlineClassRepresentation() ?: return null
+        val representation = klass.inlineClassRepresentation ?: return null
         require(isInlineClassType())
 
         // TODO: Apply type substitutions

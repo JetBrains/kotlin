@@ -37,12 +37,20 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
 }
 
 /**
- * Checks if the class is an inline class. A full value class is never an inline class.
+ * `true` if the class is an inline class. A full value class is never an inline class.
  *
  * See [ValueClassRepresentation] documentation for more details about value class types.
  */
-fun IrClass.isInlineClass(): Boolean =
-    inlineClassRepresentation() != null
+val IrClass.isInlineClass: Boolean
+    get() = valueClassRepresentation is InlineClassRepresentation<*>
+
+/**
+ * The [InlineClassRepresentation] of the class if it is an inline class, `null` otherwise.
+ *
+ * See [ValueClassRepresentation] documentation for more details about value class types.
+ */
+val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
+    get() = valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
 
 val IrClass.isFullValueClass: Boolean
     get() = valueClassRepresentation is FullValueClassRepresentation<*>
@@ -65,17 +73,6 @@ val IrFunction.isStaticMethodOfClass: Boolean
 
 val IrFunction.isPropertyAccessor: Boolean
     get() = this is IrSimpleFunction && correspondingPropertySymbol != null
-
-/**
- * Retrieves an [InlineClassRepresentation] of the [IrClass] if the class is an inline class.
- *
- * See [ValueClassRepresentation] documentation for more details about value class types.
- *
- * @return An [InlineClassRepresentation] or `null`.
- */
-fun IrClass.inlineClassRepresentation(): InlineClassRepresentation<IrSimpleType>? =
-    valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
-
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
 fun <D : IrElement> D.copyAttributes(other: IrElement?): D = apply {
