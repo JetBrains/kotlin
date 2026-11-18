@@ -51,11 +51,17 @@ sourceSets {
     "withBinariesTest" {
         codebaseTestDir(project, "withBinariesTest")
     }
+    /* Long-running tests; executed by the `nightlyTests` task */
+    "nightlyTests" {
+        codebaseTestDir(project, "nightlyTests")
+    }
 }
 
-/* Gives the tests from the `withBinariesTest` source set access to `internal` declarations of `main` */
-kotlin.target.compilations.named("withBinariesTest") {
-    associateWith(kotlin.target.compilations.getByName("main"))
+/* Gives the tests from the additional source sets access to `internal` declarations of `main` */
+for (sourceSetName in listOf("withBinariesTest", "nightlyTests")) {
+    kotlin.target.compilations.named(sourceSetName) {
+        associateWith(kotlin.target.compilations.getByName("main"))
+    }
 }
 
 open class TestSystemPropertiesProvider @Inject constructor(
@@ -103,10 +109,6 @@ projectTests {
         testFederation {
             smokeTests { includeAll() }
         }
-
-        useJUnitPlatform {
-            excludeTags("codebaseNightly")
-        }
     }
 
     testTask("withBinariesTest", javaLauncher = JdkMajorVersion.JDK_21_0, maxHeapSize = testMaxHeapSizeTiny, skipInLocalBuild = false) {
@@ -140,6 +142,10 @@ projectTests {
     }
 
     testTask("nightlyTests", javaLauncher = JdkMajorVersion.JDK_21_0, skipInLocalBuild = false) {
+        val nightlyTestsSourceSet = sourceSets["nightlyTests"]
+        testClassesDirs = nightlyTestsSourceSet.output.classesDirs
+        classpath = nightlyTestsSourceSet.runtimeClasspath
+
         workingDir = rootDir
 
         jvmArgumentProviders.add(objects.newInstance<TestSystemPropertiesProvider>().apply {
@@ -148,10 +154,6 @@ projectTests {
         })
 
         forkEvery = 1
-
-        useJUnitPlatform {
-            includeTags("codebaseNightly")
-        }
 
         assertKotlinNativeIsEnabled()
     }
