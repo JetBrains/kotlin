@@ -187,6 +187,17 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
 
+    override fun preLinkCommands(objectFiles: List<ObjectFile>, output: ObjectFile): List<Command> =
+            listOf(Command(clang).apply {
+                +"-target"
+                +targetTriple.withoutVendor()
+                +"-r"
+                +"-nostdlib"
+                +"-o"
+                +output
+                +objectFiles
+            })
+
     override fun LinkerArguments.finalLinkCommands(): List<Command> {
         require(sanitizer == null) {
             "Sanitizers are unsupported"
@@ -452,6 +463,14 @@ class GccBasedLinker(targetProperties: GccConfigurables)
     }
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
+
+    override fun preLinkCommands(objectFiles: List<ObjectFile>, output: ObjectFile): List<Command> =
+            listOf(Command(absoluteLinker).apply {
+                +"-r"
+                +"-o"
+                +output
+                +objectFiles
+            })
 
     override fun LinkerArguments.finalLinkCommands(): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {

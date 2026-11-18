@@ -61,3 +61,20 @@ internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<NativeBackendPh
     val commands = context.config.platform.linker.preLinkCommands(inputFiles, outputObjectFile.absolute().normalize().pathString)
     runLinkerCommands(context, commands, cachingInvolved = true)
 }
+
+/**
+ * Relocatable-link several object files into one (`ld -r` / equivalent).
+ * Used so STATIC / STATIC_CACHE can keep a single archive member after parallel object emission.
+ */
+internal data class RelocateLinkObjectFilesInput(
+        val objectFiles: List<Path>,
+        val outputObjectFile: Path,
+)
+
+internal val RelocateLinkObjectFilesPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, RelocateLinkObjectFilesInput>(
+        name = "RelocateLinkObjectFiles",
+) { context, (objectFiles, outputObjectFile) ->
+    val inputFiles = objectFiles.map { it.absolute().normalize().pathString }
+    val commands = context.config.platform.linker.preLinkCommands(inputFiles, outputObjectFile.absolute().normalize().pathString)
+    runLinkerCommands(context, commands, cachingInvolved = false)
+}

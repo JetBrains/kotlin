@@ -67,8 +67,21 @@ LLVMKotlinCreateTargetMachine(const char *TargetTriple, const char *CPU,
                               LLVMKotlinInstructionSelector Selector,
                               char **ErrorMessage);
 
+/// Returns null if parallel object emission is considered sound for this module.
+/// ELF: unique module id + no module inline asm. Mach-O: builds the same-file
+/// cluster (Keep + relative hosts/locals + LocalStay users + explicit sections);
+/// refuses only if a seed/closure invariant still fails (caller → Count==1).
+/// May assign names to unnamed local same-file symbols; otherwise does not
+/// mutate the module.
+LLVMErrorRef LLVMKotlinCheckParallelObjectEmission(LLVMModuleRef Module);
+
 /// Consume the optimized module and emit Count objects with independent LLVM contexts.
-/// Partitions use SplitModule with PreserveLocals=false. OutputPaths has Count entries.
+/// Partitions use SplitModule with PreserveLocals=false. ELF: full externalize
+/// + .kn.<id> + used rebuild (no metadata mega-COMDAT). Mach-O: weld MetaTogether
+/// (metadata + all globals + no-debug fns), keep source files whole, keep/restore
+/// LocalStay linkage. OutputPaths has Count entries.
+/// Callers should run LLVMKotlinCheckParallelObjectEmission first and fall back to
+/// Count==1 when that check fails.
 LLVMErrorRef LLVMKotlinEmitObjectFiles(LLVMModuleRef Module, LLVMTargetMachineRef Machine,
                                      unsigned Count, const char *const *OutputPaths);
 
