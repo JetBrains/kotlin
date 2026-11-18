@@ -708,12 +708,12 @@ private fun BackendChecker.checkCanUnwrapVariadicArguments(elements: List<IrVara
             checkCanMapCalleeFunctionParameter(element.type, isObjCMethod, variadic = true, parameter = null, argument = element)
         is IrSpreadElement -> {
             val expression = element.expression
-            if (expression is IrCall && expression.symbol == irBuiltIns.arrayOf)
+            if (expression is IrCall && expression.isVariadicSpreadArrayFactory(irBuiltIns))
                 checkCanHandleArgumentForVarargParameter(expression.arguments[0], isObjCMethod)
             else
                 reportError(element, "When calling variadic " +
                         (if (isObjCMethod) "Objective-C methods " else "C functions ") +
-                        "spread operator is supported only for *arrayOf(...)")
+                        "the spread operator is supported only for '*arrayOf(...)' or '*Array.of(...)'.")
         }
     }
 }

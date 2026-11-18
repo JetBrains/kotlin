@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun IrType.isCEnumType(): Boolean {
     if (isNullable()) return false
@@ -126,3 +128,7 @@ fun cBoolType(target: KonanTarget): CType? = when (target.family) {
 
 fun IrFunction.isCGlobalAccess(): Boolean =
     this.hasAnnotation(RuntimeNames.cGlobalAccess)
+
+fun IrCall.isVariadicSpreadArrayFactory(irBuiltIns: IrBuiltIns): Boolean =
+        symbol == irBuiltIns.arrayOf ||
+                symbol.owner.parent == irBuiltIns.arrayClass.owner && symbol.owner.name == OperatorNameConventions.OF
