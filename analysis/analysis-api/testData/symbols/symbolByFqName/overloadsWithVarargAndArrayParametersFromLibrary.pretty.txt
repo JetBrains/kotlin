@@ -1,0 +1,9 @@
+fun foo(vararg x: kotlin.Int)
+
+@kotlin.jvm.JvmName(name = "fooArray")
+fun foo(x: kotlin.IntArray)
+
+fun foo(vararg x: kotlin.Int, y: kotlin.IntArray)
+
+@kotlin.jvm.JvmName(name = "fooArrayAndVararg")
+fun foo(x: kotlin.IntArray, vararg y: kotlin.Int)

@@ -1,0 +1,4 @@
+override fun foo(x: kotlin.String)
+
+override val kotlin.String.foo: kotlin.Int
+  get()

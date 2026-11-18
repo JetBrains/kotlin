@@ -1,0 +1,3 @@
+(120,123) CANNOT_INFER_PARAMETER_TYPE Cannot infer type for type parameter 'T'. Specify it explicitly.
+(124,131) ARGUMENT_TYPE_MISMATCH Argument type mismatch: actual type is 'BImpl', but 'A' was expected.
+(148,161) ARGUMENT_TYPE_MISMATCH Argument type mismatch: actual type is 'IntArray', but 'Int' was expected.

@@ -1,0 +1,51 @@
+KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
+  annotations: []
+  isActual: false
+  isExpect: false
+  isExternal: false
+  isReified: false
+  location: LOCAL
+  modality: FINAL
+  name: T
+  origin: LIBRARY
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
+  upperBounds: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/A
+  ]
+  variance: INVARIANT
+  visibility: LOCAL
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library library"
+  deprecation: null
+  importableFqName: null
+
+KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
+  annotations: []
+  isActual: false
+  isExpect: false
+  isExternal: false
+  isReified: false
+  location: LOCAL
+  modality: FINAL
+  name: T
+  origin: LIBRARY
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
+  upperBounds: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/A
+  ]
+  variance: INVARIANT
+  visibility: LOCAL
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library library"
+  deprecation: null
+  importableFqName: null
