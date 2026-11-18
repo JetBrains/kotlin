@@ -11,6 +11,7 @@ import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.referenceDeserializedSymbol
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -85,15 +86,15 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
         }
 
         // Get all signatures of declarations contained in the library.
-        val allDeclaredSignatures: Map<IdSignature, IrDeclaration> = transformer.declarationTracker.deserializedDeclarations
+        val allDeclaredSignatures: Map<SignatureAndKind, IrDeclaration> = transformer.declarationTracker.deserializedDeclarations
 
         // Compute the set of signatures that are "imported".
         val importedSignatures = (allReferencedClasses - allDeclaredClasses.keys).mapToSetOrEmpty { it.computeSignature() }
 
         // Exclude any private declarations, such as private constructors which happen in C-interop KLIBs.
         val onlyPublicDeclaredSignatures = allDeclaredSignatures
-            .mapNotNullTo(hashSetOf()) { [signature, deserializedDeclaration] ->
-                signature.takeIf {
+            .mapNotNullTo(hashSetOf()) { [signatureAndKind, deserializedDeclaration] ->
+                signatureAndKind.signature.takeIf {
                     deserializedDeclaration !is IrDeclarationWithVisibility || deserializedDeclaration.isNonPrivate
                 }
             }
@@ -154,13 +155,13 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
             }
 
             // Get all signatures of declarations contained in the library.
-            val allDeclaredSignatures: Map<IdSignature, IrDeclaration> = transformer.declarationTracker.deserializedDeclarations
+            val allDeclaredSignatures: Map<SignatureAndKind, IrDeclaration> = transformer.declarationTracker.deserializedDeclarations
 
             val importedSignatures = (onlyTopLevelReferencedClasses - declaredTopLevelClasses).mapToSetOrEmpty { it.computeSignature() }
 
             // Exclude any non-top-level signatures that might happen for accessors of top-level properties, for example.
             val onlyPublicTopLevelDeclaredSignatures = allDeclaredSignatures.keys
-                .mapNotNullTo(hashSetOf()) { it as? IdSignature.CommonSignature }
+                .mapNotNullTo(hashSetOf()) { it.signature as? IdSignature.CommonSignature }
 
             return ExtractedSignatures(
                 declaredSignatures = onlyPublicTopLevelDeclaredSignatures + declaredTopLevelClasses.mapToSetOrEmpty { it.computeSignature() },
