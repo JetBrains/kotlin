@@ -58,7 +58,7 @@ internal class KlibToolIrLinker(
             fileLocalSymbolProvider = fileLocalSymbolProvider,
             symbolTable = symbolTable,
             mangler = irMangler,
-            partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
+            partialLinkageSupport = partialLinkageSupport,
     )
 
     override fun createModuleDeserializer(
