@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 
 open class AbstractFirLoadK2CompiledJvmKotlinTest : AbstractKotlinCompilerJvmTest() {
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
@@ -20,6 +21,10 @@ open class AbstractFirLoadK2CompiledJvmKotlinTest : AbstractKotlinCompilerJvmTes
 
         configureJvmArtifactsHandlersStep {
             useHandlers(::JvmLoadedMetadataDumpHandler)
+        }
+
+        defaultDirectives {
+            TestDumpDirectives.DUMP_CLASSIFIER with "jvm"
         }
 
         forTestsMatching("compiler/testData/loadJava/compiledKotlinWithStdlib/*") {

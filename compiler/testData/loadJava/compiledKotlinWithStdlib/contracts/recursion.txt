@@ -1,4 +1,0 @@
-package test
-
-public fun foo(/*0*/ n: kotlin.Int, /*1*/ x: kotlin.Any?): kotlin.Boolean
-    Returns(TRUE) -> x is String

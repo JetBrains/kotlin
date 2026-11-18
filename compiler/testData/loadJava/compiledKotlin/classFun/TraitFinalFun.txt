@@ -1,5 +1,0 @@
-package test
-
-public interface A {
-    public final fun f(): kotlin.String
-}

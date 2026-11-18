@@ -41,6 +41,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.PLATFORM_DEPENDANT_METADATA
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
+import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
+import org.jetbrains.kotlin.test.directives.getDefaultDumpFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.fir.DeprecatedTestFacade
@@ -53,7 +56,6 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
 
 class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedMetadataDumpHandler<BinaryArtifacts.Jvm>(
@@ -176,6 +178,10 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
     failureDisablesNextSteps = false,
     doNotRunIfThereWerePreviousFailures = false
 ) {
+    companion object {
+        private const val DUMP_SUFFIX = ".fir.txt"
+    }
+
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper()
 
     override val directiveContainers: List<DirectivesContainer>
@@ -233,86 +239,40 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
     ): List<SessionWithSources<KtFile>>
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val actualText = if (dumper.isEmpty()) null else dumper.generateResultingDump()
 
-        val frontendKind = testServices.defaultsProvider.frontendKind
+        // Common logic: checks that actual dump is equal
+        // to existing `.platform.fir.txt` / `.fir.txt` file.
+        // If it is equal to `.fir.txt` one, also reports that
+        // `.platform.fir.txt` is not needed.
+        assertEqualsToDump(DUMP_SUFFIX, actualText)
 
-        val commonExtension = ".fir.txt"
-        val [specificExtension, otherSpecificExtension] = when (frontendKind) {
-            FrontendKinds.FIR -> ".fir.k2.txt" to ".fir.k1.txt"
-            else -> shouldNotBeCalled()
+        // Logic specific to this handler:
+        val commonFile = testServices.moduleStructure.getDefaultDumpFile(DUMP_SUFFIX)
+        val platformFile = testServices.moduleStructure.getClassifiedDumpFile(DUMP_SUFFIX)
+
+        val oppositePlatformFile = when {
+            platformFile.name.endsWith(".jvm$DUMP_SUFFIX") -> platformFile.withExtension(".klib$DUMP_SUFFIX")
+            platformFile.name.endsWith(".klib$DUMP_SUFFIX") -> platformFile.withExtension(".jvm$DUMP_SUFFIX")
+            else -> error("Dump classifier must be either '.jvm' or '.klib'.")
         }
 
-        val targetPlatform = testServices.moduleStructure.modules.last().targetPlatform(testServices)
+        checkDumpsIdentity(
+            testServices.moduleStructure.getDefaultDumpFile(DUMP_SUFFIX),
+            platformFile, oppositePlatformFile, commonFile,
+            postProcessTestData = { it.replace("// $PLATFORM_DEPENDANT_METADATA\n", "") }
+        )
+
         if (PLATFORM_DEPENDANT_METADATA in testServices.moduleStructure.allDirectives) {
-            val platformExtension = specificExtension.replace(".txt", "${targetPlatform.suffix}.txt")
-            val otherPlatformExtension = specificExtension.replace(".txt", "${targetPlatform.oppositeSuffix}.txt")
-
-            val expectedFile = testDataFile.withExtension(platformExtension)
-            val actualText = dumper.generateResultingDump()
-            assertions.assertEqualsToFile(expectedFile, actualText, message = { "Content is not equal" })
-
-            val checks = listOf(commonExtension, specificExtension, otherSpecificExtension).map { extension ->
-                {
-                    val baseFile = testDataFile.withExtension(extension)
-                    assertions.assertFalse(baseFile.exists()) {
-                        "Base file $baseFile exists in presence of $PLATFORM_DEPENDANT_METADATA directive. Please remove file or directive"
-                    }
-                }
+            assertions.assertFalse(commonFile.exists()) {
+                "Base dump $commonFile exists in presence of $PLATFORM_DEPENDANT_METADATA directive. Please remove file or directive"
             }
-            assertions.assertAll(checks)
-            val secondFile = testDataFile.withExtension(otherPlatformExtension)
-            val common = testDataFile.withExtension(specificExtension)
-            checkDumpsIdentity(
-                testDataFile, expectedFile, secondFile, common,
-                postProcessTestData = { it.replace("// $PLATFORM_DEPENDANT_METADATA\n", "") }
-            )
         } else {
-            val commonFirDump = testDataFile.withExtension(commonExtension)
-            val specificFirDump = testDataFile.withExtension(specificExtension)
-
-            val expectedFile = when {
-                commonFirDump.exists() -> commonFirDump
-                else -> specificFirDump
-            }
-
-            val actualText = dumper.generateResultingDump()
-            assertions.assertEqualsToFile(expectedFile, actualText, message = { "Content is not equal" })
-
-
-            if (commonFirDump.exists() && specificFirDump.exists()) {
-                assertions.fail {
-                    """
-                    Common dump ${commonFirDump.name} and specific ${specificFirDump.name} exist at the same time
-                    Please remove ${specificFirDump.name}
-                """.trimIndent()
-                }
-            }
-            if (!commonFirDump.exists()) {
-                val otherFirDump = testDataFile.withExtension(otherSpecificExtension)
-                checkDumpsIdentity(testDataFile, specificFirDump, otherFirDump, commonFirDump)
+            assertions.assertFalse(platformFile.exists()) {
+                "Please remove platform-specific dump $platformFile or add $PLATFORM_DEPENDANT_METADATA directive"
             }
         }
     }
-
-    private val TargetPlatform.suffix: String
-        get() = when {
-            isJvm() -> ".jvm"
-            isJs() -> ".klib"
-            isWasm() -> ".klib"
-            isNative() -> ".klib"
-            else -> error("Unsupported platform: $this")
-        }
-
-    private val TargetPlatform.oppositeSuffix: String
-        get() = when {
-            isJvm() -> ".klib"
-            isJs() -> ".jvm"
-            isWasm() -> ".jvm"
-            isNative() -> ".jvm"
-            else -> error("Unsupported platform: $this")
-        }
 
     private fun checkDumpsIdentity(
         testDataFile: File,

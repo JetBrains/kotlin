@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives.DUMP_CLASSIFIER
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJsTest
 import org.jetbrains.kotlin.utils.bind
 
@@ -30,6 +31,7 @@ abstract class AbstractLoadCompiledJsKotlinTest : AbstractKotlinCompilerJsTest(T
 
         defaultDirectives {
             FIR_PARSER with FirParser.LightTree
+            DUMP_CLASSIFIER with "klib"
         }
     }
 }
