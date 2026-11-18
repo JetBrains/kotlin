@@ -6,3 +6,7 @@
 class B {
     val a = A()
 }
+
+fun main() {
+
+}

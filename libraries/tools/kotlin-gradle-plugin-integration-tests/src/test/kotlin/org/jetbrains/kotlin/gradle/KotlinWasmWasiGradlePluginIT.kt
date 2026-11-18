@@ -85,7 +85,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build(":compileProductionExecutableKotlinWasmWasiComponentize") {
+            build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
                 assertOutputDoesNotContain("Downloading WASI preview1 adapter")
                 val componentFile =
@@ -135,7 +135,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                 }
             }
 
-            build(":compileProductionExecutableKotlinWasmWasiComponentize") {
+            build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
                 val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v${WASMTIME_VERSION}/wasi_snapshot_preview1.reactor.wasm"
                 assertOutputContains("Downloading WASI preview1 adapter REACTOR for Wasmtime ${WASMTIME_VERSION} from $downloadUrl")
@@ -182,7 +182,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                 }
             }
 
-            build(":compileProductionExecutableKotlinWasmWasiComponentize") {
+            build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
                 val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v${WASMTIME_VERSION}/wasi_snapshot_preview1.command.wasm"
                 assertOutputContains("Downloading WASI preview1 adapter COMMAND for Wasmtime ${WASMTIME_VERSION} from $downloadUrl")
@@ -882,6 +882,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
             build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
 
                 val original =
                     projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/kotlin/new-mpp-wasm-wasi-test.wasm")
