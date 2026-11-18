@@ -447,6 +447,20 @@ open class SymbolTable(
         fieldSlice.forEachSymbol { block(it) }
     }
 
+    fun hasBoundSymbolForSignature(signature: IdSignature): Boolean {
+        fun hasBoundSymbol(slice: SymbolTableSlice.Flat<IdSignature, *, *>): Boolean {
+            return slice.signatureToSymbol[signature]?.isBound == true
+        }
+
+        return hasBoundSymbol(classSlice) ||
+                hasBoundSymbol(constructorSlice) ||
+                hasBoundSymbol(functionSlice) ||
+                hasBoundSymbol(propertySlice) ||
+                hasBoundSymbol(enumEntrySlice) ||
+                hasBoundSymbol(typeAliasSlice) ||
+                hasBoundSymbol(fieldSlice)
+    }
+
     /**
      * This method should not be used directly, because in a lot of cases there are unbound symbols
      *   not only in SymbolTable itself, but in descriptorExtension too

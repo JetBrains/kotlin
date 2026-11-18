@@ -93,7 +93,7 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
 
     class Flat<Key, SymbolOwner, Symbol>(lock: IrLock, val symbolFilter: (Key, Symbol) -> Boolean = { _, _ -> true }) :
         SymbolTableSlice<Key, SymbolOwner, Symbol>(lock) where SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<*, SymbolOwner> {
-        private val signatureToSymbol = hashMapOf<Key, Symbol>()
+        internal val signatureToSymbol = hashMapOf<Key, Symbol>()
 
         override fun get(key: Key): Symbol? {
             return signatureToSymbol[key]

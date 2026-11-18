@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isClassSignature
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.name.CallableId
@@ -154,7 +155,22 @@ class FileDeserializationStateImpl(
         symbolTable = linker.symbolTable,
         libraryFile = fileReader,
         fileSymbol = file.symbol,
-        enqueueLocalTopLevelDeclaration = ::addIdSignature,
+        enqueueLocalTopLevelDeclaration = {
+            val wasActuallyAdded = reachableTopLevels.add(it)
+            if (wasActuallyAdded) {
+                // Suspicious, let's check if it's already in symbol table and is bound.
+                if (!linker.symbolTable.hasBoundSymbolForSignature(it)) {
+                    buildString {
+                        appendLine("The signature has been added to the queue, despite it should not be")
+                        appendLine("Signature: ${it.render()}")
+                        appendLine("Signature kind: ${it::class.java.simpleName}")
+                        appendLine("File: ${file.fileEntry.name}")
+                        appendLine("Module: ${file.module.name.asString()}")
+                        appendLine("Library: ${file.module.kotlinLibrary?.path}")
+                    }
+                }
+            }
+        },
         deserializedSymbolPostProcessor = linker.deserializedSymbolPostProcessor,
         irInterner = linker.irInterner,
         deserializePublicSymbolWithOwnerInUnknownFile = { idSignature, symbolKind ->
