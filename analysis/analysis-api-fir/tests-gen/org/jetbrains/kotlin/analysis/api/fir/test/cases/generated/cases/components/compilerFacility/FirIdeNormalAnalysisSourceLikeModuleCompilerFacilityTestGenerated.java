@@ -610,6 +610,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
     }
 
     @Test
+    @TestMetadata("similarOverloadsFromDifferentLibraries.kt")
+    public void testSimilarOverloadsFromDifferentLibraries() {
+      run("similarOverloadsFromDifferentLibraries.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       run("simple.kt");
