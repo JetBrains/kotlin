@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt.test.integration
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
@@ -105,8 +104,8 @@ class FirKaptExtensionForTests(
     override fun createProcessorLoader(): ProcessorLoader =
         TestProcessorLoader(processor, logger)
 
-    override fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean {
-        return super.doAnalysis(project, configuration).also {
+    override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
+        return super.doAnalysis(configuration).also {
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
                 logger.configuration.diagnosticsCollector,
                 logger.configuration,

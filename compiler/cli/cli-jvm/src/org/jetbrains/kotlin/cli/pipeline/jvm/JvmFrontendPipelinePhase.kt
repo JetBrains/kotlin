@@ -98,7 +98,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return null
         }
 
-        runAnalysisHandlerExtensions(environment.project, configuration)?.let {
+        runAnalysisHandlerExtensions(configuration)?.let {
             /*
              * If the analysis handler exception finishes successfully, we should stop the pipeline (as it doesn't produce the proper
              * fronted artifact), but we don't need to return the [ExitCode.COMPILATION_ERROR] (because the "compilation" finished
@@ -574,7 +574,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
     /**
      * Applies [FirAnalysisHandlerExtension] instances to a project
-     * @param project the project to analyze
      * @param configuration compiler configuration
      * @return `null` if no applicable extensions were found, `true` if all applicable extensions returned `true` from [FirAnalysisHandlerExtension.doAnalysis],
      * `false` if any applicable extension returned `false`
@@ -582,12 +581,12 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
      * @see FirAnalysisHandlerExtension.isApplicable
      * @see FirAnalysisHandlerExtension.doAnalysis
      */
-    private fun runAnalysisHandlerExtensions(project: Project, configuration: CompilerConfiguration): Boolean? {
+    private fun runAnalysisHandlerExtensions(configuration: CompilerConfiguration): Boolean? {
         val extensions = configuration.getCompilerExtensions(FirAnalysisHandlerExtension)
             .filter { it.isApplicable(configuration) }
             .takeIf { it.isNotEmpty() }
             ?: return null
-        return extensions.all { it.doAnalysis(project, configuration) }
+        return extensions.all { it.doAnalysis(configuration) }
     }
 
     // ----------------------- Project environment utils -----------------------
