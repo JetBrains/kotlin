@@ -104,6 +104,8 @@ projectTests {
         useJUnitPlatform {
             excludeTags("codebaseNightly")
         }
+
+        assertKotlinNativeIsEnabled()
     }
 
     testTask("nightlyTests", javaLauncher = JdkMajorVersion.JDK_21_0, skipInLocalBuild = false) {
@@ -119,6 +121,8 @@ projectTests {
         useJUnitPlatform {
             includeTags("codebaseNightly")
         }
+
+        assertKotlinNativeIsEnabled()
     }
 }
 
@@ -139,18 +143,17 @@ tasks.register<JavaExec>("updateDomainsDump") {
     mainClass = "org.jetbrains.kotlin.code.UpdateDomainsDump"
 }
 
+fun Task.assertKotlinNativeIsEnabled() {
+    val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled
+    doFirst {
+        if (!isKotlinNativeEnabled.get()) error(
+            "Running '$path' requires Kotlin/Native to be enabled (-Pkotlin.native.enabled=true)"
+        )
+    }
+}
+
 tasks.configureEach {
     if (this !is JavaForkOptions) return@configureEach
-
-    /* The dump includes tests from Kotlin/Native */
-    if (this is Test) {
-        val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled
-        doFirst {
-            if (!isKotlinNativeEnabled.get()) error(
-                "Running '$path' requires Kotlin/Native to be enabled (-Pkotlin.native.enabled=true)"
-            )
-        }
-    }
 
     /* Nested/Deep debugging support */
     val debuggerDispatchPort = providers.systemProperty("idea.debugger.dispatch.port")
