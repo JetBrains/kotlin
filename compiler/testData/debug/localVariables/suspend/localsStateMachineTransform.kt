@@ -79,7 +79,6 @@ suspend fun box() {
 // test.kt:21 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1, 1, 1, 1)
 // coroutineHelpers.kt:9 $EmptyContinuation.<get-context>: $<this>:(ref $EmptyContinuation)=(ref $EmptyContinuation) (37, 37)
 // test.kt:21 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1)
-// test.kt:12 $SuspendLambda_0.doResume: $<this>:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (4, 4, 4, 4, 4, 4)
 // test.kt:12 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $x:i32=0:i32, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
 // test.kt:6 $h: $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (18, 18)
 // test.kt:12 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=0:i32, $x:i32=0:i32, $e:(ref null $kotlin.Throwable)=null (4, 4, 4, 4, 4)
@@ -105,5 +104,4 @@ suspend fun box() {
 // test.kt:19 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $x:i32=1:i32, $e:(ref null $kotlin.Throwable)=null (8, 8)
 // test.kt:18 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $x:i32=1:i32, $e:(ref null $kotlin.Throwable)=null (4, 17, 4, 4, 4, 4)
 // test.kt:21 $$boxCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref $kotlin.Unit)=(ref $kotlin.Unit), $tmp:i32=1:i32, $x:i32=1:i32, $e:(ref null $kotlin.Throwable)=null (0, 0, 0)
-// test.kt:12 $SuspendLambda_0.doResume: $<this>:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (4)
 // test.kt:21 $box: $$completion:(ref $EmptyContinuation)=(ref $EmptyContinuation) (1)

@@ -74,11 +74,7 @@ fun box(): String {
 
 // EXPECTATIONS WASM_JS
 // test.kt:13 $box (9)
-// test.kt:10 $Enum$static_init (18)
-// test.kt:13 $Enum.<init> (9)
 // test.kt:10 $Enum$static_init (18, 26)
-// test.kt:13 $Enum.<init> (9)
-// test.kt:10 $Enum$static_init (26)
 // test.kt:13 $box (9)
 // test.kt:14 $box (17, 9)
 // test.kt:10 $Enum$static_init (18)
@@ -87,11 +83,7 @@ fun box(): String {
 // test.kt:10 $Enum$static_init (18)
 // test.kt:15 $box (9)
 // test.kt:17 $box (14)
-// test.kt:5 $Type$static_init (22)
-// test.kt:4 $Anno$Type.<init> (22)
 // test.kt:5 $Type$static_init (22, 29)
-// test.kt:4 $Anno$Type.<init> (22)
-// test.kt:5 $Type$static_init (29)
 // test.kt:17 $box (14)
 // test.kt:18 $box (22, 14)
 // test.kt:5 $Type$static_init (22)
