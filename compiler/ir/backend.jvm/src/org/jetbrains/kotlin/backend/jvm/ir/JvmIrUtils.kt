@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
+import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -270,8 +271,9 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     if (isSuspend) return false
     // Ditto for suspend lambda methods
     if (parentClassOrNull?.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA) return false
-    // Ditto for private functions or methods of private classes
-    if (isEffectivelyPrivate()) return false
+    // Multifile parts are package-private, but their members are accessible through the facade.
+    val isInaccessibleEffectivelyPrivate = if (parentClassOrNull?.isFileClass == true) !isNonPrivate else isEffectivelyPrivate()
+    if (isInaccessibleEffectivelyPrivate) return false
     // Cannot expose open or abstract - @JvmName problem
     if (isOverridable) return false
     // Cannot expose sealed class constructors
