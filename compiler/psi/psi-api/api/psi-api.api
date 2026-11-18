@@ -1421,7 +1421,6 @@ public class org/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry : org/jetb
 	public fun getColon ()Lcom/intellij/psi/PsiElement;
 	public fun getDestructuringDeclaration ()Lorg/jetbrains/kotlin/psi/KtDestructuringDeclaration;
 	public fun getEqualsToken ()Lcom/intellij/psi/PsiElement;
-	public fun getFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public synthetic fun getInitializer ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public fun getInitializer ()Lorg/jetbrains/kotlin/psi/KtNameReferenceExpression;
 	public fun getOwnValOrVarKeyword ()Lcom/intellij/psi/PsiElement;

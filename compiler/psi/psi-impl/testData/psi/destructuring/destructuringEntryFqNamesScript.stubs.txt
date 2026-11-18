@@ -18,8 +18,8 @@ FILE[kind=Script[packageFqName=test.fqNames]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
     DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
-      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=scriptA]
-      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=scriptB]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.scriptA, isSingleUnderscore=false, isVar=false, name=scriptA]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.scriptB, isSingleUnderscore=false, isVar=false, name=scriptB]
       CALL_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=X]
         VALUE_ARGUMENT_LIST
@@ -30,8 +30,8 @@ FILE[kind=Script[packageFqName=test.fqNames]]
     CLASS[classId=test/fqNames/C, fqName=test.fqNames.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
       CLASS_BODY
         DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
-          DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=memberA]
-          DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=memberB]
+          DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.memberA, isSingleUnderscore=false, isVar=false, name=memberA]
+          DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.memberB, isSingleUnderscore=false, isVar=false, name=memberB]
           CALL_EXPRESSION
             REFERENCE_EXPRESSION[referencedName=X]
             VALUE_ARGUMENT_LIST

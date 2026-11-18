@@ -109,6 +109,9 @@ internal object StubUtils {
     internal fun StubInputStream.readFqName(): FqName = FqName(readNameString()!!)
 
     @JvmStatic
+    internal fun StubInputStream.readNullableFqName(): FqName? = readNameString()?.let(::FqName)
+
+    @JvmStatic
     internal inline fun <K : Any, V : Any> StubOutputStream.writeNullableMap(
         map: Map<K, V>?,
         keyWriter: StubOutputStream.(K) -> Unit,

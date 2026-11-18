@@ -19,8 +19,8 @@ FILE[kind=Facade[packageFqName=test.fqNames, facadeFqName=test.fqNames.Destructu
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
   DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
-    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=topA]
-    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=topB]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.topA, isSingleUnderscore=false, isVar=false, name=topA]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.topB, isSingleUnderscore=false, isVar=false, name=topB]
     CALL_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=X]
       VALUE_ARGUMENT_LIST
@@ -31,8 +31,8 @@ FILE[kind=Facade[packageFqName=test.fqNames, facadeFqName=test.fqNames.Destructu
   CLASS[classId=test/fqNames/C, fqName=test.fqNames.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C, superNames=[]]
     CLASS_BODY
       DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
-        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=memberA]
-        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=memberB]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.memberA, isSingleUnderscore=false, isVar=false, name=memberA]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.memberB, isSingleUnderscore=false, isVar=false, name=memberB]
         CALL_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=X]
           VALUE_ARGUMENT_LIST
@@ -43,8 +43,8 @@ FILE[kind=Facade[packageFqName=test.fqNames, facadeFqName=test.fqNames.Destructu
       CLASS[classId=test/fqNames/C.Nested, fqName=test.fqNames.C.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
         CLASS_BODY
           DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
-            DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=nestedA]
-            DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=nestedB]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.Nested.nestedA, isSingleUnderscore=false, isVar=false, name=nestedA]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.Nested.nestedB, isSingleUnderscore=false, isVar=false, name=nestedB]
             CALL_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=X]
               VALUE_ARGUMENT_LIST
@@ -56,8 +56,8 @@ FILE[kind=Facade[packageFqName=test.fqNames, facadeFqName=test.fqNames.Destructu
         MODIFIER_LIST[companion]
         CLASS_BODY
           DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
-            DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=companionA]
-            DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=companionB]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.Companion.companionA, isSingleUnderscore=false, isVar=false, name=companionA]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.Companion.companionB, isSingleUnderscore=false, isVar=false, name=companionB]
             CALL_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=X]
               VALUE_ARGUMENT_LIST
@@ -68,8 +68,8 @@ FILE[kind=Facade[packageFqName=test.fqNames, facadeFqName=test.fqNames.Destructu
   OBJECT_DECLARATION[classId=test/fqNames/O, fqName=test.fqNames.O, isObjectLiteral=false, isTopLevel=true, name=O, superNames=[]]
     CLASS_BODY
       DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
-        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=objectA]
-        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=objectB]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.O.objectA, isSingleUnderscore=false, isVar=false, name=objectA]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.O.objectB, isSingleUnderscore=false, isVar=false, name=objectB]
         CALL_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=X]
           VALUE_ARGUMENT_LIST
@@ -95,8 +95,8 @@ FILE[kind=Facade[packageFqName=test.fqNames, facadeFqName=test.fqNames.Destructu
   CLASS[classId=test/fqNames/<no name provided>, fqName=test.fqNames.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=null, superNames=[]]
     CLASS_BODY
       DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
-        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=namelessA]
-        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=namelessB]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.<no name provided>.namelessA, isSingleUnderscore=false, isVar=false, name=namelessA]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.<no name provided>.namelessB, isSingleUnderscore=false, isVar=false, name=namelessB]
         CALL_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=X]
           VALUE_ARGUMENT_LIST

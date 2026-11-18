@@ -116,7 +116,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesWithFunctionReceiv
   FUNCTION[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   PROPERTY[fqName=<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=null]
   DESTRUCTURING_DECLARATION[hasInitializer=false, hasSquareBrackets=false, isFullForm=false, isVar=false]
-    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=A]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=A, isSingleUnderscore=false, isVar=false, name=A]
   PROPERTY[fqName=<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=null]
     TYPE_REFERENCE
       MODIFIER_LIST[]
