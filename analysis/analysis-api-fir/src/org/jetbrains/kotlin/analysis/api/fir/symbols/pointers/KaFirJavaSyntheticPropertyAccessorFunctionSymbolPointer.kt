@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -32,7 +32,7 @@ internal class KaFirJavaSyntheticPropertyAccessorFunctionSymbolPointer(
     originalSymbol: KaNamedFunctionSymbol?,
 ) : KaFirMemberSymbolPointer<KaNamedFunctionSymbol>(ownerPointer, originalSymbol = originalSymbol) {
     context(analysisSession: KaFirSession)
-    override fun chooseCandidateAndCreateSymbol(candidates: FirScope, firSession: FirSession): KaNamedFunctionSymbol? {
+    override fun chooseCandidateAndCreateSymbol(candidates: FirScope, owner: FirClassSymbol<*>): KaNamedFunctionSymbol? {
         val syntheticProperty = candidates.getProperties(propertyName)
             .mapNotNull { it.fir as? FirSyntheticProperty }
             .singleOrNull()
