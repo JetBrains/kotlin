@@ -235,6 +235,8 @@ val businessLogicTestSuits = setOf(
     "testBuildSession",
     "testLint",
     "testIcEvents",
+    "testIcFuzzing",
+    "testIcFuzzingReproducers",
     "testNative", // smoke tests for Native running even when kotlin.native.enabled == false
 )
 
@@ -346,6 +348,47 @@ testing {
             }
         }
 
+        named<JvmTestSuite>("testIcFuzzing") {
+            dependencies {
+                implementation(libs.jqwik)
+            }
+            targets.all {
+                val fuzzingTries = providers.gradleProperty("kotlin.ic.fuzz.tries").orElse("10")
+                val shrinkingSeconds = providers.gradleProperty("kotlin.ic.fuzz.shrinkingSeconds").orElse("120")
+                val includeKnownIssues = providers.gradleProperty("kotlin.ic.fuzz.includeKnownIssues").orElse("false")
+                val survey = providers.gradleProperty("kotlin.ic.fuzz.survey").orElse("false")
+                val strategy = providers.gradleProperty("kotlin.ic.fuzz.strategy").orElse("inProcess")
+                val sourcesChanges = providers.gradleProperty("kotlin.ic.fuzz.sourcesChanges").orElse("known")
+                val compilerArgs = providers.gradleProperty("kotlin.ic.fuzz.compilerArgs").orElse("")
+                val jqwikDatabase = layout.buildDirectory.file("${testTask.name}.jqwik-database").map { it.asFile.absolutePath }
+                testTask.configure {
+                    // jqwik reads its configuration parameters from the system properties
+                    systemProperty("jqwik.tries.default", fuzzingTries.get())
+                    systemProperty("jqwik.shrinking.bounded.seconds", shrinkingSeconds.get())
+                    systemProperty("kotlin.ic.fuzz.includeKnownIssues", includeKnownIssues.get())
+                    systemProperty("kotlin.ic.fuzz.survey", survey.get())
+                    systemProperty("kotlin.ic.fuzz.strategy", strategy.get())
+                    systemProperty("kotlin.ic.fuzz.sourcesChanges", sourcesChanges.get())
+                    systemProperty("kotlin.ic.fuzz.compilerArgs", compilerArgs.get())
+                    systemProperty("jqwik.database", jqwikDatabase.get())
+                    systemProperty("kotlin.ic.fuzz.failuresDir", layout.buildDirectory.dir("ic-fuzz-failures").get().asFile.absolutePath)
+                }
+            }
+        }
+
+        // the reproducers of the fuzzing failures, in a separate task so that running them does not overwrite the results of the fuzzing
+        named<JvmTestSuite>("testIcFuzzingReproducers") {
+            dependencies {
+                implementation(files(sourceSets.named("testIcFuzzing").map { it.output }))
+            }
+            targets.all {
+                testTask.configure {
+                    // the oracle tolerates no known issue in a reproducer
+                    systemProperty("kotlin.ic.fuzz.includeKnownIssues", "true")
+                }
+            }
+        }
+
         named<JvmTestSuite>("testEscapableCharacters") {
             configurations.named(sources.runtimeClasspathConfigurationName) {
                 testSymlinkTransformation.resolveAgainstSymlinkedArtifacts(this)
@@ -438,7 +481,8 @@ testing {
 }
 
 tasks.named("check") {
-    dependsOn(testing.suites.matching { it.name != "testExample" }) // do not run example tests by default
+    // do not run example tests by default; fuzzing is random by nature and is run on demand
+    dependsOn(testing.suites.matching { it.name != "testExample" && it.name != "testIcFuzzing" })
 }
 
 val checkCompatibilityCoverageTask = checkCompatibilityCoverage(
