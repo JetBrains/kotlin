@@ -167,6 +167,33 @@ long-term hot-reload mode + the cell/payload/fdefn encoding as
 experimental modes (the multimodule `__fn$/__vt$/__rt$` machinery is
 precedent).
 
+### 8. Foreign-binding entries — kill the host funcref channel — PARKED
+
+The last driver→runtime move: a delta referencing an older
+generation's binding emits `@WasmImport("host", …)` and the driver
+supplies the old instance's exported funcref at instantiation
+(daemon.mjs's `hostFns` loop, glue.mjs's host proxy, lrepl's
+`gen_import_lines`/`find_export` — ~80 lines across both loops). The
+image already holds every binding by exact name, so the compiler
+could instead emit a FOREIGN-BINDING ENTRY — the standard cell-reading
+trampoline plus a MUTABLE cell global the init populates from
+`hotFdefnsLookup(name)` (a stdlib function that exists); no host
+import, no funcref over the JSON boundary. Val accessors and foreign
+constructor references ride the same pattern; type recovery stays (it
+types the source, not the import).
+
+THE SEMANTIC TRADE (why parked): today an incompatible old-reference
+signature rejects the whole patch AT INSTANTIATION (clean browser
+overlay, "nothing swapped"); with cell routing the patch loads and
+the failure moves to the per-call `ref.cast` — per-binding, catchable,
+exactly SBCL's type-erased fdefinition contract, but a different
+failure mode than the gates assert. Class-cell shape rejections are
+unaffected (they die at instantiation for type reasons regardless).
+Parked pending that call; the passenger candidate found in the same
+audit: lrepl's `reset()` still wipes the IC cache on table-era "baked
+indices" grounds — with nothing baked anymore, the wipe (and the slow
+`:reset`) may be unnecessary.
+
 ## Operational notes
 
 - After `./gradlew dist`: delete the IC caches AND the cached stdlib
