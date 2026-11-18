@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
@@ -52,10 +51,8 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirJavaElementFinder(
     private val session: FirSession,
-    project: Project
+    private val psiManager: PsiManager,
 ) : PsiElementFinder(), KotlinFinderMarker, FirSessionComponent {
-    private val psiManager = PsiManager.getInstance(project)
-
     private val firProviders: List<FirProvider> = buildList {
         add(session.firProvider)
         session.collectAllDependentSourceSessions().mapTo(this) { it.firProvider }
