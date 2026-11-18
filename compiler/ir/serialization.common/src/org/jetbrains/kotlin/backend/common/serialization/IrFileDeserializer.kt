@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
@@ -225,9 +224,9 @@ class FileDeserializationStateImpl(
         // Thus we schedule their deserialization in deserializer's constructor.
         fileProto.explicitlyExportedToCompilerList.forEach {
             val symbolData = symbolDeserializer.parseSymbolData(it)
-            val sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
-            assert(!sig.isPackageSignature())
-            addIdSignature(sig.topLevelSignature())
+            val signature = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+            assert(!signature.isPackageSignature())
+            linker.getSymbolAndPutIntoQueue(signature, symbolData.kind)
         }
     }
 
