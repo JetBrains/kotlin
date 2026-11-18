@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
@@ -225,7 +226,7 @@ fun VfsBasedProjectEnvironment.psiJavaInterop(
         val psiFinderExtensionPoint = PsiElementFinder.EP.getPoint(project)
         psiFinderExtensionPoint.unregisterFinders<FirJavaElementFinder>()
 
-        val firJavaElementFinder = FirJavaElementFinder(session, project)
+        val firJavaElementFinder = FirJavaElementFinder(session, PsiManager.getInstance(project))
         session.register(FirJavaElementFinder::class, firJavaElementFinder)
         // see comment and TODO in KotlinCoreEnvironment.registerKotlinLightClassSupport (KT-64296)
         @Suppress("DEPRECATION")
