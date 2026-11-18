@@ -1,7 +1,7 @@
 // lrepl daemon: a persistent Node process holding the "live image".
 // - instantiates the STDLIB BASE once per image (it IS the image: the
 //   stdlib's hotFdefns table owns the fdefinition cells) and then every
-//   load's app DELTA against it (the ordinary cross-module
+//   module's app DELTA against it (the ordinary cross-module
 //   `__fn$`/`__vt$`/`__rt$` import channel — the multimodule port),
 // - supplies @WasmImport("host", ...) funcrefs from previously loaded instances,
 // - implements a minimal WASI with *capturing* stdout (expression results are
@@ -10,7 +10,7 @@
 //
 // Only the BASE imports WASI functions — the deltas reach I/O through the
 // base's stdlib — so one WASI closure bound to the BASE's memory captures
-// every load's output. LOAD IS APPLY: each delta's init resolves
+// every module's output. LOAD IS APPLY: each delta's init resolves
 // its bindings' cells by name against the base's table and installs its
 // impls; the daemon holds NO binding state at all.
 

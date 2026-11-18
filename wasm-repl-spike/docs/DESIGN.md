@@ -33,9 +33,9 @@ Three engine/toolchain properties do the heavy lifting (all validated in
   instantiation. Incompatible redefinitions are not representable — they
   fail loudly.
 
-## 2. The load model
+## 2. The submission model
 
-Every submission becomes one wasm module — one LOAD:
+Every submission becomes one wasm module:
 
 ```kotlin
 @file:OptIn(kotlin.wasm.ExperimentalWasmInterop::class)
@@ -51,7 +51,7 @@ Compiled (klib step, then `-Xinclude` link), instantiated, initialized
 resolves its bindings' fdefinition cells BY NAME against the image's
 table and installs its impls (§15), so the newest definition is live the
 moment loading finishes. Nothing is re-run and nothing is swept; the
-load is neither the state owner (the image's tables are — §15)
+module is neither the state owner (the image's tables are — §15)
 nor the identity owner (the shared cell is). Cost today: ~0.3 s and
 25–50 KB per line over the once-per-dist base (§7).
 
@@ -62,7 +62,7 @@ mutable function cells (`setf symbol-function`), classes redefine in
 place behind stable wrappers, and nothing is chained because
 loading code never mints a new runtime. V8 has no such instruction: new
 code must arrive as a new `WebAssembly.Instance`, and a wasm global
-cannot move between instances — the bindings and objects a load
+cannot move between instances — the bindings and objects a module
 defines live *in* it. So a submission is one `compile-file` + `load`,
 made visible only because wasm makes the loader's unit explicit; the
 chain of instances *behaves* as one image.
@@ -81,14 +81,14 @@ shrink the chain toward "one base + the last patch" (§7).
 
 | kind | how it lives in the image |
 |---|---|
-| `class` | frozen text re-declared per load; identity via rec-group unification (§6) |
+| `class` | frozen text re-declared by every module; identity via rec-group unification (§6) |
 | `fun` | cell-backed (§5): the cell-reading entry is the ABI for all callers |
-| `val`/`var` | real top-level property in its defining load + exported `name__get` (`name__set` for var) accessors; later references are rewritten to accessor calls |
+| `val`/`var` | real top-level property in its defining module + exported `name__get` (`name__set` for var) accessors; later references are rewritten to accessor calls |
 | `object` | rewritten to `class Foo__obj { … }` + a single shared instance treated like a val |
 
 - **Vals are lazy** (`WasmPropertyLazyInitLowering`): an initializer can
-  first run inside a *later* load — any WASI it uses must run
-  against the *defining* load's memory (§9). **Val redefinition**
+  first run inside a *later* module — any WASI it uses must run
+  against the *defining* module's memory (§9). **Val redefinition**
   registers a new binding; the old object stays reachable through the old
   accessor (Lisp-image semantics). Var state is shared via get/set.
 - **Type recovery**: an un-annotated val's type is read back from the
@@ -354,7 +354,7 @@ The vtable stepper is STDLIB KOTLIN (`hotVtableUpdate`), like the rest
 of the generic machinery: it looks the class up in the registry (the
 same classId → layout map) and installs the
 registered vtable + itable — old instances' dispatch keeps working
-from any load. Reactor init ordering is preserved: the glue
+from any module. Reactor init ordering is preserved: the glue
 controls instantiate → init → push (load is apply), and a patch whose
 instantiation traps never inits.
 
@@ -502,7 +502,7 @@ verdict, old code keeps running.
 
 Deliberately REPL-only: the PSI rewrite frontend (the product's Gradle
 task knows what changed), mini-WASI shims, `:dis`/binding-table UX, the
-per-line load model. Nothing load-bearing depends on them; the
+module-per-line model. Nothing load-bearing depends on them; the
 REPL stays the semantics lab where engine behaviors get discovered first.
 
 ## 9. The runtime (daemon.mjs, REPL only)
@@ -529,7 +529,7 @@ architecture as the browser loop:
   delta, instantiated against `<kotlin>` = the base's exports plus the
   driver's `host` funcrefs (previous bindings' accessors), retained
   forever (their objects and exports may be referenced by any later
-  load).
+  module).
 - **Mini-WASI** — hand-implemented `fd_write` (captured per-call stdout;
   the *only* result channel — Kotlin `String` is an opaque GC object on
   every target, §13), `random_get`, clock, environ stubs; any other WASI
@@ -617,7 +617,7 @@ operational notes.
   A *null* String prints as nothing — concatenate instead of printing
   raw nullable strings.
 - Top-level vals are lazy ⇒ initializers can fire inside other
-  loads ⇒ per-instance WASI memory.
+  modules ⇒ per-instance WASI memory.
 - Kotlin/Wasm wasi modules declare `(memory 0)` — 0 pages; the scoped
   allocator grows it via the `wasm_memory_grow` intrinsic on first use.
 - Wasm exception tags are **module-local** ⇒ JS cannot extract Kotlin

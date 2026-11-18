@@ -442,18 +442,18 @@ class SwankServer:
             if b.get("kind") == "fun":
                 lines.append(f"{name} is a function (Julia-style generic).")
                 for key, m in sorted(b["methods"].items()):
-                    lines.append(f"  method {m['sig']}  [defined by load {m['gen']}]")
+                    lines.append(f"  method {m['sig']}  [defined by module {m['gen']}]")
                 lines.append("A same-signature definition swaps the live slot; every")
                 lines.append("already-compiled caller runs the new body immediately.")
             elif b.get("kind") == "obj":
                 lines.append(f"{name} is an object; its live singleton (created in")
-                lines.append(f"load {b['gen']}) is shared across the image;")
+                lines.append(f"module {b['gen']}) is shared across the image;")
                 lines.append("redefinitions update its method bodies and keep its state.")
             else:
                 lines.append(f"{name} is a {b['kind']} of type {b.get('kotlin_type')}")
-                lines.append(f"  (defined by load {b['gen']}; state is shared across the image).")
+                lines.append(f"  (defined by module {b['gen']}; state is shared across the image).")
         if name in image.classes:
-            lines.append(f"{name} is a class. Current definition (load {image.gen}):")
+            lines.append(f"{name} is a class. Current definition (module {image.gen}):")
             for ln in image.classes[name].splitlines():
                 lines.append("  " + ln)
         if not lines:
