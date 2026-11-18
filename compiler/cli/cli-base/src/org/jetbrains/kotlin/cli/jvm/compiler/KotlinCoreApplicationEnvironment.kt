@@ -57,11 +57,10 @@ sealed interface KotlinCoreApplicationEnvironmentMode {
     }
 }
 
-class KotlinCoreApplicationEnvironment private constructor(
+open class KotlinCoreApplicationEnvironment protected constructor(
     parentDisposable: Disposable,
-    environmentMode: KotlinCoreApplicationEnvironmentMode,
-) : JavaCoreApplicationEnvironment(parentDisposable, environmentMode == KotlinCoreApplicationEnvironmentMode.UnitTest) {
-
+    unitTestMode: Boolean,
+) : JavaCoreApplicationEnvironment(parentDisposable, unitTestMode) {
     init {
         registerApplicationService(JavaFileCodeStyleFacadeFactory::class.java, DummyJavaFileCodeStyleFacadeFactory())
         if (application.getService(JavaModuleGraphHelper::class.java) == null) {
@@ -72,20 +71,6 @@ class KotlinCoreApplicationEnvironment private constructor(
 
     override fun createJrtFileSystem(): VirtualFileSystem {
         return CoreJrtFileSystem()
-    }
-
-    override fun createApplication(parentDisposable: Disposable): MockApplication {
-        val mock = super.createApplication(parentDisposable)
-
-        /**
-         * We can't use [environmentMode] from the constructor to decide whether we're in unit test mode, because the corresponding property
-         * is not yet initialized when this function is called from the superclass constructor.
-         */
-        return if (mock.isUnitTestMode) {
-            KotlinCoreUnitTestApplication(parentDisposable)
-        } else {
-            mock
-        }
     }
 
     private var fastJarFileSystemField: FastJarFileSystem? = null
@@ -189,9 +174,10 @@ class KotlinCoreApplicationEnvironment private constructor(
 
         fun create(
             parentDisposable: Disposable,
+            // TODO: replace with coreApplicationEnvironmentModeFactory parameter in the following commit
             environmentMode: KotlinCoreApplicationEnvironmentMode,
         ): KotlinCoreApplicationEnvironment {
-            val environment = KotlinCoreApplicationEnvironment(parentDisposable, environmentMode)
+            val environment = KotlinCoreApplicationEnvironment(parentDisposable, unitTestMode = false)
             registerExtensionPoints()
             registerApplicationServicesForCLI(environment)
             registerApplicationServices(environment)
@@ -268,56 +254,6 @@ class KotlinCoreApplicationEnvironment private constructor(
                 instance = null
                 environment.dispose()
             }
-        }
-    }
-}
-
-/**
- * A [MockApplication] which allows write actions only in [runWriteAction] blocks.
- *
- * The Analysis API is usually not allowed to be used from a write action. To properly support Analysis API tests, the application should
- * not return `true` for [isWriteAccessAllowed] indiscriminately like [MockApplication]. On the other hand, we have some tests which require
- * write access, but don't access the Analysis API. Hence, we remember which threads have started a write action with [runWriteAction].
- */
-private class KotlinCoreUnitTestApplication(parentDisposable: Disposable) : MockApplication(parentDisposable) {
-    override fun isUnitTestMode(): Boolean = true
-
-    override fun isWriteAccessAllowed(): Boolean = PlatformWriteAccessSupport.isWriteAccessAllowed()
-
-    override fun runWriteAction(action: Runnable) {
-        withWriteAccessAllowedInThread {
-            action.run()
-        }
-    }
-
-    override fun <T : Any?> runWriteAction(computation: Computable<T?>): T? =
-        withWriteAccessAllowedInThread { computation.compute() }
-
-    override fun <T : Any?, E : Throwable?> runWriteAction(computation: ThrowableComputable<T?, E?>): T? =
-        withWriteAccessAllowedInThread { computation.compute() }
-
-    private inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A = PlatformWriteAccessSupport.withWriteAccessAllowedInThread(action)
-}
-
-/**
- * This object is required because write access may be requested during the entire tree disposal.
- * Thus, if at that moment the application was already disposed, the information about requested write access may be lost.
- */
-private object PlatformWriteAccessSupport {
-    /**
-     * We need to remember whether write access is allowed per thread because the application can be shared between multiple concurrent test
-     * runs.
-     */
-    private val isWriteAccessAllowedInThread: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
-
-    fun isWriteAccessAllowed(): Boolean = isWriteAccessAllowedInThread.get()
-
-    inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A {
-        isWriteAccessAllowedInThread.set(true)
-        try {
-            return action()
-        } finally {
-            isWriteAccessAllowedInThread.set(false)
         }
     }
 }
