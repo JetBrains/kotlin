@@ -80,6 +80,8 @@ internal interface SwiftExportConfigurationCompat {
     fun addBinary(binary: AbstractNativeLibrary)
 
     companion object {
+        const val EXPORT_DSL_MODULE_NAME = "export { swift { moduleName = ... } }"
+
         /**
          * The configuration of the module as [integration] sees it. The settings and the dependency overrides
          * come from the integration, so every integration runs Swift Export with its own.
@@ -92,7 +94,7 @@ internal interface SwiftExportConfigurationCompat {
         ): SwiftExportConfigurationCompat =
             object : SwiftExportConfigurationCompat {
                 override val moduleName: Property<String> get() = configuration.moduleName
-                override val moduleNameDsl: String get() = "export { swift { moduleName = ... } }"
+                override val moduleNameDsl: String get() = EXPORT_DSL_MODULE_NAME
                 override val rootPackage: Property<String> get() = configuration.rootPackage
 
                 override val apiConfiguration: Provider<Configuration>
