@@ -12,6 +12,7 @@
         <list>
           <option value="generateCheckersComponents" />
           <option value=":analysis:analysis-api-fir:generateDiagnostics" />
+          <option value=":analysis:low-level-api-fir:generateDiagnostics" />
         </list>
       </option>
       <option name="vmOptions" value="" />
