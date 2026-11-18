@@ -229,7 +229,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             localRepoDir = repoDir,
             buildJdk = jdk17Info.javaHome
         ) {
-            prepareConsumerProject(consumer, producers, repoDir)
+            prepareConsumerProject(consumer, producers)
             val buildOptions = if (consumer.hasAndroid) {
                 val androidVersion = consumer.agpVersionString!!
                 defaultBuildOptions.copy(androidVersion = androidVersion)

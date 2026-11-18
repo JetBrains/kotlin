@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.test.TestMetadata
 import java.nio.file.Path
 import java.util.jar.JarFile
 import kotlin.io.path.appendText
-import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
@@ -36,7 +35,7 @@ class MppDslSourcesJarIT : KGPBaseTest() {
                   repositories {
                     maven {
                       name = "LocalRepo"
-                      url = uri("${localRepoDir.invariantSeparatorsPathString}")
+                      url = uri($localRepositoryReference)
                     }
                   }
                 }

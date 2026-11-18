@@ -153,7 +153,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
     
                     tasks.whenTaskAdded {
                         if (it.name == "kaptKotlin") {
-                          it.getInputs().files("${additionalInputs.invariantSeparatorsPathString}")
+                          it.getInputs().files("${additionalInputs.relativeTo(projectPath).invariantSeparatorsPathString}")
                         }
                     }
                     """.trimIndent()
@@ -480,7 +480,6 @@ fun TestProject.setupIncrementalAptProject(
     setupIncrementalAptProject(procType to procClass, buildFile = buildFile)
 }
 
-@OptIn(ExperimentalPathApi::class)
 fun TestProject.setupIncrementalAptProject(
     vararg processors: Pair<String, Class<*>>,
     buildFile: Path = buildGradle
@@ -490,15 +489,15 @@ fun TestProject.setupIncrementalAptProject(
 
     val updatedContent = content.replace(
         Regex("^\\s*kapt\\s\"org\\.jetbrains\\.kotlin.*$", RegexOption.MULTILINE),
-        "    kapt files(\"${processorPath.invariantSeparatorsPath}\")"
+        "    kapt files(\"${processorPath.relativeTo(buildFile.parent).invariantSeparatorsPathString}\")"
     )
     buildFile.writeText(updatedContent)
 }
 
 fun TestProject.generateProcessor(
-    vararg processors: Pair<String, Class<*>>
-): File {
-    val processorPath = projectPath.resolve("incrementalProcessor.jar").toFile()
+    vararg processors: Pair<String, Class<*>>,
+): Path {
+    val processorPath = projectPath.resolve("incrementalProcessor.jar")
 
     ZipOutputStream(processorPath.outputStream()).use {
         for ((_, procClass) in processors) {

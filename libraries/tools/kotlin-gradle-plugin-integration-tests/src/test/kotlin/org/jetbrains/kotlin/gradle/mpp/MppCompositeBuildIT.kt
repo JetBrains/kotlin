@@ -50,7 +50,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
 
         project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             resolveIdeDependencies(":consumerA") { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     regularSourceDependency(":producerBuild::producerA/commonMain"),
@@ -86,7 +86,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
 
         project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             build("cleanNativeDistributionCommonization")
 
             build("assemble") {
@@ -116,7 +116,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 freeArgs = defaultBuildOptions.freeArgs + "-Pkotlin.mpp.enableCInteropCommonization=true"
             )
         ) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             build("assemble") {
                 assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
                 assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
@@ -144,7 +144,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
 
         project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             resolveIdeDependencies(":consumerA") { dependencies ->
                 /* Pick some known dependency  and run check on it */
                 val dependency = dependencies["commonMain"].getOrFail(regularSourceDependency(":producerBuild::producerA/commonMain"))
@@ -265,7 +265,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producer = project("mpp-composite-build/sample2-withHostSpecificTargets/producerBuild", gradleVersion)
 
         project("mpp-composite-build/sample2-withHostSpecificTargets/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             build("cleanNativeDistributionCommonization")
 
             build("assemble") {
@@ -303,7 +303,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         }
 
         project("mpp-composite-build/sample2-withHostSpecificTargets/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             gradleProperties.append("kotlin.mpp.enableCInteropCommonization=true")
 
             build("cleanNativeDistributionCommonization")
@@ -324,7 +324,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producer = project("mpp-composite-build/sample3-KT-56198-singleTargetMpp-includingJvm/producerBuild", gradleVersion)
 
         project("mpp-composite-build/sample3-KT-56198-singleTargetMpp-includingJvm/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             resolveIdeDependencies(":consumerA") { dependencies ->
                 assertOutputDoesNotContain("e: org.jetbrains.kotlin.gradle.plugin.ide")
                 dependencies["commonMain"].assertMatches(
@@ -355,7 +355,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/sample4-KT-37051-withCInterop/consumerBuild", gradleVersion,
             buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail)
         ) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
 
             build(":consumerA:assemble") {
                 assertTasksExecuted(":consumerA:compileKotlinLinuxX64")
@@ -365,6 +365,11 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     private fun TestProject.includedBuildName(): String = projectPath.listDirectoryEntries("included_*").single().name
+
+    /** Replaces `"<[placeholder]>"` in the settings script with a reference to [includedBuild]'s directory. */
+    private fun TestProject.replaceIncludedBuildPath(placeholder: String, includedBuild: TestProject) {
+        settingsGradleKts.replaceText("\"<$placeholder>\"", pathReference(placeholder, includedBuild.projectPath))
+    }
 
     /**
      * Included build with `producerA` (has `clib` cinterop) and `producerB` (exposes `producerA` as `api`).
@@ -501,7 +506,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producer = project("mpp-composite-build/sample5-KT-56536-rootProject.name/producerBuild", gradleVersion)
 
         project("mpp-composite-build/sample5-KT-56536-rootProject.name/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             build("cleanNativeDistributionCommonization")
 
             build("assemble") {
@@ -527,7 +532,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producer = project("mpp-composite-build/sample5-KT-56536-rootProject.name/producerBuild", gradleVersion)
 
         project("mpp-composite-build/sample5-KT-56536-rootProject.name/consumerBuild", gradleVersion) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             resolveIdeDependencies(":consumerA") { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     regularSourceDependency(":producerBuild::producerA/commonMain"),
@@ -576,9 +581,9 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 androidVersion = agpVersion,
             ), buildJdk = jdkVersion.location
         ) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
-            settingsGradleKts.toFile().replaceText("<consumerA_path>", consumerA.projectPath.toUri().path)
-            settingsGradleKts.toFile().replaceText("<consumerB_path>", consumerB.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
+            replaceIncludedBuildPath("consumerA_path", consumerA)
+            replaceIncludedBuildPath("consumerB_path", consumerB)
 
             build(
                 ":consumerA:compileCommonMainKotlinMetadata",
@@ -620,7 +625,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleVersion,
             defaultBuildOptions
         ) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             build("projects")
         }
     }
@@ -657,7 +662,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             buildOptions = buildOptions
                 .suppressDeprecationWarnings("Old Kotlin versions produces deprecation warnings with latest Gradle release"),
         ) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             defaultKotlinNativeVersion?.let { gradleProperties.appendText("\nkotlin.native.version=$it") }
 
             build(":consumerA:assemble") {
@@ -687,7 +692,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         )
 
         project("mpp-composite-build/kt66568_duplicate_cinterop_libraries/app", gradleVersion, localRepoDir = localRepoDir) {
-            settingsGradleKts.toFile().replaceText("<lib_path>", lib.projectPath.toUri().path)
+            replaceIncludedBuildPath("lib_path", lib)
             build(":lib:publish")
             build(":app:compileLinuxMainKotlinMetadata") {
                 assertOutputDoesNotContain("""KLIB resolver.*The same 'unique_name=.*' found in more than one library""".toRegex())
@@ -729,7 +734,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = buildOptions,
         ) {
-            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            replaceIncludedBuildPath("producer_path", producer)
             defaultKotlinNativeVersion?.let { gradleProperties.appendText("\nkotlin.native.version=$it") }
 
             build("assemble") {

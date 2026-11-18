@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.createDirectories
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.readLines
+import kotlin.io.path.relativeTo
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -142,7 +144,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
                         
                         dependencies {
                             implementation "org.jetbrains.kotlin:kotlin-stdlib:${'$'}kotlin_version"
-                            kapt files("${processorPath.invariantSeparatorsPath}")
+                            kapt files("${processorPath.relativeTo(subProject("app").projectPath).invariantSeparatorsPathString}")
                         }
                         """.trimIndent()
                     )

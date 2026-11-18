@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportImpl
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -437,7 +436,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     fun `test dependency on composite build with commonized cinterops`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         val includedLib = project("composite-build-with-cinterop-commonization/includedLib", gradleVersion, localRepoDir = tempDir)
         project("composite-build-with-cinterop-commonization", gradleVersion, localRepoDir = tempDir) {
-            settingsGradleKts.replaceText("<includedLib_path>", includedLib.projectPath.toUri().toString())
+            settingsGradleKts.replaceText("\"<includedLib_path>\"", pathReference("includedLib_path", includedLib.projectPath))
             // Quick fix for: KT-58815
             build(":lib:copyCommonizeCInteropForIde")
             resolveIdeDependencies { dependencies ->
