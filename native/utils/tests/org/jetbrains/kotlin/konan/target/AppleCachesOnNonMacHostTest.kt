@@ -35,7 +35,7 @@ class AppleCachesOnNonMacHostTest {
 
         assertDoesNotThrow { platformManager.checkCanProduce(CompilerOutputKind.LIBRARY, KonanTarget.IOS_ARM64) }
         val error = assertUnavailable(platformManager, CompilerOutputKind.STATIC_CACHE, KonanTarget.IOS_ARM64)
-        assertTrue("copy 'konan/targets/ios_arm64'" in error.message!!, error.message)
+        assertTrue("its runtime, 'konan/targets/ios_arm64'" in error.message!!, error.message)
         assertThrows<NoSuchElementException> { platformManager.platform(KonanTarget.IOS_ARM64) }
     }
 
