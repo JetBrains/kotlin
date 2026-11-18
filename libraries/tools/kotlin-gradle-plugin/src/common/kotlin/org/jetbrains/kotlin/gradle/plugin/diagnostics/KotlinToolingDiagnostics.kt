@@ -2604,6 +2604,20 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KotlinCompilerPlatformUnsupported : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(taskPath: String, platform: String, compilerVersion: String, pluginVersion: String) = build {
+            title { "Kotlin compiler version does not support the platform" }
+                .description {
+                    "Task '$taskPath' cannot run because Kotlin compiler version '$compilerVersion' " +
+                            "does not support $platform compilation through the Build Tools API."
+                }
+                .solution {
+                    "Set 'kotlin.compilerVersion' to a version that supports $platform compilation, " +
+                            "or remove it to use Kotlin compiler version '$pluginVersion' of the Kotlin Gradle Plugin."
+                }
+        }
+    }
+
     internal object DuplicateJsBrowserTestFrameworkConfiguration : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,

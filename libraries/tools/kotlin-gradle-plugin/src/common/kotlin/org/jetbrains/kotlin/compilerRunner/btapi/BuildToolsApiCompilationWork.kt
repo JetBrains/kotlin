@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
+import org.jetbrains.kotlin.buildtools.api.UnsupportedToolchainException
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
@@ -157,6 +158,9 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             }
         } catch (e: CompilerArgumentsParseException) {
             throw e
+        } catch (e: UnsupportedToolchainException) {
+            // The fallback would use the same compiler, so it cannot provide the toolchain either
+            throw e
         } catch (t: Throwable) {
             fallback(t, null)
         }
@@ -231,6 +235,17 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             throwExceptionIfCompilationFailed(compilationResult.asExitCode, executionStrategy)
         } catch (e: CompilerArgumentsParseException) {
             reportArgumentsRejected(buildSession, e.message)
+            throw FailedCompilationException(e.message.orEmpty(), e)
+        } catch (e: UnsupportedToolchainException) {
+            parameters.toolingDiagnosticsCollector.orNull?.report(
+                parameters,
+                KotlinToolingDiagnostics.KotlinCompilerPlatformUnsupported(
+                    taskPath,
+                    workArguments.btaToolchain?.platformName ?: e.toolchainType.simpleName,
+                    e.compilerVersion,
+                    workArguments.kotlinPluginVersion,
+                ),
+            )
             throw FailedCompilationException(e.message.orEmpty(), e)
         } catch (e: FailedCompilationException) {
             // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
@@ -394,3 +409,11 @@ internal object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider 
 
 private fun KotlinToolchains.compilerReleaseVersion(): KotlinReleaseVersion =
     KotlinToolingVersion(getCompilerVersion()).let { KotlinReleaseVersion(it.major, it.minor, it.patch) }
+
+private val BtaToolchain.platformName: String
+    get() = when (this) {
+        BtaToolchain.JVM -> "Kotlin/JVM"
+        BtaToolchain.JS_COMPILATION, BtaToolchain.JS_LINKING -> "Kotlin/JS"
+        BtaToolchain.WASM_COMPILATION, BtaToolchain.WASM_LINKING -> "Kotlin/Wasm"
+        BtaToolchain.METADATA -> "Kotlin metadata"
+    }

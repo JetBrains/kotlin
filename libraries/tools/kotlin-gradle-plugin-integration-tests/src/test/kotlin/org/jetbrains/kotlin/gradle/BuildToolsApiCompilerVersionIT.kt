@@ -93,6 +93,24 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
             """.trimIndent()
         )
     }
+
+    @GradleTest
+    @DisplayName("Compiler version without the JS toolchain reports KotlinCompilerPlatformUnsupported without a daemon fallback")
+    fun compileJsWithCompilerVersionWithoutJsToolchain(gradleVersion: GradleVersion) {
+        project("js-per-file", gradleVersion, compilerVersion = COMPILER_WITHOUT_JS_TOOLCHAIN) {
+            buildAndFail("compileKotlinJs") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.KotlinCompilerPlatformUnsupported,
+                    withSubstring = "Kotlin compiler version '$COMPILER_WITHOUT_JS_TOOLCHAIN' does not support Kotlin/JS compilation",
+                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed)
+                assertTasksFailed(":compileKotlinJs")
+            }
+        }
+    }
 }
 
 private const val NON_EXISTENT_COMPILER = "Version.Does.Not.Exist"
+
+// The Build Tools API provides the JS toolchain since Kotlin 2.4.20
+private const val COMPILER_WITHOUT_JS_TOOLCHAIN = "2.4.0"
