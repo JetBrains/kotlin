@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.findPackage
-import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -232,11 +230,7 @@ object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, Ko
         else type.constructor.supertypes.asSequence().flatMap { computeFullErasure(it) }
     }
 
-    @OptIn(ValueClassBackendAgnosticApi::class)
-    override fun hasInlineModifier(clazz: ClassDescriptor): Boolean =
-        clazz.valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatCompatibleFullValueClassesAsInline = true) {
-            clazz.getSuperClassNotAny() != null
-        } != null
+    override fun hasInlineModifier(clazz: ClassDescriptor): Boolean = clazz.isInlineClass()
 
     override fun getNativePointedSuperclass(clazz: ClassDescriptor): ClassDescriptor? = clazz.getAllSuperClassifiers()
         .firstOrNull { it.fqNameUnsafe == InteropFqNames.nativePointed } as ClassDescriptor?
@@ -252,4 +246,3 @@ object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, Ko
 
     override fun isTopLevelClass(clazz: ClassDescriptor): Boolean = clazz.containingDeclaration is PackageFragmentDescriptor
 }
-

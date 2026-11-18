@@ -40,24 +40,5 @@ sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
 }
 
 
-/**
- * Interprets given [ValueClassRepresentation] as [InlineClassRepresentation].
- *
- * * If the actual given [ValueClassRepresentation] is an instance of [InlineClassRepresentation], the function simply returns it.
- * * A [FullValueClassRepresentation] is never interpreted as an [InlineClassRepresentation], the function returns `null` for it:
- *   the compiler does not guess whether a value class should be inline, the user has to request it explicitly.
- *
- * Both [treatCompatibleFullValueClassesAsInline] and [hasSuperClass] are unused: they used to make a [FullValueClassRepresentation]
- * with a single underlying property and no super class be interpreted as an [InlineClassRepresentation].
- * They are going to be removed together with the same parameter of the functions calling this one (KT-91357).
- *
- * @return An [InlineClassRepresentation] or `null`.
- */
-@ValueClassBackendAgnosticApi
-fun <T : RigidTypeMarker> ValueClassRepresentation<T>.interpretAsInlineClassRepresentationOrNull(
-    treatCompatibleFullValueClassesAsInline: Boolean,
-    hasSuperClass: () -> Boolean,
-): InlineClassRepresentation<T>? = this as? InlineClassRepresentation<T>
-
 @RequiresOptIn("Use backend-specific APIs instead of this one. See usages for examples.")
 annotation class ValueClassBackendAgnosticApi

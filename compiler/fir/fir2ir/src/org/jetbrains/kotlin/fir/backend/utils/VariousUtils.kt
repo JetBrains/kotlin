@@ -5,20 +5,15 @@
 
 package org.jetbrains.kotlin.fir.backend.utils
 
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
-import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isClass
-import org.jetbrains.kotlin.fir.declarations.valueClassRepresentation
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -164,21 +159,15 @@ fun IrType.getArrayElementType(builtins: Fir2IrBuiltinSymbolsContainer): IrType 
     }
 }
 
-@OptIn(ValueClassBackendAgnosticApi::class)
-fun FirCallableSymbol<*>.isPotentialInlineClassProperty(session: FirSession): Boolean {
-    if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || hasContextParameters) return false
-    val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
-    // when we are not sure if the class is full value class or basic value class,
-    // treat it better as potential inline class when not sure
-    val inlineClassRepresentation = containingClass.valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(
-        treatCompatibleFullValueClassesAsInline = true,
-        hasSuperClass = {
-            val superClassSymbol = containingClass.getSuperClassSymbolOrAny(session)
-            superClassSymbol?.classId != StandardClassIds.Any && superClassSymbol?.isClass == true
-        },
-    ) ?: return false
-    return inlineClassRepresentation.underlyingPropertyName == this.name
-}
+val FirCallableSymbol<*>.isInlineClassProperty: Boolean
+    get() {
+        if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || hasContextParameters) {
+            return false
+        }
+        val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
+        val inlineClassRepresentation = containingClass.inlineClassRepresentation ?: return false
+        return inlineClassRepresentation.underlyingPropertyName == this.name
+    }
 
 fun FirBasedSymbol<*>.shouldHaveReceiver(session: FirSession): Boolean =
     !fir.hasAnnotation(StandardClassIds.Annotations.jsNoDispatchReceiver, session)

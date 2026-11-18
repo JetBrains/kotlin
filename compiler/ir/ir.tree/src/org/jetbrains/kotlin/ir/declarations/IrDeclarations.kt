@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
-import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
 import java.io.File
@@ -81,10 +79,7 @@ val IrFunction.isPropertyAccessor: Boolean
  */
 @ValueClassBackendAgnosticApi
 fun IrClass.inlineClassRepresentation(treatCompatibleFullValueClassesAsInline: Boolean): InlineClassRepresentation<IrSimpleType>? =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(
-        treatCompatibleFullValueClassesAsInline = treatCompatibleFullValueClassesAsInline,
-        hasSuperClass = { superClass != null }
-    )
+    valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
 
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
