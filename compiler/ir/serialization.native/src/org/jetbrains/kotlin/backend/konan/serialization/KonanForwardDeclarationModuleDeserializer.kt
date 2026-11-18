@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.and
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -99,9 +99,7 @@ internal class KonanForwardDeclarationModuleDeserializer(
         )
 
         @OptIn(IrLinkerInternalApi::class)
-        val superClassSymbol = linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
-            superClassSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL, this
-        ) as IrClassSymbol
+        val superClassSymbol = linker.findAndEnqueueSymbolOrUnbound(superClassSignature and CLASS_SYMBOL,) as IrClassSymbol
         clazz.superTypes = listOf(superClassSymbol.defaultTypeWithoutArguments)
 
         val irPackage = getOrCreateContainingPackage(kind.packageFqName)

@@ -86,8 +86,6 @@ abstract class IrModuleDeserializer(
      */
     abstract val contributedPackageNames: Set<FqName>?
 
-    open val preferLinkingToTheCurrentModule: Boolean get() = true
-
     /**
      * Looks up the symbol with the given [SignatureAndKind.signature] and [SignatureAndKind.kind] in this module and schedules
      * the corresponding declaration for deserialization.
