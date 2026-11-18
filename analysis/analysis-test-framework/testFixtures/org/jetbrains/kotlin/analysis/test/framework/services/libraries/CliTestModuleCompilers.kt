@@ -35,6 +35,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
     protected abstract fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String>
 
     protected abstract fun doCompile(
+        module: TestModule,
         sourcesPath: Path,
         options: List<String>,
         libraryOutputPath: Path,
@@ -61,6 +62,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         val library = try {
             val outputPath = libraryOutputPath(sourcesTempDirectory, libraryName)
             doCompile(
+                module,
                 sourcesTempDirectory,
                 buildCompilerOptions(module, testServices, commonSourcesTempDirectory),
                 outputPath,
@@ -194,7 +196,7 @@ abstract class JvmTestModuleCompiler : CliTestModuleCompiler() {
     }
 
     override fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String> = buildList {
-        module.directives[JvmEnvironmentConfigurationDirectives.JVM_TARGET].firstOrNull()?.let { jvmTarget ->
+        module.jvmTarget?.let { jvmTarget ->
             addAll(listOf(K2JVMCompilerArguments::jvmTarget.cliArgument, jvmTarget.description))
 
             val jdkHome = when {
@@ -223,33 +225,51 @@ abstract class JvmTestModuleCompiler : CliTestModuleCompiler() {
     }
 
     /**
-     * Compiles the sources at [sourcesPath] into a JAR called [jarName] next to them.
+     * Compiles the sources of [module] at [sourcesPath] into a JAR called [jarName] next to them.
      *
-     * Java sources are compiled by the `javac` of the test JVM. An external `javac` would start a separate JVM for each library, which
-     * would take most of the time of tests whose libraries contain Java sources.
+     * Java sources are compiled by the `javac` of the test JVM for the JVM target of [module], which the test JVM has to support. An
+     * external `javac` would start a separate JVM for each library, which would take most of the time of tests whose libraries contain
+     * Java sources.
      */
-    protected fun compileToJar(sourcesPath: Path, jarName: String, options: List<String>, extraClasspath: List<String>) {
+    protected fun compileToJar(
+        module: TestModule,
+        sourcesPath: Path,
+        jarName: String,
+        options: List<String>,
+        extraClasspath: List<String>,
+    ) {
         MockLibraryUtil.compileLibraryToJar(
             sourcesPath = sourcesPath.absolutePathString(),
             contentDir = sourcesPath.toFile(),
             jarName = jarName,
             extraOptions = options,
+            extraJavacOptions = listOf("--release", (module.jvmTarget ?: JvmTarget.DEFAULT).javaRelease),
             extraClasspath = extraClasspath,
         )
     }
 }
+
+private val TestModule.jvmTarget: JvmTarget?
+    get() = directives[JvmEnvironmentConfigurationDirectives.JVM_TARGET].firstOrNull()
+
+/**
+ * The Java release of this JVM target in the form that `javac --release` accepts, e.g., `8` for `1.8`.
+ */
+private val JvmTarget.javaRelease: String
+    get() = description.removePrefix("1.")
 
 object JvmJarTestModuleCompiler : JvmTestModuleCompiler() {
     override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =
         inputPath / "$libraryName.jar"
 
     override fun doCompile(
+        module: TestModule,
         sourcesPath: Path,
         options: List<String>,
         libraryOutputPath: Path,
         extraClasspath: List<String>,
     ) {
-        compileToJar(sourcesPath, libraryOutputPath.nameWithoutExtension, options, extraClasspath)
+        compileToJar(module, sourcesPath, libraryOutputPath.nameWithoutExtension, options, extraClasspath)
     }
 }
 
@@ -268,6 +288,7 @@ object JvmAbiTestModuleCompiler : JvmTestModuleCompiler() {
         inputPath / "$libraryName-abi.jar"
 
     override fun doCompile(
+        module: TestModule,
         sourcesPath: Path,
         options: List<String>,
         libraryOutputPath: Path,
@@ -275,7 +296,8 @@ object JvmAbiTestModuleCompiler : JvmTestModuleCompiler() {
     ) {
         val pluginJar = ForTestCompileRuntime.getFileFromProperty(JVM_ABI_GEN_JAR_PATH_PROPERTY)
         compileToJar(
-            sourcesPath,
+            module = module,
+            sourcesPath = sourcesPath,
             // The plugin writes the ABI JAR to `libraryOutputPath`, so the compiler's own output has to go to a separate JAR.
             jarName = "${libraryOutputPath.nameWithoutExtension}-full",
             options = options + listOf(
@@ -296,6 +318,7 @@ object JsKlibTestModuleCompiler : CliTestModuleCompiler() {
     }
 
     override fun doCompile(
+        module: TestModule,
         sourcesPath: Path,
         options: List<String>,
         libraryOutputPath: Path,
@@ -339,6 +362,7 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
     }
 
     override fun doCompile(
+        module: TestModule,
         sourcesPath: Path,
         options: List<String>,
         libraryOutputPath: Path,
