@@ -28,8 +28,8 @@ class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copy(
             // disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
             enableJvmIncrementalCompilationOfCommonSources = true,
-            enableJsUnsafeIncrementalCompilationForMultiplatform = true,
-            enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJsIncrementalCompilationOfCommonSources = true,
+            enableWasmIncrementalCompilationOfCommonSources = true,
             buildReport = listOf(BuildReportType.FILE),
         )
 
