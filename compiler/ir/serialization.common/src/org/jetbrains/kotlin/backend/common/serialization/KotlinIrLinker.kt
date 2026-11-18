@@ -269,9 +269,7 @@ abstract class KotlinIrLinker(
                 // Symbol could get bound as a side effect of deserializing other symbols.
                 if (!symbol.isBound && triedToDeserializeDeclarationForSymbol.add(symbol)) {
                     val signature = symbol.signature ?: continue
-                    // TODO (KT-91417): Need to make it without an excessive IrModuleDeserializer.contains() call!
-                    firstModuleDeserializerOrNull(signature.packageFqName()) { signature in it }
-                        ?.tryDeserializeIrSymbol(signature, symbol.kind())
+                    getSymbolAndPutIntoQueue(signature, symbol.kind())
                 }
             }
             deserializeAllReachableTopLevels()
@@ -327,6 +325,7 @@ abstract class KotlinIrLinker(
      * @return The symbol for the given signature and kind if successfully found; otherwise, null.
      */
     fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
+        // TODO (KT-91417): Need to make it without an excessive IrModuleDeserializer.contains() call!
         val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
         return moduleDeserializer.tryDeserializeIrSymbol(signature, kind).also {
             if (finished) deserializeAllReachableTopLevels()
