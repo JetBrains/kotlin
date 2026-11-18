@@ -27,17 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
  */
 @KtExperimentalApi
 fun KtNameReferenceExpression.lookupLocally(): KtNamedDeclaration? {
-    val containingFile = containingFile
-    if (containingFile.originalFile != containingFile) {
-        return null
-    }
-
-    val contextKind = LookupLocallyInternals.getContextKind(this) ?: return null
-
-    return when (contextKind) {
-        is VALUE -> ValueLocalReferenceTargetLookupVisitor(this, contextKind.strict).lookup().toResult()
-        TYPE -> TypeLocalReferenceTargetLookupVisitor(this).lookup().toResult()
-    }
+    return LookupLocallyInternals.doLookup(this@lookupLocally).toResult()
 }
 
 private val KtElement.nonContainerParent: KtElement?
@@ -113,38 +103,14 @@ private fun LocalReferenceTargetLookupVisitor.availableNameElementSequence(): Se
     }
 }
 
-private sealed interface LookupResult {
-    data class Found(val declaration: KtNamedDeclaration) : LookupResult
-    data object Stopped : LookupResult
-    data object NotFound : LookupResult
-}
-
-private fun LookupResult.toResult() = when (this) {
+private fun LookupLocallyInternals.LookupResult.toResult() = when (this) {
     is Found -> declaration
     is Stopped -> null
-    NotFound -> null
-}
-
-private fun LocalReferenceTargetLookupVisitor.lookup(): LookupResult {
-    val availableNameElementSequence = availableNameElementSequence()
-
-    var previousElement: KtElement? = null
-
-    for ([element, direction] in availableNameElementSequence) {
-        element.accept(this, VisitorContext(direction, previousElement))
-        if (_stopResolution) return LookupResult.Stopped
-
-        _found?.let { return LookupResult.Found(it) }
-
-        previousElement = element
-    }
-
-    return LookupResult.NotFound
+    NotFound, ImpossibleToPerform -> null
 }
 
 private class ValueLocalReferenceTargetLookupVisitor(
     element: KtNameReferenceExpression,
-    val strict: Boolean,
 ) : LocalReferenceTargetLookupVisitor(element) {
     private var constructorParametersAllowed: Boolean = false
     private var usePrimaryConstructorProperties: Boolean = false
@@ -282,18 +248,19 @@ private class ValueLocalReferenceTargetLookupVisitor(
     override fun visitClass(klass: KtClass, data: VisitorContext) {
         super.visitClass(klass, data)
 
-        if (strict) {
-            if (name == klass.nameAsSafeName) {
-                //            object A
-                //            fun f() {
-                //                class A { companion object }
-                //                A
-                //                ^ this A should resolve to the companion object
-                //            }
-                //
-                // note: only in value context, in a `::class` literal (!strict context), we should resolve to the local `class A`
-                klass.companionObjects.firstOrNull()?.let(::found)
-            }
+        if (name == klass.nameAsSafeName) {
+//            fun f() {
+//                val x = 1
+//                run {
+//                    @Serializable // serializable generates a companion object, to which the x below resolves
+//                    class x {
+//                    }
+//
+//                    val a = <expr>x</expr>
+//                }
+//            }
+            // in this case, we cannot resolve the name, as it might be to a compiler-plugin generated companion object
+            stopResolution()
         }
 
         data.parentOnly {
@@ -488,9 +455,8 @@ private val IMPLICIT_LAMBDA_PARAMETER: Name = Name.identifier("it")
 @KtImplementationDetail
 object LookupLocallyInternals {
     @KtImplementationDetail
-    sealed interface ContextKind {
-        data class VALUE(val strict: Boolean = true) : ContextKind
-        data object TYPE : ContextKind
+    enum class ContextKind {
+        VALUE, TYPE
     }
 
     @KtImplementationDetail
@@ -506,11 +472,10 @@ object LookupLocallyInternals {
             is KtDotQualifiedExpression,
             is KtSafeQualifiedExpression,
                 -> {
-                ContextKind.VALUE().takeIf { p.receiverExpression == expression }
+                VALUE.takeIf { p.receiverExpression == expression }
             }
             is KtUserType -> {
-                ContextKind.TYPE
-                    .takeIf { p.qualifier == null && (p.referenceExpression == expression) }
+                TYPE.takeIf { p.qualifier == null && (p.referenceExpression == expression) }
             }
             // We can use types in a class literal expression as well, but between a non-local variable and a local class of the same name,
             // the compiler picks the non-local variable. I.e. in this case:
@@ -524,24 +489,24 @@ object LookupLocallyInternals {
             //
             // So we can only resolve local variables in class literal expressions, trying to resolve types causes it to be unsound
             // because of the above.
-            is KtClassLiteralExpression -> VALUE(false)
+            is KtClassLiteralExpression -> VALUE
             is KtProperty -> {
-                ContextKind.VALUE().takeIf { p.delegateExpressionOrInitializer == expression }
+                VALUE.takeIf { p.delegateExpressionOrInitializer == expression }
             }
             is KtDestructuringDeclaration -> {
-                ContextKind.VALUE().takeIf { p.initializer == expression }
+                VALUE.takeIf { p.initializer == expression }
             }
             is KtNamedFunction -> {
-                ContextKind.VALUE().takeIf { p.bodyExpression == expression }
+                VALUE.takeIf { p.bodyExpression == expression }
             }
             is KtPropertyAccessor -> {
-                ContextKind.VALUE().takeIf { p.bodyExpression == expression }
+                VALUE.takeIf { p.bodyExpression == expression }
             }
             is KtParameter -> {
-                ContextKind.VALUE().takeIf { p.defaultValue == expression }
+                VALUE.takeIf { p.defaultValue == expression }
             }
             is KtDelegatedSuperTypeEntry -> {
-                if (p.delegateExpression == expression) return VALUE()
+                if (p.delegateExpression == expression) return VALUE
 
                 TYPE
             }
@@ -563,7 +528,7 @@ object LookupLocallyInternals {
             is KtSimpleNameStringTemplateEntry,
             is KtWhenConditionWithExpression,
             is KtWhenEntry,
-                -> VALUE()
+                -> VALUE
             is KtTypeConstraint -> TYPE
             else -> null
         }
@@ -571,6 +536,53 @@ object LookupLocallyInternals {
     @KtImplementationDetail
     @TestOnly
     fun canPerformLocalLookup(expression: KtNameReferenceExpression): Boolean = getContextKind(expression) != null
+
+    @KtImplementationDetail
+    fun doLookup(expression: KtNameReferenceExpression): LookupResult {
+        val containingFile = expression.containingFile
+        if (containingFile.originalFile != containingFile) {
+            return LookupResult.ImpossibleToPerform
+        }
+
+        val contextKind = getContextKind(expression) ?: return LookupResult.ImpossibleToPerform
+
+        return when (contextKind) {
+            VALUE -> ValueLocalReferenceTargetLookupVisitor(expression).lookup()
+            TYPE -> TypeLocalReferenceTargetLookupVisitor(expression).lookup()
+        }
+    }
+
+    @KtImplementationDetail
+    sealed interface LookupResult {
+        @KtImplementationDetail
+        data class Found(val declaration: KtNamedDeclaration) : LookupResult
+
+        @KtImplementationDetail
+        data object Stopped : LookupResult
+
+        @KtImplementationDetail
+        data object NotFound : LookupResult
+
+        @KtImplementationDetail
+        data object ImpossibleToPerform : LookupResult
+    }
+
+    private fun LocalReferenceTargetLookupVisitor.lookup(): LookupResult {
+        val availableNameElementSequence = availableNameElementSequence()
+
+        var previousElement: KtElement? = null
+
+        for ([element, direction] in availableNameElementSequence) {
+            element.accept(this, VisitorContext(direction, previousElement))
+            if (_stopResolution) return LookupResult.Stopped
+
+            _found?.let { return LookupResult.Found(it) }
+
+            previousElement = element
+        }
+
+        return LookupResult.NotFound
+    }
 }
 
 private enum class LastDirection {

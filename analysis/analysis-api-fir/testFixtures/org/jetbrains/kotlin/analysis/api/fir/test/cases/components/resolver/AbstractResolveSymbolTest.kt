@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus
 import org.jetbrains.kotlin.analysis.api.expressions.isImplicitReferenceToCompanion
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDanglingTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.stringRepresentation
@@ -197,6 +196,9 @@ private fun KaSymbol.canPerformLocalLookup(
     if (origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED) return false
     if (!LookupLocallyInternals.canPerformLocalLookup(startingReference)) return false
 
+    if (LookupLocallyInternals.doLookup(startingReference) == LookupLocallyInternals.LookupResult.Stopped)
+        return false
+
     fun crossesNonLocalBoundary(): Boolean {
         val commonParent = PsiTreeUtil.findCommonParent(startingReference, this.psi)
         return generateSequence<PsiElement>(startingReference) { it.parent }
@@ -219,7 +221,7 @@ private fun KaSymbol.canPerformLocalLookup(
             }
         }
         is KaClassSymbol -> {
-            if (localLookupContextKind is LookupLocallyInternals.ContextKind.VALUE) {
+            if (localLookupContextKind == LookupLocallyInternals.ContextKind.VALUE) {
                 // object A
                 // fun f() {
                 //     class A
