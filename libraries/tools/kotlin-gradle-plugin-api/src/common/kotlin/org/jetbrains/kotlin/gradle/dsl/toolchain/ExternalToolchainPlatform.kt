@@ -26,9 +26,12 @@ class ExternalToolchainPlatform(
     @get:Input
     val arch: String,
 ) : Serializable {
+
+    /** @suppress */
     override fun equals(other: Any?): Boolean =
         this === other || other is ExternalToolchainPlatform && os == other.os && arch == other.arch
 
+    /** @suppress */
     override fun hashCode(): Int = 31 * os.hashCode() + arch.hashCode()
 
     /** Returns the platform in the `<os>-<arch>` format, for example `linux-x86_64`. */
