@@ -67,6 +67,10 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases")
+}
+
 if (!kotlinBuildProperties.isTeamcityBuild.get()) {
     testDataManager {
         // Ensure golden tests run first: `analysis-api-fir` and `low-level-api-fir` write the `.txt` files that the Standalone tests
