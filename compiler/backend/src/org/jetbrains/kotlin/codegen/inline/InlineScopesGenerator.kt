@@ -89,13 +89,15 @@ class InlineScopesGenerator {
             return rootNode
         }
 
+        // Returns the highest scope number given out, relative to `inlinedScopes`. It may exceed the number of markers:
+        // the scope numbers of an already inlined body have gaps where markers were dropped, e.g. in `@InlineOnly` functions.
         private fun renameVariables(rootNode: InlineScopeNode): Int {
-            var seenInlineScopesNumber = 0
+            var maxScopeNumber = 0
             val nodeStack = mutableListOf<InlineScopeNode>()
             nodeStack.addAll(rootNode.children)
             while (nodeStack.isNotEmpty()) {
                 val node = nodeStack.removeLast()
-                seenInlineScopesNumber += 1
+                maxScopeNumber = maxOf(maxScopeNumber, node.scopeNumber)
                 with(node) {
                     markerVariable!!.name = computeNewVariableName(
                         markerVariable.name,
@@ -117,7 +119,7 @@ class InlineScopesGenerator {
                 nodeStack.addAll(node.children)
             }
 
-            return seenInlineScopesNumber
+            return maxScopeNumber
         }
 
         private fun InlineScopeNode.findClosestSurroundingScope(

@@ -65,7 +65,8 @@ object IrInlineDefaultCodegen : IrInlineCallGenerator {
                 // while inlining default argument values. Shift them to keep the numbering of the
                 // stub consecutive.
                 if (JvmAbi.isFakeLocalVariableForInline(name)) {
-                    copiedScopes += 1
+                    // The copied numbers may have gaps, so skip past the highest one instead of counting the markers.
+                    copiedScopes = maxOf(copiedScopes, info.scopeNumber)
                 }
                 super.visitLocalVariable(name.shiftScopeNumbers(info, scopeNumberOffset), desc, signature, start, end, index)
             }
