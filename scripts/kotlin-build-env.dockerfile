@@ -35,11 +35,11 @@ RUN curl https://corretto.aws/downloads/resources/8.512.09.1/amazon-corretto-8.5
 
 RUN curl https://corretto.aws/downloads/resources/11.0.33.0.10/amazon-corretto-11.0.33.0.10-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://corretto.aws/downloads/resources/17.0.21.0.11/amazon-corretto-17.0.21.0.11-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://corretto.aws/downloads/resources/17.0.21.1.2/amazon-corretto-17.0.21.1.2-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://corretto.aws/downloads/resources/21.0.13.0.11/amazon-corretto-21.0.13.0.11-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://corretto.aws/downloads/resources/21.0.13.1.2/amazon-corretto-21.0.13.1.2-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://corretto.aws/downloads/resources/25.0.5.0.10/amazon-corretto-25.0.5.0.10-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://corretto.aws/downloads/resources/25.0.5.1.2/amazon-corretto-25.0.5.1.2-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
 RUN curl https://download.java.net/java/early_access/jdk28/21/GPL/openjdk-28-ea+21_${JDK_PLATFORM_SUFFIX}_bin.tar.gz | tar -xz -C /usr/lib/jvm
 
