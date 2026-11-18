@@ -676,6 +676,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     @OptIn(ExperimentalArgumentApi::class)

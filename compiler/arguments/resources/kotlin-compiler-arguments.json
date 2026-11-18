@@ -18824,7 +18824,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": false,
-                                        "restrictedToCompilerPhase": null,
+                                        "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
