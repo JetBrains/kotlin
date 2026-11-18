@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.js.disableNpmLockFileValidations
 import org.jetbrains.kotlin.gradle.util.setupCustomKgpNpmToolingDependenciesDir
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.*
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInGradle
 @GradleTestVersions(
     // Test does not depend on Gradle-version specifics.
     // If these tests fail in older Gradle versions, it's probably a Gradle bug.
@@ -45,7 +47,7 @@ sealed class KotlinWebpackUpToDateIT(
     }
 
     @GradleTest
-    @MppGradlePluginTests
+    @WasmJsGradlePluginTests
     fun `testChangingNpmDepVersion - wasmjs`(gradleVersion: GradleVersion) {
         testChangingNpmDepVersion(gradleVersion, buildTaskPath = ":sp1:wasmJsBrowserDevelopmentWebpack")
     }
@@ -135,7 +137,7 @@ sealed class KotlinWebpackUpToDateIT(
     }
 
     @GradleTest
-    @MppGradlePluginTests
+    @WasmJsGradlePluginTests
     fun `test file npm dependency disables caching - wasmjs`(gradleVersion: GradleVersion) {
         testFileNpmDependencyDisablesCaching(gradleVersion, buildTaskPath = ":sp2:wasmJsBrowserDevelopmentWebpack")
     }

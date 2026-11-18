@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppDslSourceSetsIT : KGPBaseTest() {
 
     @GradleTest

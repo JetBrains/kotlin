@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.junit.jupiter.api.Timeout
 import java.io.PipedInputStream
@@ -32,6 +33,7 @@ import kotlin.time.TimeSource
  *- A bug (in KGP, or configuration of the external processes) could cause the Gradle build, and thus daemon, to hang.
  *  Using independent daemons per-test means one hanging test won't affect others.
  */
+@MustRunOnChangesInGradle
 class JsContinuousBuildIT : AbstractWebContinuousBuildIT() {
     @GradleTest
     @TestMetadata("js-run-continuous")
