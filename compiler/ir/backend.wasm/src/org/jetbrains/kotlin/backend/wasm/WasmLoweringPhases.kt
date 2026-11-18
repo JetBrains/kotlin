@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,20 +23,8 @@ import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorL
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
 
-private fun createKotlinNothingValueExceptionPhase(context: CommonBackendContext): KotlinNothingValueExceptionLowering {
-    return KotlinNothingValueExceptionLowering(context)
-}
-
-private fun createSharedVariablesLoweringPhase(context: LoweringContext): SharedVariablesLowering {
-    return SharedVariablesLowering(context)
-}
-
 private fun createSpecializeSharedVariableBoxesPhase(context: WasmBackendContext): SharedVariablesPrimitiveBoxSpecializationLowering {
     return SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols)
-}
-
-private fun createSyntheticAccessorGenerationPhase(context: LoweringContext): SyntheticAccessorLowering {
-    return SyntheticAccessorLowering(context)
 }
 
 private fun createUpgradeCallableReferences(context: LoweringContext): UpgradeCallableReferences {
@@ -56,14 +44,6 @@ private fun createCaptureRichFunctionReferenceLocals(context: LoweringContext): 
 @Suppress("unused")
 private fun createInventNamesForLocalFunctionsPhase(context: LoweringContext): KlibInventNamesForLocalFunctions{
     return KlibInventNamesForLocalFunctions()
-}
-
-private fun createLocalDeclarationsLoweringPhase(context: LoweringContext): LocalDeclarationsLowering {
-    return LocalDeclarationsLowering(context)
-}
-
-private fun createDefaultParameterCleanerPhase(context: CommonBackendContext): DefaultParameterCleaner {
-    return DefaultParameterCleaner(context)
 }
 
 //@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
@@ -90,12 +70,12 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::InlineCallCycleCheckerLowering,
     ::createUpgradeCallableReferences,
     ::LateinitLowering,
-    ::createSharedVariablesLoweringPhase,
+    ::SharedVariablesLowering,
     ::LocalClassesInInlineLambdasLowering,
     ::ArrayConstructorLowering,
     ::WasmPrivateFunctionInlining,
     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
-    ::createSyntheticAccessorGenerationPhase,
+    ::SyntheticAccessorLowering,
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
     ::IrValidationAfterInliningPrivateFunctionsKlibPhase,
@@ -138,7 +118,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::createCaptureRichFunctionReferenceLocals,
     ::WasmCallableReferenceLowering,
     ::createInventNamesForLocalFunctionsPhase,
-    ::createLocalDeclarationsLoweringPhase,
+    ::LocalDeclarationsLowering,
     ::LocalDeclarationPopupLowering,
     ::InnerClassesLowering,
     ::InnerClassesMemberBodyLowering,
@@ -177,7 +157,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     // functions have been lowered so that suspend functions
     // declared to return nothing get a chance to get lowered
     // without the exception being inserted.
-    ::createKotlinNothingValueExceptionPhase,
+    ::KotlinNothingValueExceptionLowering,
 
     ::InvokeOnExportedFunctionExitLowering,
 
@@ -188,7 +168,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::WasmDefaultArgumentStubGenerator,
     ::WasmDefaultParameterPatchOverridenSymbolsLowering,
     ::WasmDefaultParameterInjector,
-    ::createDefaultParameterCleanerPhase,
+    ::DefaultParameterCleaner,
 
     ::WasmPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
