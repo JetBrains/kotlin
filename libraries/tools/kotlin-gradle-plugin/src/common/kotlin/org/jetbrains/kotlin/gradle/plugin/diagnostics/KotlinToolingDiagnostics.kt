@@ -2675,6 +2675,26 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KotlinCompilerVersionWithoutBuildToolsApi : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(taskPath: String, compilerVersion: String, pluginVersion: String, propertyName: String) = build {
+            title { "Kotlin compiler version cannot be applied without the Build Tools API" }
+                .description {
+                    "Task '$taskPath' cannot use Kotlin compiler version '$compilerVersion' set via 'kotlin.compilerVersion' " +
+                            "because '$propertyName=false' disables the Build Tools API.\n" +
+                            "Such a task can only use version '$pluginVersion', which matches the Kotlin Gradle Plugin."
+                }
+                .solutions {
+                    listOf(
+                        "To use Kotlin compiler version '$compilerVersion', remove '$propertyName=false'.",
+                        "To keep the Build Tools API disabled, remove 'kotlin.compilerVersion'.",
+                    )
+                }
+                .documentationLink(URI("https://kotl.in/build-tools-api-compiler-versions")) { url ->
+                    "Learn more about using a different Kotlin compiler version: $url"
+                }
+        }
+    }
+
     internal object DuplicateJsBrowserTestFrameworkConfiguration : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
