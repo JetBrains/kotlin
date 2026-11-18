@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.kapt
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
@@ -50,7 +49,7 @@ open class FirKaptAnalysisHandlerExtension(
         return configuration[KAPT_OPTIONS] != null && !configuration.skipBodies
     }
 
-    override fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean {
+    override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
         val optionsBuilder = configuration[KAPT_OPTIONS]!!
         logger = kaptLogger ?: CompilerConfigurationBackedKaptLogger(
             KaptFlag.VERBOSE in optionsBuilder.flags,
@@ -59,7 +58,6 @@ open class FirKaptAnalysisHandlerExtension(
         )
 
         optionsBuilder.apply {
-            projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
             val contentRoots = configuration.contentRoots
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmModulePathRoot>().map { it.file })
