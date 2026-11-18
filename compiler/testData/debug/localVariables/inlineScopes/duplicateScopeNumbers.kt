@@ -31,21 +31,21 @@ fun box() {
 // test.kt:7 box: n:int=1:int, $i$f$wrap\1\20:int=0:int
 // test.kt:21 box: n:int=1:int, $i$f$wrap\1\20:int=0:int, $i$a$-wrap-TestKt$box$1\2\75\0:int=0:int
 // test.kt:22 box: n:int=1:int, $i$f$wrap\1\20:int=0:int, $i$a$-wrap-TestKt$box$1\2\75\0:int=0:int
-// test.kt:10 box: n:int=1:int, $i$f$wrap\1\20:int=0:int, $i$a$-wrap-TestKt$box$1\2\75\0:int=0:int, x\4:int=1:int, $i$f$get\4\22:int=0:int
-// test.kt:11 box: n:int=1:int, $i$f$wrap\1\20:int=0:int, $i$a$-wrap-TestKt$box$1\2\75\0:int=0:int, x\4:int=1:int, $i$f$get\4\22:int=0:int, y\4:int=2:int
+// test.kt:10 box: n:int=1:int, $i$f$wrap\1\20:int=0:int, $i$a$-wrap-TestKt$box$1\2\75\0:int=0:int, x\3:int=1:int, $i$f$get\3\22:int=0:int
+// test.kt:11 box: n:int=1:int, $i$f$wrap\1\20:int=0:int, $i$a$-wrap-TestKt$box$1\2\75\0:int=0:int, x\3:int=1:int, $i$f$get\3\22:int=0:int, y\3:int=2:int
 // test.kt:22 box: n:int=1:int, $i$f$wrap\1\20:int=0:int, $i$a$-wrap-TestKt$box$1\2\75\0:int=0:int
 // test.kt:23 box: n:int=1:int, $i$f$wrap\1\20:int=0:int, $i$a$-wrap-TestKt$box$1\2\75\0:int=0:int, a\2:int=2:int
 // test.kt:7 box: n:int=1:int, $i$f$wrap\1\20:int=0:int
 // test.kt:24 box: n:int=1:int
-// fake.kt:1 box: n:int=1:int, it\5:int=2:int
-// test.kt:24 box: n:int=1:int, it\5:int=2:int, $i$a$-also-TestKt$box$2\5\24\0:int=0:int
+// fake.kt:1 box: n:int=1:int, it\4:int=2:int
+// test.kt:24 box: n:int=1:int, it\4:int=2:int, $i$a$-also-TestKt$box$2\4\24\0:int=0:int
 // test.kt:25 box: n:int=1:int
-// test.kt:15 box: n:int=1:int, $i$f$withStop\6\25:int=0:int
-// test.kt:25 box: n:int=1:int, $i$f$withStop\6\25:int=0:int, $i$a$-withStop-TestKt$box$3\9\78\0:int=0:int
-// test.kt:15 box: n:int=1:int, $i$f$withStop\6\25:int=0:int
-// fake.kt:1 box: n:int=1:int, $i$f$withStop\6\25:int=0:int, e\8:java.lang.Throwable=java.lang.IllegalStateException
-// test.kt:15 box: n:int=1:int, $i$f$withStop\6\25:int=0:int, e\8:java.lang.Throwable=java.lang.IllegalStateException, $i$a$-onFailure-TestKt$withStop$1\8\78\6:int=0:int
-// test.kt:16 box: n:int=1:int, $i$f$withStop\6\25:int=0:int
+// test.kt:15 box: n:int=1:int, $i$f$withStop\5\25:int=0:int
+// test.kt:25 box: n:int=1:int, $i$f$withStop\5\25:int=0:int, $i$a$-withStop-TestKt$box$3\7\78\0:int=0:int
+// test.kt:15 box: n:int=1:int, $i$f$withStop\5\25:int=0:int
+// fake.kt:1 box: n:int=1:int, $i$f$withStop\5\25:int=0:int, e\6:java.lang.Throwable=java.lang.IllegalStateException
+// test.kt:15 box: n:int=1:int, $i$f$withStop\5\25:int=0:int, e\6:java.lang.Throwable=java.lang.IllegalStateException, $i$a$-onFailure-TestKt$withStop$1\6\78\5:int=0:int
+// test.kt:16 box: n:int=1:int, $i$f$withStop\5\25:int=0:int
 // test.kt:26 box: n:int=1:int
 
 // EXPECTATIONS JVM

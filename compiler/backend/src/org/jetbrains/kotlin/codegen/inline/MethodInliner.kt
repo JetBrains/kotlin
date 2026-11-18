@@ -149,6 +149,8 @@ class MethodInliner(
 
     private fun doInline(node: MethodNode, inlinedFunctionMarkerVariableName: String?): MethodNode {
         val currentInvokes = LinkedList(invokeCalls)
+        // Lambdas called before the first line number of the inlined method, e.g., in a synthetic one, get its call site.
+        val callSiteLineNumberOfInlinedMethod = inliningContext.inlineScopesGenerator?.currentCallSiteLineNumber ?: 0
 
         val resultNode = MethodNode(node.access, node.name, node.desc, node.signature, null)
 
@@ -348,7 +350,7 @@ class MethodInliner(
                         inlinedScopes += inlineScopeNumberIncrement
                         currentCallSiteLineNumber =
                             if (currentLineNumber == -1)
-                                0
+                                callSiteLineNumberOfInlinedMethod
                             else if (isInlineOnlyMethod) {
                                 currentLineNumber
                             } else {
@@ -520,8 +522,13 @@ class MethodInliner(
             node.signature, node.exceptions?.toTypedArray()
         )
 
-        val inlinedFunctionMarkerVariableName =
+        // The local variables of an `@InlineOnly` function are dropped, so its scopes don't get numbers.
+        val keepsLocalVariables = nodeRemapper.isInsideInliningLambda || GENERATE_SMAP && !isInlineOnlyMethod
+        val inlinedFunctionMarkerVariableName = if (keepsLocalVariables) {
             inliningContext.inlineScopesGenerator?.addInlineScopesInfo(node, isRegeneratingAnonymousObject())
+        } else {
+            null
+        }
 
         val skippedParameterLocalVariablesEnd =
             if (skipParameterLocalVariables) argumentsSize(node.desc, node.access and Opcodes.ACC_STATIC != 0) else 0
