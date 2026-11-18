@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
+import org.jetbrains.kotlin.backend.konan.testUtils.languageFeatureDirectives
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.export.test.LibraryModuleInfo
 import org.jetbrains.kotlin.export.test.createStandaloneAnalysisApiSession
 import org.jetbrains.kotlin.export.test.defaultKotlinSourceModuleName
@@ -37,10 +39,15 @@ class AnalysisApiHeaderGeneratorExtension : ParameterResolver {
 
 object AnalysisApiHeaderGenerator : HeaderGenerator {
     override fun generateHeaders(root: File, configuration: HeaderGenerator.Configuration): ObjCHeader {
+        val kotlinFiles = root.listFiles().orEmpty().filter { it.extension == "kt" }
         val session = createStandaloneAnalysisApiSession(
             kotlinSourceModuleName = defaultKotlinSourceModuleName,
-            kotlinFiles = root.listFiles().orEmpty().filter { it.extension == "kt" },
-            dependencies = configuration.dependencies.map { it.toLibraryModuleInfo() }
+            kotlinFiles = kotlinFiles,
+            dependencies = configuration.dependencies.map { it.toLibraryModuleInfo() },
+            specificLanguageFeatures = languageFeatureDirectives(kotlinFiles).associate {
+                LanguageFeature.valueOf(it.drop(1)) to
+                        if (it.startsWith("+")) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
+            },
         )
 
         val [module, files] = session.modulesWithFiles.entries.single()

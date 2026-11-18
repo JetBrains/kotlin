@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -57,6 +59,7 @@ fun createStandaloneAnalysisApiSession(
     kotlinSourceModuleName: String = defaultKotlinSourceModuleName,
     kotlinFiles: List<File>,
     dependencies: List<LibraryModuleInfo> = emptyList(),
+    specificLanguageFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap(),
 ): StandaloneAnalysisAPISession {
     val currentArchitectureTarget = HostManager.host
     val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))
@@ -94,6 +97,13 @@ fun createStandaloneAnalysisApiSession(
                     }
                     platform = nativePlatform
                     moduleName = kotlinSourceModuleName
+                    if (specificLanguageFeatures.isNotEmpty()) {
+                        languageVersionSettings = LanguageVersionSettingsImpl(
+                            languageVersionSettings.languageVersion,
+                            languageVersionSettings.apiVersion,
+                            specificFeatures = languageVersionSettings.getCustomizedLanguageFeatures() + specificLanguageFeatures,
+                        )
+                    }
                 }
             )
         }

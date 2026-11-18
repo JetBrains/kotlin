@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.createPerformanceManagerFor
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.config.*
@@ -113,6 +114,7 @@ private fun compileTestModuleKlib(
         libraries = dependencyKlibs.map { it.toString() }.toTypedArray()
         freeArgs = kotlinFiles.map { it.absolutePath }
     }
+    parseCommandLineArguments(languageFeatureDirectives(kotlinFiles).map { "-XXLanguage:$it" }, arguments)
 
     val messageCollector = MessageCollectorImpl()
     val exitCode = NativeKlibCliPipeline(
