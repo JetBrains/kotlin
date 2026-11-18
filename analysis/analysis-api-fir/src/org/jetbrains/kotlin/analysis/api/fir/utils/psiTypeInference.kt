@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.fir.builder.appliesToPrimaryConstructorParameter
 import org.jetbrains.kotlin.fir.builder.parseCharacter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.inferClassIdByPsi
+import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 
 /**
@@ -63,7 +67,7 @@ internal fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
 context(analysisSession: KaFirSession)
 internal fun KtExpression.inferExpressionTypeByPsi(mayHaveExpectedType: Boolean): KaType? {
     val unwrappedExpression = unwrapParenthesesLabelsAndAnnotations()
-    return with(analysisSession.builtinTypes) {
+    val type = with(analysisSession.builtinTypes) {
         when (unwrappedExpression) {
             is KtStringTemplateExpression -> string
 
@@ -119,4 +123,53 @@ internal fun KtExpression.inferExpressionTypeByPsi(mayHaveExpectedType: Boolean)
             else -> null
         }
     }
+
+    return type?.takeUnless { mayBeDroppedByRawFir }
 }
+
+/**
+ * Whether this expression may be in code that FIR doesn't keep, such as invalid code that raw FIR drops or the effects of
+ * `contract [...]`.
+ *
+ * The check is conservative: it is also `true` for some parts of the enclosing declarations that FIR keeps.
+ */
+internal val KtExpression.mayBeDroppedByRawFir: Boolean
+    get() = parents.any(PsiElement::mayHaveInvalidCodeDroppedByRawFir)
+
+private val PsiElement.mayHaveInvalidCodeDroppedByRawFir: Boolean
+    get() = when (this) {
+        is KtParameter -> when {
+            // Raw FIR keeps only the name and the type of a function type parameter, including a context one
+            isFunctionTypeParameter -> true
+
+            // Raw FIR drops the default value of a catch or context parameter
+            isCatchParameter -> true
+            isContextParameter -> true
+
+            // Raw FIR drops the annotations of the parameter of a setter without a body
+            ownerFunction.let { it is KtPropertyAccessor && !it.hasBody() } -> true
+
+            // A primary constructor parameter without `val` or `var` has no property, so raw FIR drops its annotations for one, such
+            // as `@field:` ones (KT-91817)
+            ownerFunction is KtPrimaryConstructor && !hasValOrVar() -> annotationEntries.any {
+                val useSiteTarget = it.useSiteTarget?.getAnnotationUseSiteTarget()
+                !useSiteTarget.appliesToPrimaryConstructorParameter()
+            }
+
+            else -> false
+        }
+
+        // Raw FIR drops the arguments of the entries of an `expect` enum class
+        is KtEnumEntry -> isExpectDeclaration()
+
+        // Raw FIR drops a `where` constraint without a type parameter name
+        is KtTypeConstraint -> subjectTypeParameterName == null
+
+        // FIR resolves the effects of `contract [...]` in a synthetic `contract { ... }` call that isn't part of the declaration
+        is KtContractEffectList -> true
+
+        // Raw FIR drops the annotations of a placeholder type argument, `_`
+        is KtTypeReference -> isPlaceholder
+
+        else -> false
+    }
