@@ -358,11 +358,13 @@ class InlineScopesGenerator {
 
 fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
     val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
-    if (callSiteLineNumber == null) {
+    // 0 stands for an unknown call site line number, there is nothing to map.
+    if (callSiteLineNumber == null || callSiteLineNumber == 0) {
         return name
     }
 
-    val newLineNumber = calculate(callSiteLineNumber)
+    // A line that can't be mapped becomes unknown.
+    val newLineNumber = calculate(callSiteLineNumber).coerceAtLeast(0)
     if (newLineNumber == callSiteLineNumber) {
         return name
     }

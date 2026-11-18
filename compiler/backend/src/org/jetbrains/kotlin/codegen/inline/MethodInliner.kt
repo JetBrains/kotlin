@@ -352,7 +352,8 @@ class MethodInliner(
                             else if (isInlineOnlyMethod) {
                                 currentLineNumber
                             } else {
-                                sourceMapper.mapLineNumber(currentLineNumber)
+                                // A line that can't be mapped becomes unknown.
+                                sourceMapper.mapLineNumber(currentLineNumber).coerceAtLeast(0)
                             }
                     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.ir.unwrapRichInlineLambda
@@ -338,7 +339,14 @@ class IrInlineCodegen(
         val sourceInfo = sourceMapper.sourceInfo!!
         val lastLineNumber = codegen.lastLineNumber
         val callSite = SourcePosition(lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
-        info.inlineScopesGenerator?.apply { currentCallSiteLineNumber = lastLineNumber }
+        info.inlineScopesGenerator?.apply {
+            // No line number may have been generated yet, e.g., for a delegate initializer in `<clinit>`.
+            currentCallSiteLineNumber = when {
+                lastLineNumber >= 0 -> lastLineNumber
+                expression.startOffset >= 0 -> codegen.irFunction.fileParent.fileEntry.getLineNumber(expression.startOffset) + 1
+                else -> 0
+            }
+        }
         val inliner = MethodInliner(
             state,
             node,
