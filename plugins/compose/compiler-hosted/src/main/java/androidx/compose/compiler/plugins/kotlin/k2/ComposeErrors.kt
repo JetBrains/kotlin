@@ -16,10 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.k2
 
-import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -27,9 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtTryExpression
 
 object ComposeErrors : KtDiagnosticsContainer() {
     // error goes on the composable call in a non-composable function
@@ -47,7 +43,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
     // composable calls are not allowed in try expressions
     // error goes on the `try` keyword
     val ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE by error0(
-        ComposeSourceElementPositioningStrategies.TRY_KEYWORD
+        SourceElementPositioningStrategies.TRY_KEYWORD
     )
 
     // error goes on the `runCatching` call
@@ -119,29 +115,6 @@ object ComposeErrors : KtDiagnosticsContainer() {
 }
 
 object ComposeSourceElementPositioningStrategies {
-    private val PSI_TRY_KEYWORD: PsiPositioningStrategy<KtTryExpression> =
-        object : PsiPositioningStrategy<KtTryExpression>() {
-            override fun mark(element: KtTryExpression): List<TextRange> {
-                element.tryKeyword?.let {
-                    return markElement(it)
-                }
-                return PsiPositioningStrategies.DEFAULT.mark(element)
-            }
-        }
-
-    private val LIGHT_TREE_TRY_KEYWORD: LightTreePositioningStrategy =
-        object : LightTreePositioningStrategy() {
-            override fun mark(
-                node: LighterASTNode,
-                startOffset: Int,
-                endOffset: Int,
-                tree: FlyweightCapableTreeStructure<LighterASTNode>,
-            ): List<TextRange> {
-                val target = tree.findChildByType(node, KtTokens.TRY_KEYWORD) ?: node
-                return markElement(target, startOffset, endOffset, tree, node)
-            }
-        }
-
     private val PSI_DECLARATION_NAME_OR_DEFAULT: PsiPositioningStrategy<PsiElement> =
         object : PsiPositioningStrategy<PsiElement>() {
             override fun mark(element: PsiElement): List<TextRange> {
@@ -151,11 +124,6 @@ object ComposeSourceElementPositioningStrategies {
                 return PsiPositioningStrategies.DEFAULT.mark(element)
             }
         }
-
-    val TRY_KEYWORD = SourceElementPositioningStrategy(
-        LIGHT_TREE_TRY_KEYWORD,
-        PSI_TRY_KEYWORD
-    )
 
     val DECLARATION_NAME_OR_DEFAULT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_NAME,

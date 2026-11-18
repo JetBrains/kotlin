@@ -591,6 +591,17 @@ object PsiPositioningStrategies {
     }
 
     @JvmField
+    val TRY_KEYWORD: PsiPositioningStrategy<KtTryExpression> =
+        object : PsiPositioningStrategy<KtTryExpression>() {
+            override fun mark(element: KtTryExpression): List<TextRange> {
+                element.tryKeyword?.let {
+                    return markElement(it)
+                }
+                return DEFAULT.mark(element)
+            }
+        }
+
+    @JvmField
     val ELSE_ENTRY: PsiPositioningStrategy<KtWhenEntry> = object : PsiPositioningStrategy<KtWhenEntry>() {
         override fun mark(element: KtWhenEntry): List<TextRange> {
             return markElement(element.elseKeyword!!)
