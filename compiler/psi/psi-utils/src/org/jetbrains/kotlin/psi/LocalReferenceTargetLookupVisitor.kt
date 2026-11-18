@@ -112,8 +112,50 @@ private fun LookupLocallyInternals.LookupResult.toResult() = when (this) {
 private class ValueLocalReferenceTargetLookupVisitor(
     element: KtNameReferenceExpression,
 ) : LocalReferenceTargetLookupVisitor(element) {
-    private var constructorParametersAllowed: Boolean = false
-    private var usePrimaryConstructorProperties: Boolean = false
+    private enum class ConstructorParameterState(
+        val constructorParametersAllowed: Boolean,
+        val usePrimaryConstructorProperties: Boolean,
+    ) {
+        /**
+         * Cannot resolve to primary constructor parameters, as they are not allowed by the context.
+         *
+         * Note that even though the final resolution can resolve to properties declared in the primary constructor, that's not part of
+         * the local resolution, and values from outside those local classes might be preferred, if they exist.
+         */
+        None(constructorParametersAllowed = false, usePrimaryConstructorProperties = false),
+
+        /**
+         * Can resolve to primary constructor parameters, but only if they are not also properties. In the case when a class property
+         * declared in the primary constructor shadows the same name in an outer scope, then that name from the outer scope is preferred,
+         * as long as it is not a class property itself as well.
+         *
+         */
+//        fun f(x: Int) {
+//            class A(val x: Int) {
+//                fun g() {
+//                    val a = x
+//                            ^ resolves to outer x: Int parameter of f
+//                }
+//            }
+//        }
+        AllowedNoProperties(constructorParametersAllowed = true, usePrimaryConstructorProperties = false),
+
+        /**
+         * Can resolve to primary constructor parameters as well as properties declared in the primary constructor.
+         */
+        // interface I
+        // fun f(x: I) {
+        //     class A : I by x
+        //                    ^ resolves to parameter x: I of f
+        //     class B(x: I) : I by x
+        //                          ^ resolves to parameter x: I of the primary constructor of B
+        //     class C(val x: I) : I by x
+        //                              ^ resolves to property x: I of the primary constructor of C
+        // }
+        AllowedWithProperties(constructorParametersAllowed = true, usePrimaryConstructorProperties = true),
+    }
+
+    private var constructorParameterState: ConstructorParameterState = ConstructorParameterState.None
 
     override fun isStopElement(element: KtElement, lastDirection: LastDirection): Boolean =
         lastDirection == PARENT &&
@@ -127,8 +169,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
 
     override fun visitKtElement(element: KtElement, data: VisitorContext?) {
         if (data?.previousElement is KtClass) {
-            constructorParametersAllowed = false
-            usePrimaryConstructorProperties = false
+            constructorParameterState = ConstructorParameterState.None
         }
     }
 
@@ -139,8 +180,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         // class B(i: Int) : A(i)
         //                     ^ we need to be able to resolve this i to the parameter
 
-        constructorParametersAllowed = true
-        usePrimaryConstructorProperties = false
+        constructorParameterState = ConstructorParameterState.AllowedNoProperties
     }
 
     override fun visitDelegatedSuperTypeEntry(specifier: KtDelegatedSuperTypeEntry, data: VisitorContext) {
@@ -150,8 +190,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         // class A : I
         // class B(i: I) : I by i
         //                      ^
-        constructorParametersAllowed = true
-        usePrimaryConstructorProperties = true
+        constructorParameterState = ConstructorParameterState.AllowedWithProperties
     }
 
     override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: VisitorContext) {
@@ -163,8 +202,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         //                 ^ we need to be able to resolve this i to the constructor parameter
         //     }
         // }
-        constructorParametersAllowed = true
-        usePrimaryConstructorProperties = false
+        constructorParameterState = ConstructorParameterState.AllowedNoProperties
     }
 
     override fun visitForExpression(element: KtForExpression, data: VisitorContext) {
@@ -218,8 +256,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
                         //                 ^ but not this x
                         //     }
                         // }
-                        constructorParametersAllowed = true
-                        usePrimaryConstructorProperties = false
+                        constructorParameterState = ConstructorParameterState.AllowedNoProperties
                     }
                 }
                 is KtPropertyAccessor -> {
@@ -231,8 +268,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
                     //     }
                     // }
                     allowResolveToProperty = false
-                    constructorParametersAllowed = false
-                    usePrimaryConstructorProperties = false
+                    constructorParameterState = ConstructorParameterState.None
                 }
             }
         }
@@ -264,9 +300,9 @@ private class ValueLocalReferenceTargetLookupVisitor(
         }
 
         data.parentOnly {
-            if (constructorParametersAllowed) {
+            if (constructorParameterState.constructorParametersAllowed) {
                 klass.primaryConstructorParameters.processMany {
-                    if (it.isPropertyParameter() && !usePrimaryConstructorProperties) {
+                    if (it.isPropertyParameter() && !constructorParameterState.usePrimaryConstructorProperties) {
                         return@processMany
                     }
 
@@ -285,8 +321,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
     override fun visitNamedFunction(element: KtNamedFunction, data: VisitorContext) {
         super.visitNamedFunction(element, data)
 
-        constructorParametersAllowed = false
-        usePrimaryConstructorProperties = false
+        constructorParameterState = ConstructorParameterState.None
 
         data.parentOnly {
             element.valueParameters.processMany { processParameter(it, data) }
@@ -311,8 +346,7 @@ private class ValueLocalReferenceTargetLookupVisitor(
         constructor.valueParameters.processMany { processParameter(it, data) }
         constructor.contextParameters.processMany { processParameter(it, data) }
 
-        constructorParametersAllowed = false
-        usePrimaryConstructorProperties = false
+        constructorParameterState = ConstructorParameterState.None
     }
 
     override fun visitLambdaExpression(element: KtLambdaExpression, data: VisitorContext) {
