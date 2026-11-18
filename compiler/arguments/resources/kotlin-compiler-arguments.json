@@ -18046,13 +18046,13 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.PathListType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
-                                                "current": [],
+                                                "current": null,
                                                 "valueInVersions": []
                                             },
                                             "isNullable": {
-                                                "current": false,
+                                                "current": true,
                                                 "valueInVersions": []
                                             }
                                         },

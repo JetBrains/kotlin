@@ -577,7 +577,6 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
-    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xfile-to-cache"
         compilerName = "filesToCache"
@@ -585,7 +584,6 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
-        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
