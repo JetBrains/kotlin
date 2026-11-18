@@ -82,6 +82,20 @@ class KotlinNativeLinkTest {
     }
 
     @Test
+    fun `KT-89241 - outputFile carries a dependency on the link task`() {
+        val project = buildProjectWithMPP {
+            kotlin { linuxX64().binaries.executable() }
+        }.evaluate()
+        val linkTask = project.tasks.named("linkDebugExecutableLinuxX64", KotlinNativeLink::class.java)
+
+        val outputFile = linkTask.flatMap { it.outputFile }
+        val builtBy = project.files(outputFile).buildDependencies.getDependencies(null).map { it.name }
+        assertEquals(listOf("linkDebugExecutableLinuxX64"), builtBy)
+        // Still readable at configuration time
+        assertEquals("test.kexe", outputFile.get().name)
+    }
+
+    @Test
     fun `KT-89241 - link task declares produced files as outputs - not the whole destination directory`() {
         val project = buildProjectWithMPP {
             kotlin {
@@ -97,6 +111,8 @@ class KotlinNativeLinkTest {
                     binaries.staticLib()
                     binaries.framework()
                     binaries.framework("static") { isStatic = true }
+                    binaries.framework("staticArg") { freeCompilerArgs += "-Xstatic-framework" }
+                    binaries.executable("noLightDebug") { freeCompilerArgs += "-Xadd-light-debug=disable" }
                 }
             }
         }.evaluate()
@@ -142,6 +158,20 @@ class KotlinNativeLinkTest {
         assertEquals(
             bin("iosSimulatorArm64", "staticDebugFramework", "static.framework"),
             outputsOf("linkStaticDebugFrameworkIosSimulatorArm64")
+        )
+
+        // Free compiler args change what the compiler writes
+        assertEquals(
+            bin("iosSimulatorArm64", "staticArgDebugFramework", "staticArg.framework"),
+            outputsOf("linkStaticArgDebugFrameworkIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "noLightDebugReleaseExecutable", "noLightDebug.kexe"),
+            outputsOf("linkNoLightDebugReleaseExecutableIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "noLightDebugDebugExecutable", "noLightDebug.kexe", "noLightDebug.kexe.dSYM"),
+            outputsOf("linkNoLightDebugDebugExecutableIosSimulatorArm64")
         )
     }
 }
