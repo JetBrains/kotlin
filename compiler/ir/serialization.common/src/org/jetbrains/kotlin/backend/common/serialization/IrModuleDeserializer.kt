@@ -119,11 +119,7 @@ abstract class IrModuleDeserializer(
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
-    open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
-        return fileDeserializers.flatMap { [_, fileDeserializer] ->
-            fileDeserializer.getAllMatchingSignatures(callableId, signatureKind)
-        }
-    }
+    open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> = emptyList()
 }
 
 fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol =
@@ -252,6 +248,6 @@ class IrModuleDeserializerWithBuiltIns(
 
     override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
         irBuiltInsCallableIdMap[callableId]?.let { return it }
-        return super.getAllMatchingSignatures(callableId, signatureKind)
+        return delegate.getAllMatchingSignatures(callableId, signatureKind)
     }
 }
