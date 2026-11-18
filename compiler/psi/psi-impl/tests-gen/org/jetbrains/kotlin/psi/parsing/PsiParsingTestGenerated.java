@@ -2327,6 +2327,18 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       }
 
       @Test
+      @TestMetadata("unsignedDefaults.kt")
+      public void testUnsignedDefaults() {
+        run("unsignedDefaults.kt");
+      }
+
+      @Test
+      @TestMetadata("unsignedDefaultsFromOldMetadata.kt")
+      public void testUnsignedDefaultsFromOldMetadata() {
+        run("unsignedDefaultsFromOldMetadata.kt");
+      }
+
+      @Test
       @TestMetadata("unsignedLiterals.kt")
       public void testUnsignedLiterals() {
         run("unsignedLiterals.kt");

@@ -40,6 +40,12 @@ PropertyInitializersKt.class:
 
   public const val uShort: kotlin.UShort = -1
 
+  public const val uInt: kotlin.UInt = -1
+
+  public const val uLong: kotlin.ULong = -1L
+
+  public const val aliasedUInt: kotlin.UInt /* from: test.UIntAlias */ = -1
+
   public const val negative: kotlin.Int = -7
 
   public const val sum: kotlin.Int = 3
@@ -63,6 +69,8 @@ PropertyInitializersKt.class:
   public val nonConst: kotlin.Int /* compiled code */
 
   public var mutable: kotlin.String /* compiled code */
+
+  public typealias UIntAlias = kotlin.UInt
 
 WithMember.class:
   // IntelliJ API Decompiler stub source generated from a class file

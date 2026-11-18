@@ -174,6 +174,46 @@ PropertyInitializersKt.class:
       PREFIX_EXPRESSION
         OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+    PROPERTY[fqName=test.uInt, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uInt]
+      constantInitializer: -1
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UInt]
+            isClassRef: true
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+    PROPERTY[fqName=test.uLong, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uLong]
+      constantInitializer: -1.toLong()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=ULong]
+            isClassRef: true
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+    PROPERTY[fqName=test.aliasedUInt, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=aliasedUInt]
+      constantInitializer: -1
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          abbreviatedType: test.UIntAlias
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UInt]
+            isClassRef: true
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     PROPERTY[fqName=test.negative, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
       constantInitializer: -7
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
@@ -313,6 +353,14 @@ PropertyInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
+    TYPEALIAS[classId=test/UIntAlias, fqName=test.UIntAlias, isTopLevel=true, name=UIntAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UInt]
             isClassRef: true
 
 
