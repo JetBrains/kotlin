@@ -45,7 +45,7 @@ internal object FirNativeObjCStringAsVariadicChecker : FirFunctionCallChecker(Mp
                 for (element in argument.arguments) {
                     if (element is FirSpreadArgumentExpression) {
                         val spreadExpression = element.expression
-                        if (!isObjC && spreadExpression is FirFunctionCall && spreadExpression.isArrayOfCall()) {
+                        if (spreadExpression is FirFunctionCall && spreadExpression.isArrayOfCall()) {
                             checkVarargArguments(spreadExpression, isObjC)
                         }
                         continue
