@@ -251,8 +251,13 @@ hiccups or the directory is not accessible, is not a missing marker: the install
 stays, since deleting a good installation that other builds run from would be far worse.
 
 For a store with history the marker name is a parameter, so that installations made by earlier plugin versions count as complete:
-`~/.konan` uses `provisioned.ok`. Older installers in `~/.konan` also lock somewhere else; how a store excludes them is part of the
-Kotlin/Native migration.
+`~/.konan` uses `provisioned.ok`. Older installers in `~/.konan` also lock somewhere else: they unpack in place and hold
+`<id>/.lock`, inside the installation, while they do. The store does not know that lock. The plugin's
+`KotlinNativeDistributionInstaller` takes it before it lets the store look at a directory without a marker, so a distribution that
+an older plugin version is unpacking is waited for. The store there has the `FAIL` policy: a directory that still has no marker
+after that may be in use by a build with an older plugin version, and is left for the user to delete. The other direction
+stays open: an older installer that starts while the store is unpacking does not wait. It creates the directory, the store's
+rename then fails, and the plugin waits for the older installer and uses what it installed.
 
 A directory that an installer without markers still writes to must not be taken over with `REPLACE`. The current Node.js
 installer, for one, considers an installation complete when the executable exists and writes no marker, so to this library all
