@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import org.junit.platform.engine.discovery.PackageNameFilter
 import org.junit.platform.launcher.core.LauncherConfig
 import org.junit.platform.launcher.core.LauncherFactory
 import java.io.ByteArrayOutputStream
@@ -68,7 +67,7 @@ internal class TestDataManagerRunnerIntegrationTest {
                 testDataPath = testDataPath,
                 goldenOnly = false,
                 incremental = incremental,
-                PackageNameFilter.includePackageNames(FakeRunnerScenario::class.java.`package`.name),
+                testPackages = listOf(FakeRunnerScenario::class.java.`package`.name),
                 rootDir = tempDir,
                 launcherSession = session,
             )
@@ -376,7 +375,7 @@ internal class TestDataManagerRunnerIntegrationTest {
                 testDataPath = null,
                 goldenOnly = false,
                 incremental = false,
-                PackageNameFilter.includePackageNames(FakeConflictingTestABGenerated::class.java.`package`.name),
+                testPackages = listOf(FakeConflictingTestABGenerated::class.java.`package`.name),
                 launcherSession = session,
             )
         }

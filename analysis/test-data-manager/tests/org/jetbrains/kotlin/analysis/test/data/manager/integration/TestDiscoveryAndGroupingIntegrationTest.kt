@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.data.manager.integration
 import org.jetbrains.kotlin.analysis.test.data.manager.GroupingResult
 import org.jetbrains.kotlin.analysis.test.data.manager.VariantChainConflict
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner
+import org.jetbrains.kotlin.analysis.test.data.manager.fakes.compiler.FakeFirTestGenerated
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.conflicts.FakeConflictingTestABGenerated
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.conflicts.FakeConflictingTestBAGenerated
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.conflicts.FakeConflictingTestXBGenerated
@@ -475,6 +476,46 @@ internal class TestDiscoveryAndGroupingIntegrationTest : AbstractFakeTestIntegra
                 FakeGoldenAnalysisApiTestGenerated.testTypes() -> []
             """
         )
+    }
+
+    @Test
+    fun `discovery in the given test packages`() {
+        val request = TestDataManagerRunner.buildDiscoveryRequest(
+            testPackages = listOf(
+                FakeFirTestGenerated::class.java.`package`.name,
+                FakeNonConflictingTestXYGenerated::class.java.`package`.name,
+            ),
+        )
+
+        val tests = TestDataManagerRunner.discoverTests(discoverFakeTestPlan(request))
+        assertEquals(
+            """
+                === Group 0 (golden) ===
+                FakeFirTestGenerated.Resolve.testInference() -> []
+                FakeFirTestGenerated.testChecker() -> []
+
+                === Group 2 (depth=2) ===
+                Variants: [[a, b], [b, a], [x, b], [x, y]]
+                FakeConflictingTestABGenerated.testAB() -> [a, b]
+                FakeConflictingTestBAGenerated.testBA() -> [b, a]
+                FakeConflictingTestXBGenerated.testXB() -> [x, b]
+                FakeNonConflictingTestXYGenerated.testXY() -> [x, y]
+
+                === Conflicts ===
+                [a, b] writes 'b' which [b, a] reads
+                [b, a] writes 'a' which [a, b] reads
+                [x, b] writes 'b' which [a, b] reads
+                [x, b] writes 'b' which [b, a] reads
+            """.trimIndent(),
+            formatResult(TestDataManagerRunner.groupByVariantDepth(tests)),
+        )
+    }
+
+    @Test
+    fun `test packages option`() {
+        assertEquals(listOf(TestDataManagerRunner.DEFAULT_TEST_PACKAGE), TestDataManagerRunner.parseTestPackages(null))
+        assertEquals(listOf(TestDataManagerRunner.DEFAULT_TEST_PACKAGE), TestDataManagerRunner.parseTestPackages(" , "))
+        assertEquals(listOf("a.b", "c"), TestDataManagerRunner.parseTestPackages("a.b, c,"))
     }
 
     private companion object {
