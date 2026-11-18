@@ -52,16 +52,16 @@ internal fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
     if (singleExpression?.unwrapParenthesesLabelsAndAnnotations() is KtLoopExpression) return null
 
     // The body of a declaration with an implicit type has no expected type
-    return singleExpression?.getExpressionTypeByPsiOrNull(noExpectedType = true)
+    return singleExpression?.inferExpressionTypeByPsi(mayHaveExpectedType = false)
 }
 
 /**
  * Optimization: try to determine the type of the expression by its PSI, so FIR doesn't have to be built.
  *
- * @param noExpectedType whether the expression definitely has no expected type, which defines the type of some literals.
+ * @param mayHaveExpectedType whether the expression may have an expected type, which defines the type of some literals.
  */
 context(analysisSession: KaFirSession)
-internal fun KtExpression.getExpressionTypeByPsiOrNull(noExpectedType: Boolean): KaType? {
+internal fun KtExpression.inferExpressionTypeByPsi(mayHaveExpectedType: Boolean): KaType? {
     val unwrappedExpression = unwrapParenthesesLabelsAndAnnotations()
     return with(analysisSession.builtinTypes) {
         when (unwrappedExpression) {
@@ -102,11 +102,11 @@ internal fun KtExpression.getExpressionTypeByPsiOrNull(noExpectedType: Boolean):
                  * ```
                  *
                  * Computing the expected type may require building FIR, which defeats this optimization, so the inference returns
-                 * [int] only when [noExpectedType] is `true`. Unsigned literals are always left to FIR, which also infers an error
-                 * type for them if any unsigned type is missing.
+                 * [int] only when [mayHaveExpectedType] is `false`. Unsigned literals are always left to FIR, which also infers an
+                 * error type for them if any unsigned type is missing.
                  */
                 when (classId) {
-                    StandardClassIds.Int -> int.takeIf { noExpectedType }
+                    StandardClassIds.Int -> int.takeUnless { mayHaveExpectedType }
                     StandardClassIds.Long -> long
                     StandardClassIds.Float -> float
                     StandardClassIds.Double -> double

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.fir.utils.getExpressionTypeByPsiOrNull
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferExpressionTypeByPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -47,7 +47,7 @@ internal class KaFirExpressionTypeProvider(
 ) : KaFirSessionComponent(), KaInternalsExpressionTypeProvider {
 
     override fun expressionType(expression: KtExpression): KaType? = expression.withPsiValidityAssertion {
-        expression.getExpressionTypeByPsiOrNull(noExpectedType = false, analysisSession = analysisSession)?.let { return it }
+        expression.inferExpressionTypeByPsi(mayHaveExpectedType = true, analysisSession = analysisSession)?.let { return it }
 
         val unwrappedElement = expression.unwrap()
 
