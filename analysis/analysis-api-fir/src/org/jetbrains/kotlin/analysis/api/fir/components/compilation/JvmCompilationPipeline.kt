@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedVariableDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 context(component: KaFirSessionComponent)
@@ -85,7 +86,7 @@ internal fun runJvmIrCodeGen(
     )
 
     val generationState = GenerationState(
-        project,
+        VirtualFileFinder.getInstance(project),
         fir2IrResult.irModuleFragment.descriptor,
         configuration,
         classBuilderFactory,

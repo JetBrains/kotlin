@@ -22,17 +22,14 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
-import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
-import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
-import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -161,7 +158,10 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : Frontend2BackendCo
 
         val project = testServices.compilerConfigurationProvider.getProject(module)
         val generationState = GenerationState(
-            project, fir2IrResult.irModuleFragment.descriptor, compilerConfiguration, ClassBuilderFactories.TEST,
+            VirtualFileFinder.getInstance(project),
+            fir2IrResult.irModuleFragment.descriptor,
+            compilerConfiguration,
+            ClassBuilderFactories.TEST,
             jvmBackendClassResolver = FirJvmBackendClassResolver(fir2IrResult.components),
             diagnosticReporter = diagnosticReporter,
         )
