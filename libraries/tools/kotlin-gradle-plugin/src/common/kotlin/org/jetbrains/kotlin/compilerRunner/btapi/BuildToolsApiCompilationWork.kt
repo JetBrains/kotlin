@@ -21,7 +21,11 @@ import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import org.jetbrains.kotlin.buildtools.api.UnsupportedToolchainException
+import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
@@ -242,7 +246,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 parameters,
                 KotlinToolingDiagnostics.KotlinCompilerPlatformUnsupported(
                     taskPath,
-                    workArguments.btaToolchain?.platformName ?: e.toolchainType.simpleName,
+                    e.toolchainType.platformName,
                     e.compilerVersion,
                     workArguments.kotlinPluginVersion,
                     e,
@@ -413,10 +417,11 @@ internal object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider 
 private fun KotlinToolchains.compilerReleaseVersion(): KotlinReleaseVersion =
     KotlinToolingVersion(getCompilerVersion()).let { KotlinReleaseVersion(it.major, it.minor, it.patch) }
 
-private val BtaToolchain.platformName: String
+private val Class<out KotlinToolchains.Toolchain>.platformName: String
     get() = when (this) {
-        BtaToolchain.JVM -> "Kotlin/JVM"
-        BtaToolchain.JS_COMPILATION, BtaToolchain.JS_LINKING -> "Kotlin/JS"
-        BtaToolchain.WASM_COMPILATION, BtaToolchain.WASM_LINKING -> "Kotlin/Wasm"
-        BtaToolchain.METADATA -> "Kotlin metadata"
+        JvmPlatformToolchain::class.java -> "Kotlin/JVM"
+        JsPlatformToolchain::class.java -> "Kotlin/JS"
+        WasmPlatformToolchain::class.java -> "Kotlin/Wasm"
+        KotlinMetadataPlatformToolchain::class.java -> "Kotlin metadata"
+        else -> simpleName
     }

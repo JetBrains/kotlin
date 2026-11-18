@@ -13,15 +13,16 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Kotlin compiler version resolution via the Build Tools API")
-@JvmGradlePluginTests
 @MustRunOnChangesInGradle
 @MustRunOnChangesInBuildToolsApi
 class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Non-existent compiler version reports KotlinCompilerVersionNotFound")
     fun compileWithNonExistentCompilerVersion(gradleVersion: GradleVersion) =
         testNonExistentCompilerVersion(gradleVersion, defaultBuildOptions)
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Non-existent compiler version reports KotlinCompilerVersionNotFound without configuration cache")
     fun compileWithNonExistentCompilerVersionWithoutConfigurationCache(gradleVersion: GradleVersion) =
@@ -46,6 +47,7 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Non-existent compiler version from a resolution rule reports KotlinCompilerVersionNotFound")
     fun compileWithNonExistentCompilerVersionFromResolutionRule(gradleVersion: GradleVersion) {
@@ -62,6 +64,7 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Switching between non-existent and existing compiler versions reports KotlinCompilerVersionNotFound only for the missing one")
     fun compileAfterSwitchingCompilerVersion(gradleVersion: GradleVersion) {
@@ -94,6 +97,7 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
         )
     }
 
+    @JsGradlePluginTests
     @GradleTest
     @DisplayName("Compiler version without the JS toolchain reports KotlinCompilerPlatformUnsupported without a daemon fallback")
     fun compileJsWithCompilerVersionWithoutJsToolchain(gradleVersion: GradleVersion) {

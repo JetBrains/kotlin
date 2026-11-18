@@ -2618,8 +2618,9 @@ internal object KotlinToolingDiagnostics {
                             "does not support $platform compilation through the Build Tools API."
                 }
                 .solution {
-                    "Set 'kotlin.compilerVersion' to a version that supports $platform compilation, " +
-                            "or remove it to use Kotlin compiler version '$pluginVersion' of the Kotlin Gradle Plugin."
+                    "Use a Kotlin compiler version that supports $platform compilation. " +
+                            "The version comes from 'kotlin.compilerVersion' or a dependency resolution rule " +
+                            "for 'kotlin-build-tools-impl', and defaults to Kotlin Gradle Plugin version '$pluginVersion'."
                 }
         }
     }
