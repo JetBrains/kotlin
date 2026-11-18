@@ -33,6 +33,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.filesToCache = from.filesToCache.copyOf()
     to.frameworkImportHeaders = from.frameworkImportHeaders.copyOf()
     to.friendModules = from.friendModules
+    @Suppress("DEPRECATION")
     to.gc = from.gc
     to.generateDebugTrampolineString = from.generateDebugTrampolineString
     to.generateNoExitTestRunner = from.generateNoExitTestRunner
@@ -56,6 +57,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.makePerFileCache = from.makePerFileCache
     to.manifestFile = from.manifestFile
     to.manifestNativeTargets = from.manifestNativeTargets.copyOf()
+    @Suppress("DEPRECATION")
     to.memoryModel = from.memoryModel
     to.moduleName = from.moduleName
     to.nativeLibraries = from.nativeLibraries.copyOf()

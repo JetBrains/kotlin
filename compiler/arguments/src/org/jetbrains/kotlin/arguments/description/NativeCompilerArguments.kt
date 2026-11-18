@@ -159,14 +159,22 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "memory-model"
-        description = "Choose the memory model to be used – 'strict' and 'experimental' are currently supported.".asReleaseDependent()
+        description = ReleaseDependent(
+            current = "Choose the memory model to be used – only 'experimental' is supported.",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v1_5_20..KotlinReleaseVersion.v2_5_0 to
+                        "Choose the memory model to be used – 'strict' and 'experimental' are currently supported."
+            )
+        )
         valueType = StringType.defaultNull
         valueDescription = "<model>".asReleaseDependent()
         argumentType = NativeMemoryModelType()
+        deprecatedMessage = "The legacy memory model is no longer supported, 'experimental' is the only available one"
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_9_20,
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
@@ -867,7 +875,12 @@ The default value is 1.""".asReleaseDependent()
         name = "Xallocator"
         description = "Allocator used at runtime.".asReleaseDependent()
         valueType = StringType.defaultNull
-        valueDescription = "std | mimalloc | custom".asReleaseDependent()
+        valueDescription = ReleaseDependent(
+            current = "std | custom",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v1_5_20..KotlinReleaseVersion.v2_5_0 to "std | mimalloc | custom"
+            )
+        )
         argumentType = NativeAllocationModeType()
 
         lifecycle(
@@ -933,13 +946,21 @@ The default value is 1.""".asReleaseDependent()
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xgc"
-        description = "GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.".asReleaseDependent()
+        description = ReleaseDependent(
+            current = "GC to use – 'noop', 'stms', and 'cms' are currently supported.",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v1_5_30..KotlinReleaseVersion.v2_5_0 to
+                        "GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'."
+            )
+        )
         valueType = StringType.defaultNull
         valueDescription = "<gc>".asReleaseDependent()
         argumentType = NativeGcModeType()
+        deprecatedMessage = "Use '-Xbinary=gc=<gc>'"
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,
+            deprecatedVersion = KotlinReleaseVersion.v1_9_20,
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }

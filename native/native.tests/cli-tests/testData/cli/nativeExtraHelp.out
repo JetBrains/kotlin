@@ -5,8 +5,7 @@ where advanced options include:
                              Add light debug information for optimized builds. This option is skipped in debug builds.
                              It's enabled by default on Darwin platforms where collected debug information is stored in a .dSYM file.
                              Currently this option is disabled by default on other platforms.
-  -Xallocator=std | mimalloc | custom
-                             Allocator used at runtime.
+  -Xallocator=std | custom   Allocator used at runtime.
   -Xauto-cache-dir=<path>    Path to the directory where caches for auto-cacheable dependencies should be put.
   -Xauto-cache-from=<path>   Path to the root directory from which dependencies are to be cached automatically.
                              By default caches will be placed into the kotlin-native system cache directory.
@@ -36,7 +35,8 @@ where advanced options include:
                              Add an additional header import to the framework header.
   -Xg-generate-debug-trampoline={disable|enable}
                              Generate trampolines to make debugger breakpoint resolution more accurate (inlines, 'when', etc.).
-  -Xgc=<gc>                  GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.
+  -Xgc=<gc>                  GC to use – 'noop', 'stms', and 'cms' are currently supported.
+                             The option is deprecated since Kotlin 1.9.20. It will be removed in one of the future releases. Use '-Xbinary=gc=<gc>'
   -Xheader-klib-path         Save a klib that only contains the public ABI to the given path.
   -Xic-cache-dir=<path>      Path to the directory where incremental build caches should be put.
   -Xinclude=<path>           A path to an intermediate library that should be processed in the same manner as source files.
