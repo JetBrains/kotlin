@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
@@ -47,7 +46,6 @@ fun interface CompilationSpawner {
 }
 
 class KonanDriver(
-        val project: Project,
         val environment: VfsBasedProjectEnvironment,
         val configuration: CompilerConfiguration,
         val performanceManager: PerformanceManager?,
@@ -95,7 +93,7 @@ class KonanDriver(
             configuration.filesToCache = fileNames
         }
 
-        val config = NativeSecondStageCompilationConfig(project, configuration)
+        val config = NativeSecondStageCompilationConfig(configuration)
 
         if (configuration.listTargets) {
             config.targetManager.list()

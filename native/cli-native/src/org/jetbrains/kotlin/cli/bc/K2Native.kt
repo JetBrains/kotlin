@@ -277,7 +277,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     ) {
         val perfManager = configuration.perfManager
 
-        val konanDriver = KonanDriver(environment.project, environment.toVfsBasedProjectEnvironment(), configuration, perfManager) { arguments, setupConfiguration ->
+        val konanDriver = KonanDriver(environment.toVfsBasedProjectEnvironment(), configuration, perfManager) { arguments, setupConfiguration ->
             val spawnedArguments = K2NativeCompilerArguments()
             parseCommandLineArguments(arguments, spawnedArguments)
             val spawnedConfiguration = CompilerConfiguration.create()

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
@@ -37,15 +36,12 @@ import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.Properties
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.name
 
-class NativeSecondStageCompilationConfig(
-        val project: Project,
-        override val configuration: CompilerConfiguration
-) : NativeCompilationConfig {
+class NativeSecondStageCompilationConfig(override val configuration: CompilerConfiguration) : NativeCompilationConfig {
     /**
      * Determine if we compile for iOS target with Mac ABI (Catalyst).
      * Avoid using this property if possible. Instead, use [TargetTriple.isMacabi] as it is more direct.
