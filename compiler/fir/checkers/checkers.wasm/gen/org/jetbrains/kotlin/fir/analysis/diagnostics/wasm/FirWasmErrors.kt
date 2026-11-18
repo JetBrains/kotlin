@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.wasm
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature.ProhibitVarInJsModuleFile
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
@@ -25,9 +23,6 @@ import org.jetbrains.kotlin.psi.KtElement
  */
 @Suppress("IncorrectFormatting")
 object FirWasmErrors : KtDiagnosticsContainer() {
-    // Annotations
-    val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE", ProhibitVarInJsModuleFile, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtElement::class, getRendererFactory())
-
     // Externals
     val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val WRONG_JS_INTEROP_TYPE: KtDiagnosticFactory2<ConeKotlinType, String> = KtDiagnosticFactory2("WRONG_JS_INTEROP_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())

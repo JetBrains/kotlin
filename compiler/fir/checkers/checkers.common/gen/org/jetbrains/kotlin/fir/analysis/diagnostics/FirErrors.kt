@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingLessVisibleType
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidImplicitTypeAnnotationWithMissingDependency
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidNonTopLevelEagerInitialization
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidObjectDelegationToItself
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidParenthesizedLhsInAssignments
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidProjectionsInAnnotationProperties
@@ -387,6 +388,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED: KtDiagnosticFactory0 = KtDiagnosticFactory0("IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val DSL_MARKER_PROPAGATES_TO_MANY: KtDiagnosticFactory0 = KtDiagnosticFactory0("DSL_MARKER_PROPAGATES_TO_MANY", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val DSL_MARKER_APPLIED_TO_WRONG_TARGET: KtDiagnosticFactory2<FirRegularClassSymbol, String> = KtDiagnosticFactory2("DSL_MARKER_APPLIED_TO_WRONG_TARGET", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
+    val INAPPLICABLE_EAGER_INITIALIZATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("INAPPLICABLE_EAGER_INITIALIZATION", ForbidNonTopLevelEagerInitialization, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // EqualityBound
     val UNRESOLVED_EQUALITY_BOUND_ARGUMENT: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNRESOLVED_EQUALITY_BOUND_ARGUMENT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())

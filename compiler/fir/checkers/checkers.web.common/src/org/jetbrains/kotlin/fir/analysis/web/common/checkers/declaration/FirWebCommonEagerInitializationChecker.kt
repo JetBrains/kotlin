@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
-import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.name.ClassId
@@ -29,6 +29,6 @@ abstract class FirWebCommonAbstractEagerInitializationChecker(
         if (context.isTopLevel && declaration.initializer != null) return
 
         val annotation = declaration.getAnnotationByClassId(requiredAnnotation, context.session) ?: return
-        reporter.reportOn(annotation.source, FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION)
+        reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_EAGER_INITIALIZATION)
     }
 }

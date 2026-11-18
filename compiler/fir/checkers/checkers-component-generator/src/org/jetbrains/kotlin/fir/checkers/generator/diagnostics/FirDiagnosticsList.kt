@@ -544,6 +544,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirRegularClassSymbol>("dslMarkerSymbol")
             parameter<String>("actualTarget")
         }
+
+        val INAPPLICABLE_EAGER_INITIALIZATION by deprecationError<KtElement>(ForbidNonTopLevelEagerInitialization)
     }
 
     val EQUALITY_BOUND by object : DiagnosticGroup("EqualityBound") {

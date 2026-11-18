@@ -1929,16 +1929,16 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface JsModuleProhibitedOnVarInModuleFileError : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileError>
-            get() = JsModuleProhibitedOnVarInModuleFileError::class
+    public interface InapplicableEagerInitializationError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableEagerInitializationError>
+            get() = InapplicableEagerInitializationError::class
     }
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface JsModuleProhibitedOnVarInModuleFileWarning : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileWarning>
-            get() = JsModuleProhibitedOnVarInModuleFileWarning::class
+    public interface InapplicableEagerInitializationWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableEagerInitializationWarning>
+            get() = InapplicableEagerInitializationWarning::class
     }
 
     @KaUnstableDiagnosticApi
@@ -2197,25 +2197,29 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface InapplicableEagerInitializationError : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<InapplicableEagerInitializationError>
-            get() = InapplicableEagerInitializationError::class
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface InapplicableEagerInitializationWarning : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<InapplicableEagerInitializationWarning>
-            get() = InapplicableEagerInitializationWarning::class
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NativeAnnotationsAllowedOnlyOnMemberFun : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NativeAnnotationsAllowedOnlyOnMemberFun>
             get() = NativeAnnotationsAllowedOnlyOnMemberFun::class
 
         public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnVarInModuleFileError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileError>
+            get() = JsModuleProhibitedOnVarInModuleFileError::class
+
+        public val message: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnVarInModuleFileWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileWarning>
+            get() = JsModuleProhibitedOnVarInModuleFileWarning::class
+
+        public val message: String
     }
 
     @KaUnstableDiagnosticApi
