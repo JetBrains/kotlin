@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -1280,7 +1280,7 @@ class CompileServiceImpl(
     override fun clearJarCache() {
         ZipHandler.clearFileAccessorCache()
         @OptIn(CoreEnvironmentDeprecation::class)
-        KotlinCoreEnvironment.applicationEnvironment?.apply {
+        KotlinCoreApplicationEnvironment.instance?.apply {
             (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
             (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()
             idleCleanup()

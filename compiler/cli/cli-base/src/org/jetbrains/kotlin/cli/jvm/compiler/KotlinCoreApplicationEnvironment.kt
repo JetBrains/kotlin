@@ -36,7 +36,9 @@ import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.util.JavaClassSupers
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.IdeaExtensionPoints.registerVersionSpecificAppExtensionPoints
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
@@ -128,6 +130,63 @@ class KotlinCoreApplicationEnvironment private constructor(
         inline fun <R> underApplicationLock(action: () -> R): R =
             synchronized(APPLICATION_LOCK) { action() }
 
+        @Volatile
+        @CoreEnvironmentDeprecation
+        var instance: KotlinCoreApplicationEnvironment? = null
+            private set
+
+        private var ourProjectCount = 0
+
+        @CoreEnvironmentDeprecation
+        fun getOrCreateApplicationEnvironment(
+            projectDisposable: Disposable,
+            environmentMode: KotlinCoreApplicationEnvironmentMode,
+        ): KotlinCoreApplicationEnvironment {
+            underApplicationLock {
+                if (instance == null) {
+                    val disposable = Disposer.newDisposable("Disposable for the KotlinCoreApplicationEnvironment")
+                    instance = create(disposable, environmentMode)
+                    ourProjectCount = 0
+                    Disposer.register(disposable) {
+                        underApplicationLock {
+                            instance = null
+                        }
+                    }
+                }
+                try {
+                    val disposeAppEnv =
+                        CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true
+                    // Disposer uses identity of passed object to deduplicate registered disposables
+                    // We should everytime pass new instance to avoid un-registering from previous one
+                    @Suppress("ObjectLiteralToLambda")
+                    Disposer.register(projectDisposable, object : Disposable {
+                        override fun dispose() {
+                            underApplicationLock {
+                                // Build-systems may run many instances of the compiler in parallel
+                                // All projects share the same ApplicationEnvironment, and when the last project is disposed,
+                                // the ApplicationEnvironment is disposed as well
+                                if (--ourProjectCount <= 0) {
+                                    // Do not use this property unless you sure need it, causes Application to MEMORY LEAK
+                                    // Only valid use-case is when Application should be cached to avoid
+                                    // initialization costs
+                                    if (disposeAppEnv) {
+                                        disposeApplicationEnvironment()
+                                    } else {
+                                        instance?.idleCleanup()
+                                    }
+                                }
+                            }
+                        }
+                    })
+                } finally {
+                    ourProjectCount++
+                }
+
+                return instance!!
+            }
+        }
+
+
         fun create(
             parentDisposable: Disposable,
             environmentMode: KotlinCoreApplicationEnvironmentMode,
@@ -195,6 +254,19 @@ class KotlinCoreApplicationEnvironment private constructor(
                 if (currentApplication.isUnitTestMode) {
                     throw exception
                 }
+            }
+        }
+
+        /**
+         * This method is also used in Gradle after configuration phase finished.
+         */
+        @JvmStatic
+        @CoreEnvironmentDeprecation
+        fun disposeApplicationEnvironment() {
+            underApplicationLock {
+                val environment = instance ?: return
+                instance = null
+                environment.dispose()
             }
         }
     }

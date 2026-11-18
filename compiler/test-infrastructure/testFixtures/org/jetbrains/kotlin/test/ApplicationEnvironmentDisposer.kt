@@ -21,7 +21,7 @@ class ApplicationEnvironmentDisposer : TestExecutionListener {
 
     @OptIn(CoreEnvironmentDeprecation::class)
     override fun testPlanExecutionFinished(testPlan: TestPlan) {
-        KotlinCoreEnvironment.disposeApplicationEnvironment()
+        KotlinCoreApplicationEnvironment.disposeApplicationEnvironment()
         Disposer.dispose(ROOT_DISPOSABLE)
         KotlinCoreApplicationEnvironment.resetApplicationManager()
     }
