@@ -36,15 +36,15 @@ PropertyInitializersKt.class:
 
   public const val string: kotlin.String = "s"
 
-  public const val uByte: kotlin.UByte = -1
+  public const val uByte: kotlin.UByte = 255u
 
-  public const val uShort: kotlin.UShort = -1
+  public const val uShort: kotlin.UShort = 65535u
 
-  public const val uInt: kotlin.UInt = -1
+  public const val uInt: kotlin.UInt = 4294967295u
 
-  public const val uLong: kotlin.ULong = -1L
+  public const val uLong: kotlin.ULong = 18446744073709551615uL
 
-  public const val aliasedUInt: kotlin.UInt /* from: test.UIntAlias */ = -1
+  public const val aliasedUInt: kotlin.UInt /* from: test.UIntAlias */ = 4294967295u
 
   public const val negative: kotlin.Int = -7
 

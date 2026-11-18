@@ -149,7 +149,7 @@ PropertyInitializersKt.class:
       STRING_TEMPLATE
         LITERAL_STRING_TEMPLATE_ENTRY[text=s]
     PROPERTY[fqName=test.uByte, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uByte]
-      constantInitializer: -1.toByte()
+      constantInitializer: -1.toUByte()
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -158,11 +158,9 @@ PropertyInitializersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=UByte]
             isClassRef: true
-      PREFIX_EXPRESSION
-        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=255u]
     PROPERTY[fqName=test.uShort, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uShort]
-      constantInitializer: -1.toShort()
+      constantInitializer: -1.toUShort()
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -171,11 +169,9 @@ PropertyInitializersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=UShort]
             isClassRef: true
-      PREFIX_EXPRESSION
-        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=65535u]
     PROPERTY[fqName=test.uInt, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uInt]
-      constantInitializer: -1
+      constantInitializer: -1.toUInt()
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -184,11 +180,9 @@ PropertyInitializersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=UInt]
             isClassRef: true
-      PREFIX_EXPRESSION
-        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4294967295u]
     PROPERTY[fqName=test.uLong, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uLong]
-      constantInitializer: -1.toLong()
+      constantInitializer: -1.toULong()
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -197,11 +191,9 @@ PropertyInitializersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=ULong]
             isClassRef: true
-      PREFIX_EXPRESSION
-        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=18446744073709551615uL]
     PROPERTY[fqName=test.aliasedUInt, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=aliasedUInt]
-      constantInitializer: -1
+      constantInitializer: -1.toUInt()
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
@@ -211,9 +203,7 @@ PropertyInitializersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=UInt]
             isClassRef: true
-      PREFIX_EXPRESSION
-        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4294967295u]
     PROPERTY[fqName=test.negative, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
       constantInitializer: -7
       origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)

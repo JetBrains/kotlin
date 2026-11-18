@@ -8,7 +8,7 @@ FILE[kind=File[packageFqName=<root>]]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=Defaults.ub, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=ub]
-          constantInitializer: -1.toByte()
+          constantInitializer: -1.toUByte()
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -16,11 +16,9 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=UByte]
                 isClassRef: true
-          PREFIX_EXPRESSION
-            OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
-            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=255u]
         VALUE_PARAMETER[fqName=Defaults.us, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=us]
-          constantInitializer: -1.toShort()
+          constantInitializer: -1.toUShort()
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -28,11 +26,9 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=UShort]
                 isClassRef: true
-          PREFIX_EXPRESSION
-            OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
-            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=65535u]
         VALUE_PARAMETER[fqName=Defaults.ui, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=ui]
-          constantInitializer: -1
+          constantInitializer: -1.toUInt()
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -40,11 +36,9 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=UInt]
                 isClassRef: true
-          PREFIX_EXPRESSION
-            OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
-            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4294967295u]
         VALUE_PARAMETER[fqName=Defaults.ul, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=ul]
-          constantInitializer: -1.toLong()
+          constantInitializer: -1.toULong()
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -52,9 +46,7 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=ULong]
                 isClassRef: true
-          PREFIX_EXPRESSION
-            OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
-            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=18446744073709551615uL]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
