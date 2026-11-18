@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal.testing
 
+@Deprecated("No longer used. Scheduled for removal in Kotlin 2.6.20.")
 interface KotlinTestRunnerListener {
     fun runningFailure(failure: Error)
 }

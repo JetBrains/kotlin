@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.internal.tasks.testing.TestExecuter
@@ -42,14 +44,12 @@ internal constructor(
     val excludePatterns: Set<String>
         @Input get() = filterExt.excludePatterns
 
-    private val runListeners = mutableListOf<KotlinTestRunnerListener>()
-
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.6.20.")
     @Internal
     var ignoreRunFailures: Boolean = false
 
-    fun addRunListener(listener: KotlinTestRunnerListener) {
-        runListeners.add(listener)
-    }
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.6.20.")
+    fun addRunListener(listener: KotlinTestRunnerListener) = Unit
 
     private val ignoreTcsmOverflow = PropertiesProvider(project).ignoreTcsmOverflow
 
@@ -57,9 +57,7 @@ internal constructor(
     override fun createTestExecuter(): TestExecuter<*> =
         TCServiceMessagesTestExecutor(
             description = path,
-            runListeners = runListeners,
             ignoreTcsmOverflow = ignoreTcsmOverflow.get(),
-            ignoreRunFailures = ignoreRunFailures,
             execOps = execOps,
         )
 }
