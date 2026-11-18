@@ -127,13 +127,15 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                     mergeDependencies(module, dependenciesToCompile)
                 }
 
-        fun List<BackendJobFragment>.runAllLowerings() {
-            if (context.config.produce.isCache) {
-                runEngineForLowerings { module ->
-                    runAndMeasurePhase(BuildAdditionalPreLoweringsCacheInfoPhase, module)
-                }
-            }
+        fun List<BackendJobFragment>.cacheInfoPreLowerings() = runEngineForLowerings { module ->
+            runAndMeasurePhase(BuildAdditionalPreLoweringsCacheInfoPhase, module)
+        }
 
+        fun List<BackendJobFragment>.cacheInfoPostLowerings() = runEngineForLowerings { module ->
+            runAndMeasurePhase(BuildAdditionalPostLoweringsCacheInfoPhase, module)
+        }
+
+        fun List<BackendJobFragment>.runAllLowerings() {
             if (context.config.produce == CompilerOutputKind.PROGRAM) {
                 // Cannot use `runSpecifiedLowering`, because we really need to run this lowering on a single module, not on the module
                 // and all of its dependencies.
@@ -173,14 +175,6 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             runSpecifiedLowering(::IrValidationAfterInliningAllFunctionsKlibSecondStagePhase)
             runSpecifiedLowerings(context.config.getLoweringsAfterInlining())
             runSpecifiedLowering(::IrValidationAfterLoweringsSecondStagePhase)
-
-            if (context.config.produce.isCache) {
-                runEngineForLowerings { module ->
-                    runAndMeasurePhase(BuildAdditionalPostLoweringsCacheInfoPhase, module)
-                }
-            }
-
-            finalizeLowerings()
         }
 
         fun BackendJobFragment.runAfterLowerings() {
@@ -227,7 +221,14 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 
         val fragmentsList = irModules.flatMap { backendEngine.splitIntoFragments(it, performanceManager).toList() }
         performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
+            if (context.config.produce.isCache) {
+                fragmentsList.cacheInfoPreLowerings()
+            }
             fragmentsList.runAllLowerings()
+            if (context.config.produce.isCache) {
+                fragmentsList.cacheInfoPostLowerings()
+            }
+            fragmentsList.finalizeLowerings()
         }
 
         val threadsCount = context.config.threadsCount
