@@ -105,14 +105,27 @@ sealed interface TypeRef {
         is ClassType -> copy(nullable = nullable)
         is AliasType -> copy(nullable = nullable)
         is TypeParamType -> copy(nullable = nullable)
+        is ListType -> copy(nullable = nullable)
     }
 
     data class BuiltinType(val builtin: Builtin, override val nullable: Boolean = false) : TypeRef
-    data class ClassType(val classId: Int, override val nullable: Boolean = false) : TypeRef
-    data class AliasType(val aliasId: Int, override val nullable: Boolean = false) : TypeRef
 
-    /** The type parameter `T` of the function the type is used in, substituted with the type argument at the call sites. */
+    /**
+     * A class type. The type argument of a generic class is [typeArg], `Int` if it is `null`, or a star projection if [star];
+     * a non-generic class ignores it.
+     */
+    data class ClassType(val classId: Int, override val nullable: Boolean = false, val typeArg: TypeRef? = null, val star: Boolean = false) : TypeRef
+
+    /** A typealias type, with the type argument [typeArg] of a generic typealias, `Int` if it is `null`. */
+    data class AliasType(val aliasId: Int, override val nullable: Boolean = false, val typeArg: TypeRef? = null) : TypeRef
+
+    /**
+     * The type parameter `T` of the function, of the class or of the typealias the type is used in,
+     * substituted with the type argument at the use sites.
+     */
     data class TypeParamType(override val nullable: Boolean = false) : TypeRef
+
+    data class ListType(val element: TypeRef, override val nullable: Boolean = false) : TypeRef
 }
 
 enum class Visibility(val keyword: String) {
@@ -125,6 +138,14 @@ enum class Visibility(val keyword: String) {
 }
 
 data class Param(val name: String, val type: TypeRef, val hasDefault: Boolean, val defaultVariant: Int = 0)
+
+/** A parameter of a primary constructor, which declares a property when [isProperty]. */
+data class CtorParam(val name: String, val type: TypeRef, val hasDefault: Boolean, val isProperty: Boolean, val defaultVariant: Int = 0) {
+    fun asParam() = Param(name, type, hasDefault, defaultVariant)
+}
+
+/** An annotation of a declaration with the annotation class [annotationId], passing this variant as its argument. */
+data class AnnotationUse(val annotationId: Int, val argVariant: Int)
 
 /** An expression printed as `println(...)` inside a function body. */
 sealed interface Use {
@@ -140,12 +161,23 @@ sealed interface Use {
         val lambdaVariant: Int = 0,
         val form: CallForm = CallForm.REGULAR,
         val typeArg: TypeRef = TypeRef.BuiltinType(Builtin.INT),
+        val scopeClassId: Int? = null,
     ) : Use
     data class ReadProp(val propId: Int) : Use
-    data class Construct(val classId: Int) : Use
+    /** A creation of an instance of [classId], through the secondary constructor if [viaSecondary] and the class has one. */
+    data class Construct(val classId: Int, val viaSecondary: Boolean = false) : Use
 
-    /** A call of the member [memberId] (possibly inherited) on an instance of [classId], the arguments are passed as in [CallFun]. */
-    data class CallMember(val classId: Int, val memberId: Int, val argNames: List<String> = emptyList(), val named: Boolean = true) : Use
+    /**
+     * A call of the member [memberId] (possibly inherited) on an instance of [classId], the arguments are passed as in [CallFun].
+     * An [implicit] call is made in a `with` block on the instance, so a function with the same name may win the resolution.
+     */
+    data class CallMember(
+        val classId: Int,
+        val memberId: Int,
+        val argNames: List<String> = emptyList(),
+        val named: Boolean = true,
+        val implicit: Boolean = false,
+    ) : Use
 
     /** An exhaustive `when` over the sealed class [sealedId], branches are fixed when the use is created. */
     data class WhenSealed(val sealedId: Int, val scrutineeClassId: Int, val branchClassIds: List<Int>) : Use
@@ -173,13 +205,30 @@ sealed interface Use {
 
     /** A `when` with a branch condition reading the property [memberId] of the object [objectId], inlined when it is a constant. */
     data class WhenMember(val objectId: Int, val memberId: Int) : Use
+
+    /**
+     * A destructuring declaration of an instance of the data class [classId]: by position into [componentCount] variables,
+     * or by the name of the property [propertyName], which stops compiling when the property is renamed.
+     */
+    data class Destructure(val classId: Int, val componentCount: Int, val propertyName: String?) : Use
+
+    /** A `copy()` call on an instance of the data class [classId]. */
+    data class Copy(val classId: Int) : Use
+
+    /** A read of the constructor property [name] of an instance of [classId], which stops compiling when it is removed or renamed. */
+    data class ReadCtorProperty(val classId: Int, val name: String) : Use
 }
 
 /**
- * The syntax of a call of an extension function with a single parameter. A call in the infix or in the operator form
- * stops compiling when the function loses its modifier.
+ * The syntax of a call of an extension function. A call in the infix or in the operator form stops compiling when the function
+ * loses its modifier.
  */
 enum class CallForm { REGULAR, INFIX, OPERATOR }
+
+/** The operator an extension function is, with the name it gets. */
+enum class OperatorKind(val functionName: String) {
+    PLUS("plus"), GET("get"), INVOKE("invoke"), COMPARE_TO("compareTo"), COMPONENT1("component1"), GET_VALUE("getValue")
+}
 
 sealed interface Decl {
     val id: Int
@@ -214,7 +263,8 @@ sealed interface Decl {
  * @property deprecationConstId the constant whose value is the message of the `@Deprecated` annotation of the function
  * @property receiverClassId the receiver of an extension function
  * @property infix whether the function is infix, printed only for an extension function with a single parameter
- * @property operator whether the function is the `plus` operator, printed only for an extension function with a single parameter
+ * @property operator whether the function is the [operatorKind] operator, printed only for an extension function of its shape
+ * @property operatorKind the operator, a `getValue` operator ignores the parameters of the function
  * @property jvmNameVariant if not 0, the function is renamed in the bytecode with `@JvmName`
  * @property jvmOverloads whether the function is `@JvmOverloads`, printed only for a non-inline function with default values
  * @property publishedApi whether the function is `@PublishedApi`, printed only for an internal function
@@ -228,6 +278,9 @@ sealed interface Decl {
  * @property localFunVariant if not 0, a non-inline function declares and calls a local function returning this variant
  * @property jvmSynthetic whether the function is `@JvmSynthetic`
  * @property throws whether the function declares `@Throws`
+ * @property annotations the annotations with the annotation classes of the program
+ * @property optInIds the opt-in markers the function opts in to with `@OptIn`
+ * @property contextClassId the type of the context parameter, a call needs an instance of it as an implicit receiver
  */
 data class FunDecl(
     override val id: Int,
@@ -259,6 +312,10 @@ data class FunDecl(
     val localFunVariant: Int = 0,
     val jvmSynthetic: Boolean = false,
     val throws: Boolean = false,
+    val annotations: List<AnnotationUse> = emptyList(),
+    val optInIds: List<Int> = emptyList(),
+    val operatorKind: OperatorKind = OperatorKind.PLUS,
+    val contextClassId: Int? = null,
 ) : Decl {
     /** Whether the function is printed as suspend: suspend inline functions are generated only with [KnownIssues.inlineOfSeparateCompilation]. */
     val isSuspend: Boolean get() = suspend && (!inline || KnownIssues.inlineOfSeparateCompilation)
@@ -274,10 +331,24 @@ data class FunDecl(
     /** Whether the function may be infix or an operator: an extension function with a single parameter without a default value. */
     val isBinary: Boolean get() = receiverClassId != null && lambda == null && params.size == 1 && !params.single().hasDefault
 
+    /** Whether the function is printed as the [operatorKind] operator: it has to have the shape of the operator. */
+    val isOperator: Boolean
+        get() = operator && receiverClassId != null && typeParam == null && when (operatorKind) {
+            OperatorKind.PLUS, OperatorKind.GET -> isBinary
+            OperatorKind.COMPARE_TO -> isBinary && returnType == TypeRef.BuiltinType(Builtin.INT)
+            OperatorKind.INVOKE -> true
+            OperatorKind.COMPONENT1 -> params.isEmpty() && lambda == null
+            OperatorKind.GET_VALUE -> lambda == null
+        }
+
     /** Whether the [contract] is printed. */
     val hasContract: Boolean get() = contract && !isSuspend && typeParam == null && params.firstOrNull()?.type?.nullable == true
 
     val isReified: Boolean get() = inline && typeParam == TypeParamKind.REIFIED
+
+    /** The printed [lambdaShape]: a suspend lambda of an inline function needs the function to be suspend. */
+    val printedLambdaShape: LambdaShape
+        get() = lambdaShape.takeIf { it != LambdaShape.SUSPEND || !inline || isSuspend } ?: LambdaShape.NO_PARAMS
 }
 
 enum class TypeParamKind { PLAIN, REIFIED }
@@ -297,12 +368,15 @@ enum class PropKind { VAL, VAR, CONST, LATEINIT }
  * How the value of a property is provided. A getter is printed instead of a field and of a delegate for an extension property,
  * and a field is printed instead of a delegate for a `var`.
  */
-enum class PropAccessor { FIELD, GETTER, INLINE_GETTER, LAZY }
+enum class PropAccessor { FIELD, GETTER, INLINE_GETTER, LAZY, DELEGATE }
 
 /**
  * @property receiverClassId the receiver of an extension property
  * @property jvmField whether the property is `@JvmField`, printed only for a property with a field
  * @property volatile whether the property is `@Volatile`, printed only for a `var` with a field
+ * @property annotations the annotations with the annotation classes of the program
+ * @property delegateFunId the `getValue` operator providing the value of a [PropAccessor.DELEGATE] property, which is delegated to
+ *   an instance of its receiver
  */
 data class PropDecl(
     override val id: Int,
@@ -316,6 +390,8 @@ data class PropDecl(
     val receiverClassId: Int? = null,
     val jvmField: Boolean = false,
     val volatile: Boolean = false,
+    val annotations: List<AnnotationUse> = emptyList(),
+    val delegateFunId: Int? = null,
 ) : Decl {
     /** The printed receiver: a constant has none. */
     val printedReceiverId: Int? get() = receiverClassId.takeIf { kind != PropKind.CONST }
@@ -326,10 +402,12 @@ data class TypeAliasDecl(
     override val name: String,
     override val visibility: Visibility,
     val target: TypeRef,
+    /** Whether the typealias has the type parameter `T`, which [target] may use. */
+    val generic: Boolean = false,
 ) : Decl
 
 enum class ClassKind {
-    FINAL, OPEN, ABSTRACT, SEALED, INTERFACE, SEALED_INTERFACE, DATA, OBJECT, ENUM, VALUE;
+    FINAL, OPEN, ABSTRACT, SEALED, INTERFACE, SEALED_INTERFACE, DATA, OBJECT, ENUM, VALUE, ANNOTATION;
 
     /** Whether the class can be a supertype in the model. */
     val isInheritable: Boolean get() = this == OPEN || this == ABSTRACT || this == SEALED || isInterface
@@ -343,6 +421,9 @@ enum class ClassKind {
 
     /** Whether the class may be an inner class or have a companion object. */
     val isRegularClass: Boolean get() = this == FINAL || this == OPEN || this == ABSTRACT || this == SEALED || this == DATA
+
+    /** Whether the class has a primary constructor with the parameters of the model. */
+    val hasConstructor: Boolean get() = isRegularClass
 }
 
 enum class Modality { FINAL, OPEN, ABSTRACT }
@@ -350,12 +431,29 @@ enum class Modality { FINAL, OPEN, ABSTRACT }
 /** How a class is declared in its [ClassDecl.outerId]. */
 enum class Nesting { NESTED, INNER, COMPANION }
 
+/** The declarations an annotation class may annotate. */
+enum class AnnotationTargets { ALL, CLASSES, FUNCTIONS }
+
+enum class Variance(val keyword: String) { INVARIANT(""), OUT("out "), IN("in ") }
+
 /**
  * @property interfaceIds the interfaces implemented in addition to the supertype [superId]
  * @property outerId the class this class is declared in, then it is printed in that class instead of its file
  * @property enumConstructorVariant if not 0, the enum class has a constructor parameter passed by its entries
  * @property enumEntryBodyVariant if not 0, the enum entries have bodies
  * @property funInterface whether an interface is a `fun interface`, printed only if it has a single abstract member function
+ * @property ctorParams the parameters of the primary constructor, a data class also has the `v` property
+ * @property secondaryCtor whether the class has a secondary constructor with `String` and `Unit` parameters delegating to the primary one
+ * @property initVariant if not 0, the class has an `init` block printing this variant
+ * @property ctorVisibility the visibility of the primary constructor
+ * @property delegatedIds the interfaces of [interfaceIds] implemented by delegation to a constructor parameter
+ * @property retention the retention of an annotation class
+ * @property annotationTargets the targets of an annotation class
+ * @property requiresOptIn whether an annotation class is a `@RequiresOptIn` marker
+ * @property annotations the annotations of the class with the annotation classes of the program
+ * @property typeParam the variance of the type parameter `T`, `null` if the class is not generic. The members may use `T`,
+ *   the overrides in the subclasses, which pass `Int` as the type argument, use `Int` instead
+ * @property typeParamNonNull whether `T` has the `Any` upper bound
  */
 data class ClassDecl(
     override val id: Int,
@@ -371,13 +469,40 @@ data class ClassDecl(
     val enumConstructorVariant: Int = 0,
     val enumEntryBodyVariant: Int = 0,
     val funInterface: Boolean = false,
+    val ctorParams: List<CtorParam> = emptyList(),
+    val secondaryCtor: Boolean = false,
+    val initVariant: Int = 0,
+    val ctorVisibility: Visibility = Visibility.PUBLIC,
+    val delegatedIds: Set<Int> = emptySet(),
+    val retention: AnnotationRetention = AnnotationRetention.RUNTIME,
+    val annotationTargets: AnnotationTargets = AnnotationTargets.ALL,
+    val requiresOptIn: Boolean = false,
+    val annotations: List<AnnotationUse> = emptyList(),
+    val typeParam: Variance? = null,
+    val typeParamNonNull: Boolean = false,
 ) : Decl {
+    /** Whether the class is printed as generic: objects, enums and annotation classes cannot be. */
+    val isGeneric: Boolean get() = typeParam != null && kind != ClassKind.OBJECT && kind != ClassKind.ENUM && kind != ClassKind.ANNOTATION
+
     val isInstantiable: Boolean
         get() = when (kind) {
             ClassKind.FINAL, ClassKind.OPEN, ClassKind.DATA, ClassKind.OBJECT, ClassKind.VALUE -> true
             ClassKind.ENUM -> enumEntries.isNotEmpty()
-            ClassKind.ABSTRACT, ClassKind.SEALED, ClassKind.INTERFACE, ClassKind.SEALED_INTERFACE -> false
+            ClassKind.ABSTRACT, ClassKind.SEALED, ClassKind.INTERFACE, ClassKind.SEALED_INTERFACE, ClassKind.ANNOTATION -> false
         }
+
+    /**
+     * The printed constructor parameters: a data class has only property parameters, and the delegation to an interface
+     * is to a constructor parameter.
+     */
+    val printedCtorParams: List<CtorParam>
+        get() = if (!kind.hasConstructor) emptyList() else {
+            ctorParams.map { if (kind == ClassKind.DATA) it.copy(isProperty = true) else it } +
+                    printedDelegatedIds.map { CtorParam("d$it", TypeRef.ClassType(it), hasDefault = false, isProperty = kind == ClassKind.DATA) }
+        }
+
+    /** The interfaces actually implemented by delegation, only a class with a constructor delegates. */
+    val printedDelegatedIds: List<Int> get() = if (kind.hasConstructor) interfaceIds.filter { it in delegatedIds } else emptyList()
 
     fun replaceMember(id: Int, transform: (MemberFun) -> MemberFun): ClassDecl =
         copy(members = members.map { if (it.id == id) transform(it) else it })
@@ -389,6 +514,10 @@ data class ClassDecl(
     val samMember: MemberFun?
         get() = members.filter { it.modality == Modality.ABSTRACT && it.overrides == null }.singleOrNull()
             ?.takeIf { !it.isProperty && it.params.none(Param::hasDefault) }
+
+    /** Whether the interface is printed as a `fun interface`: only one without supertypes, whose abstract members are all its own. */
+    val isFunInterface: Boolean
+        get() = funInterface && kind == ClassKind.INTERFACE && superId == null && interfaceIds.isEmpty() && samMember != null
 }
 
 /**

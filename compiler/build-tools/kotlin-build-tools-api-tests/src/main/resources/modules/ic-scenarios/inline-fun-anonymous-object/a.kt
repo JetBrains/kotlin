@@ -1,0 +1,5 @@
+inline fun f(crossinline block: () -> String) {
+    println(object {
+        override fun toString() = "o1" + block()
+    })
+}

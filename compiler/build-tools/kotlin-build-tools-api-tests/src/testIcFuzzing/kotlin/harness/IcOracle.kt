@@ -68,26 +68,44 @@ object IcOracle {
 
     /**
      * A line diff of the `javap` dumps of two class files: for each differing class member, its lines in [expected] marked with `-`
-     * and its lines in [actual] marked with `+`. Returns `null` for the other files.
+     * and its lines in [actual] marked with `+`, and the entries of the constant pool which only one of them has.
+     * The lines of a member are compared in order and with their repetitions, while the members and the constant pool entries
+     * may be in any order: an empty diff means that the class files differ only in these orders. Returns `null` for the other files.
      */
     private fun classDiff(expected: Path, actual: Path): Map<String, List<String>>? {
         if (!expected.toString().endsWith(".class")) return null
-        val expectedMembers = members(javap(expected))
-        val actualMembers = members(javap(actual))
-        return (expectedMembers.keys + actualMembers.keys).associateWith { member ->
+        val [expectedLines, expectedPool] = javap(expected)
+        val [actualLines, actualPool] = javap(actual)
+        val expectedMembers = members(expectedLines)
+        val actualMembers = members(actualLines)
+        val memberDiffs = (expectedMembers.keys + actualMembers.keys).associateWith { member ->
             val expectedLines = expectedMembers[member]
             val actualLines = actualMembers[member]
             when {
                 expectedLines == null -> listOf("+ (only in the incremental build)")
                 actualLines == null -> listOf("- (only in the rebuild)")
-                else -> (expectedLines - actualLines.toSet()).map { "- $it" } + (actualLines - expectedLines.toSet()).map { "+ $it" }
+                expectedLines == actualLines -> emptyList()
+                else -> ((expectedLines - actualLines.toSet()).map { "- $it" } + (actualLines - expectedLines.toSet()).map { "+ $it" })
+                    .ifEmpty { listOf("  (the same lines in a different order or number)") }
             }
         }.filterValues { it.isNotEmpty() }
+        val poolDiff = multisetDiff(expectedPool, actualPool)
+        return if (poolDiff.isEmpty()) memberDiffs else memberDiffs + ("<constant pool>" to poolDiff)
+    }
+
+    /** The elements whose numbers of occurrences differ, marked with `-` for [expected] and `+` for [actual]. */
+    private fun multisetDiff(expected: List<String>, actual: List<String>): List<String> {
+        val expectedCounts = expected.groupingBy { it }.eachCount()
+        val actualCounts = actual.groupingBy { it }.eachCount()
+        return (expectedCounts.keys + actualCounts.keys).flatMap { entry ->
+            val difference = (actualCounts[entry] ?: 0) - (expectedCounts[entry] ?: 0)
+            List(kotlin.math.abs(difference)) { if (difference > 0) "+ $entry" else "- $entry" }
+        }
     }
 
     private fun render(diff: Map<String, List<String>>?, path: String): String {
         if (diff == null) return "(${path.substringAfterLast('.')} file)"
-        if (diff.isEmpty()) return "(the javap dumps are equal up to the order of the members, the difference is in constant pool, member or attribute order)"
+        if (diff.isEmpty()) return "(the class files differ only in the order of their members and of their constant pool entries)"
         // every differing member is listed, each with a limited number of lines
         return diff.flatMap { [member, lines] ->
             listOf("  $member") + lines.take(MAX_MEMBER_DIFF_LINES) +
@@ -111,25 +129,31 @@ object IcOracle {
         return members
     }
 
-    private fun javap(classFile: Path): List<String> {
+    /**
+     * The `javap` dump of [classFile] without the constant pool, with the constant pool indices removed, and the entries of the constant pool,
+     * whose indices are removed as well: an entry is its type with its value or with the comment describing what it refers to.
+     */
+    private fun javap(classFile: Path): Pair<List<String>, List<String>> {
         val javaHome = System.getProperty("java.home")
         val javap = File(javaHome, "bin/javap").let {
             // in case we got java.home pointing to the JRE part, javap is located in the outer JDK part
             if (it.exists()) it else File(javaHome, "../bin/javap")
         }
         val result = runProcess(listOf(javap.absolutePath, "-v", "-p", "-c", classFile.toString()), classFile.parent)
-        if (!result.isSuccessful) return listOf("<javap failed: ${result.output}>")
-        return result.output.lines()
+        if (!result.isSuccessful) return listOf("<javap failed: ${result.output}>") to emptyList()
+        val [pool, body] = result.output.lines()
             // the header contains the path, the last modification time and the checksum of the file
             .dropWhile { !it.contains("class ") && !it.contains("interface ") }
-            .filterNot { it.trimStart().startsWith("#") } // constant pool entries are numbered differently with an unchanged semantics
-            .map { it.replace(CONSTANT_POOL_INDEX, "# ") }
+            .partition { it.trimStart().startsWith("#") }
+        return body.map { it.replace(CONSTANT_POOL_INDEX, "# ") } to pool.map { it.replace(CONSTANT_POOL_INDEX, "").replace(WHITESPACE, " ").trim() }
     }
 
     private const val MAX_MEMBER_DIFF_LINES = 30
 
     /** A constant pool index with the padding that aligns the following comment, the padding depends on the width of the index. */
     private val CONSTANT_POOL_INDEX = Regex("#\\d+\\s*")
+
+    private val WHITESPACE = Regex("\\s+")
 
     /** `javap -v` prints the member declarations with an indentation of two spaces, and their contents deeper. */
     private val MEMBER_DECLARATION = Regex("^ {2}\\S.*;$")

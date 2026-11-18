@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPLICIT_BACKING_FIELDS
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
@@ -19,13 +20,17 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAg
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.exists
 
 class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
@@ -263,6 +268,23 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
                 )
                 assertCompiledSources("Usage.kt", "ImportedUsage.kt", "Import.kt", "StarImport.kt")
             }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("IC removes the stale output of a source file deleted after a rebuild with unknown source changes")
+    @TestMetadata("source-file-modification")
+    fun testSourceFileDeletedAfterRebuildWithUnknownChanges(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module = module("source-file-modification")
+            module.compileIncrementally(SourcesChanges.Unknown)
+
+            module.sourcesDirectory.resolve("Dummy.kt").deleteExisting()
+
+            module.compileIncrementally(SourcesChanges.ToBeCalculated)
+            // The deletion is found when the changes are calculated from the first build on, see testConsequentBuilds,
+            // but not after a rebuild with unknown changes: Dummy.class stays in the output.
+            assertFalse(module.outputDirectory.resolve("Dummy.class").exists()) { "The output of the deleted Dummy.kt is stale" }
         }
     }
 }

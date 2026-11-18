@@ -33,6 +33,8 @@ enum class EditKind(val initialWeight: Int, val weight: Int) {
     ADD_SPECIFIC_OVERLOAD(1, 2),
     ADD_INTERFACE(1, 1),
     ADD_NESTED_CLASS(1, 1),
+    ADD_ANNOTATION_CLASS(1, 1),
+    ADD_ANNOTATION_USE(1, 1),
     ADD_SHADOWING_FUN(0, 1),
     ADD_SHADOWING_MEMBER(0, 1),
 
@@ -87,6 +89,28 @@ enum class EditKind(val initialWeight: Int, val weight: Int) {
     CHANGE_ENUM_ENTRY_BODIES(0, 1),
     TOGGLE_FUN_INTERFACE(0, 1),
     RENAME_ENUM_ENTRY(0, 1),
+    ADD_CTOR_PARAM(0, 1),
+    REMOVE_CTOR_PARAM(0, 1),
+    RENAME_CTOR_PARAM(0, 1),
+    TOGGLE_CTOR_PARAM_PROPERTY(0, 1),
+    TOGGLE_CTOR_PARAM_DEFAULT(0, 1),
+    TOGGLE_SECONDARY_CTOR(0, 1),
+    CHANGE_INIT_BLOCK(0, 1),
+    CHANGE_CTOR_VISIBILITY(0, 1),
+    TOGGLE_DELEGATION(0, 1),
+    REMOVE_ANNOTATION_USE(0, 1),
+    CHANGE_ANNOTATION_ARG(0, 1),
+    CHANGE_RETENTION(0, 1),
+    CHANGE_ANNOTATION_TARGETS(0, 1),
+    TOGGLE_REQUIRES_OPT_IN(0, 1),
+    TOGGLE_OPT_IN(0, 1),
+    TOGGLE_CONTEXT(0, 1),
+    ADD_DELEGATED_PROP(0, 1),
+    ADD_SCOPE_SHADOW(0, 1),
+    ADD_COMPANION_SHADOW(0, 1),
+    TOGGLE_CLASS_TYPE_PARAM(0, 1),
+    CHANGE_VARIANCE(0, 1),
+    TOGGLE_CLASS_TYPE_PARAM_BOUND(0, 1),
     CHANGE_MEMBER_MODALITY(0, 2),
     ADD_MEMBER_PARAM(0, 1),
     TOGGLE_MEMBER_PROPERTY(0, 1),
@@ -126,6 +150,8 @@ object Edits {
 
     private val PRIMITIVES = setOf(Builtin.INT, Builtin.LONG, Builtin.BOOLEAN)
 
+    private const val MAX_NESTING = 16
+
     /** The program the initial edits are applied to. */
     val SEED_PROGRAM = Program(
         files = listOf(SourceFile("f1.kt", "p0", emptyList()), SourceFile("f2.kt", "p0", emptyList()), SourceFile("f3.kt", "p1", emptyList())),
@@ -148,6 +174,8 @@ object Edits {
             EditKind.ADD_SPECIFIC_OVERLOAD -> addSpecificOverload()
             EditKind.ADD_INTERFACE -> addInterface()
             EditKind.ADD_NESTED_CLASS -> addNestedClass()
+            EditKind.ADD_ANNOTATION_CLASS -> addAnnotationClass()
+            EditKind.ADD_ANNOTATION_USE -> addAnnotationUse()
             EditKind.ADD_SHADOWING_FUN -> addShadowingFun()
             EditKind.ADD_SHADOWING_MEMBER -> addShadowingMember()
             EditKind.CHANGE_FUN_BODY -> changeFunBody()
@@ -201,6 +229,61 @@ object Edits {
             EditKind.CHANGE_ENUM_ENTRY_BODIES -> changeEnumEntryBodies()
             EditKind.TOGGLE_FUN_INTERFACE -> toggleFunInterface()
             EditKind.RENAME_ENUM_ENTRY -> renameEnumEntry()
+            EditKind.ADD_CTOR_PARAM -> updateClass("add a constructor parameter to", { it.kind.hasConstructor }) {
+                it.copy(ctorParams = it.ctorParams + CtorParam("c${newId()}", randomType(), choices.chance(60), choices.chance(50)))
+            }
+            EditKind.REMOVE_CTOR_PARAM -> updateClass("remove the last constructor parameter of", { it.ctorParams.isNotEmpty() }) {
+                it.copy(ctorParams = it.ctorParams.dropLast(1))
+            }
+            EditKind.RENAME_CTOR_PARAM -> updateClass("rename a constructor parameter of", { it.ctorParams.isNotEmpty() }) {
+                val index = choices.next(it.ctorParams.size)
+                it.copy(ctorParams = it.ctorParams.mapIndexed { i, param -> if (i == index) param.copy(name = "c${newId()}") else param })
+            }
+            EditKind.TOGGLE_CTOR_PARAM_PROPERTY -> updateClass("toggle a constructor property of", { it.ctorParams.isNotEmpty() }) {
+                val index = choices.next(it.ctorParams.size)
+                it.copy(ctorParams = it.ctorParams.mapIndexed { i, param -> if (i == index) param.copy(isProperty = !param.isProperty) else param })
+            }
+            EditKind.TOGGLE_CTOR_PARAM_DEFAULT -> updateClass("toggle a constructor parameter default value of", { it.ctorParams.isNotEmpty() }) {
+                val index = choices.next(it.ctorParams.size)
+                it.copy(ctorParams = it.ctorParams.mapIndexed { i, param -> if (i == index) param.copy(hasDefault = !param.hasDefault) else param })
+            }
+            EditKind.TOGGLE_SECONDARY_CTOR -> updateClass("toggle the secondary constructor of", { it.kind.hasConstructor }) { it.copy(secondaryCtor = !it.secondaryCtor) }
+            EditKind.CHANGE_INIT_BLOCK -> updateClass("change the init block of", { !it.kind.isInterface }) { it.copy(initVariant = nextVariant(it.initVariant)) }
+            EditKind.CHANGE_CTOR_VISIBILITY -> updateClass("change the constructor visibility of", { it.kind.hasConstructor }) {
+                it.copy(ctorVisibility = choices.pick(Visibility.entries - it.ctorVisibility)!!)
+            }
+            // without a class implementing an interface, the edit prepares one for a later edit
+            EditKind.TOGGLE_DELEGATION -> updateClass("toggle the delegation of an interface of", { it.kind.hasConstructor && it.interfaceIds.isNotEmpty() }) {
+                val delegated = choices.pick(it.interfaceIds)!!
+                it.copy(delegatedIds = if (delegated in it.delegatedIds) it.delegatedIds - delegated else it.delegatedIds + delegated)
+            } ?: addInterface()
+            EditKind.REMOVE_ANNOTATION_USE -> removeAnnotationUse()
+            EditKind.CHANGE_ANNOTATION_ARG -> changeAnnotationArg()
+            EditKind.CHANGE_RETENTION -> updateAnnotationClass("change the retention of") {
+                it.copy(retention = choices.pick(AnnotationRetention.entries - it.retention)!!)
+            }
+            EditKind.CHANGE_ANNOTATION_TARGETS -> updateAnnotationClass("change the targets of") {
+                it.copy(annotationTargets = choices.pick(AnnotationTargets.entries - it.annotationTargets)!!)
+            }
+            EditKind.TOGGLE_REQUIRES_OPT_IN -> if (!KnownIssues.optInMarkerChange) null else {
+                updateAnnotationClass("toggle @RequiresOptIn of") { it.copy(requiresOptIn = !it.requiresOptIn) }
+            }
+            EditKind.TOGGLE_OPT_IN -> toggleOptIn()
+            EditKind.TOGGLE_CONTEXT -> toggleFun("the context parameter") {
+                it.copy(contextClassId = if (it.contextClassId != null) null else choices.pick(classes)?.id)
+            }
+            EditKind.ADD_DELEGATED_PROP -> addDelegatedProp()
+            EditKind.ADD_SCOPE_SHADOW -> addScopeShadow()
+            EditKind.ADD_COMPANION_SHADOW -> addCompanionShadow()
+            EditKind.TOGGLE_CLASS_TYPE_PARAM -> updateClass("toggle the type parameter of", { true }) {
+                it.copy(typeParam = if (it.typeParam != null) null else Variance.INVARIANT)
+            }
+            EditKind.CHANGE_VARIANCE -> updateClass("change the variance of the type parameter of", { it.typeParam != null }) {
+                it.copy(typeParam = choices.pick(Variance.entries - it.typeParam!!)!!)
+            }
+            EditKind.TOGGLE_CLASS_TYPE_PARAM_BOUND -> updateClass("toggle the bound of the type parameter of", { it.typeParam != null }) {
+                it.copy(typeParamNonNull = !it.typeParamNonNull)
+            }
             EditKind.CHANGE_MEMBER_MODALITY -> changeMemberModality()
             EditKind.ADD_MEMBER_PARAM -> addMemberParam()
             EditKind.TOGGLE_MEMBER_PROPERTY -> toggleMemberProperty()
@@ -255,9 +338,11 @@ object Edits {
         private val funs get() = program.decls.filterIsInstance<FunDecl>()
         private val props get() = program.decls.filterIsInstance<PropDecl>()
         private val aliases get() = program.decls.filterIsInstance<TypeAliasDecl>()
-        private val classes get() = program.classes
+        /** The classes except the annotation classes, which are only used to annotate declarations. */
+        val classes get() = program.classes.filter { it.kind != ClassKind.ANNOTATION }
+        private val annotationClasses get() = program.classes.filter { it.kind == ClassKind.ANNOTATION }
 
-        private fun newId(): Int = program.withNextId().let { [newProgram, id] -> program = newProgram; id }
+        fun newId(): Int = program.withNextId().let { [newProgram, id] -> program = newProgram; id }
 
         private fun pickFile(): SourceFile? = choices.pick(program.files)
 
@@ -277,15 +362,25 @@ object Edits {
             return TypeRef.BuiltinType(builtins[choices.next(builtins.size)])
         }
 
-        private fun randomType(maxId: Int = Int.MAX_VALUE): TypeRef {
+        fun randomType(maxId: Int = Int.MAX_VALUE): TypeRef {
             val roll = choices.next(10)
             val type = when {
-                roll >= 8 -> aliases.filter { it.id < maxId }.let(choices::pick)?.let { TypeRef.AliasType(it.id) }
-                roll >= 6 -> classes.filter { it.id < maxId }.let(choices::pick)?.let { TypeRef.ClassType(it.id) }
+                roll >= 8 -> aliases.filter { it.id < maxId }.let(choices::pick)?.let { TypeRef.AliasType(it.id, typeArg = if (it.generic) randomBuiltin() else null) }
+                roll >= 6 -> classes.filter { it.id < maxId }.let(choices::pick)?.let { cls ->
+                    // a generic class gets a type argument or a star projection
+                    if (cls.typeParam == null) TypeRef.ClassType(cls.id)
+                    else if (choices.chance(30)) TypeRef.ClassType(cls.id, star = true)
+                    else TypeRef.ClassType(cls.id, typeArg = randomBuiltin())
+                }
+                roll == 5 && choices.chance(50) -> TypeRef.ListType(randomBuiltin())
                 else -> null
             } ?: randomBuiltin()
             return if (choices.chance(15)) type.withNullable(true) else type
         }
+
+        /** A type in a member of a generic class, which may be the type parameter of the class. */
+        private fun randomMemberType(generic: Boolean, typeParamPercent: Int): TypeRef =
+            if (generic && choices.chance(typeParamPercent)) TypeRef.TypeParamType(nullable = choices.chance(20)) else randomType()
 
         private fun randomParams(): List<Param> =
             List(choices.next(3)) { index -> Param("a$index", randomType(), hasDefault = choices.chance(50)) }
@@ -312,11 +407,14 @@ object Edits {
                     add {
                         choices.pick(it)?.let { decl ->
                             val form = when {
-                                decl.isBinary && decl.operator && choices.chance(50) -> CallForm.OPERATOR
+                                decl.isOperator && choices.chance(50) -> CallForm.OPERATOR
                                 decl.isBinary && decl.infix && choices.chance(50) -> CallForm.INFIX
                                 else -> CallForm.REGULAR
                             }
-                            Use.CallFun(decl.id, decl.params.map(Param::name), named = choices.chance(80), form = form)
+                            // a function with a context parameter is called with the context as an implicit receiver,
+                            // another one may be called with an implicit receiver whose member may later shadow it
+                            val scope = decl.contextClassId ?: if (choices.chance(15)) choices.pick(classes)?.id else null
+                            Use.CallFun(decl.id, decl.params.map(Param::name), named = choices.chance(80), form = form, scopeClassId = scope)
                                 .let { use -> if (decl.typeParam == null) use else use.copy(typeArg = randomTypeArg(decl)) }
                         }
                     }
@@ -327,13 +425,28 @@ object Edits {
                     add { choices.pick(it)?.let { decl -> Use.ContractSmartCast(decl.id) } }
                 }
                 val instantiable = classes.filter { it.isInstantiable }
-                instantiable.takeIf { it.isNotEmpty() }?.let { add { choices.pick(it)?.let { cls -> Use.Construct(cls.id) } } }
+                instantiable.takeIf { it.isNotEmpty() }?.let {
+                    add { choices.pick(it)?.let { cls -> Use.Construct(cls.id, viaSecondary = cls.secondaryCtor && choices.chance(50)) } }
+                }
+                classes.filter { it.kind == ClassKind.DATA }.takeIf { it.isNotEmpty() }?.let {
+                    add {
+                        choices.pick(it)?.let { cls ->
+                            val properties = listOf("v") + cls.printedCtorParams.map { param -> param.name }
+                            if (choices.chance(50)) Use.Destructure(cls.id, 1 + choices.next(properties.size), null)
+                            else Use.Destructure(cls.id, 0, choices.pick(properties))
+                        }
+                    }
+                    add { choices.pick(it)?.let { cls -> Use.Copy(cls.id) } }
+                }
+                instantiable.filter { cls -> cls.printedCtorParams.any { it.isProperty } }.takeIf { it.isNotEmpty() }?.let {
+                    add { choices.pick(it)?.let { cls -> Use.ReadCtorProperty(cls.id, choices.pick(cls.printedCtorParams.filter { p -> p.isProperty })!!.name) } }
+                }
                 instantiable.filter { callableMembers(it).isNotEmpty() }.takeIf { it.isNotEmpty() }?.let {
                     add {
                         choices.pick(it)?.let { cls ->
                             choices.pick(callableMembers(cls))?.let { member ->
                                 val root = program.member(rootOf(member))?.second ?: member
-                                Use.CallMember(cls.id, member.id, root.params.map(Param::name), named = choices.chance(80))
+                                Use.CallMember(cls.id, member.id, root.params.map(Param::name), named = choices.chance(80), implicit = choices.chance(20))
                             }
                         }
                     }
@@ -351,14 +464,19 @@ object Edits {
                 classes.filter { it.kind == ClassKind.ENUM && it.enumEntries.isNotEmpty() }.takeIf { it.isNotEmpty() }?.let {
                     add { choices.pick(it)?.let { enum -> Use.WhenEnum(enum.id, enum.enumEntries, viaValues = choices.chance(30)) } }
                 }
-                classes.filter { it.kind == ClassKind.INTERFACE && it.funInterface && it.samMember != null }.takeIf { it.isNotEmpty() }?.let {
+                classes.filter { it.isFunInterface }.takeIf { it.isNotEmpty() }?.let {
                     add { choices.pick(it)?.let { cls -> Use.SamConversion(cls.id) } }
                 }
-                props.filter { it.type.nullable }.takeIf { it.isNotEmpty() }?.let { add { choices.pick(it)?.let { prop -> Use.SmartCast(prop.id) } } }
+                // a smart cast is created only for a stable property, a later edit may make it unstable
+                props.filter { it.type.nullable && it.kind == PropKind.VAL && it.accessor == PropAccessor.FIELD && it.receiverClassId == null }
+                    .takeIf { it.isNotEmpty() }?.let { add { choices.pick(it)?.let { prop -> Use.SmartCast(prop.id) } } }
                 val objectProperties = classes.filter { it.kind == ClassKind.OBJECT }.flatMap { obj ->
                     callableMembers(obj).filter { (program.member(rootOf(it))?.second ?: it).isProperty }.map { obj to it }
                 }
-                objectProperties.filter { [_, member] -> (program.member(rootOf(member))?.second ?: member).returnType.nullable }
+                objectProperties.filter { [obj, member] ->
+                    val root = program.member(rootOf(member))?.second ?: member
+                    member in obj.members && root.returnType.nullable && root.propKind == PropKind.VAL && member.accessor == PropAccessor.FIELD
+                }
                     .takeIf { it.isNotEmpty() }?.let { add { choices.pick(it)?.let { [obj, member] -> Use.SmartCastMember(obj.id, member.id) } } }
                 objectProperties.takeIf { it.isNotEmpty() }?.let { add { choices.pick(it)?.let { [obj, member] -> Use.WhenMember(obj.id, member.id) } } }
             }
@@ -389,7 +507,7 @@ object Edits {
             returnType = member.returnType, bodyVariant = choices.next(100), uses = emptyList(),
         )
 
-        private fun randomMember(owner: ClassKind): MemberFun {
+        private fun randomMember(owner: ClassKind, generic: Boolean = false): MemberFun {
             val modalities = buildList {
                 add(Modality.FINAL)
                 if (owner.isInheritable) add(Modality.OPEN)
@@ -399,9 +517,12 @@ object Edits {
             val id = newId()
             val isProperty = choices.chance(25)
             return MemberFun(
-                id = id, name = "m$id", modality = modality, overrides = null, returnType = randomType(),
+                id = id, name = "m$id", modality = modality, overrides = null, returnType = randomMemberType(generic, 10),
                 bodyVariant = choices.next(100), uses = if (modality == Modality.ABSTRACT) emptyList() else randomUses(id, 1),
-                params = if (isProperty) emptyList() else randomParams(), isProperty = isProperty,
+                params = if (isProperty) emptyList() else randomParams().map { param ->
+                    if (generic && choices.chance(25)) Param(param.name, TypeRef.TypeParamType(nullable = choices.chance(20)), hasDefault = false) else param
+                },
+                isProperty = isProperty,
                 propKind = if (isProperty && choices.chance(40)) choices.pick(PropKind.entries)!! else PropKind.VAL,
                 accessor = if (isProperty && choices.chance(40)) PropAccessor.FIELD else PropAccessor.GETTER,
                 jvmField = choices.chance(10),
@@ -425,14 +546,25 @@ object Edits {
             nesting: Nesting = Nesting.NESTED,
         ): ClassDecl {
             val id = newId()
+            val generic = kind != ClassKind.OBJECT && kind != ClassKind.ENUM && kind != ClassKind.ANNOTATION && choices.chance(20)
             val overrides = if (kind.allowsAbstractMembers) emptyList() else unimplementedAbstractMembers(listOfNotNull(superId) + interfaceIds).map(::overrideOf)
-            val members = overrides + List(choices.next(3)) { randomMember(kind) }
+            val members = overrides + List(choices.next(3)) { randomMember(kind, generic) }
             val entries = if (kind == ClassKind.ENUM) List(1 + choices.next(3)) { "E$it" } else emptyList()
             val cls = ClassDecl(
                 id, "C$id", Visibility.PUBLIC, kind, superId, members, entries, interfaceIds, outerId, nesting,
                 enumConstructorVariant = if (kind == ClassKind.ENUM && choices.chance(30)) 1 else 0,
                 enumEntryBodyVariant = if (kind == ClassKind.ENUM && choices.chance(30)) 1 else 0,
+                ctorParams = if (kind.hasConstructor && choices.chance(30)) {
+                    List(1 + choices.next(2)) {
+                        val type = randomMemberType(generic, 25)
+                        CtorParam("c${id}x$it", type, hasDefault = type !is TypeRef.TypeParamType && choices.chance(50), isProperty = choices.chance(50))
+                    }
+                } else emptyList(),
+                secondaryCtor = kind.hasConstructor && choices.chance(10),
+                initVariant = if (choices.chance(15)) 1 else 0,
                 funInterface = kind == ClassKind.INTERFACE && choices.chance(30),
+                typeParam = if (generic) Variance.INVARIANT else null,
+                typeParamNonNull = choices.chance(50),
             )
             addDecl(file, cls)
             return cls
@@ -519,12 +651,20 @@ object Edits {
         fun addTypeAlias(): EditOutcome? {
             val file = pickFile() ?: return null
             val id = newId()
-            addDecl(file, TypeAliasDecl(id, "A$id", Visibility.PUBLIC, randomType(maxId = id)))
+            // a generic typealias is a list or a generic class of its type parameter
+            val genericClass = choices.pick(classes.filter { it.isGeneric })
+            val alias = when {
+                !choices.chance(20) -> TypeAliasDecl(id, "A$id", Visibility.PUBLIC, randomType(maxId = id))
+                genericClass != null && choices.chance(50) -> TypeAliasDecl(id, "A$id", Visibility.PUBLIC, TypeRef.ClassType(genericClass.id, typeArg = TypeRef.TypeParamType()), generic = true)
+                else -> TypeAliasDecl(id, "A$id", Visibility.PUBLIC, TypeRef.ListType(TypeRef.TypeParamType()), generic = true)
+            }
+            addDecl(file, alias)
             return outcome("add typealias A$id to ${file.name}")
         }
 
         fun addClass(): EditOutcome? {
-            val kind = ClassKind.entries[choices.next(ClassKind.entries.size)]
+            // the interfaces are needed by many edits
+            val kind = if (choices.chance(15)) ClassKind.INTERFACE else choices.pick(ClassKind.entries - ClassKind.ANNOTATION)!!
             val superClass = if (choices.chance(50)) choices.pick(superCandidates(kind, Int.MAX_VALUE)) else null
             val file = if (superClass?.kind?.isSealed == true) {
                 choices.pick(program.files.filter { it.pkg == program.fileOf(superClass.id)?.pkg })
@@ -541,6 +681,10 @@ object Edits {
         private fun interfaceCandidates(classId: Int, except: Int?): List<ClassDecl> =
             classes.filter { it.kind == ClassKind.INTERFACE && it.id < classId && it.id != except }
 
+        /** Whether [cls] is declared, possibly deeply, in the class [outerId]. */
+        private fun isNestedIn(cls: ClassDecl, outerId: Int): Boolean =
+            generateSequence(cls.outerId) { program.classDecl(it)?.outerId }.take(MAX_NESTING).any { it == outerId }
+
         fun addSealedSubclass(): EditOutcome? {
             val sealed = choices.pick(classes.filter { it.kind.isSealed }) ?: return null
             val file = choices.pick(program.files.filter { it.pkg == program.fileOf(sealed.id)?.pkg }) ?: return null
@@ -554,7 +698,7 @@ object Edits {
             val outer = choices.pick(classes.filter { it.nesting != Nesting.INNER || it.outerId == null }) ?: return null
             val file = program.fileOf(outer.id) ?: return null
             val nesting = choices.pick(Nesting.entries)!!
-            val kind = if (nesting == Nesting.COMPANION) ClassKind.OBJECT else choices.pick(ClassKind.entries - ClassKind.SEALED_INTERFACE)!!
+            val kind = if (nesting == Nesting.COMPANION) ClassKind.OBJECT else choices.pick(ClassKind.entries - ClassKind.SEALED_INTERFACE - ClassKind.ANNOTATION)!!
             val superClass = if (choices.chance(30)) choices.pick(superCandidates(kind, Int.MAX_VALUE).filter { !it.kind.isSealed }) else null
             val cls = newClass(file, kind, superClass?.id, outerId = outer.id, nesting = nesting)
             return outcome("add ${nesting.name.lowercase()} ${kind.name.lowercase()} class ${cls.name} to ${describe(outer)}")
@@ -562,7 +706,7 @@ object Edits {
 
         fun addMember(): EditOutcome? {
             val cls = choices.pick(classes) ?: return null
-            val member = randomMember(cls.kind)
+            val member = randomMember(cls.kind, cls.isGeneric)
             program = program.replaceDecl(cls.id) { (it as ClassDecl).copy(members = it.members + member) }
             return outcome("add ${member.modality.name.lowercase()} member ${member.name} to ${describe(cls)}")
         }
@@ -637,8 +781,11 @@ object Edits {
         }
 
         fun addInterface(): EditOutcome? {
+            // only an interface may be implemented by an older interface, which could make a cycle,
+            // and a class cannot implement an interface nested in it
             val [cls, added] = choices.pick(classes.flatMap { cls ->
-                interfaceCandidates(cls.id, cls.superId).filter { it.id !in cls.interfaceIds }.map { cls to it }
+                interfaceCandidates(if (cls.kind.isInterface) cls.id else Int.MAX_VALUE, cls.superId)
+                    .filter { it.id !in cls.interfaceIds && !isNestedIn(it, cls.id) }.map { cls to it }
             }) ?: return null
             val overrides = if (cls.kind.allowsAbstractMembers) emptyList() else {
                 unimplementedAbstractMembers(listOf(added.id)).filter { member -> cls.members.none { it.overrides == member.id } }.map(::overrideOf)
@@ -867,11 +1014,110 @@ object Edits {
             return outcome("make ${describe(decl)} ${if (decl.infix) "non-infix" else "infix"}")
         }
 
-        /** Makes a function the `plus` operator, renaming it, or makes it a regular function keeping the name. */
+        /** Makes an extension function an operator of its shape, renaming it, or makes it a regular function keeping the name. */
         fun toggleOperator(): EditOutcome? {
-            val decl = choices.pick(funs.filter { it.isBinary }) ?: return null
-            program = program.replaceDecl(decl.id) { (it as FunDecl).copy(operator = !it.operator, name = if (it.operator) it.name else "plus") }
-            return outcome("make ${describe(decl)} ${if (decl.operator) "a regular function" else "the plus operator"}")
+            val decl = choices.pick(funs.filter { it.receiverClassId != null }) ?: return null
+            val updated = if (decl.operator) decl.copy(operator = false) else {
+                val kind = choices.pick(OperatorKind.entries.filter { decl.copy(operator = true, operatorKind = it).isOperator }) ?: return null
+                decl.copy(operator = true, operatorKind = kind, name = kind.functionName)
+            }
+            program = program.replaceDecl(decl.id) { updated }
+            return outcome("make ${describe(decl)} ${if (decl.operator) "a regular function" else "the ${updated.operatorKind.functionName} operator"}")
+        }
+
+        /**
+         * Adds a property delegated to an instance of the receiver of a getValue operator, with the type the operator returns.
+         * Without such an operator, the edit adds one for a later edit.
+         */
+        fun addDelegatedProp(): EditOutcome? {
+            val operator = choices.pick(funs.filter { decl ->
+                decl.isOperator && decl.operatorKind == OperatorKind.GET_VALUE && program.classDecl(decl.receiverClassId!!)?.isInstantiable == true
+            }) ?: return addGetValueOperator()
+            val file = pickFile() ?: return null
+            val id = newId()
+            addDecl(file, PropDecl(id, "p$id", Visibility.PUBLIC, PropKind.VAL, operator.returnType, 0, accessor = PropAccessor.DELEGATE, delegateFunId = operator.id))
+            return outcome("add val p$id delegated to ${describe(operator)} to ${file.name}")
+        }
+
+        private fun addGetValueOperator(): EditOutcome? {
+            val receiver = choices.pick(classes.filter { it.isInstantiable }) ?: return null
+            val file = pickFile() ?: return null
+            val id = newId()
+            val decl = FunDecl(
+                id = id, name = OperatorKind.GET_VALUE.functionName, visibility = Visibility.PUBLIC, inline = false, params = emptyList(),
+                returnType = randomType(), bodyVariant = choices.next(100), uses = emptyList(), receiverClassId = receiver.id,
+                operator = true, operatorKind = OperatorKind.GET_VALUE,
+            )
+            addDecl(file, decl)
+            return outcome("add the getValue operator ${receiver.name}.${decl.name} to ${file.name}")
+        }
+
+        private fun shadowOf(shadowed: FunDecl): MemberFun = MemberFun(
+            id = newId(), name = shadowed.name, modality = Modality.FINAL, overrides = null, returnType = shadowed.returnType,
+            bodyVariant = choices.next(100), uses = emptyList(), params = shadowed.params,
+        )
+
+        /** The calls of the top-level functions without a receiver, a context or a lambda, which a member could shadow. */
+        private fun Use.shadowableCall(): Pair<Use.CallFun, FunDecl>? {
+            val call = this as? Use.CallFun ?: return null
+            val callee = program.decl(call.funId) as? FunDecl ?: return null
+            return (call to callee).takeIf { callee.receiverClassId == null && callee.contextClassId == null && callee.lambda == null }
+        }
+
+        /**
+         * Adds a member to the implicit receiver of a call of a top-level function, so that the call calls the member instead.
+         * Without such a call, the edit adds one for a later edit.
+         */
+        fun addScopeShadow(): EditOutcome? {
+            val [scope, callee] = choices.pick(
+                (funs.flatMap { it.uses } + classes.flatMap { cls -> cls.members.flatMap { it.uses } }).mapNotNull { use ->
+                    use.shadowableCall()?.let { [call, callee] -> call.scopeClassId?.let(program::classDecl)?.let { it to callee } }
+                }
+            ) ?: return addScopedCall()
+            if (scope.members.any { it.name == callee.name }) return null
+            program = program.replaceDecl(scope.id) { (it as ClassDecl).copy(members = it.members + shadowOf(callee)) }
+            return outcome("add member ${callee.name} shadowing ${describe(callee)} in the calls with an implicit ${scope.name}")
+        }
+
+        /** Adds a call of a top-level function with an implicit receiver to a later function, so that the call is still acyclic. */
+        private fun addScopedCall(): EditOutcome? {
+            val callee = choices.pick(funs.filter { it.receiverClassId == null && it.contextClassId == null && it.lambda == null && !it.isSuspend }) ?: return null
+            val scope = choices.pick(classes) ?: return null
+            val owner = choices.pick(funs.filter { it.id > callee.id && funs.none { f -> f.name == callee.name && f.id >= it.id } })
+                ?: return null
+            val call = Use.CallFun(callee.id, callee.params.map(Param::name), scopeClassId = scope.id)
+            program = program.replaceDecl(owner.id) { (it as FunDecl).copy(uses = it.uses + call) }
+            return outcome("call ${describe(callee)} with an implicit ${scope.name} from ${describe(owner)}")
+        }
+
+        /**
+         * Adds a member to the companion of a class whose members call a top-level function, so that they call the companion member instead.
+         * Without such a class, the edit prepares one for a later edit: it adds the companion object or the call.
+         */
+        fun addCompanionShadow(): EditOutcome? {
+            val [companion, callee] = choices.pick(classes.filter { it.outerId != null && it.nesting == Nesting.COMPANION && it.kind == ClassKind.OBJECT }
+                .flatMap { companion ->
+                    val outer = program.classDecl(companion.outerId!!) ?: return@flatMap emptyList()
+                    outer.members.flatMap { it.uses }.mapNotNull { it.shadowableCall()?.second }.map { companion to it }
+                }) ?: return prepareCompanionShadow()
+            if (companion.members.any { it.name == callee.name }) return null
+            program = program.replaceDecl(companion.id) { (it as ClassDecl).copy(members = it.members + shadowOf(callee)) }
+            return outcome("add member ${callee.name} shadowing ${describe(callee)} to the companion ${describe(companion)}")
+        }
+
+        private fun prepareCompanionShadow(): EditOutcome? {
+            val outer = choices.pick(classes.filter { it.kind.isRegularClass && it.outerId == null }) ?: return null
+            val companion = classes.firstOrNull { it.outerId == outer.id && it.nesting == Nesting.COMPANION && it.kind == ClassKind.OBJECT }
+            if (companion == null) {
+                val file = program.fileOf(outer.id) ?: return null
+                val cls = newClass(file, ClassKind.OBJECT, superId = null, outerId = outer.id, nesting = Nesting.COMPANION)
+                return outcome("add companion object ${cls.name} to ${describe(outer)}")
+            }
+            val callee = choices.pick(funs.filter { it.receiverClassId == null && it.contextClassId == null && it.lambda == null && !it.isSuspend }) ?: return null
+            val member = choices.pick(outer.members.filter { it.modality != Modality.ABSTRACT || it.overrides != null }) ?: return null
+            val call = Use.CallFun(callee.id, callee.params.map(Param::name))
+            program = program.replaceDecl(outer.id) { (it as ClassDecl).replaceMember(member.id) { m -> m.copy(uses = m.uses + call) } }
+            return outcome("call ${describe(callee)} from ${outer.name}.${member.name}")
         }
 
         // ---- modifications of other declarations ----
@@ -938,7 +1184,7 @@ object Edits {
 
         fun changeClassKind(): EditOutcome? {
             val cls = choices.pick(classes) ?: return null
-            val kind = choices.pick(ClassKind.entries - cls.kind)!!
+            val kind = choices.pick(ClassKind.entries - cls.kind - ClassKind.ANNOTATION)!!
             program = program.replaceDecl(cls.id) {
                 (it as ClassDecl).copy(kind = kind, enumEntries = if (kind == ClassKind.ENUM && it.enumEntries.isEmpty()) listOf("E0") else it.enumEntries)
             }
@@ -961,7 +1207,8 @@ object Edits {
         }
 
         fun reorderSupertypes(): EditOutcome? {
-            val cls = choices.pick(classes.filter { it.interfaceIds.size > 1 }) ?: return null
+            // without a class implementing two interfaces, the edit prepares one for a later edit
+            val cls = choices.pick(classes.filter { it.interfaceIds.size > 1 }) ?: return addInterface()
             program = program.replaceDecl(cls.id) { (it as ClassDecl).copy(interfaceIds = it.interfaceIds.reversed()) }
             return outcome("reorder the interfaces of ${describe(cls)}")
         }
@@ -1005,6 +1252,82 @@ object Edits {
             val cls = choices.pick(classes.filter { it.kind == ClassKind.INTERFACE }) ?: return null
             program = program.replaceDecl(cls.id) { (it as ClassDecl).copy(funInterface = !it.funInterface) }
             return outcome("make ${describe(cls)} ${if (cls.funInterface) "a regular" else "a fun"} interface")
+        }
+
+        fun updateClass(what: String, filter: (ClassDecl) -> Boolean, transform: (ClassDecl) -> ClassDecl): EditOutcome? {
+            val cls = choices.pick(classes.filter(filter)) ?: return null
+            val updated = transform(cls)
+            program = program.replaceDecl(cls.id) { updated }
+            return outcome("$what ${describe(cls)}")
+        }
+
+        fun updateAnnotationClass(what: String, transform: (ClassDecl) -> ClassDecl): EditOutcome? {
+            val cls = choices.pick(annotationClasses) ?: return null
+            program = program.replaceDecl(cls.id) { transform(it as ClassDecl) }
+            return outcome("$what the annotation class ${describe(cls)}")
+        }
+
+        fun addAnnotationClass(): EditOutcome? {
+            val file = pickFile() ?: return null
+            val id = newId()
+            val cls = ClassDecl(
+                id, "Ann$id", Visibility.PUBLIC, ClassKind.ANNOTATION, superId = null, members = emptyList(), enumEntries = emptyList(),
+                retention = choices.pick(AnnotationRetention.entries)!!,
+            )
+            addDecl(file, cls)
+            return outcome("add annotation class ${cls.name} to ${file.name}")
+        }
+
+        private fun Decl.annotationUses(): List<AnnotationUse> = when (this) {
+            is FunDecl -> annotations
+            is PropDecl -> annotations
+            is ClassDecl -> annotations
+            is TypeAliasDecl -> emptyList()
+        }
+
+        private fun Decl.withAnnotationUses(uses: List<AnnotationUse>): Decl = when (this) {
+            is FunDecl -> copy(annotations = uses)
+            is PropDecl -> copy(annotations = uses)
+            is ClassDecl -> copy(annotations = uses)
+            is TypeAliasDecl -> this
+        }
+
+        /** Annotates a declaration allowed by the targets of the annotation class. */
+        fun addAnnotationUse(): EditOutcome? {
+            val annotation = choices.pick(annotationClasses) ?: return null
+            val targets = when (annotation.annotationTargets) {
+                AnnotationTargets.ALL -> funs + props + classes
+                AnnotationTargets.CLASSES -> classes
+                AnnotationTargets.FUNCTIONS -> funs
+            }
+            val decl = choices.pick(targets.filter { target -> target.annotationUses().none { it.annotationId == annotation.id } }) ?: return null
+            program = program.replaceDecl(decl.id) { it.withAnnotationUses(it.annotationUses() + AnnotationUse(annotation.id, choices.next(100))) }
+            return outcome("annotate ${describe(decl)} with ${annotation.name}")
+        }
+
+        private fun pickAnnotated(): Decl? = choices.pick(program.decls.filter { it.annotationUses().isNotEmpty() })
+
+        fun removeAnnotationUse(): EditOutcome? {
+            val decl = pickAnnotated() ?: return null
+            program = program.replaceDecl(decl.id) { it.withAnnotationUses(it.annotationUses().drop(1)) }
+            return outcome("remove an annotation of ${describe(decl)}")
+        }
+
+        fun changeAnnotationArg(): EditOutcome? {
+            val decl = pickAnnotated() ?: return null
+            program = program.replaceDecl(decl.id) {
+                it.withAnnotationUses(it.annotationUses().mapIndexed { i, use -> if (i == 0) use.copy(argVariant = use.argVariant + 1) else use })
+            }
+            return outcome("change an annotation argument of ${describe(decl)}")
+        }
+
+        fun toggleOptIn(): EditOutcome? {
+            val decl = choices.pick(funs) ?: return null
+            val marker = choices.pick(annotationClasses) ?: return null
+            program = program.replaceDecl(decl.id) {
+                (it as FunDecl).copy(optInIds = if (marker.id in it.optInIds) it.optInIds - marker.id else it.optInIds + marker.id)
+            }
+            return outcome("toggle the opt-in to ${marker.name} of ${describe(decl)}")
         }
 
         /** Renames an enum entry; the existing `when` uses keep the old name, so they stop compiling. */
@@ -1216,7 +1539,7 @@ object Edits {
             fun Use.refreshed(): Use? = when (this) {
                 is Use.WhenSealed -> copy(branchClassIds = program.directSubclasses(sealedId).map { it.id })
                 is Use.WhenEnum -> copy(entries = program.classDecl(enumId)?.enumEntries ?: entries)
-                is Use.SamConversion -> takeIf { program.classDecl(interfaceId)?.samMember != null }
+                is Use.SamConversion -> takeIf { program.classDecl(interfaceId)?.isFunInterface == true }
                 else -> this
             }
             for (decl in program.decls) {

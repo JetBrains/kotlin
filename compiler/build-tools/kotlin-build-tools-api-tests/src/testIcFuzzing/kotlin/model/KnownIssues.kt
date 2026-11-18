@@ -36,7 +36,7 @@ object KnownIssues {
      * so recompiling only some of the files gives a different bytecode, as in KT-19175. This shows in the `$$forInline` templates
      * of suspend inline functions, and in the code inlined through another inline function or an inline property.
      * When excluded, inline functions are not suspend, have no `noinline` parameters or local variables, do not call inline functions
-     * or read inline properties, and reified ones have no `run` body.
+     * or read inline properties, and have no `run` body.
      * The reproducers are in `SeparateCompilationReproducibilityTest` of the `testIcFuzzingReproducers` suite.
      */
     val inlineOfSeparateCompilation: Boolean get() = included("inlineOfSeparateCompilation")
@@ -44,7 +44,15 @@ object KnownIssues {
     /**
      * A class compiled together with a supertype from another file and one compiled against its class file may differ in the order
      * of their constant pools and members, e.g. a class implementing an interface with default members. When excluded, the class files
-     * with the same `javap` dumps up to the order of the members are equal.
+     * differing only in the order of their members and of their constant pool entries are equal; the lines of each member still have
+     * to be the same, in the same order.
      */
     val classFileOrder: Boolean get() = included("classFileOrder")
+
+    /**
+     * Making an annotation class a `@RequiresOptIn` marker recompiles the declarations annotated with it, but not their usages,
+     * so a missing opt-in is not reported: `AnnotationChangesTest.testAnnotationClassBecomingOptInMarker`.
+     * When excluded, annotation classes do not become markers.
+     */
+    val optInMarkerChange: Boolean get() = included("optInMarkerChange")
 }

@@ -1,0 +1,3 @@
+@Retention(AnnotationRetention.BINARY)
+@RequiresOptIn
+annotation class Marker

@@ -294,4 +294,21 @@ class AnnotationChangesTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Making an annotation class an opt-in marker should recompile the usages of the declarations annotated with it")
+    @TestMetadata("ic-scenarios/opt-in-marker")
+    fun testAnnotationClassBecomingOptInMarker(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val mod = module("ic-scenarios/opt-in-marker")
+
+            mod.replaceFileWithVersion("marker.kt", "requires-opt-in")
+            mod.compile {
+                // TODO: only `marker.kt` is recompiled, so the usage of `f` in `b.kt` is not reported as needing the opt-in
+                expectFail()
+                assertCompiledSources("marker.kt", "a.kt", "b.kt")
+                assertLogContainsPatterns(LogLevel.ERROR, ".*b\\.kt:\\d+:\\d+ This declaration needs opt-in\\..*".toRegex())
+            }
+        }
+    }
 }

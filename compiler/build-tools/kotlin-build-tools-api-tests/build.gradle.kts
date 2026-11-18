@@ -360,6 +360,7 @@ testing {
                 val strategy = providers.gradleProperty("kotlin.ic.fuzz.strategy").orElse("inProcess")
                 val sourcesChanges = providers.gradleProperty("kotlin.ic.fuzz.sourcesChanges").orElse("known")
                 val compilerArgs = providers.gradleProperty("kotlin.ic.fuzz.compilerArgs").orElse("")
+                val focus = providers.gradleProperty("kotlin.ic.fuzz.focus").orElse("")
                 val jqwikDatabase = layout.buildDirectory.file("${testTask.name}.jqwik-database").map { it.asFile.absolutePath }
                 testTask.configure {
                     // jqwik reads its configuration parameters from the system properties
@@ -370,6 +371,7 @@ testing {
                     systemProperty("kotlin.ic.fuzz.strategy", strategy.get())
                     systemProperty("kotlin.ic.fuzz.sourcesChanges", sourcesChanges.get())
                     systemProperty("kotlin.ic.fuzz.compilerArgs", compilerArgs.get())
+                    systemProperty("kotlin.ic.fuzz.focus", focus.get())
                     systemProperty("jqwik.database", jqwikDatabase.get())
                     systemProperty("kotlin.ic.fuzz.failuresDir", layout.buildDirectory.dir("ic-fuzz-failures").get().asFile.absolutePath)
                 }

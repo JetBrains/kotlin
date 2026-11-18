@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.buildtools.tests.fuzzing.model.ProgramPrinter
  * To replay a failure, put the seed reported by jqwik into `@Property(seed = "...")`, or paste the reproducer from the failure message into a regular test.
  * With the `kotlin.ic.fuzz.survey` Gradle property, a violation does not fail the property: every violation is only saved,
  * to collect the distinct failures of a run.
+ * The `kotlin.ic.fuzz.focus` Gradle property lists the edit kinds whose weights are multiplied by [FOCUS_FACTOR],
+ * to exercise the edits which need a rare program.
  */
 class IcFuzzingTest {
     private val states = mutableListOf<FuzzState>()
@@ -65,12 +67,12 @@ class IcFuzzingTest {
 
     @Provide
     fun initialEdits(): Arbitrary<List<Edit>> =
-        edits { it.initialWeight }.list().ofMinSize(MIN_INITIAL_EDITS).ofMaxSize(MAX_INITIAL_EDITS)
+        edits { it.initialWeight * focusFactor(it) }.list().ofMinSize(MIN_INITIAL_EDITS).ofMaxSize(MAX_INITIAL_EDITS)
 
     @Provide
     fun editChains(): Arbitrary<ActionChain<FuzzState>> = EditKind.entries
         .filter { it.weight > 0 }
-        .fold(ActionChain.startWith { newState(currentInitialEdits) }) { chain, kind -> chain.withAction(kind.weight, EditAction(kind)) }
+        .fold(ActionChain.startWith { newState(currentInitialEdits) }) { chain, kind -> chain.withAction(kind.weight * focusFactor(kind), EditAction(kind)) }
         .withAction(REVERT_WEIGHT, RevertAction)
         .withMaxTransformations(MAX_EDITS)
 
@@ -102,6 +104,12 @@ class IcFuzzingTest {
 
     companion object {
         private val survey = System.getProperty("kotlin.ic.fuzz.survey").toBoolean()
+
+        private val focus = System.getProperty("kotlin.ic.fuzz.focus").orEmpty().split(',').map(String::trim).filter(String::isNotEmpty).toSet()
+
+        private const val FOCUS_FACTOR = 10
+
+        private fun focusFactor(kind: EditKind): Int = if (kind.name in focus) FOCUS_FACTOR else 1
 
         private const val MIN_INITIAL_EDITS = 3
         private const val MAX_INITIAL_EDITS = 16

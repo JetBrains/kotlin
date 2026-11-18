@@ -1,0 +1,5 @@
+inline fun <reified T : Any> f() {
+    println(object {
+        override fun toString() = "o2 " + T::class.simpleName
+    })
+}

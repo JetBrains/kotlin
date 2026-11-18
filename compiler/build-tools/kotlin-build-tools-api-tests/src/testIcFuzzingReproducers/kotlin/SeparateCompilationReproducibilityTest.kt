@@ -487,6 +487,26 @@ class SeparateCompilationReproducibilityTest {
     )
 
     @Test
+    @DisplayName("an inline function with a run body called from a suspend function with a suspension point")
+    fun testInlineFunctionWithRunBodyCalledFromSuspendFunction() = touchingCallSites(
+        """
+            |inline fun f7() = run {
+            |    println(1)
+            |    true
+            |}
+            |
+            |suspend fun g(): Int = 1
+        """.trimMargin(),
+        """
+            |suspend fun f8(): Int {
+            |    println(f7())
+            |    println(g())
+            |    return 6
+            |}
+        """.trimMargin(),
+    )
+
+    @Test
     @DisplayName("an inline property read in a when condition of an inline function")
     fun testInlinePropertyInWhenConditionOfInlineFunction() = touchingCallSites(
         """

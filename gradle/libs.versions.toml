@@ -37,6 +37,7 @@ jetbrains-markdown = "0.7.3"
 junit4 = "4.13.2"
 junit5 = "5.14.4"
 junit-platform = "1.14.4"
+jqwik = "1.9.2"
 opentest4j = "1.3.0" # should be consistent with the version brought by junit-platform
 android-gradle-plugin = "8.13.2"
 android-gradle-plugin-latest = "9.3.0"
@@ -174,6 +175,7 @@ junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", vers
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", version.ref = "junit-platform" }
+jqwik = { module = "net.jqwik:jqwik", version.ref = "jqwik" }
 opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" }
 lincheck = { module = "org.jetbrains.kotlinx:lincheck", version.ref = "lincheck" }
 archunit = { module = "com.tngtech.archunit:archunit", version.ref = "archunit" }

@@ -37,11 +37,13 @@ class ProgramPrinter private constructor(private val program: Program) {
     private fun printDecl(decl: Decl): String = when (decl) {
         is FunDecl -> printFun(decl)
         is PropDecl -> printProp(decl)
-        is TypeAliasDecl -> "${decl.visibility.keyword}typealias ${decl.name} = ${type(decl.target)}\n"
+        is TypeAliasDecl -> "${decl.visibility.keyword}typealias ${decl.name}${if (decl.generic) "<T>" else ""} = ${type(decl.target)}\n"
         is ClassDecl -> printClass(decl)
     }
 
     private fun printFun(decl: FunDecl): String = buildString {
+        append(annotations(decl.annotations))
+        if (decl.optInIds.isNotEmpty()) appendLine("@OptIn(${decl.optInIds.joinToString { "${classReference(it)}::class" }})")
         if (decl.deprecationConstId != null || decl.hidden) {
             val message = decl.deprecationConstId?.let { constId -> "\${${program.decl(constId)?.let(::reference) ?: unresolved(constId)}}" } ?: "h"
             appendLine("@Deprecated(\"$message\"${if (decl.hidden) ", level = DeprecationLevel.HIDDEN" else ""})")
@@ -53,16 +55,22 @@ class ProgramPrinter private constructor(private val program: Program) {
         if (decl.hasContract) appendLine("@OptIn(kotlin.contracts.ExperimentalContracts::class)")
         if (decl.jvmSynthetic) appendLine("@JvmSynthetic")
         if (decl.throws) appendLine("@Throws(IllegalStateException::class)")
+        decl.contextClassId?.let { append("context(ctx: ${typeReference(it)}) ") }
         append(decl.visibility.keyword)
         if (decl.inline) append("inline ")
         if (decl.infix && decl.isBinary) append("infix ")
-        if (decl.operator && decl.isBinary) append("operator ")
+        if (decl.isOperator) append("operator ")
         if (decl.isSuspend) append("suspend ")
         append("fun ")
         decl.typeParam?.let { append("<${if (decl.isReified) "reified " else ""}T${if (decl.typeParamNonNull) " : Any" else ""}> ") }
-        decl.receiverClassId?.let { append("${classReference(it)}.") }
+        decl.receiverClassId?.let { append("${typeReference(it)}.") }
         append("${decl.name}(")
-        val params = parameters(decl.params, decl::printsDefault)
+        // a getValue operator has the parameters of the convention instead of the ones of the model
+        val params = if (decl.isOperator && decl.operatorKind == OperatorKind.GET_VALUE) {
+            listOf("thisRef: Any?", "property: kotlin.reflect.KProperty<*>")
+        } else {
+            parameters(decl.params, decl::printsDefault)
+        }
         val lambdaParam = decl.lambda?.let { kind ->
             val modifier = when {
                 !decl.inline -> ""
@@ -70,14 +78,14 @@ class ProgramPrinter private constructor(private val program: Program) {
                 kind == LambdaKind.CROSSINLINE -> "crossinline "
                 else -> ""
             }
-            "$modifier$LAMBDA_PARAM: ${decl.lambdaShape.type}"
+            "$modifier$LAMBDA_PARAM: ${decl.printedLambdaShape.type}"
         }
         append((params + listOfNotNull(lambdaParam)).joinToString())
         // an inferred return type is the type of the last expression of the `run` lambda, the statements are kept;
-        // a contract has to be the first statement of a block body; the `typeOf` call of a reified function is inlined through the `run` lambda,
+        // a contract has to be the first statement of a block body; the code of an inline function is inlined through the `run` lambda,
         // see KnownIssues.inlineOfSeparateCompilation
         val implicitReturnType = decl.implicitReturnType && !decl.hasContract && isInferable(decl.returnType, decl.bodyVariant) &&
-                (!decl.isReified || KnownIssues.inlineOfSeparateCompilation)
+                (!decl.inline || KnownIssues.inlineOfSeparateCompilation)
         appendLine(if (implicitReturnType) ") = run {" else "): ${type(decl.returnType)} {")
         if (decl.hasContract) appendLine("    kotlin.contracts.contract { returns() implies (${decl.params.first().name} != null) }")
         val extraStatements = buildList {
@@ -86,7 +94,7 @@ class ProgramPrinter private constructor(private val program: Program) {
                 invocation == null -> {}
                 // a crossinline lambda is called from an object, which is a class owned by the inline function copied to the call sites
                 decl.inline && decl.lambda == LambdaKind.CROSSINLINE && KnownIssues.inlineFunOwnedClass -> {
-                    if (decl.lambdaShape != LambdaShape.SUSPEND) add("object : Runnable { override fun run() { println($invocation) } }.run()")
+                    if (decl.printedLambdaShape != LambdaShape.SUSPEND) add("object : Runnable { override fun run() { println($invocation) } }.run()")
                 }
                 else -> add("println($invocation)")
             }
@@ -99,14 +107,15 @@ class ProgramPrinter private constructor(private val program: Program) {
             // an object using a reified type parameter is copied to the call sites, see KnownIssues.inlineFunOwnedClass
             val reifiedType = if (decl.isReified && KnownIssues.inlineFunOwnedClass) " + kotlin.reflect.typeOf<T>()" else ""
             if (decl.ownedObjectVariant != 0) add("println(object { override fun toString() = \"o${decl.ownedObjectVariant}\"$reifiedType })")
-            // local declarations are not allowed in inline functions
+            // local declarations are not allowed in inline functions; the local classes of the overloads have the same JVM names
+            // unless their names differ
             if (!decl.inline && decl.localClassVariant != 0) {
-                add("class L { override fun toString() = \"l${decl.localClassVariant}\" }")
-                add("println(L())")
+                add("class L${decl.id} { override fun toString() = \"l${decl.localClassVariant}\" }")
+                add("println(L${decl.id}())")
             }
             if (!decl.inline && decl.localFunVariant != 0) {
-                add("fun lf() = \"f${decl.localFunVariant}\"")
-                add("println(lf())")
+                add("fun lf${decl.id}() = \"f${decl.localFunVariant}\"")
+                add("println(lf${decl.id}())")
             }
         }
         // the code inlined through another inline function or an inline property differs between the separate and the joint compilation
@@ -124,11 +133,14 @@ class ProgramPrinter private constructor(private val program: Program) {
     }
 
     private fun printProp(decl: PropDecl): String {
-        val receiver = decl.printedReceiverId?.let { "${classReference(it)}." } ?: ""
+        val receiver = decl.printedReceiverId?.let { "${typeReference(it)}." } ?: ""
         val accessor = when {
             decl.kind == PropKind.CONST -> PropAccessor.FIELD
-            decl.printedReceiverId != null && (decl.accessor == PropAccessor.FIELD || decl.accessor == PropAccessor.LAZY) -> PropAccessor.GETTER
+            decl.printedReceiverId != null && decl.accessor != PropAccessor.GETTER && decl.accessor != PropAccessor.INLINE_GETTER -> PropAccessor.GETTER
             decl.accessor == PropAccessor.LAZY && decl.kind != PropKind.VAL -> PropAccessor.FIELD
+            // a delegate needs the getValue operator, and a setValue one for a var
+            decl.accessor == PropAccessor.DELEGATE && (decl.kind != PropKind.VAL || decl.printedReceiverId != null || delegateOf(decl) == null) ->
+                PropAccessor.FIELD
             else -> decl.accessor
         }
         val lateinit = decl.kind == PropKind.LATEINIT && accessor == PropAccessor.FIELD && decl.printedReceiverId == null && allowsLateinit(decl.type)
@@ -146,11 +158,12 @@ class ProgramPrinter private constructor(private val program: Program) {
         val inline = if (accessor == PropAccessor.INLINE_GETTER) "inline " else ""
         val typeAnnotation = if (!lateinit && decl.implicitType && isInferable(decl.type, decl.valueVariant)) "" else ": ${type(decl.type)}"
         val value = value(decl.type, decl.valueVariant)
-        val declaration = "$annotation${decl.visibility.keyword}$inline$keyword $receiver${decl.name}$typeAnnotation"
+        val declaration = "${annotations(decl.annotations)}$annotation${decl.visibility.keyword}$inline$keyword $receiver${decl.name}$typeAnnotation"
         return when {
             lateinit -> "$declaration\n"
             accessor == PropAccessor.FIELD -> "$declaration = $value\n"
             accessor == PropAccessor.LAZY -> "$declaration by lazy { $value }\n"
+            accessor == PropAccessor.DELEGATE -> "$declaration by ${instance(delegateOf(decl)!!.receiverClassId!!)}\n"
             else -> "$declaration\n    get() = $value\n" + if (isVar) "    set(value) {}\n" else ""
         }
     }
@@ -162,6 +175,7 @@ class ProgramPrinter private constructor(private val program: Program) {
     private fun allowsLateinit(type: TypeRef): Boolean = !type.nullable && when (type) {
         is TypeRef.BuiltinType -> type.builtin == Builtin.STRING || type.builtin == Builtin.ANY
         is TypeRef.ClassType -> program.classDecl(type.classId)?.kind != ClassKind.VALUE
+        is TypeRef.ListType -> true
         is TypeRef.AliasType, is TypeRef.TypeParamType -> false
     }
 
@@ -169,7 +183,7 @@ class ProgramPrinter private constructor(private val program: Program) {
     private fun isValueClassType(type: TypeRef, depth: Int = 0): Boolean = depth <= MAX_ALIAS_DEPTH && when (type) {
         is TypeRef.ClassType -> program.classDecl(type.classId)?.kind == ClassKind.VALUE
         is TypeRef.AliasType -> (program.decl(type.aliasId) as? TypeAliasDecl)?.let { isValueClassType(it.target, depth + 1) } == true
-        is TypeRef.BuiltinType, is TypeRef.TypeParamType -> false
+        is TypeRef.BuiltinType, is TypeRef.TypeParamType, is TypeRef.ListType -> false
     }
 
     /** A read of [prop], on an instance of its receiver for an extension property. */
@@ -179,6 +193,18 @@ class ProgramPrinter private constructor(private val program: Program) {
     private fun isInferable(type: TypeRef, variant: Int): Boolean = value(type, variant).let { it != "TODO()" && it != "null" }
 
     private fun printClass(decl: ClassDecl): String = buildString {
+        append(annotations(decl.annotations))
+        if (decl.kind == ClassKind.ANNOTATION) {
+            appendLine("@Retention(AnnotationRetention.${decl.retention.name})")
+            when (decl.annotationTargets) {
+                AnnotationTargets.ALL -> {}
+                AnnotationTargets.CLASSES -> appendLine("@Target(AnnotationTarget.CLASS)")
+                AnnotationTargets.FUNCTIONS -> appendLine("@Target(AnnotationTarget.FUNCTION)")
+            }
+            if (decl.requiresOptIn) appendLine("@RequiresOptIn")
+            appendLine("${decl.visibility.keyword}annotation class ${decl.name}(val v: String = \"\")")
+            return@buildString
+        }
         if (decl.kind == ClassKind.VALUE) appendLine("@JvmInline")
         append(decl.visibility.keyword)
         when {
@@ -191,29 +217,39 @@ class ProgramPrinter private constructor(private val program: Program) {
                 ClassKind.OPEN -> "open class "
                 ClassKind.ABSTRACT -> "abstract class "
                 ClassKind.SEALED -> "sealed class "
-                ClassKind.INTERFACE -> if (decl.funInterface && decl.samMember != null) "fun interface " else "interface "
+                ClassKind.INTERFACE -> if (decl.isFunInterface) "fun interface " else "interface "
                 ClassKind.SEALED_INTERFACE -> "sealed interface "
                 ClassKind.DATA -> "data class "
                 ClassKind.OBJECT -> "object "
                 ClassKind.ENUM -> "enum class "
                 ClassKind.VALUE -> "value class "
+                ClassKind.ANNOTATION -> error("printed above")
             }
         )
         append(decl.name)
+        if (decl.isGeneric) append("<${decl.typeParam!!.keyword}T${if (decl.typeParamNonNull) " : Any" else ""}>")
+        val ctorParams = decl.printedCtorParams.map { param ->
+            "${if (param.isProperty) "val " else ""}${param.name}: ${type(param.type)}" +
+                    if (param.hasDefault) " = ${value(param.type, param.defaultVariant)}" else ""
+        }
+        val ctorVisibility = if (decl.kind.hasConstructor && decl.ctorVisibility != Visibility.PUBLIC) " ${decl.ctorVisibility.keyword}constructor" else ""
         when {
-            decl.kind == ClassKind.DATA -> append("(val v: Int = 0)")
-            decl.kind == ClassKind.VALUE -> append("(val v: Int)")
+            decl.kind == ClassKind.DATA -> append("$ctorVisibility(${(listOf("val v: Int = 0") + ctorParams).joinToString()})")
+            decl.kind == ClassKind.VALUE -> append("(val v: ${if (decl.isGeneric) "T" else "Int"})")
             decl.kind == ClassKind.ENUM && decl.enumConstructorVariant != 0 -> append("(val v: Int)")
+            // the secondary constructor delegates to an explicit primary one
+            ctorParams.isNotEmpty() || ctorVisibility.isNotEmpty() || decl.secondaryCtor && decl.kind.hasConstructor ->
+                append("$ctorVisibility(${ctorParams.joinToString()})")
         }
         decl.superId?.let { superId ->
             val superClass = program.classDecl(superId)
             append(" : ")
-            append(classReference(superId))
-            if (superClass != null && !superClass.kind.isInterface && !decl.kind.isInterface) append("()")
+            append(typeReference(superId))
+            if (superClass != null && !superClass.kind.isInterface && !decl.kind.isInterface) append("(${constructorArguments(superClass)})")
         }
         if (decl.interfaceIds.isNotEmpty()) {
             append(if (decl.superId == null) " : " else ", ")
-            append(decl.interfaceIds.joinToString { classReference(it) })
+            append(decl.interfaceIds.joinToString { typeReference(it) + if (it in decl.printedDelegatedIds) " by d$it" else "" })
         }
         appendLine(" {")
         if (decl.kind == ClassKind.ENUM) {
@@ -224,6 +260,10 @@ class ProgramPrinter private constructor(private val program: Program) {
             }
             appendLine("    ${entries.joinToString()};")
         }
+        if (decl.initVariant != 0 && !decl.kind.isInterface) appendLine("    init { println(\"i${decl.initVariant}\") }")
+        // the `Unit` parameter keeps the signature different from the primary constructor
+        // in the class, its type parameter is not substituted
+        if (decl.secondaryCtor && decl.kind.hasConstructor) appendLine("    constructor(s: String, u: Unit) : this(${constructorArguments(decl, typeArg = null)})")
         for (member in decl.members) {
             printMember(decl, member)
         }
@@ -239,7 +279,7 @@ class ProgramPrinter private constructor(private val program: Program) {
 
     /** An inner class is printed as a nested one where an inner class is not allowed. */
     private fun isInner(cls: ClassDecl): Boolean =
-        cls.nesting == Nesting.INNER && cls.kind in INNER_KINDS && outerOf(cls)?.kind?.isRegularClass == true
+        cls.nesting == Nesting.INNER && cls.kind in INNER_KINDS && outerOf(cls)?.let { it.kind.isRegularClass && !it.isGeneric } == true
 
     /** A companion object is printed as a nested object where a companion object is not allowed, or if the class already has one. */
     private fun isCompanion(cls: ClassDecl): Boolean {
@@ -250,7 +290,14 @@ class ProgramPrinter private constructor(private val program: Program) {
     }
 
     private fun StringBuilder.printMember(owner: ClassDecl, member: MemberFun) {
-        val signatureSource = member.overrides?.let(::rootOverridden) ?: member
+        // an override in a subclass, which passes `Int` as the type argument, has `Int` instead of the type parameter of the class
+        val root = member.overrides?.let(::rootOverridden) ?: member
+        val rootOwner = program.member(root.id)?.first
+        val signatureSource = if (rootOwner != null && rootOwner.id != owner.id) {
+            root.copy(returnType = substitute(root.returnType, INT_TYPE), params = root.params.map { it.copy(type = substitute(it.type, INT_TYPE)) })
+        } else {
+            root
+        }
         val modifiers = when {
             member.overrides != null && member.finalOverride -> "final override "
             member.overrides != null -> "override "
@@ -271,8 +318,9 @@ class ProgramPrinter private constructor(private val program: Program) {
         val isLateinit = signatureSource.propKind == PropKind.LATEINIT && member.overrides == null && !isAbstract &&
                 accessor == PropAccessor.FIELD && allowsLateinit(returnType)
         val isVar = signatureSource.propKind == PropKind.VAR || signatureSource.propKind == PropKind.LATEINIT
+        // the properties of the companion of an interface may be @JvmField only all together
         val jvmField = member.jvmField && accessor == PropAccessor.FIELD && member.overrides == null && member.modality == Modality.FINAL &&
-                !isConst && !isLateinit && !isValueClassType(returnType)
+                !isConst && !isLateinit && !isValueClassType(returnType) && !(isCompanion(owner) && outerOf(owner)?.kind?.isInterface == true)
         val annotations = jvmStatic + if (jvmField) "@JvmField " else ""
         val visibility = annotations + if (member.overrides == null) member.visibility.keyword else ""
         if (isProperty) {
@@ -315,7 +363,7 @@ class ProgramPrinter private constructor(private val program: Program) {
 
     /** The call of the lambda parameter of [decl], `null` if it has none or a suspend lambda cannot be called. */
     private fun lambdaInvocation(decl: FunDecl): String? = decl.lambda?.let {
-        when (decl.lambdaShape) {
+        when (decl.printedLambdaShape) {
             LambdaShape.NO_PARAMS -> "$LAMBDA_PARAM()"
             LambdaShape.PARAM -> "$LAMBDA_PARAM(0)"
             LambdaShape.RECEIVER -> "0.$LAMBDA_PARAM()"
@@ -347,9 +395,14 @@ class ProgramPrinter private constructor(private val program: Program) {
         return args to positional
     }
 
-    /** Substitutes the type parameter with [typeArg]. */
-    private fun substitute(type: TypeRef, typeArg: TypeRef?): TypeRef =
-        if (type is TypeRef.TypeParamType && typeArg != null) typeArg.withNullable(type.nullable || typeArg.nullable) else type
+    /** Substitutes the type parameter with [typeArg] in [type]. */
+    private fun substitute(type: TypeRef, typeArg: TypeRef?): TypeRef = if (typeArg == null) type else when (type) {
+        is TypeRef.TypeParamType -> typeArg.withNullable(type.nullable || typeArg.nullable)
+        is TypeRef.ListType -> type.copy(element = substitute(type.element, typeArg))
+        is TypeRef.ClassType -> type.copy(typeArg = type.typeArg?.let { substitute(it, typeArg) })
+        is TypeRef.AliasType -> type.copy(typeArg = type.typeArg?.let { substitute(it, typeArg) })
+        is TypeRef.BuiltinType -> type
+    }
 
     private fun rootOverridden(memberId: Int): MemberFun? {
         val visited = mutableSetOf<Int>()
@@ -378,40 +431,40 @@ class ProgramPrinter private constructor(private val program: Program) {
     }
 
     private fun useExpression(use: Use): String = when (use) {
-        is Use.CallFun -> {
-            val decl = program.decl(use.funId) as? FunDecl
-            if (decl == null) {
-                unresolved(use.funId)
+        is Use.CallFun -> callFun(use).let { call -> use.scopeClassId?.let { "with(${instance(it)}) { $call }" } ?: call }
+        is Use.ReadProp -> (program.decl(use.propId) as? PropDecl)?.let(::propertyRead) ?: unresolved(use.propId)
+        is Use.Construct -> {
+            val cls = program.classDecl(use.classId)
+            if (use.viaSecondary && cls != null && cls.secondaryCtor && cls.kind.hasConstructor && !isInner(cls)) {
+                "${typeReference(cls.id)}(s = \"x\", u = Unit)"
+            }
+            else instance(use.classId)
+        }
+        is Use.Destructure -> {
+            val instance = instance(use.classId)
+            if (use.propertyName != null) {
+                "run { val (${use.propertyName}) = $instance; ${use.propertyName} }"
             } else {
-                val [args, positional] = arguments(decl.params, decl::printsDefault, use.argNames, use.named, use.typeArg)
-                val lambda = decl.lambda?.let { "{ ${use.lambdaVariant} }" }
-                val receiver = decl.receiverClassId?.let { "${instance(it)}." } ?: ""
-                val name = reference(decl).let { if (decl.typeParam != null) "$it<${type(use.typeArg)}>" else it }
-                val binaryArg by lazy { value(substitute(decl.params.single().type, use.typeArg), 0) }
-                // a call in the infix or the operator form infers the type argument from the argument
-                val binary = decl.isBinary && (decl.typeParam == null || decl.params.single().type is TypeRef.TypeParamType)
-                when {
-                    binary && use.form == CallForm.INFIX -> "(${instance(decl.receiverClassId!!)} ${reference(decl)} $binaryArg)"
-                    binary && use.form == CallForm.OPERATOR -> "(${instance(decl.receiverClassId!!)} + $binaryArg)"
-                    lambda == null -> "$receiver$name(${args.joinToString()})"
-                    positional -> "$receiver$name(${args.joinToString()}) $lambda"
-                    else -> "$receiver$name(${(args + "$LAMBDA_PARAM = $lambda").joinToString()})"
-                }
+                val names = (1..use.componentCount).map { "c$it" }
+                "run { val [${names.joinToString()}] = $instance; c1 }"
             }
         }
-        is Use.ReadProp -> (program.decl(use.propId) as? PropDecl)?.let(::propertyRead) ?: unresolved(use.propId)
-        is Use.Construct -> instance(use.classId)
+        is Use.Copy -> "${instance(use.classId)}.copy()"
+        is Use.ReadCtorProperty -> "${instance(use.classId)}.${use.name}"
         is Use.CallMember -> {
             val member = program.member(use.memberId)?.second?.let { member -> member.overrides?.let(::rootOverridden) ?: member }
-            when {
-                member == null -> "${instance(use.classId)}.${unresolved(use.memberId)}()"
-                member.isProperty -> "${instance(use.classId)}.${member.name}"
-                else -> "${instance(use.classId)}.${member.name}(${arguments(member.params, Param::hasDefault, use.argNames, use.named).first.joinToString()})"
+            val call = when {
+                member == null -> "${unresolved(use.memberId)}()"
+                member.isProperty -> member.name
+                else -> "${member.name}(${arguments(member.params, Param::hasDefault, use.argNames, use.named, INT_TYPE).first.joinToString()})"
             }
+            // an implicit call may resolve to another function with the same name
+            if (use.implicit) "with(${instance(use.classId)}) { $call }" else "${instance(use.classId)}.$call"
         }
         is Use.WhenSealed -> {
-            val branches = use.branchClassIds.joinToString("; ") { "is ${classReference(it)} -> \"${it}\"" }
-            "when (val v: ${classReference(use.sealedId)} = ${instance(use.scrutineeClassId)}) { $branches }"
+            // a generic class is checked with a star projection, as its type argument is erased
+            val branches = use.branchClassIds.joinToString("; ") { "is ${typeReference(it, star = true)} -> \"${it}\"" }
+            "when (val v: ${typeReference(use.sealedId, star = true)} = ${instance(use.scrutineeClassId)}) { $branches }"
         }
         is Use.WhenEnum -> {
             val enumName = classReference(use.enumId)
@@ -449,26 +502,77 @@ class ProgramPrinter private constructor(private val program: Program) {
         }
         is Use.SamConversion -> {
             val cls = program.classDecl(use.interfaceId)
-            val sam = cls?.samMember
+            val sam = cls?.takeIf { it.isFunInterface }?.samMember
             when {
                 cls == null -> unresolved(use.interfaceId)
-                sam == null -> "${classReference(cls.id)} { 0 }"
+                sam == null -> "${typeReference(cls.id)} { 0 }"
                 else -> {
                     val params = sam.params.joinToString { "_" }.let { if (it.isEmpty()) "" else "$it -> " }
-                    "${classReference(cls.id)} { $params${value(sam.returnType, 0)} }"
+                    "${typeReference(cls.id)} { $params${value(substitute(sam.returnType, INT_TYPE), 0)} }"
                 }
             }
         }
     }
 
+    /** A call of a function, in the infix or the operator form of the call if the function has the modifier. */
+    private fun callFun(use: Use.CallFun): String {
+        val decl = program.decl(use.funId) as? FunDecl ?: return unresolved(use.funId)
+        val [args, positional] = arguments(decl.params, decl::printsDefault, use.argNames, use.named, use.typeArg)
+        val lambda = decl.lambda?.let { "{ ${use.lambdaVariant} }" }
+        val receiver = decl.receiverClassId?.let { "${instance(it)}." } ?: ""
+        val name = reference(decl).let { if (decl.typeParam != null) "$it<${type(use.typeArg)}>" else it }
+        val binaryArg by lazy { value(substitute(decl.params.single().type, use.typeArg), 0) }
+        // a call in the infix or the operator form infers the type argument from the argument
+        val binary = decl.isBinary && (decl.typeParam == null || decl.params.single().type is TypeRef.TypeParamType)
+        val operand by lazy { instance(decl.receiverClassId!!) }
+        val regularArgs = when {
+            lambda == null -> "(${args.joinToString()})"
+            positional -> "(${args.joinToString()}) $lambda"
+            else -> "(${(args + "$LAMBDA_PARAM = $lambda").joinToString()})"
+        }
+        return when {
+            binary && use.form == CallForm.INFIX -> "($operand ${reference(decl)} $binaryArg)"
+            decl.isOperator && decl.operatorKind == OperatorKind.GET_VALUE -> "$operand.${reference(decl)}(null, String::length)"
+            decl.isOperator && use.form == CallForm.OPERATOR && (decl.typeParam == null || binary) -> when (decl.operatorKind) {
+                OperatorKind.PLUS -> "($operand + $binaryArg)"
+                OperatorKind.GET -> "$operand[$binaryArg]"
+                OperatorKind.COMPARE_TO -> "($operand < $binaryArg)"
+                OperatorKind.INVOKE -> "$operand$regularArgs"
+                OperatorKind.COMPONENT1 -> "run { val [c] = $operand; c }"
+                OperatorKind.GET_VALUE -> error("handled above")
+            }
+            else -> "$receiver$name$regularArgs"
+        }
+    }
+
+    /** The getValue operator a delegated property delegates to, `null` if it is not an operator any more. */
+    private fun delegateOf(prop: PropDecl): FunDecl? =
+        (prop.delegateFunId?.let(program::decl) as? FunDecl)?.takeIf { it.isOperator && it.operatorKind == OperatorKind.GET_VALUE }
+
     private fun type(type: TypeRef): String {
         val base = when (type) {
             is TypeRef.BuiltinType -> type.builtin.kotlinName
-            is TypeRef.ClassType -> classReference(type.classId)
-            is TypeRef.AliasType -> program.decl(type.aliasId)?.let(::reference) ?: unresolved(type.aliasId)
+            is TypeRef.ClassType -> typeReference(type.classId, type.typeArg, type.star)
+            is TypeRef.AliasType -> {
+                val alias = program.decl(type.aliasId) as? TypeAliasDecl
+                when {
+                    alias == null -> program.decl(type.aliasId)?.let(::reference) ?: unresolved(type.aliasId)
+                    alias.generic -> "${reference(alias)}<${type(type.typeArg ?: INT_TYPE)}>"
+                    else -> reference(alias)
+                }
+            }
             is TypeRef.TypeParamType -> "T"
+            is TypeRef.ListType -> "List<${type(type.element)}>"
         }
         return if (type.nullable) "$base?" else base
+    }
+
+    /** A reference to the class [classId] as a type, with the type argument of a generic class: [typeArg], `Int` by default, or a star. */
+    private fun typeReference(classId: Int, typeArg: TypeRef? = null, star: Boolean = false): String {
+        val reference = classReference(classId)
+        val cls = program.classDecl(classId)
+        if (cls == null || !cls.isGeneric) return reference
+        return "$reference<${if (star) "*" else type(typeArg ?: INT_TYPE)}>"
     }
 
     private fun value(type: TypeRef, variant: Int, depth: Int = 0): String {
@@ -479,31 +583,53 @@ class ProgramPrinter private constructor(private val program: Program) {
                 val cls = program.classDecl(type.classId)
                 when {
                     cls == null -> unresolved(type.classId)
-                    cls.isInstantiable -> instance(type.classId)
+                    cls.isInstantiable -> instance(type.classId, type.typeArg.takeUnless { type.star })
                     type.nullable -> "null"
                     else -> "TODO()"
                 }
             }
             is TypeRef.AliasType -> {
                 val alias = program.decl(type.aliasId) as? TypeAliasDecl
-                if (alias == null) unresolved(type.aliasId) else value(alias.target, variant, depth + 1)
+                if (alias == null) unresolved(type.aliasId)
+                else value(if (alias.generic) substitute(alias.target, type.typeArg ?: INT_TYPE) else alias.target, variant, depth + 1)
             }
-            // a value of the type parameter is never needed: a function returns no value of it, and its parameters have no default values
+            // the value of a type parameter is only returned, and a parameter of it has no default value
             is TypeRef.TypeParamType -> "TODO()"
+            is TypeRef.ListType -> "listOf(${value(type.element, variant, depth + 1)})"
         }
     }
 
-    private fun instance(classId: Int): String {
+    /** An instance of the class [classId], with the type argument [typeArg] of a generic class, `Int` by default. */
+    private fun instance(classId: Int, typeArg: TypeRef? = null): String {
         val cls = program.classDecl(classId) ?: return unresolved(classId)
-        if (isInner(cls)) return "${instance(outerOf(cls)!!.id)}.${cls.name}()"
-        val name = reference(cls)
-        return when (cls.kind) {
-            ClassKind.OBJECT -> name
-            ClassKind.ENUM -> "$name.entries.first()"
-            ClassKind.ABSTRACT, ClassKind.SEALED, ClassKind.INTERFACE, ClassKind.SEALED_INTERFACE -> "(TODO() as $name)"
-            ClassKind.FINAL, ClassKind.OPEN, ClassKind.DATA -> "$name()"
-            ClassKind.VALUE -> "$name(0)"
+        // a constructor parameter may have the type of its class
+        if (instanceDepth > MAX_INSTANCE_DEPTH) return "TODO()"
+        instanceDepth++
+        try {
+            val arg = typeArg ?: INT_TYPE
+            val typeArgs = if (cls.isGeneric) "<${type(arg)}>" else ""
+            if (isInner(cls)) return "${instance(outerOf(cls)!!.id)}.${cls.name}$typeArgs(${constructorArguments(cls, arg)})"
+            val name = reference(cls) + typeArgs
+            return when (cls.kind) {
+                ClassKind.OBJECT -> reference(cls)
+                ClassKind.ENUM -> "${reference(cls)}.entries.first()"
+                ClassKind.ABSTRACT, ClassKind.SEALED, ClassKind.INTERFACE, ClassKind.SEALED_INTERFACE, ClassKind.ANNOTATION -> "(TODO() as $name)"
+                ClassKind.FINAL, ClassKind.OPEN, ClassKind.DATA -> "$name(${constructorArguments(cls, arg)})"
+                ClassKind.VALUE -> "$name(${if (cls.isGeneric) value(arg, 0) else "0"})"
+            }
+        } finally {
+            instanceDepth--
         }
+    }
+
+    private var instanceDepth = 0
+
+    /** The arguments of a call of the primary constructor of [cls], passing the parameters without default values by name. */
+    private fun constructorArguments(cls: ClassDecl, typeArg: TypeRef? = INT_TYPE): String =
+        cls.printedCtorParams.filterNot { it.hasDefault }.joinToString { "${it.name} = ${value(substitute(it.type, typeArg), 0)}" }
+
+    private fun annotations(uses: List<AnnotationUse>): String = uses.joinToString("") { use ->
+        "@${classReference(use.annotationId)}(\"a${use.argVariant}\")\n"
     }
 
     private fun classReference(classId: Int): String = program.decl(classId)?.let(::reference) ?: unresolved(classId)
@@ -527,6 +653,8 @@ class ProgramPrinter private constructor(private val program: Program) {
 
     companion object {
         private const val MAX_ALIAS_DEPTH = 8
+        private const val MAX_INSTANCE_DEPTH = 4
+        private val INT_TYPE: TypeRef = TypeRef.BuiltinType(Builtin.INT)
         private const val LAMBDA_PARAM = "block"
         private const val ALIAS_SUFFIX = "Alias"
 
