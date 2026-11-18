@@ -116,7 +116,7 @@ abstract class KotlinIrLinker(
 
     private val triedToDeserializeDeclarationForSymbol = hashSetOf<IrSymbol>()
 
-    open val partialLinkageSupport: PartialLinkageSupportForLinker get() = PartialLinkageSupportForLinker.DISABLED
+    abstract val partialLinkageSupport: PartialLinkageSupportForLinker
 
     open val moduleDependencyTracker: IrModuleDependencyTracker get() = IrModuleDependencyTracker.DISABLED
 
