@@ -75,6 +75,10 @@ internal fun Project.registerSwiftPackageExportPipeline(exportExtension: ExportE
     if (!HostManager.hostIsMac && kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
         reportDiagnostic(KotlinToolingDiagnostics.SwiftPackageExportUnsupportedHost(HostManager.platformName()))
     }
+    // Swift Package Manager only refuses an empty product name. A blank one is no better.
+    if (integration.productName.get().isBlank()) {
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftPackageBlankProductName(path))
+    }
     // The setup action doesn't get here without Apple targets.
     val appleTargets = multiplatformExtension.supportedAppleTargets().toList()
 
@@ -126,7 +130,7 @@ private fun Project.registerSwiftPackageExport(
 
         task.kotlinRuntime.set(swiftExportKotlinRuntime)
         task.swiftApiModuleName.set(swiftApiModuleName)
-        task.swiftLibraryName.set(swiftApiLibraryName(swiftApiModuleName))
+        task.swiftLibraryName.set(integration.productName)
         task.kotlinBinaryTargetName.set(kotlinBinaryTargetName)
         task.platforms.set(swiftPackagePlatforms(outputs.map { it.first.konanTarget.family }))
         task.swiftPMDependencies.set(swiftPMDependencies)

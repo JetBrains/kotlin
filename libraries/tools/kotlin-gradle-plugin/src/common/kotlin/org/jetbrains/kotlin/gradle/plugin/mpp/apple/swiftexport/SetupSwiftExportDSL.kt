@@ -40,7 +40,7 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
     )
 
     // TODO: Move to a more generic SetUpExportAction.
-    val exportExtension = objects.ExportExtension(swiftExportDependencySelectorFactory())
+    val exportExtension = objects.ExportExtension(swiftExportDependencySelectorFactory(), project.name)
     multiplatformExtension.addExtension(EXPORT_EXTENSION_NAME, exportExtension)
 
     val appleTargets = project
