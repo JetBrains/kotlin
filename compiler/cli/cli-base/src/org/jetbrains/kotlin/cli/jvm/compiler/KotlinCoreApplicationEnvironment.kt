@@ -6,9 +6,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.DynamicBundle
-import com.intellij.codeInsight.ContainerProvider
-import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.lang.MetaLanguage
@@ -24,13 +21,10 @@ import com.intellij.openapi.vfs.VirtualFileSetFactory
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.pom.java.InternalPersistentJavaLanguageLevelReaderService
-import com.intellij.psi.FileContextProvider
 import com.intellij.psi.JavaModuleGraphHelper
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.codeStyle.JavaFileCodeStyleFacadeFactory
 import com.intellij.psi.impl.JavaClassSupersImpl
-import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
-import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.util.JavaClassSupers
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
@@ -175,14 +169,8 @@ open class KotlinCoreApplicationEnvironment protected constructor(
 
         @Suppress("UnstableApiUsage")
         private fun registerExtensionPoints() {
-            registerApplicationExtensionPoint(DynamicBundle.LanguageBundleEP.EP_NAME, DynamicBundle.LanguageBundleEP::class.java)
-            registerApplicationExtensionPoint(FileContextProvider.EP_NAME, FileContextProvider::class.java)
-            registerApplicationExtensionPoint(MetaDataContributor.EP_NAME, MetaDataContributor::class.java)
             registerApplicationExtensionPoint(PsiAugmentProvider.EP_NAME, PsiAugmentProvider::class.java)
-            registerApplicationExtensionPoint(JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
-            registerApplicationExtensionPoint(ContainerProvider.EP_NAME, ContainerProvider::class.java)
             registerApplicationExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage::class.java)
-            registerApplicationExtensionPoint(SmartPointerAnchorProvider.EP_NAME, SmartPointerAnchorProvider::class.java)
             registerVersionSpecificAppExtensionPoints(ApplicationManager.getApplication().extensionArea)
         }
 

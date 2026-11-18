@@ -267,6 +267,10 @@
     ** getBasePath();
 }
 
+# for analysis api
+-keep class com.intellij.mock.MockComponentManager {
+    public void registerService(java.lang.Class);
+}
 
 # for building kotlin-build-common-test
 -keep class org.jetbrains.kotlin.build.SerializationUtilsKt { *; }
