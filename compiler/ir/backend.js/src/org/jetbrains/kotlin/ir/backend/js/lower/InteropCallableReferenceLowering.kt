@@ -58,7 +58,8 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
     JsSuspendFunctionWithGeneratorsLowering::class,
     LocalDeclarationsLowering::class,
     LocalDelegatedPropertiesLowering::class,
-    JsCallableReferenceLowering::class
+    JsCallableReferenceLowering::class,
+    JsInitializersLowering::class,
 )
 class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val getContinuation = context.symbols.getContinuation
