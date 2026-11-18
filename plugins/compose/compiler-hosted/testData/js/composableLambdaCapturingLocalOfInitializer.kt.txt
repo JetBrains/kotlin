@@ -1,0 +1,177 @@
+private val topLevelContent: Function3<StringBuilder, Composer, Int, Unit>
+  field = { // BLOCK
+    val local: String = "t"
+    when {
+      else -> Function3<StringBuilder, Composer, Int, Unit>(
+        /* bound = */ [composableLambdaInstance(key = 1040610316, tracked = true, block =         @Composable
+        @FunctionKeyMeta(key = 1040610316, startOffset = 900, endOffset = 928)
+local fun <anonymous>(out: StringBuilder, /* var */ $composer: Composer?, $changed: Int) {
+          var $composer: Composer? = $composer
+          sourceInformation(composer = $composer, sourceInformation = "C:composableLambdaCapturingLocalOfInitializer.kt")
+          // COMPOSITE {
+          when {
+            isTraceInProgress() -> traceEventStart(key = 1040610316, dirty1 = $changed, dirty2 = -1, info = "topLevelContent.<anonymous> (composableLambdaCapturingLocalOfInitializer.kt:27)")
+          }
+          out.append(value = local) /*~> Unit */
+          when {
+            isTraceInProgress() -> traceEventEnd()
+          }
+          // }
+        }
+)],
+        /* invoke = */        local fun(<this>: ComposableLambda, p0: StringBuilder, p1: Composer, p2: Int) {
+          return <this>.invoke(p1 = p0 /*as Any? */, p2 = p1, p3 = p2) /*~> Unit */
+        }
+      )
+ /*as Function3<StringBuilder, Composer, Int, Unit> */
+    }
+  }
+  private get
+
+val NoOpApplier$stableprop: Int
+  field = androidx_compose_runtime_AbstractApplier$stableprop_getter()
+
+private class InitHolder {
+  init {
+    val local: String = label
+    <this>.#content = Function3<StringBuilder, Composer, Int, Unit>(
+      /* bound = */ [composableLambdaInstance(key = 1433690679, tracked = true, block =       @Composable
+      @FunctionKeyMeta(key = 1433690679, startOffset = 576, endOffset = 604)
+local fun <anonymous>(out: StringBuilder, /* var */ $composer: Composer?, $changed: Int) {
+        var $composer: Composer? = $composer
+        sourceInformation(composer = $composer, sourceInformation = "C:composableLambdaCapturingLocalOfInitializer.kt")
+        // COMPOSITE {
+        when {
+          isTraceInProgress() -> traceEventStart(key = 1433690679, dirty1 = $changed, dirty2 = -1, info = "InitHolder.<anonymous> (composableLambdaCapturingLocalOfInitializer.kt:16)")
+        }
+        out.append(value = local) /*~> Unit */
+        when {
+          isTraceInProgress() -> traceEventEnd()
+        }
+        // }
+      }
+)],
+      /* invoke = */      local fun(<this>: ComposableLambda, p0: StringBuilder, p1: Composer, p2: Int) {
+        return <this>.invoke(p1 = p0 /*as Any? */, p2 = p1, p3 = p2) /*~> Unit */
+      }
+    )
+ /*as Function3<StringBuilder, Composer, Int, Unit> */
+  }
+
+  constructor(label: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val content: Function3<StringBuilder, Composer, Int, Unit>
+    get
+
+}
+
+@StabilityInferred(parameters = 0)
+class NoOpApplier : AbstractApplier<Unit> {
+  constructor() /* primary */ {
+    super/*AbstractApplier*/<Unit>(root = Unit)
+    /* <init>() */
+
+  }
+
+  override fun insertBottomUp(index: Int, instance: Unit) {
+  }
+
+  override fun insertTopDown(index: Int, instance: Unit) {
+  }
+
+  override fun move(from: Int, to: Int, count: Int) {
+  }
+
+  protected override fun onClear() {
+  }
+
+  override fun remove(index: Int, count: Int) {
+  }
+
+}
+
+private class PropertyHolder {
+  val content: Function3<StringBuilder, Composer, Int, Unit>
+    field = { // BLOCK
+      val local: String = label
+      when {
+        else -> Function3<StringBuilder, Composer, Int, Unit>(
+          /* bound = */ [composableLambdaInstance(key = 1736457170, tracked = true, block =           @Composable
+          @FunctionKeyMeta(key = 1736457170, startOffset = 758, endOffset = 786)
+local fun <anonymous>(out: StringBuilder, /* var */ $composer: Composer?, $changed: Int) {
+            var $composer: Composer? = $composer
+            sourceInformation(composer = $composer, sourceInformation = "C:composableLambdaCapturingLocalOfInitializer.kt")
+            // COMPOSITE {
+            when {
+              isTraceInProgress() -> traceEventStart(key = 1736457170, dirty1 = $changed, dirty2 = -1, info = "PropertyHolder.content.<anonymous> (composableLambdaCapturingLocalOfInitializer.kt:22)")
+            }
+            out.append(value = local) /*~> Unit */
+            when {
+              isTraceInProgress() -> traceEventEnd()
+            }
+            // }
+          }
+)],
+          /* invoke = */          local fun(<this>: ComposableLambda, p0: StringBuilder, p1: Composer, p2: Int) {
+            return <this>.invoke(p1 = p0 /*as Any? */, p2 = p1, p3 = p2) /*~> Unit */
+          }
+        )
+ /*as Function3<StringBuilder, Composer, Int, Unit> */
+      }
+    }
+    get
+
+  constructor(label: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Deprecated(message = "Synthetic declaration generated by the Compose compiler. Please do not use.", level = DeprecationLevel.HIDDEN)
+fun NoOpApplier$stableprop_getter(): Int {
+  return #NoOpApplier$stable
+}
+
+fun box(): String {
+  val out: StringBuilder = StringBuilder()
+  Composition(applier = NoOpApplier(), parent = Recomposer(effectCoroutineContext = EmptyCoroutineContext)).setContent(content = Function2<Composer, Int, Unit>(
+    /* bound = */ [composableLambdaInstance(key = 816122279, tracked = true, block =     @Composable
+    @FunctionKeyMeta(key = 816122279, startOffset = 1375, endOffset = 1567)
+local fun <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
+      var $composer: Composer? = $composer
+      sourceInformation(composer = $composer, sourceInformation = "C41@1401L12,42@1438L12,43@1479L12,44@1520L12,45@1541L20:composableLambdaCapturingLocalOfInitializer.kt")
+      when {
+        $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 3), arg1 = 2).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+          when {
+            isTraceInProgress() -> traceEventStart(key = 816122279, dirty1 = $changed, dirty2 = -1, info = "box.<anonymous> (composableLambdaCapturingLocalOfInitializer.kt:41)")
+          }
+          InitHolder(label = "a").<get-content>().invoke(p1 = out, p2 = $composer, p3 = 0)
+          InitHolder(label = "b").<get-content>().invoke(p1 = out, p2 = $composer, p3 = 0)
+          PropertyHolder(label = "c").<get-content>().invoke(p1 = out, p2 = $composer, p3 = 0)
+          PropertyHolder(label = "d").<get-content>().invoke(p1 = out, p2 = $composer, p3 = 0)
+          <get-topLevelContent>().invoke(p1 = out, p2 = $composer, p3 = 48)
+          when {
+            isTraceInProgress() -> traceEventEnd()
+          }
+        }
+        else -> $composer.skipToGroupEnd()
+      }
+    }
+)],
+    /* invoke = */    local fun(<this>: ComposableLambda, p0: Composer, p1: Int) {
+      return <this>.invoke(p1 = p0, p2 = p1) /*~> Unit */
+    }
+  )
+ /*as Function2<Composer, Int, Unit> */)
+  return when {
+    EQEQ(arg0 = out.toString(), arg1 = "abcdt") -> "OK"
+    else -> "out=" + out
+  }
+}
+

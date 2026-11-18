@@ -190,7 +190,10 @@ private class FunctionContext(
     }
 }
 
-private class AnonymousInitializerContext(override val declaration: IrAnonymousInitializer) : DeclarationContext() {
+/**
+ * An `init` block or a field initializer: not a function, but may declare locals.
+ */
+private class InitializerContext(override val declaration: IrSymbolOwner) : DeclarationContext() {
     override val composable: Boolean = false
     override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
 
@@ -395,7 +398,9 @@ class ComposerLambdaMemoization(
             return super.visitDeclaration(declaration)
         }
 
-        declarationContextStack.push(SymbolOwnerContext(declaration))
+        declarationContextStack.push(
+            if (declaration is IrField) InitializerContext(declaration) else SymbolOwnerContext(declaration)
+        )
         val result = super.visitDeclaration(declaration)
         declarationContextStack.pop()
         return result
@@ -460,7 +465,7 @@ class ComposerLambdaMemoization(
     }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement {
-        val context = AnonymousInitializerContext(declaration)
+        val context = InitializerContext(declaration)
         declarationContextStack.recordLocalDeclaration(context)
         declarationContextStack.push(context)
         val result = super.visitAnonymousInitializer(declaration)
@@ -477,7 +482,9 @@ class ComposerLambdaMemoization(
     }
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
-        currentFunctionContext?.declareLocal(declaration)
+        // Innermost function or initializer, not currentFunctionContext: a class resets it, but `init`
+        // blocks and field initializers have locals too
+        declarationContextStack.lastOrNull { it is FunctionContext || it is InitializerContext }?.declareLocal(declaration)
         return super.visitVariable(declaration)
     }
 
