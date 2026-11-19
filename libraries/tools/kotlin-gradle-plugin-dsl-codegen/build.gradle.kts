@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -58,5 +60,9 @@ fun JavaForkOptions.setKGPSourceRootPaths() {
 projectTests {
     testTask {
         setKGPSourceRootPaths()
+
+        testFederation {
+            smokeTests()
+        }
     }
 }

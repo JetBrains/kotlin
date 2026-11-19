@@ -2,6 +2,13 @@ import org.gradle.api.publish.internal.PublicationInternal
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.Domain.Frontend
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.Domain.Native
+import org.jetbrains.kotlin.testFederation.testFederation
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 import plugins.configureKotlinPomAttributes
 
@@ -168,6 +175,10 @@ projectTests {
         }
 
         setUpJsIrBoxTests()
+
+        testFederation {
+            contractTestsFor(Frontend, CommonBackend, Jvm, Js, AnalysisApi)
+        }
     }
 
     nativeTestTask(
@@ -176,7 +187,11 @@ projectTests {
         requirePlatformLibs = false,
         customTestDependencies = listOf(coreNativeRuntimeForTests, jsonNativeRuntimeForTests),
         compilerPluginDependencies = listOf(serializationPluginForTests)
-    )
+    ) {
+        testFederation {
+            contractTestsFor(Native)
+        }
+    }
 
     testGenerator("org.jetbrains.kotlinx.serialization.GenerateSerializationTestsKt")
 

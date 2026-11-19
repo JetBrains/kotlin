@@ -1,5 +1,10 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.Domain.Native
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -76,6 +81,10 @@ projectTests {
         useJUnitPlatform {
             excludeTags("sandbox-native")
         }
+
+        testFederation {
+            contractTestsFor(CommonBackend, Jvm, Js)
+        }
     }
 
     nativeTestTask(
@@ -84,7 +93,11 @@ projectTests {
         requirePlatformLibs = false,
         customTestDependencies = listOf(sandboxAnnotationsNativeRuntimeForTests),
         compilerPluginDependencies = listOf(sandboxPluginForTests)
-    )
+    ) {
+        testFederation {
+            contractTestsFor(Native)
+        }
+    }
 
     testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt", generateTestsInBuildDirectory = true) {
         args("tolerateEmptyModels")

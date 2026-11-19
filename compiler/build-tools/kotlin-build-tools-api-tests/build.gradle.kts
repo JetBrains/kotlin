@@ -1,4 +1,7 @@
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.testFederation.Domain.CompilerPlugins
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -263,6 +266,11 @@ testing {
                         ) {
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+
+                            testFederation {
+                                smokeTests()
+                                contractTestsFor(Js)
+                            }
                         }
                     }
                 }
@@ -327,6 +335,23 @@ testing {
                 implementation(project(":daemon-common"))
                 implementation(project(":compiler:build-tools:kotlin-build-tools-impl"))
             }
+            targets.all {
+                testTask.configure {
+                    testFederation {
+                        contractTestsFor(Js)
+                    }
+                }
+            }
+        }
+
+        named<JvmTestSuite>("testExample") {
+            targets.all {
+                testTask.configure {
+                    testFederation {
+                        smokeTests()
+                    }
+                }
+            }
         }
 
         named<JvmTestSuite>("testInputChangesTracking") {
@@ -354,6 +379,11 @@ testing {
             }
             targets.all {
                 testTask.configure {
+                    testFederation {
+                        smokeTests()
+                        contractTestsFor(CompilerPlugins)
+                    }
+
                     addClasspathProperty(noArgCompilerPlugin, "NOARG_COMPILER_PLUGIN")
                     addClasspathProperty(assignmentCompilerPlugin, "ASSIGNMENT_COMPILER_PLUGIN")
                     addClasspathProperty(scriptingCompilerPlugin, "SCRIPTING_COMPILER_PLUGIN")

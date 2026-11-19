@@ -3,7 +3,6 @@
 import com.google.gson.GsonBuilder
 import org.gradle.kotlin.dsl.support.serviceOf
 import com.google.gson.JsonObject
-import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.withType
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
-import org.jetbrains.kotlin.testFederation.testFederation
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
@@ -590,16 +588,6 @@ publishing {
             listOf("${framework.lowercase()}Module", "$framework", "kotlin-test-${framework.lowercase()}", "jvm${framework}RuntimeDependencies")
         }).forEach { (module, sbomTarget, sbomDocument, classpath) ->
             configureSbom(sbomTarget, sbomDocument, setOf(classpath), named<MavenPublication>(module))
-        }
-    }
-}
-
-tasks.withType<Test>().configureEach {
-    if (testFramework !is JUnitPlatformTestFramework) {
-        testFederation {
-            // Not JUnit Platform, so Test Federation cannot select a subset of it
-            smokeTests { skip() }
-            contractTests { skip() }
         }
     }
 }

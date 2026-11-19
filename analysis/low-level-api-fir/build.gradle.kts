@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -119,6 +121,10 @@ projectTests {
         )
     ) {
         addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
+
+        testFederation {
+            smokeTests()
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.TestGeneratorKt")

@@ -1,4 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.Native
+import org.jetbrains.kotlin.testFederation.testFederation
 import java.util.zip.ZipFile
 
 plugins {
@@ -228,5 +231,9 @@ projectTests {
         )
         testClassesDirs = testSourceSet.output.classesDirs
         systemProperty("ide.can.use.coroutines.fork", "false")
+
+        testFederation {
+            contractTestsFor(Native, AnalysisApi)
+        }
     }
 }

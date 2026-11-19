@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
 
 description = "Kotlin Power-Assert Compiler Plugin"
 
@@ -69,6 +71,10 @@ javadocJar()
 
 projectTests {
     testTask {
+        testFederation {
+            contractTestsFor(Jvm)
+        }
+
         addClasspathProperty(junit5Classpath, "junit5.classpath")
         addClasspathProperty(powerAssertJvmRuntimeClasspath, "powerAssertRuntime.jvm.classpath")
         addClasspathProperty(powerAssertJsRuntimeClasspath, "powerAssertRuntime.js.classpath")

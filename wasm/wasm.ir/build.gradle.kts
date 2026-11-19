@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -83,6 +84,10 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 projectTests {
     testTask {
+        testFederation {
+            smokeTests()
+        }
+
         addDirectoryProperty("wabt.bin.path") {
             fileProvider(unzipWabt.map { it.destinationDir.resolve("bin") })
         }
@@ -91,4 +96,3 @@ projectTests {
         }
     }
 }
-

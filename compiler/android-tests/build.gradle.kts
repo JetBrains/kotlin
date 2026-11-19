@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
-import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -87,13 +86,6 @@ projectTests {
         androidSdkProvisioner {
             provideToThisTaskAsSystemProperty(ProvisioningType.SDK_WITH_EMULATOR)
         }
-
-        testFederation {
-            // KTI-3196
-            smokeTests { skip() }
-            contractTests { skip() }
-        }
-
 
         testData(project(":compiler").isolated, "testData/codegen/box")
         testData(project(":compiler").isolated, "testData/codegen/boxJvm")

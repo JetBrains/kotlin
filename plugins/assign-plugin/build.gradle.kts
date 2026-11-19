@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
+
 description = "Kotlin Assignment Compiler Plugin"
 
 plugins {
@@ -51,5 +55,9 @@ projectTests {
     withMockJdkAnnotationsJar()
     withTestJar()
 
-    testTask()
+    testTask {
+        testFederation {
+            contractTestsFor(Jvm, AnalysisApi)
+        }
+    }
 }

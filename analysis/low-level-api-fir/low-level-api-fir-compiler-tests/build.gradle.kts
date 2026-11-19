@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.testFederation.Domain.CompilerPlugins
 import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
@@ -58,6 +59,7 @@ projectTests {
             smokeTests {
                 includeAutoSamples(percentage = 1)
             }
+            contractTestsFor(CompilerPlugins)
         }
     }
 

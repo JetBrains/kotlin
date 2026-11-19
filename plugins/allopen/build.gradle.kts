@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
+
 description = "Kotlin AllOpen Compiler Plugin"
 
 plugins {
@@ -48,7 +52,11 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0))
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
+        testFederation {
+            contractTestsFor(Jvm, AnalysisApi)
+        }
+    }
 
     testGenerator("org.jetbrains.kotlin.allopen.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
