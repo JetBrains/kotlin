@@ -16,6 +16,11 @@ analysisApiArtifact {
     content {
         project(":analysis:analysis-api-fir-diagnostics")
     }
+
+    validateClasspath(
+        proguardConfiguration = file("analysis-api-fir-diagnostics.pro"),
+        permittedDuplicatesFile = file("api/analysis-api-fir-diagnostics.permitted-duplicates"),
+    )
 }
 
 // The generated diagnostics expose plenty of compiler types (`FirModuleData`, `ClassKind`, …) which are shipped in
