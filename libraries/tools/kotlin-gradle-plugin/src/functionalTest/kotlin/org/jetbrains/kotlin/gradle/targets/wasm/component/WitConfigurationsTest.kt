@@ -78,6 +78,33 @@ class WitConfigurationsTest {
         )
     }
 
+    @Test
+    fun `a Java project declared in commonMain resolves like it does for the JS runtime classpath`() {
+        val root = buildProject(projectBuilder = { withName("root") })
+        val javaLib = buildProject(projectBuilder = { withParent(root).withName("java-lib") }) {
+            plugins.apply("java-library")
+        }
+        val app = buildProjectWithMPP(
+            projectBuilder = { withParent(root).withName("app") },
+            preApplyCode = { disableDefaultDependencies() },
+        ) {
+            kotlin {
+                jvm()
+                wasmWasi { wasmtime() }
+                sourceSets.getByName("commonMain").dependencies {
+                    implementation(project(":java-lib"))
+                }
+            }
+        }
+        javaLib.evaluate()
+        app.evaluate()
+
+        assertEquals(
+            setOf(javaLib.tasks.getByName("jar").outputs.files.singleFile),
+            app.configurations.getByName("wasmWasiWit").incoming.artifacts.artifactFiles.files,
+        )
+    }
+
     private fun buildLibAndApp(): Pair<Project, Project> {
         val root = buildProject(projectBuilder = { withName("root") })
         val lib = buildProjectWithMPP(
