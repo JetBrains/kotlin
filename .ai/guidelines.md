@@ -64,6 +64,10 @@ follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_gui
 
 **MANDATORY: First check the [Areas](#areas) table above — some areas have specialized test tooling.**
 
+Managed test data (most of `analysis/`, and `compiler/psi/psi-impl`) is checked and updated only with
+`python3 analysis/test-data-manager/test-data-manager.py check|update --path <dir-or-file>`, never with the commands below;
+see [Working with Test Data](../analysis/AGENTS.md#working-with-test-data).
+
 Use `-q` (quiet) flag to reduce output noise. Example of commands for areas WITHOUT specialized tooling:
 
 ```bash
