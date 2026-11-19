@@ -181,13 +181,19 @@ internal fun JavaAnnotationArgument.toFirExpression(
             expectedArrayElementTypeIfArray
         )
         is JavaArrayAnnotationArgument -> buildCollectionLiteral {
-            val argumentTypeRef = expectedConeType?.let {
-                coneTypeOrNull = it
-                buildResolvedTypeRef {
-                    this.coneType = it.lowerBoundIfFlexible().arrayElementType()
-                        ?: ConeErrorType(ConeSimpleDiagnostic("expected type is not array type"))
-                }
+            coneTypeOrNull = if (expectedConeType != null && !expectedConeType.isArrayOrPrimitiveArray) {
+                // The dependency that declared the annotation changed in an incompatible way from array to scalar type (see KT-91611).
+                // Fix the type of the collection literal to prevent a crash in FIR2IR.
+                StandardClassIds.Array.constructClassLikeType(arrayOf(expectedConeType))
+            } else {
+                expectedConeType ?: ConeErrorType(ConeSimpleDiagnostic("missing expected type"))
             }
+
+            val argumentTypeRef = buildResolvedTypeRef {
+                this.coneType = expectedArrayElementTypeIfArray
+                    ?: ConeErrorType(ConeSimpleDiagnostic("expected type is not array type"))
+            }
+
             argumentList = buildArgumentList {
                 getElements().mapTo(arguments) { it.toFirExpression(session, javaTypeParameterStack, argumentTypeRef, source) }
             }
