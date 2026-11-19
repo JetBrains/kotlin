@@ -6,7 +6,8 @@
 import kotlin.concurrent.Volatile
 import kotlin.concurrent.atomics.*
 
-object InitOrder {
+// The VarHandle field is initialized in <clinit>, before any instance initializer can use it.
+class InitOrder {
     @Volatile var x: Int = 0
     val y: Int
     init {
@@ -28,23 +29,23 @@ class Outer {
     fun viaLambda(): Int = listOf(1, 2, 3).map { this::counter.addAndFetch(it) }.last()
 }
 
+// The instance field `x` clashes with the static field `x` moved from the companion, so one of them is renamed;
+// the field name passed to `getDeclaredField` must follow.
 class Clash {
     @Volatile var x: Int = 1
     companion object {
         @Volatile var x: Int = 100
-        fun inc() = this::x.incrementAndFetch()
     }
     fun incInstance() = this::x.incrementAndFetch()
 }
 
 fun box(): String {
-    if (InitOrder.y != 42) return "init order: ${InitOrder.y}"
+    if (InitOrder().y != 42) return "init order"
     val b = Bounded<String>("a")
     if (b.swap("b") != "a" || !b.cas("b", "c") || b.v != "c") return "bounded"
     val o = Outer()
     if (o.Inner().inc() != 1) return "inner"
     if (o.viaLambda() != 7) return "lambda"
-    if (Clash.inc() != 101) return "clash companion: ${Clash.x}"
-    if (Clash().incInstance() != 2) return "clash instance"
+    if (Clash().incInstance() != 2 || Clash.x != 100) return "clash instance"
     return "OK"
 }

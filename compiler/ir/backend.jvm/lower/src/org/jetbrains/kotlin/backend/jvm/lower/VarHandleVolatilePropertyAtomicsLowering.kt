@@ -25,8 +25,9 @@ import org.jetbrains.kotlin.name.Name
  * Implementation of [AbstractVolatilePropertyAtomicsLowering] for JVM 9+, based on `java.lang.invoke.VarHandle`.
  *
  * Since [java.lang.invoke.VarHandle] methods are signature polymorphic, the calls are generated with exact (unboxed) signatures,
- * which allows the JIT to intrinsify them. All volatile properties are supported, including static fields (properties of objects,
- * companion objects and top-level properties) and `Boolean` properties.
+ * which allows the JIT to intrinsify them. All supported property types, including `Boolean`, can be handled.
+ * (`VarHandle` also supports static fields, but the frontend prohibits them for consistency with JVM 1.8,
+ * see `FirVolatileIntrinsicApplicabilityChecker`.)
  *
  * The resulting bytecode is equivalent to the following Java code:
  *
@@ -66,14 +67,12 @@ internal class VarHandleVolatilePropertyAtomicsLowering(context: JvmBackendConte
         returnType: IrType,
         vararg arguments: IrExpression,
     ): IrExpression {
-        val receiver = access.receiver
-        val parameterTypes = listOfNotNull(receiver?.let { access.field.parentAsClass.defaultType }) + arguments.map { access.erasedType }
+        val parameterTypes = listOf(access.field.parentAsClass.defaultType) + arguments.map { access.erasedType }
         val method = polymorphicSignatureInstantiation(name, parameterTypes, returnType)
         return irCall(method.symbol, returnType).apply {
             dispatchReceiver = irGetField(null, varHandleFieldFor(access.field))
-            var index = 1
-            if (receiver != null) this.arguments[index++] = irGet(receiver)
-            for (argument in arguments) this.arguments[index++] = argument
+            this.arguments[1] = irGet(access.receiver)
+            arguments.forEachIndexed { index, argument -> this.arguments[index + 2] = argument }
         }
     }
 

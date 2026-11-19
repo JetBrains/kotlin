@@ -26,20 +26,12 @@ class Counters {
     }
 }
 
-object Statics {
-    @Volatile var counter: Long = 0L
-    fun increment() { Statics::counter.fetchAndIncrement() }
-}
-
 fun box(): String {
     val threads = 8
     val iterations = 20_000
     val counters = Counters()
     (0 until threads).map { id ->
-        thread {
-            counters.work(id, iterations)
-            repeat(iterations) { Statics.increment() }
-        }
+        thread { counters.work(id, iterations) }
     }.forEach { it.join() }
 
     if (counters.ints != threads * iterations) return "Fail ints: ${counters.ints}"
@@ -47,6 +39,5 @@ fun box(): String {
     if (counters.updates != 3 * threads * iterations) return "Fail updates: ${counters.updates}"
     if (counters.list.sorted() != (0 until threads).toList()) return "Fail list: ${counters.list}"
     if (counters.flagWinners != 1) return "Fail flag: ${counters.flagWinners}"
-    if (Statics.counter != threads.toLong() * iterations) return "Fail statics: ${Statics.counter}"
     return "OK"
 }

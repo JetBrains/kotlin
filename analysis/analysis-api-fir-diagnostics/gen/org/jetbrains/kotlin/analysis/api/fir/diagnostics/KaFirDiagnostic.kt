@@ -6097,6 +6097,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VolatileIntrinsicCallOnStaticProperty : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<VolatileIntrinsicCallOnStaticProperty>
+            get() = VolatileIntrinsicCallOnStaticProperty::class
+
+        public val declaration: KaSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface LocalExtensionProperty : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<LocalExtensionProperty>
             get() = LocalExtensionProperty::class

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations
@@ -36,7 +38,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations
  * Similarly to `isInitialized` (see [FirLateinitIntrinsicApplicabilityChecker]), such intrinsics are recognized by the
  * `@receiver:kotlin.internal.AccessibleVolatilePropertyLiteral` annotation. Backends replace the calls with atomic operations
  * on the backing field of the referenced property, so the receiver must be a property reference literal, referencing
- * a property with a `@Volatile` backing field, which is accessible at the call site.
+ * a property with a `@Volatile` backing field, which is accessible at the call site, and isn't stored in a static field.
  */
 object FirVolatileIntrinsicApplicabilityChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -70,6 +72,15 @@ object FirVolatileIntrinsicApplicabilityChecker : FirFunctionCallChecker(MppChec
             return
         }
 
+        // Top-level properties and properties of (companion) objects are stored in static fields on the JVM, which can't be accessed
+        // atomically by JVM 1.8 `Atomic*FieldUpdater`s. To keep the API consistent across platforms and JVM targets, such properties
+        // are prohibited everywhere: they are allocated once, so `Atomic*` classes (boxed atomics) are cheap there.
+        // This can be reconsidered when JVM 1.8 support is dropped, since `VarHandle` supports static fields.
+        if (propertySymbol.isStoredInStaticField()) {
+            reporter.reportOn(source, FirErrors.VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY, propertySymbol)
+            return
+        }
+
         // The generic (`AtomicReference`-like) overloads compare values by identity, which is meaningless for primitives
         // and value classes. Int/Long/Boolean have dedicated overloads which are preferred by overload resolution.
         if (calleeSymbol.typeParameterSymbols.isNotEmpty()) {
@@ -92,6 +103,14 @@ object FirVolatileIntrinsicApplicabilityChecker : FirFunctionCallChecker(MppChec
         if (context.containingDeclarations.any { it is FirFunctionSymbol && it.isInline }) {
             reporter.reportOn(source, FirErrors.VOLATILE_INTRINSIC_CALL_IN_INLINE_FUNCTION)
         }
+    }
+
+    /**
+     * Whether the property is top-level or declared in an object (including companion objects, excluding anonymous objects).
+     */
+    private fun FirPropertySymbol.isStoredInStaticField(): Boolean {
+        val containingClass = getContainingClassSymbol() ?: return true
+        return containingClass is FirRegularClassSymbol && containingClass.classKind == ClassKind.OBJECT
     }
 
     /**

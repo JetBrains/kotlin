@@ -1,7 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // DONT_TARGET_EXACT_BACKEND: JVM
 // JVM is tested in boxModernJdk/testsWithJava11/volatilePropertyAtomics (VarHandle, JVM 9+) and box/volatilePropertyAtomicsJvm8
-// (field updaters, JVM 1.8, which do not support static and Boolean properties).
+// (field updaters, JVM 1.8, which do not support Boolean properties).
 // `@Volatile` is an optional expectation without actuals on JS and Wasm, so it can only be used in common code there.
 // WITH_STDLIB
 // OPT_IN: kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -12,7 +12,7 @@
 import kotlin.concurrent.Volatile
 import kotlin.concurrent.atomics.*
 
-object InitOrder {
+class InitOrder {
     @Volatile var x: Int = 0
     val y: Int
     init {
@@ -38,20 +38,18 @@ class Clash {
     @Volatile var x: Int = 1
     companion object {
         @Volatile var x: Int = 100
-        fun inc() = this::x.incrementAndFetch()
     }
     fun incInstance() = this::x.incrementAndFetch()
 }
 
 fun commonBox(): String {
-    if (InitOrder.y != 42) return "init order: ${InitOrder.y}"
+    if (InitOrder().y != 42) return "init order"
     val b = Bounded<String>("a")
     if (b.swap("b") != "a" || !b.cas("b", "c") || b.v != "c") return "bounded"
     val o = Outer()
     if (o.Inner().inc() != 1) return "inner"
     if (o.viaLambda() != 7) return "lambda"
-    if (Clash.inc() != 101) return "clash companion: ${Clash.x}"
-    if (Clash().incInstance() != 2) return "clash instance"
+    if (Clash().incInstance() != 2 || Clash.x != 100) return "clash instance"
     return "OK"
 }
 

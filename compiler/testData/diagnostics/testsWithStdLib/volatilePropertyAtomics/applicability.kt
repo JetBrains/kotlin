@@ -13,10 +13,32 @@ class Box<T>(@Volatile var value: T) {
     fun ok(new: T) = this::value.exchange(new)
 }
 
+// Properties stored in static fields are prohibited: they are allocated once, so `Atomic*` classes can be used instead.
 object Obj {
     @Volatile var x: Long = 0L
-    fun ok() = this::x.incrementAndFetch()
+    fun onStatic() = this::x.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>incrementAndFetch<!>()
 }
+
+class WithCompanion {
+    companion object {
+        @Volatile var c: Int = 0
+        fun onStatic() {
+            this::c.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>load<!>()
+            WithCompanion::c.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>compareAndSet<!>(0, 1)
+        }
+    }
+}
+
+fun onStaticTopLevel() {
+    ::topLevel.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>store<!>(1)
+    ::topLevel.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>incrementAndFetch<!>()
+}
+
+// Properties of anonymous objects are stored in instance fields.
+fun anonymousObjectOk() = object {
+    @Volatile var x: Int = 0
+    fun inc() = this::x.incrementAndFetch()
+}.inc()
 
 open class Foo {
     @Volatile var i: Int = 0
@@ -34,7 +56,6 @@ open class Foo {
         private set
 
     fun ok() {
-        ::topLevel.incrementAndFetch()
         this::i.compareAndSet(0, 1)
         this::l.fetchAndAdd(1L)
         this::b.exchange(true)
@@ -101,7 +122,6 @@ class Subclass : Foo() {
 class Other {
     fun notAccessible(foo: Foo) {
         foo::i.<!VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>load<!>()
-        Obj::x.<!VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>load<!>()
     }
 }
 

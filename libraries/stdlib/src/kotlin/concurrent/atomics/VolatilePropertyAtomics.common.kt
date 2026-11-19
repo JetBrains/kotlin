@@ -17,6 +17,8 @@ import kotlin.reflect.KMutableProperty0
 //
 // Each function below is an intrinsic: it may only be called on a property reference literal (e.g. `this::counter`)
 // referencing an accessible `var` property whose backing field is annotated with [kotlin.concurrent.Volatile].
+// Top-level properties and properties of objects (including companion objects) are not supported: they are allocated once,
+// so the matching `Atomic*` class can be used for them instead.
 // The compiler replaces such calls with an atomic operation on the backing field, no `KProperty` or atomic box is allocated.
 // The set of operations mirrors the API of the matching `Atomic*` class.
 
@@ -27,6 +29,7 @@ import kotlin.reflect.KMutableProperty0
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.load
  */
@@ -40,6 +43,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.store
  */
@@ -53,6 +57,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.exchange
  */
@@ -69,6 +74,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.compareAndSet
  */
@@ -85,6 +91,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.compareAndExchange
  */
@@ -98,6 +105,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.fetchAndAdd
  */
@@ -111,6 +119,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.addAndFetch
  */
@@ -124,6 +133,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.fetchAndIncrement
  */
@@ -137,6 +147,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.incrementAndFetch
  */
@@ -150,6 +161,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.fetchAndDecrement
  */
@@ -163,6 +175,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.decrementAndFetch
  */
@@ -176,6 +189,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.plusAssign
  */
@@ -189,6 +203,7 @@ public expect inline operator fun @receiver:AccessibleVolatilePropertyLiteral KM
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.minusAssign
  */
@@ -209,6 +224,7 @@ public expect inline operator fun @receiver:AccessibleVolatilePropertyLiteral KM
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.update
  */
@@ -236,6 +252,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.fetchAndUpdate
  */
@@ -263,6 +280,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicInt.updateAndFetch
  */
@@ -285,6 +303,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.load
  */
@@ -298,6 +317,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.store
  */
@@ -311,6 +331,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.exchange
  */
@@ -327,6 +348,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.compareAndSet
  */
@@ -343,6 +365,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.compareAndExchange
  */
@@ -356,6 +379,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.fetchAndAdd
  */
@@ -369,6 +393,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.addAndFetch
  */
@@ -382,6 +407,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.fetchAndIncrement
  */
@@ -395,6 +421,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.incrementAndFetch
  */
@@ -408,6 +435,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.fetchAndDecrement
  */
@@ -421,6 +449,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.decrementAndFetch
  */
@@ -434,6 +463,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.plusAssign
  */
@@ -447,6 +477,7 @@ public expect inline operator fun @receiver:AccessibleVolatilePropertyLiteral KM
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.minusAssign
  */
@@ -467,6 +498,7 @@ public expect inline operator fun @receiver:AccessibleVolatilePropertyLiteral KM
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.update
  */
@@ -494,6 +526,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.fetchAndUpdate
  */
@@ -521,6 +554,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicLong.updateAndFetch
  */
@@ -543,6 +577,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicBoolean.load
  */
@@ -556,6 +591,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicBoolean.store
  */
@@ -569,6 +605,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicBoolean.exchange
  */
@@ -585,6 +622,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicBoolean.compareAndSet
  */
@@ -601,6 +639,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicBoolean.compareAndExchange
  */
@@ -617,6 +656,7 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicReference.load
  */
@@ -630,6 +670,7 @@ public expect inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutabl
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicReference.store
  */
@@ -643,6 +684,7 @@ public expect inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutabl
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicReference.exchange
  */
@@ -659,6 +701,7 @@ public expect inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutabl
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicReference.compareAndSet
  */
@@ -675,6 +718,7 @@ public expect inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutabl
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicReference.compareAndExchange
  */
@@ -695,6 +739,7 @@ public expect inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutabl
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicReference.update
  */
@@ -722,6 +767,7 @@ public expect inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutabl
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicReference.fetchAndUpdate
  */
@@ -749,6 +795,7 @@ public expect inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutabl
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
  * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
+ * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
  *
  * @see kotlin.concurrent.atomics.AtomicReference.updateAndFetch
  */

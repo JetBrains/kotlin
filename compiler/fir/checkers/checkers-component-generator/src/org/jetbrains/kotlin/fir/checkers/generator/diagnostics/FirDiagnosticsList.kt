@@ -1777,6 +1777,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE by error<PsiElement> {
             parameter<ConeKotlinType>("type")
         }
+        val VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY by error<PsiElement> {
+            parameter<Symbol>("declaration")
+        }
 
         val LOCAL_EXTENSION_PROPERTY by error<PsiElement>()
 

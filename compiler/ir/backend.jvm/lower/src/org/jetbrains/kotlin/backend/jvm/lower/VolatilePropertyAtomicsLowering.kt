@@ -45,7 +45,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  *
  * Similarly to `::x.isInitialized` (see [org.jetbrains.kotlin.backend.common.lower.LateinitLowering]), the receiver of such
  * calls is a property reference literal (this is guaranteed by `FirVolatileIntrinsicApplicabilityChecker`), so the reference
- * is never materialized. Instead:
+ * is never materialized. The checker also prohibits properties stored in static fields (top-level properties and properties of
+ * objects), so the backing field is always an instance field. Instead:
  *  * `load()`/`store()` become plain reads/writes of the (volatile) backing field;
  *  * read-modify-write operations become calls to a JDK primitive which performs an atomic operation on the backing field.
  *    The primitive object is stored in a `private static final synthetic` field generated next to the backing field
@@ -58,7 +59,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  * The phases must run before:
  *  * [PropertyReferenceLowering], which materializes property references;
  *  * [DirectInvokeLowering], which inlines directly invoked lambdas;
- *  * [MoveOrCopyCompanionObjectFieldsLowering], since these lowerings use the final (static) fields of object properties;
  *  * `StaticInitializersLowering`, which moves the initializers of the generated fields into `<clinit>`.
  */
 internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val context: JvmBackendContext) : FileLoweringPass,
@@ -72,7 +72,8 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
 
     /**
      * Returns a description of the kind of properties that the given backing field belongs to,
-     * if atomic operations on it are not supported by this implementation (to be used in the error message), or `null` otherwise.
+     * if read-modify-write operations on it are not supported by this implementation (to be used in the error message),
+     * or `null` otherwise.
      */
     protected open fun unsupportedPropertyKind(field: IrField): String? = null
 
@@ -94,8 +95,8 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
     protected open fun IrBlockBuilder.addAndGet(access: FieldAccess, delta: () -> IrExpression): IrExpression =
         plus(getAndAdd(access, delta()), delta())
 
-    /** The backing field of a volatile property, and the (already evaluated) receiver if the field is not static. */
-    protected class FieldAccess(val field: IrField, val receiver: IrValueDeclaration?)
+    /** The (instance) backing field of a volatile property, and the already evaluated receiver. */
+    protected class FieldAccess(val field: IrField, val receiver: IrValueDeclaration)
 
     /** `VarHandle`s and field updaters are typed by the erased JVM type of the field. */
     protected val FieldAccess.erasedType: IrType
@@ -128,11 +129,10 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
         val [property, boundReceiver] = expression.arguments[receiverIndex]!!.propertyReferenceTarget()
             ?: error("Atomic intrinsic call on a non-literal property reference: ${expression.render()}")
 
-        // For properties of objects and companion objects, use the static field, which will be created by
-        // MoveOrCopyCompanionObjectFieldsLowering.
-        val field = context.cachedDeclarations.getStaticBackingField(property)
-            ?: property.backingField
+        val field = property.backingField
             ?: error("Volatile property is supposed to have a backing field: ${property.render()}")
+        check(!field.isStatic) { "Atomic intrinsics on properties stored in static fields are prohibited by the frontend: ${expression.render()}" }
+        val receiverExpression = checkNotNull(boundReceiver) { "Instance field without receiver: ${expression.render()}" }
 
         // load/store are plain volatile accesses, they're supported everywhere.
         if (kind != IntrinsicKind.LOAD && kind != IntrinsicKind.STORE) {
@@ -149,14 +149,7 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
 
         return builder.irBlock(resultType = expression.type) {
             // The receiver is evaluated exactly once, before the arguments (as if the property reference was materialized).
-            val receiver: IrValueDeclaration? = when {
-                field.isStatic -> {
-                    // e.g. `SomeObject::x`, the receiver is not needed; still evaluate it for side effects.
-                    if (boundReceiver != null && boundReceiver !is IrGetObjectValue && boundReceiver !is IrGetValue) +boundReceiver
-                    null
-                }
-                else -> irTemporary(boundReceiver ?: error("Instance field without receiver: ${expression.render()}"), "receiver")
-            }
+            val receiver = irTemporary(receiverExpression, "receiver")
             val arguments: List<() -> IrExpression> = regularArguments.map { argument ->
                 if (argument is IrRichFunctionReference) {
                     // Keep lambdas in place (they're used exactly once), so that they're inlined by DirectInvokeLowering.
@@ -183,7 +176,7 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
 
         val result = when (kind) {
             IntrinsicKind.LOAD -> load(access)
-            IntrinsicKind.STORE -> irSetField(access.receiver?.let { irGet(it) }, access.field, arg(0))
+            IntrinsicKind.STORE -> irSetField(irGet(access.receiver), access.field, arg(0))
             IntrinsicKind.EXCHANGE -> getAndSet(access, arg(0))
             IntrinsicKind.COMPARE_AND_SET -> compareAndSet(access, arg(0), arg(1))
             IntrinsicKind.COMPARE_AND_EXCHANGE -> compareAndExchange(access, arguments[0], arguments[1])
@@ -202,7 +195,7 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
     }
 
     protected fun IrBuilderWithScope.load(access: FieldAccess): IrExpression =
-        irGetField(access.receiver?.let { irGet(it) }, access.field)
+        irGetField(irGet(access.receiver), access.field)
 
     /**
      * ```

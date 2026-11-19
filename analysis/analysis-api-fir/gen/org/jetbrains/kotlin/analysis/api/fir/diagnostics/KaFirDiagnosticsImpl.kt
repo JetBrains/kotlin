@@ -4310,6 +4310,12 @@ internal class VolatileIntrinsicCallOnUnsupportedTypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VolatileIntrinsicCallOnUnsupportedType
 
+internal class VolatileIntrinsicCallOnStaticPropertyImpl(
+    override val declaration: KaSymbol,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VolatileIntrinsicCallOnStaticProperty
+
 internal class LocalExtensionPropertyImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

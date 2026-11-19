@@ -3,7 +3,8 @@
 // JVM_TARGET: 1.8
 // OPT_IN: kotlin.concurrent.atomics.ExperimentalAtomicApi
 
-// On JVM 1.8, atomic operations are implemented with `Atomic*FieldUpdater`s, which support neither static nor `boolean` fields.
+// On JVM 1.8, atomic operations are implemented with `Atomic*FieldUpdater`s, which do not support `boolean` fields.
+// (Static fields are not supported by field updaters either, but they are prohibited by the frontend on all platforms.)
 
 import kotlin.concurrent.atomics.*
 
@@ -27,28 +28,4 @@ class Supported {
         <!VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9!>this::b.compareAndSet(false, true)<!>
         <!VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9!>this::b.exchange(true)<!>
     }
-
-    companion object {
-        @Volatile var c: Int = 0
-
-        fun unsupportedCompanion() {
-            this::c.store(this::c.load() + 1)
-            <!VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9!>this::c.incrementAndFetch()<!>
-        }
-    }
-}
-
-object Obj {
-    @Volatile var o: Long = 0L
-
-    fun unsupportedObject() {
-        <!VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9!>this::o.fetchAndAdd(1L)<!>
-    }
-}
-
-@Volatile var topLevel: String = ""
-
-fun unsupportedTopLevel() {
-    ::topLevel.store("a")
-    <!VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9!>::topLevel.update { it + "b" }<!>
 }

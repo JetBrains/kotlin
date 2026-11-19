@@ -7265,6 +7265,13 @@ private fun KaDiagnosticConverterBuilder.addConversions151() {
             token,
         )
     }
+    add(FirErrors.VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY) { firDiagnostic ->
+        VolatileIntrinsicCallOnStaticPropertyImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.LOCAL_EXTENSION_PROPERTY) { firDiagnostic ->
         LocalExtensionPropertyImpl(
             firDiagnostic as KtDiagnosticWithSource,

@@ -987,6 +987,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_NON_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_PROPERTY_WITH_CUSTOM_ACCESSORS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
@@ -3319,6 +3320,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE,
             "Atomic operations are not supported on properties of type ''{0}''. Use a property of type ''Int'', ''Long'', ''Boolean'', or a reference type.",
             RENDER_TYPE
+        )
+        map.put(
+            VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY,
+            "Atomic operations are not supported on ''{0}'', since it is a top-level property or a property of an object. To update it atomically, use a property of type ''AtomicInt'', ''AtomicLong'', ''AtomicBoolean'', or ''AtomicReference''.",
+            SYMBOL
         )
 
         map.put(LOCAL_EXTENSION_PROPERTY, "Local extension properties are prohibited.")

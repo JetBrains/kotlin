@@ -6,8 +6,6 @@
 import kotlin.concurrent.Volatile
 import kotlin.concurrent.atomics.*
 
-@Volatile var topLevelInt: Int = 0
-
 class IntHolder {
     @Volatile var x: Int = 0
 
@@ -117,26 +115,6 @@ fun testGeneric(): String {
     return "OK"
 }
 
-object Singleton {
-    @Volatile var counter: Int = 0
-    fun next(): Int = this::counter.incrementAndFetch()
-}
-
-class WithCompanion {
-    companion object {
-        @Volatile var counter: Long = 10L
-        fun next(): Long = this::counter.incrementAndFetch()
-    }
-}
-
-fun testStatics(): String {
-    if (::topLevelInt.incrementAndFetch() != 1 || topLevelInt != 1) return "top-level"
-    if (!::topLevelInt.compareAndSet(1, 2)) return "top-level compareAndSet"
-    if (Singleton.next() != 1 || Singleton.next() != 2 || Singleton.counter != 2) return "object"
-    if (WithCompanion.next() != 11L || WithCompanion.counter != 11L) return "companion"
-    return "OK"
-}
-
 class EvaluationOrder {
     @Volatile var x: Int = 0
     val log = StringBuilder()
@@ -172,7 +150,6 @@ fun box(): String {
     StringHolder().test().let { if (it != "OK") return it }
     DataHolder().test().let { if (it != "OK") return it }
     testGeneric().let { if (it != "OK") return it }
-    testStatics().let { if (it != "OK") return it }
     EvaluationOrder().test().let { if (it != "OK") return it }
     NonLocalReturn().test().let { if (it != "OK") return it }
     return "OK"

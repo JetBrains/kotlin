@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.ir.util.defaultType
  * Limitations, compared to [VarHandleVolatilePropertyAtomicsLowering]:
  *  * `compareAndExchange` is not available in field updaters, so it is emulated with a CAS loop
  *    (see [emulatedCompareAndExchange]);
- *  * field updaters only support instance fields, so atomic operations on volatile properties stored in static fields
- *    (top-level properties, properties of objects and companion objects) are reported as errors;
+ *  * field updaters only support instance fields; this is fine, since the frontend prohibits atomic operations on properties
+ *    stored in static fields (see `FirVolatileIntrinsicApplicabilityChecker`);
  *  * there is no field updater for `boolean` fields, so atomic operations on `Boolean` volatile properties are reported as errors.
  *
  * `load()` and `store()` are plain volatile accesses, and are thus supported for all properties.
@@ -53,11 +53,8 @@ internal class FieldUpdaterVolatilePropertyAtomicsLowering(context: JvmBackendCo
     override val isApplicable: Boolean
         get() = context.config.target < JvmTarget.JVM_9
 
-    override fun unsupportedPropertyKind(field: IrField): String? = when {
-        field.isStatic -> "volatile properties stored in static fields (top-level, object and companion object properties)"
-        field.type.isBoolean() -> "'Boolean' volatile properties"
-        else -> null
-    }
+    override fun unsupportedPropertyKind(field: IrField): String? =
+        if (field.type.isBoolean()) "'Boolean' volatile properties" else null
 
     private val FieldAccess.updater: JvmSymbols.FieldUpdaterSymbols
         get() = when {
@@ -89,10 +86,9 @@ internal class FieldUpdaterVolatilePropertyAtomicsLowering(context: JvmBackendCo
         method: IrSimpleFunctionSymbol,
         vararg arguments: IrExpression,
     ): IrExpression {
-        val receiver = access.receiver ?: error("Field updaters only support instance fields: ${access.field.name}")
         return irCall(method).apply {
             dispatchReceiver = irGetField(null, updaterFieldFor(access))
-            this.arguments[1] = irGet(receiver)
+            this.arguments[1] = irGet(access.receiver)
             arguments.forEachIndexed { index, argument -> this.arguments[index + 2] = argument }
         }
     }
