@@ -265,7 +265,7 @@ We define the following test subsets:
   - selects every test in the task
 - `SmokeTests`:
   - selects tests annotated with `@MustRunAlways`
-  - selects tests included in `testFederation { smokeTests { ... } }` DSL
+  - selects tests specified via `testFederation { smokeTests { ... } }` DSL
 - `ContractTestsFor<Domain>`
   - selects tests annotated with `@MustRunOnChangesIn<Domain>`
 
@@ -277,31 +277,38 @@ selected by both `ContractTestsForJs` and `ContractTestsForWasm`.
 
 Other test filters, such as `@NightlyTest`, still apply regardless of the requested subsets.
 
-### Customizing test subsets
+### Declaring test subsets
 
-The `testFederation { }` extension allows customizing the subsets' content, as well as their behavior.
-
-Use `includeAutoSamples()` to configure additional auto-sampling when the task's test framework supports it.
-It selects an approximate percentage of tests using a hash of each test's identity, and requires a JUnit 5 task:
+Every test task should declare which test subsets it supports. `AllTests` is implicitly declared; `SmokeTests` and `ContractTestsFor<Domain>` have to be declared explicitly with the `testFederation { }` extension:
 
 ```kotlin
-testTask {
-    testFederation {
-        smokeTests {
-            // Sample 5% of all tests and add them to the SmokeTest subset
-            includeAutoSamples(percentage = 5)
+testFederation {
+    // Declare the SmokeTests subset
+    smokeTests()
 
-            // Execute all tests when SmokeTests subset is requested
-            includeAll()
+    // Declare the ContractTestsForJvm subset
+    contractTestsFor(Jvm)
+}
+```
 
-            // If only SmokeTests subset was requested, skip the task
-            skip()
-        }
+The contract tests of a task's own domain are plain tests (e.g. `ContractTestsForJvm` in the `Jvm` domain).
+They need no declaration, and declaring them is an error.
 
-        contractTests {
-            // If only ContractTests* subsets were requested, skip the task
-            skip()
-        }
+The [testLifecycleTask.dump.txt](testLifecycleTask.dump.txt) lists the declared subsets of every test lifecycle task.
+
+### Customizing the smoke tests
+
+The `SmokeTests` subset normally only selects tests annotated with `@MustRunAlways`, but it may be customized.
+
+#### Auto-sampling smoke tests
+
+Use `includeAutoSamples()` to configure additional auto-sampling when the task's test framework supports it.
+It selects an approximate percentage of tests using a hash of each test's identity:
+
+```kotlin
+testFederation {
+    smokeTests {
+        includeAutoSamples(percentage = 5)
     }
 }
 ```
@@ -309,30 +316,33 @@ testTask {
 The auto-sampling selection is stable: it uses the fully qualified name and unique ID of each test.
 Choose fast and stable tests because the selected tests are required for merging to master even for unrelated changes.
 
-To require all tests in a task regardless of which subsets are requested:
+#### Running all tests as smoke tests
+
+Sometimes, all tests within a module are fast and stable. In such cases, you may add all tests to the `SmokeTests` subset:
 
 ```kotlin
-tasks.withType<Test>().configureEach {
-    testFederation {
-        smokeTests { includeAll() }
+testFederation {
+    smokeTests {
+        includeAll() 
     }
 }
 ```
 
-Other test filters still apply.
+This effectively makes `SmokeTests` equivalent to `AllTests`, making build cache entry reusable between those two runs.
 
-You can also skip the task completely when only smoke or contract tests are requested:
+### Opting out of partial subsets
+
+If a test task does not support partial execution (because it's JUnit 4, for example), it should be marked as not compatible with Test Federation:
 
 ```kotlin
-tasks.withType<Test>().configureEach {
-    testFederation {
-        smokeTests { skip() }
-        contractTests { skip() }
-    }
+testFederation {
+    notCompatibleWithTestFederation("<reason>")
 }
 ```
 
-This may be useful if your task does not support partial execution
+How it works:
+  - When a partial subset (like `SmokeTests`) is requested, the test execution is skipped.
+  - When `AllTests` subset is requested, the tests are executed normally.
 
 ## Local testing
 

@@ -11,6 +11,10 @@ internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federa
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY = "TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE"
 internal const val TEST_FEDERATION_SUBSETS_KEY = "test.federation.subsets"
 internal const val TEST_FEDERATION_SUBSETS_ENV_KEY = "TEST_FEDERATION_SUBSETS"
+internal const val TEST_FEDERATION_DECLARED_SUBSETS_KEY = "test.federation.declared.subsets"
+internal const val TEST_FEDERATION_DECLARED_SUBSETS_ENV_KEY = "TEST_FEDERATION_DECLARED_SUBSETS"
+internal const val TEST_FEDERATION_TASK_PATH_KEY = "test.federation.task.path"
+internal const val TEST_FEDERATION_TASK_PATH_ENV_KEY = "TEST_FEDERATION_TASK_PATH"
 const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
 const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
 const val TEST_FEDERATION_DOMAINS_KEY = "test.federation.domains"
@@ -29,11 +33,26 @@ val testFederationDomains: Set<Domain> =
     resolve(TEST_FEDERATION_DOMAINS_KEY, TEST_FEDERATION_DOMAINS_ENV_KEY)?.let(Domain::fromArgumentString).orEmpty()
 
 /**
- * Provides the requested test subsets.
- * Defaults to `AllTests` when [TEST_FEDERATION_SUBSETS_KEY] is not explicitly configured.
+ * Test subsets that have been requested to run
  */
 internal val testFederationSubsets: Set<TestSubset> =
-    resolve(TEST_FEDERATION_SUBSETS_KEY, TEST_FEDERATION_SUBSETS_ENV_KEY)?.toTestSubsets() ?: setOf(AllTests)
+    resolve(TEST_FEDERATION_SUBSETS_KEY, TEST_FEDERATION_SUBSETS_ENV_KEY)
+        ?.toTestSubsets()
+        ?: setOf(AllTests)
+
+/**
+ * Test subsets declared for the Gradle test task currently being executed
+ */
+internal val testFederationDeclaredSubsets: Set<TestSubset> =
+    resolve(TEST_FEDERATION_DECLARED_SUBSETS_KEY, TEST_FEDERATION_DECLARED_SUBSETS_ENV_KEY)
+        ?.toTestSubsets()
+        .orEmpty()
+
+/**
+ * Path of the Gradle test task currently being executed
+ */
+internal val testFederationTaskPath: String =
+    resolve(TEST_FEDERATION_TASK_PATH_KEY, TEST_FEDERATION_TASK_PATH_ENV_KEY) ?: "<unknown>"
 
 private fun String.toTestSubsets(): Set<TestSubset> {
     val trimmed = trim()
