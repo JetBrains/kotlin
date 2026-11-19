@@ -76,6 +76,7 @@ final class LambdaKt$test$14 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$14
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -103,6 +104,7 @@ final class LambdaKt$test$15 {
 final class LambdaKt$test$16 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$16
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -117,6 +119,7 @@ final class LambdaKt$test$17 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$17
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -131,6 +134,7 @@ final class LambdaKt$test$2 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field D$0: double
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$2
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -144,6 +148,7 @@ final class LambdaKt$test$2 {
 final class LambdaKt$test$3 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
+    synthetic field D$0: double
     synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$3
@@ -204,6 +209,7 @@ final class LambdaKt$test$7 {
     enclosing method LambdaKt.test()V
     synthetic field D$0: double
     private synthetic field J$0: long
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaKt$test$7
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -217,6 +223,7 @@ final class LambdaKt$test$7 {
 final class LambdaKt$test$8 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
+    synthetic field D$0: double
     private synthetic field J$0: long
     synthetic field L$0: java.lang.Object
     field label: int

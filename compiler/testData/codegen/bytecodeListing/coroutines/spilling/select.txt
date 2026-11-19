@@ -30,6 +30,7 @@ public interface SelectClause2 {
 final class SelectKt$produceNumbers$1$1$1 {
     // source: 'select.kt'
     enclosing method SelectKt$produceNumbers$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class SelectKt$produceNumbers$1
     inner (anonymous) class SelectKt$produceNumbers$1$1$1
