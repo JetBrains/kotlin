@@ -251,5 +251,6 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
 open class JsPlainObjectsLoweringExtension : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         MoveExternalInlineFunctionsWithBodiesOutsideLowering(pluginContext).lower(moduleFragment)
+        GeneratedCompanionJsExportIgnoreTransformer(pluginContext).visitModuleFragment(moduleFragment)
     }
 }

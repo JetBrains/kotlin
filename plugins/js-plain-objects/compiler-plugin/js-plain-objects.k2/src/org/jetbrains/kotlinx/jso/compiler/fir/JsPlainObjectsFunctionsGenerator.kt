@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlinx.jspo.compiler.fir
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
@@ -29,21 +27,24 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMappi
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.extensions.CompanionObjectGenerationContext
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JsStandardClassIds
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -92,7 +93,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             .single()
     }
 
-   private val matchedInterfaces by lazy {
+    private val matchedInterfaces by lazy {
         session.predicateBasedProvider
             .getSymbolsByPredicate(JsPlainObjectsPredicates.AnnotatedWithJsPlainObject.LOOKUP)
             .filterIsInstance<FirRegularClassSymbol>()
@@ -106,50 +107,8 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
     private val FirClassLikeSymbol<*>.isJsPlainObject: Boolean
         get() = this is FirRegularClassSymbol && this in matchedInterfaces
 
-    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        return if (classSymbol.isJsPlainObject) setOf(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) else emptySet()
-    }
-
-    override fun generateNestedClassLikeDeclaration(
-        owner: FirClassSymbol<*>,
-        name: Name,
-        context: NestedClassGenerationContext
-    ): FirClassLikeSymbol<*>? {
-        return if (
-            owner is FirRegularClassSymbol &&
-            owner.isJsPlainObject &&
-            name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-        ) generateCompanionDeclaration(owner)
-        else null
-    }
-
-    private fun generateCompanionDeclaration(owner: FirRegularClassSymbol): FirRegularClassSymbol? {
-        @OptIn(SymbolInternals::class)
-        if (owner.companionObjectSymbol != null) {
-            return null
-        }
-
-        val classId = owner.classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
-        return buildRegularClass {
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            moduleData = session.moduleData
-            origin = JsPlainObjectsPluginKey.origin
-            classKind = ClassKind.OBJECT
-            scopeProvider = session.kotlinScopeProvider
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                Visibilities.Public.toEffectiveVisibility(owner, forClass = true)
-            ).apply {
-                isExternal = true
-                isCompanion = true
-            }
-            name = classId.shortClassName
-            symbol = FirRegularClassSymbol(classId)
-            annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
-            source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
-            superTypeRefs += session.builtinTypes.anyType
-        }.symbol
+    override fun needsCompanionObject(classSymbol: FirClassSymbol<*>, context: CompanionObjectGenerationContext): GeneratedDeclarationKey? {
+        return if (classSymbol.isJsPlainObject) JsPlainObjectsPluginKey else null
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
