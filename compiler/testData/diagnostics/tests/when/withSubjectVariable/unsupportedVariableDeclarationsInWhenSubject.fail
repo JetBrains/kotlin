@@ -1,0 +1,6 @@
+Caused by: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Exception in expression checkers
+	at org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckersDiagnosticComponent.visitWhenExpression(ExpressionCheckersDiagnosticComponent.kt:474)
+	...
+Caused by: java.lang.NullPointerException
+	at org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.FirJavaWhenExhaustivenessWarningChecker.check(FirJavaWhenExhaustivenessWarningChecker.kt:26)
+	at org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckersDiagnosticComponent.visitWhenExpression(ExpressionCheckersDiagnosticComponent.kt:462)
