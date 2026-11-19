@@ -85,7 +85,7 @@ class JvmDependenciesIndexImpl(roots: List<JavaRoot>) : JvmDependenciesIndexBase
                     ?.takeIf { it.isValid }
 
                 if (file != null) {
-                    val classFile = VfsClassFileHandle(file, root)
+                    val classFile = file.toHandle(root)
                     if (filter == null || filter.accepts(classFile)) {
                         results.add(classFile)
 

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
@@ -66,8 +64,10 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
 
     override val indexedRoots by lazy { roots.asSequence() }
 
-    private val packageCache: Array<out MutableMap<String, VirtualFile?>> by lazy {
-        Array(roots.size) { Object2ObjectOpenHashMap<String, VirtualFile?>() }
+    private val rootEntries: List<JvmRootEntry> by lazy { roots.map { VfsRootEntry(it.file) } }
+
+    private val packageCache: Array<out MutableMap<String, JvmRootEntry?>> by lazy {
+        Array(roots.size) { Object2ObjectOpenHashMap<String, JvmRootEntry?>() }
     }
 
     final override fun hasPackage(packageFqName: FqName, acceptedRootTypes: Set<JavaRoot.RootType>): Boolean {
@@ -87,17 +87,17 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         lock.withLock {
             traverseIndex(packageFqName, JavaRoot.OnlyBinary) { directory, root ->
                 val file = directory.findChild(fileName)?.takeIf { it.isValid }
-                if (file != null) result = VfsClassFileHandle(file, root)
+                if (file != null) result = file.toHandle(root)
                 file == null
             }
         }
         return result
     }
 
-    protected fun traverseVirtualFilesInPackage(
+    protected fun traverseEntriesInPackage(
         packageFqName: FqName,
         acceptedRootTypes: Set<JavaRoot.RootType>,
-        continueSearch: (VirtualFile, JavaRoot) -> Boolean
+        continueSearch: (JvmRootEntry, JavaRoot) -> Boolean
     ) {
         lock.withLock {
             traverseIndex(packageFqName, acceptedRootTypes) { dir, root ->
@@ -120,11 +120,11 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         acceptedExtensions: JavaFileExtensions,
         continueSearch: (BinaryClassFileHandle) -> Boolean,
     ) {
-        traverseVirtualFilesInPackage(packageFqName, acceptedExtensions.rootTypes) { file, root ->
-            val extension = file.extension ?: return@traverseVirtualFilesInPackage true
+        traverseEntriesInPackage(packageFqName, acceptedExtensions.rootTypes) { file, root ->
+            val extension = file.extension ?: return@traverseEntriesInPackage true
 
             if (extension in acceptedExtensions) {
-                continueSearch(VfsClassFileHandle(file, root))
+                continueSearch(file.toHandle(root))
             } else {
                 true
             }
@@ -132,13 +132,13 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
     }
 
     /**
-     * @param handleEntry A function that is given an index entry made up of the directory in the root ([VirtualFile]) and the [JavaRoot].
+     * @param handleEntry A function that is given an index entry made up of the directory in the root ([JvmRootEntry]) and the [JavaRoot].
      *  It should handle this entry and return whether the traversal should be continued.
      */
     protected inline fun traverseIndex(
         packageFqName: FqName,
         acceptedRootTypes: Set<JavaRoot.RootType>,
-        handleEntry: (VirtualFile, JavaRoot) -> Boolean,
+        handleEntry: (JvmRootEntry, JavaRoot) -> Boolean,
     ) {
         // a list of package sub names, ["org", "jb", "kotlin"]
         val packagesPath = packageFqName.pathSegments().map { JvmClassFileNames.packageDirectoryName(it) ?: return }
@@ -176,7 +176,7 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         packagesPath: List<String>,
         fillCachesAfter: Int,
         cachesPath: List<Cache>
-    ): VirtualFile? {
+    ): JvmRootEntry? {
         if (rootIndex >= maxIndex) {
             for (i in (fillCachesAfter + 1) until cachesPath.size) {
                 // We know all roots that contain this package by now.
@@ -193,11 +193,11 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         }
     }
 
-    private fun doTravelPath(rootIndex: Int, packagesPath: List<String>, fillCachesAfter: Int, cachesPath: List<Cache>): VirtualFile? {
+    private fun doTravelPath(rootIndex: Int, packagesPath: List<String>, fillCachesAfter: Int, cachesPath: List<Cache>): JvmRootEntry? {
         val pathRoot = roots[rootIndex]
         val prefixPathSegments = pathRoot.prefixFqName?.pathSegments()
 
-        var currentFile = pathRoot.file
+        var currentFile = rootEntries[rootIndex]
 
         for (pathIndex in packagesPath.indices) {
             val subPackageName = packagesPath[pathIndex]
@@ -220,7 +220,7 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         return currentFile
     }
 
-    private fun VirtualFile.findChildPackage(subPackageName: String, rootType: JavaRoot.RootType): VirtualFile? {
+    private fun JvmRootEntry.findChildPackage(subPackageName: String, rootType: JavaRoot.RootType): JvmRootEntry? {
         val childDirectory = findChild(subPackageName) ?: return null
 
         val fileExtension = rootType.classFileExtension.extension
@@ -228,7 +228,7 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         // If in addition to a directory "foo" there's a class file "foo.class" AND there are no classes anywhere in the directory "foo",
         // then we ignore the directory and let the resolution choose the class "foo" instead.
         if (findChild(JvmClassFileNames.fileName(subPackageName, fileExtension))?.isDirectory == false) {
-            if (VfsUtilCore.processFilesRecursively(childDirectory) { file -> file.extension != fileExtension }) {
+            if (!childDirectory.containsExtensionRecursively(fileExtension)) {
                 return null
             }
         }

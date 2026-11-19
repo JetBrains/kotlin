@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexBase
-import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -151,10 +150,10 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
 
     private fun computeClassFilesInPackage(packageFqName: FqName): ClassFilesByName {
         val result = HashMap<String, SmartList<BinaryClassFileHandle>>()
-        traverseVirtualFilesInPackage(packageFqName, ALL_ROOT_TYPES) { virtualFile, root ->
-            if (!virtualFile.isDirectory && virtualFile.extension in CACHED_EXTENSIONS) {
-                val relativeClassName = virtualFile.nameWithoutExtension.replace('$', '.')
-                result.getOrPut(relativeClassName, ::SmartList).add(VfsClassFileHandle(virtualFile, root))
+        traverseEntriesInPackage(packageFqName, ALL_ROOT_TYPES) { entry, root ->
+            if (!entry.isDirectory && entry.extension in CACHED_EXTENSIONS) {
+                val relativeClassName = entry.nameWithoutExtension.replace('$', '.')
+                result.getOrPut(relativeClassName, ::SmartList).add(entry.toHandle(root))
             }
             true // continue
         }
