@@ -179,6 +179,59 @@ internal class TestDataManagerRunnerIntegrationTest {
     }
 
     @Test
+    fun `failure of a class setup in check`() {
+        FakeRunnerScenario.classSetupFailures.set(1)
+
+        assertEquals(
+            """
+                tests: 7, passed: 7, failed: 0, skipped: 0
+                executions: 7, successful: true
+            """.trimIndent(),
+            run(TestDataManagerMode.CHECK),
+        )
+    }
+
+    @Test
+    fun `failure of a class setup in update`() {
+        FakeRunnerScenario.classSetupFailures.set(1)
+
+        assertEquals(
+            """
+                tests: 7, passed: 7, failed: 0, skipped: 0
+                executions: 7, successful: true
+            """.trimIndent(),
+            run(TestDataManagerMode.UPDATE),
+        )
+    }
+
+    @Test
+    fun `failure of a class teardown with a skipped test`() {
+        FakeRunnerScenario.classTeardownFailures.set(1)
+        FakeRunnerScenario.jsSecondDisabled = true
+
+        assertEquals(
+            """
+                tests: 7, passed: 7, failed: 0, skipped: 0
+                executions: 7, successful: true
+            """.trimIndent(),
+            run(TestDataManagerMode.CHECK),
+        )
+    }
+
+    @Test
+    fun `failure of a test class constructor after discovery`() {
+        FakeRunnerScenario.jsConstructionFailsAfterGolden = true
+
+        assertEquals(
+            """
+                tests: 7, passed: 5, failed: 2, skipped: 0
+                executions: 7, successful: true
+            """.trimIndent(),
+            run(TestDataManagerMode.CHECK),
+        )
+    }
+
+    @Test
     fun `update writes golden and variant files`() {
         setupFiles("first.txt" to "old")
         FakeRunnerScenario.outputs["first"] = "new"
@@ -245,6 +298,34 @@ internal class TestDataManagerRunnerIntegrationTest {
                 tests: 7, passed: 7, failed: 0, skipped: 0
                 executions: 7, successful: true
                 first.txt: golden
+            """.trimIndent(),
+            run(TestDataManagerMode.UPDATE),
+        )
+    }
+
+    @Test
+    fun `abort of a class setup retry`() {
+        FakeRunnerScenario.classSetupFailures.set(1)
+        FakeRunnerScenario.classSetupAborts.set(1)
+
+        assertEquals(
+            """
+                tests: 7, passed: 7, failed: 0, skipped: 0
+                executions: 7, successful: true
+            """.trimIndent(),
+            run(TestDataManagerMode.UPDATE),
+        )
+    }
+
+    @Test
+    fun `abort of a test retry`() {
+        FakeRunnerScenario.classSetupFailures.set(1)
+        FakeRunnerScenario.jsFirstAborts.set(1)
+
+        assertEquals(
+            """
+                tests: 7, passed: 7, failed: 0, skipped: 0
+                executions: 7, successful: true
             """.trimIndent(),
             run(TestDataManagerMode.UPDATE),
         )

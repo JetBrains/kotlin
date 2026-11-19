@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.junit.platform.engine.TestExecutionResult
 import org.junit.platform.engine.discovery.DiscoverySelectors
+import org.junit.platform.engine.support.descriptor.ClassSource
 import org.junit.platform.launcher.TestIdentifier
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.opentest4j.MultipleFailuresError
@@ -194,6 +195,56 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
                   actual: actual
                 failed test
             """,
+        )
+    }
+
+    /**
+     * Reports the tests of the outer fake class as passed, then [nestedResult] for its nested class, then a teardown
+     * failure of the outer class, and renders the errors with their test data paths.
+     */
+    private fun runOuterTeardownFailureAfterNested(nestedResult: TestExecutionResult): String {
+        val request = LauncherDiscoveryRequestBuilder.request()
+            .selectors(DiscoverySelectors.selectClass(FakeGoldenAnalysisApiTestGenerated::class.java))
+            .build()
+
+        val testPlan = discoverFakeTestPlan(request)
+        val identifiers = testPlan.roots.flatMap(testPlan::getDescendants)
+        fun container(javaClass: Class<*>) = identifiers.single { (it.source.orElse(null) as? ClassSource)?.javaClass == javaClass }
+        val outer = container(FakeGoldenAnalysisApiTestGenerated::class.java)
+        val nested = container(FakeGoldenAnalysisApiTestGenerated.Expressions::class.java)
+
+        val listener = FileUpdateTrackingListener()
+        listener.testPlanExecutionStarted(testPlan)
+        for (test in testPlan.getChildren(outer).filter(TestIdentifier::isTest)) {
+            listener.executionFinished(test, TestExecutionResult.successful())
+        }
+
+        listener.executionFinished(nested, nestedResult)
+        listener.executionFinished(outer, TestExecutionResult.failed(IllegalStateException("Teardown failure")))
+
+        return buildList {
+            listener.getTestErrors().values.flatten()
+                .map { error -> "error: ${error.testName} - ${error.message} (${error.testDataPath})" }
+                .sorted()
+                .forEach(::add)
+
+            add("failed tests: ${listener.getTestsWithErrors().size}")
+        }.joinToString("\n")
+    }
+
+    @Test
+    fun `failures of a nested class setup and of the outer class teardown`() {
+        assertEquals(
+            "failed tests: 0",
+            runOuterTeardownFailureAfterNested(TestExecutionResult.failed(IllegalStateException("Setup failure"))),
+        )
+    }
+
+    @Test
+    fun `aborted nested class setup and failure of the outer class teardown`() {
+        assertEquals(
+            "failed tests: 0",
+            runOuterTeardownFailureAfterNested(TestExecutionResult.aborted(IllegalStateException("Setup abort"))),
         )
     }
 
