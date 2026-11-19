@@ -109,6 +109,7 @@ class FunctionReferenceBuilder(
             returnType = callee.returnType
             isSuspend = callee.isSuspend
         }.apply {
+            isComposableFunInterfaceImplementation = true
             overriddenSymbols += superMethod
             parameters += parentAsClass.thisReceiver!!.copyTo(this)
             createLambdaInvokeMethod()
