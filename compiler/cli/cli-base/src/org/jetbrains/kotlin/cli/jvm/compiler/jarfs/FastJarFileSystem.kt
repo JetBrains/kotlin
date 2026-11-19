@@ -93,7 +93,7 @@ class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByte
 
 private val IS_PRIOR_9_JRE = System.getProperty("java.specification.version", "").startsWith("1.")
 
-private fun prepareCleanerCallback(): ((ByteBuffer) -> Unit)? {
+internal fun prepareCleanerCallback(): ((ByteBuffer) -> Unit)? {
     return try {
         if (IS_PRIOR_9_JRE) {
             val cleaner = Class.forName("java.nio.DirectByteBuffer").getMethod("cleaner")
