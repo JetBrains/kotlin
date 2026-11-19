@@ -277,9 +277,36 @@ selected by both `ContractTestsForJs` and `ContractTestsForWasm`.
 
 Other test filters, such as `@NightlyTest`, still apply regardless of the requested subsets.
 
-### Customizing test subsets
+### Declaring test subsets
 
-The `testFederation { }` extension allows customizing the subsets' content, as well as their behavior.
+Every test task declares which test subsets it supports. `AllTests` is always declared; `SmokeTests` and
+`ContractTestsFor<Domain>` have to be declared explicitly with the `testFederation { }` extension:
+
+```kotlin
+testTask {
+    testFederation {
+        // Declare the SmokeTests subset (tests annotated with @MustRunAlways)
+        smokeTests()
+
+        // Declare the ContractTestsForJvm subset (tests annotated with @MustRunOnChangesInJvm)
+        contractTestsFor(Domain.Jvm)
+    }
+}
+```
+
+The declarations are checked:
+- Running a test annotated for an undeclared subset fails, whichever subsets are requested, locally too.
+
+The contract tests of a task's own domains are plain tests: they need no declaration, and declaring them is an error.
+
+If none of the requested subsets is declared, the task is skipped.
+This is the case for tasks that do not support partial execution, such as non-JUnit 5 tasks: they may only declare `AllTests`.
+
+The [testLifecycleTask.dump.txt](testLifecycleTask.dump.txt) lists the declared subsets of every lifecycle task.
+
+### Customizing the smoke tests
+
+`smokeTests { }` declares the `SmokeTests` subset and allows customizing its content.
 
 Use `includeAutoSamples()` to configure additional auto-sampling when the task's test framework supports it.
 It selects an approximate percentage of tests using a hash of each test's identity, and requires a JUnit 5 task:
@@ -293,14 +320,6 @@ testTask {
 
             // Execute all tests when SmokeTests subset is requested
             includeAll()
-
-            // If only SmokeTests subset was requested, skip the task
-            skip()
-        }
-
-        contractTests {
-            // If only ContractTests* subsets were requested, skip the task
-            skip()
         }
     }
 }
@@ -320,19 +339,6 @@ tasks.withType<Test>().configureEach {
 ```
 
 Other test filters still apply.
-
-You can also skip the task completely when only smoke or contract tests are requested:
-
-```kotlin
-tasks.withType<Test>().configureEach {
-    testFederation {
-        smokeTests { skip() }
-        contractTests { skip() }
-    }
-}
-```
-
-This may be useful if your task does not support partial execution
 
 ## Local testing
 

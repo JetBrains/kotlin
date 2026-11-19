@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
 import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.Domain.Gradle
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.Domain.Wasm
 import org.jetbrains.kotlin.testFederation.GenerateTestFederationRuntimeCodeTask
 import org.jetbrains.kotlin.testFederation.fromArgumentStringOrThrow
 import org.jetbrains.kotlin.testFederation.testFederation
@@ -60,11 +63,17 @@ tasks.test.configure {
         providers.environmentVariable("_SMOKE_TESTS_INCLUDE_ALL_").orNull?.let {
             smokeTests { includeAll() }
         }
-        providers.environmentVariable("_SKIP_SMOKES_").orNull?.let {
-            smokeTests { skip() }
+        if (providers.environmentVariable("_DECLARE_SMOKES_").orNull == "true") {
+            smokeTests()
         }
-        providers.environmentVariable("_SKIP_CONTRACTS_").orNull?.let {
-            contractTests { skip() }
+        if (providers.environmentVariable("_DECLARE_CONTRACTS_").orNull == "true") {
+            val overriddenDomains = providers.environmentVariable("_DOMAINS_OVERRIDE_").orNull
+                ?.let(Domain::fromArgumentStringOrThrow)
+                .orEmpty()
+            val ownDomainContracts = providers.environmentVariable("_DECLARE_OWN_DOMAIN_CONTRACTS_").orNull != null
+            val contractDomains = listOf(Js, Wasm, Gradle)
+                .filter { domain -> ownDomainContracts || domain !in overriddenDomains }
+            contractTestsFor(*contractDomains.toTypedArray())
         }
     }
 

@@ -169,9 +169,6 @@ class TestFederationFunctionalTest {
         assertTrue(result.buildResult.output.contains("Test subsets: [AllTests]"))
     }
 
-    /**
-     * Configuring RunAllTests selects all tests even when a different mode is explicitly requested.
-     */
     @Test
     fun `test - SmokeTests - smokeTests { includeAll() }`() {
         val result = runTestBuild(SmokeTests, smokeTestsIncludeAll = true)
@@ -179,48 +176,63 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - SmokeTests - smokeTests { skip() }`() {
-        val result = runTestBuild(SmokeTests, skipSmokes = true)
+    fun `test - SmokeTests - smokeTests not declared - skips`() {
+        val result = runTestBuild(SmokeTests, declareSmokes = false)
         assertEquals(emptySet(), result.executedTests)
-        assertContains(result.buildResult.output, "The test task is disabled because all requested subsets are configured to skip()")
+        assertContains(result.buildResult.output, TASK_DISABLED_MESSAGE)
     }
 
     @Test
-    fun `test - SmokeTests - contractTests { skip() }`() {
-        val result = runTestBuild(SmokeTests, skipContracts = true)
-        assertEquals(
-            setOf(
-                TestResult("PseudoTest", "smoke test"),
-                TestResult("PseudoTest", "smoke js contract test"),
-            ),
-            result.executedTests
+    fun `test - SmokeTests - contractTests not declared - fails`() {
+        val result = runTestBuild(SmokeTests, declareContracts = false, expectFailure = true)
+        assertContains(result.buildResult.output, "Undeclared test subsets for task ':repo:test-runtime:test'")
+        assertContains(result.buildResult.output, "- ContractTestsForWasm")
+    }
+
+    @Test
+    fun `test - ContractTestsForJs - contractTests not declared - skips`() {
+        val result = runTestBuild(ContractTestsForJs, declareContracts = false)
+        assertEquals(emptySet(), result.executedTests)
+        assertContains(result.buildResult.output, TASK_DISABLED_MESSAGE)
+    }
+
+    @Test
+    fun `test - ContractTestsForJs - smokeTests not declared - fails`() {
+        val result = runTestBuild(ContractTestsForJs, declareSmokes = false, expectFailure = true)
+        assertContains(result.buildResult.output, "Undeclared test subsets for task ':repo:test-runtime:test'")
+        assertContains(result.buildResult.output, "- SmokeTests")
+    }
+
+    @Test
+    fun `test - AllTests - smokeTests not declared - fails`() {
+        val result = runTestBuild(AllTests, declareSmokes = false, expectFailure = true)
+        assertContains(result.buildResult.output, "Undeclared test subsets for task ':repo:test-runtime:test'")
+        assertContains(result.buildResult.output, "- SmokeTests")
+    }
+
+    @Test
+    fun `test - AllTests - test federation disabled - smokeTests not declared - fails`() {
+        val result = runTestBuild(AllTests, testFederationEnabled = false, declareSmokes = false, expectFailure = true)
+        assertContains(result.buildResult.output, "Undeclared test subsets for task ':repo:test-runtime:test'")
+        assertContains(result.buildResult.output, "- SmokeTests")
+    }
+
+    @Test
+    fun `test - SmokeTests + ContractTestsForJs - smokeTests and contract tests not declared - skips`() {
+        val result = runTestBuild(SmokeTests, ContractTestsForJs, declareSmokes = false, declareContracts = false)
+        assertEquals(emptySet(), result.executedTests)
+        assertContains(result.buildResult.output, TASK_DISABLED_MESSAGE)
+    }
+
+    @Test
+    fun `test - own domain's contract tests declared - fails`() {
+        val result = runTestBuild(
+            AllTests,
+            domainsOverride = listOf(Domain.Js),
+            declareOwnDomainContracts = true,
+            expectFailure = true,
         )
-    }
-
-    @Test
-    fun `test - ContractTestsForJs - contractTests { skip() }`() {
-        val result = runTestBuild(ContractTestsForJs, skipContracts = true)
-        assertEquals(emptySet(), result.executedTests)
-        assertContains(result.buildResult.output, "The test task is disabled because all requested subsets are configured to skip()")
-    }
-
-    @Test
-    fun `test - ContractTestsForJs - smokeTests { skip() }`() {
-        val result = runTestBuild(ContractTestsForJs, skipSmokes = true)
-        assertEquals(
-            setOf(
-                TestResult("PseudoTest", "js contract test"),
-                TestResult("PseudoTest", "smoke js contract test"),
-            ),
-            result.executedTests
-        )
-    }
-
-    @Test
-    fun `test - SmokeTests + ContractTestsForJs - smokeTests { skip() } + contractTests { skip() }`() {
-        val result = runTestBuild(SmokeTests, ContractTestsForJs, skipSmokes = true, skipContracts = true)
-        assertEquals(emptySet(), result.executedTests)
-        assertContains(result.buildResult.output, "The test task is disabled because all requested subsets are configured to skip()")
+        assertContains(result.buildResult.output, "Task ':repo:test-runtime:test' declares the contract test subsets of its own domains: ContractTestsForJs")
     }
 
     /**
@@ -747,16 +759,16 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - JUnit4 - SmokeTests - smokeTests { skip() } - fails`() {
-        val result = runTestBuild(SmokeTests, testFramework = JUnit4, skipSmokes = true, expectFailure = true)
+    fun `test - JUnit4 - SmokeTests - smokeTests not declared - fails`() {
+        val result = runTestBuild(SmokeTests, testFramework = JUnit4, declareSmokes = false, expectFailure = true)
         assertContains(result.buildResult.output, "Unsupported 'testFramework' found for task ':repo:test-runtime:test'")
     }
 
     @Test
-    fun `test - JUnit4 - SmokeTests - smokeTests { skip() } + contractTests { skip() } - skips`() {
-        val result = runTestBuild(SmokeTests, testFramework = JUnit4, skipSmokes = true, skipContracts = true)
+    fun `test - JUnit4 - SmokeTests - nothing declared - skips`() {
+        val result = runTestBuild(SmokeTests, testFramework = JUnit4, declareSmokes = false, declareContracts = false)
         assertEquals(emptySet(), result.executedTests)
-        assertContains(result.buildResult.output, "The test task is disabled because all requested subsets are configured to skip()")
+        assertContains(result.buildResult.output, TASK_DISABLED_MESSAGE)
     }
 
     @Test
@@ -766,16 +778,16 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - JUnit4 - ContractTestsForJs - contractTests { skip() } - fails`() {
-        val result = runTestBuild(ContractTestsForJs, testFramework = JUnit4, skipContracts = true, expectFailure = true)
+    fun `test - JUnit4 - ContractTestsForJs - contract tests not declared - fails`() {
+        val result = runTestBuild(ContractTestsForJs, testFramework = JUnit4, declareContracts = false, expectFailure = true)
         assertContains(result.buildResult.output, "Unsupported 'testFramework' found for task ':repo:test-runtime:test'")
     }
 
     @Test
-    fun `test - JUnit4 - ContractTestsForJs - smokeTests { skip() } + contractTests { skip() } - skips`() {
-        val result = runTestBuild(ContractTestsForJs, testFramework = JUnit4, skipSmokes = true, skipContracts = true)
+    fun `test - JUnit4 - ContractTestsForJs - nothing declared - skips`() {
+        val result = runTestBuild(ContractTestsForJs, testFramework = JUnit4, declareSmokes = false, declareContracts = false)
         assertEquals(emptySet(), result.executedTests)
-        assertContains(result.buildResult.output, "The test task is disabled because all requested subsets are configured to skip()")
+        assertContains(result.buildResult.output, TASK_DISABLED_MESSAGE)
     }
 
     @Test
@@ -785,23 +797,25 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - JUnit4 - AllTests - smokeTests { skip() } - fails`() {
-        val result = runTestBuild(AllTests, testFramework = JUnit4, skipSmokes = true, expectFailure = true)
+    fun `test - JUnit4 - AllTests - smokeTests not declared - fails`() {
+        val result = runTestBuild(AllTests, testFramework = JUnit4, declareSmokes = false, expectFailure = true)
         assertContains(result.buildResult.output, "Unsupported 'testFramework' found for task ':repo:test-runtime:test'")
     }
 
     @Test
-    fun `test - JUnit4 - AllTests - contractTests { skip() } - fails`() {
-        val result = runTestBuild(AllTests, testFramework = JUnit4, skipContracts = true, expectFailure = true)
+    fun `test - JUnit4 - AllTests - contractTests not declared - fails`() {
+        val result = runTestBuild(AllTests, testFramework = JUnit4, declareContracts = false, expectFailure = true)
         assertContains(result.buildResult.output, "Unsupported 'testFramework' found for task ':repo:test-runtime:test'")
     }
 
     @Test
-    fun `test - JUnit4 - AllTests - smokeTests { skip() } + contractTests { skip() } - passes`() {
-        val result = runTestBuild(AllTests, testFramework = JUnit4, skipSmokes = true, skipContracts = true)
+    fun `test - JUnit4 - AllTests - nothing declared - passes`() {
+        val result = runTestBuild(AllTests, testFramework = JUnit4, declareSmokes = false, declareContracts = false)
         assertEquals(setOf(TestResult("PseudoTest", "junit4 test")), result.executedTests)
     }
 }
+
+private const val TASK_DISABLED_MESSAGE = "The test task is disabled because none of the requested subsets is declared"
 
 private val allTests = setOf(
     TestResult("PseudoTest", "domain test"),
@@ -838,8 +852,9 @@ private fun runTestBuild(
     rerun: Boolean = true,
     testsFilter: String? = "org.jetbrains.kotlin.testFederation.PseudoTest",
     smokeTestsIncludeAll: Boolean = false,
-    skipSmokes: Boolean = false,
-    skipContracts: Boolean = false,
+    declareSmokes: Boolean = true,
+    declareContracts: Boolean = true,
+    declareOwnDomainContracts: Boolean = false,
     additionalCliArgs: List<String> = emptyList(),
     expectFailure: Boolean = false,
     testFramework: TestFramework = JUnit5,
@@ -852,12 +867,16 @@ private fun runTestBuild(
             this["_SMOKE_TESTS_INCLUDE_ALL_"] = "true"
         }
 
-        if (skipSmokes) {
-            this["_SKIP_SMOKES_"] = "true"
+        if (declareSmokes) {
+            this["_DECLARE_SMOKES_"] = "true"
         }
 
-        if (skipContracts) {
-            this["_SKIP_CONTRACTS_"] = "true"
+        if (declareContracts) {
+            this["_DECLARE_CONTRACTS_"] = "true"
+        }
+
+        if (declareOwnDomainContracts) {
+            this["_DECLARE_OWN_DOMAIN_CONTRACTS_"] = "true"
         }
 
         if (domainsOverride != null) {

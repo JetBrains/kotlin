@@ -6,6 +6,8 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
+import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.support.serviceOf
@@ -14,8 +16,10 @@ import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.testFederation.TestSubset
 import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
 import org.jetbrains.kotlin.testFederation.testFederationDomains
+import org.jetbrains.kotlin.testFederation.testFederationExtension
 import org.jetbrains.kotlin.testFederation.toArgumentString
 import org.jetbrains.kotlin.tooling.core.closure
 import java.io.Serializable
@@ -32,6 +36,8 @@ interface TestLifecycleTasksModel : Serializable {
          * this test belongs to
          */
         val domains: String
+
+        val testSubsets: String
     }
 
     interface TestLifecycleTask : Serializable {
@@ -96,6 +102,7 @@ internal data class TestLifecycleTaskImpl(
 internal data class TestTaskImpl(
     override val path: String,
     override val domains: String,
+    override val testSubsets: String,
 ) : TestLifecycleTasksModel.TestTask
 
 internal fun Project.configureTestLifecycleTasksModelBuilder() {
@@ -114,7 +121,8 @@ class TestLifecycleTasksModelBuilder : ToolingModelBuilder {
             .map { testTask ->
                 TestTaskImpl(
                     testTask.identityPath.asString(),
-                    testTask.testFederationDomains.get().toArgumentString()
+                    testTask.testFederationDomains.get().toArgumentString(),
+                    testTask.declaredTestSubsets().toArgumentString(),
                 )
             }
 
@@ -147,6 +155,10 @@ class TestLifecycleTasksModelBuilder : ToolingModelBuilder {
         )
     }
 
+    private fun AbstractTestTask.declaredTestSubsets(): Set<TestSubset> {
+        if (this !is Test || testFramework !is JUnitPlatformTestFramework) return setOf(TestSubset.AllTests)
+        return testFederationExtension.allDeclaredSubsets.get()
+    }
 
     private fun Task.isRelevant(): Boolean {
         if (this is AbstractTestTask) return isRelevantTest()
