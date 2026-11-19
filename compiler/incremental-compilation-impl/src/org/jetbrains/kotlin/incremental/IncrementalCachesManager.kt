@@ -89,11 +89,15 @@ open class IncrementalJvmCachesManager(
     ).apply { registerCache() }
 }
 
+enum class KlibCachePlatform {
+    JS, Wasm, Native
+}
+
 class IncrementalKlibCachesManager(
     icContext: IncrementalCompilationContext,
     cachesRootDir: File,
-    childDir: String,
+    targetPlatform: KlibCachePlatform,
 ) : IncrementalCachesManager<IncrementalKlibCache>(icContext, cachesRootDir) {
-    private val klibCacheFile = File(cachesRootDir, childDir).apply { mkdirs() }
+    private val klibCacheFile = File(cachesRootDir, targetPlatform.name.lowercase()).apply { mkdirs() }
     override val platformCache = IncrementalKlibCache(klibCacheFile, icContext).apply { registerCache() }
 }
