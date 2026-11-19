@@ -110,6 +110,7 @@ class SerializableCompanionIrGenerator(
         }
 
         patchNamedCompanionWithMarkerAnnotation()
+        patchGeneratedCompanionWithJsExportIgnore()
     }
 
     private fun patchNamedCompanionWithMarkerAnnotation() {
@@ -120,6 +121,11 @@ class SerializableCompanionIrGenerator(
         val annotationClass = compilerContext.finderForBuiltins().findClass(SerializationAnnotations.namedCompanionClassId) ?: return
         val annotationCall = irClass.createAnnotationCallWithoutArgs(annotationClass)
         compilerContext.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(irClass, annotationCall)
+    }
+
+    private fun patchGeneratedCompanionWithJsExportIgnore() {
+        if (!irClass.isFromPlugin()) return
+        irClass.excludeFromJsExport()
     }
 
     private fun patchSerializableClassWithMarkerAnnotation(serializer: IrClass) {
