@@ -990,10 +990,13 @@ private class ContextCollectorVisitor(
                             processList(namedFunction.valueParameters)
                             processBody(namedFunction)
                         }
+
+                        // Like `FirContractResolveTransformer`, process the contract in the scope of the function body,
+                        // so that the parameters are visible in a contract that is declared outside the body.
+                        process(namedFunction.contractDescription)
                     }
 
                     process(namedFunction.returnTypeRef)
-                    process(namedFunction.contractDescription)
                 }
             }
         }
