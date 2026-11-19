@@ -110,10 +110,10 @@ private fun Project.currentBuildId(): BuildIdentifier =
 
 class IdeaKotlinDependencyMatcherWithSourcesFile(
     private val upstreamMatcher: IdeaKotlinDependencyMatcher,
-    private val filePattern: Regex,
+    private val filePatterns: List<Regex>,
 ) : IdeaKotlinDependencyMatcher {
     override val description: String
-        get() = upstreamMatcher.description + " with resolved sources file '$filePattern'"
+        get() = upstreamMatcher.description + " with resolved sources files ${filePatterns.joinToString { "'$it'" }}"
 
     override fun matches(dependency: IdeaKotlinDependency): Boolean {
         if (!upstreamMatcher.matches(dependency)) return false
@@ -121,20 +121,21 @@ class IdeaKotlinDependencyMatcherWithSourcesFile(
         // only binary dependencies can have resolved sources file attached
         if (dependency !is IdeaKotlinBinaryDependency) return false
 
-        // at the moment we expect only 1 source file be associated with dependency
-        val sourcesFile = dependency.sourcesClasspath.singleOrNull() ?: return false
-
-        // require that *ALL* files in sourcesClasspath matches the file pattern
-        return sourcesFile.toString().matches(filePattern)
+        // require that every file in sourcesClasspath is matched by exactly one of the patterns and vice versa
+        val sourcesFiles = dependency.sourcesClasspath.map { it.toString() }
+        if (sourcesFiles.size != filePatterns.size) return false
+        return filePatterns.all { pattern -> sourcesFiles.count { it.matches(pattern) } == 1 }
     }
 
-    override fun toString(): String = "$upstreamMatcher with resolved sources file '$filePattern'"
+    override fun toString(): String = description
 }
 
-fun IdeaKotlinDependencyMatcher.withResolvedSourcesFile(endsWith: String) =
+fun IdeaKotlinDependencyMatcher.withResolvedSourcesFile(endsWith: String) = withResolvedSourcesFiles(endsWith)
+
+fun IdeaKotlinDependencyMatcher.withResolvedSourcesFiles(vararg endsWith: String) =
     IdeaKotlinDependencyMatcherWithSourcesFile(
         upstreamMatcher = this,
-        filePattern = Regex(".*$endsWith")
+        filePatterns = endsWith.map { Regex(".*$it") }
     )
 
 fun IdeaKotlinDependency.assertNoSourcesResolved(): IdeaKotlinDependency {
