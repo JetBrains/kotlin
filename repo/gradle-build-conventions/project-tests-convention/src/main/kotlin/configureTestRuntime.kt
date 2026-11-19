@@ -4,9 +4,27 @@
  */
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.withType
+import org.gradle.process.CommandLineArgumentProvider
+
+/**
+ * Passes the resolved `teamcity` Gradle property (`-Pteamcity`) to the test runtime
+ * */
+private abstract class TeamcityBuildArgumentProvider : CommandLineArgumentProvider {
+    /**
+     * Not an input: test results pushed to the build cache by CI should remain reusable locally.
+     * The same as with the `TEAMCITY_VERSION` environment variable, which is not tracked either.
+     */
+    @get:Internal
+    abstract val teamcityBuild: Property<Boolean>
+
+    override fun asArguments(): Iterable<String> = listOf("-Dkotlin.build.teamcity=${teamcityBuild.get()}")
+}
 
 /**
  * The 'test-runtime' module is universally required for running tests properly:
@@ -17,12 +35,19 @@ internal fun Project.configureTestRuntime() {
         isTransitive = false
     }.incoming.files
 
+    val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
+
     afterEvaluate {
         tasks.withType<Test>().configureEach {
             classpath = files(testRuntime, classpath)
 
             /* Ensure that the test runtime is always available on the classpath (and the extension is enabled) */
             systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+
+            jvmArgumentProviders.add(objects.newInstance<TeamcityBuildArgumentProvider>().apply {
+                teamcityBuild.set(isTeamcityBuild)
+            })
+
             doFirst {
                 /* Check if classpath contains test federation runtime */
                 if (!classpath.files.containsAll(testRuntime.files)) {
