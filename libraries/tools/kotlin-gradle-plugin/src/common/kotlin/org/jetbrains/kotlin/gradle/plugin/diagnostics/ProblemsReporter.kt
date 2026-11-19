@@ -48,11 +48,11 @@ internal fun ProblemReporter.report(
     try {
         when (renderedDiagnostic) {
             is ReportedDiagnostic.Message -> report(
-                ProblemId.create(diagnostic.id.decamelize(), diagnostic.name, diagnostic.group.toProblemGroup())
+                createProblemId(diagnostic.id.decamelize(), diagnostic.name, diagnostic.group.toProblemGroup())
             ) { fillSpec(it, null) }
             is ReportedDiagnostic.Throwable -> throwing(
                 renderedDiagnostic.throwable,
-                ProblemId.create(diagnostic.id.decamelize(), diagnostic.name, diagnostic.group.toProblemGroup())
+                createProblemId(diagnostic.id.decamelize(), diagnostic.name, diagnostic.group.toProblemGroup())
             ) { fillSpec(it, renderedDiagnostic.throwable) }
         }
     } catch (e: NoSuchMethodError) {
@@ -110,6 +110,13 @@ private fun ProblemSpec.defaultSpecConfiguration(
         }
 }
 
+// TODO: KT-91868
+@Suppress("DEPRECATION")
+internal fun createProblemId(name: String, displayName: String, group: ProblemGroup): ProblemId =
+    ProblemId.create(name, displayName, group)
+
+// TODO: KT-91868
+@Suppress("DEPRECATION")
 internal fun DiagnosticGroup.toProblemGroup(): ProblemGroup = ProblemGroup.create(
     groupId.toLowerCaseAsciiOnly(),
     displayName,
