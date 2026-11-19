@@ -94,6 +94,6 @@ class IncrementalKlibCachesManager(
     cachesRootDir: File,
     childDir: String,
 ) : IncrementalCachesManager<IncrementalKlibCache>(icContext, cachesRootDir) {
-    private val jsCacheFile = File(cachesRootDir, childDir).apply { mkdirs() }
-    override val platformCache = IncrementalKlibCache(jsCacheFile, icContext).apply { registerCache() }
+    private val klibCacheFile = File(cachesRootDir, childDir).apply { mkdirs() }
+    override val platformCache = IncrementalKlibCache(klibCacheFile, icContext).apply { registerCache() }
 }
