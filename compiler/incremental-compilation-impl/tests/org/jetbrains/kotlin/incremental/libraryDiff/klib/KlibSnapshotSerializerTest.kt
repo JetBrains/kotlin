@@ -10,37 +10,62 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LE
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Test
-import java.io.File
-import kotlin.test.assertEquals
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Named
+import org.junit.jupiter.api.Named.named
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 
-/** The klib counterpart of `ClasspathSnapshotSerializerTest`: a snapshot must be the same after a save / read round trip. */
-@Disabled("KT-90559: KlibSnapshotSerializer is not implemented yet")
-class KlibSnapshotSerializerTest : KlibSnapshotTestCommon() {
+class KlibSnapshotSerializerTest {
 
-    @Test
-    fun testRoundTrip_ClassMemberLevel() = testRoundTrip(CLASS_MEMBER_LEVEL)
+    @ParameterizedTest(name = "{0}: {displayName}")
+    @MethodSource("snapshots")
+    fun `test KlibSnapshotExternalizer`(originalSnapshot: KlibSnapshot) {
+        val serializedSnapshot = KlibSnapshotExternalizer.toByteArray(originalSnapshot)
+        val deserializedSnapshot = KlibSnapshotExternalizer.fromByteArray(serializedSnapshot)
 
-    @Test
-    fun testRoundTrip_ClassLevel() = testRoundTrip(CLASS_LEVEL)
-
-    private fun testRoundTrip(granularity: ClassSnapshotGranularity) {
-        val snapshot = snapshotKlib(File(klibTestDataDir, "KlibEntrySnapshotterTest/testClassesAndPackageMembers/src"), granularity)
-        val deserialized = KlibEntrySnapshotExternalizer.fromByteArray(KlibEntrySnapshotExternalizer.toByteArray(snapshot))
-
-        assertEquals(snapshot.toDebugString(), deserialized.toDebugString())
+        assertSnapshotEquals(originalSnapshot, deserializedSnapshot)
     }
 
-    /** The snapshot classes have no `equals`, so compare a full text dump, sorted by `id` (the set order is not part of the contract). */
-    private fun KlibEntrySnapshot.toDebugString(): String = klibSnapshots.sortedBy { it.id }.joinToString("\n") { snapshot ->
-        when (snapshot) {
-            is PackageFragmentSnapshot -> with(snapshot) {
-                "id=$id, contentHash=$contentHash, packageName=$packageName, " +
-                        "classInfos=${classInfos.map { "${it.classId}: ${it.supertypes}" }}, " +
-                        "packageMemberNames=$packageMemberNames, " +
-                        "packageFragmentProto=${packageFragmentProto?.map { it.contentToString() }}"
+    private fun assertSnapshotEquals(expected: KlibSnapshot, actual: KlibSnapshot) {
+        assertEquals(expected.javaClass, actual.javaClass)
+        when (expected) {
+            is PackageFragmentSnapshot -> {
+                actual as PackageFragmentSnapshot
+                assertEquals(expected.id, actual.id)
+                assertEquals(expected.contentHash, actual.contentHash)
+                assertEquals(expected.packageName, actual.packageName)
+                assertEquals(expected.classInfos.map { it.classId to it.supertypes }, actual.classInfos.map { it.classId to it.supertypes })
+                assertEquals(expected.packageMemberNames, actual.packageMemberNames)
+                assertEquals(expected.packageFragmentProto?.map { it.toList() }, actual.packageFragmentProto?.map { it.toList() })
             }
         }
+    }
+
+    companion object {
+        @JvmStatic
+        fun snapshots(): List<Named<KlibSnapshot>> = ClassSnapshotGranularity.entries.map { granularity ->
+            named("[PackageFragmentSnapshot][$granularity]", packageFragmentSnapshot(granularity))
+        }
+
+        private fun packageFragmentSnapshot(granularity: ClassSnapshotGranularity) = PackageFragmentSnapshot(
+            id = "com/example/ClassAndTopLevelMembersKt",
+            contentHash = 42L,
+            packageName = FqName("com.example"),
+            classInfos = listOf(
+                KlibClassInfo(
+                    ClassId.fromString("com/example/SomeClass"),
+                    supertypes = listOf(ClassId.fromString("com/example/SomeInterface"))
+                ),
+                KlibClassInfo(ClassId.fromString("com/example/Outer.Nested"), supertypes = emptyList()),
+            ),
+            packageMemberNames = setOf("topLevelFunction", "topLevelProperty"),
+            packageFragmentProto = when (granularity) {
+                CLASS_LEVEL -> null
+                CLASS_MEMBER_LEVEL -> listOf(byteArrayOf(1, 2, 3), byteArrayOf())
+            },
+        )
     }
 }

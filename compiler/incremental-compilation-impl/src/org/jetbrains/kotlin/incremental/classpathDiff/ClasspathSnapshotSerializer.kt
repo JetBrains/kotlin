@@ -326,7 +326,7 @@ private object InaccessibleClassSnapshotExternalizer : DataExternalizer<Inaccess
     }
 }
 
-private object ClassIdExternalizerWithInterning : DataExternalizer<ClassId> by ClassIdExternalizer {
+internal object ClassIdExternalizerWithInterning : DataExternalizer<ClassId> by ClassIdExternalizer {
 
     override fun read(input: DataInput): ClassId {
         return ClassId(
@@ -339,7 +339,7 @@ private object ClassIdExternalizerWithInterning : DataExternalizer<ClassId> by C
     }
 }
 
-private object FqNameExternalizerWithInterning : DataExternalizer<FqName> by FqNameExternalizer {
+internal object FqNameExternalizerWithInterning : DataExternalizer<FqName> by FqNameExternalizer {
 
     private val fqNameInterner by lazy { Interner.createWeakInterner<FqName>() }
 
