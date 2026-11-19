@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import org.jetbrains.kotlin.backend.common.serialization.computeFileRelativePath
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
@@ -159,19 +160,12 @@ fun IrClass.computePrivateTypeInfoSymbolName(containerName: String) = with(Konan
  * The name identifying [this] class in every compilation that sees it.
  * It is the key the class hierarchy pieces of the separate compilations are stitched together by.
  */
-internal fun IrClass.crossModuleName(): String =
-        cachedCrossModuleName ?: computeCrossModuleName().also { cachedCrossModuleName = it }
+internal fun IrClass.crossModuleName(context: NativeBackendContext): String =
+        cachedCrossModuleName ?: computeCrossModuleName(context).also { cachedCrossModuleName = it }
 
 private var IrClass.cachedCrossModuleName: String? by irAttribute(copyByDefault = false)
 
-/**
- * A qualified name alone only identifies a class that is exported: a private, local or anonymous one can carry
- * the same qualified name in another file, so a non-exported class is prefixed with its file path, the same way
- * [KonanBinaryInterface.privateTypeInfoSymbolName] does it.
- * That is still not enough to tell apart the classes the lowerings generate, so a homonym of another class of the
- * same file gets its [homonymIndex] appended.
- */
-private fun IrClass.computeCrossModuleName(): String {
+private fun IrClass.computeCrossModuleName(context: NativeBackendContext): String {
     // A qualified name alone only identifies a class that is exported.
     // A private, local or anonymous class can carry the same qualified name in another file,
     // so a non-exported class is prefixed with its file path, the same way [KonanBinaryInterface.privateTypeInfoSymbolName] does it.
@@ -180,7 +174,8 @@ private fun IrClass.computeCrossModuleName(): String {
     // That is still not enough to tell apart the classes the lowerings generate, so a homonym of another class of the
     // same file gets its [homonymIndex] appended.
     val index = homonymIndex.takeIf { it != 0 }?.let { "#$it" } ?: ""
-    return "${file.path}.$fqName$index".replaceSpecialSymbols()
+    val path = computeFileRelativePath(file.path, context.configuration.klibRelativePathBases)
+    return "$path.$fqName$index".replaceSpecialSymbols()
 }
 
 /**
