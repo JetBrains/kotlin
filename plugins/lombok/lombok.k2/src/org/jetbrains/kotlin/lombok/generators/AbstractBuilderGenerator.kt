@@ -830,7 +830,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         BuilderDescription(
                             builder,
                             classSymbol.fir,
-                            calculateBuilderItems(entityClass, classSymbol.fir, entityClass.promotedPropertiesByName())
+                            calculateBuilderItems(entityClass, classSymbol.fir, classSymbol.promotedPropertiesByName())
                         )
                     )
                 }

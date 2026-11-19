@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.checkers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
@@ -35,6 +36,10 @@ class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExt
 
         override val propertyCheckers: Set<FirPropertyChecker> = setOf(
             FirLombokBuilderPropertyChecker
+        )
+
+        override val functionCheckers: Set<FirFunctionChecker> = setOf(
+            FirLombokBuilderFunctionChecker
         )
     }
 
