@@ -6,10 +6,19 @@
 package org.jetbrains.kotlin.analysis.test.data.manager.filters
 
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.analysis.FakeGoldenAnalysisApiTestGenerated
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import org.junit.platform.engine.TestDescriptor
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
 
 internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
+    @TempDir
+    lateinit var repositoryRoot: Path
+
     @Test
     fun `ClassSource matching path is included`() {
         assertIncluded(
@@ -54,6 +63,14 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     fun `MethodSource matching path with trailing slash is included`() {
         assertIncluded(
             filter = TestMetadataFilter(listOf("testData/analysis/api/")),
+            descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
+        )
+    }
+
+    @Test
+    fun `MethodSource of a file named like a directory is excluded by a trailing slash`() {
+        assertExcluded(
+            filter = TestMetadataFilter(listOf("testData/analysis/api/symbols/")),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
         )
     }
@@ -151,6 +168,103 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
         assertExcluded(
             filter = TestMetadataFilter(listOf("testData/other")),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated.Expressions::testCall),
+        )
+    }
+
+    // ========== testDataPath option resolution ==========
+
+    /**
+     * Creates `module/testData/dir/file.kt` under [repositoryRoot], resolves [option] with `module` as the project dir
+     * and renders the resolved paths and errors.
+     */
+    private fun assertResolved(option: String, expected: String) {
+        repositoryRoot.resolve("module/testData/dir").createDirectories().resolve("file.kt").createFile()
+        val resolved = resolveTestDataPaths(option, repositoryRoot, projectDir = repositoryRoot.resolve("module"))
+        val actual = (resolved.paths.map { "path: $it" } + resolved.errors.map { "error: $it" }).joinToString("\n")
+
+        assertEquals(expected.trimIndent(), actual)
+    }
+
+    @Test
+    fun `repository-relative directory and file paths resolve as is`() {
+        assertResolved(
+            option = "module/testData/dir, module/testData/dir/file.kt,module/testData/dir/",
+            expected = """
+                path: module/testData/dir
+                path: module/testData/dir/file.kt
+                path: module/testData/dir/
+            """,
+        )
+    }
+
+    @Test
+    fun `file path without extension resolves`() {
+        assertResolved(
+            option = "module/testData/dir/file",
+            expected = "path: module/testData/dir/file",
+        )
+    }
+
+    @Test
+    fun `absolute path inside the repository becomes relative`() {
+        assertResolved(
+            option = repositoryRoot.resolve("module/testData/dir").toString(),
+            expected = "path: module/testData/dir",
+        )
+    }
+
+    @Test
+    fun `module-relative path is an error with a suggestion`() {
+        assertResolved(
+            option = "testData/dir",
+            expected = "error: Missing(path=testData/dir, suggestion=module/testData/dir)",
+        )
+    }
+
+    @Test
+    fun `nonexistent path is an error`() {
+        assertResolved(
+            option = "module/testData/dir/fi,module/testData/dir",
+            expected = """
+                path: module/testData/dir
+                error: Missing(path=module/testData/dir/fi, suggestion=null)
+            """,
+        )
+    }
+
+    @Test
+    fun `path with glob syntax is an error, not a crash`() {
+        assertResolved(
+            option = "module/testData/dir/fi[le",
+            expected = "error: Missing(path=module/testData/dir/fi[le, suggestion=null)",
+        )
+    }
+
+    @Test
+    fun `path outside the repository is an error`() {
+        assertResolved(
+            option = "../elsewhere",
+            expected = "error: OutsideRepository(path=../elsewhere)",
+        )
+    }
+
+    @Test
+    fun `errors name the repository root`() {
+        val root = Path("/repo")
+        val errors = listOf(
+            TestDataPathError.OutsideRepository("../elsewhere"),
+            TestDataPathError.Missing("testData/dir", suggestion = null),
+            TestDataPathError.Missing("testData/dir", suggestion = "module/testData/dir"),
+        )
+
+        assertEquals(
+            listOf(
+                "testDataPath '../elsewhere' is outside the repository root ${root.toAbsolutePath()}",
+                "testDataPath 'testData/dir' does not exist; paths are relative to the repository root ${root.toAbsolutePath()}",
+                "testDataPath 'testData/dir' does not exist; paths are relative to the repository root ${root.toAbsolutePath()}. " +
+                        "Did you mean 'module/testData/dir'?",
+            ),
+            errors.map { it.render(root) },
         )
     }
 }

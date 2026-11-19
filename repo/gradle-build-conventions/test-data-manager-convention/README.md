@@ -44,7 +44,7 @@ Run on a single module:
 
 # Filter by test data path
 ./gradlew :analysis:analysis-api-fir:updateTestData \
-    -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=testData/myTest.kt
+    -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/myTest.kt
 
 # Filter by test class pattern
 ./gradlew :analysis:analysis-api-fir:updateTestData \
@@ -63,7 +63,7 @@ Gradle's task-name matching runs the task in every module with the plugin:
 ./gradlew updateTestData
 
 # Filter by path or pattern (applies to all modules)
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=testData/myTest.kt
+./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/myTest.kt
 
 # Run only golden tests (skip variant-specific tests)
 ./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.goldenOnly=true
@@ -92,10 +92,16 @@ system properties at execution time.
 
 | Gradle property                                                 | Effect                                                                     |
 |-----------------------------------------------------------------|----------------------------------------------------------------------------|
-| `org.jetbrains.kotlin.testDataManager.options.testDataPath`     | Comma-separated test data paths (dir or file)                              |
+| `org.jetbrains.kotlin.testDataManager.options.testDataPath`     | Comma-separated repository-relative test data paths (dir or file)          |
 | `org.jetbrains.kotlin.testDataManager.options.testClassPattern` | Regex pattern for test class names                                         |
 | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`       | Run only golden tests (empty variant chain)                                |
 | `org.jetbrains.kotlin.testDataManager.options.incremental`      | Only run variant tests for changed golden paths (effective in update mode) |
+
+`testDataPath` entries are relative to the repository root, as in `@TestMetadata`, or absolute paths inside the
+repository. A path matches whole names only (`dir`, `dir/file.kt`, or `dir/file` without the extension), and a path that
+does not exist fails the run instead of silently matching nothing. Only `*Generated` classes implementing `ManagedTest`
+are managed. A module where nothing matches the filters passes, since in a multi-module run most modules have nothing to
+run.
 
 ## Configuration Cache
 
