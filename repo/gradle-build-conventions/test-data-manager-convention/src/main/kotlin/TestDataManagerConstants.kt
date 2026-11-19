@@ -26,6 +26,7 @@ internal object TestDataManagerOption {
     const val GOLDEN_ONLY = "$testDataManagerOptionsPrefix.goldenOnly"
     const val INCREMENTAL = "$testDataManagerOptionsPrefix.incremental"
     const val RUN_ID = "$testDataManagerOptionsPrefix.runId"
+    const val RERUN_ID = "$testDataManagerOptionsPrefix.rerunId"
     const val OUTPUT = "$testDataManagerOptionsPrefix.output"
     const val PROJECT_NAME = "$testDataManagerOptionsPrefix.projectName"
     const val PROJECT_DIR = "$testDataManagerOptionsPrefix.projectDir"
