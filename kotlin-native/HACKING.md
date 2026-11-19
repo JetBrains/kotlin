@@ -316,7 +316,7 @@ Please note:
 
 #### Example: replace predefined LLVM pipeline with Clang options.
 ```shell script
-CLANG_FLAGS="clangFlags.macos_x64=-cc1 -emit-obj;clangNooptFlags.macos_x64=-O2"
+CLANG_FLAGS="clangFlags.macos_arm64=-cc1 -emit-obj;clangNooptFlags.macos_arm64=-O2"
 kotlinc-native main.kt -Xdisable-phases=MandatoryBitcodeLLVMPostprocessingPhase,ModuleBitcodeOptimization,LTOBitcodeOptimization -Xoverride-konan-properties="$CLANG_FLAGS"
 ```
 
