@@ -17,31 +17,38 @@ import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.InputStream
 
 /**
- * Finds the [VirtualFile]s of classes in [index], applying [filter] during index traversal.
+ * Finds classes with [classFiles], and the [VirtualFile]s of classes with [virtualFiles], which must read an index with VFS entries.
  *
  * Compiler code should use [JvmIndexKotlinClassFinder] instead.
  *
  * TODO(KT-90203): drop this finder once the Analysis API adapters read handles.
  */
-class CliVirtualFileFinder @VirtualFileBasedApi constructor(
-    index: JvmDependenciesIndex,
-    accepts: (VirtualFile) -> Boolean,
-    enableSearchInCtSym: Boolean,
+class CliVirtualFileFinder(
+    private val classFiles: JvmIndexKotlinClassFinder,
+    private val virtualFiles: JvmIndexKotlinClassFinder,
     perfManager: PerformanceManager?,
 ) : VirtualFileFinder(perfManager) {
-    @OptIn(VirtualFileBasedApi::class)
-    private val classFiles =
-        JvmIndexKotlinClassFinder(index, { accepts(it.virtualFile) }, enableSearchInCtSym, perfManager)
+    /** Finds the classes of [index] whose [VirtualFile] [accepts]; [index] must have VFS entries. */
+    @VirtualFileBasedApi
+    constructor(
+        index: JvmDependenciesIndex,
+        accepts: (VirtualFile) -> Boolean,
+        enableSearchInCtSym: Boolean,
+        perfManager: PerformanceManager?,
+    ) : this(JvmIndexKotlinClassFinder(index, { accepts(it.virtualFile) }, enableSearchInCtSym, perfManager), perfManager)
+
+    private constructor(classFiles: JvmIndexKotlinClassFinder, perfManager: PerformanceManager?) :
+            this(classFiles, classFiles, perfManager)
 
     // The two `VirtualFile` lookups stay for the Analysis API and the IDE.
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
-        @OptIn(VirtualFileBasedApi::class) classFiles.findBinaryClassFile(classId)?.virtualFile
+        @OptIn(VirtualFileBasedApi::class) virtualFiles.findBinaryClassFile(classId)?.virtualFile
 
     override fun findBinaryClassBytes(classId: ClassId): ByteArray? =
         classFiles.findBinaryClassFile(classId)?.readBytes()
 
     override fun findSourceOrBinaryVirtualFile(classId: ClassId): VirtualFile? =
-        @OptIn(VirtualFileBasedApi::class) classFiles.findSourceOrBinaryClassFile(classId)?.virtualFile
+        @OptIn(VirtualFileBasedApi::class) virtualFiles.findSourceOrBinaryClassFile(classId)?.virtualFile
 
     override fun findMetadata(classId: ClassId): InputStream? =
         classFiles.findMetadata(classId)

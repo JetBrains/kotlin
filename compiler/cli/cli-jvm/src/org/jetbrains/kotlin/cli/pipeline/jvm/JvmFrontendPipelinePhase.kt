@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
-import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
-import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathIndexes
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
@@ -524,16 +523,21 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         }
 
         // REPL updates classpath dynamically
-        val rootsIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true).apply {
-            addIndex(JvmDependenciesIndexImpl(roots))
-            indexedRoots.forEach {
-                projectEnvironment.addSourcesToClasspath(it.file)
-            }
+        val classpathIndexes = JvmClasspathIndexes(configuration)
+        classpathIndexes.addRoots(roots).indexedRoots.forEach {
+            projectEnvironment.addSourcesToClasspath(it.file)
         }
+        val rootsIndex = classpathIndexes.javaFileManagerIndex
 
         val perfManager = configuration.perfManager
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, enableSearchInCtSym = jdkRelease != null, perfManager)
+        val fileFinderFactory =
+            CliVirtualFileFinderFactory(
+                classpathIndexes.classFinderIndex,
+                enableSearchInCtSym = jdkRelease != null,
+                perfManager,
+                vfsIndex = classpathIndexes.javaFileManagerIndex,
+            )
         project.registerService(
             JavaModuleResolver::class.java,
             CliJavaModuleResolver(
@@ -554,7 +558,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             initialRoots, configuration,
             projectEnvironment,
             classpathRootsResolver,
-            rootsIndex
+            classpathIndexes,
         ).also {
             it.registerIndexedClasspathRoots(rootsIndex.indexedRoots.map { it.file }.asIterable())
             javaFileManager.initialize(
@@ -576,7 +580,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val configuration: CompilerConfiguration,
         val projectEnvironment: KotlinCoreProjectEnvironment,
         val classpathRootsResolver: ClasspathRootsResolver,
-        val rootsIndex: JvmDependenciesDynamicCompoundIndex
+        val classpathIndexes: JvmClasspathIndexes,
     ) : VfsBasedProjectEnvironment(project, knownFileSystems, getPackagePartProviderFn) {
 
         private val currentRoots = initialRoots.toMutableList()
@@ -595,11 +599,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         override fun updateClasspath(classpath: List<File>) {
             val contentRoots = classpath.map { JvmClasspathRoot(it) }
             val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots - currentRoots
-            val unindexedRoots = rootsIndex.getUnindexedRoots(newRoots)
+            val unindexedRoots = classpathIndexes.javaFileManagerIndex.getUnindexedRoots(newRoots)
             if (unindexedRoots.isEmpty()) return
 
-            val newIndex = JvmDependenciesIndexImpl(unindexedRoots)
-            rootsIndex.addIndex(newIndex)
+            val newIndex = classpathIndexes.addRoots(unindexedRoots)
             newIndex.indexedRoots.forEach {
                 projectEnvironment.addSourcesToClasspath(it.file)
             }
