@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
 
         testGroup("plugins/plugins-interactions-testing/tests-gen", "plugins/plugins-interactions-testing/testData") {
             testClass<AbstractPluginInteractionFirBlackBoxCodegenTest> {
-                model("box", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("box")
             }
 
             testClass<AbstractPluginInteractionLLDiagnosticsTest> {
