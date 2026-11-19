@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
@@ -108,12 +110,7 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractTwoStageNativeC
                 ::NativeLauncherAdditionalSourceProvider,
             )
 
-            // Because of package escaping various dumps for grouping mode would be different from
-            // the regular one, so we don't want all the frontend handlers to be set up, only some specific ones.
-            commonConfigurationForNativeFirstStageUpToSerialization(
-                includeBasicFirHandlers = true,
-                includeDumpFirHandlers = false,
-            )
+            commonConfigurationForNativeCodegenTest()
             facadeStep(::KlibSerializerNativeCliFacade)
             klibArtifactsHandlersStep {
                 // Tests with KLIB ABI dumps are not renamed: `NativeGroupingTestIsolator` isolates them.
@@ -124,6 +121,10 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractTwoStageNativeC
             // so the latter one must run last, for its output to be used for compilation of other modules.
             facadeStep(::ObjCInteropFacade.bind(/*isForwardTest*/true, /*customClassLoader*/null))
             useAfterAnalysisCheckers(::KlibOnlyFirstStageStateReleaser)
+
+            configureFirHandlersStep {
+                commonFirHandlersForCodegenTest()
+            }
 
             useFailureSuppressors(
                 // Suppress all tests that failed on the first stage if they are anyway marked as "IGNORE_BACKEND*".
