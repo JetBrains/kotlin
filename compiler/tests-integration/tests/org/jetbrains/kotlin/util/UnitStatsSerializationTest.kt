@@ -76,5 +76,9 @@ class UnitStatsSerializationTest {
             KlibElementStats("KLIB directory cumulative size/Manifest file", 40_000),
             KlibElementStats("KLIB directory cumulative size/IR files", 60_000)
         ),
+        memoryStats = listOf(
+            MemoryStats(PhaseType.IrLowering, dynamicPhase = null, 10_000_000L, 20_000_000L, gcCount = 2, gcPauseNanos = 3_000_000L),
+            MemoryStats(PhaseType.IrLowering, "Dynamic 2", 11_000_000L, 21_000_000L, gcCount = 1, gcPauseNanos = 4_000_000L),
+        ),
     )
 }
