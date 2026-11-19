@@ -1,0 +1,81 @@
+@Builder
+class BodyVar {
+  var items: List<String>
+    field = emptyList<String>()
+    get
+    set
+
+  open class BodyVarBuilder {
+    internal constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): BodyVar {
+      val tmp_0: BodyVar = BodyVar()
+      tmp_0.<set-items>(<set-?> = <this>.#items)
+      return tmp_0
+    }
+
+    open fun clearItems(): BodyVarBuilder {
+      val tmp_1: MutableList<String>? = <this>.#items
+      when {
+        EQEQ(arg0 = tmp_1, arg1 = null).not() -> tmp_1 /*as MutableList<String> */.clear()
+      }
+      return <this>
+    }
+
+    open fun item(item: String): BodyVarBuilder {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<String>()
+      }
+      <this>.#items /*as MutableList<String> */.add(element = item)
+      return <this>
+    }
+
+    open fun items(items: Collection<String>): BodyVarBuilder {
+      // COMPOSITE {
+      when {
+        EQEQ(arg0 = <this>.#items, arg1 = null) -> <this>.#items = ArrayList<String>()
+      }
+      <this>.#items /*as MutableList<String> */.addAll(elements = items)
+      // }
+      return <this>
+    }
+
+    private var items: MutableList<String>?
+      private get
+      private set
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): BodyVarBuilder {
+      return BodyVarBuilder()
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val builder: BodyVarBuilder = Companion.builder().item(item = "a")
+  val first: BodyVar = builder.build()
+  builder.item(item = "b") /*~> Unit */
+  assertEquals<List<String>>(expected = listOf<String>(element = "a"), actual = first.<get-items>())
+  return "OK"
+}
