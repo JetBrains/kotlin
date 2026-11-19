@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
@@ -75,14 +77,14 @@ object FirLombokBuilderClassChecker : FirRegularClassChecker(MppCheckerKind.Plat
             // again, nothing is generated for it, leaving the checks below nothing to say. A function builder
             // is untouched by this: it builds whatever the function returns, which need not be this class.
             if (functionSymbol is FirConstructorSymbol) {
-                declaration.uninstantiableClassModifier()?.let { modifier ->
+                UNINSTANTIABLE_CLASS_MODIFIERS.firstOrNull { declaration.hasModifier(it) }?.let { modifier ->
                     val annotationName = builder.annotation.toAnnotationClassId(context.session)?.shortClassName
                     if (annotationName != null) {
                         reporter.reportOn(
                             builder.annotation.source,
                             LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS,
                             annotationName,
-                            modifier.presentation,
+                            modifier.value,
                             context,
                         )
                     }
@@ -97,6 +99,8 @@ object FirLombokBuilderClassChecker : FirRegularClassChecker(MppCheckerKind.Plat
             }
         }
     }
+
+    private val UNINSTANTIABLE_CLASS_MODIFIERS = setOf(KtTokens.INNER_KEYWORD, KtTokens.ABSTRACT_KEYWORD, KtTokens.SEALED_KEYWORD)
 
     /**
      * `toBuilder()` fills each builder field from the entity's property of that name - see
