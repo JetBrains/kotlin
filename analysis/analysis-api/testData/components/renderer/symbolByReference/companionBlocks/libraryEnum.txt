@@ -2,9 +2,9 @@ enum class E {
   A,
   B;
 
-  fun fromBlock(): lib.E
-
   fun regular()
+
+  fun fromBlock(): lib.E
 
   fun valueOf(value: kotlin.String): lib.E
 

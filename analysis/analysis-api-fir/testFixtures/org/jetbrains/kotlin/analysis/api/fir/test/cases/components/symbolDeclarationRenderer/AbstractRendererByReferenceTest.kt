@@ -46,7 +46,7 @@ abstract class AbstractRendererByReferenceTest : AbstractAnalysisApiBasedTest() 
 
                     // Order the members as in `AbstractSymbolRenderingByReferenceTest`.
                     set(KaRenderingOption.ClassMemberOrdering) { first, second ->
-                        compareValuesBy(first, second) { KaRenderer.default.renderToString(it) }
+                        compareValuesBy(first, second, { it.isCompanionBlockMember }, { KaRenderer.default.renderToString(it) })
                     }
                 }
 

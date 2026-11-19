@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClass
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.rendering.KaRenderer
 import org.jetbrains.kotlin.analysis.api.rendering.renderToString
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -48,7 +51,8 @@ abstract class AbstractSymbolRenderingByReferenceTest : AbstractAnalysisApiBased
         classifierBodyRenderer = KaClassifierBodyRenderer.BODY_WITH_MEMBERS
 
         // Sort the members by their rendered text, so that the order doesn't depend on how a library class is loaded: from stubs in
-        // the IDE mode or from class files in the Standalone mode.
+        // the IDE mode or from class files in the Standalone mode. Companion members go after the other members, so that wrapping
+        // them in a `companion { }` block doesn't move the other members.
         bodyMemberScopeSorter = object : KaRendererBodyMemberScopeSorter {
             override fun sortMembers(
                 analysisSession: KaSession,
@@ -56,10 +60,15 @@ abstract class AbstractSymbolRenderingByReferenceTest : AbstractAnalysisApiBased
                 container: KaDeclarationContainerSymbol,
             ): List<KaDeclarationSymbol> {
                 context(analysisSession) {
-                    val sortedMembers = members.sortedBy { KaRenderer.default.renderToString(it) }
+                    val sortedMembers =
+                        members.sortedWith(compareBy({ it.isCompanionBlockMember }, { KaRenderer.default.renderToString(it) }))
                     return KaRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING.sortMembers(analysisSession, sortedMembers, container)
                 }
             }
         }
     }
 }
+
+/** Whether the member is [companion][KaCallableSymbol.isCompanion] and not an enum entry, which stays at the start of an enum body. */
+internal val KaSymbol.isCompanionBlockMember: Boolean
+    get() = this is KaCallableSymbol && this !is KaEnumEntrySymbol && isCompanion
