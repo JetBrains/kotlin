@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Con
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
@@ -910,19 +911,21 @@ private class ContextCollectorVisitor(
      * the call itself is resolved with the implicit receiver of the containing class (required for super calls to inner classes),
      * while its children (e.g., arguments) are resolved without it.
      */
-    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) = withProcessor(delegatedConstructorCall) {
-        val constructor = context.containerIfAny as? FirConstructor
-            ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
-                withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+        withProcessor(delegatedConstructorCall) {
+            val constructor = context.containerIfAny as? FirConstructor
+                ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
+                    withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+                }
+
+            context.forDelegatedConstructorCallResolution {
+                dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
             }
 
-        context.forDelegatedConstructorCallResolution {
-            dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
-        }
-
-        onActive {
-            context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
-                processChildren(delegatedConstructorCall)
+            onActive {
+                context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
+                    processChildren(delegatedConstructorCall)
+                }
             }
         }
     }
@@ -1106,7 +1109,14 @@ private class ContextCollectorVisitor(
         onActive {
             val holder = getSessionHolder(propertyAccessor)
 
-            context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder = holder) {
+            context.withPropertyAccessor(
+                property = propertyAccessor.propertySymbol.fir,
+                accessor = propertyAccessor,
+                // `FirDeclarationsResolveTransformer` resolves a getter that provides the property type while that
+                // type is still implicit, so without the backing field.
+                hideBackingField = propertyAccessor.providesPropertyType,
+                holder = holder,
+            ) {
                 dumpContext(propertyAccessor, ContextKind.BODY)
                 processChildren(propertyAccessor)
             }
@@ -1405,3 +1415,9 @@ private class ContextCollectorVisitor(
         }
     }
 }
+
+/**
+ * Whether the type of the property is inferred from this accessor.
+ */
+private val FirPropertyAccessor.providesPropertyType: Boolean
+    get() = isGetter && propertySymbol.fir.initializer == null && !propertySymbol.hasExplicitReturnType
