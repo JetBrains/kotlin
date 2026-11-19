@@ -11,6 +11,7 @@ plugins {
 
 dependencies {
     api(kotlinStdlib())
+    api(project(":core:names"))
 }
 
 kotlin {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi.psiUtil
 
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmFileClassNaming
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
@@ -19,14 +20,17 @@ internal object JvmFileClassUtil {
     private const val JVM_NAME_SHORT: String = "JvmName"
 
     private fun manglePartName(facadeName: String, file: KtFile): String =
-        "$facadeName$MULTIFILE_PART_NAME_DELIMITER${PackagePartClassUtils.getFilePartShortName(file)}"
+        "$facadeName$MULTIFILE_PART_NAME_DELIMITER${getFileClassName(file)}"
+
+    private fun getFileClassName(file: KtFile): String =
+        JvmFileClassNaming.fileClassName(file.name, file.isCompiled)
 
     fun getFileClassInfoNoResolve(file: KtFile): JvmFileClassInfo {
         val parsedAnnotations = parseJvmNameOnFileNoResolve(file)
         val packageFqName = parsedAnnotations?.jvmPackageName ?: file.packageFqName
         return when {
             parsedAnnotations != null -> {
-                val simpleName = parsedAnnotations.jvmName ?: PackagePartClassUtils.getFilePartShortName(file)
+                val simpleName = parsedAnnotations.jvmName ?: getFileClassName(file)
                 val facadeClassFqName = packageFqName.child(Name.identifier(simpleName))
                 when {
                     parsedAnnotations.isMultifileClass -> JvmMultifileClassPartInfo(
@@ -38,7 +42,7 @@ internal object JvmFileClassUtil {
                 }
             }
 
-            else -> JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(packageFqName, file), false)
+            else -> JvmSimpleFileClassInfo(JvmFileClassNaming.fileClassFqName(packageFqName, file.name, file.isCompiled), false)
         }
     }
 
