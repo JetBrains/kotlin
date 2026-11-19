@@ -88,7 +88,6 @@ abstract class AbstractLLStubBasedResolutionTest : AbstractLLStubBasedTest<Pair<
         }
 
         val astBasedDump = dumpOutput(astBasedFirFile)
-        val astBasedOutputFile = getTestOutputFile(extension = ".astBasedResolve.txt").toFile()
         val stubDifferenceExpected = Directives.STUB_RESOLUTION_INCONSISTENCY in testServices.moduleStructure.allDirectives
         when {
             astBasedDump == stubBasedDump -> {
@@ -96,13 +95,11 @@ abstract class AbstractLLStubBasedResolutionTest : AbstractLLStubBasedTest<Pair<
                     "'// ${Directives.STUB_RESOLUTION_INCONSISTENCY}' directive is unused and has to be dropped"
                 }
 
-                testServices.assertions.assertFileDoesntExist(astBasedOutputFile) {
-                    "${astBasedOutputFile.name} has the same content, so it should be dropped"
-                }
+                assertEqualsToTestOutputFile(actual = null, extension = AST_BASED_RESOLVE_EXTENSION)
             }
 
             stubDifferenceExpected -> {
-                testServices.assertions.assertEqualsToFile(astBasedOutputFile, astBasedDump)
+                assertEqualsToTestOutputFile(astBasedDump, extension = AST_BASED_RESOLVE_EXTENSION)
             }
 
             else -> {
@@ -113,6 +110,8 @@ abstract class AbstractLLStubBasedResolutionTest : AbstractLLStubBasedTest<Pair<
         }
     }
 }
+
+private const val AST_BASED_RESOLVE_EXTENSION = ".astBasedResolve.txt"
 
 private fun dumpOutput(file: FirFile): String = lazyResolveRenderer(StringBuilder()).renderElementAsString(file, trim = true)
 
