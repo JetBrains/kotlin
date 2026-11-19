@@ -15,17 +15,15 @@ import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrSourceRangesTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrTextTest
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
     val testRoot = args[0]
-    val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testRoot, testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionTestGenerated") {
-                model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$")
             }
 
             run {
@@ -33,11 +31,9 @@ fun main(args: Array<String>) {
                     model(
                         "diagnostics/tests", pattern = TestGeneratorUtil.KT,
                         excludeDirsRecursively = listOf("multiplatform", "jvm"),
-                        excludedPattern = excludedCustomTestdataPattern,
                     )
                     model(
                         "diagnostics/testsWithStdLib",
-                        excludedPattern = excludedCustomTestdataPattern,
                     )
                 }
 
@@ -57,9 +53,9 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLightTreeForeignAnnotationsSourceJavaTest>(
                 suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated"
             ) {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/tests")
+                model("diagnostics/foreignAnnotationsTests/java8Tests")
+                model("diagnostics/foreignAnnotationsTests/java11Tests")
             }
 
             testClass<AbstractFirLightTreeForeignAnnotationsCompiledJavaTest>(
@@ -67,19 +63,18 @@ fun main(args: Array<String>) {
             ) {
                 model(
                     "diagnostics/foreignAnnotationsTests/tests",
-                    excludedPattern = excludedCustomTestdataPattern,
                     excludeDirs = listOf("externalAnnotations"),
                 )
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests")
+                model("diagnostics/foreignAnnotationsTests/java11Tests")
             }
 
             testClass<AbstractFirLightTreeForeignAnnotationsCompiledJavaWithPsiClassReadingTest>(
                 suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated"
             ) {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/tests")
+                model("diagnostics/foreignAnnotationsTests/java8Tests")
+                model("diagnostics/foreignAnnotationsTests/java11Tests")
             }
         }
 
@@ -113,7 +108,6 @@ fun main(args: Array<String>) {
                         excludeDirs = listOf("declarations/multiplatform/k1"),
                         skipTestAllFilesCheck = true,
                         pattern = pattern.canFreezeIDE,
-                        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                         excludeDirsRecursively = excludeDirsRecursively,
                     )
                 }
@@ -129,17 +123,17 @@ fun main(args: Array<String>) {
 
         testGroup(testRoot, "compiler/testData/diagnostics") {
             testClass<AbstractPhasedPipelineCheckerTest> {
-                model("phasedPipelineChecker", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("phasedPipelineChecker")
             }
 
             testClass<AbstractPhasedPipelineCheckerWithLanguageFeatureDisabledTest> {
-                model("phasedPipelineChecker", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("phasedPipelineChecker")
             }
         }
 
         testGroup(testRoot, "compiler/testData/diagnostics/tests/contextSensitiveResolutionUsingExpectedType") {
             testClass<AbstractPhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTest> {
-                model("ideHint", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("ideHint")
             }
         }
 
@@ -148,7 +142,6 @@ fun main(args: Array<String>) {
                 model(
                     "diagnostics",
                     excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
                 )
             }
         }

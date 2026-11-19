@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractLightTreeNativeDiagnosticsWithBackendTestBase
 import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentityTest
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Tag
 
@@ -22,7 +21,6 @@ import org.junit.jupiter.api.Tag
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     val testsRoot = args[0]
-    val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
     generateTestGroupSuiteWithJUnit5(args) {
         // New frontend test infrastructure tests
@@ -31,11 +29,11 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "LightTreeNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(klib())
             ) {
-                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
+                model("klibSerializationTests")
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
-                model("testsWithAnyBackend", excludedPattern = excludedCustomTestdataPattern)
-                model("irInliner", excludedPattern = excludedCustomTestdataPattern)
+                model("nativeTests")
+                model("testsWithAnyBackend")
+                model("irInliner")
             }
         }
 

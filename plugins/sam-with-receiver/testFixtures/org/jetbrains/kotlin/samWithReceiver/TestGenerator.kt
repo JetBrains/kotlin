@@ -6,20 +6,19 @@
 package org.jetbrains.kotlin.samWithReceiver
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/sam-with-receiver/testData") {
             testClass<AbstractFirLightTreeSamWithReceiverDiagnosticTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("diagnostics")
             }
             testClass<AbstractLLSamWithReceiverDiagnosticTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("diagnostics")
             }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver> {
-                model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("codegen")
             }
         }
     }
