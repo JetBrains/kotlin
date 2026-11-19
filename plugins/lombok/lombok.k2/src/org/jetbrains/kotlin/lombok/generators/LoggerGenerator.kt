@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.generators
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.extensions.CompanionObjectGenerationContext
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -55,6 +57,7 @@ import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.generators.kotlin.isCompanionNeeded
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
@@ -72,7 +75,7 @@ fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation): Boolean {
     } == true
 }
 
-class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(session), LombokCompanionObjectContributor {
+class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private val JAVA_PROPERTY_NAME = Name.identifier("java")
         private val JAVA_GET_NAME = Name.identifier("getName")
@@ -101,12 +104,14 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
      * A static logger goes into the companion object, so a class that gets one needs a companion object to hold
      * it. A non-static one goes into the class itself, and needs nothing.
      */
-    override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean {
-        if (!session.lombokService.config.logFieldIsStatic) return false
-        if (session.lombokService.getLogs(owner).isEmpty()) return false
+    override fun needsCompanionObject(classSymbol: FirClassSymbol<*>, context: CompanionObjectGenerationContext): GeneratedDeclarationKey? {
+        if (!isCompanionNeeded(classSymbol, context)) return null
+        if (!session.lombokService.config.logFieldIsStatic) return null
+        if (session.lombokService.getLogs(classSymbol).isEmpty()) return null
 
         // Nothing would go into the companion object anyway, so don't ask for an empty one
-        return !owner.declaresConflictingLogProperty()
+        if (classSymbol.declaresConflictingLogProperty()) return null
+        return LombokCompanionObjectKey
     }
 
     private val logFieldAndPropertyCache: FirCache<FirClassSymbol<*>, FirVariableSymbol<*>?, MemberGenerationContext> =

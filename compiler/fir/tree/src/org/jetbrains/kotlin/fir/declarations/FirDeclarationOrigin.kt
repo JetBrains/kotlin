@@ -152,6 +152,18 @@ sealed class FirDeclarationOrigin(
 val GeneratedDeclarationKey.origin: FirDeclarationOrigin
     get() = FirDeclarationOrigin.Plugin(this)
 
+inline fun FirDeclarationOrigin.toPluginKey(predicate: (GeneratedDeclarationKey) -> Boolean): GeneratedDeclarationKey? {
+    return when (this) {
+        is FirDeclarationOrigin.Plugin -> key.takeIf { predicate(it) }
+        is FirDeclarationOrigin.Plugin.SharedCompanion -> keys.singleOrNull { predicate(it) }
+        else -> null
+    }
+}
+
+inline fun <reified T : GeneratedDeclarationKey> FirDeclarationOrigin.toPluginKey(): T? {
+    return toPluginKey { it is T } as? T
+}
+
 /**
  * @return **true** if a declaration with [this] origin can be in not fully resolved state
  */

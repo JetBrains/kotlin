@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
-import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
+import org.jetbrains.kotlin.fir.extensions.CompanionObjectGenerationContext
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
@@ -84,7 +84,7 @@ fun FirCallableSymbol<*>.buildJvmStaticAnnotationCallOrError(session: FirSession
 
 fun isCompanionNeeded(
     owner: FirClassSymbol<*>,
-    context: NestedClassGenerationContext,
+    context: CompanionObjectGenerationContext,
 ): Boolean {
     // Companion objects are only relevant for Kotlin classes
     if (owner.hasJavaOrigin) {
