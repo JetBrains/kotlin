@@ -254,7 +254,8 @@ internal object TestDataManagerRunner {
     /**
      * Result of running a test group, containing test data problems and errors.
      *
-     * @property finalPassFailedTestIds Test IDs that failed in the final convergence pass.
+     * @property finalPassFailedTestIds Test IDs that failed in the final convergence pass, or still have a problem
+     *           or an error from an earlier one because their re-run didn't complete, e.g., when it aborted.
      *           Used to calculate passed/failed counts - if a test eventually passes after
      *           convergence, it counts as passed (matching standard Gradle behavior).
      */
@@ -569,11 +570,25 @@ internal object TestDataManagerRunner {
         var lastErrorTestCount = 0
         var lastMismatchedTestCount = 0
         var testIdsToExecute: Collection<String> = group.tests.map { it.uniqueId }
+        val variantChains = group.tests.associate { it.uniqueId to it.variantChain }
 
         val projectName: String? = System.getProperty(TEST_DATA_MANAGER_OPTIONS_PROJECT_NAME)
 
         var testExecutions = 0
         var pass = 1
+
+        fun runResult(): RunResult {
+            // The keys of the failures of containers are no test IDs
+            val testsWithResults = (finalProblems.keys + finalErrors.keys).filter(variantChains::containsKey)
+            return RunResult(
+                problems = finalProblems.values.flatten().toSet(),
+                errors = finalErrors.values.flatten().toSet(),
+                finalPassFailedTestIds = lastPassFailedTestIds + testsWithResults,
+                testExecutions = testExecutions,
+                recoveredTests = recoveredTests.values,
+            )
+        }
+
         while (pass <= MAX_CONVERGENCE_PASSES) {
             detail("\n=== Pass $pass ===")
             val testCount = testIdsToExecute.size
@@ -581,7 +596,7 @@ internal object TestDataManagerRunner {
             detail("  Tests to execute: $testCount")
 
             val request = buildGroupRequest(testIdsToExecute)
-            val fileTrackingListener = FileUpdateTrackingListener()
+            val fileTrackingListener = FileUpdateTrackingListener(variantChains)
             val ijLogListener = if (TestDataManagerMode.isUnderIde) {
                 val uniqueVariantChains = group.uniqueVariantChains
                 val suiteName = buildString {
@@ -639,13 +654,7 @@ internal object TestDataManagerRunner {
             val isReadOnly = TestDataManagerMode.isExplicitCheck
             if (isReadOnly || lastErrorTestCount == errorTestCount && lastMismatchedTestCount == mismatchedTestCount) {
                 detail("  Convergence reached.")
-                return RunResult(
-                    problems = finalProblems.values.flatten().toSet(),
-                    errors = finalErrors.values.flatten().toSet(),
-                    finalPassFailedTestIds = lastPassFailedTestIds,
-                    testExecutions = testExecutions,
-                    recoveredTests = recoveredTests.values,
-                )
+                return runResult()
             } else {
                 lastErrorTestCount = errorTestCount
                 lastMismatchedTestCount = mismatchedTestCount
@@ -660,13 +669,7 @@ internal object TestDataManagerRunner {
             testIdsToExecute = lastPassFailedTestIds
         }
 
-        return RunResult(
-            problems = finalProblems.values.flatten().toSet(),
-            errors = finalErrors.values.flatten().toSet(),
-            finalPassFailedTestIds = lastPassFailedTestIds,
-            testExecutions = testExecutions,
-            recoveredTests = recoveredTests.values,
-        )
+        return runResult()
     }
 
     /** Prints the counts and the lists of the run; `internal` for the tests of the compact output. */
