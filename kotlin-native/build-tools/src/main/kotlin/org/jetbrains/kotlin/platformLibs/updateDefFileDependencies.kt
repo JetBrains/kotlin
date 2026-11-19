@@ -18,7 +18,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.isWholeXcodeProvisioningEnabled
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.unsupportedTargetNames
+import org.jetbrains.kotlin.konan.target.removedTargetNames
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import java.io.ByteArrayOutputStream
@@ -35,7 +35,7 @@ fun Project.familyDefFiles(family: Family) = fileTree("src/platform/${family.vis
 fun Project.registerUpdateDefFileDependenciesForAppleFamiliesTasks(aggregateTask: TaskProvider<*>): Map<Family, TaskProvider<*>> {
     val shouldUpdate = project.kotlinBuildProperties.booleanProperty(updateDefFileDependenciesFlag, false).get()
 
-    val targets = KonanTarget.predefinedTargets.values.filter { it.name !in unsupportedTargetNames }
+    val targets = KonanTarget.predefinedTargets.values.filter { it.name !in removedTargetNames }
     val updateDefFilesTaskPerFamily = targets.filter { it.family.isAppleFamily }.groupBy { it.family }.mapValues {
         registerUpdateDefFileDependenciesTask(
                 family = it.key,
