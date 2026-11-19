@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHostOs
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHostArchitecture
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
@@ -22,7 +24,9 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommoniz
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.lenient
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.dsl.konanTarget
+import org.jetbrains.kotlin.gradle.dsl.canLinkBinaries
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
@@ -111,7 +115,7 @@ internal open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, pro
 }
 
 internal val KonanTarget.isCurrentHost: Boolean
-    get() = this == HostManager.hostOrNull
+    get() = this == KotlinNativeHost.current().konanTarget
 
 /**
  * Returns whether klib compilation is allowed for [this]-target on the current host.
@@ -121,21 +125,15 @@ internal val KonanTarget.isCurrentHost: Boolean
  * [enabledOnCurrentHostForKlibCompilation] might return 'true' in some cases where [enabledOnCurrentHostForBinariesCompilation]
  * returns 'false' (e.g.: compile a klib for iOS target on Linux when the code depends only on Kotlin Stdlib)
  *
- * Ideally, these APIs should be in [HostManager] instead of KGP-side wrappers. Refer to KT-64512 for that
+ * See KT-64512 for a finer-grained model on the Kotlin/Native side.
  */
 @Deprecated("Use crossCompilationOnCurrentHostSupported instead")
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     provider: PropertiesProvider,
-) = if (HostManager.hostIsSupported) {
-    if (provider.enableKlibsCrossCompilation) {
-        // If cross-compilation is enabled, allow compilation for all targets
-        true
-    } else {
-        // If cross-compilation is disabled use standard HostManager enablement check
-        HostManager().isEnabled(this)
-    }
-} else {
-    false
+): Boolean {
+    val host = KotlinNativeHost.current()
+    // With cross-compilation enabled every target compiles on a supported host. Otherwise only linkable targets do.
+    return host.isSupported && (provider.enableKlibsCrossCompilation || host.canLinkBinaries(this))
 }
 
 internal val AbstractKotlinNativeCompilation.crossCompilationSharedData: KotlinProjectSharedDataProvider<CrossCompilationData>
@@ -146,7 +144,7 @@ internal val AbstractKotlinNativeCompilation.crossCompilationSharedData: KotlinP
 internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Boolean
     get() = when (this) {
         is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported.getOrThrow()
-        else -> HostManager.hostIsSupported
+        else -> KotlinNativeHost.current().isSupported
     }
 
 // KT-81134 with a fallback to `enabledOnCurrentHostForKlibCompilation`
@@ -156,15 +154,32 @@ internal val KotlinNativeTarget.publishableWithFallback: Boolean
         ?: konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
 
 internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
-    get() = if (HostManager.hostIsSupported) HostManager().isEnabled(this) else false
+    get() = KotlinNativeHost.current().canLinkBinaries(this)
 
-internal val HostManager.supportedHosts: List<String> get() = enabledByHost.keys.map { it.formattedHostName }
+/** Human-readable names of the supported hosts for diagnostics, e.g. `macOS (arm64)`. */
+internal val supportedNativeHosts: List<String> = KotlinNativeHost.supportedHosts().map { it.displayName }
 
-private val KonanTarget.formattedHostName: String
-    get() = when (this) {
-        KonanTarget.LINUX_X64 -> "Linux (x86_64)"
-        KonanTarget.MINGW_X64 -> "Windows (x86_64)"
-        KonanTarget.MACOS_ARM64 -> "macOS (arm64)"
-        // Fallback for any future hosts, though the 'when' should be exhaustive
-        else -> visibleName
+internal val KotlinNativeHost.displayName: String
+    get() {
+        val osName = when (os) {
+            KotlinNativeHostOs.MACOS -> "macOS"
+            KotlinNativeHostOs.LINUX -> "Linux"
+            KotlinNativeHostOs.WINDOWS -> "Windows"
+            KotlinNativeHostOs.UNKNOWN -> "unknown OS"
+        }
+        val archName = when (architecture) {
+            KotlinNativeHostArchitecture.X64 -> "x86_64"
+            KotlinNativeHostArchitecture.ARM64 -> "arm64"
+            KotlinNativeHostArchitecture.UNKNOWN -> "unknown architecture"
+        }
+        return "$osName ($archName)"
     }
+
+/**
+ * `true` on a macOS host with a Kotlin/Native distribution.
+ *
+ * KGP's Apple tooling needs linked Kotlin/Native binaries, so it is gated on this instead of [KotlinNativeHost.isMacOs].
+ * An Intel Mac is macOS but unsupported, and its tasks stay skipped as they were with `HostManager.hostIsMac`.
+ */
+internal val KotlinNativeHost.isSupportedMacOs: Boolean
+    get() = isMacOs && isSupported

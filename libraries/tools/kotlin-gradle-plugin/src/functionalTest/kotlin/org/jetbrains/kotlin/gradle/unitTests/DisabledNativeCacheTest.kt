@@ -7,6 +7,9 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHostArchitecture
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
@@ -28,7 +31,6 @@ import org.jetbrains.kotlin.gradle.unitTests.utils.MockKonanHomeExtension
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -86,7 +88,7 @@ class DisabledNativeCacheTest {
 
     @Test
     fun `test native cache is enabled by default`() {
-        Assumptions.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
+        Assumptions.assumeTrue(!KotlinNativeHost.current().isWindows) // No cacheable targets on Windows
         with(mppProjectWithFakeKonan(mockKonan)) {
             kotlin {
                 createCacheableTargets().forEach { target ->
@@ -96,7 +98,7 @@ class DisabledNativeCacheTest {
 
             evaluate()
 
-            if (HostManager.hostIsMac) {
+            if (KotlinNativeHost.current().isSupportedMacOs) {
                 assertEquals(
                     NativeCacheKind.STATIC,
                     konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
@@ -127,7 +129,7 @@ class DisabledNativeCacheTest {
                     konanCacheKind(IOS_SIMULATOR_ARM64_LINK_RELEASE_TASK_NAME).get(),
                     "Native cache should be enabled on iOS Simulator Arm64 RELEASE target"
                 )
-            } else if (HostManager.hostIsLinux) {
+            } else if (KotlinNativeHost.current().isLinux) {
                 assertEquals(
                     NativeCacheKind.STATIC,
                     konanCacheKind(LINUX_X64_LINK_DEBUG_TASK_NAME).get(),
@@ -144,7 +146,7 @@ class DisabledNativeCacheTest {
 
     @Test
     fun `test native cache is disabled`() {
-        Assumptions.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
+        Assumptions.assumeTrue(!KotlinNativeHost.current().isWindows) // No cacheable targets on Windows
         with(mppProjectWithFakeKonan(mockKonan, nativeVersion = disableCacheVersionString)) {
             kotlin {
                 createCacheableTargets().forEach { target ->
@@ -160,7 +162,7 @@ class DisabledNativeCacheTest {
 
             evaluate()
 
-            if (HostManager.hostIsMac) {
+            if (KotlinNativeHost.current().isSupportedMacOs) {
                 assertEquals(
                     NativeCacheKind.NONE,
                     konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
@@ -191,7 +193,7 @@ class DisabledNativeCacheTest {
                     konanCacheKind(IOS_SIMULATOR_ARM64_LINK_RELEASE_TASK_NAME).get(),
                     "Native cache should be disabled on iOS Simulator Arm64 RELEASE target for version ${getKotlinPluginVersion()}"
                 )
-            } else if (HostManager.hostIsLinux) {
+            } else if (KotlinNativeHost.current().isLinux) {
                 assertEquals(
                     NativeCacheKind.NONE,
                     konanCacheKind(LINUX_X64_LINK_DEBUG_TASK_NAME).get(),
@@ -208,10 +210,10 @@ class DisabledNativeCacheTest {
 
     @Test
     fun `test native cache is disabled for particular buildType`() {
-        Assumptions.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
+        Assumptions.assumeTrue(!KotlinNativeHost.current().isWindows) // No cacheable targets on Windows
         with(mppProjectWithFakeKonan(mockKonan, nativeVersion = disableCacheVersionString)) {
             kotlin {
-                val target = if (HostManager.hostIsMac) macosArm64() else linuxX64()
+                val target = if (KotlinNativeHost.current().isSupportedMacOs) macosArm64() else linuxX64()
                 target.binaries.staticLib {
                     if (buildType == NativeBuildType.DEBUG) {
                         disableNativeCache(
@@ -225,7 +227,7 @@ class DisabledNativeCacheTest {
 
             evaluate()
 
-            if (HostManager.hostIsMac) {
+            if (KotlinNativeHost.current().isSupportedMacOs) {
                 assertEquals(
                     NativeCacheKind.STATIC,
                     konanCacheKind(MAC_ARM64_LINK_RELEASE_TASK_NAME).get(),
@@ -236,7 +238,7 @@ class DisabledNativeCacheTest {
                     konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
                     "Native cache should be disabled on macOS Arm64 DEBUG target"
                 )
-            } else if (HostManager.hostIsLinux) {
+            } else if (KotlinNativeHost.current().isLinux) {
                 assertEquals(
                     NativeCacheKind.STATIC,
                     konanCacheKind(LINUX_X64_LINK_RELEASE_TASK_NAME).get(),
@@ -319,19 +321,19 @@ class DisabledNativeCacheTest {
 //    ios_arm64
 // fixme: KT-89587 Clean up tests after iosX64 target deprecation
 private fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNativeTarget> {
-    val isArm64 = HostManager.hostArch() == "aarch64"
+    val isArm64 = KotlinNativeHost.current().architecture == KotlinNativeHostArchitecture.ARM64
 
     return when {
-        HostManager.hostIsMac && isArm64 -> listOf(
+        KotlinNativeHost.current().isSupportedMacOs && isArm64 -> listOf(
             iosArm64(),
             iosSimulatorArm64(),
             macosArm64()
         )
-        HostManager.hostIsMac && !isArm64 -> listOf(
+        KotlinNativeHost.current().isSupportedMacOs && !isArm64 -> listOf(
             iosArm64(),
             iosX64(),
         )
-        HostManager.hostIsLinux -> listOf(
+        KotlinNativeHost.current().isLinux -> listOf(
             linuxX64()
         )
         else -> emptyList()

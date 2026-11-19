@@ -269,6 +269,33 @@ internal object KotlinToolingDiagnostics {
             }
     }
 
+    internal object HostNativeTargetUnavailable : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(host: String, supportedHosts: List<String>) =
+            build {
+                val supportedHostsList = supportedHosts
+                    .sorted()
+                    .joinToString(separator = "\n* ", prefix = "* ")
+
+                title("No Kotlin/Native target matches the current host")
+                    .description(
+                        """
+                        |'hostNativeTarget()' was called, but Kotlin/Native does not support the current host: $host.
+                        |No target was declared, so tasks for the host target will be missing from this build.
+                        |
+                        |Kotlin/Native supports the following hosts:
+                        |$supportedHostsList
+                        """.trimMargin()
+                    )
+                    .solutions {
+                        listOf(
+                            "Run the build on one of the supported hosts (listed above).",
+                            "Guard the call with 'kotlin.nativeHost.isSupported' if the project must also configure on other hosts.",
+                        )
+                    }
+                    .documentationLink(URI("https://kotlinlang.org/docs/native-target-support.html"))
+            }
+    }
+
     object CrossCompilationWithCinterops : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(projectName: String, target: String, interops: List<String>, hostname: String) =
             build {

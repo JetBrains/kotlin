@@ -540,6 +540,12 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeComp
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 }
 
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinNativeHostExtensionsKt {
+	public static final fun canLinkBinaries (Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;Lorg/jetbrains/kotlin/konan/target/KonanTarget;)Z
+	public static final fun canRunBinaries (Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;Lorg/jetbrains/kotlin/konan/target/KonanTarget;)Z
+	public static final fun getKonanTarget (Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;)Lorg/jetbrains/kotlin/konan/target/KonanTarget;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeSettingsDsl {
 	public abstract fun getCommonizeCInteropMaxWorkers ()Lorg/gradle/api/provider/Property;
 	public abstract fun getCompileMaxWorkers ()Lorg/gradle/api/provider/Property;

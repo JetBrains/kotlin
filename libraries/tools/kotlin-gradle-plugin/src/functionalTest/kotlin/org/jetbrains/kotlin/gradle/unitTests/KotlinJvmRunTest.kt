@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.JavaExec
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
 import kotlin.test.*
 
@@ -165,7 +165,7 @@ class KotlinJvmRunTest {
 
     @Test
     fun `test - jvmRun task is using kotlin configured toolchain - jvm 11`() = buildProjectWithMPP().runLifecycleAwareTest {
-        Assumptions.assumeFalse(HostManager.hostIsMingw, "https://github.com/gradle/native-platform/issues/274")
+        Assumptions.assumeFalse(KotlinNativeHost.current().isWindows, "https://github.com/gradle/native-platform/issues/274")
         val kotlin = multiplatformExtension
         kotlin.jvmToolchain(11)
         kotlin.jvm()
@@ -175,7 +175,7 @@ class KotlinJvmRunTest {
 
     @Test
     fun `test - jvmRun task is using kotlin configured toolchain - jvm 17`() = buildProjectWithMPP().runLifecycleAwareTest {
-        Assumptions.assumeFalse(HostManager.hostIsMingw, "https://github.com/gradle/native-platform/issues/274")
+        Assumptions.assumeFalse(KotlinNativeHost.current().isWindows, "https://github.com/gradle/native-platform/issues/274")
         val kotlin = multiplatformExtension
         kotlin.jvmToolchain(17)
         kotlin.jvm()

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -14,7 +16,6 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProv
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,7 +38,7 @@ class KotlinNativeToolchainTest {
         val compileTask = project.tasks.withType(KotlinNativeCompile::class.java).first()
 
         assertEquals(
-            "kotlin-native-prebuilt-${HostManager.platformName()}-$STABLE_VERSION",
+            "kotlin-native-prebuilt-${KotlinNativeHost.current().name}-$STABLE_VERSION",
             (compileTask.kotlinNativeProvider.get() as KotlinNativeFromToolchainProvider).kotlinNativeBundleVersion.get()
         )
     }
@@ -63,7 +64,7 @@ class KotlinNativeToolchainTest {
 
     private fun prepareProjectWithEnabledKlibsCrossCompilation(): Project {
         // we support all apple targets on MacOs, so this test should run only on Windows and Linux
-        Assumptions.assumeTrue(!HostManager.hostIsMac)
+        Assumptions.assumeTrue(!KotlinNativeHost.current().isSupportedMacOs)
 
         val project = buildProjectWithMPP {
             setUpKotlinNativeToolchainWithStableVersion()

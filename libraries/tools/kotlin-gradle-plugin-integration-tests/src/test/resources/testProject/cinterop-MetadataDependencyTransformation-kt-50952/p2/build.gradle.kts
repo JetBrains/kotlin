@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     kotlin("multiplatform")
@@ -8,6 +8,7 @@ plugins {
 val dependencyMode = providers.gradleProperty("dependencyMode")
 val enableAdditionalTarget = providers.gradleProperty("p2.enableAdditionalTarget")
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     linuxX64()
     linuxArm64()
@@ -16,8 +17,9 @@ kotlin {
         mingwX64()
     }
 
+    val host = nativeHost
     targets.withType<KotlinNativeTarget>().configureEach {
-        if (!HostManager().isEnabled(konanTarget)) {
+        if (!host.canLinkBinaries(konanTarget.name)) {
             error("Expected all targets to be supported. $konanTarget is disabled on this host!")
         }
     }

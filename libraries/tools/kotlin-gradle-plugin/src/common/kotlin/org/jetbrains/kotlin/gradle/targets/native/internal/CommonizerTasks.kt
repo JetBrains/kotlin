@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromTool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import java.io.File
 import javax.inject.Inject
 
@@ -122,7 +122,7 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
 }
 
 private suspend fun Project.isCommonizeCInteropTaskRegistrationEnabled(): Boolean {
-    if (!HostManager.hostIsSupported) {
+    if (!KotlinNativeHost.current().isSupported) {
         logger.debug("[${project.path}] $commonizeCInteropTaskName task registration disabled. Host is not supported.")
         return false
     }
