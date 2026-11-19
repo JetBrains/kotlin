@@ -67,7 +67,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 }
             } else {
                 checkPrimaryConstructorParameters(declaration, primaryConstructor, lombokService)
-                checkBodyBuilderProperties(declaration, primaryConstructor)
+                checkBodyBuilderProperties(declaration, primaryConstructor, lombokService)
                 checkToBuilderCanObtainValues(declaration, classBuilder, primaryConstructor)
             }
         }
@@ -167,7 +167,11 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
      * from that parameter's builder field (and is what `toBuilder()` reads it back from), so both are left alone.
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkBodyBuilderProperties(declaration: FirRegularClass, primaryConstructor: FirConstructorSymbol) {
+    private fun checkBodyBuilderProperties(
+        declaration: FirRegularClass,
+        primaryConstructor: FirConstructorSymbol,
+        lombokService: LombokService,
+    ) {
         val parameterNames = primaryConstructor.valueParameterSymbols.mapTo(mutableSetOf()) { it.name }
 
         declaration.processAllDeclarations(context.session) { symbol ->
@@ -175,6 +179,17 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             val name = property.name
             if (property.fromPrimaryConstructor || name.isSpecial) return@processAllDeclarations
             if (property.origin != FirDeclarationOrigin.Source) return@processAllDeclarations
+
+            val singularAnnotation = property.backingFieldSymbol?.getCompilerRequiredAnnotationByClassId(LombokNames.SINGULAR_ID)
+            val defaultAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID)
+
+            if (singularAnnotation != null) {
+                checkSingular(property, singularAnnotation, lombokService)
+
+                if (defaultAnnotation != null) {
+                    reporter.reportOn(defaultAnnotation.source, LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED, context)
+                }
+            }
 
             val whyNotIncluded = with(AbstractBuilderGenerator) {
                 property.whyNotIncludedInBuilder(parameterNames, resolveInProcess = false)

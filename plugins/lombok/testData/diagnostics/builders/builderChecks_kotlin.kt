@@ -68,10 +68,10 @@ class BodyPropertiesAreNotBuilderFields(val id: Int, extra: String) {
     <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Builder.Default<!>
     val <!BUILDER_PROPERTY_NOT_INCLUDED!>defaulted<!>: Int = 1
 
-    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular<!>
+    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY, CANNOT_SINGULARIZE_NAME!>@Singular<!>
     val <!BUILDER_PROPERTY_NOT_INCLUDED!>sheep<!>: List<String> = emptyList()
 
-    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY!>@Singular("thing")<!>
+    <!BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY, UNSUPPORTED_SINGULAR_TYPE!>@Singular("thing")<!>
     val <!BUILDER_PROPERTY_NOT_INCLUDED!>things<!>: Array<String> = emptyArray()
 }
 
