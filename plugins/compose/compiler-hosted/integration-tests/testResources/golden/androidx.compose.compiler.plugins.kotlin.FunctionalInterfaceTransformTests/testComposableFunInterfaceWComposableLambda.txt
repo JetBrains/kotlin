@@ -31,7 +31,7 @@ fun interface Decoration {
 @FunctionKeyMeta(key = 2083614743, startOffset = 92, endOffset = 275)
 private fun Decorated(boolean: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Decorated)N(boolean)<Decora...>:Test.kt")
+  sourceInformation(%composer, "C(Decorated)N(boolean)<{>,<Decora...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or %composer.changed(boolean) as Int + 1 shl 1
@@ -41,39 +41,44 @@ private fun Decorated(boolean: Boolean, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     Decoratable(<block>{
-      class <no name provided> : Decoration {
-        @Composable
-        @ComposableInferredTarget(scheme = "[0[0]]")
-        @FunctionKeyMeta(key = -1679813187, startOffset = 166, endOffset = 260)
-        override fun Decoration(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-          %composer = %composer.startRestartGroup(<>)
-          sourceInformation(%composer, "C(Decoration)N(content)<conten...>:Test.kt")
-          val %dirty = %changed
-          if (%changed and 0b0110 == 0) {
-            %dirty = %dirty or %composer.changedInstance(content) as Int + 1 shl 1
-          }
-          if (%changed and 0b00110000 == 0) {
-            %dirty = %dirty or %composer.changed(<this>) as Int + 1 shl 4
-          }
-          if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
-            if (isTraceInProgress()) {
-              traceEventStart(<>, %dirty, -1, <>)
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
+        class <no name provided> : Decoration {
+          @Composable
+          @ComposableInferredTarget(scheme = "[0[0]]")
+          @FunctionKeyMeta(key = -835817477, startOffset = 166, endOffset = 260)
+          override fun Decoration(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+            %composer = %composer.startRestartGroup(<>)
+            sourceInformation(%composer, "C(Decoration)N(content)<conten...>:Test.kt")
+            val %dirty = %changed
+            if (%changed and 0b0110 == 0) {
+              %dirty = %dirty or %composer.changedInstance(content) as Int + 1 shl 1
             }
-            used(boolean)
-            content(%composer, 0b1110 and %dirty)
-            if (isTraceInProgress()) {
-              traceEventEnd()
+            if (%changed and 0b00110000 == 0) {
+              %dirty = %dirty or %composer.changed(<this>) as Int + 1 shl 4
             }
-          } else {
-            %composer.skipToGroupEnd()
-          }
-          val tmp0_rcvr = <this>
-          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            tmp0_rcvr.Decoration(content, %composer, updateChangedFlags(%changed or 0b0001))
+            if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %dirty, -1, <>)
+              }
+              used(boolean)
+              content(%composer, 0b1110 and %dirty)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+            } else {
+              %composer.skipToGroupEnd()
+            }
+            val tmp0_rcvr = <this>
+            %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+              tmp0_rcvr.Decoration(content, %composer, updateChangedFlags(%changed or 0b0001))
+            }
           }
         }
+        <no name provided>()
       }
-      <no name provided>()
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
     }, %composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()

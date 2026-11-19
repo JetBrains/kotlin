@@ -46,7 +46,7 @@ private fun Decorated(boolean: Boolean, %composer: Composer?, %changed: Int) {
       class <no name provided> : Decoration {
         @Composable
         @ComposableInferredTarget(scheme = "[0[0]]")
-        @FunctionKeyMeta(key = -1679813187, startOffset = 206, endOffset = 302)
+        @FunctionKeyMeta(key = -835817477, startOffset = 206, endOffset = 302)
         override fun Decoration(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Decoration)N(content)<conten...>:Test.kt")

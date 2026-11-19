@@ -18,6 +18,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 @Suppress("SuspiciousCollectionReassignment")
 class FunctionReferenceBuilder(
@@ -49,11 +51,9 @@ class FunctionReferenceBuilder(
     functionSuperClass: IrClassSymbol,
     private val superType: IrType,
     private val currentDeclarationParent: IrDeclarationParent,
-    private val generatorContext: IrGeneratorContext,
+    private val generatorContext: IrPluginContext,
     private val currentScopeOwnerSymbol: IrSymbol,
     private val irTypeSystemContext: IrTypeSystemContext,
-    // The JS and Wasm backends treat a class of the JVM origins, matched by name, as their own lambda class
-    private val isJvm: Boolean,
     private val singleton: Boolean,
 ) {
     private val callee = irFunctionExpression.function
@@ -64,8 +64,9 @@ class FunctionReferenceBuilder(
         setSourceRange(irFunctionExpression)
         visibility = DescriptorVisibilities.LOCAL
         when {
-            isJvm -> origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
-            // A local object: not expressible in Kotlin, but it references nothing outside
+            // The JVM backend makes a class of this origin a singleton if it captures nothing
+            generatorContext.platform.isJvm() -> origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+            // Local object: not expressible in Kotlin, but it references nothing outside
             singleton -> kind = ClassKind.OBJECT
         }
         name = SpecialNames.NO_NAME_PROVIDED
@@ -81,7 +82,8 @@ class FunctionReferenceBuilder(
         generatorContext,
         currentScopeOwnerSymbol
     ).run {
-        irBlock(irFunctionExpression.startOffset, irFunctionExpression.endOffset) {
+        // A type visible outside the block: the class is declared inside it
+        irBlock(irFunctionExpression.startOffset, irFunctionExpression.endOffset, resultType = superType) {
             val constructor = createConstructor()
             createInvokeMethod()
             functionReferenceClass.addFakeOverrides(irTypeSystemContext)
@@ -92,7 +94,6 @@ class FunctionReferenceBuilder(
 
     private fun createConstructor(): IrConstructor =
         functionReferenceClass.addConstructor {
-            if (isJvm) origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
             returnType = functionReferenceClass.defaultType
             isPrimary = true
         }.apply {
@@ -117,6 +118,8 @@ class FunctionReferenceBuilder(
             returnType = callee.returnType
             isSuspend = callee.isSuspend
         }.apply {
+            // incl. the durable key of the lambda
+            copyAttributes(callee)
             isComposableFunInterfaceImplementation = true
             overriddenSymbols += superMethod
             parameters += parentAsClass.thisReceiver!!.copyTo(this)

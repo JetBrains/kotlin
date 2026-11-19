@@ -64,7 +64,7 @@ fun Test(%composer: Composer?, %changed: Int) {
     Button(<block>{
       class <no name provided> : ButtonColors {
         @Composable
-        @FunctionKeyMeta(key = -1319121241, startOffset = 289, endOffset = 347)
+        @FunctionKeyMeta(key = -1625473610, startOffset = 289, endOffset = 347)
         override fun getColor(%composer: Composer?, %changed: Int): Color {
           %composer.startReplaceGroup(<>)
           sourceInformation(%composer, "C(getColor)<condit...>:Test.kt")
@@ -84,7 +84,7 @@ fun Test(%composer: Composer?, %changed: Int) {
         }
       }
       <no name provided>()
-    }, %composer, 0)
+    }, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

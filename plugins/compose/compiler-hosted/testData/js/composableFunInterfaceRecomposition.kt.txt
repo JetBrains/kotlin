@@ -151,11 +151,11 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
           }
 
           @Composable
-          @FunctionKeyMeta(key = 1511445988, startOffset = 2675, endOffset = 2716)
+          @FunctionKeyMeta(key = 420035636, startOffset = 2675, endOffset = 2716)
           override fun invoke(text: String, /* var */ $composer: Composer?, $changed: Int) {
             var $composer: Composer? = $composer
             { // BLOCK
-              $composer = $composer.startRestartGroup(key = 1511445988)
+              $composer = $composer.startRestartGroup(key = 420035636)
               sourceInformation(composer = $composer, sourceInformation = "C(invoke)87@2685L29:composableFunInterfaceRecomposition.kt")
             }
             val $dirty: Int = $changed
@@ -168,7 +168,7 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
             when {
               $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
                 when {
-                  isTraceInProgress() -> traceEventStart(key = 1511445988, dirty1 = $dirty, dirty2 = -1, info = "App.<no name provided>.invoke (composableFunInterfaceRecomposition.kt:87)")
+                  isTraceInProgress() -> traceEventStart(key = 420035636, dirty1 = $dirty, dirty2 = -1, info = "App.<no name provided>.invoke (composableFunInterfaceRecomposition.kt:87)")
                 }
                 TextNode(text = text.plus(other = <get-suffix>().<get-value>()), $composer = $composer, $changed = 0)
                 when {
@@ -195,7 +195,7 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
         }
 
         <no name provided>
-      }, $composer = $composer, $changed = 0)
+      }, $composer = $composer, $changed = 6)
       ItemList(itemRenderer = inlineRenderer(transform = local fun <anonymous>(it: String): String {
         return uppercase(/* <this> = it */)
       }
@@ -209,11 +209,11 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
           }
 
           @Composable
-          @FunctionKeyMeta(key = 969844771, startOffset = 2778, endOffset = 2819)
+          @FunctionKeyMeta(key = 857552814, startOffset = 2778, endOffset = 2819)
           override fun Content(text: String, /* var */ $composer: Composer?, $changed: Int) {
             var $composer: Composer? = $composer
             { // BLOCK
-              $composer = $composer.startRestartGroup(key = 969844771)
+              $composer = $composer.startRestartGroup(key = 857552814)
               sourceInformation(composer = $composer, sourceInformation = "C(Content)89@2788L29:composableFunInterfaceRecomposition.kt")
             }
             val $dirty: Int = $changed
@@ -226,7 +226,7 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
             when {
               $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
                 when {
-                  isTraceInProgress() -> traceEventStart(key = 969844771, dirty1 = $dirty, dirty2 = -1, info = "App.<no name provided>.Content (composableFunInterfaceRecomposition.kt:89)")
+                  isTraceInProgress() -> traceEventStart(key = 857552814, dirty1 = $dirty, dirty2 = -1, info = "App.<no name provided>.Content (composableFunInterfaceRecomposition.kt:89)")
                 }
                 TextNode(text = text.plus(other = <get-suffix>().<get-value>()), $composer = $composer, $changed = 0)
                 when {
@@ -253,7 +253,7 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
         }
 
         <no name provided>
-      }, $composer = $composer, $changed = 0)
+      }, $composer = $composer, $changed = 6)
       when {
         isTraceInProgress() -> traceEventEnd()
       }
@@ -479,11 +479,11 @@ private inline fun inlineRenderer(crossinline transform: Function1<String, Strin
       }
 
       @Composable
-      @FunctionKeyMeta(key = -92615565, startOffset = 2576, endOffset = 2628)
+      @FunctionKeyMeta(key = 1091166915, startOffset = 2576, endOffset = 2628)
       override fun invoke(text: String, /* var */ $composer: Composer?, $changed: Int) {
         var $composer: Composer? = $composer
         { // BLOCK
-          $composer = $composer.startRestartGroup(key = -92615565)
+          $composer = $composer.startRestartGroup(key = 1091166915)
           sourceInformation(composer = $composer, sourceInformation = "C(invoke)83@2586L40:composableFunInterfaceRecomposition.kt")
         }
         val $dirty: Int = $changed
@@ -496,7 +496,7 @@ private inline fun inlineRenderer(crossinline transform: Function1<String, Strin
         when {
           $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
             when {
-              isTraceInProgress() -> traceEventStart(key = -92615565, dirty1 = $dirty, dirty2 = -1, info = "inlineRenderer.<no name provided>.invoke (composableFunInterfaceRecomposition.kt:83)")
+              isTraceInProgress() -> traceEventStart(key = 1091166915, dirty1 = $dirty, dirty2 = -1, info = "inlineRenderer.<no name provided>.invoke (composableFunInterfaceRecomposition.kt:83)")
             }
             TextNode(text = transform.invoke(p1 = text).plus(other = <get-suffix>().<get-value>()), $composer = $composer, $changed = 0)
             when {

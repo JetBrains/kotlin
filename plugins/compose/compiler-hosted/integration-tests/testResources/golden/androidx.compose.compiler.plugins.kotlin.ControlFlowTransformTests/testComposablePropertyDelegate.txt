@@ -47,7 +47,7 @@ interface ThemeToken<T>  {
 }
 val background: ThemeToken<Int> = class <no name provided> : ThemeToken<Int> {
   @Composable
-  @FunctionKeyMeta(key = 1185942797, startOffset = 522, endOffset = 536)
+  @FunctionKeyMeta(key = -1509659793, startOffset = 522, endOffset = 536)
   override fun MaterialTheme.resolve(%composer: Composer?, %changed: Int): Int {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(resolve):Test.kt")

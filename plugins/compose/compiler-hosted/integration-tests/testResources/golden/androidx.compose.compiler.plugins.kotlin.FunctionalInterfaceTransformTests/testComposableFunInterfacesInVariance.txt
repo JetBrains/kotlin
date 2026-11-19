@@ -39,7 +39,7 @@ fun test() {
   Repro().test(<block>{
     class <no name provided> : Consumer<Any?> {
       @Composable
-      @FunctionKeyMeta(key = 2097238722, startOffset = 315, endOffset = 380)
+      @FunctionKeyMeta(key = 1185521642, startOffset = 315, endOffset = 380)
       override fun consume(string: String, %composer: Composer?, %changed: Int) {
         %composer = %composer.startRestartGroup(<>)
         sourceInformation(%composer, "C(consume)N(string):Test.kt")

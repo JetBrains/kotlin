@@ -24,7 +24,7 @@ fun Example(a: A) {
   Example(<block>{
     class <no name provided> : A {
       @Composable
-      @FunctionKeyMeta(key = -1360105720, startOffset = 206, endOffset = 229)
+      @FunctionKeyMeta(key = -447005325, startOffset = 206, endOffset = 229)
       override fun compute(it: Int, %composer: Composer?, %changed: Int) {
         %composer = %composer.startRestartGroup(<>)
         sourceInformation(%composer, "C(compute)N(it)<comput...>:Test.kt")

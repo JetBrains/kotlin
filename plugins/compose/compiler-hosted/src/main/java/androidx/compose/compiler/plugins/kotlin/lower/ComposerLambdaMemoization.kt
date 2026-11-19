@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -641,16 +642,19 @@ class ComposerLambdaMemoization(
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
         // SAM conversions are handled by Kotlin compiler
         // We only need to make sure that remember is handled correctly around type operator
-        if (
-            expression.operator != IrTypeOperator.SAM_CONVERSION ||
-            currentFunctionContext?.canRemember != true
-        ) {
+        if (expression.operator != IrTypeOperator.SAM_CONVERSION) {
             return super.visitTypeOperator(expression)
         }
 
         // Unwrap function from type operator
         val functionExpression =
             expression.findSamFunctionExpr() ?: return super.visitTypeOperator(expression)
+
+        val isComposableFunInterface = expression.typeOperand.isComposableFunInterface()
+        val functionContext = currentFunctionContext?.takeIf { it.canRemember }
+        if (functionContext == null && !isComposableFunInterface) {
+            return super.visitTypeOperator(expression)
+        }
 
         // Record capture variables for this scope
         val collector = CaptureCollector()
@@ -661,7 +665,30 @@ class ComposerLambdaMemoization(
         val captures = collector.captures.toList()
         val dontMemoize = functionExpression.function.hasAnnotation(ComposeFqNames.DontMemoize)
 
-        return rememberExpression(currentFunctionContext!!, expression, captures, dontMemoize = dontMemoize)
+        if (!isComposableFunInterface) {
+            return rememberExpression(functionContext!!, expression, captures, dontMemoize = dontMemoize)
+        }
+
+        // Singleton if nothing is captured: JVM makes it one itself, elsewhere it's an object, which can't
+        // reference outer type parameters, incl. those of the fun interface type
+        val isSingleton = captures.isEmpty() && (context.platform.isJvm() ||
+                functionExpression.function.collectReferencedOuterTypeParameters(expression.typeOperand).isEmpty())
+        val superType = expression.typeOperand
+        val implementation = FunctionReferenceBuilder(
+            functionExpression,
+            superType.classOrFail,
+            superType,
+            functionExpression.function.parent,
+            context,
+            declarationContextStack.last().declaration.symbol,
+            IrTypeSystemContextImpl(context.irBuiltIns),
+            isSingleton,
+        ).build()
+        return if (functionContext == null) {
+            implementation
+        } else {
+            rememberExpression(functionContext, implementation, captures, isSingleton = isSingleton, dontMemoize = dontMemoize)
+        }
     }
 
     private fun visitNonComposableFunctionExpression(
@@ -993,16 +1020,16 @@ class ComposerLambdaMemoization(
     }
 
     /**
-     * Type parameters declared outside this function and referenced in it, directly or through bounds of other such type parameters,
-     * in the order of declaration: from the outermost container, by index within a container.
+     * Type parameters declared outside this function and referenced in it or in [funInterfaceType], directly or through bounds of other
+     * such type parameters, in the order of declaration: from the outermost container, by index within a container.
      */
-    private fun IrFunction.collectReferencedOuterTypeParameters(): List<IrTypeParameter> {
+    private fun IrFunction.collectReferencedOuterTypeParameters(funInterfaceType: IrType? = null): List<IrTypeParameter> {
         val outerContainers = parents.filter { it is IrTypeParametersContainer && it.typeParameters.isNotEmpty() }.toList()
         // The common case: nothing to reference, don't walk the body.
         if (outerContainers.isEmpty()) return emptyList()
         val function = this
         val referenced = mutableSetOf<IrTypeParameter>()
-        acceptVoid(object : IrTypeVisitorVoid() {
+        val visitor = object : IrTypeVisitorVoid() {
             override fun visitType(container: IrElement, type: IrType) {
                 val typeParameter = type.classifierOrNull?.owner as? IrTypeParameter ?: return
                 if (function in typeParameter.parents) return
@@ -1010,7 +1037,9 @@ class ComposerLambdaMemoization(
                     typeParameter.superTypes.forEach { visitTypeRecursively(typeParameter, it) }
                 }
             }
-        })
+        }
+        acceptVoid(visitor)
+        funInterfaceType?.let { visitor.visitTypeRecursively(this, it) }
         return referenced.sortedWith(compareBy({ -outerContainers.indexOf(it.parent) }, { it.index }))
     }
 
@@ -1196,7 +1225,7 @@ internal object ComposeMemoizedLambdaOrigin : IrStatementOrigin {
         get() = "ComposeMemoizedLambdaOrigin"
 }
 
-internal fun IrType.isComposableFunInterface(): Boolean =
+private fun IrType.isComposableFunInterface(): Boolean =
     classOrNull
         ?.functions
         ?.single { it.owner.modality == Modality.ABSTRACT }

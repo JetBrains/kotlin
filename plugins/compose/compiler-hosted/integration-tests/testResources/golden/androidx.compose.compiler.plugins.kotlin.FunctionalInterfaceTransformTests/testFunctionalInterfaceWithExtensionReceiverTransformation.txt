@@ -72,7 +72,7 @@ fun CallTest(%composer: Composer?, %changed: Int) {
     Test(<block>{
       class <no name provided> : TestContent {
         @Composable
-        @FunctionKeyMeta(key = 1239804493, startOffset = 238, endOffset = 253)
+        @FunctionKeyMeta(key = 320464568, startOffset = 238, endOffset = 253)
         override fun String.Content(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Content):Test.kt")
@@ -101,7 +101,7 @@ fun CallTest(%composer: Composer?, %changed: Int) {
         }
       }
       <no name provided>()
-    }, %composer, 0)
+    }, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
