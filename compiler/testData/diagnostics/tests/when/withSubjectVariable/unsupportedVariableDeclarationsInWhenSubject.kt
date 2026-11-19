@@ -16,6 +16,12 @@ fun testValWithoutInitializerWhenSubject() {
     }
 }
 
+fun testValWithoutInitializerInExhaustiveWhenSubject() {
+    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y: Any<!>) {
+        else -> {}
+    }
+}
+
 fun testVarInWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>var y = foo()<!>) {
         is String -> y.length
@@ -24,6 +30,12 @@ fun testVarInWhenSubject() {
 
 fun testDelegatedValInWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>y<!> by lazy { 42 }<!>) {
+    }
+}
+
+fun testDelegatedValInExhaustiveWhenSubject() {
+    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>y<!> by lazy { 42 }<!>) {
+        else -> {}
     }
 }
 
