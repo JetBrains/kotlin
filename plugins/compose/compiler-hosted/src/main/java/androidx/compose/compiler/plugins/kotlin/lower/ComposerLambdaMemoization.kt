@@ -1051,23 +1051,24 @@ class ComposerLambdaMemoization(
         return referenced.sortedWith(compareBy({ -outerContainers.indexOf(it.parent) }, { it.index }))
     }
 
+    // Kotlin/JS doesn't have an optimization for non-capturing lambdas
+    // https://youtrack.jetbrains.com/issue/KT-49923
+    // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization on Android.
+    private val memoizeLambdasWithoutCaptures = context.platform.isJs() || context.platform.isJvm()
+
+    /**
+     * @param isSingleton [expression] is the same instance every time, no need to remember it
+     * @param dontMemoize the lambda of [expression] is `@DontMemoize`
+     */
     private fun rememberExpression(
         functionContext: FunctionContext,
         expression: IrExpression,
         captures: List<IrValueDeclaration>,
-    ): IrExpression {
-        val memoizeLambdasWithoutCaptures =
-        // Kotlin/JS doesn't have an optimization for non-capturing lambdas
-            // https://youtrack.jetbrains.com/issue/KT-49923
-            context.platform.isJs() ||
-                    (
-                            // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
-                            // on Android.
-                            context.platform.isJvm()
-                            )
-
         // If the function doesn't capture, Kotlin's default optimization is sufficient
-        if (!memoizeLambdasWithoutCaptures && captures.isEmpty()) {
+        isSingleton: Boolean = !memoizeLambdasWithoutCaptures && captures.isEmpty(),
+        dontMemoize: Boolean = expression.hasDontMemoizeAnnotation,
+    ): IrExpression {
+        if (isSingleton) {
             metrics.recordLambda(
                 composable = false,
                 memoized = true,
@@ -1083,7 +1084,7 @@ class ComposerLambdaMemoization(
         // - inlined lambdas.
         if (
             functionContext.declaration.hasAnnotation(ComposeFqNames.DontMemoize) ||
-            expression.hasDontMemoizeAnnotation ||
+            dontMemoize ||
             captures.any {
                 it.isVar() ||
                         it.isPropertyReferenceDelegate() ||
