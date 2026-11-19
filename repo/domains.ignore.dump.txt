@@ -178,6 +178,7 @@ ignored:
  - repo/gradle-build-conventions/test-data-manager-convention/README.md
  - repo/gradle-build-conventions/test-inputs-check/README.md
  - repo/gradle-settings-conventions/README.md
+ - repo/test-inventory-fixture/ReadMe.md
  - repo/test-runtime/ReadMe.md
  - spec-docs/ReadMe.md
  - test-instrumenter/README.md
