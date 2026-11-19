@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
@@ -53,6 +54,7 @@ class FunctionReferenceBuilder(
     private val generatorContext: IrPluginContext,
     private val currentScopeOwnerSymbol: IrSymbol,
     private val irTypeSystemContext: IrTypeSystemContext,
+    private val singleton: Boolean,
 ) {
     private val callee = irFunctionExpression.function
     private val superMethod =
@@ -61,8 +63,12 @@ class FunctionReferenceBuilder(
     private val functionReferenceClass = generatorContext.irFactory.buildClass {
         setSourceRange(irFunctionExpression)
         visibility = DescriptorVisibilities.LOCAL
-        // The JVM backend makes a class of this origin a singleton if it captures nothing
-        if (generatorContext.platform.isJvm()) origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+        when {
+            // The JVM backend makes a class of this origin a singleton if it captures nothing
+            generatorContext.platform.isJvm() -> origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+            // Local object: not expressible in Kotlin, but it references nothing outside
+            singleton -> kind = ClassKind.OBJECT
+        }
         name = SpecialNames.NO_NAME_PROVIDED
     }.apply {
         parent = currentDeclarationParent
@@ -82,7 +88,7 @@ class FunctionReferenceBuilder(
             createInvokeMethod()
             functionReferenceClass.addFakeOverrides(irTypeSystemContext)
             +functionReferenceClass
-            +irCall(constructor.symbol)
+            +if (functionReferenceClass.isObject) irGetObject(functionReferenceClass.symbol) else irCall(constructor.symbol)
         }
     }
 

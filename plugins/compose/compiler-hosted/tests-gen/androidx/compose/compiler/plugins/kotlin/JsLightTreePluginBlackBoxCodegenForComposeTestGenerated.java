@@ -34,6 +34,12 @@ public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("composableFunInterfaceOutsideCompositionIsSingleton.kt")
+  public void testComposableFunInterfaceOutsideCompositionIsSingleton() {
+    run("composableFunInterfaceOutsideCompositionIsSingleton.kt");
+  }
+
+  @Test
   @TestMetadata("composableFunInterfaceRecomposition.kt")
   public void testComposableFunInterfaceRecomposition() {
     run("composableFunInterfaceRecomposition.kt");
