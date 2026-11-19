@@ -10,15 +10,11 @@ import org.jetbrains.kotlin.build.report.*
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
@@ -26,49 +22,9 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.getClasspathChanges
 import org.jetbrains.kotlin.incremental.dirtyFiles.getRemovedClassesChanges
 import org.jetbrains.kotlin.incremental.js.*
-import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
-
-fun makeJsIncrementally(
-    cachesDir: File,
-    sourceRoots: Iterable<File>,
-    args: K2JSCompilerArguments,
-    buildHistoryFile: File,
-    messageCollector: MessageCollector = MessageCollector.NONE,
-    reporter: ICReporter = DoNothingICReporter,
-    modulesApiHistory: ModulesApiHistory = EmptyModulesApiHistory,
-    providedChangedFiles: ChangedFiles? = null,
-) {
-    val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
-        .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
-
-    val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
-    withJsIC(args) {
-        val compiler = IncrementalJsCompilerRunner(
-            cachesDir, buildReporter,
-            buildHistoryFile = buildHistoryFile,
-            modulesApiHistory = modulesApiHistory,
-        )
-        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles ?: ChangedFiles.DeterminableFiles.ToBeComputed)
-    }
-}
-
-@Suppress("DEPRECATION")
-inline fun <R> withJsIC(args: CommonCompilerArguments, enabled: Boolean = true, fn: () -> R): R {
-    val isJsEnabledBackup = IncrementalCompilation.isEnabledForJs()
-    IncrementalCompilation.setIsEnabledForJs(true)
-
-    try {
-        if (args.incrementalCompilation == null) {
-            args.incrementalCompilation = enabled
-        }
-        return fn()
-    } finally {
-        IncrementalCompilation.setIsEnabledForJs(isJsEnabledBackup)
-    }
-}
 
 abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArguments>(
     workingDir: File,
