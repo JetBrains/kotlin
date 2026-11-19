@@ -75,6 +75,7 @@ private fun AbstractTestDataModuleTask.wireOptions(extension: TestDataManagerExt
     testClassPattern.convention(project.providers.gradleProperty(TestDataManagerOption.TEST_CLASS_PATTERN))
     goldenOnly.convention(project.providers.gradleProperty(TestDataManagerOption.GOLDEN_ONLY).map { it.toBoolean() })
     incremental.convention(project.providers.gradleProperty(TestDataManagerOption.INCREMENTAL).map { it.toBoolean() })
+    runId.convention(project.providers.gradleProperty(TestDataManagerOption.RUN_ID))
 
     /**
      * The `Test` task configured exactly like the module's `test`, but never executed (see `createGeneralTestTask`).
@@ -147,4 +148,7 @@ private fun AbstractTestDataModuleTask.wireOptions(extension: TestDataManagerExt
     // the repository-relative form of a module-relative path. `rootDir` is allowed with Isolated Projects.
     systemProperty(TestDataManagerOption.ROOT_DIR, project.rootDir.absolutePath)
     systemProperty(TestDataManagerOption.PROJECT_DIR, project.projectDir.absolutePath)
+
+    // The machine-readable reports, `<runId>.json`, go into the module's own build directory
+    reportDirectory.convention(project.layout.buildDirectory.dir("test-data-manager"))
 }
