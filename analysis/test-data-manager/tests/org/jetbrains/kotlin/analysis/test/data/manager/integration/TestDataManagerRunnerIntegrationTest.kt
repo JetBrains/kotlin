@@ -84,6 +84,7 @@ internal class TestDataManagerRunnerIntegrationTest {
             outcome.runErrors.forEach { add("run error: ${it.replace(tempDir.toString(), "<root>")}") }
             outcome.problems.map { "${it.kind} ${tempDir.relativize(it.file)} (${it.testName})" }.sorted().forEach(::add)
             outcome.errors.map { "error: ${it.testName} - ${it.exception}" }.sorted().forEach(::add)
+            outcome.fileActions.map { "${it.kind} ${tempDir.relativize(it.file)}" }.sorted().forEach(::add)
             testDataDirectory.listDirectoryEntries("*.txt").sortedBy { it.name }.forEach { add("${it.name}: ${it.readText().trim()}") }
         }.joinToString("\n")
     }
@@ -173,6 +174,8 @@ internal class TestDataManagerRunnerIntegrationTest {
             """
                 tests: 7, passed: 7, failed: 0, skipped: 0
                 executions: 7, successful: true
+                CREATED runner/second.js.txt
+                UPDATED runner/first.txt
                 first.txt: new
                 second.js.txt: js second
             """.trimIndent(),
@@ -190,10 +193,46 @@ internal class TestDataManagerRunnerIntegrationTest {
             """
                 tests: 7, passed: 6, failed: 0, skipped: 1
                 executions: 6, successful: true
+                UPDATED runner/first.txt
                 first.txt: new
                 second.txt: second
             """.trimIndent(),
             run(TestDataManagerMode.UPDATE, incremental = true),
+        )
+    }
+
+    @Test
+    fun `file written by two groups is listed once with its net effect`() {
+        setupFiles("first.txt" to "golden")
+        FakeRunnerScenario.outputs["first"] = "golden"
+        FakeRunnerScenario.outputs["js:first"] = "js"
+        FakeRunnerScenario.outputs["knmJs:first"] = "knm js"
+
+        assertEquals(
+            """
+                tests: 7, passed: 7, failed: 0, skipped: 0
+                executions: 7, successful: true
+                CREATED runner/first.js.txt
+                first.js.txt: knm js
+                first.txt: golden
+            """.trimIndent(),
+            run(TestDataManagerMode.UPDATE),
+        )
+    }
+
+    @Test
+    fun `file created by one group and deleted by another is not listed`() {
+        setupFiles("first.txt" to "golden")
+        FakeRunnerScenario.outputs["first"] = "golden"
+        FakeRunnerScenario.outputs["js:first"] = "js"
+
+        assertEquals(
+            """
+                tests: 7, passed: 7, failed: 0, skipped: 0
+                executions: 7, successful: true
+                first.txt: golden
+            """.trimIndent(),
+            run(TestDataManagerMode.UPDATE),
         )
     }
 
