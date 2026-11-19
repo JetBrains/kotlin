@@ -78,8 +78,13 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
 
         val actual = buildList {
             listener.getMismatchesByPath().forEach { [path, chains] -> add("mismatch: $path $chains") }
-            listener.getTestDataProblems().values.flatten().map { "problem: ${it.testName} ${it.kind} ${tempDir.relativize(it.file)}" }.sorted().forEach(::add)
-            listener.getTestErrors().values.flatten().forEach { add("error: ${it.testName} - ${it.exception}") }
+            listener.getTestDataProblems().values.flatten().sortedBy { it.file }.forEach { problem ->
+                add("problem: ${problem.testName} ${problem.kind} ${tempDir.relativize(problem.file)}")
+                problem.comparedFile?.let { add("  compared with: ${tempDir.relativize(it)}") }
+                problem.actual?.let { add("  actual: ${it.trim()}") }
+            }
+
+            listener.getTestErrors().values.flatten().forEach { add("error: ${it.testName} - ${it.exceptionClass}: ${it.message}") }
             listener.getTestsWithErrors().forEach { _ -> add("failed test") }
         }.joinToString("\n")
 
@@ -95,6 +100,24 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
             expected = """
                 mismatch: testData/analysis/api/symbols.kt [[]]
                 problem: FakeGoldenAnalysisApiTestGenerated.testSymbols MISMATCH test.txt
+                  compared with: test.txt
+                  actual: actual
+                failed test
+            """,
+        )
+    }
+
+    @Test
+    fun `variant mismatch is compared with the less specific file`() {
+        setupFiles("test.txt" to "golden")
+        assertClassified(
+            variantChain = listOf("js"),
+            actual = "actual",
+            expected = """
+                mismatch: testData/analysis/api/symbols.kt [[]]
+                problem: FakeGoldenAnalysisApiTestGenerated.testSymbols MISMATCH test.js.txt
+                  compared with: test.txt
+                  actual: actual
                 failed test
             """,
         )
@@ -108,6 +131,7 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
             expected = """
                 mismatch: testData/analysis/api/symbols.kt [[]]
                 problem: FakeGoldenAnalysisApiTestGenerated.testSymbols MISSING_FILE test.txt
+                  actual: actual
                 failed test
             """,
         )
@@ -122,6 +146,7 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
             expected = """
                 mismatch: testData/analysis/api/symbols.kt [[]]
                 problem: FakeGoldenAnalysisApiTestGenerated.testSymbols REDUNDANT_FILE test.js.txt
+                  compared with: test.txt
                 failed test
             """,
         )
@@ -162,7 +187,11 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
             expected = """
                 mismatch: testData/analysis/api/symbols.kt [[]]
                 problem: FakeGoldenAnalysisApiTestGenerated.testSymbols MISMATCH other.txt
+                  compared with: other.txt
+                  actual: actual
                 problem: FakeGoldenAnalysisApiTestGenerated.testSymbols MISMATCH test.txt
+                  compared with: test.txt
+                  actual: actual
                 failed test
             """,
         )
@@ -173,7 +202,7 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
         assertClassified(
             failure = IllegalStateException("Broken"),
             expected = """
-                error: FakeGoldenAnalysisApiTestGenerated.testSymbols - IllegalStateException: Broken
+                error: FakeGoldenAnalysisApiTestGenerated.testSymbols - java.lang.IllegalStateException: Broken
                 failed test
             """,
         )

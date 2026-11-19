@@ -53,20 +53,45 @@ internal data class VariantChainConflict(
 }
 
 /**
- * Represents a test error with formatted test name and exception.
+ * A failed test whose failure is not a [TestDataProblem].
+ *
+ * @property testName the test as `Class.method`
+ * @property testDataPath the `@TestMetadata` path of the test, if any
+ * @property exceptionClass the fully qualified class of the exception
+ * @property stackTrace the top frames of the exception, down to the first frame of the test class
  */
 internal data class TestError(
     val testName: String,
-    val exception: String,
-)
+    val testDataPath: String?,
+    val variantChain: TestVariantChain,
+    val exceptionClass: String,
+    val message: String?,
+    val stackTrace: List<String>,
+) {
+    /** One line for the console summary: the simple class name and the start of the message. */
+    val exception: String
+        get() {
+            val name = exceptionClass.substringAfterLast('.')
+            val shortMessage = message?.lineSequence()?.first()?.let { if (it.length > 100) it.take(100) + "..." else it }
+            return if (shortMessage.isNullOrEmpty()) name else "$name: $shortMessage"
+        }
+}
 
 /**
  * A test data file that doesn't match the output of [testName], from a [TestDataAssertionError].
+ *
+ * @property file the file `updateTestData` would create, update or delete
+ * @property comparedFile the existing file the output was compared with, see [TestDataAssertionError.comparedFile]
+ * @property actual the actual output, for the kinds that compare it with a file
  */
 internal data class TestDataProblem(
     val testName: String,
+    val testDataPath: String?,
+    val variantChain: TestVariantChain,
     val kind: TestDataAssertionError.Kind,
     val file: Path,
+    val comparedFile: Path?,
+    val actual: String?,
 )
 
 /**
