@@ -38,7 +38,7 @@ internal class KotlinWasmD8(
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,
-        nodeJsArgs: MutableList<String>,
+        toolArgs: MutableList<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val compiledFile = task.inputFileProperty.get().asFile
