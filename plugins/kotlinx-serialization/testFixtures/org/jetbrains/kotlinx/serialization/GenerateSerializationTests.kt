@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.generators.tests.standalone
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlinx.serialization.matrix.cases.enumsTestMatrix
@@ -21,8 +20,6 @@ import org.junit.jupiter.api.Tag
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
-
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(
             "plugins/kotlinx-serialization/tests-gen",
@@ -30,12 +27,12 @@ fun main(args: Array<String>) {
         ) {
             // ------------------------------- diagnostics -------------------------------
             testClass<AbstractSerializationFirLightTreeDiagnosticTest> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics")
                 model("firMembers")
             }
 
             testClass<AbstractSerializationJsDiagnosticTest> {
-                model("diagnosticsJs", excludedPattern = excludedFirTestdataPattern)
+                model("diagnosticsJs")
             }
 
             // ------------------------------- asm instructions -------------------------------
@@ -89,7 +86,7 @@ fun main(args: Array<String>) {
         testGroup(testsRoot = "plugins/kotlinx-serialization/tests-gen", testDataRoot = "plugins/kotlinx-serialization/testData") {
             run {
                 fun TestGroup.TestClass.diagnosticsModelInit() {
-                    model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                    model("diagnostics")
                     model("firMembers")
                 }
 

@@ -6,20 +6,19 @@
 package org.jetbrains.kotlin.noarg
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/noarg/testData") {
             testClass<AbstractNoArgDiagnosticsTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("diagnostics")
             }
             testClass<AbstractLLNoArgDiagnosticsTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("diagnostics")
             }
             testClass<AbstractFirLightTreeBytecodeListingTestForNoArg> {
-                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("bytecodeListing")
             }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForNoArg> {
                 model("box")

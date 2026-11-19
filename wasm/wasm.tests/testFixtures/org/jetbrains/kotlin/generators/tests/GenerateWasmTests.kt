@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_UNDERSCORE_PREFIX
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.WITHOUT_UNDERSCORE_PREFIX
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationMultiModuleTest
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLMultiModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLSingleModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLTest
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.wasm.test.*
 import org.jetbrains.kotlin.wasm.test.diagnostics.*
 
@@ -121,17 +119,17 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/diagnostics") {
             testClass<AbstractWasmJsDiagnosticTest> {
-                model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-                model("tests/defaultArguments", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-                model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-                model("testsWithAnyBackend", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-                model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("wasmTests")
+                model("tests/defaultArguments")
+                model("wasmDiagnosticsKlibTests")
+                model("testsWithAnyBackend")
+                model("irInliner")
             }
 
             testClass<AbstractWasmWasiDiagnosticTest> {
-                model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-                model("wasmDiagnosticsKlibTests/wasmExport", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-                model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("wasmWasiTests")
+                model("wasmDiagnosticsKlibTests/wasmExport")
+                model("irInliner")
             }
         }
 
