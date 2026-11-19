@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -37,8 +40,11 @@ projectTests {
     testTask {
         outputs.dir(layout.buildDirectory.dir("t"))
         useJUnitPlatform()
+
+        testFederation {
+            contractTestsFor(Js)
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt", generateTestsInBuildDirectory = true)
 }
-

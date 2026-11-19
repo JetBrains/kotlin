@@ -3,6 +3,9 @@ import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.Domain.Frontend
 import org.jetbrains.kotlin.testFederation.testFederation
 import java.util.*
 
@@ -159,14 +162,26 @@ projectTests {
             useJUnitPlatform { excludeTags(swcTag) }
         }
         setUpJsBoxTests()
+
+        testFederation {
+            contractTestsFor(Frontend, CommonBackend, AnalysisApi)
+        }
     }
 
     jsTestTask(taskName = "jsTest", tag = "!es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
         setUpJsBoxTests()
+
+        testFederation {
+            contractTestsFor(Frontend, CommonBackend, AnalysisApi)
+        }
     }
 
     jsTestTask(taskName = "jsES6Test", tag = "es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
         setUpJsBoxTests()
+
+        testFederation {
+            contractTestsFor(AnalysisApi)
+        }
     }
 
     jsTestTask(taskName = "jsES5InlineAnonymousFunctionsTest", tag = "!es6 & jsInlineAnonymousFunctions", skipInLocalBuild = true) {
@@ -192,6 +207,11 @@ projectTests {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         include("org/jetbrains/kotlin/incremental/*")
         forwardProperties()
+
+        testFederation {
+            smokeTests()
+            contractTestsFor(Frontend, CommonBackend, AnalysisApi)
+        }
     }
 
     testData(project(":compiler").isolated, "testData/diagnostics")

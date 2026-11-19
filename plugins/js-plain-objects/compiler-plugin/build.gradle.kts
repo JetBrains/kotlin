@@ -1,6 +1,11 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.Domain.Frontend
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.testFederation
 
 description = "JavaScript Plain Objects Compiler Plugin"
 
@@ -68,6 +73,10 @@ javadocJar()
 
 projectTests {
     testTask {
+        testFederation {
+            contractTestsFor(Frontend, CommonBackend, Js, AnalysisApi)
+        }
+
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         addClasspathProperty(jsoIrRuntimeForTests, "jso.runtime.path")
     }

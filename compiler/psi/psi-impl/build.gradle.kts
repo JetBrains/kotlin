@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -53,7 +55,11 @@ sourceSets {
 }
 
 projectTests {
-    testTask()
+    testTask {
+        testFederation {
+            smokeTests()
+        }
+    }
 
     testGenerator("org.jetbrains.kotlin.TestGeneratorForPsiImplKt")
 

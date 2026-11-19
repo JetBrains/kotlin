@@ -1,6 +1,7 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
 import org.jetbrains.kotlin.testFederation.testFederation
 import java.util.*
 
@@ -391,6 +392,7 @@ projectTests {
             smokeTests {
                 includeAutoSamples(percentage = 1)
             }
+            contractTestsFor(CommonBackend)
         }
     }
 
@@ -398,15 +400,27 @@ projectTests {
     // Tests without any of the group tags are run by the `wasmMiscTest` task.
     // The `wasmFirCompilerExtraTest` task is excluded from aggregate `wasmFirCompilerTest` task.
     wasmProjectTest("wasmFirCompilerExtraTest", tags = extraTag)
-    wasmProjectTest("wasmJsBoxTest", tags = jsBoxTag)
+    wasmProjectTest("wasmJsBoxTest", tags = jsBoxTag) {
+        testFederation {
+            smokeTests()
+        }
+    }
     wasmProjectTest("wasmJsBoxWithJscOnWindows", tags = jsBoxTag) {
         systemProperty("javascript.engine.JavaScriptCore.EnableOnWindows", "true")
+
+        testFederation {
+            smokeTests()
+        }
     }
     wasmProjectTest("wasmJsSplittingTest", tags = jsSplittingTag)
     wasmProjectTest("wasmJsMultiModuleTest", tags = jsMultiModuleTag)
     wasmProjectTest("wasmWasiBoxTest", tags = wasiBoxTag)
     wasmProjectTest("wasmIcTest", tags = "$icTag & !$extraTag")
-    wasmProjectTest("wasmMiscTest", tags = allTags.joinToString(" & ") { "!$it" })
+    wasmProjectTest("wasmMiscTest", tags = allTags.joinToString(" & ") { "!$it" }) {
+        testFederation {
+            contractTestsFor(CommonBackend)
+        }
+    }
 
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")

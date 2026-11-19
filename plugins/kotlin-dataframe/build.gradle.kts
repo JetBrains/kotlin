@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -47,6 +51,10 @@ projectTests {
 
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_1_8)) {
         addClasspathProperty(dataframeRuntimeClasspath, "kotlin.dataframe.plugin.test.classpath")
+
+        testFederation {
+            contractTestsFor(Jvm, AnalysisApi)
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.fir.dataframe.TestGeneratorKt", generateTestsInBuildDirectory = true)

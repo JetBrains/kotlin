@@ -1,6 +1,11 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -185,6 +190,10 @@ projectTests {
             // Kotlin/Native tests are launched by the `nativeTest` task.
             excludeTags("compose-native")
         }
+
+        testFederation {
+            contractTestsFor(CommonBackend, Jvm, Js, AnalysisApi)
+        }
     }
 
     nativeTestTask(
@@ -210,4 +219,3 @@ projectTests {
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()
 }
-
