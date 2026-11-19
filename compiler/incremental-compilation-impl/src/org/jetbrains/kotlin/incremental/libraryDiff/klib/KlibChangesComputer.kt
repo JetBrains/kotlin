@@ -126,11 +126,23 @@ internal object KlibChangesComputer {
         is PackageFragmentSnapshot -> packageFragmentProto != null
     }
 
-    @Suppress("unused")
     private fun computeCoarseGrainedChanges(
         currentSnapshots: List<KlibSnapshot>,
         previousSnapshots: List<KlibSnapshot>,
-    ): ProgramSymbolSet = TODO("KT-90559: coarse-grained klib changes")
+    ): ProgramSymbolSet {
+        // Note: We have removed unchanged snapshots earlier in computeChangedAndImpactedSet method, so here we only have changed ones.
+        return ProgramSymbolSet.Collector().run {
+            (currentSnapshots + previousSnapshots).forEach {
+                when (it) {
+                    is PackageFragmentSnapshot -> {
+                        addClasses(it.classInfos.map { classInfo -> classInfo.classId })
+                        addPackageMembers(it.packageName, it.packageMemberNames)
+                    }
+                }
+            }
+            getResult()
+        }
+    }
 
     @Suppress("unused")
     private fun computeFineGrainedChanges(
