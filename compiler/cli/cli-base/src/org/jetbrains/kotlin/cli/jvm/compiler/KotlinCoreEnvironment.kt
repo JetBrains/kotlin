@@ -201,6 +201,7 @@ class KotlinCoreEnvironment private constructor(
             javaFileManager::findClassOnClasspath,
             releaseTarget,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
+            rootEntries = classpathIndexes.rootEntryFactory,
         )
 
         (val initialRoots = roots, val javaModules = modules) = classpathRootsResolver.convertClasspathRoots(contentRoots)

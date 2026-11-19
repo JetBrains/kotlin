@@ -32,9 +32,10 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntry
+import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntryFactory
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
-import org.jetbrains.kotlin.cli.jvm.modules.readJavaModuleInfo
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -53,6 +54,8 @@ import kotlin.LazyThreadSafetyMode.NONE
 /**
  * @param findClassOnClasspath Resolves the annotation classes of a `module-info` anywhere on the classpath, lazily: the
  *  classpath index is built from the roots computed here, so the lookup fails if it runs while the roots are computed.
+ * @param rootEntries The entries through which `module-info.class` files and manifests of binary roots are read; the modules
+ *  themselves keep the [VirtualFile]s of their roots and descriptors.
  */
 class ClasspathRootsResolver(
     private val configuration: CompilerConfiguration,
@@ -64,6 +67,7 @@ class ClasspathRootsResolver(
     private val findClassOnClasspath: ClassIdToJavaClass,
     private val jdkRelease: Int?,
     hasKotlinSources: Boolean,
+    private val rootEntries: JvmRootEntryFactory = JvmRootEntryFactory.VFS,
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
@@ -200,17 +204,27 @@ class ClasspathRootsResolver(
 
     private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
         val isJar = root.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL
-        val manifest = lazy(NONE) { readManifestAttributes(root) }
+        val javaRoot = JavaRoot(root, JavaRoot.RootType.BINARY)
+        val rootEntry = rootEntries.createRootEntry(javaRoot)
+        val metaInf by lazy(NONE) { rootEntry.findChild(META_INF) }
+        val manifest = lazy(NONE) { readManifestAttributes(metaInf, javaRoot) }
 
-        val moduleInfoFile = ModuleInfoClassSelection.select(
-            rootModuleInfo = root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE),
+        val moduleInfoEntry = ModuleInfoClassSelection.select(
+            rootModuleInfo = rootEntry.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)?.let { PsiJavaModule.MODULE_INFO_CLS_FILE to it },
             isJar = isJar,
             isMultiRelease = { ModuleInfoClassSelection.isMultiReleaseJar(manifest.value) },
-            versionedModuleInfos = { findVersionSpecificModuleInfos(root) },
+            versionedModuleInfos = { findVersionSpecificModuleInfos(metaInf) },
         )
 
-        if (moduleInfoFile != null) {
-            val moduleInfo = readJavaModuleInfo(moduleInfoFile, findClassOnClasspathAfterRoots) ?: return null
+        if (moduleInfoEntry != null) {
+            val [relativePath, entry] = moduleInfoEntry
+            val moduleInfoFile = root.findFileByRelativePath(relativePath) ?: return null
+            val handle = entry.toHandle(javaRoot)
+            val moduleInfo = try {
+                JavaModuleInfo.read(handle.readBytes(), handle.pathForDiagnostics, findClassOnClasspathAfterRoots)
+            } catch (_: IOException) {
+                null
+            } ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
 
@@ -235,18 +249,23 @@ class ClasspathRootsResolver(
         return null
     }
 
-    /** The `module-info.class` files under `META-INF/versions/<n>/`, keyed by `<n>` (see [ModuleInfoClassSelection.select]). */
-    private fun findVersionSpecificModuleInfos(root: VirtualFile): Map<String, VirtualFile> {
-        val versionsDir = root.findChild("META-INF")?.findChild("versions") ?: return emptyMap()
+    /**
+     * The `module-info.class` entries under `META-INF/versions/<n>/` with their paths relative to the root, keyed by `<n>`
+     * (see [ModuleInfoClassSelection.select]).
+     */
+    private fun findVersionSpecificModuleInfos(metaInf: JvmRootEntry?): Map<String, Pair<String, JvmRootEntry>> {
+        val versionsDir = metaInf?.findChild("versions") ?: return emptyMap()
         return versionsDir.children.mapNotNull { versionDir ->
-            versionDir.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)?.let { versionDir.name to it }
+            versionDir.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)?.let {
+                versionDir.name to ("$META_INF/versions/${versionDir.name}/${PsiJavaModule.MODULE_INFO_CLS_FILE}" to it)
+            }
         }.toMap()
     }
 
-    private fun readManifestAttributes(jarRoot: VirtualFile): Attributes? {
-        val manifestFile = jarRoot.findChild("META-INF")?.findChild("MANIFEST.MF")
+    private fun readManifestAttributes(metaInf: JvmRootEntry?, javaRoot: JavaRoot): Attributes? {
+        val manifestEntry = metaInf?.findChild("MANIFEST.MF") ?: return null
         return try {
-            manifestFile?.inputStream?.let(::Manifest)?.mainAttributes
+            Manifest(manifestEntry.toHandle(javaRoot).readBytes().inputStream()).mainAttributes
         } catch (_: IOException) {
             null
         }
@@ -355,5 +374,6 @@ class ClasspathRootsResolver(
 
     private companion object {
         const val AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"
+        private const val META_INF = "META-INF"
     }
 }

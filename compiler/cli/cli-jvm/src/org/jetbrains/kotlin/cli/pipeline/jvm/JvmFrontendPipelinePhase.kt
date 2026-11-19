@@ -625,6 +625,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val contentRoots = configuration.contentRoots
 
+        val classpathIndexes = JvmClasspathIndexes(configuration).also { Disposer.register(parentDisposable, it::close) }
+
         val classpathRootsResolver = ClasspathRootsResolver(
             configuration,
             additionalModules = configuration.additionalJavaModules,
@@ -635,6 +637,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             javaFileManager::findClassOnClasspath,
             jdkRelease,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
+            rootEntries = classpathIndexes.rootEntryFactory,
         )
 
         (val initialRoots = roots, val javaModules = modules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
@@ -644,7 +647,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         }
 
         // REPL updates classpath dynamically
-        val classpathIndexes = JvmClasspathIndexes(configuration).also { Disposer.register(parentDisposable, it::close) }
         classpathIndexes.addRoots(roots).indexedRoots.forEach {
             projectEnvironment.addSourcesToClasspath(it.file)
         }

@@ -47,8 +47,11 @@ class JvmClasspathIndexes(
 
     private val nioRootEntryFactory = NioRootEntryFactory(jarPool)
 
-    /** The `.kotlin_module` mappings of the roots, read through the entries of [classFinderIndex]. */
-    val moduleMappings = JvmModuleMappings(languageVersionSettings, if (useNioEntries) nioRootEntryFactory else JvmRootEntryFactory.VFS)
+    /** The entries of the roots of [classFinderIndex], also for reading root content outside the index (e.g. module descriptors). */
+    val rootEntryFactory: JvmRootEntryFactory = if (useNioEntries) nioRootEntryFactory else JvmRootEntryFactory.VFS
+
+    /** The `.kotlin_module` mappings of the roots, read through [rootEntryFactory]. */
+    val moduleMappings = JvmModuleMappings(languageVersionSettings, rootEntryFactory)
 
     /** Adds [roots] to both indexes and returns the index over them with VFS entries. */
     fun addRoots(roots: List<JavaRoot>): JvmDependenciesIndex {
