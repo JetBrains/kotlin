@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootBase
 import org.jetbrains.kotlin.cli.jvm.modules.ALL_UNNAMED
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleAccess
+import org.jetbrains.kotlin.cli.jvm.modules.isInJavaModulePatchPaths
 import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModuleAccessOption
 import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModulePatch
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -70,14 +70,9 @@ internal class JavaModuleOptionsResolver(
     fun findModuleWithPatchedSources(sourceRootFiles: List<SourceRootFile>): String? {
         if (patches.isEmpty()) return null
         val sourceFiles = sourceRootFiles.flatMap { (val file, val extension) ->
-            file.walk().filter { it.isFile && (it == file || it.extension == extension) }.map { it.absoluteFile.normalize() }.toList()
+            file.walk().filter { it.isFile && (it == file || it.extension == extension) }.toList()
         }
-        val moduleNames = patches.filterValues { paths ->
-            paths.any { path ->
-                val patchPath = path.absoluteFile.normalize()
-                sourceFiles.any { FileUtil.isAncestor(patchPath, it, true) }
-            }
-        }.keys
+        val moduleNames = patches.filterValues { paths -> sourceFiles.any { isInJavaModulePatchPaths(it, paths) } }.keys
         if (moduleNames.size > 1) {
             reportError("Too many patched modules: ${moduleNames.joinToString { "'$it'" }}.")
             return null

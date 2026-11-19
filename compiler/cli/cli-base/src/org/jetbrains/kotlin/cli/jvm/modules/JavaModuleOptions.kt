@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.modules
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import java.io.File
 
@@ -43,6 +44,14 @@ private val PATCH_MODULE_VALUE = Regex("([^/]+)=(,*[^,].*)")
 fun parseJavaModulePatch(value: String): Pair<String, List<String>>? {
     if (!PATCH_MODULE_VALUE.matches(value)) return null
     return value.substringBefore('=') to value.substringAfter('=').split(File.pathSeparatorChar).filter(String::isNotEmpty)
+}
+
+/**
+ * Whether [source] is in one of the [patchPaths] given with `-Xpatch-module` for a module, comparing normalized absolute paths.
+ */
+fun isInJavaModulePatchPaths(source: File, patchPaths: List<File>): Boolean {
+    val file = source.absoluteFile.normalize()
+    return patchPaths.any { FileUtil.isAncestor(it.absoluteFile.normalize(), file, true) }
 }
 
 /**
