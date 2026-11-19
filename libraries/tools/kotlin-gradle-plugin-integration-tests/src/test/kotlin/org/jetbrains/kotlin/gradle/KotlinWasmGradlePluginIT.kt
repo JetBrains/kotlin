@@ -1207,7 +1207,17 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
             }
 
             build("wasmJsTest") {
-                assertTasksExecuted(":wasmJsTest")
+                // The test run executes no tests (no kotlin-test dependency),
+                // so the aggregate report task has no binary results and
+                // generates no report. Gradle < 9.0 reports such a no-output
+                // execution of a TestReport task as UP-TO-DATE, Gradle 9.0+
+                // as executed - both mean the aggregation does not break the
+                // build (see KT-91779)
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)) {
+                    assertTasksUpToDate(":wasmJsTest")
+                } else {
+                    assertTasksExecuted(":wasmJsTest")
+                }
             }
         }
     }
