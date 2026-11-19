@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotSame
 
 // Must precede CompositionTests: the runtime-test class loader defines classes in generation order and
 // has no findClass, so an implementation generated above would not resolve its supertype
@@ -40,6 +41,10 @@ fun interface FunPresenter {
 fun interface FunConsumer<T> {
     @Composable
     fun consume(t: T)
+}
+
+fun interface FunListener {
+    fun onEvent()
 }
 
 @MustRunAlways
@@ -332,6 +337,44 @@ class CompositionTests {
         advance()
         assertEquals(2, innerCounter)
         assertEquals(2, counter)
+    }
+
+    // `@DontMemoize` keeps the conversion out of memoization, as for a lambda: a new instance every time
+    @Test
+    fun funInterfaceConversionWithDontMemoizeIsNotMemoized() = compositionTest {
+        val seen = mutableListOf<FunPresenter>()
+        val trigger = mutableIntStateOf(0)
+
+        compose {
+            trigger.value // read to restart this scope
+            val captured = remember { "Hello" }
+            seen += FunPresenter @DontMemoize { Text(captured) }
+        }
+        assertEquals(1, seen.size)
+
+        trigger.value++
+        advance()
+        assertEquals(2, seen.size)
+        assertNotSame(seen[0], seen[1])
+    }
+
+    // Same for a non-composable fun interface
+    @Test
+    fun samConversionWithDontMemoizeIsNotMemoized() = compositionTest {
+        val seen = mutableListOf<FunListener>()
+        val trigger = mutableIntStateOf(0)
+
+        compose {
+            trigger.value // read to restart this scope
+            val captured = remember { "Hello" }
+            seen += FunListener @DontMemoize { captured.length }
+        }
+        assertEquals(1, seen.size)
+
+        trigger.value++
+        advance()
+        assertEquals(2, seen.size)
+        assertNotSame(seen[0], seen[1])
     }
 
     // A conversion in an inline function is copied to each call site, with the reified type substituted
