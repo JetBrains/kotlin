@@ -19,7 +19,7 @@ import org.junit.platform.launcher.PostDiscoveryFilter
  *
  * A prefix that cuts a name in the middle (`dir/fi`) matches nothing.
  */
-internal class TestMetadataFilter(private val includePaths: Collection<String>) : PostDiscoveryFilter {
+internal class TestMetadataFilter(private val includePaths: Collection<TestMetadataPath>) : PostDiscoveryFilter {
     override fun apply(descriptor: TestDescriptor): FilterResult {
         // Only filter test methods, not containers
         if (descriptor.type != TestDescriptor.Type.TEST) {
@@ -35,8 +35,9 @@ internal class TestMetadataFilter(private val includePaths: Collection<String>) 
         }
     }
 
-    private fun matchesPath(testMetadataPath: String): Boolean = includePaths.any { includePath ->
-        testMetadataPath.startsWith(includePath) && endsAtNameBoundary(testMetadataPath, includePath)
+    private fun matchesPath(testMetadataPath: TestMetadataPath): Boolean {
+        val path = testMetadataPath.path
+        return includePaths.any { includePath -> path.startsWith(includePath.path) && endsAtNameBoundary(path, includePath.path) }
     }
 
     /** Whether [prefix] of [path] is followed by `/` (a directory), `.` (an extension) or nothing. */

@@ -135,14 +135,14 @@ internal class TestDataManagerReport(
                     "comparedFile" to problem.comparedFile?.displayPath(rootDir),
                     "actualFile" to actualFiles[problem]?.toAbsolutePath()?.invariantSeparatorsPathString,
                     "test" to problem.testName,
-                    "testDataPath" to problem.testDataPath,
+                    "testDataPath" to problem.testDataPath?.path,
                     "variantChain" to problem.variantChain,
                 )
             },
             "testErrors" to testErrors.sortedBy { it.testName }.map { error ->
                 linkedMapOf(
                     "test" to error.testName,
-                    "testDataPath" to error.testDataPath,
+                    "testDataPath" to error.testDataPath?.path,
                     "variantChain" to error.variantChain,
                     "exception" to error.exceptionClass,
                     "message" to error.message?.let { if (it.length > MAX_MESSAGE_LENGTH) it.take(MAX_MESSAGE_LENGTH) + "..." else it },

@@ -9,12 +9,22 @@ import java.nio.file.Path
 import kotlin.io.path.*
 
 /**
+ * A test data path in the form `@TestMetadata` uses: relative to the repository root, with `/` separators.
+ * As a [TestMetadataFilter] path, a trailing `/` limits it to the directory; without a repository root to resolve the
+ * option against (a direct launch, see [unresolvedTestDataPaths]), it is the option entry as given.
+ */
+@JvmInline
+internal value class TestMetadataPath(val path: String) {
+    override fun toString(): String = path
+}
+
+/**
  * The `testDataPath` option resolved against the repository root.
  *
- * @property paths repository-relative paths in the form `@TestMetadata` uses, for [TestMetadataFilter]
+ * @property paths the paths for [TestMetadataFilter]
  * @property errors one per path that can't be used; the run must not start if there are any
  */
-internal class ResolvedTestDataPaths(val paths: List<String>, val errors: List<TestDataPathError>)
+internal class ResolvedTestDataPaths(val paths: List<TestMetadataPath>, val errors: List<TestDataPathError>)
 
 /** A `testDataPath` entry that can't be used, with [path] as given in the option. */
 internal sealed interface TestDataPathError {
@@ -31,7 +41,7 @@ internal sealed interface TestDataPathError {
     /**
      * @property suggestion the repository-relative form of [path] if it exists relative to the module directory
      */
-    data class Missing(override val path: String, val suggestion: String?) : TestDataPathError {
+    data class Missing(override val path: String, val suggestion: TestMetadataPath?) : TestDataPathError {
         override fun render(repositoryRoot: Path): String = buildString {
             append("testDataPath '$path' does not exist; paths are relative to the repository root ")
             append(repositoryRoot.toAbsolutePath().normalize())
@@ -46,6 +56,10 @@ internal sealed interface TestDataPathError {
 internal fun splitTestDataPaths(option: String): List<String> =
     option.split(",").map(String::trim).filter(String::isNotEmpty)
 
+/** The entries of the `testDataPath` [option] as they are, without resolving them like [resolveTestDataPaths]. */
+internal fun unresolvedTestDataPaths(option: String): List<TestMetadataPath> =
+    splitTestDataPaths(option).map(::TestMetadataPath)
+
 /**
  * Resolves the comma-separated `testDataPath` [option] against [repositoryRoot], the directory `@TestMetadata` paths
  * are relative to.
@@ -58,7 +72,7 @@ internal fun splitTestDataPaths(option: String): List<String> =
  */
 internal fun resolveTestDataPaths(option: String, repositoryRoot: Path, projectDir: Path?): ResolvedTestDataPaths {
     val root = repositoryRoot.toAbsolutePath().normalize()
-    val paths = mutableListOf<String>()
+    val paths = mutableListOf<TestMetadataPath>()
     val errors = mutableListOf<TestDataPathError>()
 
     for (rawPath in splitTestDataPaths(option)) {
@@ -73,13 +87,13 @@ internal fun resolveTestDataPaths(option: String, repositoryRoot: Path, projectD
             val projectRelative = projectDir?.toAbsolutePath()?.resolve(path)?.normalize()
             val suggestion = projectRelative
                 ?.takeIf { it.startsWith(root) && it.existsAsTestDataPath() }
-                ?.let { root.relativize(it).invariantSeparatorsPathString }
+                ?.let { TestMetadataPath(root.relativize(it).invariantSeparatorsPathString) }
             errors += TestDataPathError.Missing(rawPath, suggestion)
             continue
         }
 
         val relativePath = root.relativize(absolutePath).invariantSeparatorsPathString
-        paths += if (rawPath.endsWith('/') && relativePath.isNotEmpty()) "$relativePath/" else relativePath
+        paths += TestMetadataPath(if (rawPath.endsWith('/') && relativePath.isNotEmpty()) "$relativePath/" else relativePath)
     }
 
     return ResolvedTestDataPaths(paths, errors)

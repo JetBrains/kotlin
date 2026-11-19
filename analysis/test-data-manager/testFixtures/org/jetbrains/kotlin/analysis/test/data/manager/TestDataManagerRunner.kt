@@ -286,7 +286,7 @@ internal object TestDataManagerRunner {
         projectDir: Path? = null,
     ): RunOutcome {
         val testDataPaths = testDataPath?.let { option ->
-            val root = rootDir ?: return@let splitTestDataPaths(option)
+            val root = rootDir ?: return@let unresolvedTestDataPaths(option)
             val resolved = resolveTestDataPaths(option, root, projectDir)
             if (resolved.errors.isNotEmpty()) {
                 val messages = resolved.errors.map { it.render(root) }
@@ -374,7 +374,7 @@ internal object TestDataManagerRunner {
             else -> true
         }
 
-        var changedTestDataPaths: Set<String> = emptySet()
+        var changedTestDataPaths: List<Path> = emptyList()
         var skippedTests = 0
 
         for ([index, group] in groupingResult.groups.withIndex()) {
@@ -383,7 +383,7 @@ internal object TestDataManagerRunner {
             val effectiveGroup = if (useIncremental && !isFirstGroup) {
                 val filtered = group.tests.filter { test ->
                     test.testDataPath == null || changedTestDataPaths.any { changedPath ->
-                        Path(changedPath).endsWith(test.testDataPath)
+                        changedPath.endsWith(test.testDataPath.path)
                     }
                 }
 
@@ -417,7 +417,8 @@ internal object TestDataManagerRunner {
             allFileActions = allFileActions.mergedWith(groupFileActions)
 
             if (useIncremental && isFirstGroup) {
-                changedTestDataPaths = groupFileActions.mapTo(HashSet()) { it.testDataPath.toString() }
+                // By the spelling, as `Path` equality ignores the case on Windows
+                changedTestDataPaths = groupFileActions.map { it.testDataPath }.distinctBy(Path::toString)
                 if (changedTestDataPaths.isNotEmpty()) {
                     detail("  Incremental: ${changedTestDataPaths.size} test data path(s) changed in first group")
                 } else {
@@ -452,7 +453,7 @@ internal object TestDataManagerRunner {
 
     internal fun buildDiscoveryRequest(
         testClassPattern: String? = null,
-        testDataPaths: List<String>? = null,
+        testDataPaths: List<TestMetadataPath>? = null,
         goldenOnly: Boolean = false,
         vararg additionalFilters: Filter<*>,
     ): LauncherDiscoveryRequest {
