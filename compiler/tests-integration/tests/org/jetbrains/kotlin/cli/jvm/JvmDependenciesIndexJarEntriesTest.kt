@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.cli.jvm
 
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
-import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
-import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntryFactory
-import org.jetbrains.kotlin.cli.jvm.index.VfsRootEntry
 import org.jetbrains.kotlin.cli.jvm.index.nio.JarClassFileHandle
 import org.jetbrains.kotlin.cli.jvm.index.nio.JarFilePool
-import org.jetbrains.kotlin.cli.jvm.index.nio.PathRootEntry
+import org.jetbrains.kotlin.cli.jvm.index.nio.NioRootEntryFactory
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.AfterEach
@@ -25,33 +22,11 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.outputStream
 import kotlin.io.path.writeBytes
-
-/** Roots of a test classpath with NIO entries: directories as [PathRootEntry], jars from a [JarFilePool], others with VFS entries. */
-internal class NioTestRootEntryFactory(val pool: JarFilePool) : JvmRootEntryFactory {
-    override fun createRootEntry(root: JavaRoot) = when {
-        root.file.fileSystem.protocol == "file" && root.file.isDirectory -> PathRootEntry.root(Paths.get(root.file.path))
-        root.file.fileSystem.protocol == "jar" && root.file.parent == null ->
-            pool.rootEntry(Paths.get(root.file.path.substringBefore("!/")))
-        else -> VfsRootEntry(root.file)
-    }
-}
-
-/** The shared contract over NIO directory and jar entries. */
-class JvmDependenciesIndexJarEntriesContractTest : AbstractJvmDependenciesIndexContractTest() {
-    private val pool = checkNotNull(JarFilePool.createIfUnmappingPossible())
-
-    @AfterEach
-    fun closePool() = pool.close()
-
-    override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex =
-        JvmDependenciesIndexImpl(roots, NioTestRootEntryFactory(pool))
-}
 
 /** Behavior of the jar entries ([org.jetbrains.kotlin.cli.jvm.index.nio.JarRootEntry]) and their [JarFilePool]. */
 class JvmDependenciesIndexJarEntriesTest : JvmDependenciesIndexContractTestBase() {
@@ -60,7 +35,7 @@ class JvmDependenciesIndexJarEntriesTest : JvmDependenciesIndexContractTestBase(
     @AfterEach
     fun closePool() = pool.close()
 
-    private fun index(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioTestRootEntryFactory(pool))
+    private fun index(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioRootEntryFactory(pool))
 
     @Test
     fun readsDeflatedAndStoredEntries() {
@@ -111,7 +86,7 @@ class JvmDependenciesIndexJarEntriesTest : JvmDependenciesIndexContractTestBase(
         val lib = jar("lib.jar", "p/A.class")
         val first = index(lib.jarRoot()).findClassFiles(classId("p/A"), CLASS).single()
         val second = JvmDependenciesIndexImpl(
-            listOf(lib.jarRoot()), NioTestRootEntryFactory(checkNotNull(JarFilePool.createIfUnmappingPossible()))
+            listOf(lib.jarRoot()), NioRootEntryFactory(checkNotNull(JarFilePool.createIfUnmappingPossible()))
         ).findClassFiles(classId("p/A"), CLASS).single()
         assertEquals(first, second)
         assertEquals(first.hashCode(), second.hashCode())

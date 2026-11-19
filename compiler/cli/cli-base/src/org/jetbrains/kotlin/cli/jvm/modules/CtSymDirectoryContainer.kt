@@ -10,11 +10,11 @@ import java.io.InputStream
 
 class CtSymDirectoryContainer(
     private val parent: VirtualFile?,
-    private val rootOrPackageParts: List<VirtualFile>,
-    private val packages: Map<String, Boolean>,
-    private val currentPackage: String,
+    internal val rootOrPackageParts: List<VirtualFile>,
+    internal val packages: Map<String, Boolean>,
+    internal val currentPackage: String,
     private val moduleRoot: String,
-    private val skipPackageCheck: Boolean
+    internal val skipPackageCheck: Boolean
 ) : VirtualFile() {
 
     private val _path by lazy { parent?.path + currentPackage + "/" }

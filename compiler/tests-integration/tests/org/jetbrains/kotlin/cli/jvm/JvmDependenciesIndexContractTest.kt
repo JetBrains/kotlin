@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
+import org.jetbrains.kotlin.cli.jvm.index.nio.JarFilePool
 import org.jetbrains.kotlin.cli.jvm.index.nio.NioRootEntryFactory
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
@@ -693,9 +694,15 @@ class JvmDependenciesIndexImplContractTest : AbstractJvmDependenciesIndexContrac
     override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesIndexImpl(roots)
 }
 
-/** The same contract holds for a [JvmDependenciesIndexImpl] whose directory roots have NIO entries ([NioRootEntryFactory]). */
+/** The same contract holds for a [JvmDependenciesIndexImpl] whose roots have NIO entries ([NioRootEntryFactory]). */
 class JvmDependenciesIndexNioEntriesContractTest : AbstractJvmDependenciesIndexContractTest() {
-    override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesIndexImpl(roots, NioRootEntryFactory)
+    private val jarPool = checkNotNull(JarFilePool.createIfUnmappingPossible())
+
+    @AfterEach
+    fun closeJarPool() = jarPool.close()
+
+    override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex =
+        JvmDependenciesIndexImpl(roots, NioRootEntryFactory(jarPool))
 }
 
 /** The same contract holds for a first-only [JvmDependenciesDynamicCompoundIndex] wrapping a single [JvmDependenciesIndexImpl]. */

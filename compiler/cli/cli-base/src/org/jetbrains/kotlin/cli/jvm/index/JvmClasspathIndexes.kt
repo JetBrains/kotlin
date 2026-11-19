@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
+import org.jetbrains.kotlin.cli.jvm.index.nio.JarFilePool
 import org.jetbrains.kotlin.cli.jvm.index.nio.NioRootEntryFactory
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.config.useNioJvmDependenciesIndex
  *
  * [javaFileManagerIndex] serves the PSI Java view and always has VFS entries. With NIO entries enabled, [classFinderIndex] is a separate
  * index over the same roots whose roots get NIO entries where available ([NioRootEntryFactory]); otherwise it is [javaFileManagerIndex].
+ * The archives of the NIO entries belong to [jarPool].
  */
 class JvmClasspathIndexes(useNioEntries: Boolean) {
 
@@ -30,11 +32,16 @@ class JvmClasspathIndexes(useNioEntries: Boolean) {
     val classFinderIndex: JvmDependenciesDynamicCompoundIndex =
         if (useNioEntries) JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true) else javaFileManagerIndex
 
+    /** The archives of the NIO entries; `null` without NIO entries or if mapped archives cannot be released on this JVM. */
+    val jarPool: JarFilePool? = if (useNioEntries) JarFilePool.createIfUnmappingPossible() else null
+
+    private val nioRootEntryFactory = NioRootEntryFactory(jarPool)
+
     /** Adds [roots] to both indexes and returns the index over them with VFS entries. */
     fun addRoots(roots: List<JavaRoot>): JvmDependenciesIndex {
         val index = JvmDependenciesIndexImpl(roots)
         javaFileManagerIndex.addIndex(index)
-        if (classFinderIndex !== javaFileManagerIndex) classFinderIndex.addIndex(JvmDependenciesIndexImpl(roots, NioRootEntryFactory))
+        if (classFinderIndex !== javaFileManagerIndex) classFinderIndex.addIndex(JvmDependenciesIndexImpl(roots, nioRootEntryFactory))
         return index
     }
 }

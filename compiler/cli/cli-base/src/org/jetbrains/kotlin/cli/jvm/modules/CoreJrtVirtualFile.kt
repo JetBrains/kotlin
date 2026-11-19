@@ -58,6 +58,10 @@ internal class CoreJrtVirtualFile(
 
     override fun isValid(): Boolean = true
 
+    /** The path of this file in the `jrt:` file system of its JDK. */
+    internal val nioPath: Path
+        get() = path
+
     override fun getParent(): VirtualFile? = parent
 
     private val myChildren by lazy { computeChildren() }

@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.useNioJvmDependenciesIndex
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -61,10 +63,19 @@ open class JvmClasspathIndexRootsTest {
         val updateClasspath: (List<File>) -> Unit,
     )
 
+    /** Whether the class finder of the environment is expected to have NIO root entries (`-Xuse-nio-jvm-dependencies-index`). */
+    protected open val nioEntries: Boolean get() = false
+
+    protected fun CompilerConfiguration.withBackend(): CompilerConfiguration = apply { useNioJvmDependenciesIndex = nioEntries }
+
+    protected fun assertBackend(handle: BinaryClassFileHandle) {
+        assertEquals(!nioEntries, handle is VfsClassFileHandle, "the backend of $handle")
+    }
+
     protected open fun createIndexedEnvironment(configuration: CompilerConfiguration): IndexedEnvironment {
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment =
-            KotlinCoreEnvironment.create(testRootDisposable, configuration)
+            KotlinCoreEnvironment.create(testRootDisposable, configuration.withBackend())
         val project = environment.project
         return IndexedEnvironment(
             (project.getService(VirtualFileFinderFactory::class.java) as CliVirtualFileFinderFactory).index,
@@ -114,8 +125,9 @@ open class JvmClasspathIndexRootsTest {
         assertTrue(jdkRoots.all { it.isJrtRoot() && it.type == JavaRoot.RootType.BINARY }, "all JDK roots are jrt BINARY roots: $jdkRoots")
         assertEquals(jdkRoots.size, jdkRoots.mapTo(HashSet()) { it.file.path }.size, "every JDK module has its own root")
         val javaBase = jdkRoots.single { it.file.path.endsWith("/modules/java.base") }
-        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), CLASS_FILES).single() as VfsClassFileHandle
-        assertEquals(javaBase, objectClass.root)
+        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), CLASS_FILES).single()
+        assertEquals(javaBase.id, objectClass.rootId)
+        assertBackend(objectClass)
     }
 
     @Test
@@ -146,8 +158,9 @@ open class JvmClasspathIndexRootsTest {
         )
         assertTrue(roots.none { it.isJrtRoot() }, "a JDK 8 home has no module roots: $roots")
 
-        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), CLASS_FILES).single() as VfsClassFileHandle
-        assertTrue(objectClass.root.localPath().endsWith("/jre/lib/rt.jar"), "java.lang.Object comes from rt.jar: ${objectClass.root}")
+        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), CLASS_FILES).single()
+        assertTrue(objectClass.rootId.id.endsWith("/jre/lib/rt.jar"), "java.lang.Object comes from rt.jar: ${objectClass.rootId}")
+        assertBackend(objectClass)
     }
 
     @Test
@@ -201,8 +214,9 @@ open class JvmClasspathIndexRootsTest {
         assertTrue("ct.sym" in ctSymRoot.file.path, "the release root lies in ct.sym: ${ctSymRoot.file.path}")
         assertTrue(roots.none { it.isJrtRoot() }, "no jrt roots with -Xjdk-release: $roots")
 
-        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), SIG_FILES).single() as VfsClassFileHandle
-        assertEquals(ctSymRoot, objectClass.root)
+        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), SIG_FILES).single()
+        assertEquals(ctSymRoot.id, objectClass.rootId)
+        assertBackend(objectClass)
         assertEquals("sig", objectClass.extension)
     }
 
@@ -227,8 +241,9 @@ open class JvmClasspathIndexRootsTest {
         assertEquals(1, jdkRoots.mapTo(HashSet()) { it.file.path }.size, "...although they all share one path")
         assertTrue(roots.none { it.isJrtRoot() }, "no jrt roots with -Xjdk-release: $roots")
 
-        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), SIG_FILES).single() as VfsClassFileHandle
-        assertEquals(jdkRoots.single { it.id.id.endsWith("/java.base") }, objectClass.root)
+        val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), SIG_FILES).single()
+        assertEquals(jdkRoots.single { it.id.id.endsWith("/java.base") }.id, objectClass.rootId)
+        assertBackend(objectClass)
         assertEquals("sig", objectClass.extension)
     }
 
@@ -276,8 +291,9 @@ open class JvmClasspathIndexRootsTest {
             roots.map { Triple(it.localPath(), it.type, it.prefixFqName) },
         )
 
-        val foo = environment.index.findClassFiles(ClassId.fromString("my/pkg/Foo"), JAVA_FILES).single() as VfsClassFileHandle
-        assertEquals(roots[0], foo.root)
+        val foo = environment.index.findClassFiles(ClassId.fromString("my/pkg/Foo"), JAVA_FILES).single()
+        assertEquals(roots[0].id, foo.rootId)
+        assertBackend(foo)
     }
 
     @Test
@@ -309,10 +325,12 @@ open class JvmClasspathIndexRootsTest {
         )
         assertEquals(rootsAfter.size, rootsAfter.toSet().size, "no root is indexed twice")
 
-        val b = index.findClassFiles(ClassId.fromString("pb/B"), CLASS_FILES).single() as VfsClassFileHandle
-        assertEquals(classesB.localPath(), b.root.localPath())
-        val c = index.findClassFiles(ClassId.fromString("pc/C"), CLASS_FILES).single() as VfsClassFileHandle
-        assertEquals(jarC.localPath(), c.root.localPath())
+        val b = index.findClassFiles(ClassId.fromString("pb/B"), CLASS_FILES).single()
+        assertEquals(classesB.localPath(), b.rootId.id)
+        assertBackend(b)
+        val c = index.findClassFiles(ClassId.fromString("pc/C"), CLASS_FILES).single()
+        assertEquals(jarC.localPath(), c.rootId.id)
+        assertBackend(c)
 
         val versionAfter = index.version
         environment.updateClasspath(listOf(classesB.toFile()))
@@ -378,9 +396,9 @@ open class JvmClasspathIndexRootsTest {
     }
 }
 
-class PipelineJvmClasspathIndexRootsTest : JvmClasspathIndexRootsTest() {
+open class PipelineJvmClasspathIndexRootsTest : JvmClasspathIndexRootsTest() {
     override fun createIndexedEnvironment(configuration: CompilerConfiguration): IndexedEnvironment {
-        val pipelineConfiguration = configuration.copy().apply { testEnvironment = true }
+        val pipelineConfiguration = configuration.copy().apply { testEnvironment = true }.withBackend()
         val projectEnvironment = JvmFrontendPipelinePhase.createProjectEnvironment(
             pipelineConfiguration, testRootDisposable
         )
@@ -391,4 +409,12 @@ class PipelineJvmClasspathIndexRootsTest : JvmClasspathIndexRootsTest() {
             projectEnvironment::updateClasspath,
         )
     }
+}
+
+class NioJvmClasspathIndexRootsTest : JvmClasspathIndexRootsTest() {
+    override val nioEntries: Boolean get() = true
+}
+
+class NioPipelineJvmClasspathIndexRootsTest : PipelineJvmClasspathIndexRootsTest() {
+    override val nioEntries: Boolean get() = true
 }

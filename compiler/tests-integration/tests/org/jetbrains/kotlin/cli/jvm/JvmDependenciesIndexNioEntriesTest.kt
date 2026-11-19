@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.cli.jvm
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
+import org.jetbrains.kotlin.cli.jvm.index.nio.JarClassFileHandle
+import org.jetbrains.kotlin.cli.jvm.index.nio.JarFilePool
 import org.jetbrains.kotlin.cli.jvm.index.nio.NioRootEntryFactory
 import org.jetbrains.kotlin.cli.jvm.index.nio.PathClassFileHandle
 import org.jetbrains.kotlin.cli.jvm.index.nio.PathRootEntry
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.FqName
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -25,14 +28,26 @@ import org.junit.jupiter.api.Test
 
 /** Behavior of the NIO directory entries ([PathRootEntry]) under [JvmDependenciesIndexImpl] which the shared contract does not pin. */
 class JvmDependenciesIndexNioEntriesTest : JvmDependenciesIndexContractTestBase() {
-    private fun nioIndex(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioRootEntryFactory)
+    private val jarPool = checkNotNull(JarFilePool.createIfUnmappingPossible())
+
+    @AfterEach
+    fun closeJarPool() = jarPool.close()
+
+    private fun nioIndex(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioRootEntryFactory(jarPool))
 
     @Test
-    fun directoryRootsGetNioEntriesAndOtherRootsVfsEntries() {
+    fun directoryAndJarRootsGetNioEntries() {
         val out = dir("out", "p/A.class")
         val lib = jar("lib.jar", "q/B.class")
         val index = nioIndex(out.dirRoot(), lib.jarRoot())
         assertInstanceOf(PathClassFileHandle::class.java, index.findClassFiles(classId("p/A"), CLASS).single())
+        assertInstanceOf(JarClassFileHandle::class.java, index.findClassFiles(classId("q/B"), CLASS).single())
+    }
+
+    @Test
+    fun jarRootsGetVfsEntriesWithoutAJarPool() {
+        val lib = jar("lib.jar", "q/B.class")
+        val index = JvmDependenciesIndexImpl(listOf(lib.jarRoot()), NioRootEntryFactory(jarPool = null))
         assertInstanceOf(VfsClassFileHandle::class.java, index.findClassFiles(classId("q/B"), CLASS).single())
     }
 
