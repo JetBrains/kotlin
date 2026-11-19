@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.captureValueInAnalyze
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -86,20 +89,45 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
         if (scopeReceivers.isEmpty()) return scopeReceivers
 
         // Injected scope receivers land on top of the implicit receiver stack and would make an explicit `this`
-        // resolve to a scope instead of the enclosing extension receiver (e.g. `this@run`).
-        // To keep `this` pointing at the enclosing receiver, push a value bound to that very receiver parameter back on top.
+        // resolve to a scope instead of the enclosing receiver (e.g. `this@run` or the enclosing class instance).
+        // To keep `this` pointing at the enclosing receiver, push a value bound to that very receiver back on top.
         // Column accessors of the scopes are still reachable through tower resolution, so `this.select("a").a` keeps working.
         val outerReceiver = (containingCallableSymbol as? FirCallableSymbol<*>)?.let { callable ->
-            val receiverParameter = callable.receiverParameterSymbol ?: return@let null
-            val receiverType = callable.resolvedReceiverType ?: return@let null
+            val outerReceiverSymbol = callable.receiverParameterSymbol
+                ?: syntheticDispatchReceiverSymbolOrNull(callable)
+                ?: return@let null
             ImplicitExtensionReceiverValue(
-                boundSymbol = receiverParameter,
-                type = receiverType,
+                boundSymbol = outerReceiverSymbol,
+                type = outerReceiverSymbol.resolvedType,
                 useSiteSession = sessionHolder.session,
                 scopeSession = sessionHolder.scopeSession
             )
         }
 
         return scopeReceivers.plusIfNotNull(outerReceiver)
+    }
+
+    // For a class member, `this` is the dispatch receiver of the containing class. Re-push it as a synthetic receiver
+    // parameter contained in that class: an explicit `this` then keeps the enclosing instance type and lowers to the
+    // class dispatch receiver, just like a regular unqualified `this`. Constructors are skipped, as only inner-class
+    // constructors have a dispatch receiver there, and it stands for the outer instance.
+    private fun syntheticDispatchReceiverSymbolOrNull(
+        callable: FirCallableSymbol<*>,
+    ): FirReceiverParameterSymbol? {
+        if (callable is FirConstructorSymbol) return null
+        val dispatchReceiverType = callable.dispatchReceiverType ?: return null
+        val containingClass = session.firProvider.getContainingClass(callable) as? FirClassSymbol<*> ?: return null
+        val receiverParameter = buildReceiverParameter {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            moduleData = session.moduleData
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
+            symbol = FirReceiverParameterSymbol()
+            containingDeclarationSymbol = containingClass
+            typeRef = buildResolvedTypeRef {
+                coneType = dispatchReceiverType
+            }
+        }
+        receiverParameter.captureValueInAnalyze = false
+        return receiverParameter.symbol
     }
 }
