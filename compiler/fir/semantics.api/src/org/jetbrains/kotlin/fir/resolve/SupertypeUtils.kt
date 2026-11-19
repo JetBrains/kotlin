@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isRichError
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -346,5 +348,33 @@ fun FirClassLikeSymbol<*>.getSuperTypes(
 ): List<ConeClassLikeType> {
     return SmartList<ConeClassLikeType>().also {
         collectSuperTypes(it, SmartSet.create(), recursive, lookupInterfaces, substituteSuperTypes, useSiteSession, supertypeSupplier)
+    }
+}
+
+fun ConeKotlinType.isBoundedByRichError(session: FirSession): Boolean {
+    if (this is ConeUnionType) return this.primaryType.isNothing
+    val symbol = unwrapToSimpleTypeUsingLowerBound().toSymbol(session) ?: return false
+    return symbol.isBoundedByRichError(session)
+}
+
+fun FirClassifierSymbol<*>.isBoundedByRichError(session: FirSession): Boolean {
+    return when (this) {
+        is FirRegularClassSymbol -> isRichError || classId == StandardClassIds.RichError
+        // Typealias should only be encountered during first round of supertype resolution.
+        // We return true to not produce bogus errors. If the typealias expansion is not bounded by RichError,
+        // we'll produce the errors during the second round in breakLoops.
+        is FirTypeAliasSymbol -> true
+        // It's safe to access fir because own type parameters and containing class type parameter bounds are guaranteed to be resolved
+        // before resolving the rest of callable signatures.
+        is FirTypeParameterSymbol -> fir.bounds.any {
+            // We can only encounter unresolved bounds during the first round of type parameter bound resolution,
+            // and even in the second round in red code like `T : T | RichError`.
+            // When the bound is unresolved,
+            // we return true so that we don't produce error types (Non-rich error component must appear first).
+            // Otherwise, the topological sort could be incorrect as we'd miss dependencies in error types.
+            val coneType = it.coneTypeOrNull?.fullyExpandedType(session) ?: return@isBoundedByRichError true
+            coneType.isBoundedByRichError(session)
+        }
+        is FirAnonymousObjectSymbol -> false
     }
 }
