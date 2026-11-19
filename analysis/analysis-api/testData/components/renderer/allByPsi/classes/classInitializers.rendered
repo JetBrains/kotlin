@@ -1,7 +1,7 @@
 class WithInitializers(size: Int) {
-  val name: String
-
   val size: Int
+
+  val name: String
 }
 
 object ObjectWithInitializer

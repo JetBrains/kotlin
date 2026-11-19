@@ -1,7 +1,7 @@
 class Compact {
+  val x: Int
   fun first()
   fun second()
-  val x: Int
 }
 
 enum class Entries {

@@ -5,7 +5,7 @@ inline value class Meters(value: Double) {
 
 @JvmInline
 inline value class Wrapper(text: String) {
-  fun describe(): String
-
   val text: String
+
+  fun describe(): String
 }

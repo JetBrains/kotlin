@@ -3,14 +3,14 @@ annotation class Anno
 
 class ConstructorProperties(@Anno full: Int, @Anno simple: String, @Anno plain: Long) {
   @Anno
-  private val simple: String
-
-  @Anno
   var full: Int
     @Anno
     get()
     @Anno
     set(@Anno value: Int)
+
+  @Anno
+  private val simple: String
 }
 
 @Anno

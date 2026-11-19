@@ -1,6 +1,6 @@
 enum class Level {
-  HIGH,
-  LOW
+  LOW,
+  HIGH
 }
 
 annotation class Nested(val id: Int)

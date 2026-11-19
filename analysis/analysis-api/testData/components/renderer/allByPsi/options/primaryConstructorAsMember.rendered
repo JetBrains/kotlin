@@ -3,9 +3,9 @@ class Simple(x: Int, y: String) {
 }
 
 class WithSecondary(x: Int) {
-  constructor()
-
   val x: Int
+
+  constructor()
 }
 
 class WithAnnotatedConstructor @Ctor constructor(x: Int) {

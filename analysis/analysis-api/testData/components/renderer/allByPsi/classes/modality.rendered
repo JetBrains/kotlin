@@ -5,9 +5,9 @@ class Final {
 }
 
 open class Open {
-  fun nonOverridable()
-
   open fun overridable()
+
+  fun nonOverridable()
 
   protected open fun protectedOverridable()
 }
