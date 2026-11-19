@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.config
 
-import com.intellij.openapi.util.Key
 import java.util.*
 
 class CompilerConfiguration {
@@ -25,7 +24,7 @@ class CompilerConfiguration {
     @Internals("Consider using `CompilerConfiguration.create()` from :cli-base module instead")
     constructor()
 
-    private val map: MutableMap<Key<*>, Any> = LinkedHashMap()
+    private val map: MutableMap<CompilerConfigurationKey<*>, Any> = LinkedHashMap()
     var isReadOnly = false
 
     operator fun <T : Any> get(key: CompilerConfigurationKey<T>): T? {
@@ -62,7 +61,7 @@ class CompilerConfiguration {
 
     fun <T : Any> put(key: CompilerConfigurationKey<T>, value: T) {
         checkReadOnly()
-        map[key.ideaKey] = value
+        map[key] = value
     }
 
     fun <T : Any> putIfAbsent(key: CompilerConfigurationKey<T>, value: T): T {
@@ -82,7 +81,7 @@ class CompilerConfiguration {
         checkReadOnly()
 
         @Suppress("UNCHECKED_CAST")
-        val list = map.getOrPut(key.ideaKey) { mutableListOf<T>() } as MutableList<T>
+        val list = map.getOrPut(key) { mutableListOf<T>() } as MutableList<T>
         list += value
     }
 
@@ -90,7 +89,7 @@ class CompilerConfiguration {
         checkReadOnly()
 
         @Suppress("UNCHECKED_CAST")
-        val map = map.getOrPut(configurationKey.ideaKey) { mutableMapOf<K, V>() } as MutableMap<K, V>
+        val map = map.getOrPut(configurationKey) { mutableMapOf<K, V>() } as MutableMap<K, V>
         map[key] = value
     }
 
@@ -104,7 +103,7 @@ class CompilerConfiguration {
         checkReadOnly()
 
         @Suppress("UNCHECKED_CAST")
-        val list = map.getOrPut(key.ideaKey) { mutableListOf<T>() } as MutableList<T>
+        val list = map.getOrPut(key) { mutableListOf<T>() } as MutableList<T>
         list.addAll(index, values)
     }
 
@@ -115,7 +114,7 @@ class CompilerConfiguration {
 
     private fun <T : Any> getValue(key: CompilerConfigurationKey<T>): T? {
         @Suppress("UNCHECKED_CAST")
-        return map[key.ideaKey] as T?
+        return map[key] as T?
     }
 
     override fun toString(): String {
@@ -143,7 +142,7 @@ class CompilerConfiguration {
 
     fun toString(excludedKeys: Set<CompilerConfigurationKey<*>>, valueMapper: (Any) -> String?): String = buildString {
         for ([key, value] in map) {
-            if (excludedKeys.none { key == it.ideaKey }) {
+            if (excludedKeys.none { key == it }) {
                 val mappedValue = valueMapper(value)
                 if (mappedValue != null) {
                     append(key).append(": ").appendLine(mappedValue)

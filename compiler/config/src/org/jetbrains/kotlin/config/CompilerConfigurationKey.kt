@@ -16,13 +16,9 @@
 
 package org.jetbrains.kotlin.config;
 
-import com.intellij.openapi.util.Key
-
-class CompilerConfigurationKey<out T : Any> private constructor(internal val ideaKey: Key<@UnsafeVariance T>) {
-    constructor(name: String) : this(Key.create(name))
-
+class CompilerConfigurationKey<out T : Any> (private val name: String) {
     override fun toString(): String {
-        return ideaKey.toString()
+        return name
     }
 
     companion object {
