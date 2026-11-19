@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.problems.ProblemId
 import org.gradle.api.problems.ProblemSpec
 import org.gradle.api.problems.Problems
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
@@ -42,7 +41,7 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
         diagnosticId: String?,
     ) {
         val diagnosticGroup = severity.toDiagnosticGroup()
-        val problemId = ProblemId.create(
+        val problemId = createProblemId(
             severity.resolvedProblemId(diagnosticId),
             severity.resolvedDisplayName(diagnosticId),
             diagnosticGroup.toProblemGroup(),
