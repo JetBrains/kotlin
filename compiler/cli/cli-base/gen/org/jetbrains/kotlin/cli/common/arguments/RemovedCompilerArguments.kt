@@ -585,6 +585,20 @@ See KT-45671 for more details.""",
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xllvm-lto-passes",
+        description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.",
+        removedVersion = "2.5.0",
+    )
+    var llvmLTOPasses: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xpurge-user-libs",
         deprecatedName = "--purge_user_libs",
         description = "Don't link unused libraries even if explicitly specified.",
