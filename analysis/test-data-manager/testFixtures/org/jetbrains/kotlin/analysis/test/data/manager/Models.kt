@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.data.manager
 
+import org.jetbrains.kotlin.analysis.test.data.manager.filters.TestMetadataPath
 import java.nio.file.Path
 
 /**
@@ -14,7 +15,7 @@ internal data class DiscoveredTest(
     val uniqueId: String,
     val displayName: String,
     val variantChain: TestVariantChain,
-    val testDataPath: String? = null,
+    val testDataPath: TestMetadataPath? = null,
 )
 
 /**
@@ -62,7 +63,7 @@ internal data class VariantChainConflict(
  */
 internal data class TestError(
     val testName: String,
-    val testDataPath: String?,
+    val testDataPath: TestMetadataPath?,
     val variantChain: TestVariantChain,
     val exceptionClass: String,
     val message: String?,
@@ -86,7 +87,7 @@ internal data class TestError(
  */
 internal data class TestDataProblem(
     val testName: String,
-    val testDataPath: String?,
+    val testDataPath: TestMetadataPath?,
     val variantChain: TestVariantChain,
     val kind: TestDataAssertionError.Kind,
     val file: Path,

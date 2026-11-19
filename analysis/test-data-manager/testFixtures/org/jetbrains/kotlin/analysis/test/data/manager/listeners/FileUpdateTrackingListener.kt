@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.test.data.manager.TestDataAssertionError
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataProblem
 import org.jetbrains.kotlin.analysis.test.data.manager.TestError
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
+import org.jetbrains.kotlin.analysis.test.data.manager.filters.TestMetadataPath
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.formatTestName
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.testDataPath
 import org.junit.platform.engine.TestExecutionResult
@@ -69,7 +70,7 @@ internal class FileUpdateTrackingListener(
      * Map: testDataPath -> set of prefix lists that failed for this path.
      * Used for CHECK mode summary.
      */
-    private val mismatchesByPath = ConcurrentHashMap<String, MutableSet<TestVariantChain>>()
+    private val mismatchesByPath = ConcurrentHashMap<TestMetadataPath, MutableSet<TestVariantChain>>()
 
     /**
      * Test data files that didn't match, by test unique ID.
@@ -158,7 +159,7 @@ internal class FileUpdateTrackingListener(
     private fun TestPlan.isSkipped(test: TestIdentifier): Boolean =
         generateSequence(test) { getParent(it).orElse(null) }.any { it.uniqueId in skippedIds }
 
-    private fun recordError(identifier: TestIdentifier, testDataPath: String?, variantChain: TestVariantChain, failure: Throwable) {
+    private fun recordError(identifier: TestIdentifier, testDataPath: TestMetadataPath?, variantChain: TestVariantChain, failure: Throwable) {
         val error = TestError(
             testName = identifier.formatTestName(),
             testDataPath = testDataPath,
@@ -223,7 +224,7 @@ internal class FileUpdateTrackingListener(
     /**
      * Returns the map of test data paths to sets of variant chains that had mismatches.
      */
-    fun getMismatchesByPath(): Map<String, Set<TestVariantChain>> = mismatchesByPath.mapValues { it.value.toSet() }
+    fun getMismatchesByPath(): Map<TestMetadataPath, Set<TestVariantChain>> = mismatchesByPath.mapValues { it.value.toSet() }
 
     /**
      * Returns the test data files that didn't match, by test unique ID.

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.data.manager.report
 
 import org.jetbrains.kotlin.analysis.test.data.manager.*
+import org.jetbrains.kotlin.analysis.test.data.manager.filters.TestMetadataPath
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -33,7 +34,7 @@ class TestDataManagerReportTest {
 
     private fun problem(kind: TestDataAssertionError.Kind, file: String, comparedFile: String?, actual: String?) = TestDataProblem(
         testName = "FooTestGenerated.testFoo",
-        testDataPath = "module/testData/foo.kt",
+        testDataPath = TestMetadataPath("module/testData/foo.kt"),
         variantChain = listOf("knm", "js"),
         kind = kind,
         file = rootDir.resolve(file),
@@ -91,7 +92,7 @@ class TestDataManagerReportTest {
             problems += problem(TestDataAssertionError.Kind.MISMATCH, "module/testData/foo.js.txt", "module/testData/foo.txt", "actual")
             testErrors += TestError(
                 testName = "FooTestGenerated.testBar",
-                testDataPath = null,
+                testDataPath = TestMetadataPath("module/testData/bar.kt"),
                 variantChain = emptyList(),
                 exceptionClass = "java.lang.IllegalStateException",
                 message = "Broken \"quoted\"\nsecond line",
@@ -109,6 +110,16 @@ class TestDataManagerReportTest {
                 passedInPass = 2,
                 problems = emptyList(),
                 errors = listOf(testErrors.single().copy(testName = "FooTestGenerated.testFlaky", message = "Flaky")),
+            )
+
+            // The failure of a container after its tests, without a test data path
+            testErrors += TestError(
+                testName = "FooTestGenerated",
+                testDataPath = null,
+                variantChain = emptyList(),
+                exceptionClass = "java.lang.IllegalStateException",
+                message = "Teardown",
+                stackTrace = emptyList(),
             )
         }
 
@@ -131,8 +142,16 @@ class TestDataManagerReportTest {
                   ],
                   "testErrors": [
                     {
-                      "test": "FooTestGenerated.testBar",
+                      "test": "FooTestGenerated",
                       "testDataPath": null,
+                      "variantChain": [],
+                      "exception": "java.lang.IllegalStateException",
+                      "message": "Teardown",
+                      "stackTrace": []
+                    },
+                    {
+                      "test": "FooTestGenerated.testBar",
+                      "testDataPath": "module/testData/bar.kt",
                       "variantChain": [],
                       "exception": "java.lang.IllegalStateException",
                       "message": "Broken \"quoted\"\nsecond line",

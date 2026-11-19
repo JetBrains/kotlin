@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.data.manager.integration
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.analysis.FakeGoldenAnalysisApiTestGenerated
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.compiler.FakeFirTestGenerated
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.TestMetadataFilter
+import org.jetbrains.kotlin.analysis.test.data.manager.filters.testMetadataFilter
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -65,7 +66,7 @@ internal class TestMetadataFilterIntegrationTest : AbstractFakeTestIntegrationTe
     @Test
     fun `filter includes analysis tests and excludes fir tests`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis")),
+            filter = testMetadataFilter("testData/analysis"),
             expectedIncluded = setOf("testSymbols()", "testTypes()", "testCall()", "testLambda()"),
             expectedExcluded = setOf("testChecker()", "testInference()"),
         )
@@ -74,7 +75,7 @@ internal class TestMetadataFilterIntegrationTest : AbstractFakeTestIntegrationTe
     @Test
     fun `filter includes nested class tests`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/expressions")),
+            filter = testMetadataFilter("testData/analysis/api/expressions"),
             expectedIncluded = setOf("testCall()", "testLambda()"),
             expectedExcluded = setOf("testSymbols()", "testTypes()", "testChecker()", "testInference()"),
         )
@@ -83,7 +84,7 @@ internal class TestMetadataFilterIntegrationTest : AbstractFakeTestIntegrationTe
     @Test
     fun `filter for specific file in nested class`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/expressions/call")),
+            filter = testMetadataFilter("testData/analysis/api/expressions/call"),
             expectedIncluded = setOf("testCall()"),
             expectedExcluded = setOf("testSymbols()", "testTypes()", "testLambda()", "testChecker()", "testInference()"),
         )
@@ -92,7 +93,7 @@ internal class TestMetadataFilterIntegrationTest : AbstractFakeTestIntegrationTe
     @Test
     fun `filter with multiple paths`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/symbols", "testData/compiler/fir/resolve")),
+            filter = testMetadataFilter("testData/analysis/api/symbols", "testData/compiler/fir/resolve"),
             expectedIncluded = setOf("testSymbols()", "testInference()"),
             expectedExcluded = setOf("testTypes()", "testCall()", "testLambda()", "testChecker()"),
         )
@@ -101,7 +102,7 @@ internal class TestMetadataFilterIntegrationTest : AbstractFakeTestIntegrationTe
     @Test
     fun `filter with exact file path including extension`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/symbols.kt")),
+            filter = testMetadataFilter("testData/analysis/api/symbols.kt"),
             expectedIncluded = setOf("testSymbols()"),
             expectedExcluded = setOf("testTypes()", "testCall()", "testLambda()", "testChecker()", "testInference()"),
         )
@@ -110,7 +111,7 @@ internal class TestMetadataFilterIntegrationTest : AbstractFakeTestIntegrationTe
     @Test
     fun `filter with non-existing file path excludes all`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/nonexistent.kt")),
+            filter = testMetadataFilter("testData/analysis/api/nonexistent.kt"),
             expectedIncluded = emptySet(),
             expectedExcluded = setOf("testSymbols()", "testTypes()", "testCall()", "testLambda()", "testChecker()", "testInference()"),
         )
