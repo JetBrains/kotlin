@@ -235,7 +235,12 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
     @Test
     fun `failures of a nested class setup and of the outer class teardown`() {
         assertEquals(
-            "failed tests: 0",
+            $$"""
+                error: FakeGoldenAnalysisApiTestGenerated - Teardown failure (null)
+                error: FakeGoldenAnalysisApiTestGenerated$Expressions.testCall - Setup failure (testData/analysis/api/expressions/call.kt)
+                error: FakeGoldenAnalysisApiTestGenerated$Expressions.testLambda - Setup failure (testData/analysis/api/expressions/lambda.kt)
+                failed tests: 2
+            """.trimIndent(),
             runOuterTeardownFailureAfterNested(TestExecutionResult.failed(IllegalStateException("Setup failure"))),
         )
     }
@@ -243,7 +248,10 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
     @Test
     fun `aborted nested class setup and failure of the outer class teardown`() {
         assertEquals(
-            "failed tests: 0",
+            """
+                error: FakeGoldenAnalysisApiTestGenerated - Teardown failure (null)
+                failed tests: 0
+            """.trimIndent(),
             runOuterTeardownFailureAfterNested(TestExecutionResult.aborted(IllegalStateException("Setup abort"))),
         )
     }

@@ -184,8 +184,10 @@ internal class TestDataManagerRunnerIntegrationTest {
 
         assertEquals(
             """
-                tests: 7, passed: 7, failed: 0, skipped: 0
-                executions: 7, successful: true
+                tests: 7, passed: 5, failed: 2, skipped: 0
+                executions: 7, successful: false
+                error: FakeRunnerJsTestGenerated.testFirst - IllegalStateException: Class setup failure
+                error: FakeRunnerJsTestGenerated.testSecond - IllegalStateException: Class setup failure
             """.trimIndent(),
             run(TestDataManagerMode.CHECK),
         )
@@ -198,7 +200,9 @@ internal class TestDataManagerRunnerIntegrationTest {
         assertEquals(
             """
                 tests: 7, passed: 7, failed: 0, skipped: 0
-                executions: 7, successful: true
+                executions: 9, successful: true
+                recovered in pass 2: FakeRunnerJsTestGenerated.testFirst - IllegalStateException: Class setup failure
+                recovered in pass 2: FakeRunnerJsTestGenerated.testSecond - IllegalStateException: Class setup failure
             """.trimIndent(),
             run(TestDataManagerMode.UPDATE),
         )
@@ -212,7 +216,8 @@ internal class TestDataManagerRunnerIntegrationTest {
         assertEquals(
             """
                 tests: 7, passed: 7, failed: 0, skipped: 0
-                executions: 7, successful: true
+                executions: 7, successful: false
+                error: FakeRunnerJsTestGenerated - IllegalStateException: Class teardown failure
             """.trimIndent(),
             run(TestDataManagerMode.CHECK),
         )
@@ -225,7 +230,9 @@ internal class TestDataManagerRunnerIntegrationTest {
         assertEquals(
             """
                 tests: 7, passed: 5, failed: 2, skipped: 0
-                executions: 7, successful: true
+                executions: 7, successful: false
+                error: FakeRunnerJsTestGenerated.testFirst - IllegalStateException: Construction failure
+                error: FakeRunnerJsTestGenerated.testSecond - IllegalStateException: Construction failure
             """.trimIndent(),
             run(TestDataManagerMode.CHECK),
         )
@@ -310,8 +317,10 @@ internal class TestDataManagerRunnerIntegrationTest {
 
         assertEquals(
             """
-                tests: 7, passed: 7, failed: 0, skipped: 0
-                executions: 7, successful: true
+                tests: 7, passed: 5, failed: 2, skipped: 0
+                executions: 9, successful: false
+                error: FakeRunnerJsTestGenerated.testFirst - IllegalStateException: Class setup failure
+                error: FakeRunnerJsTestGenerated.testSecond - IllegalStateException: Class setup failure
             """.trimIndent(),
             run(TestDataManagerMode.UPDATE),
         )
@@ -324,8 +333,10 @@ internal class TestDataManagerRunnerIntegrationTest {
 
         assertEquals(
             """
-                tests: 7, passed: 7, failed: 0, skipped: 0
-                executions: 7, successful: true
+                tests: 7, passed: 6, failed: 1, skipped: 0
+                executions: 9, successful: false
+                error: FakeRunnerJsTestGenerated.testFirst - IllegalStateException: Class setup failure
+                recovered in pass 2: FakeRunnerJsTestGenerated.testSecond - IllegalStateException: Class setup failure
             """.trimIndent(),
             run(TestDataManagerMode.UPDATE),
         )
