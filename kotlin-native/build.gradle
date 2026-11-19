@@ -314,22 +314,38 @@ tasks.register("crossDistStdlibCache") {
 }
 
 targetList.each { target ->
-    tasks.register("${target}CrossDistBitcodeCopy", Sync) {
-        def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
-            attributes {
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, new TargetWithSanitizer(platformManager.targetByName(target), null))
+    def registerBitcodeCopy = { taskName, runtime, destination ->
+        tasks.register(taskName, Sync) {
+            def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
+                attributes {
+                    attribute(TargetVariant.TARGET_ATTRIBUTE, runtime)
+                }
+            }.files
+
+            into(destination)
+
+            from(bitcodeFiles) {
+                include("*.bc")
             }
-        }.files
-
-        into(nativeDistribution.map { it.runtime(target) })
-
-        from(bitcodeFiles) {
-            include("*.bc")
         }
+    }
+
+    def konanTarget = platformManager.targetByName(target)
+    // The runtime for -Xbinary=arm64e=true.
+    def hasArm64eRuntime = Arm64eKt.hasArm64eVariant(platformManager, konanTarget)
+    registerBitcodeCopy("${target}CrossDistBitcodeCopy", new TargetVariant(konanTarget, null),
+            nativeDistribution.map { it.runtime(target) })
+    if (hasArm64eRuntime) {
+        registerBitcodeCopy("${target}Arm64eCrossDistBitcodeCopy", TargetVariantKt.arm64eVariant(konanTarget),
+                nativeDistribution.map { it.arm64eRuntime(target) })
     }
 
     tasks.register("${target}CrossDistRuntimeFingerprint", PrepareDistributionFingerprint) {
         input.from(tasks.named("${target}CrossDistBitcodeCopy"))
+        if (hasArm64eRuntime) {
+            // Caches for -Xbinary=arm64e=true contain the arm64e runtime.
+            input.from(tasks.named("${target}Arm64eCrossDistBitcodeCopy"))
+        }
         output = nativeDistribution.map { it.runtimeFingerprint(target) }
 
         finalizedBy("distInvalidateStaleCaches") // if the fingerprint has updated, some caches may need to be invalidated
@@ -339,6 +355,9 @@ targetList.each { target ->
         dependsOn ":kotlin-native:distStdlib"
         dependsOn "${target}CrossDistBitcodeCopy"
         dependsOn "${target}CrossDistRuntimeFingerprint"
+        if (hasArm64eRuntime) {
+            dependsOn "${target}Arm64eCrossDistBitcodeCopy"
+        }
     }
 
     tasks.register("${target}PlatformLibs") {

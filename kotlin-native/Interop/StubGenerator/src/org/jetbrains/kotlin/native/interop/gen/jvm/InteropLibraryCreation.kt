@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignat
 import org.jetbrains.kotlin.backend.common.includeSignatureIndex
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_ARM64E_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS
 import org.jetbrains.kotlin.konan.library.writer.includeBitcode
 import org.jetbrains.kotlin.konan.library.writer.includeNativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.writer.legacyNativeDependenciesInManifest
@@ -31,6 +33,7 @@ fun createInteropLibrary(
         outputPath: Path,
         moduleName: String,
         nativeBitcodeFiles: List<Path>,
+        arm64eBitcodeFiles: List<Path> = emptyList(),
         target: KonanTarget,
         manifest: Properties,
         dependencies: List<KotlinLibrary>,
@@ -54,12 +57,14 @@ fun createInteropLibrary(
             platformAndTargets(BuiltInsPlatform.NATIVE, target.visibleName)
             customProperties {
                 this += (manifest - KLIB_PROPERTY_DEPENDS) // Do not propagate the `depends=` property from *.def files, rely on `dependencies` instead.
+                if (arm64eBitcodeFiles.isNotEmpty()) setProperty(KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS, KLIB_ARM64E_FOLDER_NAME)
             }
             legacyNativeShortNameInManifest(shortName)
             legacyNativeDependenciesInManifest(dependencies.map { it.uniqueName })
         }
         includeMetadata(serializedMetadata)
         includeBitcode(target, nativeBitcodeFiles)
+        if (arm64eBitcodeFiles.isNotEmpty()) includeBitcode(target, arm64eBitcodeFiles, arm64e = true)
         includeNativeIncludedBinaries(target, staticLibraries)
         includeSignatureIndex(topLevelSignatures)
     }.writeTo(outputPath)

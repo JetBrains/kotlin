@@ -12,6 +12,11 @@ abstract class AbstractToolConfig(konanHome: String, userProvidedTargetName: Str
     private val host = HostManager.host
     val target = targetManager.target
 
+    /**
+     * Whether [target] has an arm64e variant, see [Distribution.hasArm64eVariant].
+     */
+    val hasArm64eVariant: Boolean get() = distribution.hasArm64eVariant(target.name)
+
     protected val platform = platformManager.platform(target)
 
     fun downloadDependencies() = platform.downloadDependencies()

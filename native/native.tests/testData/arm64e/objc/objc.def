@@ -1,0 +1,8 @@
+language = Objective-C
+package = objc
+---
+#import <Foundation/NSObject.h>
+
+@interface Answer : NSObject
+- (int)answer;
+@end

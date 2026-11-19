@@ -16,9 +16,10 @@ import kotlin.io.path.name
 internal class KlibBitcodeComponentWriterImpl(
     private val target: KonanTarget,
     private val bitcodeFilePaths: Collection<Path>,
+    private val arm64e: Boolean = false,
 ) : KlibComponentWriter {
     override fun writeTo(root: Path) {
-        val layout = KlibBitcodeComponentLayout(target, root)
+        val layout = KlibBitcodeComponentLayout(target, root, arm64e)
         layout.bitcodeDir.createDirectories()
 
         for (filePath in bitcodeFilePaths) {

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cpp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin
-import org.jetbrains.kotlin.konan.target.registerTargetWithSanitizerAttribute
+import org.jetbrains.kotlin.konan.target.registerTargetVariantAttribute
 
 /**
  * Plugin for projects that depend upon C++-built projects.
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.konan.target.registerTargetWithSanitizerAttribute
 class CppConsumerPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.dependencies.attributesSchema {
-            registerTargetWithSanitizerAttribute()
+            registerTargetVariantAttribute()
         }
     }
 

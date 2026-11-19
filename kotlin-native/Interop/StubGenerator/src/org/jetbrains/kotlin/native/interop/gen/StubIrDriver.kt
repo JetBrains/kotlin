@@ -16,6 +16,28 @@ import org.jetbrains.kotlin.native.interop.indexer.*
 import java.io.File
 import java.util.*
 
+/**
+ * The compilation of the C stubs for this library, which also use the declarations of some standard headers.
+ */
+internal fun Compilation.forCStubs(platform: KotlinPlatform): Compilation = copy(
+        includes = mutableListOf<IncludeInfo>().apply {
+            add(IncludeInfo("stdint.h", null))
+            add(IncludeInfo("string.h", null))
+            if (platform == KotlinPlatform.JVM) {
+                add(IncludeInfo("jni.h", null))
+            }
+            if (language == Language.CPP) {
+                add(IncludeInfo("new", null))
+            }
+            addAll(this@forCStubs.includes)
+        },
+        additionalPreambleLines = additionalPreambleLines +
+                when (language) {
+                    Language.C, Language.CPP -> emptyList()
+                    Language.OBJECTIVE_C -> listOf("void objc_terminate();")
+                }
+)
+
 class StubIrContext(
         val log: (String) -> Unit,
         val configuration: InteropConfiguration,
@@ -27,25 +49,7 @@ class StubIrContext(
         val allowPrecompiledHeaders: Boolean,
         val metadataVersion: KlibMetadataVersion,
 ) {
-    val libraryForCStubs = configuration.library.copy(
-            includes = mutableListOf<IncludeInfo>().apply {
-                add(IncludeInfo("stdint.h", null))
-                add(IncludeInfo("string.h", null))
-                if (platform == KotlinPlatform.JVM) {
-                    add(IncludeInfo("jni.h", null))
-                }
-                if (configuration.library.language == Language.CPP) {
-                    add(IncludeInfo("new", null))
-                }
-                addAll(configuration.library.includes)
-            },
-            compilerArgs = configuration.library.compilerArgs,
-            additionalPreambleLines = configuration.library.additionalPreambleLines +
-                    when (configuration.library.language) {
-                        Language.C, Language.CPP -> emptyList()
-                        Language.OBJECTIVE_C -> listOf("void objc_terminate();")
-                    }
-    ).let {
+    val libraryForCStubs = configuration.library.forCStubs(platform).let {
         if (allowPrecompiledHeaders) it.precompileHeaders() else it
     }
 

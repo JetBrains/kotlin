@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.dependencies
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.konan.target.registerTargetWithSanitizerAttribute
+import org.jetbrains.kotlin.konan.target.registerTargetVariantAttribute
 
 /**
  * Base plugin for projects that use native dependencies.
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.konan.target.registerTargetWithSanitizerAttribute
 class NativeDependenciesBasePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.dependencies.attributesSchema {
-            registerTargetWithSanitizerAttribute()
+            registerTargetVariantAttribute()
         }
     }
 }

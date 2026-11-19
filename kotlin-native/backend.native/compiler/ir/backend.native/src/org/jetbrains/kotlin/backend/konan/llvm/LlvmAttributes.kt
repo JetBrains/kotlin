@@ -20,6 +20,13 @@ internal fun addDefaultLlvmFunctionAttributes(context: NativeBackendContext, llv
         // Note: this is default for clang on at least on iOS and macOS.
         enforceFramePointer(llvmFunction, context)
     }
+    if (context.config.arm64e) {
+        // Matches Clang behaviour for arm64e.
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-auth-traps", "")
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-calls", "")
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-indirect-gotos", "")
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-returns", "")
+    }
 }
 
 /**

@@ -9,6 +9,7 @@ import llvm.LLVMLinkage
 import llvm.LLVMStoreSizeOfType
 import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.BlockPointerBridge
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -135,7 +136,29 @@ private fun FunctionGenerationContext.loadBlockInvoke(
     val invokePtr = structGep(codegen.runtime.blockLiteralType, blockPtr, 3)
     val signature = bridge.blockType.toBlockInvokeLlvmType(llvm)
     val functionPointer = load(llvm.pointerType, invokePtr)
-    return LlvmFunctionPointer(functionPointer, signature)
+    // On arm64e, the invoke pointer is signed with the IA key and its address.
+    val ptrAuth = if (context.config.arm64e) PtrAuthBundle(llvm.int32(PtrAuthKey.IA.value), ptrToInt(invokePtr, llvm.int64Type)) else null
+    return LlvmFunctionPointer(functionPointer, signature, ptrAuth)
+}
+
+/**
+ * Signs [pointer] at run time as Clang signs pointers stored at [address] on arm64e:
+ * with [key], and [discriminator] blended with [address].
+ */
+private fun FunctionGenerationContext.signPointer(
+        pointer: LLVMValueRef,
+        key: PtrAuthKey,
+        discriminator: Int,
+        address: LLVMValueRef,
+): LLVMValueRef {
+    val addressDiscriminator = ptrToInt(address, llvm.int64Type)
+    val modifier = if (discriminator == 0) {
+        addressDiscriminator
+    } else {
+        call(llvm.llvmPtrAuthBlend, listOf(addressDiscriminator, llvm.int64(discriminator.toLong())))
+    }
+    val signed = call(llvm.llvmPtrAuthSign, listOf(ptrToInt(pointer, llvm.int64Type), llvm.int32(key.value), modifier))
+    return intToPtr(signed, llvm.pointerType)
 }
 
 private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(
@@ -231,7 +254,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
                 else -> error("Unexpected width of long type: $longWidth")
             }
 
-    private fun generateDescriptorForBlock(blockType: BlockType): ConstValue {
+    private fun generateDescriptorForBlock(blockType: BlockType): StaticData.Global {
         val numberOfParameters = blockType.numberOfParameters
 
         val signature = buildString {
@@ -249,14 +272,25 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             }
         }
 
-        return Struct(codegen.runtime.blockDescriptorType,
+        val signatureLiteral = codegen.staticData.cStringLiteral(signature)
+        // The descriptor is created before its initializer, which uses the addresses of its fields.
+        val descriptor = codegen.staticData.createGlobal(codegen.runtime.blockDescriptorType, "")
+
+        // On arm64e, libsystem_blocks authenticates the helpers with the IA key and their addresses.
+        fun helper(function: LlvmCallable, field: Int) = llvm.signedPointer(
+                function.toConstPointer(), PtrAuthKey.IA,
+                address = descriptor.pointer.getElementPtr(llvm, codegen.runtime.blockDescriptorType, field)
+        )
+
+        descriptor.setInitializer(Struct(codegen.runtime.blockDescriptorType,
                 codegen.LongInt(0L),
                 codegen.LongInt(LLVMStoreSizeOfType(codegen.runtime.targetData, blockLiteralType)),
-                copyHelper.toConstPointer(),
-                disposeHelper.toConstPointer(),
-                codegen.staticData.cStringLiteral(signature),
+                helper(copyHelper, 2),
+                helper(disposeHelper, 3),
+                signatureLiteral,
                 llvm.nullPointer,
-        )
+        ))
+        return descriptor
     }
 
 
@@ -308,10 +342,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             invokeName: String,
             genBlockBody: ObjCExportFunctionGenerationContext.(LLVMValueRef, List<LLVMValueRef>) -> Unit
     ): LlvmCallable {
-        val blockDescriptor = codegen.staticData.placeGlobal(
-                "",
-                generateDescriptorForBlock(blockType)
-        )
+        val blockDescriptor = generateDescriptorForBlock(blockType)
 
         return functionGenerator(
                 LlvmFunctionSignature(
@@ -340,7 +371,15 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             listOf(isa, flags, reserved, invoke, descriptor).forEachIndexed { index, value ->
                 // Although value is actually on the stack, it's not in normal slot area, so we cannot handle it
                 // as if it was on the stack.
-                store(value, structGep(codegen.runtime.blockLiteralType, blockOnStackBase, index))
+                val address = structGep(codegen.runtime.blockLiteralType, blockOnStackBase, index)
+                // On arm64e, the isa and invoke pointers are signed as Clang signs them in a block literal.
+                val signedValue = when {
+                    !context.config.arm64e -> value
+                    index == 0 -> signPointer(value, PtrAuthKey.DA, ObjCDataGenerator.ISA_DISCRIMINATOR, address)
+                    index == 3 -> signPointer(value, PtrAuthKey.IA, discriminator = 0, address)
+                    else -> value
+                }
+                store(signedValue, address)
             }
 
             store(kotlinRef, objectInBlock(blockOnStack))
