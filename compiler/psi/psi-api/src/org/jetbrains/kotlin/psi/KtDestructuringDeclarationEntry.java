@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.ResolveScopeManager;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
@@ -203,12 +202,6 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationStub<Kotl
     public KtDestructuringDeclaration getDestructuringDeclaration() {
         KotlinDestructuringDeclarationEntryStub stub = getGreenStub();
         PsiElement parent = stub != null ? stub.getParentStub().getPsi() : getParent();
-        if (parent instanceof PsiErrorElement) {
-            // For top-level destructuring declarations we report an error in the parser, so the entries are wrapped in an error element.
-            // TODO(KT-58563): After the reporting is moved out of the parser, this workaround can be removed.
-            parent = parent.getParent();
-        }
-
         if (!(parent instanceof KtDestructuringDeclaration)) {
             String parentClass = parent != null ? parent.getClass().getName() : null;
             throw new IllegalStateException("Unexpected parent of a destructuring declaration entry: " + parentClass);

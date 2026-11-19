@@ -15,20 +15,20 @@ const val x = "str"
 
 data class X(val a: Int, val b: Int)
 
-val <!SYNTAX!>(@Ann(x) a, @Ann(x) b)<!> = X(1, 2)
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(@Ann(x) a, @Ann(x) b)<!> = X(1, 2)
 
-val <!SYNTAX!>(@Ann(<!UNRESOLVED_REFERENCE!>y<!>) c: Int, @<!UNRESOLVED_REFERENCE!>Unresolved<!> <!WRONG_ANNOTATION_TARGET!>@ClassOnly<!> d: @TypeAnn(x) Int)<!> = X(1, 2)
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(@Ann(<!UNRESOLVED_REFERENCE!>y<!>) c: Int, @<!UNRESOLVED_REFERENCE!>Unresolved<!> <!WRONG_ANNOTATION_TARGET!>@ClassOnly<!> d: @TypeAnn(x) Int)<!> = X(1, 2)
 
 @Ann(x)
-val <!SYNTAX!>[@Ann(x) e, f]<!> = X(1, 2)
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>[@Ann(x) e, f]<!> = X(1, 2)
 
 class C {
-    val <!SYNTAX!>(@Ann(x) a, @Ann(x) b)<!> = X(1, 2)
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(@Ann(x) a, @Ann(x) b)<!> = X(1, 2)
 
-    val <!SYNTAX!>(@Ann(<!UNRESOLVED_REFERENCE!>y<!>) c: Int, @<!UNRESOLVED_REFERENCE!>Unresolved<!> <!WRONG_ANNOTATION_TARGET!>@ClassOnly<!> d: @TypeAnn(x) Int)<!> = X(1, 2)
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(@Ann(<!UNRESOLVED_REFERENCE!>y<!>) c: Int, @<!UNRESOLVED_REFERENCE!>Unresolved<!> <!WRONG_ANNOTATION_TARGET!>@ClassOnly<!> d: @TypeAnn(x) Int)<!> = X(1, 2)
 
     @Ann(x)
-    val <!SYNTAX!>[@Ann(x) e, f]<!> = X(1, 2)
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>[@Ann(x) e, f]<!> = X(1, 2)
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, data, integerLiteral, primaryConstructor,

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -65,6 +66,12 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         val source = declaration.source ?: return
         // val (...) = `destructuring_declaration`
         if (source.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION) {
+            // Only top-level and member containers outside of scripts are regular properties,
+            // local and script top-level containers are local variables
+            if (declaration.symbol !is FirLocalPropertySymbol) {
+                reporter.reportOn(source, FirErrors.NON_LOCAL_DESTRUCTURING_DECLARATION)
+            }
+
             checkInitializer(source, declaration.initializer)
             checkSquareBracketsLanguageFeature(source)
             return

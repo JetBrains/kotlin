@@ -219,9 +219,9 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     /**
      * Builds the container of a top-level or member destructuring declaration outside of scripts.
      *
-     * Such declarations are not allowed, and the parser reports them (KT-58563). Still, they are desugared like script destructuring
-     * declarations, so the entries become regular properties: references to them resolve, and they conflict with other declarations.
-     * The container itself is private and synthetic, so it stays out of member scopes.
+     * Such declarations are not allowed, and the checkers report `NON_LOCAL_DESTRUCTURING_DECLARATION` on the container. Still, they
+     * are desugared like script destructuring declarations, so the entries become regular properties: references to them resolve, and
+     * they conflict with other declarations. The container itself is private and synthetic, so it stays out of member scopes.
      *
      * @param symbol the symbol from [createNonLocalDestructuringDeclarationContainerSymbol],
      *   the [initializer] is expected to be built with it as the container symbol.

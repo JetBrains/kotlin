@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.SubclassOptInRequired;
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,29 +58,9 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
      */
     @NotNull
     public List<KtDestructuringDeclarationEntry> getEntries() {
-        KotlinDestructuringDeclarationStub stub = getGreenStub();
-        if (stub != null) {
-            KtDestructuringDeclarationEntry[] entries =
-                    getStubOrPsiChildren(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY, KtDestructuringDeclarationEntry.EMPTY_ARRAY);
-            return Arrays.asList(entries);
-        }
-
-        List<KtDestructuringDeclarationEntry> result = new ArrayList<>();
-        for (ASTNode child = getNode().getFirstChildNode(); child != null; child = child.getTreeNext()) {
-            if (child.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
-                result.add((KtDestructuringDeclarationEntry) child.getPsi());
-            } else if (child.getElementType() == TokenType.ERROR_ELEMENT) {
-                // Entries may be wrapped in ERROR_ELEMENTs (e.g., for top-level destructuring declarations
-                // where the parser reports an error).
-                // TODO(KT-58563): After the reporting is moved out of the parser, this workaround can be removed.
-                for (ASTNode errorChild = child.getFirstChildNode(); errorChild != null; errorChild = errorChild.getTreeNext()) {
-                    if (errorChild.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
-                        result.add((KtDestructuringDeclarationEntry) errorChild.getPsi());
-                    }
-                }
-            }
-        }
-        return result;
+        KtDestructuringDeclarationEntry[] entries =
+                getStubOrPsiChildren(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY, KtDestructuringDeclarationEntry.EMPTY_ARRAY);
+        return Arrays.asList(entries);
     }
 
     @Nullable
@@ -179,14 +157,7 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
             return stub.getHasSquareBrackets();
         }
 
-        ASTNode node = getNode();
-        if (node.findChildByType(LBRACKET) != null) return true;
-
-        // The brackets may be wrapped in an ERROR_ELEMENT along with the entries (e.g., for top-level destructuring declarations
-        // where the parser reports an error).
-        // TODO(KT-58563): After the reporting is moved out of the parser, this workaround can be removed.
-        ASTNode errorElement = node.findChildByType(TokenType.ERROR_ELEMENT);
-        return errorElement != null && errorElement.findChildByType(LBRACKET) != null;
+        return getNode().findChildByType(LBRACKET) != null;
     }
 
     /** Returns the trailing comma after the last entry, or {@code null} if there is none. */

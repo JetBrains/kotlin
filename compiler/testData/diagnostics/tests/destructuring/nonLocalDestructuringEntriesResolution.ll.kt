@@ -11,20 +11,20 @@ data class X(val a: Int, val b: String)
 
 class NoComponents
 
-val <!SYNTAX!>(<!REDECLARATION!>topA<!>, topB)<!> = X(1, "")
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(<!REDECLARATION!>topA<!>, topB)<!> = X(1, "")
 val <!REDECLARATION!>topA<!> = ""
 
-val <!SYNTAX!>[topC, topD]<!> = X(1, "")
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>[topC, topD]<!> = X(1, "")
 
-val <!SYNTAX!>(topE, topF)<!> = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>NoComponents()<!>
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(topE, topF)<!> = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>NoComponents()<!>
 
-var <!SYNTAX!>(topG: Int, topH)<!> = X(1, "")
+var <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(topG: Int, topH)<!> = X(1, "")
 
 class C {
-    val <!SYNTAX!>(<!REDECLARATION!>a<!>, b: String)<!> = X(1, "")
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(<!REDECLARATION!>a<!>, b: String)<!> = X(1, "")
     val <!REDECLARATION!>a<!> = ""
 
-    val <!SYNTAX!>(c, d)<!> = X(1, "")
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(c, d)<!> = X(1, "")
 
     fun use() {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>a<!>.<!UNRESOLVED_REFERENCE!>length<!>

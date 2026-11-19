@@ -1468,16 +1468,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     enum DeclarationParsingMode {
-        MEMBER_OR_TOPLEVEL(false, true, true),
-        LOCAL(true, false, false),
-        SCRIPT_TOPLEVEL(true, true, false);
+        MEMBER_OR_TOPLEVEL(true, true),
+        LOCAL(false, false),
+        SCRIPT_TOPLEVEL(true, false);
 
-        public final boolean destructuringAllowed;
         public final boolean accessorsAllowed;
         public final boolean canBeEnumUsedAsSoftKeyword;
 
-        DeclarationParsingMode(boolean destructuringAllowed, boolean accessorsAllowed, boolean canBeEnumUsedAsSoftKeyword) {
-            this.destructuringAllowed = destructuringAllowed;
+        DeclarationParsingMode(boolean accessorsAllowed, boolean canBeEnumUsedAsSoftKeyword) {
             this.accessorsAllowed = accessorsAllowed;
             this.canBeEnumUsedAsSoftKeyword = canBeEnumUsedAsSoftKeyword;
         }
@@ -1519,12 +1517,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker beforeName = mark();
 
         if (multiDeclaration) {
-            PsiBuilder.Marker multiDecl = mark();
             parseMultiDeclarationEntry(
                     isShortForm ? PROPERTY_NAME_FOLLOW_SET : DESTRUCTURING_PROPERTY_NAME_FOLLOW_SET,
                     PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET,
                     isShortForm ? MultiDeclarationMode.SHORT : MultiDeclarationMode.FULL);
-            errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values");
         }
         else {
             parseFunctionOrPropertyName(receiverTypeDeclared, "property", PROPERTY_NAME_FOLLOW_SET, PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET, /*nameRequired = */ true);

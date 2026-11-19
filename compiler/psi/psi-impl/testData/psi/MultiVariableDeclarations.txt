@@ -480,15 +480,14 @@ KtFile: MultiVariableDeclarations.kt
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('a')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('b')
-      PsiElement(RPAR)(')')
+    PsiElement(LPAR)('(')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('a')
+    PsiElement(COMMA)(',')
+    PsiWhiteSpace(' ')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('b')
+    PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
@@ -504,15 +503,14 @@ KtFile: MultiVariableDeclarations.kt
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('Int')
       PsiElement(DOT)('.')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('a')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('b')
-      PsiElement(RPAR)(')')
+    PsiElement(LPAR)('(')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('a')
+    PsiElement(COMMA)(',')
+    PsiWhiteSpace(' ')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('b')
+    PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
@@ -522,15 +520,14 @@ KtFile: MultiVariableDeclarations.kt
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('a')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('b')
-      PsiElement(RPAR)(')')
+    PsiElement(LPAR)('(')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('a')
+    PsiElement(COMMA)(',')
+    PsiWhiteSpace(' ')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('b')
+    PsiElement(RPAR)(')')
     PsiErrorElement:Type annotations are not allowed on destructuring declarations
       PsiElement(COLON)(':')
       TYPE_REFERENCE
@@ -554,15 +551,14 @@ KtFile: MultiVariableDeclarations.kt
       DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
@@ -578,15 +574,14 @@ KtFile: MultiVariableDeclarations.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Int')
           PsiElement(DOT)('.')
-        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
@@ -596,15 +591,14 @@ KtFile: MultiVariableDeclarations.kt
       DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('a')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('b')
-          PsiElement(RPAR)(')')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
         PsiErrorElement:Type annotations are not allowed on destructuring declarations
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')

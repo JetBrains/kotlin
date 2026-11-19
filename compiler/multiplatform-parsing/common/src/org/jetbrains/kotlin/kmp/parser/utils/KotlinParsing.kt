@@ -1620,13 +1620,12 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     }
 
     enum class DeclarationParsingMode(
-        val destructuringAllowed: Boolean,
         val accessorsAllowed: Boolean,
         val canBeEnumUsedAsSoftKeyword: Boolean,
     ) {
-        MEMBER_OR_TOPLEVEL(destructuringAllowed = false, accessorsAllowed = true, canBeEnumUsedAsSoftKeyword = true),
-        LOCAL(destructuringAllowed = true, accessorsAllowed = false, canBeEnumUsedAsSoftKeyword = false),
-        SCRIPT_TOPLEVEL(destructuringAllowed = true, accessorsAllowed = true, canBeEnumUsedAsSoftKeyword = false)
+        MEMBER_OR_TOPLEVEL(accessorsAllowed = true, canBeEnumUsedAsSoftKeyword = true),
+        LOCAL(accessorsAllowed = false, canBeEnumUsedAsSoftKeyword = false),
+        SCRIPT_TOPLEVEL(accessorsAllowed = true, canBeEnumUsedAsSoftKeyword = false)
     }
 
     /*
@@ -1665,13 +1664,11 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val beforeName = mark()
 
         if (multiDeclaration) {
-            val multiDecl = mark()
             parseMultiDeclarationEntry(
                 follow = if (isShortForm) PROPERTY_NAME_FOLLOW_SET else DESTRUCTURING_PROPERTY_NAME_FOLLOW_SET,
                 recoverySet = PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET,
                 mode = if (isShortForm) MultiDeclarationMode.Short else MultiDeclarationMode.Full
             )
-            errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values")
         } else {
             parseFunctionOrPropertyName(
                 receiverTypeDeclared,

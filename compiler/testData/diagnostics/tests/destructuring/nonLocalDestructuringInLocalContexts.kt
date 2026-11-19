@@ -6,7 +6,7 @@ data class X(val a: Int, val b: String)
 
 enum class E {
     ENTRY {
-        val <!SYNTAX!>(a, b)<!> = X(1, "")
+        val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(a, b)<!> = X(1, "")
 
         fun use() = b.length
     };
@@ -14,7 +14,7 @@ enum class E {
 
 fun local() {
     class Local {
-        val <!SYNTAX!>(a, b)<!> = X(1, "")
+        val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(a, b)<!> = X(1, "")
 
         fun use() = b.length
     }
@@ -22,7 +22,7 @@ fun local() {
     Local().b.length
 
     val o = object {
-        val <!SYNTAX!>(a, b)<!> = X(1, "")
+        val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(a, b)<!> = X(1, "")
     }
 
     o.b.length

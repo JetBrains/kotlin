@@ -322,6 +322,8 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 is KtBinaryExpression -> checkStringLiteralFolderExpression(element, session, mapping)
                 // Here there is no separate FIR node for partial operator calls (like for a[i] = 1, there is no separate node for a[i])
                     ?: if (element is KtArrayAccessExpression || element is KtOperationReferenceExpression) mapping[current] else null
+                // Syntax not allowed on a destructuring declaration is wrapped in an error element,
+                // as a receiver in `val Int.(a, b) = ...` or a type annotation in `val (a, b): Int = ...`
                 is PsiErrorElement -> {
                     val parent = current.parent
                     if (parent is KtDestructuringDeclaration) mapping[parent] else null

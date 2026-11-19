@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
-import com.intellij.psi.TokenType
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -26,15 +25,9 @@ internal object KtDestructuringDeclarationEntryStubSerializingElementFactory :
 
     /**
      * An entry is stubbed only if its destructuring declaration is stubbed.
-     *
-     * The entries of top-level and member destructuring declarations are wrapped in an error element by the parser (KT-58563).
      */
     override fun shouldCreateStub(node: ASTNode): Boolean {
-        var parent = node.treeParent ?: return false
-        if (parent.elementType == TokenType.ERROR_ELEMENT) {
-            parent = parent.treeParent ?: return false
-        }
-
+        val parent = node.treeParent ?: return false
         return parent.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION &&
                 KtDestructuringDeclarationStubSerializingElementFactory.shouldCreateStub(parent)
     }

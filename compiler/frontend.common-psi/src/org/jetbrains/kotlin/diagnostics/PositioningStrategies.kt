@@ -1338,6 +1338,18 @@ object PositioningStrategies {
         }
     }
 
+    /**
+     * Marks the brackets of a destructuring declaration together with its entries, e.g., `(a, b)` in `val (a, b) = pair`.
+     */
+    val DESTRUCTURING_DECLARATION_ENTRIES: PositioningStrategy<KtDestructuringDeclaration> =
+        object : PositioningStrategy<KtDestructuringDeclaration>() {
+            override fun mark(element: KtDestructuringDeclaration): List<TextRange> {
+                val opening = element.lPar ?: return super.mark(element)
+                val closing = element.rPar ?: element.entries.lastOrNull() ?: opening
+                return markRange(opening, closing)
+            }
+        }
+
     val DEPRECATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             if (element is KtConstructorCalleeExpression) element.typeReference?.let { return mark(it) }

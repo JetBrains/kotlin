@@ -4322,6 +4322,11 @@ internal class NameBasedDestructuringUnderscoreWithoutRenamingImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NameBasedDestructuringUnderscoreWithoutRenaming
 
+internal class NonLocalDestructuringDeclarationImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDestructuringDeclaration>(firDiagnostic, token), KaFirDiagnostic.NonLocalDestructuringDeclaration
+
 internal class ExpectedDeclarationWithBodyImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

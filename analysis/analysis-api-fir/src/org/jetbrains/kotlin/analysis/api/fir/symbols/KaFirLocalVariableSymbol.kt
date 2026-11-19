@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.entryName
+import org.jetbrains.kotlin.analysis.api.fir.hasNonLocalEntries
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParameterSymbolPointer
@@ -96,28 +97,9 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
     }
 
     constructor(declaration: KtDestructuringDeclarationEntry, session: KaFirSession) : super(declaration, session) {
-        val parent = declaration.parent
-
-        /**
-         *  [KtDestructuringDeclaration] in incorrect positions (like class-level)
-         *  still produce [KtDestructuringDeclarationEntry],
-         *  but their parent is [com.intellij.psi.PsiErrorElement],
-         *  so for them [KaFirKotlinPropertySymbol.create] should be used instead.
-         */
-        assert(parent is KtDestructuringDeclaration)
-
-        /**
-         * Top-level destructuring declarations inside [KtScript] produce non-local
-         * properties for each corresponding [KtDestructuringDeclarationEntry],
-         * so [KaFirKotlinPropertySymbol.create] should be used in this case.
-         *
-         * This assertion checks that this is not the case here.
-         *
-         * In the case of the script, the first parent for [KtDestructuringDeclarationEntry]
-         * will be [KtDestructuringDeclaration] (previous assertion),
-         * the second one is [KtBlockExpression] and the third one is [KtScript].
-         */
-        assert(parent.parent?.parent !is KtScript)
+        // Entries of top-level, member, and script top-level destructuring declarations are properties,
+        // so [KaFirKotlinPropertySymbol.create] should be used for them instead
+        assert(!declaration.destructuringDeclaration.hasNonLocalEntries)
     }
 
     constructor(symbol: FirPropertySymbol, session: KaFirSession) : super(symbol, session) {

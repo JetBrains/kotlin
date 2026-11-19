@@ -1833,20 +1833,6 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             }
         }
 
-        // The parser wraps the brackets and the entries of a non-local destructuring declaration in an error element (KT-58563),
-        // which `forEachChildren` skips
-        if (entries.isEmpty()) {
-            for (child in node.getChildren()) {
-                if (child.toTokenId() != BasicSyntaxElementTypeIds.ERROR_ELEMENT) continue
-                for (errorChild in child.getChildren()) {
-                    when (errorChild.toTokenId()) {
-                        KotlinSyntaxTokenIds.LBRACKET -> hasSquareBrackets = true
-                        KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(errorChild, isVar)
-                    }
-                }
-            }
-        }
-
         return DestructuringDeclaration(
             isVar = isVar,
             kind = destructuringKindOf(hasSquareBrackets = hasSquareBrackets, isFullForm = entries.any { it.isFullForm }),
