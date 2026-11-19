@@ -11,12 +11,15 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractTwoStageNativeCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.NativeGroupingTestIsolator
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeCodegenTest
+import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.configuration.setupStepsForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunnerGroupingStage
 import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
 import org.jetbrains.kotlin.konan.test.services.FileCheckTestTotalSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
@@ -32,6 +35,8 @@ import org.jetbrains.kotlin.test.klib.isolateReflectionPackageNameDependentTests
 import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
 import org.jetbrains.kotlin.test.klib.useReflectionPackageNameAnnotationIfSupported
 import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -53,7 +58,13 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractTwoStageNativeC
         super.configure(builder)
         val customLanguageVersion = customNativeCompilerSettings.defaultLanguageVersion
         commonConfiguration {
-            commonConfigurationForNativeCodegenTest()
+            globalDefaults {
+                frontend = FrontendKinds.FIR
+                targetPlatform = NativePlatforms.unspecifiedNativePlatform
+                targetBackend = TargetBackend.NATIVE
+                dependencyKind = DependencyKind.Binary
+            }
+
             useMetaTestConfigurators(
                 ::UnsupportedFeaturesTestConfigurator,
                 ::TargetBackendTestSkipper,
@@ -99,7 +110,7 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractTwoStageNativeC
 
             // Because of package escaping various dumps for grouping mode would be different from
             // the regular one, so we don't want all the frontend handlers to be set up, only some specific ones.
-            setupStepsForNativeFirstStageUpToSerialization(
+            commonConfigurationForNativeFirstStageUpToSerialization(
                 includeBasicFirHandlers = true,
                 includeDumpFirHandlers = false,
             )
