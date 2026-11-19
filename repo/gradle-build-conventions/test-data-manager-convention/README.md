@@ -161,19 +161,18 @@ as task outputs, which is out of scope here.
 
 ## Execution Order
 
-Module ordering is determined by `mustRunAfter` dependencies inherited from each module's
-`test` task. This ensures that golden modules (which establish baseline `.txt` files) run before dependent modules (which may create
-prefixed variants like `.descriptors.txt`).
+Module ordering is declared in `testDataManager { mustRunAfterProjects }`. This ensures that golden modules (which establish baseline `.txt`
+files) run before dependent modules (which may create variants like `.descriptors.txt`).
 
-To configure ordering, set up `mustRunAfter` on your module's test task in `build.gradle.kts`:
+To configure ordering, list the projects whose tasks must run first in `build.gradle.kts`:
 
 ```kotlin
-tasks.named<Test>("test") {
-    mustRunAfter(":analysis:analysis-api-fir:test")
+testDataManager {
+    mustRunAfterProjects.add(":analysis:analysis-api-fir")
 }
 ```
 
-Both tasks automatically inherit this ordering (with `:test` references rewritten to the corresponding manager task).
+`test`, `checkTestData` and `updateTestData` each run after the same task of these projects.
 
 ## See Also
 
