@@ -100,7 +100,11 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         DoNothingBuildMetricsReporter
     }
 
-    private val icEventCollector = IcEventCollectorImpl()
+    private val icEventCollector = if (workArguments.icEventReport) {
+        IcEventCollectorImpl()
+    } else {
+        null
+    }
 
     // the files are backed up in the task action before any changes to the outputs
     private fun initializeBackup(log: KotlinLogger): TaskOutputsBackup? = if (parameters.snapshotsDir.isPresent) {

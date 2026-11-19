@@ -225,6 +225,7 @@ internal open class GradleCompilerRunner(
             outputFiles = environment.outputFiles.toList(),
             taskPath = pathProvider,
             reportingSettings = environment.reportingSettings,
+            icEventReport = environment.icEventReport,
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors,
             compilerExecutionSettings = compilerExecutionSettings,

@@ -20,6 +20,7 @@ internal class GradleCompilerEnvironment(
     outputItemsCollector: OutputItemsCollector,
     val outputFiles: List<File>,
     val reportingSettings: ReportingSettings,
+    val icEventReport: Boolean,
     val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel,
     override val toolingDiagnosticsCollector: Property<KotlinToolingDiagnosticsCollector>,
     override val toolingDiagnosticsContext: Property<ToolingDiagnosticsContext>,
