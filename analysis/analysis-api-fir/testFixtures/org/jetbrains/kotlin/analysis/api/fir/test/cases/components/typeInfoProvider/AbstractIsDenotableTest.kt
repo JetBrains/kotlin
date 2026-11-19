@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
+import kotlin.io.path.extension
 
 abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
     val denotableName = Name.identifier("Denotable")
@@ -67,7 +67,7 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToFile(testDataPath, actualText)
+        assertEqualsToTestOutputFile(actualText, extension = testDataPath.extension)
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {
