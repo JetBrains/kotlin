@@ -2615,13 +2615,11 @@ internal object KotlinToolingDiagnostics {
             title { "Kotlin compiler version does not support the platform" }
                 .description {
                     "Task '$taskPath' cannot run because Kotlin compiler version '$compilerVersion' " +
-                            "does not support $platform compilation through the Build Tools API."
+                            "does not support $platform compilation through the Build Tools API.\n" +
+                            "The compiler version comes from 'kotlin.compilerVersion' or a dependency resolution rule " +
+                            "for 'kotlin-build-tools-impl'. By default, it is Kotlin Gradle Plugin version '$pluginVersion'."
                 }
-                .solution {
-                    "Use a Kotlin compiler version that supports $platform compilation. " +
-                            "The version comes from 'kotlin.compilerVersion' or a dependency resolution rule " +
-                            "for 'kotlin-build-tools-impl', and defaults to Kotlin Gradle Plugin version '$pluginVersion'."
-                }
+                .solution { "Use a Kotlin compiler version that supports $platform compilation." }
         }
     }
 
