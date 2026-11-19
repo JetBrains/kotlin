@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -44,6 +46,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
@@ -56,6 +59,40 @@ private fun IrFunction.capturesCrossinline(): Boolean {
     val parents = parents.toSet()
     return hasChild { it is IrGetValue && it.isReadOfCrossinline() && it.symbol.owner.parent in parents }
 }
+
+// Suspend calls in the function's own body, including inline lambdas, which are inlined into it.
+private fun IrFunction.hasSuspendCalls(): Boolean {
+    var result = false
+    body?.acceptVoid(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) {
+            if (!result) element.acceptChildrenVoid(this)
+        }
+
+        // Local classes, including continuations of nested suspend lambdas, and local functions suspend on their own.
+        override fun visitClass(declaration: IrClass) {}
+
+        override fun visitFunction(declaration: IrFunction) {}
+
+        override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
+            for (value in expression.boundValues) value.acceptVoid(this)
+            if (expression.origin == IrStatementOrigin.INLINE_LAMBDA) {
+                expression.invokeFunction.body?.acceptVoid(this)
+            }
+        }
+
+        override fun visitCall(expression: IrCall) {
+            if (expression.symbol.owner.isSuspend) result = true
+            else super.visitCall(expression)
+        }
+    })
+    return result
+}
+
+// Receivers, `_` and destructured parameters are not shown by the debugger.
+private fun IrValueParameter.isVisibleToDebugger(): Boolean =
+    origin != IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER &&
+            origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER &&
+            origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
 
 internal abstract class SuspendLoweringUtils(protected val context: JvmBackendContext) {
     protected fun IrClass.addFunctionOverride(
@@ -174,12 +211,17 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                 },
             )
 
+            // A lambda without suspension points cannot leak its parameters, so keep the unused ones for the debugger.
+            val keepUnusedParameters =
+                (context.config.nullOutSpilledCoroutineLocalsUsingStdlibFunction || context.config.enableDebugMode) &&
+                        !function.hasSuspendCalls()
+
             addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaDescriptorVisibilities.PACKAGE_VISIBILITY)
             val varsCountByType = HashMap<Type, Int>()
 
             val parametersFields = function.parameters.map {
                 val unboxedType = it.type.unboxInlineClass()
-                val field = if (it in usedParams) addField {
+                val field = if (it in usedParams || keepUnusedParameters && it.isVisibleToDebugger()) addField {
                     val normalizedType = context.defaultTypeMapper.mapType(unboxedType).normalize()
                     val index = varsCountByType[normalizedType]?.plus(1) ?: 0
                     varsCountByType[normalizedType] = index
