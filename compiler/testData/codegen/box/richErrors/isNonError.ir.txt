@@ -50,44 +50,44 @@ FILE fqName:<root> fileName:/isNonError.kt
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError?
-            CALL 'public final fun produceUnion (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+            CALL 'public final fun produceUnion (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL 1"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.RichError?
-            CALL 'public final fun produceUnion2 (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+            CALL 'public final fun produceUnion2 (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL 2"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.RichError
-            CALL 'public final fun produceUnion2 (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+            CALL 'public final fun produceUnion2 (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL 3"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError
-            CALL 'public final fun produceUnion3 (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
+            CALL 'public final fun produceUnion3 (): kotlin.Any?[kotlin.String? | <root>.Foo] declared in <root>' type=kotlin.Any?[kotlin.String? | <root>.Foo] origin=null
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL 4"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.RichError?
-            CALL 'public final fun produceUnion3 (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
+            CALL 'public final fun produceUnion3 (): kotlin.Any?[kotlin.String? | <root>.Foo] declared in <root>' type=kotlin.Any?[kotlin.String? | <root>.Foo] origin=null
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL 5"
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:produceUnion visibility:public modality:FINAL returnType:kotlin.Any
+  FUN name:produceUnion visibility:public modality:FINAL returnType:kotlin.Any[kotlin.String | <root>.Foo]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun produceUnion (): kotlin.Any declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun produceUnion (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>'
         CONST String type=kotlin.String value="ok"
-  FUN name:produceUnion2 visibility:public modality:FINAL returnType:kotlin.Any
+  FUN name:produceUnion2 visibility:public modality:FINAL returnType:kotlin.Any[kotlin.String | <root>.Foo]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun produceUnion2 (): kotlin.Any declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun produceUnion2 (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo' type=<root>.Foo origin=null
-  FUN name:produceUnion3 visibility:public modality:FINAL returnType:kotlin.Any?
+  FUN name:produceUnion3 visibility:public modality:FINAL returnType:kotlin.Any?[kotlin.String? | <root>.Foo]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun produceUnion3 (): kotlin.Any? declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun produceUnion3 (): kotlin.Any?[kotlin.String? | <root>.Foo] declared in <root>'
         CONST Null type=kotlin.Nothing? value=null

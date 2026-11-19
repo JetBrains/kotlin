@@ -1,6 +1,8 @@
 // DUMP_IR
 // DUMP_IR_DIFFERENCE: JVM
 // LANGUAGE: +RichErrors
+// IGNORE_IR_DESERIALIZATION_TEST: ANY
+//   ^^^ KT-91653 IR: add serialization support for rich errors
 error class Foo
 
 fun produceUnion() : String | Foo = "ok"

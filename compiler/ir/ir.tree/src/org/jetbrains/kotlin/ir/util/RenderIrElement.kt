@@ -977,6 +977,14 @@ private fun IrType.renderTypeInner(renderer: RenderIrElementVisitor?, options: D
             } else if (isMarkedNullable()) {
                 append('?')
             }
+            errorUnionElements.takeIf { it.isNotEmpty() }?.let { unionElements ->
+                append('[')
+                unionElements.forEachIndexed { index, element ->
+                    if (index != 0) append (" | ")
+                    append(element.renderTypeWithRenderer(renderer, options))
+                }
+                append(']')
+            }
         }
     }
 

@@ -46,26 +46,26 @@ FILE fqName:<root> fileName:/simple.kt
             CONST String type=kotlin.String value="Foo("
             CONST String type=kotlin.String value=")"
   FUN name:acceptUnion visibility:public modality:FINAL returnType:kotlin.String
-    VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Any?
+    VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Any?[kotlin.String? | <root>.Foo]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun acceptUnion (x: kotlin.Any?): kotlin.String declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun acceptUnion (x: kotlin.Any?[kotlin.String? | <root>.Foo]): kotlin.String declared in <root>'
         WHEN type=kotlin.String origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-              GET_VAR 'x: kotlin.Any? declared in <root>.acceptUnion' type=kotlin.Any? origin=null
+              GET_VAR 'x: kotlin.Any?[kotlin.String? | <root>.Foo] declared in <root>.acceptUnion' type=kotlin.Any?[kotlin.String? | <root>.Foo] origin=null
             then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-              GET_VAR 'x: kotlin.Any? declared in <root>.acceptUnion' type=kotlin.Any? origin=null
+              GET_VAR 'x: kotlin.Any?[kotlin.String? | <root>.Foo] declared in <root>.acceptUnion' type=kotlin.Any?[kotlin.String? | <root>.Foo] origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST String type=kotlin.String value="FAIL"
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
-      VAR name:u type:kotlin.Any [val]
-        CALL 'public final fun produceUnion (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+      VAR name:u type:kotlin.Any[kotlin.String | <root>.Foo] [val]
+        CALL 'public final fun produceUnion (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun acceptUnion (x: kotlin.Any?): kotlin.String declared in <root>' type=kotlin.String origin=null
-          ARG x: GET_VAR 'val u: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
-  FUN name:produceUnion visibility:public modality:FINAL returnType:kotlin.Any
+        CALL 'public final fun acceptUnion (x: kotlin.Any?[kotlin.String? | <root>.Foo]): kotlin.String declared in <root>' type=kotlin.String origin=null
+          ARG x: GET_VAR 'val u: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
+  FUN name:produceUnion visibility:public modality:FINAL returnType:kotlin.Any[kotlin.String | <root>.Foo]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun produceUnion (): kotlin.Any declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun produceUnion (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>'
         CONST String type=kotlin.String value="OK"

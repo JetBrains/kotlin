@@ -26,12 +26,16 @@ abstract class IrAbstractSimpleType(
         other is IrAbstractSimpleType &&
                 FqNameEqualityChecker.areEqual(classifier, other.classifier) &&
                 nullability == other.nullability &&
-                arguments == other.arguments
+                arguments == other.arguments &&
+                errorUnionElements == other.errorUnionElements
 
-    override fun hashCode(): Int =
-        (FqNameEqualityChecker.getHashCode(classifier) * 31 +
-                nullability.hashCode()) * 31 +
-                arguments.hashCode()
+    override fun hashCode(): Int {
+        var hashCode = FqNameEqualityChecker.getHashCode(classifier)
+        hashCode = hashCode * 31 + nullability.hashCode()
+        hashCode = hashCode * 31 + arguments.hashCode()
+        hashCode = hashCode * 31 + errorUnionElements.hashCode()
+        return hashCode
+    }
 }
 
 abstract class IrDelegatedSimpleType : IrSimpleType() {
@@ -59,6 +63,15 @@ private class IrSimpleTypeImpl(
     override val arguments: List<IrTypeArgument>,
     override val annotations: List<IrAnnotation>,
 ) : IrAbstractSimpleType(classifier, nullability) {
+}
+
+private class IrSimpleTypeRichErrorImpl(
+    anyClassifier: IrClassifierSymbol,
+    nullability: SimpleTypeNullability,
+    override val errorUnionElements: List<IrSimpleType>,
+    override val annotations: List<IrAnnotation>,
+) : IrAbstractSimpleType(anyClassifier, nullability) {
+    override val arguments: List<IrTypeArgument> get() = emptyList()
 }
 
 private class IrSimpleTypeOnlyClassifierImpl(
@@ -126,12 +139,28 @@ fun IrSimpleTypeImpl(
     }
 }
 
+fun irRichErrorType(
+    anyClassifier: IrClassifierSymbol,
+    nullability: SimpleTypeNullability,
+    errorUnionElements: List<IrSimpleType>,
+    annotations: List<IrAnnotation>,
+): IrSimpleType {
+    require(errorUnionElements.size > 1)
+    return IrSimpleTypeRichErrorImpl(
+        anyClassifier,
+        nullability,
+        errorUnionElements,
+        annotations,
+    )
+}
+
 class IrSimpleTypeBuilder {
     var kotlinType: KotlinType? = null
     var classifier: IrClassifierSymbol? = null
     var nullability = SimpleTypeNullability.NOT_SPECIFIED
     var arguments: List<IrTypeArgument> = emptyList()
     var annotations: List<IrAnnotation> = emptyList()
+    var errorUnionElements: List<IrSimpleType> = emptyList()
 
     var captureStatus: CaptureStatus? = null
     var capturedLowerType: IrType? = null
@@ -151,6 +180,7 @@ fun IrSimpleType.toBuilder(): IrSimpleTypeBuilder =
         b.nullability = nullability
         b.arguments = arguments
         b.annotations = annotations
+        b.errorUnionElements = errorUnionElements
     }
 
 fun IrSimpleTypeBuilder.buildSimpleType(): IrSimpleType =
@@ -171,6 +201,19 @@ fun IrSimpleTypeBuilder.buildSimpleType(): IrSimpleType =
         ).apply {
             constructor.initSuperTypes(capturedTypeConstructor!!.superTypes)
         }
+    } else if (errorUnionElements.isNotEmpty()) {
+        check(captureStatus == null && capturedTypeConstructor == null) {
+            "Both errorUnionElements and captured type constructor are provided"
+        }
+        check(errorUnionElements.size > 1) {
+            "There must be more than one error union element"
+        }
+        irRichErrorType(
+            anyClassifier = classifier ?: error("Classifier not provided"),
+            nullability = nullability,
+            errorUnionElements = errorUnionElements.compactIfPossible(),
+            annotations = annotations.compactIfPossible()
+        )
     } else {
         check(captureStatus == null && capturedTypeConstructor == null) {
             "Both classifier and captured type constructor are provided"
