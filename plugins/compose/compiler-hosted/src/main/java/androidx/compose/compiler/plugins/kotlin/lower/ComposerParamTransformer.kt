@@ -576,11 +576,10 @@ class ComposerParamTransformer(
         if (parameters[index].defaultValue != null) return true
 
         return overriddenSymbols.any {
-            // ComposableFunInterfaceLowering copies extension receiver as a value
-            // parameter, which breaks indices for overrides. fun interface cannot
-            // have parameters defaults, however, so we can skip here if mismatch is detected.
-            it.owner.parameters.size == parameters.size &&
-                    it.owner.hasDefaultForParam(index)
+            require(it.owner.parameters.size == parameters.size) {
+                "Expected ${it.owner.render()} to have the parameters of ${render()}"
+            }
+            it.owner.hasDefaultForParam(index)
         }
     }
 
