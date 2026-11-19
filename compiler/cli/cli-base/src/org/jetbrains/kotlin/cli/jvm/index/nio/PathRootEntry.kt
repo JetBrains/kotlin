@@ -15,7 +15,7 @@ import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 /**
- * A [JvmRootEntry] over a [Path] of a local directory root.
+ * A [JvmRootEntry] over a [Path] of any file-system provider (the default one for directory roots, `jrt:` for JDK modules).
  *
  * A directory is listed once, on first use, into a map from the exact child name to the child entry, which serves [findChild] and
  * [children]: names are matched case-sensitively even on case-insensitive hosts. The listing is never refreshed, and the entries are
@@ -29,6 +29,8 @@ class PathRootEntry private constructor(
     val relativePath: String,
     override val name: String,
     private val parent: PathRootEntry?,
+    /** The diagnostic path of the root entry, if it is not the [path] itself (e.g. `<jdk home>!/modules/java.base` for JRT). */
+    private val rootPathForDiagnostics: String?,
 ) : JvmRootEntry {
     /** `null` until the file type is read, then [FILE], [UNLISTED_DIRECTORY] or, once listed, the [Listing] of the directory. */
     @Volatile
@@ -65,9 +67,9 @@ class PathRootEntry private constructor(
             Files.newDirectoryStream(path).use { stream ->
                 // Unsorted, as in the VFS.
                 for (child in stream) {
-                    val childName = child.fileName?.toString() ?: continue
+                    val childName = child.fileName?.toString()?.removeSuffix("/") ?: continue
                     val childRelativePath = if (relativePath.isEmpty()) childName else "$relativePath/$childName"
-                    result[childName] = PathRootEntry(child, childRelativePath, childName, this)
+                    result[childName] = PathRootEntry(child, childRelativePath, childName, this, rootPathForDiagnostics)
                 }
             }
         } catch (_: IOException) {
@@ -92,6 +94,13 @@ class PathRootEntry private constructor(
 
     internal fun sibling(name: String): PathRootEntry? = parent?.listing?.byName?.get(name)
 
+    internal val pathForDiagnostics: String
+        get() = when {
+            rootPathForDiagnostics == null -> path.toString()
+            relativePath.isEmpty() -> rootPathForDiagnostics
+            else -> rootPathForDiagnostics.trimEnd('/') + "/" + relativePath
+        }
+
     override fun toString(): String = path.toString()
 
     private class Listing(val byName: Map<String, PathRootEntry>) {
@@ -109,9 +118,9 @@ class PathRootEntry private constructor(
         private val STATE: AtomicReferenceFieldUpdater<PathRootEntry, Any> =
             AtomicReferenceFieldUpdater.newUpdater(PathRootEntry::class.java, Any::class.java, "state")
 
-        /** The root entry of a root at [path]. */
-        fun root(path: Path): PathRootEntry =
-            PathRootEntry(path, relativePath = "", name = path.fileName?.toString().orEmpty(), parent = null)
+        /** The root entry of a root at [path]; diagnostics show [pathForDiagnostics] in place of [path], if given. */
+        fun root(path: Path, pathForDiagnostics: String? = null): PathRootEntry =
+            PathRootEntry(path, relativePath = "", name = path.fileName?.toString().orEmpty(), parent = null, pathForDiagnostics)
     }
 }
 
