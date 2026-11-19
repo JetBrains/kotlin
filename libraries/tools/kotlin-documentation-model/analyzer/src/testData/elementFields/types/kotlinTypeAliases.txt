@@ -10,7 +10,6 @@ val alias: Names [example//alias/#/PointingToDeclaration/].type:
   ],
   "classLikeId": "example/Names///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -33,7 +32,6 @@ typealias Names = List<String?> [example/Names///PointingToDeclaration/].underly
             ],
             "classLikeId": "kotlin/String///PointingToDeclaration/",
             "isMarkedNullable": true,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         }
@@ -42,6 +40,6 @@ typealias Names = List<String?> [example/Names///PointingToDeclaration/].underly
   ],
   "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
+
