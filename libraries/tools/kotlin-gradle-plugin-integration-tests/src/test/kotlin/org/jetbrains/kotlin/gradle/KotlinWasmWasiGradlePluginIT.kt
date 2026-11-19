@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.named
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.js.ir.ExecutableWasmWasi
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
-import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.test.TestMetadata
@@ -130,8 +131,12 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
             }
 
             buildScriptInjection {
-                project.tasks.named<WasmComponentizeTask>("compileProductionExecutableKotlinWasmWasiComponentize") {
-                    wasiAdapterRequest.get().flavor.set(org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor.REACTOR)
+                kotlinMultiplatform.wasmWasi {
+                    binaries.executable().forEach {
+                        (it as ExecutableWasmWasi).flavor.set(
+                            WasiAdapterFlavor.REACTOR
+                        )
+                    }
                 }
             }
 
@@ -291,6 +296,25 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                         .loggedPathString(),
                     component = projectPath.resolve(componentFile)
                 )
+            }
+        }
+    }
+
+    @TestMetadata("wasm-wasmtime-test")
+    @DisplayName("Check wasi target without main function reports a hint when componentization fails")
+    @GradleTest
+    fun wasiComponentizeWithoutMainFunction(gradleVersion: GradleVersion) {
+        project("wasm-wasmtime-test", gradleVersion) {
+            projectPath.resolve("src/wasmWasiMain/kotlin/foo.kt").writeText(
+                """
+                package my.pack.name
+
+                fun foo(): Int = 1
+                """.trimIndent()
+            )
+
+            buildAndFail(":compileDevelopmentExecutableKotlinWasmWasiComponentize") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.WasiCommandComponentWithoutMainFunction)
             }
         }
     }

@@ -5500,7 +5500,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/Binaryen
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSetupTask$Companion {
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/component/WasmComponentizeTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/tasks/wasiadapter/UsesWasiAdapterToolchainService, org/jetbrains/kotlin/gradle/tasks/wasmtools/UsesWasmToolsToolchainService {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/component/WasmComponentizeTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics, org/jetbrains/kotlin/gradle/tasks/wasiadapter/UsesWasiAdapterToolchainService, org/jetbrains/kotlin/gradle/tasks/wasmtools/UsesWasmToolsToolchainService {
 	public final fun componentize ()V
 	public abstract fun getComponentEmbedArguments ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getComponentNewArguments ()Lorg/gradle/api/provider/ListProperty;
