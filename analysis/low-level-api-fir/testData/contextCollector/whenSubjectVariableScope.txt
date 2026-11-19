@@ -17,8 +17,6 @@ Tower Data Context:
                 FirValueParameterSymbol a: R|kotlin/Any|
     Element 7
         Scope: FirLocalScope
-            Properties:
-                FirLocalPropertySymbol lval x: R|kotlin/Any|
 Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] whenSubjectVariableScope.kt
