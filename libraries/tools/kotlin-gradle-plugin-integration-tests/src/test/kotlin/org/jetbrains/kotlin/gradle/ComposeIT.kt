@@ -763,7 +763,8 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName($$"Ensure that older versions of the compiler can access the backing field of a $stable property")
     @GradleAndroidTest
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813, maxVersion = TestVersions.AGP.AGP_813)
-    @GradleTestVersions(minVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST, maxVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST)
+    // Gradle version known to be compatible with Kotlin 2.3.10
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_3, maxVersion = TestVersions.Gradle.G_9_3)
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
     fun testOlderCompilerCanAccessBackingFieldOfStableProperty(
@@ -853,8 +854,5 @@ class ComposeIT : KGPBaseTest() {
         private const val LEGACY_OPEN_FUNCTION_WARNING =
             "Detected a @Composable function that overrides an open function compiled with older compiler that is known to crash " +
                     "at runtime."
-
-        // Gradle version known to be compatible with Kotlin 2.3.10
-        private const val GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST = TestVersions.Gradle.G_9_3
     }
 }

@@ -130,7 +130,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             val supportedGradleVersions = listOf(
                 TestVersions.Gradle.MIN_SUPPORTED,
                 TestVersions.Gradle.MAX_SUPPORTED,
-            )
+            ).map { it.version }
 
             if (specificGradleVersion != null) {
                 if (specificGradleVersion.version !in supportedGradleVersions) return emptyList()

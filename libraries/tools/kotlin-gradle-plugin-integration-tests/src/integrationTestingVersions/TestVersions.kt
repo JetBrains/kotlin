@@ -8,33 +8,35 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 
-// Must be in sync with gradleVersions in libraries/tools/kotlin-gradle-plugin-integration-tests/build.gradle.kts KTI-1612
-interface TestVersions {
+const val GRADLE_VERSION_FILTER_PROPERTY = "gradle.integration.tests.gradle.version.filter"
 
-    // https://gradle.org/nightly/
-    // Gradle nightly releases retention policy is 3 months
-    object Gradle {
-        const val G_8_13 = "8.13"
-        const val G_8_14 = "8.14.5"
-        const val G_9_0 = "9.0.0"
-        const val G_9_1 = "9.1.0"
-        const val G_9_2 = "9.2.1"
-        const val G_9_3 = "9.3.1"
-        const val G_9_4 = "9.4.1"
-        const val G_9_5 = "9.5.1"
-        const val G_9_6 = "9.6.1"
-        const val G_9_7 = "9.7.0"
-        const val G_9_8 = "9.8.1"
+interface TestVersions {
+    enum class Gradle(val version: String) {
+        G_8_13("8.13"),
+        G_8_14("8.14.5"),
+        G_9_0("9.0.0"),
+        G_9_1("9.1.0"),
+        G_9_2("9.2.1"),
+        G_9_3("9.3.1"),
+        G_9_4("9.4.1"),
+        G_9_5("9.5.1"),
+        G_9_6("9.6.1"),
+        G_9_7("9.7.0"),
+        G_9_8("9.8.1"),
+
+        // These aliases are enum entries so they can be used in annotation arguments.
 
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
          */
-        const val MIN_UNSUPPORTED_VERSION_TO_CHECK = G_8_13
+        MIN_UNSUPPORTED_VERSION_TO_CHECK(G_8_13.version),
 
         // Should be the same minor release as GradleCompatibilityCheck.minSupportedGradleVersion
         // Check [org.jetbrains.kotlin.gradle.GradleTestVersionsSanityTest]
-        const val MIN_SUPPORTED = G_8_14
-        const val MAX_SUPPORTED = G_9_8
+        MIN_SUPPORTED(G_8_14.version),
+        MAX_SUPPORTED(G_9_8.version);
+
+        override fun toString(): String = version
     }
 
     object Kotlin {
@@ -65,22 +67,25 @@ interface TestVersions {
 
     enum class AgpCompatibilityMatrix(
         val version: String,
-        val minSupportedGradleVersion: GradleVersion,
-        val maxSupportedGradleVersion: GradleVersion,
+        minGradleVersion: Gradle,
+        maxGradleVersion: Gradle,
         val requiredJdkVersion: JavaVersion,
     ) {
-        AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
-        AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
-        AGP_810(AGP.AGP_810, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
-        AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
-        AGP_812(AGP.AGP_812, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
-        AGP_813(AGP.AGP_813, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
-        AGP_90(AGP.AGP_90, GradleVersion.version(Gradle.G_9_1), GradleVersion.version(Gradle.G_9_4), JavaVersion.VERSION_17),
-        AGP_91(AGP.AGP_91, GradleVersion.version(Gradle.G_9_3), GradleVersion.version(Gradle.G_9_5), JavaVersion.VERSION_17),
-        AGP_92(AGP.AGP_92, GradleVersion.version(Gradle.G_9_4), GradleVersion.version(Gradle.G_9_5), JavaVersion.VERSION_17),
-        AGP_93(AGP.AGP_93, GradleVersion.version(Gradle.G_9_5), GradleVersion.version(Gradle.G_9_7), JavaVersion.VERSION_17),
-        AGP_94(AGP.AGP_94, GradleVersion.version(Gradle.G_9_6), GradleVersion.version(Gradle.G_9_8), JavaVersion.VERSION_17),
+        AGP_88(AGP.AGP_88, Gradle.G_8_14, Gradle.G_8_14, JavaVersion.VERSION_17),
+        AGP_89(AGP.AGP_89, Gradle.G_8_14, Gradle.G_8_14, JavaVersion.VERSION_17),
+        AGP_810(AGP.AGP_810, Gradle.G_8_14, Gradle.G_8_14, JavaVersion.VERSION_17),
+        AGP_811(AGP.AGP_811, Gradle.G_8_14, Gradle.G_9_1, JavaVersion.VERSION_17),
+        AGP_812(AGP.AGP_812, Gradle.G_8_14, Gradle.G_9_1, JavaVersion.VERSION_17),
+        AGP_813(AGP.AGP_813, Gradle.G_8_14, Gradle.G_9_1, JavaVersion.VERSION_17),
+        AGP_90(AGP.AGP_90, Gradle.G_9_1, Gradle.G_9_4, JavaVersion.VERSION_17),
+        AGP_91(AGP.AGP_91, Gradle.G_9_3, Gradle.G_9_5, JavaVersion.VERSION_17),
+        AGP_92(AGP.AGP_92, Gradle.G_9_4, Gradle.G_9_5, JavaVersion.VERSION_17),
+        AGP_93(AGP.AGP_93, Gradle.G_9_5, Gradle.G_9_7, JavaVersion.VERSION_17),
+        AGP_94(AGP.AGP_94, Gradle.G_9_6, Gradle.G_9_8, JavaVersion.VERSION_17),
         ;
+
+        val minSupportedGradleVersion: GradleVersion = GradleVersion.version(minGradleVersion.version)
+        val maxSupportedGradleVersion: GradleVersion = GradleVersion.version(maxGradleVersion.version)
 
         companion object {
             fun fromVersion(
