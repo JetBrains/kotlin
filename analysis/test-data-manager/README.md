@@ -109,6 +109,7 @@ Why this hierarchy?
 
 Within each group, tests may update files that other tests depend on.
 The runner executes passes until no more updates occur (max 10 passes).
+`checkTestData` writes no files, so it runs a single pass, and a flaky failure is not retried.
 
 ## Modes
 
