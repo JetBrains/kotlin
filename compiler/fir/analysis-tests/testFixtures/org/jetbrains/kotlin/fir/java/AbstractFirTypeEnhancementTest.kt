@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
 import org.junit.jupiter.api.AfterEach
@@ -63,11 +64,10 @@ abstract class AbstractFirTypeEnhancementTest {
     }
 
     private fun createJarWithForeignAnnotations(): List<File> {
-        val jsr305Jar =
-            MockLibraryUtilExt.compileJavaFilesLibraryToJar(JavaForeignAnnotationType.Jsr305.path, "jsr305")
+        val jsr305Jar = MockLibraryUtil.compileJavaFilesLibraryToJar(JavaForeignAnnotationType.Jsr305.path, "jsr305")
 
         return listOf(
-            MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+            MockLibraryUtil.compileJavaFilesLibraryToJar(
                 JavaForeignAnnotationType.Annotations.path, "foreign-annotations",
                 extraClasspath = listOf(jsr305Jar.absolutePath),
             ),

@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.test.MockLibraryUtilExt
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -523,7 +523,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testCircularDependencyWithReferenceToOldVersionLib() {
         initProject(JVM_MOCK_RUNTIME)
 
-        val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
         addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
 
@@ -535,7 +535,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testDependencyToOldKotlinLib() {
         initProject()
 
-        val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
         addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module")), false, "module-lib", libraryJar)
 
@@ -1116,7 +1116,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             facet.compilerArguments = K2JVMCompilerArguments()
 
             val libraryName = "module1-1.0-SNAPSHOT"
-            val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.resolve("module1AsLib").absolutePath, libraryName)
+            val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(workDir.resolve("module1AsLib").absolutePath, libraryName)
             val module1Lib = this.workDir.resolve("module1").resolve("build").resolve("libs").resolve("$libraryName.jar")
             Files.createDirectories(module1Lib.parentFile.toPath())
             Files.copy(libraryJar.toPath(), module1Lib.toPath(), StandardCopyOption.REPLACE_EXISTING)
