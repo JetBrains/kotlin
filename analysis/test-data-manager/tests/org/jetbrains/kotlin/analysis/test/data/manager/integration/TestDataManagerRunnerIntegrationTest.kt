@@ -84,6 +84,10 @@ internal class TestDataManagerRunnerIntegrationTest {
             outcome.runErrors.forEach { add("run error: ${it.replace(tempDir.toString(), "<root>")}") }
             outcome.problems.map { "${it.kind} ${tempDir.relativize(it.file)} (${it.testName})" }.sorted().forEach(::add)
             outcome.errors.map { "error: ${it.testName} - ${it.exception}" }.sorted().forEach(::add)
+            outcome.recoveredTests.map { test ->
+                val failures = test.errors.map { it.exception } + test.problems.map { "${it.kind} ${tempDir.relativize(it.file)}" }
+                "recovered in pass ${test.passedInPass}: ${test.testName} - ${failures.joinToString()}"
+            }.sorted().forEach(::add)
             outcome.fileActions.map { "${it.kind} ${tempDir.relativize(it.file)}" }.sorted().forEach(::add)
             testDataDirectory.listDirectoryEntries("*.txt").sortedBy { it.name }.forEach { add("${it.name}: ${it.readText().trim()}") }
         }.joinToString("\n")
@@ -151,14 +155,14 @@ internal class TestDataManagerRunnerIntegrationTest {
     }
 
     @Test
-    fun `failure fixed by a re-run is still reported`() {
+    fun `failure fixed by a re-run is reported as recovered`() {
         FakeRunnerScenario.flakyFailures.set(1)
 
         assertEquals(
             """
                 tests: 7, passed: 7, failed: 0, skipped: 0
-                executions: 8, successful: false
-                error: FakeRunnerGoldenTestGenerated.testFlaky - IllegalStateException: Flaky failure
+                executions: 8, successful: true
+                recovered in pass 2: FakeRunnerGoldenTestGenerated.testFlaky - IllegalStateException: Flaky failure
             """.trimIndent(),
             run(TestDataManagerMode.CHECK),
         )

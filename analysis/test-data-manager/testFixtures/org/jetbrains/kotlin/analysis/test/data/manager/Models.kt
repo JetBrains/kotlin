@@ -112,3 +112,18 @@ internal fun List<FileAction>.mergedWith(later: List<FileAction>): List<FileActi
     val earlierFiles = mapTo(HashSet()) { it.file }
     return merged + later.filter { it.file !in earlierFiles }
 }
+
+/**
+ * A test that failed in a pass of the convergence loop and passed when it was re-run: a flaky test, or one that needed
+ * files other tests of its group wrote in that pass. It counts as passed and doesn't fail the run.
+ *
+ * @property passedInPass the pass it passed in, from 2
+ * @property problems the test data problems of its last failing pass
+ * @property errors the other failures of its last failing pass
+ */
+internal data class RecoveredTest(
+    val testName: String,
+    val passedInPass: Int,
+    val problems: List<TestDataProblem>,
+    val errors: List<TestError>,
+)
