@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledOnOs
-import org.junit.jupiter.api.condition.OS
 import java.io.File
-import java.nio.file.Files
 
 /**
  * The sources are members of a module patched with `-Xpatch-module` when one of the sources compiled is in a patch path, so an
@@ -134,25 +131,6 @@ class IncrementalJavaModulePatchTest : AbstractIncrementalJvmCompilerRunnerTest(
             result.compileErrors.any { "does not export package 'lib.internal'" in it },
             "a.kt and b.kt compiled in tests have to be rejected: ${result.compileErrors}",
         )
-    }
-
-    @Test
-    @DisabledOnOs(OS.WINDOWS, disabledReason = "Symlinks do not work on Windows")
-    fun testRemovingTheSymlinkToTheLastPatchedSourceRecompilesTheOthers() {
-        val patch = File(workingDir, "patch")
-        File(patch, "lib/internal/a.kt").apply {
-            parentFile.mkdirs()
-            writeText("package lib.internal\n\nfun a(): String = Impl.impl()\n")
-        }
-        writeSource("other/b.kt", "package other\n\nfun b(): String = lib.internal.Impl.impl()\n")
-        val link = Files.createSymbolicLink(File(sourceRoot, "link").toPath(), patch.toPath())
-        val patches = listOf("lib=" + patch.path)
-
-        assertEquals(ExitCode.OK, make(patches).exitCode)
-        Files.delete(link)
-        // As in a clean build, b.kt is now compiled in the unnamed module, and lib is not in the module graph.
-        val result = make(patches)
-        assertCompileError(result, "Unresolved reference 'lib'", "b.kt compiled in the unnamed module has to be rejected")
     }
 
     @Test

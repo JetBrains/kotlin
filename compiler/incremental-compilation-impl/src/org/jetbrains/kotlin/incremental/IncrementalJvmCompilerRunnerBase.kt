@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.modules.isInJavaModulePatchPaths
 import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModulePatch
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.config.Services
@@ -230,7 +230,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         val kotlinSources = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
         val isIncremental = when (patchesWithSources.size) {
             0 -> true
-            1 -> kotlinSources.all { patchesWithSources.single().containsSource(it) }
+            1 -> kotlinSources.all { isInJavaModulePatchPaths(it, patchesWithSources.single()) }
             else -> false
         }
         return BuildAttribute.JAVA_MODULE_PATCH_WITH_SOURCES_OUTSIDE.takeUnless { isIncremental }
@@ -238,7 +238,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
 
     private fun javaModulePatches(args: K2JVMCompilerArguments): Map<String, List<File>> =
         args.javaModulePatches.mapNotNull(::parseJavaModulePatch)
-            .associate { patch -> patch.first to patch.second.map { File(it).canonicalFile } }
+            .associate { [module, paths] -> module to paths.map(::File) }
 
     // Like the compiler, the Java files in the Java source roots too, whether or not they are listed as sources.
     private fun javaModuleSources(allSourceFiles: List<File>, args: K2JVMCompilerArguments): List<File> =
@@ -249,10 +249,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         (args.javaSourceRoots.toList() + args.freeArgs.filter { it.endsWith(".java") || File(it).isDirectory }).map(::File)
 
     private fun patchesWithSources(patches: Map<String, List<File>>, sources: List<File>): Map<String, List<File>> =
-        patches.filterValues { paths -> sources.any { paths.containsSource(it) } }
-
-    private fun List<File>.containsSource(source: File): Boolean =
-        source.canonicalFile.let { file -> any { FileUtil.isAncestor(it, file, true) } }
+        patches.filterValues { paths -> sources.any { isInJavaModulePatchPaths(it, paths) } }
 
     private fun hasClasses(patches: Map<String, List<File>>): Boolean =
         patches.values.flatten().any { path -> path.isFile || path.walk().any { it.extension == "class" } }
