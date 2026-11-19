@@ -601,6 +601,7 @@ tasks {
         dependsOn(":compiler:util:test")
         dependsOn(":core:error.handling:check")
         dependsOn(":core:names:check")
+        dependsOn(":core:names.jvm:check")
         dependsOn(":core:language.model:check")
         // Not `check`: it also runs Wasm tests, whose npm install task is incompatible with the configuration cache
         dependsOn(":core:language.syntax:jvmTest")

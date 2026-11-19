@@ -78,6 +78,7 @@ ignored:
  - core/language.targets.wasm/README.md
  - core/language.targets/README.md
  - core/language.version-settings/README.md
+ - core/names.jvm/README.md
  - core/names/README.md
  - core/reflection.common.jvm/ReadMe.md
  - core/reflection.jvm/ReadMe.md

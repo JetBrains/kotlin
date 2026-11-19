@@ -55,6 +55,7 @@ CompilerInfrastructure:
  - core/language.targets.wasm
  - core/language.version-settings
  - core/names
+ - core/names.jvm
  - core/script.runtime
  - core/util.runtime
  - jps

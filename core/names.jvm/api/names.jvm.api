@@ -1,0 +1,9 @@
+public final class org/jetbrains/kotlin/name/JvmPropertyAccessorNaming {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/JvmPropertyAccessorNaming;
+	public static final fun getterName (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun isGetterName (Ljava/lang/String;)Z
+	public static final fun isSetterName (Ljava/lang/String;)Z
+	public static final fun setterName (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun startsWithIsPrefix (Ljava/lang/String;)Z
+}
+
