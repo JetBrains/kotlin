@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
+import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.plugin.tryGeneratingNoArgDelegatingConstructorCall
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -138,7 +138,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
     }
 
     @OptIn(SymbolInternals::class)
-    fun MutableList<FirFunction>.addIfNonClashing(classSymbol: FirClassSymbol<*>, declaredScope: FirClassDeclaredMemberScope?) {
+    fun MutableList<FirFunction>.addIfNonClashing(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext) {
         val [constructorInfo: T, targetClassSymbol: FirClassSymbol<*>] = extractConstructorInfoAndTargetClassSymbol(classSymbol) ?: return
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }
 
@@ -190,7 +190,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             if (checkClashing<FirConstructor>(valuesParameterCount)) return
 
             var hasConflict = false
-            declaredScope?.processDeclaredConstructors { constructor ->
+            context.declaredScope?.processDeclaredConstructors { constructor ->
                 hasConflict = hasConflict || constructor.checkParametersClashing(valuesParameterCount)
             }
             if (hasConflict) return
@@ -264,7 +264,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             if (checkClashing<FirNamedFunction>(valuesParameterCount)) return
 
             var hasConflict = false
-            declaredScope?.processFunctionsByName(staticName) { function ->
+            context.declaredScope?.processFunctionsByName(staticName) { function ->
                 hasConflict = hasConflict || (!function.hasReceiverOrContextParameters && function.checkParametersClashing(valuesParameterCount))
             }
             if (hasConflict) return
@@ -322,7 +322,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
 
                     classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol)
-                    remapTypeParameterBounds(typeParameters, targetClassSymbol.fir.typeParameters, session)
+                    remapTypeParameterBounds(typeParameters, targetClassSymbol.fir.typeParameters, context.typeResolver, session)
 
                     val functionTypeParameterSymbols = typeParameters.map { it.symbol }
                     kotlinTypeSubstitutor = substitutorByMap(

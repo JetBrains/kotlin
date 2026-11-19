@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
+import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
@@ -117,7 +118,10 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
     override fun Builder.getSpecialBuilderMethodNames(): List<Name> = listOf(Name.identifier(buildMethodName))
 
     override fun FirRegularClassBuilder.completeBuilder(
-        classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>, builder: Builder,
+        classSymbol: FirClassSymbol<*>,
+        builderSymbol: FirClassSymbol<*>,
+        builder: Builder,
+        context: NestedClassGenerationContext,
     ) {
         superTypeRefs += listOf(session.builtinTypes.anyType)
     }
