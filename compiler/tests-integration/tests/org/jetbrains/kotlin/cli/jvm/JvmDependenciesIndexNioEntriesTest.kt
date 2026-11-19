@@ -115,4 +115,16 @@ class JvmDependenciesIndexNioEntriesTest : JvmDependenciesIndexContractTestBase(
         }
         assertEquals(listOf("A.class", "B.class"), names)
     }
+
+    @Test
+    fun localDirectoryFilesAreTraversedSortedByName() {
+        val classNames = listOf("Z", "a", "M", "b-c", "b", "_x", "y1", "y")
+        val out = dir("out", *classNames.map { "p/$it.class" }.toTypedArray())
+        val names = mutableListOf<String>()
+        nioIndex(out.dirRoot()).traverseFilesInPackage(FqName("p"), CLASS) { handle: BinaryClassFileHandle ->
+            names += handle.fileName()
+            true
+        }
+        assertEquals(classNames.map { "$it.class" }.sorted(), names, "the order of the compiler's local VFS")
+    }
 }

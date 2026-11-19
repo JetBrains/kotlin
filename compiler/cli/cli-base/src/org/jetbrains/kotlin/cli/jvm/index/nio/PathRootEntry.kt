@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntry
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import java.io.IOException
+import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -50,7 +51,9 @@ class PathRootEntry private constructor(
         val result = LinkedHashMap<String, PathRootEntry>()
         try {
             Files.newDirectoryStream(path).use { stream ->
-                for (child in stream) {
+                // The order of the VFS: sorted by name on the local file system, as listed for `jrt:`.
+                val children = if (path.fileSystem == FileSystems.getDefault()) stream.sortedBy { it.fileName?.toString() } else stream
+                for (child in children) {
                     val childName = child.fileName?.toString()?.removeSuffix("/") ?: continue
                     val childRelativePath = if (relativePath.isEmpty()) childName else "$relativePath/$childName"
                     result[childName] = PathRootEntry(child, childRelativePath, childName, this, rootPathForDiagnostics)
