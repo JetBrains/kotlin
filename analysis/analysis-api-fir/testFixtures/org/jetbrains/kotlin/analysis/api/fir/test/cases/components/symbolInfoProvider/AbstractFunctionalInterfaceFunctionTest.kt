@@ -24,9 +24,11 @@ abstract class AbstractFunctionalInterfaceFunctionTest : AbstractAnalysisApiBase
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val typeReference = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtTypeReference>(mainFile)
         val actual = executeOnPooledThreadInReadAction {
-            val symbolRenderer = KaDebugRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
+            val symbolRenderer = KaDebugRenderer(renderExtra = true, renderTypeByProperties = true)
             copyAwareAnalyzeForTest(typeReference) { contextTypeReference ->
-                val classSymbol = contextTypeReference.type.symbol ?: error("Cannot resolve type reference to a class-like symbol")
+                // For a type alias application, the type alias itself is checked instead of its expansion
+                val type = contextTypeReference.type
+                val classSymbol = type.abbreviation?.symbol ?: type.symbol ?: error("Cannot resolve type reference to a class-like symbol")
                 val functionalInterfaceFunction = classSymbol.functionalInterfaceFunction
                 val samConstructor = classSymbol.samConstructor
                 val functionalInterfaceFunctionFromConstructor = samConstructor?.functionalInterfaceFunction
@@ -41,6 +43,9 @@ abstract class AbstractFunctionalInterfaceFunctionTest : AbstractAnalysisApiBase
                     appendLine()
                     appendLine("FUNCTIONAL INTERFACE FUNCTION:")
                     appendLine("  ${functionalInterfaceFunction?.let { symbolRenderer.render(useSiteSession, it) }}")
+                    appendLine()
+                    appendLine("SAM CONSTRUCTOR:")
+                    appendLine("  ${samConstructor?.let { symbolRenderer.render(useSiteSession, it) }}")
                 }
             }
         }

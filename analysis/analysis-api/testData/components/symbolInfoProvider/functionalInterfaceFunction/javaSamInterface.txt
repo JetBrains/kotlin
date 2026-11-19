@@ -115,3 +115,152 @@ FUNCTIONAL INTERFACE FUNCTION:
   returnValueStatus: Unspecified
   javaMethodName: run
   importableFqName: null
+
+SAM CONSTRUCTOR:
+  KaSamConstructorSymbol:
+  anchorPsi: PsiClassImpl
+  annotations: []
+  callableId: /JavaRunnable
+  contextParameters: []
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: JavaRunnable
+  origin: SAM_CONSTRUCTOR
+  psi: PsiClassImpl
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: JavaRunnable
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: JavaRunnable
+        symbol: KaNamedClassSymbol(JavaRunnable)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(JavaRunnable)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: function
+      origin: SAM_CONSTRUCTOR
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaFunctionType:
+        abbreviation: null
+        annotations: []
+        classId: kotlin/Function0
+        contextParameterTypes: []
+        hasReceiver: false
+        isReflectType: false
+        isSuspend: false
+        parameterTypes: []
+        parameters: []
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Function0
+            symbol: KaNamedClassSymbol(kotlin/Function0)
+            typeArguments: [
+              KaUsualClassType:
+                abbreviation: null
+                annotations: []
+                classId: kotlin/Unit
+                qualifiers: [
+                  KaResolvedClassTypeQualifier:
+                    name: Unit
+                    symbol: KaNamedClassSymbol(kotlin/Unit)
+                    typeArguments: []
+                ]
+                symbol: KaNamedClassSymbol(kotlin/Unit)
+                typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
+            ]
+        ]
+        receiverType: null
+        returnType: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Unit
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        symbol: KaNamedClassSymbol(kotlin/Function0)
+        typeArguments: [
+          KaUsualClassType:
+            abbreviation: null
+            annotations: []
+            classId: kotlin/Unit
+            qualifiers: [
+              KaResolvedClassTypeQualifier:
+                name: Unit
+                symbol: KaNamedClassSymbol(kotlin/Unit)
+                typeArguments: []
+            ]
+            symbol: KaNamedClassSymbol(kotlin/Unit)
+            typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
+        ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: null
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  javaMethodName: null
+  importableFqName: JavaRunnable

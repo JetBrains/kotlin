@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractFunctionalInterfaceBySamConstructorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            val symbolRenderer = KaDebugRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
+            val symbolRenderer = KaDebugRenderer(renderExtra = true, renderTypeByProperties = true)
             copyAwareAnalyzeForTest(mainFile) { contextFile ->
                 val samConstructorSymbol = getSamConstructorSymbol(contextFile, testServices)
                 val functionalInterface = samConstructorSymbol?.functionalInterface
