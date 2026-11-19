@@ -4276,6 +4276,40 @@ internal class LateinitIntrinsicCallOnNonAccessiblePropertyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LateinitIntrinsicCallOnNonAccessibleProperty
 
+internal class VolatileIntrinsicCallOnNonLiteralImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VolatileIntrinsicCallOnNonLiteral
+
+internal class VolatileIntrinsicCallOnNonVolatileImpl(
+    override val declaration: KaSymbol,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VolatileIntrinsicCallOnNonVolatile
+
+internal class VolatileIntrinsicCallOnPropertyWithCustomAccessorsImpl(
+    override val declaration: KaSymbol,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VolatileIntrinsicCallOnPropertyWithCustomAccessors
+
+internal class VolatileIntrinsicCallInInlineFunctionImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VolatileIntrinsicCallInInlineFunction
+
+internal class VolatileIntrinsicCallOnNonAccessiblePropertyImpl(
+    override val declaration: KaSymbol,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VolatileIntrinsicCallOnNonAccessibleProperty
+
+internal class VolatileIntrinsicCallOnUnsupportedTypeImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VolatileIntrinsicCallOnUnsupportedType
+
 internal class LocalExtensionPropertyImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

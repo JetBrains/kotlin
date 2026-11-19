@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -135,8 +136,78 @@ internal class VolatileFieldsLowering(val context: NativeLoweringContext) : File
             type == context.irBuiltIns.shortType ||
             type == context.irBuiltIns.byteType
 
+    /**
+     * Immutable temporaries holding a property reference literal, e.g. `val tmp = this::x`.
+     *
+     * The public atomic intrinsics on volatile properties (`kotlin.concurrent.atomics.compareAndSet` & co.,
+     * see `VolatilePropertyAtomics.native.kt`) are inline functions on top of the intrinsics handled here, so after inlining
+     * the property reference literal passed by the user is stored to a temporary by the inliner.
+     */
+    private val propertyReferenceTemporaries = mutableMapOf<IrVariable, IrRichPropertyReference>()
+
+    /** Temporaries from [propertyReferenceTemporaries], which were looked through, and so may become unused. */
+    private val lookedThroughTemporaries = mutableSetOf<IrVariable>()
+
+    private fun IrExpression.isPure() =
+        (this is IrGetValue && (symbol.owner as? IrVariable)?.isVar != true) || this is IrGetObjectValue || this is IrConst
+
+    /**
+     * Returns the property reference literal passed as [expression] (possibly through an immutable temporary)
+     * and its bound receiver, if any.
+     */
+    private fun IrBuilderWithScope.resolvePropertyReference(expression: IrExpression?): Pair<IrRichPropertyReference, IrExpression?>? {
+        getSinglePropertyReference(expression, null)?.let { return it to it.boundValues.singleOrNull() }
+        val variable = (expression as? IrGetValue)?.symbol?.owner as? IrVariable ?: return null
+        val reference = propertyReferenceTemporaries[variable] ?: return null
+        lookedThroughTemporaries += variable
+        // Bound values are pure (see visitVariable), so it's fine to evaluate them once again.
+        return reference to reference.boundValues.singleOrNull()?.deepCopyWithSymbols(scope.getLocalDeclarationParent())
+    }
+
+    private fun removeUnusedPropertyReferenceTemporaries(irFile: IrFile) {
+        if (lookedThroughTemporaries.isEmpty()) return
+        val usedVariables = mutableSetOf<IrValueDeclaration>()
+        irFile.acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
+            override fun visitGetValue(expression: IrGetValue) {
+                usedVariables += expression.symbol.owner
+            }
+        })
+        val toRemove: Set<IrStatement> = lookedThroughTemporaries.filterTo(mutableSetOf()) { it !in usedVariables }
+        if (toRemove.isEmpty()) return
+        irFile.acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
+            override fun visitContainerExpression(expression: IrContainerExpression) {
+                expression.statements.removeAll { it in toRemove }
+                super.visitContainerExpression(expression)
+            }
+            override fun visitBlockBody(body: IrBlockBody) {
+                body.statements.removeAll { it in toRemove }
+                super.visitBlockBody(body)
+            }
+        })
+    }
+
     override fun lower(irFile: IrFile) {
+        lowerIntrinsics(irFile)
+        removeUnusedPropertyReferenceTemporaries(irFile)
+        propertyReferenceTemporaries.clear()
+        lookedThroughTemporaries.clear()
+    }
+
+    private fun lowerIntrinsics(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
+            override fun visitVariable(declaration: IrVariable): IrStatement {
+                val result = super.visitVariable(declaration)
+                if (!declaration.isVar) {
+                    val reference = getSinglePropertyReference(declaration.initializer, null)
+                    if (reference != null && reference.boundValues.all { it.isPure() }) {
+                        propertyReferenceTemporaries[declaration] = reference
+                    }
+                }
+                return result
+            }
+
             override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.transformChildrenVoid()
                 processDeclarationList(declaration.declarations)
@@ -215,7 +286,7 @@ internal class VolatileFieldsLowering(val context: NativeLoweringContext) : File
                 } ?: return expression
                 builder.at(expression)
                 val extensionReceiver = expression.arguments[expression.symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }]
-                val reference = getSinglePropertyReference(extensionReceiver, null)
+                val [reference, boundReceiver] = builder.resolvePropertyReference(extensionReceiver)
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = (reference.reflectionTargetSymbol as? IrPropertySymbol)?.owner
                 val backingField = property?.backingField
@@ -228,7 +299,7 @@ internal class VolatileFieldsLowering(val context: NativeLoweringContext) : File
                     else -> intrinsicMap[intrinsicType]!!(backingField)
                 }
                 return builder.irCall(function).apply {
-                    dispatchReceiver = reference.boundValues.singleOrNull()
+                    dispatchReceiver = boundReceiver
                     val replacementParams = function.parameters.filter { it.kind == IrParameterKind.Regular }
                     val originalParams = expression.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular }
                     for ([from, to] in originalParams.zip(replacementParams)) {

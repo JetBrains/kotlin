@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.name.Name
 
 /**
  * Renames private fields (including fields copied from companion object) to avoid JVM declaration clash.
  */
-internal class RenameFieldsLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : ClassLoweringPass {
+internal class RenameFieldsLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val fields = irClass.fields.toMutableList()
         fields.sortBy {
@@ -39,6 +40,9 @@ internal class RenameFieldsLowering(@Suppress("UNUSED_PARAMETER", "unused") cont
             val index = count[oldName] ?: 0
             if (index != 0 && !field.visibility.isPublicAPI) {
                 field.name = Name.identifier("$oldName$$index")
+                field.callsReferencingNameReflectively?.forEach { call ->
+                    call.arguments[1] = IrConstImpl.string(call.startOffset, call.endOffset, context.irBuiltIns.stringType, field.name.asString())
+                }
             }
             count[oldName] = index + 1
         }

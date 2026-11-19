@@ -1763,6 +1763,21 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("declaration")
         }
 
+        val VOLATILE_INTRINSIC_CALL_ON_NON_LITERAL by error<PsiElement>()
+        val VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE by error<PsiElement> {
+            parameter<Symbol>("declaration")
+        }
+        val VOLATILE_INTRINSIC_CALL_ON_PROPERTY_WITH_CUSTOM_ACCESSORS by error<PsiElement> {
+            parameter<Symbol>("declaration")
+        }
+        val VOLATILE_INTRINSIC_CALL_IN_INLINE_FUNCTION by error<PsiElement>()
+        val VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY by error<PsiElement> {
+            parameter<Symbol>("declaration")
+        }
+        val VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE by error<PsiElement> {
+            parameter<ConeKotlinType>("type")
+        }
+
         val LOCAL_EXTENSION_PROPERTY by error<PsiElement>()
 
         val UNNAMED_VAR_PROPERTY by error<PsiElement>(PositioningStrategy.VAL_OR_VAR_NODE)

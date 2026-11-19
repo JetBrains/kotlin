@@ -6047,6 +6047,56 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VolatileIntrinsicCallOnNonLiteral : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<VolatileIntrinsicCallOnNonLiteral>
+            get() = VolatileIntrinsicCallOnNonLiteral::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VolatileIntrinsicCallOnNonVolatile : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<VolatileIntrinsicCallOnNonVolatile>
+            get() = VolatileIntrinsicCallOnNonVolatile::class
+
+        public val declaration: KaSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VolatileIntrinsicCallOnPropertyWithCustomAccessors : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<VolatileIntrinsicCallOnPropertyWithCustomAccessors>
+            get() = VolatileIntrinsicCallOnPropertyWithCustomAccessors::class
+
+        public val declaration: KaSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VolatileIntrinsicCallInInlineFunction : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<VolatileIntrinsicCallInInlineFunction>
+            get() = VolatileIntrinsicCallInInlineFunction::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VolatileIntrinsicCallOnNonAccessibleProperty : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<VolatileIntrinsicCallOnNonAccessibleProperty>
+            get() = VolatileIntrinsicCallOnNonAccessibleProperty::class
+
+        public val declaration: KaSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface VolatileIntrinsicCallOnUnsupportedType : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<VolatileIntrinsicCallOnUnsupportedType>
+            get() = VolatileIntrinsicCallOnUnsupportedType::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface LocalExtensionProperty : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<LocalExtensionProperty>
             get() = LocalExtensionProperty::class

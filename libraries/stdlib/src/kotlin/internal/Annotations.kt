@@ -77,6 +77,18 @@ internal annotation class DynamicExtension
 internal annotation class AccessibleLateinitPropertyLiteral
 
 /**
+ * The value of this parameter should be a property reference expression (`this::foo`), referencing a mutable property
+ * whose backing field is annotated with [kotlin.concurrent.Volatile],
+ * the backing field of which is accessible at the point where the corresponding argument is passed.
+ *
+ * Calls to functions with such a receiver are intrinsified by the compiler into atomic operations on the backing field.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("2.5")
+internal annotation class AccessibleVolatilePropertyLiteral
+
+/**
  * Specifies that this declaration is only completely supported since the specified version.
  *
  * The Kotlin compiler of an earlier version is going to report a diagnostic on usages of this declaration.

@@ -982,6 +982,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREMENT_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREMENT_DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_IN_INLINE_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_NON_LITERAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_PROPERTY_WITH_CUSTOM_ACCESSORS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_GUARD_WITHOUT_SUBJECT
@@ -3296,6 +3302,24 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL, "This declaration cannot be called on a reference to a 'val' property.")
         map.put(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION, "This declaration cannot be used inside an inline function.")
         map.put(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY, "Backing field of ''{0}'' is not accessible at this point.", SYMBOL)
+        map.put(VOLATILE_INTRINSIC_CALL_ON_NON_LITERAL, "This declaration can only be called on a property literal (e.g. 'this::bar').")
+        map.put(
+            VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE,
+            "This declaration can only be called on a reference to a property whose backing field is annotated with ''@Volatile'', but ''{0}'' is not.",
+            SYMBOL
+        )
+        map.put(
+            VOLATILE_INTRINSIC_CALL_ON_PROPERTY_WITH_CUSTOM_ACCESSORS,
+            "This declaration cannot be called on a reference to ''{0}'', because it has a custom getter or setter.",
+            SYMBOL
+        )
+        map.put(VOLATILE_INTRINSIC_CALL_IN_INLINE_FUNCTION, "This declaration cannot be used inside an inline function.")
+        map.put(VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY, "Backing field of ''{0}'' is not accessible at this point.", SYMBOL)
+        map.put(
+            VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE,
+            "Atomic operations are not supported on properties of type ''{0}''. Use a property of type ''Int'', ''Long'', ''Boolean'', or a reference type.",
+            RENDER_TYPE
+        )
 
         map.put(LOCAL_EXTENSION_PROPERTY, "Local extension properties are prohibited.")
 

@@ -249,6 +249,7 @@ object StandardClassIds {
         val EqualityBound = "EqualityBound".baseId()
 
         val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
+        val AccessibleVolatilePropertyLiteral = "AccessibleVolatilePropertyLiteral".internalId()
 
         val OptionalExpectation = "OptionalExpectation".baseId()
         val ImplicitlyActualizedByJvmDeclaration = "ImplicitlyActualizedByJvmDeclaration".jvmId()

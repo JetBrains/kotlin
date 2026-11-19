@@ -7225,6 +7225,46 @@ private fun KaDiagnosticConverterBuilder.addConversions151() {
             token,
         )
     }
+    add(FirErrors.VOLATILE_INTRINSIC_CALL_ON_NON_LITERAL) { firDiagnostic ->
+        VolatileIntrinsicCallOnNonLiteralImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE) { firDiagnostic ->
+        VolatileIntrinsicCallOnNonVolatileImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.VOLATILE_INTRINSIC_CALL_ON_PROPERTY_WITH_CUSTOM_ACCESSORS) { firDiagnostic ->
+        VolatileIntrinsicCallOnPropertyWithCustomAccessorsImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.VOLATILE_INTRINSIC_CALL_IN_INLINE_FUNCTION) { firDiagnostic ->
+        VolatileIntrinsicCallInInlineFunctionImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY) { firDiagnostic ->
+        VolatileIntrinsicCallOnNonAccessiblePropertyImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE) { firDiagnostic ->
+        VolatileIntrinsicCallOnUnsupportedTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.LOCAL_EXTENSION_PROPERTY) { firDiagnostic ->
         LocalExtensionPropertyImpl(
             firDiagnostic as KtDiagnosticWithSource,

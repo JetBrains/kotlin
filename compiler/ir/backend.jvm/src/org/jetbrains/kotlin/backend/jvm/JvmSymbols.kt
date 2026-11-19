@@ -301,6 +301,43 @@ class JvmSymbols(
             klass.addFunction("desiredAssertionStatus", irBuiltIns.booleanType)
         }
 
+    /**
+     * `java.lang.invoke.VarHandle`. Its access mode methods are signature polymorphic, so calls to them are generated
+     * through ad-hoc instantiations, see [org.jetbrains.kotlin.backend.jvm.lower.VolatilePropertyAtomicsLowering].
+     */
+    val varHandle: IrClassSymbol by lazy {
+        createClass(FqName("java.lang.invoke.VarHandle"), classModality = Modality.ABSTRACT)
+    }
+
+    private val methodHandlesLookupClass: IrClass by lazy {
+        irFactory.buildClass {
+            name = Name.identifier("Lookup")
+        }.apply {
+            createThisReceiverParameter()
+            addFunction("unreflectVarHandle", varHandle.defaultType).apply {
+                addValueParameter("f", javaLangReflectSymbols.javaLangReflectField.defaultType)
+            }
+        }
+    }
+
+    private val methodHandlesClass: IrClassSymbol by lazy {
+        createClass(FqName("java.lang.invoke.MethodHandles")) { klass ->
+            klass.declarations.add(methodHandlesLookupClass)
+            methodHandlesLookupClass.parent = klass
+            klass.addFunction("lookup", methodHandlesLookupClass.defaultType, isStatic = true)
+        }
+    }
+
+    /** `java.lang.invoke.MethodHandles.lookup()` */
+    val methodHandlesLookup: IrSimpleFunctionSymbol by lazy {
+        methodHandlesClass.functionByName("lookup")
+    }
+
+    /** `java.lang.invoke.MethodHandles.Lookup.unreflectVarHandle(java.lang.reflect.Field)` */
+    val lookupUnreflectVarHandle: IrSimpleFunctionSymbol by lazy {
+        methodHandlesClass.owner.declarations.filterIsInstance<IrClass>().single().symbol.functionByName("unreflectVarHandle")
+    }
+
     val javaLangDeprecatedWithDeprecatedFlag: IrClassSymbol =
         createClass(FqName("java.lang.Deprecated"), classKind = ClassKind.ANNOTATION_CLASS) { klass ->
             klass.addConstructor { isPrimary = true }
