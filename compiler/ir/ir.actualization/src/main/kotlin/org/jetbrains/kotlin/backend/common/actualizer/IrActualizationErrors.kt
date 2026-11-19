@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
@@ -28,23 +27,23 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 object IrActualizationErrors : KtDiagnosticsContainer() {
-    val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, IrSymbolWithModule, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val AMBIGUOUS_ACTUALS by error2<PsiElement, IrSymbolWithModule, Set<ModuleInfoForDiagnostic>>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, IrSymbolWithModule, IrSymbolWithModule, ExpectActualMatchingCompatibility.Mismatch>(
+    val NO_ACTUAL_FOR_EXPECT by error2<IrSymbolWithModule, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val AMBIGUOUS_ACTUALS by error2<IrSymbolWithModule, Set<ModuleInfoForDiagnostic>>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val EXPECT_ACTUAL_IR_MISMATCH by error3<IrSymbolWithModule, IrSymbolWithModule, ExpectActualMatchingCompatibility.Mismatch>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, IrSymbolWithModule, IrSymbolWithModule, ExpectActualIncompatibility<*>>(
+    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<IrSymbolWithModule, IrSymbolWithModule, ExpectActualIncompatibility<*>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbolWithModule, ExpectActualAnnotationsIncompatibilityType<IrAnnotation>>(
+    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<IrSymbol, IrSymbolWithModule, ExpectActualAnnotationsIncompatibilityType<IrAnnotation>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT by error1<PsiElement, IrSymbol>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val KOTLIN_ACTUAL_ANNOTATION_MISSING by error1<PsiElement, IrSymbol>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<IrValueParameter>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT by error1<IrSymbol>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val KOTLIN_ACTUAL_ANNOTATION_MISSING by error1<IrSymbol>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
 
-    val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION by error1<PsiElement, IrSymbol>()
-    val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION by error1<PsiElement, IrSymbol>()
+    val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION by error1<IrSymbol>()
+    val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION by error1<IrSymbol>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultIrActualizationErrorMessages

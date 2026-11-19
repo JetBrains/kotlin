@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
@@ -13,7 +12,7 @@ object NativeBackendDiagnostics : KtDiagnosticsContainer() {
     val NATIVE_BACKEND_ERROR by errorWithoutSource()
     val OBJC_EXPORT_WARNING by warningWithoutSource()
     val NATIVE_ESCAPE_ANALYSIS_WARNING by strongWarningWithoutSource()
-    val NATIVE_TEST_PROCESSOR_WARNING by warning1<PsiElement, String>()
+    val NATIVE_TEST_PROCESSOR_WARNING by warning1<String>()
     val LLVM_WARNING by warningWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Messages

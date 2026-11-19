@@ -1574,6 +1574,12 @@ private fun KaDiagnosticConverterBuilder.addConversions27() {
             token,
         )
     }
+    add(FirNativeErrors.STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT) { firDiagnostic ->
+        StringAsCOrObjcVariadicArgumentImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions28() {

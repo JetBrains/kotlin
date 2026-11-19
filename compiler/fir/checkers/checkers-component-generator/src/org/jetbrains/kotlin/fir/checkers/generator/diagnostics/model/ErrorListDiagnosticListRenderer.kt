@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.generators.util.printCopyright
 import org.jetbrains.kotlin.generators.util.printImports
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -76,7 +75,6 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
             is DeprecationDiagnosticData -> diagnostic.featureForError.name
         }
         val positioningStrategy = diagnostic.positioningStrategy.expressionToCreate
-        val psiTypeClass = "${diagnostic.psiType.kClass.simpleName!!}::class"
 
         print("val ${diagnostic.name}: $type")
         diagnostic.parameters.map { it.type }.ifNotEmpty { printTypeArguments(this) }
@@ -85,7 +83,6 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
             escapedName,
             severityOrFeatureForError,
             positioningStrategy,
-            psiTypeClass,
             "getRendererFactory()"
         )
         printSeparatedWithComma(arguments) { print(it) }
@@ -131,10 +128,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
 
     private fun SmartPrinter.collectAndPrintImports(diagnosticList: DiagnosticList, packageName: String, starImportsToAdd: Set<String>) {
         val importableTypes = diagnosticList.allDiagnostics.flatMap {
-            buildList {
-                add(it.psiType)
-                addAll(it.parameters.map { it.type })
-            }
+            it.parameters.map { it.type }
         }
 
         val simpleImports = buildList {

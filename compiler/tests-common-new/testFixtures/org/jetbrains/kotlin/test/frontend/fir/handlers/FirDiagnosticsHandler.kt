@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
@@ -867,7 +866,6 @@ private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
                     "DEBUG_INFO_${prop.name}",
                     Severity.INFO,
                     SourceElementPositioningStrategies.DEFAULT,
-                    KtElement::class,
                     this@KtDebugInfoDiagnostics.getRendererFactory()
                 )
             )
@@ -881,7 +879,6 @@ private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
                     "DEBUG_INFO_${prop.name}",
                     Severity.INFO,
                     SourceElementPositioningStrategies.DEFAULT,
-                    KtElement::class,
                     this@KtDebugInfoDiagnostics.getRendererFactory()
                 )
             )

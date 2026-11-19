@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -16,16 +15,16 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 
 object JsKlibErrors : KtDiagnosticsContainer() {
-    val CLASHED_FILES_IN_CASE_INSENSITIVE_FS by error1<PsiElement, List<IrFileEntry>>()
+    val CLASHED_FILES_IN_CASE_INSENSITIVE_FS by error1<List<IrFileEntry>>()
 
-    val EXPORTING_JS_NAME_CLASH by error2<PsiElement, String, List<JsKlibExport>>()
-    val EXPORTING_JS_NAME_CLASH_ES by warning2<PsiElement, String, List<JsKlibExport>>()
+    val EXPORTING_JS_NAME_CLASH by error2<String, List<JsKlibExport>>()
+    val EXPORTING_JS_NAME_CLASH_ES by warning2<String, List<JsKlibExport>>()
 
-    val JSCODE_CAN_NOT_VERIFY_JAVASCRIPT by warning0<PsiElement>()
-    val JSCODE_NO_JAVASCRIPT_PRODUCED by error0<PsiElement>()
-    val JSCODE_ERROR by error1<PsiElement, String>()
-    val JSCODE_WARNING by warning1<PsiElement, String>()
-    val JS_CODE_CAPTURES_INLINABLE_FUNCTION by deprecationError1<PsiElement, IrValueDeclaration>(
+    val JSCODE_CAN_NOT_VERIFY_JAVASCRIPT by warning0()
+    val JSCODE_NO_JAVASCRIPT_PRODUCED by error0()
+    val JSCODE_ERROR by error1<String>()
+    val JSCODE_WARNING by warning1<String>()
+    val JS_CODE_CAPTURES_INLINABLE_FUNCTION by deprecationError1<IrValueDeclaration>(
         LanguageFeature.ForbidCaptureInlinableLambdasInJsCode
     )
 

@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.ir.backend.js.wasm
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.error3
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 
 context(container: KtDiagnosticsContainer)
 private fun exportClashError() =
-    error3<PsiElement, String, String, List<WasmKlibExportingDeclaration>>()
+    error3<String, String, List<WasmKlibExportingDeclaration>>()
 
 object WasmKlibErrors : KtDiagnosticsContainer() {
 

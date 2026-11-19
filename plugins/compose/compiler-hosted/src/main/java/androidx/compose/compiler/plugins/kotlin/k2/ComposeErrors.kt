@@ -28,86 +28,84 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtTryExpression
 
 object ComposeErrors : KtDiagnosticsContainer() {
     // error goes on the composable call in a non-composable function
-    val COMPOSABLE_INVOCATION by error0<PsiElement>()
+    val COMPOSABLE_INVOCATION by error0()
 
     // error goes on the non-composable function with composable calls
-    val COMPOSABLE_EXPECTED by error0<PsiElement>(
+    val COMPOSABLE_EXPECTED by error0(
         SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
-    val NONREADONLY_CALL_IN_READONLY_COMPOSABLE by error0<PsiElement>()
+    val NONREADONLY_CALL_IN_READONLY_COMPOSABLE by error0()
 
-    val CAPTURED_COMPOSABLE_INVOCATION by error2<PsiElement, FirVariableSymbol<*>, FirCallableSymbol<*>>()
+    val CAPTURED_COMPOSABLE_INVOCATION by error2<FirVariableSymbol<*>, FirCallableSymbol<*>>()
 
     // composable calls are not allowed in try expressions
     // error goes on the `try` keyword
-    val ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE by error0<KtTryExpression>(
+    val ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE by error0(
         ComposeSourceElementPositioningStrategies.TRY_KEYWORD
     )
 
     // error goes on the `runCatching` call
-    val ILLEGAL_RUN_CATCHING_AROUND_COMPOSABLE by error0<KtCallExpression>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val ILLEGAL_RUN_CATCHING_AROUND_COMPOSABLE by error0(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     val MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION by error3<
-            PsiElement,
             FirValueParameterSymbol, // unmarked
             FirValueParameterSymbol, // marked
             FirCallableSymbol<*>>()
 
-    val DEPRECATED_OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE by warning0<PsiElement>()
+    val DEPRECATED_OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE by warning0()
 
-    val COMPOSABLE_SUSPEND_FUN by error0<PsiElement>(
+    val COMPOSABLE_SUSPEND_FUN by error0(
         SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
-    val COMPOSABLE_FUN_MAIN by error0<PsiElement>(
+    val COMPOSABLE_FUN_MAIN by error0(
         SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
-    val COMPOSABLE_PROPERTY_REFERENCE by error0<PsiElement>(
+    val COMPOSABLE_PROPERTY_REFERENCE by error0(
         ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
     )
 
-    val COMPOSABLE_PROPERTY_BACKING_FIELD by error0<PsiElement>(
+    val COMPOSABLE_PROPERTY_BACKING_FIELD by error0(
         SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
-    val COMPOSABLE_VAR by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val COMPOSABLE_VAR by error0(SourceElementPositioningStrategies.DECLARATION_NAME)
 
-    val COMPOSE_INVALID_DELEGATE by error0<PsiElement>(
+    val COMPOSE_INVALID_DELEGATE by error0(
         ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
     )
 
-    val MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL by error0<PsiElement>(
+    val MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL by error0(
         SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
-    val COMPOSE_APPLIER_CALL_MISMATCH by warning2<PsiElement, String, String>(
+    val COMPOSE_APPLIER_CALL_MISMATCH by warning2<String, String>(
         SourceElementPositioningStrategy(
             LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
             PositioningStrategies.CALL_EXPRESSION
         )
     )
 
-    val COMPOSE_APPLIER_PARAMETER_MISMATCH by warning2<PsiElement, String, String>()
+    val COMPOSE_APPLIER_PARAMETER_MISMATCH by warning2<String, String>()
 
-    val COMPOSE_APPLIER_DECLARATION_MISMATCH by warning0<PsiElement>(
+    val COMPOSE_APPLIER_DECLARATION_MISMATCH by warning0(
         ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
     )
 
-    val COMPOSABLE_INAPPLICABLE_TYPE by error1<PsiElement, ConeKotlinType>()
+    val COMPOSABLE_INAPPLICABLE_TYPE by error1<ConeKotlinType>()
 
-    val OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<PsiElement, LanguageVersion>()
+    val OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<LanguageVersion>()
 
-    val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<PsiElement, LanguageVersion>()
+    val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<LanguageVersion>()
 
-    val KEY_CALL_WITH_NO_ARGUMENTS by error0<PsiElement>(
+    val KEY_CALL_WITH_NO_ARGUMENTS by error0(
         SourceElementPositioningStrategy(
             LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
             PositioningStrategies.CALL_EXPRESSION

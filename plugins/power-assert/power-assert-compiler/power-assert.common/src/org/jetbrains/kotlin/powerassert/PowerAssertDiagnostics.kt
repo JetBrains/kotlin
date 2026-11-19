@@ -9,29 +9,26 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
 
 object PowerAssertDiagnostics : KtDiagnosticsContainer() {
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = PowerAssertRenderFactory
 
     // ===== ERRORS ===== //
 
-    val POWER_ASSERT_ILLEGAL_EXPLANATION_ACCESS by error0<KtExpression>()
-    val POWER_ASSERT_ILLEGAL_OVERRIDE by error0<KtAnnotationEntry>()
-    val POWER_ASSERT_ILLEGAL_ACTUAL by error0<KtAnnotationEntry>()
+    val POWER_ASSERT_ILLEGAL_EXPLANATION_ACCESS by error0()
+    val POWER_ASSERT_ILLEGAL_OVERRIDE by error0()
+    val POWER_ASSERT_ILLEGAL_ACTUAL by error0()
 
     // ===== WARNINGS ===== //
 
-    val POWER_ASSERT_RUNTIME_UNAVAILABLE by warning0<KtElement>()
-    val POWER_ASSERT_FUNCTION_NOT_TRANSFORMED by warning1<KtElement, FqName>()
-    val POWER_ASSERT_CAPABLE_OVERLOAD_MISSING by warning3<KtElement, FqName, String, String>()
+    val POWER_ASSERT_RUNTIME_UNAVAILABLE by warning0()
+    val POWER_ASSERT_FUNCTION_NOT_TRANSFORMED by warning1<FqName>()
+    val POWER_ASSERT_CAPABLE_OVERLOAD_MISSING by warning3<FqName, String, String>()
 
     // ===== INFOS ===== //
 
     val POWER_ASSERT_CONSTANT by DiagnosticFactory0DelegateProvider(
-        Severity.INFO, SourceElementPositioningStrategies.DEFAULT, KtElement::class, this
+        Severity.INFO, SourceElementPositioningStrategies.DEFAULT, this
     )
 }
 
