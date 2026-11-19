@@ -114,6 +114,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("companionBlocksBetweenMembers.kt")
+    public void testCompanionBlocksBetweenMembers() {
+      run("companionBlocksBetweenMembers.kt");
+    }
+
+    @Test
     @TestMetadata("companionBlocksInInterface.kt")
     public void testCompanionBlocksInInterface() {
       run("companionBlocksInInterface.kt");

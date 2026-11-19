@@ -8,4 +8,10 @@ class Compact {
 
         fun first() {}
     }
+
+    fun last() {}
+
+    companion {
+        fun other() {}
+    }
 }
