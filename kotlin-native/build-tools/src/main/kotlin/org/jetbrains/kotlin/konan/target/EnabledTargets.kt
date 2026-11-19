@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.konan.target
 
-// Targets the in-tree compiler can no longer compile for (removed from KonanTarget, or kept there only to report
-// a deprecation error), but the bootstrap still knows. Not even klibs can be compiled for them, so they are excluded
-// from the stdlib's native targets manifest, from platform libraries and from the def files dependency update.
+// Targets removed from the in-tree compiler that the bootstrap still knows. Not even klibs can be compiled for them,
+// so they are excluded from the stdlib's native targets manifest, from platform libraries and from the def files
+// dependency update.
 // Matched by name so this keeps compiling after the bootstrap drops the KonanTarget constants.
 // todo: KT-78078, KT-91457
 val removedTargetNames = setOf("watchos_arm32", "macos_x64", "tvos_x64", "watchos_x64")

@@ -337,9 +337,8 @@ class SwiftExportSourcesCombinerTest {
         ),
     )
 
-    // Every Apple target, the deprecated ones included. watchosArm32 is the one Swift Export doesn't support:
-    // it has no AppleArchitecture.
-    private val appleTargets = KonanTarget.predefinedTargets.values.filter { it.family.isAppleFamily } - KonanTarget.WATCHOS_ARM32
+    // Every Apple target, the deprecated ones included.
+    private val appleTargets = KonanTarget.predefinedTargets.values.filter { it.family.isAppleFamily }
 
     private fun bridged(name: String, location: String, dependencies: List<String> = emptyList()) =
         GradleSwiftExportModule.BridgesToKotlin(

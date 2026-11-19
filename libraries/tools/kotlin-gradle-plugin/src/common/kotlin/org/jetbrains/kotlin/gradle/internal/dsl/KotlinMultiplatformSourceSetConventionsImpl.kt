@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventions
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_AS_ERROR_MESSAGE
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 
 internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatformSourceSetConventions {
@@ -158,12 +157,6 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
     override val NamedDomainObjectContainer<KotlinSourceSet>.tvosSimulatorArm64Main by KotlinSourceSetConvention
 
     override val NamedDomainObjectContainer<KotlinSourceSet>.tvosSimulatorArm64Test by KotlinSourceSetConvention
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    override val NamedDomainObjectContainer<KotlinSourceSet>.watchosArm32Main by KotlinSourceSetConvention
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    override val NamedDomainObjectContainer<KotlinSourceSet>.watchosArm32Test by KotlinSourceSetConvention
 
     override val NamedDomainObjectContainer<KotlinSourceSet>.watchosArm64Main by KotlinSourceSetConvention
 

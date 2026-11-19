@@ -54,7 +54,7 @@ class SwiftPMImportExtensionTests {
     fun `published konanTargets of removed targets are ignored`() {
         assertEquals(
             setOf(SwiftPMDependency.Platform.iOS, SwiftPMDependency.Platform.watchOS),
-            setOf("ios_arm64", "watchos_arm64", "macos_x64", "tvos_x64", "watchos_x64").toSwiftPMPlatforms(),
+            setOf("ios_arm64", "watchos_arm64", "macos_x64", "tvos_x64", "watchos_x64", "watchos_arm32").toSwiftPMPlatforms(),
         )
     }
 
