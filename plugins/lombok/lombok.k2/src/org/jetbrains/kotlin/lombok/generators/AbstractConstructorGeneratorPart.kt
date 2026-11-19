@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.plugin.tryGeneratingNoArgDelegatingConstructorCall
@@ -277,7 +278,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 return
             }
 
-            val methodSymbol = FirNamedFunctionSymbol(CallableId(targetClassSymbol.classId, staticName))
+            val methodSymbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, staticName))
             constructorOrFactorySymbol = methodSymbol
 
             val classTypeParameterSymbols = targetClassSymbol.fir.typeParameters.map { it.symbol }
@@ -405,7 +406,9 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         }
 
         add(builder.build().apply {
-            containingClassForStaticMemberAttr = targetClassSymbol.toLookupTag()
+            if (isStatic || this is FirConstructor) {
+                containingClassForStaticMemberAttr = targetClassSymbol.toLookupTag()
+            }
         })
     }
 

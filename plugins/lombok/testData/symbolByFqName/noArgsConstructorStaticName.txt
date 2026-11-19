@@ -4,7 +4,7 @@ KaNamedFunctionSymbol:
     kotlin/jvm/JvmStatic()
       psi: null
   ]
-  callableId: /Range.empty
+  callableId: /Range.Companion.empty
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -41,10 +41,10 @@ KaNamedFunctionSymbol:
     typeArguments: []
     type: Range.Companion
   getContainingFileSymbol: KaFileSymbol(noArgsConstructorStaticName.kt)
-  getContainingJvmClassName: Range
+  getContainingJvmClassName: Range.Companion
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
   javaMethodName: empty
-  importableFqName: null
+  importableFqName: Range.Companion.empty
