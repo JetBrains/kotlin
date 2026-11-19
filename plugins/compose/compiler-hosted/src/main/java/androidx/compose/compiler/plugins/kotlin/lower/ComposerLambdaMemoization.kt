@@ -649,56 +649,18 @@ class ComposerLambdaMemoization(
         }
 
         // Unwrap function from type operator
-        val originalFunctionExpression =
+        val functionExpression =
             expression.findSamFunctionExpr() ?: return super.visitTypeOperator(expression)
 
         // Record capture variables for this scope
         val collector = CaptureCollector()
         startCollector(collector)
-        // Handle inside of the function expression
-        val result = super.visitFunctionExpression(originalFunctionExpression)
+        // The super call transforms the lambda in place, so the conversion stays as is. findSamFunctionExpr already allows only two forms
+        super.visitFunctionExpression(functionExpression)
         stopCollector(collector)
+        val captures = collector.captures.toList()
 
-        // If the ancestor converted this then return
-        val newFunctionExpression = result as? IrFunctionExpression ?: return result
-
-        // Construct new type operator call to wrap remember around.
-        val newArgument = when (val argument = expression.argument) {
-            is IrFunctionExpression -> newFunctionExpression
-            is IrTypeOperatorCall -> {
-                require(
-                    argument.operator == IrTypeOperator.IMPLICIT_CAST &&
-                            argument.argument == originalFunctionExpression
-                ) {
-                    "Only implicit cast is supported inside SAM conversion"
-                }
-                IrTypeOperatorCallImpl(
-                    argument.startOffset,
-                    argument.endOffset,
-                    argument.type,
-                    argument.operator,
-                    argument.typeOperand,
-                    newFunctionExpression
-                )
-            }
-
-            else -> error("Unknown ")
-        }
-
-        val expressionToRemember =
-            IrTypeOperatorCallImpl(
-                expression.startOffset,
-                expression.endOffset,
-                expression.type,
-                IrTypeOperator.SAM_CONVERSION,
-                expression.typeOperand,
-                newArgument
-            )
-        return rememberExpression(
-            currentFunctionContext!!,
-            expressionToRemember,
-            collector.captures.toList()
-        )
+        return rememberExpression(currentFunctionContext!!, expression, captures)
     }
 
     private fun visitNonComposableFunctionExpression(
