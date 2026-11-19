@@ -21,6 +21,8 @@ fun String.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd(): String
     return lines.dropLastWhile { it.isBlank() }.joinToString("\n", postfix = "\n")
 }
 
+private val newLineRegex = Regex("\r\n|\r|\n")
+
 fun String.convertLineSeparators(separator: String = DEFAULT_LINE_SEPARATOR): String {
-    return replace(Regex.fromLiteral("\r\n|\r|\n"), separator)
+    return replace(newLineRegex, separator)
 }
