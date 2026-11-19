@@ -265,7 +265,7 @@ We define the following test subsets:
   - selects every test in the task
 - `SmokeTests`:
   - selects tests annotated with `@MustRunAlways`
-  - selects tests included in `testFederation { smokeTests { ... } }` DSL
+  - selects tests specified via `testFederation { smokeTests { ... } }` DSL
 - `ContractTestsFor<Domain>`
   - selects tests annotated with `@MustRunOnChangesIn<Domain>`
 
@@ -277,31 +277,37 @@ selected by both `ContractTestsForJs` and `ContractTestsForWasm`.
 
 Other test filters, such as `@NightlyTest`, still apply regardless of the requested subsets.
 
-### Customizing test subsets
+### Declaring test subsets
 
-The `testFederation { }` extension allows customizing the subsets' content, as well as their behavior.
+Every test task should declare which test subsets it supports. `AllTests` is implicitly declared; `SmokeTests` and `ContractTestsFor<Domain>` have to be declared explicitly with the `testFederation { }` extension:
+
+```kotlin
+testFederation {
+    // Declare the SmokeTests subset
+    smokeTests()
+
+    // Declare the ContractTestsForJvm subset
+    contractTestsFor(Jvm)
+}
+```
+
+The contract tests of a task's own domain are plain tests (e.g. `ContractTestsForJvm` in the `Jvm` domain).
+They need no declaration, and declaring them is an error.
+
+The [testLifecycleTask.dump.txt](testLifecycleTask.dump.txt) lists the declared subsets of every lifecycle task.
+
+### Customizing the smoke tests
+
+The `smokeTests { }` DSL declares the `SmokeTests` subset and allows customizing its content.
 
 Use `includeAutoSamples()` to configure additional auto-sampling when the task's test framework supports it.
 It selects an approximate percentage of tests using a hash of each test's identity, and requires a JUnit 5 task:
 
 ```kotlin
-testTask {
-    testFederation {
-        smokeTests {
-            // Sample 5% of all tests and add them to the SmokeTest subset
-            includeAutoSamples(percentage = 5)
-
-            // Execute all tests when SmokeTests subset is requested
-            includeAll()
-
-            // If only SmokeTests subset was requested, skip the task
-            skip()
-        }
-
-        contractTests {
-            // If only ContractTests* subsets were requested, skip the task
-            skip()
-        }
+testFederation {
+    smokeTests {
+        // Sample 5% of tests and add them to SmokeTests
+        includeAutoSamples(percentage = 5)
     }
 }
 ```
@@ -312,27 +318,28 @@ Choose fast and stable tests because the selected tests are required for merging
 To require all tests in a task regardless of which subsets are requested:
 
 ```kotlin
-tasks.withType<Test>().configureEach {
-    testFederation {
-        smokeTests { includeAll() }
+testFederation {
+    smokeTests {
+        // Mark all tests as smoke tests
+        // This makes SmokeTests equivalent to AllTests
+        includeAll() 
     }
 }
 ```
 
 Other test filters still apply.
 
-You can also skip the task completely when only smoke or contract tests are requested:
+### Opting out of partial subsets
+
+If a test task does not support partial execution (because it's JUnit 4, for example), it must be marked with `notCompatibleWithTestFederation()`:
 
 ```kotlin
-tasks.withType<Test>().configureEach {
-    testFederation {
-        smokeTests { skip() }
-        contractTests { skip() }
-    }
+testFederation {
+    // Opt out of partial test execution
+    // This skips tests when partial subset is requested
+    notCompatibleWithTestFederation("<reason>")
 }
 ```
-
-This may be useful if your task does not support partial execution
 
 ## Local testing
 
