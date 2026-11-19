@@ -237,6 +237,6 @@ inline fun IrDeclarationOrigin.toPluginKey(predicate: (GeneratedDeclarationKey) 
     }
 }
 
-inline fun <reified T : GeneratedDeclarationKey> IrDeclarationOrigin.toPluginKey(): GeneratedDeclarationKey? {
-    return toPluginKey { it is T }
+inline fun <reified T : GeneratedDeclarationKey> IrDeclarationOrigin.toPluginKey(): T? {
+    return toPluginKey { it is T } as? T
 }

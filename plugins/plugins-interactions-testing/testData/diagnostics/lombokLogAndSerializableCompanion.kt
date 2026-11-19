@@ -9,6 +9,6 @@ import lombok.extern.java.Log
 
 @Log
 @Serializable
-class <!COMPANION_OBJECT_SERIALIZABLE_CONFLICT!>Sample<!>(val name: String) {
-    fun info() = <!UNRESOLVED_REFERENCE!>log<!>.info(name)
+class Sample(val name: String) {
+    fun info() = log.info(name)
 }

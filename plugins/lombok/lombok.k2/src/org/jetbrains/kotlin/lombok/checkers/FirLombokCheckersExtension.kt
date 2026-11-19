@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChe
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.lombok.generators.LombokCompanionObjectGenerator
 
 class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
@@ -31,7 +29,6 @@ class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExt
             FirLombokEqualsAndHashCodeChecker,
             FirLombokBuilderClassChecker,
             FirLombokCompanionObjectChecker,
-            FirLombokSerializableCompanionObjectChecker,
             FirLombokConflictingDeclarationsChecker,
         )
 
@@ -48,9 +45,5 @@ class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExt
         override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
             FirLombokExpressionAnnotationChecker
         )
-    }
-
-    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
-        register(LombokCompanionObjectGenerator.hasMetaSerializableAnnotation)
     }
 }

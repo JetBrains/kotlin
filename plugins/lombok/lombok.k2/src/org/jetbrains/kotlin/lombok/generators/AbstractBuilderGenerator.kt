@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.generators
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.extensions.CompanionObjectGenerationContext
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
@@ -71,6 +73,7 @@ import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
+import org.jetbrains.kotlin.lombok.generators.kotlin.isCompanionNeeded
 import org.jetbrains.kotlin.lombok.generators.kotlin.promotedPropertiesByName
 import org.jetbrains.kotlin.lombok.java.*
 import org.jetbrains.kotlin.name.*
@@ -127,7 +130,7 @@ sealed class BuilderDeclarationType {
 class BuilderGeneratorKey(val type: BuilderDeclarationType) : LombokDeclarationKey()
 
 abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession) :
-    FirDeclarationGenerationExtension(session), LombokCompanionObjectContributor {
+    FirDeclarationGenerationExtension(session) {
     companion object {
         private val TO_BUILDER = identifier("toBuilder")
 
@@ -380,8 +383,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * The key of [this] if it is a builder class this generator produced, `null` otherwise.
      *
      * `createEmptyBuilderClass` builds the class alone; the constructor `builder()` and `toBuilder()` call has to
-     * be generated separately, and only for the builder class - the companion object holding those functions is
-     * [LombokCompanionObjectGenerator]'s, constructor included.
+     * be generated separately, and only for the builder class.
      */
     private val FirClassSymbol<*>.generatedBuilderClassKey: BuilderGeneratorKey?
         get() {
@@ -393,13 +395,22 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             return (key as? BuilderGeneratorKey)?.takeIf { it.type is BuilderDeclarationType.Class.Builder }
         }
 
-    override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean {
-        val builderDescriptions = builderDescriptionsCache.getValue(owner) ?: return false
-        return !builderDescriptions.all {
-            // Regular (non-"static") builder owners requires factory in a class, not in its companion
-            // null value of builderMethodName suppresses the factory creation at all
-            it.ownerDeclarationSymbol.isNamedNeitherStaticNorCompanionFunction || it.builder.builderMethodName == null
-        }
+    /**
+     * Whether [classSymbol] needs a generated companion object to host its `builder()` factories. Only a static builder
+     * needs one — a `@Builder` method's factory is an instance method on the entity itself, so a class carrying
+     * nothing but method builders must not ask for an otherwise empty companion. Neither must one whose
+     * `builderMethodName` is empty: that suppresses the factory outright, leaving nothing to host.
+     */
+    override fun needsCompanionObject(classSymbol: FirClassSymbol<*>, context: CompanionObjectGenerationContext): GeneratedDeclarationKey? {
+        if (!isCompanionNeeded(classSymbol, context)) return null
+        val builderDescriptions = builderDescriptionsCache.getValue(classSymbol) ?: return null
+        return runIf(
+            !builderDescriptions.all {
+                // Regular (non-"static") builder owners requires factory in a class, not in its companion
+                // null value of builderMethodName suppresses the factory creation at all
+                it.ownerDeclarationSymbol.isNamedNeitherStaticNorCompanionFunction || it.builder.builderMethodName == null
+            }
+        ) { LombokCompanionObjectKey }
     }
 
     /**

@@ -5,19 +5,23 @@
 
 package org.jetbrains.kotlin.lombok.generators
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.extensions.CompanionObjectGenerationContext
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.generators.kotlin.isCompanionNeeded
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object ConstructorGeneratorKey : LombokDeclarationKey()
 
@@ -30,7 +34,7 @@ val FirDeclarationOrigin.isGeneratedConstructor: Boolean
     get() = this is FirDeclarationOrigin.Plugin && key == ConstructorGeneratorKey
 
 class LombokConstructorsGenerator(session: FirSession) :
-    FirDeclarationGenerationExtension(session), LombokCompanionObjectContributor {
+    FirDeclarationGenerationExtension(session) {
     companion object {
         private val PREDICATE = DeclarationPredicate.create {
             annotated(listOf(LombokNames.NO_ARGS_CONSTRUCTOR))
@@ -51,8 +55,10 @@ class LombokConstructorsGenerator(session: FirSession) :
      * A static factory is generated into the companion object, so a class that gets one needs a companion object to
      * hold it. A factory that would only be shadowed isn't generated, so it must not ask for an empty one either.
      */
-    override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean =
-        parts.any { part -> part.generatesStaticFactory(owner) }
+    override fun needsCompanionObject(classSymbol: FirClassSymbol<*>, context: CompanionObjectGenerationContext): GeneratedDeclarationKey? {
+        if (!isCompanionNeeded(classSymbol, context)) return null
+        return runIf(parts.any { part -> part.generatesStaticFactory(classSymbol) }) { LombokCompanionObjectKey }
+    }
 
     private val cache: FirCache<FirClassSymbol<*>, Collection<FirFunctionSymbol<*>>?, MemberGenerationContext> =
         session.firCachesFactory.createCache(::createConstructors)
