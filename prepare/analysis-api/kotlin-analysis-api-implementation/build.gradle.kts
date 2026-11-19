@@ -116,4 +116,9 @@ analysisApiArtifact {
 
         projects(implementationProjects)
     }
+
+    validateClasspath(
+        proguardConfiguration = file("analysis-api-implementation.pro"),
+        permittedDuplicatesFile = file("api/analysis-api-implementation.permitted-duplicates"),
+    )
 }

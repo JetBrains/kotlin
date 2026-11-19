@@ -22,6 +22,11 @@ analysisApiArtifact {
     content {
         project(":analysis:analysis-api-platform-interface")
     }
+
+    validateClasspath(
+        proguardConfiguration = file("analysis-api-platform-interface.pro"),
+        permittedDuplicatesFile = file("api/analysis-api-platform-interface.permitted-duplicates"),
+    )
 }
 
 registerForeignClassUsageTasks {

@@ -57,8 +57,14 @@
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt # Warning: ...: can't find referenced class kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt
 
+# ======================================================================================================================
+# Known problems
+#
+# Sic! Don't add more entries here. The entries below have to be fixed and removed.
+# ======================================================================================================================
+
 # Light tree and multiplatform parsing
-# Sic! Don't add more entries here. Build a boundary between light tree and Java direct instead.
+# Build a boundary between light tree and Java direct instead.
 -dontwarn org.jetbrains.kotlin.java.direct.JavaDirectJavaInteropKt
 -dontwarn org.jetbrains.kotlin.java.direct.JavaSourceRootEntry
 -dontwarn org.jetbrains.kotlin.java.direct.modules.JavaModuleInfoSourceReaderKt
