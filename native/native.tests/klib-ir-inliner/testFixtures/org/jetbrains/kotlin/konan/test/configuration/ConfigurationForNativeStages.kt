@@ -34,8 +34,8 @@ fun TestConfigurationBuilder.commonConfigurationForNativeFirstStageUpToSerializa
     includeBasicFirHandlers: Boolean = true,
     includeDumpFirHandlers: Boolean = true
 ) {
-    commonConfigurationForNativeCodegenTest(customIgnoreDirective = customIgnoreDirective)
-    setupStepsForNativeFirstStageUpToSerialization(includeBasicFirHandlers, includeDumpFirHandlers)
+    commonConfigurationForNativeCodegenTest()
+    setupStepsForNativeFirstStageUpToSerialization(customIgnoreDirective, includeBasicFirHandlers, includeDumpFirHandlers)
 }
 
 /**
@@ -44,7 +44,6 @@ fun TestConfigurationBuilder.commonConfigurationForNativeFirstStageUpToSerializa
  */
 fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
     firParser: FirParser = FirParser.LightTree,
-    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
     commonCodegenConfiguration()
 
@@ -74,9 +73,6 @@ fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
         ::CoroutineHelpersSourceFilesProvider,
         ::AdditionalDiagnosticsSourceFilesProvider,
     )
-    useFailureSuppressors(
-        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, null),
-    )
 }
 
 /**
@@ -84,6 +80,7 @@ fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
  * Also, sets up corresponding handlers steps for each facade step.
  */
 fun TestConfigurationBuilder.setupStepsForNativeFirstStageUpToSerialization(
+    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
     includeBasicFirHandlers: Boolean = true,
     includeDumpFirHandlers: Boolean = true
 ) {
@@ -111,4 +108,8 @@ fun TestConfigurationBuilder.setupStepsForNativeFirstStageUpToSerialization(
     configureLoweredIrHandlersStep {
         useHandlers(::IrDiagnosticsHandler)
     }
+
+    useFailureSuppressors(
+        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, null),
+    )
 }
