@@ -41,30 +41,26 @@ internal object FirNativeObjCStringAsVariadicChecker : FirFunctionCallChecker(Mp
     private fun checkVarargArguments(expression: FirFunctionCall, isObjC: Boolean) {
         val argumentMapping = expression.resolvedArgumentMapping ?: return
         for ([argument, parameter] in argumentMapping) {
-            if (parameter.isVararg && argument is FirVarargArgumentsExpression) {
-                for (element in argument.arguments) {
-                    if (element is FirSpreadArgumentExpression) {
-                        val spreadExpression = element.expression
-                        if (spreadExpression is FirFunctionCall && spreadExpression.isArrayOfCall()) {
-                            checkVarargArguments(spreadExpression, isObjC)
-                        }
-                        continue
-                    }
+            if (!parameter.isVararg || argument !is FirVarargArgumentsExpression) continue
 
-                    val type = element.resolvedType.fullyExpandedType()
-                    if (type.isString || type.isNullableString) {
-                        val diagnostic = if (isObjC) {
-                            FirNativeErrors.STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS
-                        } else {
-                            FirNativeErrors.STRING_AS_VARIADIC_C_ARGUMENT
-                        }
-                        reporter.reportOn(
-                            element.source,
-                            diagnostic,
-                            context
-                        )
+            for (element in argument.arguments) {
+                if (element is FirSpreadArgumentExpression) {
+                    val spreadExpression = element.expression
+                    if (spreadExpression is FirFunctionCall && spreadExpression.isArrayOfCall()) {
+                        checkVarargArguments(spreadExpression, isObjC)
                     }
+                    continue
                 }
+
+                val type = element.resolvedType.fullyExpandedType()
+                if (!type.isString && !type.isNullableString) continue
+
+                val diagnostic = if (isObjC && type.isString) {
+                    FirNativeErrors.STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS
+                } else {
+                    FirNativeErrors.STRING_AS_VARIADIC_ARGUMENT
+                }
+                reporter.reportOn(element.source, diagnostic, context)
             }
         }
     }
