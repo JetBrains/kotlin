@@ -606,7 +606,7 @@ This flag is intended for incremental compilation only and should not be used di
         value = "-Xuse-nio-jvm-dependencies-index",
         description = "Use NIO-based entries for classpath roots in java-direct class lookups.",
     )
-    var useNioJvmDependenciesIndex: Boolean = false
+    var useNioJvmDependenciesIndex: Boolean = true
         set(value) {
             checkFrozen()
             field = value

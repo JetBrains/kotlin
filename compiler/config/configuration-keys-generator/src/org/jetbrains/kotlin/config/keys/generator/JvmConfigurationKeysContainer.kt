@@ -59,5 +59,5 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val IC_COMMON_METADATA_TRACKER by key<ICJvmCommonMetadataTracker>("Tracks generated in-module common metadata for KMP JVM IC", throwOnNull = false)
     val USE_METADATA_ON_INCREMENTAL_CLASSPATH by key<Boolean>("Use fragment metadata found on the compilation classpath to perform incremental compilation")
     val USE_JAVA_DIRECT by key<Boolean>("Use java-direct as frontend Java facade", defaultValue = "true")
-    val USE_NIO_JVM_DEPENDENCIES_INDEX by key<Boolean>("Use NIO-based classpath root entries for class lookups with java-direct")
+    val USE_NIO_JVM_DEPENDENCIES_INDEX by key<Boolean>("Use NIO-based classpath root entries for class lookups with java-direct", defaultValue = "true")
 }

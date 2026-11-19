@@ -25,7 +25,10 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
 
-/** The hidden `-Xuse-nio-jvm-dependencies-index` switch: which compilations get NIO root entries, and a compilation with them. */
+/**
+ * The hidden `-Xuse-nio-jvm-dependencies-index` switch: which compilations get NIO root entries (java-direct with FastJar, by default),
+ * compilations with them, and `=false` as the escape hatch to VFS entries.
+ */
 class NioRootEntriesSwitchTest : JvmDependenciesIndexContractTestBase() {
     private fun configuration(nio: Boolean, javaDirect: Boolean = true, fastJar: Boolean? = null) =
         KotlinTestUtils.newConfiguration().apply {
@@ -35,9 +38,16 @@ class NioRootEntriesSwitchTest : JvmDependenciesIndexContractTestBase() {
         }
 
     @Test
-    fun nioEntriesAreOffByDefault() {
+    fun nioEntriesAreOnByDefault() {
         val indexes = JvmClasspathIndexes(KotlinTestUtils.newConfiguration())
-        assertSame(indexes.javaFileManagerIndex, indexes.classFinderIndex)
+        assertNotSame(indexes.javaFileManagerIndex, indexes.classFinderIndex)
+    }
+
+    @Test
+    fun switchTurnsNioEntriesOff() {
+        JvmClasspathIndexes(configuration(nio = false)).let {
+            assertSame(it.javaFileManagerIndex, it.classFinderIndex)
+        }
     }
 
     @Test
@@ -66,7 +76,12 @@ class NioRootEntriesSwitchTest : JvmDependenciesIndexContractTestBase() {
     }
 
     @Test
-    fun compilesAgainstDirectoryClasspathWithNioEntries() {
+    fun compilesAgainstDirectoryClasspathWithNioEntries() = compileAgainstDirectoryClasspath()
+
+    @Test
+    fun compilesAgainstDirectoryClasspathWithVfsEntries() = compileAgainstDirectoryClasspath("-Xuse-nio-jvm-dependencies-index=false")
+
+    private fun compileAgainstDirectoryClasspath(vararg switch: String) {
         val lib = tempDir.resolve("lib").createDirectories()
         val javaSource = tempDir.resolve("javaSrc/p/J.java").apply { parent.createDirectories() }
         javaSource.writeText("package p; public class J { public static int answer() { return 42; } }")
@@ -83,7 +98,7 @@ class NioRootEntriesSwitchTest : JvmDependenciesIndexContractTestBase() {
         val out: Path = tempDir.resolve("out")
         CompilerTestUtil.executeCompilerAssertSuccessful(
             K2JVMCompiler(),
-            listOf(useSource.toString(), "-cp", lib.toString(), "-d", out.toString(), "-Xuse-nio-jvm-dependencies-index")
+            listOf(useSource.toString(), "-cp", lib.toString(), "-d", out.toString(), *switch)
         )
         assertTrue(out.resolve("UseKt.class").exists())
     }

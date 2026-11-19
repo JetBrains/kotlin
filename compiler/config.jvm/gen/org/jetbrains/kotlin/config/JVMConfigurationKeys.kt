@@ -357,6 +357,6 @@ var CompilerConfiguration.useJavaDirect: Boolean
     set(value) { put(JVMConfigurationKeys.USE_JAVA_DIRECT, value) }
 
 var CompilerConfiguration.useNioJvmDependenciesIndex: Boolean
-    get() = getBoolean(JVMConfigurationKeys.USE_NIO_JVM_DEPENDENCIES_INDEX)
+    get() = get(JVMConfigurationKeys.USE_NIO_JVM_DEPENDENCIES_INDEX, true)
     set(value) { put(JVMConfigurationKeys.USE_NIO_JVM_DEPENDENCIES_INDEX, value) }
 

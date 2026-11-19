@@ -157,13 +157,13 @@ class IncrementalCompilationCustomScopeTest {
     }
 
     @Test
-    @OptIn(VirtualFileBasedApi::class)
     fun testTheRootIdFinderRestrictsLookupToTheLocalOutputDirectory(@TempDir tempDir: File) {
         val localOutputClass = localClassFile(tempDir)
         val [_, context] = prepareClasspaths(tempDir, PlainComponents())
         val finder = projectEnvironment.getKotlinClassFinder(context!!.precompiledBinaries!!) as JvmIndexKotlinClassFinder
 
-        assertEquals(localOutputClass.path, finder.findBinaryClassFile(ClassId.fromString("p/Local"))?.virtualFile?.path)
+        // The environment's class finder has NIO or VFS entries depending on the configuration, so its handles are compared by path.
+        assertEquals(localOutputClass.path, finder.findBinaryClassFile(ClassId.fromString("p/Local"))?.pathForDiagnostics)
     }
 
     @Test
