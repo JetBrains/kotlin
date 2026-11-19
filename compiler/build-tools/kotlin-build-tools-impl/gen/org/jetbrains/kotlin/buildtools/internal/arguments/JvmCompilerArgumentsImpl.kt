@@ -230,6 +230,9 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
   internal var useMetadataOnIncrementalClasspath: Boolean =
       defaultArguments.useMetadataOnIncrementalClasspath
 
+  @SerialName("X_USE_NIO_JVM_DEPENDENCIES_INDEX")
+  internal var useNioJvmDependenciesIndex: Boolean = defaultArguments.useNioJvmDependenciesIndex
+
   @SerialName("X_USE_OLD_CLASS_FILES_READING")
   internal var useOldClassFilesReading: Boolean = defaultArguments.useOldClassFilesReading
 
@@ -363,6 +366,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     "X_USE_FAST_JAR_FILE_SYSTEM" -> useFastJarFileSystem
     "X_USE_INLINE_SCOPES_NUMBERS" -> useInlineScopesNumbers
     "X_USE_METADATA_ON_INCREMENTAL_CLASSPATH" -> useMetadataOnIncrementalClasspath
+    "X_USE_NIO_JVM_DEPENDENCIES_INDEX" -> useNioJvmDependenciesIndex
     "X_USE_OLD_CLASS_FILES_READING" -> useOldClassFilesReading
     "X_USE_TYPE_TABLE" -> useTypeTable
     "X_VALHALLA_VALUE_CLASSES" -> valhallaValueClasses
@@ -445,6 +449,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
       "X_USE_FAST_JAR_FILE_SYSTEM" -> useFastJarFileSystem = JvmCompilerArgumentValueAdapter.toImpl(value)
       "X_USE_INLINE_SCOPES_NUMBERS" -> useInlineScopesNumbers = JvmCompilerArgumentValueAdapter.toImpl(value)
       "X_USE_METADATA_ON_INCREMENTAL_CLASSPATH" -> useMetadataOnIncrementalClasspath = JvmCompilerArgumentValueAdapter.toImpl(value)
+      "X_USE_NIO_JVM_DEPENDENCIES_INDEX" -> useNioJvmDependenciesIndex = JvmCompilerArgumentValueAdapter.toImpl(value)
       "X_USE_OLD_CLASS_FILES_READING" -> useOldClassFilesReading = JvmCompilerArgumentValueAdapter.toImpl(value)
       "X_USE_TYPE_TABLE" -> useTypeTable = JvmCompilerArgumentValueAdapter.toImpl(value)
       "X_VALHALLA_VALUE_CLASSES" -> valhallaValueClasses = JvmCompilerArgumentValueAdapter.toImpl(value)
@@ -553,6 +558,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     arguments.useFastJarFileSystem = useFastJarFileSystem
     arguments.useInlineScopesNumbers = useInlineScopesNumbers
     arguments.useMetadataOnIncrementalClasspath = useMetadataOnIncrementalClasspath
+    arguments.useNioJvmDependenciesIndex = useNioJvmDependenciesIndex
     arguments.useOldClassFilesReading = useOldClassFilesReading
     arguments.useTypeTable = useTypeTable
     arguments.valhallaValueClasses = valhallaValueClasses
@@ -630,6 +636,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     useFastJarFileSystem = arguments.useFastJarFileSystem
     useInlineScopesNumbers = arguments.useInlineScopesNumbers
     useMetadataOnIncrementalClasspath = arguments.useMetadataOnIncrementalClasspath
+    useNioJvmDependenciesIndex = arguments.useNioJvmDependenciesIndex
     useOldClassFilesReading = arguments.useOldClassFilesReading
     useTypeTable = arguments.useTypeTable
     valhallaValueClasses = arguments.valhallaValueClasses
@@ -704,6 +711,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     arguments.useFastJarFileSystem = useFastJarFileSystem
     arguments.useInlineScopesNumbers = useInlineScopesNumbers
     arguments.useMetadataOnIncrementalClasspath = useMetadataOnIncrementalClasspath
+    arguments.useNioJvmDependenciesIndex = useNioJvmDependenciesIndex
     arguments.useOldClassFilesReading = useOldClassFilesReading
     arguments.useTypeTable = useTypeTable
     arguments.valhallaValueClasses = valhallaValueClasses
@@ -777,6 +785,6 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
 
   public companion object {
     private val knownOptionIds: List<String> =
-        listOf("X_ABI_STABILITY","X_ADD_MODULES","X_ALLOW_NO_SOURCE_FILES","X_ALLOW_UNSTABLE_DEPENDENCIES","X_ANNOTATIONS_IN_METADATA","X_ASSERTIONS","X_BACKEND_THREADS","X_BUILD_FILE","X_DEBUG","X_DEFAULT_SCRIPT_EXTENSION","X_DIRECT_JAVA_ACTUALIZATION","X_DISABLE_STANDARD_SCRIPT","X_EMIT_JVM_TYPE_ANNOTATIONS","X_ENHANCED_COROUTINES_DEBUGGING","X_FRIEND_PATHS","X_GENERATE_STRICT_METADATA_VERSION","X_IGNORED_ANNOTATIONS_FOR_BRIDGES","X_INDY_ALLOW_ANNOTATED_LAMBDAS","X_JAVA_DIRECT","X_JAVA_PACKAGE_PREFIX","X_JAVA_SOURCE_ROOTS","X_JDK_RELEASE","X_JSPECIFY_ANNOTATIONS","X_JVM_DEFAULT","X_JVM_ENABLE_PREVIEW","X_JVM_EXPOSE_BOXED","X_LAMBDAS","X_MODULE_PATH","X_MULTIFILE_PARTS_INHERIT","X_NO_CALL_ASSERTIONS","X_NO_NEW_JAVA_ANNOTATION_TARGETS","X_NO_OPTIMIZE","X_NO_PARAM_ASSERTIONS","X_NO_RECEIVER_ASSERTIONS","X_NO_RESET_JAR_TIMESTAMPS","X_NO_SOURCE_DEBUG_EXTENSION","X_NO_UNIFIED_NULL_CHECKS","X_OUTPUT_BUILTINS_METADATA","X_SAM_CONVERSIONS","X_SANITIZE_PARENTHESES","X_SCRIPT_RESOLVER_ENVIRONMENT","X_STRING_CONCAT","X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS","X_SUPPRESS_MISSING_BUILTINS_ERROR","X_USE_14_INLINE_CLASSES_MANGLING_SCHEME","X_USE_FAST_JAR_FILE_SYSTEM","X_USE_INLINE_SCOPES_NUMBERS","X_USE_METADATA_ON_INCREMENTAL_CLASSPATH","X_USE_OLD_CLASS_FILES_READING","X_USE_TYPE_TABLE","X_VALHALLA_VALUE_CLASSES","X_VALIDATE_BYTECODE","X_WHEN_EXPRESSIONS","CLASSPATH","D","EXPRESSION","INCLUDE_RUNTIME","JAVA_PARAMETERS","JDK_HOME","JVM_DEFAULT","JVM_TARGET","MODULE_NAME","NO_JDK","NO_REFLECT","NO_STDLIB","SCRIPT_TEMPLATES","X_PROFILE","X_NULLABILITY_ANNOTATIONS","X_JSR305",)
+        listOf("X_ABI_STABILITY","X_ADD_MODULES","X_ALLOW_NO_SOURCE_FILES","X_ALLOW_UNSTABLE_DEPENDENCIES","X_ANNOTATIONS_IN_METADATA","X_ASSERTIONS","X_BACKEND_THREADS","X_BUILD_FILE","X_DEBUG","X_DEFAULT_SCRIPT_EXTENSION","X_DIRECT_JAVA_ACTUALIZATION","X_DISABLE_STANDARD_SCRIPT","X_EMIT_JVM_TYPE_ANNOTATIONS","X_ENHANCED_COROUTINES_DEBUGGING","X_FRIEND_PATHS","X_GENERATE_STRICT_METADATA_VERSION","X_IGNORED_ANNOTATIONS_FOR_BRIDGES","X_INDY_ALLOW_ANNOTATED_LAMBDAS","X_JAVA_DIRECT","X_JAVA_PACKAGE_PREFIX","X_JAVA_SOURCE_ROOTS","X_JDK_RELEASE","X_JSPECIFY_ANNOTATIONS","X_JVM_DEFAULT","X_JVM_ENABLE_PREVIEW","X_JVM_EXPOSE_BOXED","X_LAMBDAS","X_MODULE_PATH","X_MULTIFILE_PARTS_INHERIT","X_NO_CALL_ASSERTIONS","X_NO_NEW_JAVA_ANNOTATION_TARGETS","X_NO_OPTIMIZE","X_NO_PARAM_ASSERTIONS","X_NO_RECEIVER_ASSERTIONS","X_NO_RESET_JAR_TIMESTAMPS","X_NO_SOURCE_DEBUG_EXTENSION","X_NO_UNIFIED_NULL_CHECKS","X_OUTPUT_BUILTINS_METADATA","X_SAM_CONVERSIONS","X_SANITIZE_PARENTHESES","X_SCRIPT_RESOLVER_ENVIRONMENT","X_STRING_CONCAT","X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS","X_SUPPRESS_MISSING_BUILTINS_ERROR","X_USE_14_INLINE_CLASSES_MANGLING_SCHEME","X_USE_FAST_JAR_FILE_SYSTEM","X_USE_INLINE_SCOPES_NUMBERS","X_USE_METADATA_ON_INCREMENTAL_CLASSPATH","X_USE_NIO_JVM_DEPENDENCIES_INDEX","X_USE_OLD_CLASS_FILES_READING","X_USE_TYPE_TABLE","X_VALHALLA_VALUE_CLASSES","X_VALIDATE_BYTECODE","X_WHEN_EXPRESSIONS","CLASSPATH","D","EXPRESSION","INCLUDE_RUNTIME","JAVA_PARAMETERS","JDK_HOME","JVM_DEFAULT","JVM_TARGET","MODULE_NAME","NO_JDK","NO_REFLECT","NO_STDLIB","SCRIPT_TEMPLATES","X_PROFILE","X_NULLABILITY_ANNOTATIONS","X_JSR305",)
   }
 }

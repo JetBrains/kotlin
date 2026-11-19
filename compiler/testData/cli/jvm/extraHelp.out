@@ -121,6 +121,8 @@ where advanced options include:
   -Xuse-metadata-on-incremental-classpath
                              Use fragment metadata found on the compilation classpath to perform incremental compilation.
                              This flag is intended for incremental compilation only and should not be used directly.
+  -Xuse-nio-jvm-dependencies-index
+                             Use NIO-based entries for classpath roots in java-direct class lookups.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
   -Xuse-type-table           Use a type table in metadata serialization.

@@ -74,6 +74,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.useFastJarFileSystem = from.useFastJarFileSystem
     to.useInlineScopesNumbers = from.useInlineScopesNumbers
     to.useMetadataOnIncrementalClasspath = from.useMetadataOnIncrementalClasspath
+    to.useNioJvmDependenciesIndex = from.useNioJvmDependenciesIndex
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme
     to.useTypeTable = from.useTypeTable

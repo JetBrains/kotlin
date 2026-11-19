@@ -170,6 +170,10 @@ object JVMConfigurationKeys {
     @JvmField
     val USE_JAVA_DIRECT = CompilerConfigurationKey.create<Boolean>("USE_JAVA_DIRECT")
 
+    // Use NIO-based classpath root entries for class lookups with java-direct
+    @JvmField
+    val USE_NIO_JVM_DEPENDENCIES_INDEX = CompilerConfigurationKey.create<Boolean>("USE_NIO_JVM_DEPENDENCIES_INDEX")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -351,4 +355,8 @@ var CompilerConfiguration.useMetadataOnIncrementalClasspath: Boolean
 var CompilerConfiguration.useJavaDirect: Boolean
     get() = get(JVMConfigurationKeys.USE_JAVA_DIRECT, true)
     set(value) { put(JVMConfigurationKeys.USE_JAVA_DIRECT, value) }
+
+var CompilerConfiguration.useNioJvmDependenciesIndex: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_NIO_JVM_DEPENDENCIES_INDEX)
+    set(value) { put(JVMConfigurationKeys.USE_NIO_JVM_DEPENDENCIES_INDEX, value) }
 

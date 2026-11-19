@@ -161,7 +161,7 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    private val rootsIndex: JvmDependenciesDynamicCompoundIndex
+    private val classpathIndexes = JvmClasspathIndexes(configuration)
 
     val packagePartProviders: List<JvmPackagePartProvider>
         field = mutableListOf<JvmPackagePartProvider>()
@@ -209,15 +209,12 @@ class KotlinCoreEnvironment private constructor(
             initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
         // REPL updates classpath dynamically
-        rootsIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true).apply {
-            addIndex(JvmDependenciesIndexImpl(roots))
-            updateClasspathFromRootsIndex(this)
-        }
+        updateClasspathFromRootsIndex(classpathIndexes.addRoots(roots))
 
         val perfManager = configuration.perfManager
 
         javaFileManager.initialize(
-            rootsIndex,
+            classpathIndexes.javaFileManagerIndex,
             packagePartProviders,
             SingleJavaFileRootsIndex(singleJavaFileRoots),
             configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
@@ -225,7 +222,8 @@ class KotlinCoreEnvironment private constructor(
             perfManager,
         )
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, enableSearchInCtSym = releaseTarget != null, perfManager)
+        val fileFinderFactory =
+            CliVirtualFileFinderFactory(classpathIndexes.classFinderIndex, enableSearchInCtSym = releaseTarget != null, perfManager)
         project.registerService(
             JavaModuleResolver::class.java,
             CliJavaModuleResolver(
@@ -263,7 +261,7 @@ class KotlinCoreEnvironment private constructor(
      * system; see `VfsBasedProjectEnvironment.registerIndexedClasspathRoots`.
      */
     val indexedClasspathRoots: List<VirtualFile>
-        get() = rootsIndex.indexedRoots.map { it.file }.toList()
+        get() = classpathIndexes.javaFileManagerIndex.indexedRoots.map { it.file }.toList()
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
         index.indexedRoots.forEach {
@@ -275,11 +273,10 @@ class KotlinCoreEnvironment private constructor(
         // TODO: add new Java modules to CliJavaModuleResolver
         val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots - initialRoots
 
-        val unindexedRoots = rootsIndex.getUnindexedRoots(newRoots)
+        val unindexedRoots = classpathIndexes.javaFileManagerIndex.getUnindexedRoots(newRoots)
         if (unindexedRoots.isEmpty()) return null
 
-        val newIndex = JvmDependenciesIndexImpl(unindexedRoots)
-        rootsIndex.addIndex(newIndex)
+        val newIndex = classpathIndexes.addRoots(unindexedRoots)
         updateClasspathFromRootsIndex(newIndex)
 
         if (packagePartProviders.isEmpty()) {

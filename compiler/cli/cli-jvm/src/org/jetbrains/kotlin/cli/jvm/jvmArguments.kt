@@ -150,6 +150,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     put(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH, arguments.useMetadataOnIncrementalClasspath)
     put(JVMConfigurationKeys.USE_JAVA_DIRECT, arguments.javaDirect)
+    put(JVMConfigurationKeys.USE_NIO_JVM_DEPENDENCIES_INDEX, arguments.useNioJvmDependenciesIndex)
 }
 
 private fun isCompatibleJvmTargetAndRelease(jvmTarget: String, release: String): Boolean {

@@ -952,6 +952,16 @@ The default value is 'inline'.""",
     }
 
     compilerArgument {
+        name = "Xuse-nio-jvm-dependencies-index"
+        description = "Use NIO-based entries for classpath roots in java-direct class lookups.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xdirect-java-actualization"
         description = "Enable experimental direct Java actualization support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

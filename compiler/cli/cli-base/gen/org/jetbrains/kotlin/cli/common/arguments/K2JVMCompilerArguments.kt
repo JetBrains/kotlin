@@ -603,6 +603,16 @@ This flag is intended for incremental compilation only and should not be used di
         }
 
     @Argument(
+        value = "-Xuse-nio-jvm-dependencies-index",
+        description = "Use NIO-based entries for classpath roots in java-direct class lookups.",
+    )
+    var useNioJvmDependenciesIndex: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xuse-old-class-files-reading",
         description = """Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
 This can be used in the event of problems with the new implementation.""",

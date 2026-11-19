@@ -729,6 +729,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_USE_K2_KAPT", KotlinReleaseVersion(2, 1, 0))
 
     /**
+     * Use NIO-based entries for classpath roots in java-direct class lookups.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_USE_NIO_JVM_DEPENDENCIES_INDEX: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_USE_NIO_JVM_DEPENDENCIES_INDEX", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
      * This can be used in the event of problems with the new implementation.
      *
