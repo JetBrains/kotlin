@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.AbstractBuilderGenerator
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirLombokBuilderPropertyChecker : FirPropertyChecker(MppCheckerKind.Platform) {
     private val BUILDER_FIELD_ANNOTATION_IDS = listOf(LombokNames.BUILDER_DEFAULT_ID, LombokNames.SINGULAR_ID)
@@ -35,7 +35,18 @@ object FirLombokBuilderPropertyChecker : FirPropertyChecker(MppCheckerKind.Platf
     override fun check(declaration: FirProperty) {
         val containingClassSymbol = declaration.getContainingClassSymbol() as? FirRegularClassSymbol ?: return
         if (!containingClassSymbol.isBuilderCapableClass) return
-        if (declaration.fromPrimaryConstructor == true) return
+        val name = declaration.name.takeUnless { it.isSpecial } ?: return
+
+        val fromPrimaryConstructor = declaration.fromPrimaryConstructor == true
+        val primaryConstructor = containingClassSymbol.primaryConstructorIfAny(context.session)
+        val parameter = runIf(fromPrimaryConstructor) {
+            primaryConstructor?.valueParameterSymbols?.find {
+                it.name == declaration.name
+            }
+        }
+        checkDefaultAndSingular(parameter, declaration.symbol)
+
+        if (fromPrimaryConstructor) return
         if (declaration.isVal) {
             // `@Builder.Default` and `@Singular` shape a builder field,
             // and a Kotlin class's builder fields are the value parameters of the constructor or function that `build()` calls,
@@ -54,20 +65,7 @@ object FirLombokBuilderPropertyChecker : FirPropertyChecker(MppCheckerKind.Platf
         val lombokService = context.session.lombokService
         if (lombokService.getBuilder(containingClassSymbol) == null && lombokService.getSuperBuilder(containingClassSymbol) == null) return
 
-        val name = declaration.name.takeUnless { it.isSpecial } ?: return
-
-        val singularAnnotation = declaration.backingField?.symbol?.getCompilerRequiredAnnotationByClassId(LombokNames.SINGULAR_ID)
-        val defaultAnnotation = declaration.symbol.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID)
-
-        if (singularAnnotation != null) {
-            checkSingular(declaration.symbol, singularAnnotation, lombokService)
-
-            if (defaultAnnotation != null) {
-                reporter.reportOn(defaultAnnotation.source, LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED, context)
-            }
-        }
-
-        val primaryConstructor = containingClassSymbol.primaryConstructorIfAny(context.session) ?: return
+        if (primaryConstructor == null) return
         val parameterNames = primaryConstructor.valueParameterSymbols.mapTo(mutableSetOf()) { it.name }
         val whyNotIncluded = with(AbstractBuilderGenerator) {
             declaration.symbol.whyNotIncludedInBuilder(parameterNames, resolveInProcess = false)
@@ -97,7 +95,7 @@ object FirLombokBuilderPropertyChecker : FirPropertyChecker(MppCheckerKind.Platf
             return
         }
 
-        if (defaultAnnotation == null) return
+        if (declaration.symbol.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID) == null) return
         val initializer = declaration.initializer ?: return
         if (initializer.usesInstanceOf(containingClassSymbol)) {
             reporter.reportOn(initializer.source, LombokFirDiagnostics.BUILDER_DEFAULT_INITIALIZER_USES_INSTANCE, context)

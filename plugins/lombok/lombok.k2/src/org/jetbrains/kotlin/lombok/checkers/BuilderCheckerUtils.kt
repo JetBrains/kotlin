@@ -12,21 +12,44 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.LombokService
+import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.Singulars
+import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+
+context(context: CheckerContext, reporter: DiagnosticReporter)
+internal fun checkDefaultAndSingular(parameter: FirValueParameterSymbol?, property: FirPropertySymbol?) {
+    // The same lookup the generator does: `@Singular` is on the parameter unless it was written with a
+    // `@field:` target, and `@Builder.Default` (`@Target(FIELD)`) is only ever on the promoted property.
+    val singularAnnotation = parameter?.getCompilerRequiredAnnotationByClassId(LombokNames.SINGULAR_ID)
+        ?: property?.backingFieldSymbol?.getCompilerRequiredAnnotationByClassId(LombokNames.SINGULAR_ID)
+    val defaultAnnotation = property?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID)
+
+    val lombokService = context.session.lombokService
+    if (singularAnnotation != null) {
+        checkSingular(parameter ?: property!!, singularAnnotation, lombokService)
+
+        if (defaultAnnotation != null) {
+            reporter.reportOn(defaultAnnotation.source, LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED, context)
+        }
+    }
+}
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 internal fun checkSingular(variable: FirVariableSymbol<*>, singularAnnotation: FirAnnotation, lombokService: LombokService) {
