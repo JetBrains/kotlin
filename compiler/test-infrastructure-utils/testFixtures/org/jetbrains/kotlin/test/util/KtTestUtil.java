@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KtAssert;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestInfrastructureException;
+import org.jetbrains.kotlin.test.TestDataVariants;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -311,17 +312,15 @@ public class KtTestUtil {
 
         File[] files = transformTestDataPath(testDataDir.getPath()).listFiles();
         if (files != null) {
+            Set<String> fileNames = TestDataVariants.testDataFileNames(files);
             for (File file : files) {
                 if (file.isDirectory()) {
                     if (recursive && containsTestData(file, filenamePattern, excludedPattern) && !exclude.contains(file.getName())) {
                         assertTestClassPresentByMetadata(testCaseClass, file);
                     }
                 }
-                else {
-                    boolean excluded = excludedPattern != null && excludedPattern.matcher(file.getName()).matches();
-                    if (!excluded && filenamePattern.matcher(file.getName()).matches()) {
-                        assertFilePathPresent(file, rootFile, filePaths);
-                    }
+                else if (isTestDataFile(file, fileNames, filenamePattern, excludedPattern)) {
+                    assertFilePathPresent(file, rootFile, filePaths);
                 }
             }
         }
@@ -418,20 +417,28 @@ public class KtTestUtil {
     private static boolean containsTestData(File dir, Pattern filenamePattern, @Nullable Pattern excludedPattern) {
         File[] files = dir.listFiles();
         assert files != null;
+        Set<String> fileNames = TestDataVariants.testDataFileNames(files);
         for (File file : files) {
             if (file.isDirectory()) {
                 if (containsTestData(file, filenamePattern, excludedPattern)) {
                     return true;
                 }
             }
-            else {
-                boolean excluded = excludedPattern != null && excludedPattern.matcher(file.getName()).matches();
-                if (! excluded && filenamePattern.matcher(file.getName()).matches()) {
-                    return true;
-                }
+            else if (isTestDataFile(file, fileNames, filenamePattern, excludedPattern)) {
+                return true;
             }
         }
         return false;
+    }
+
+    private static boolean isTestDataFile(
+            File file,
+            Set<String> siblingFileNames,
+            Pattern filenamePattern,
+            @Nullable Pattern excludedPattern
+    ) {
+        return TestDataVariants.matchesTestDataPattern(file.getName(), filenamePattern, excludedPattern) &&
+               !TestDataVariants.isTestDataVariant(file, siblingFileNames, filenamePattern);
     }
 
     private static void assertTestClassPresentByMetadata(@NotNull Class<?> outerClass, @NotNull File testDataDir) {
