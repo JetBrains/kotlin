@@ -3,6 +3,9 @@
 // INPUT_DATA_FILE: kt33055.in
 // OUTPUT_DATA_FILE: kt33055.out
 
+// Ignored due to KT-91198
+// IGNORE_NATIVE: cacheMode=INCREMENTAL_PER_FILE
+
 // FILE: kt33055.kt
 fun question(subject: String, names: Array<String> = emptyArray()): String {
     return buildString { // breakpoint here
