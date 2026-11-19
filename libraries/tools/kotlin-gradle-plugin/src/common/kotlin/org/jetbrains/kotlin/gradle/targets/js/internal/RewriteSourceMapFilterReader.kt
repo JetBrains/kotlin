@@ -1,9 +1,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
-import com.google.gson.stream.JsonWriter
-import com.google.gson.stream.MalformedJsonException
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.slf4j.LoggerFactory
 import java.io.*
 import kotlin.math.min
@@ -26,6 +30,7 @@ open class RewriteSourceMapFilterReader(
     companion object {
         internal const val SOURCES_CONTENT_PROLOG_END = "],\"sourcesContent\":"
         internal const val NAMES_PROLOG_END = "],\"names\":"
+        private val PROLOG_ENDS = listOf(SOURCES_CONTENT_PROLOG_END, NAMES_PROLOG_END)
         const val UNSUPPORTED_FORMAT_MESSAGE =
             "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`"
 
@@ -37,7 +42,6 @@ open class RewriteSourceMapFilterReader(
 
     // buffer with transformed prolog, that wil be emitted first
     private lateinit var bufferWriter: StringWriter
-    private lateinit var bufferJsonWriter: JsonWriter
     private val buffer: StringBuffer get() = bufferWriter.buffer
     private var bufferReadPos = 0
     private val bufferAvailable get() = buffer.length - bufferReadPos
@@ -72,10 +76,8 @@ open class RewriteSourceMapFilterReader(
             // Like, one buffer ends with `],"sourc`, and the other starts with `esContent"`
             val prevEnd = jsonString.length
             jsonString.append(readBuffer, 0, lastRead)
-            val sourceContentPrologEndPos = jsonString.indexOf(SOURCES_CONTENT_PROLOG_END, prevEnd - SOURCES_CONTENT_PROLOG_END.length)
-            jsonPrologPos = if (sourceContentPrologEndPos == -1) {
-                jsonString.indexOf(NAMES_PROLOG_END, prevEnd - NAMES_PROLOG_END.length)
-            } else sourceContentPrologEndPos
+            // "sources" ends at whichever of the two comes first: both may follow it, in either order
+            jsonPrologPos = jsonString.indexOfAny(PROLOG_ENDS, prevEnd - PROLOG_ENDS.maxOf { it.length })
             if (jsonPrologPos == -1) {
                 if (jsonString.length + lastRead > prologLimit) {
                     writeBackUnsupported(jsonString, "Too many sources or format is not supported")
@@ -86,58 +88,40 @@ open class RewriteSourceMapFilterReader(
 
         // create StringWriter to write transformed prolog and contents that was read after PROLOG_END
         bufferWriter = StringWriter(jsonString.length)
-        bufferJsonWriter = JsonWriter(bufferWriter)
 
-        // parse json in prolog and write it back to bufferJsonWriter with transformed source paths
-        val json = JsonReader(StringReader(jsonString.toString()))
-        var sourceRootSpecified = false
+        // The prolog ends inside "sources": close it with `]}` to parse, then drop those two again after encoding.
+        // The object is rewritten key by key, so everything but the paths stays as it was, key order included.
+        val prologText = jsonString.substring(0, jsonPrologPos) + "]}"
         try {
-            json.beginObject()
-            bufferJsonWriter.beginObject()
-
-            reading@ while (true) {
-                val token = json.peek()
-                check(token == JsonToken.NAME) { "JSON key expected, but $token found" }
-                val key = json.nextName()
+            val prolog = KgpJson.default.parseToJsonElement(prologText).jsonObject
+            // paths are relative to "sourceRoot" when it is present, so only rewrite them otherwise
+            val sourceRootSpecified = "sourceRoot" in prolog
+            val transformed = JsonObject(prolog.mapValues { (key, value) ->
                 when (key) {
-                    "sourceRoot" -> {
-                        val srcSourceRootPath = transformString(json.nextString())
-                        bufferJsonWriter.name(key).value(srcSourceRootPath)
-                        sourceRootSpecified = true
-                    }
-                    "sources" -> {
-                        json.beginArray()
-                        bufferJsonWriter.name("sources").beginArray()
-                        while (json.peek() != JsonToken.END_ARRAY) {
-                            val path = json.nextString()
-                            val transformed = if (sourceRootSpecified) path else transformString(path)
-                            bufferJsonWriter.value(transformed)
-                        }
-                        json.endArray()
-                    }
-                    "version" -> bufferJsonWriter.name(key).value(json.nextInt())
-                    "file" -> bufferJsonWriter.name(key).value(json.nextString())
-                    "sourcesContent", "names" -> break@reading
+                    "sourceRoot" -> JsonPrimitive(transformString(value.string(key)))
+                    "sources" -> JsonArray(value.jsonArray.map { path ->
+                        val source = path.string(key)
+                        JsonPrimitive(if (sourceRootSpecified) source else transformString(source))
+                    })
+                    "version", "file" -> value
                     else -> throw IllegalStateException("Unknown key \"$key\"")
                 }
-            }
-
-            // leave bufferJsonWriter unclosed
+            })
+            bufferWriter.append(KgpJson.default.encodeToString(JsonObject.serializer(), transformed).dropLast("]}".length))
 
             // push back contents that was read after PROLOG_END
             bufferWriter.append(jsonString.substring(jsonPrologPos))
         } catch (e: IllegalStateException) {
-            writeBackUnsupported(jsonString, json, e.message!!)
-        } catch (e: MalformedJsonException) {
-            writeBackUnsupported(jsonString, json, "Malformed JSON")
+            writeBackUnsupported(jsonString, "$UNSUPPORTED_FORMAT_MESSAGE. ${e.message} in `$jsonString")
+        } catch (e: SerializationException) {
+            // kotlinx-serialization appends hints about its own configuration on later lines
+            writeBackUnsupported(jsonString, "$UNSUPPORTED_FORMAT_MESSAGE. ${e.message?.lineSequence()?.first()} in `$jsonString")
         }
     }
 
-    private fun writeBackUnsupported(jsonString: StringBuilder, reader: JsonReader, message: String) =
-        writeBackUnsupported(
-            jsonString,
-            "$UNSUPPORTED_FORMAT_MESSAGE. $message at ${reader.toString().replace("JsonReader at ", "")} in `$jsonString"
-        )
+    private fun JsonElement.string(key: String): String =
+        (this as? JsonPrimitive)?.takeIf { it.isString }?.content
+            ?: throw IllegalStateException("Expected a string in \"$key\" but was $this")
 
     private fun writeBackUnsupported(jsonString: StringBuilder, reason: String) =
         writeBackUnsupported(jsonString.toString(), reason)
