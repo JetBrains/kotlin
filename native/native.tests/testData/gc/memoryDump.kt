@@ -102,29 +102,6 @@ fun dumpOmitPrimitiveArrayPayloadsIsSmaller() {
     assertTrue(omitted < full, "omitted dump ($omitted) should be smaller than full dump ($full)")
 }
 
-@OptIn(ExperimentalForeignApi::class)
-private fun waitForStableDumpSize(fd: Int): Long {
-    // fstat, not lseek: parent and child share the file offset until the write finishes.
-    var last = -1L
-    var stable = 0
-    repeat(10_000) {
-        val size = memScoped {
-            val st = alloc<stat>()
-            assertEquals(0, fstat(fd, st.ptr), "fstat dump fd")
-            st.st_size
-        }
-        if (size > 0L && size == last) {
-            stable++
-            if (stable >= 12) return size
-        } else {
-            stable = 0
-            last = size
-        }
-        usleep(1_000u)
-    }
-    fail("dump size did not stabilize; last=$last")
-}
-
 @Test
 @OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
 fun dumpMemoryAsyncWritesHeader() {
@@ -132,8 +109,11 @@ fun dumpMemoryAsyncWritesHeader() {
     val fd = fileno(file)
     assertTrue(fd > -1, "Failed to obtain a temporary file descriptor")
     val local = Data()
-    assertTrue(Debugging.dumpMemoryAsync(fd.toLong()))
-    val size = waitForStableDumpSize(fd)
+    val dump = assertNotNull(Debugging.dumpMemoryAsync(fd.toLong()))
+    assertTrue(dump.waitForCompletion())
+    assertTrue(dump.isCompleted)
+    assertTrue(dump.waitForCompletion())
+    val size = lseek(fd, 0, SEEK_END)
     assertTrue(size > 0L, "async dump produced empty file")
     assertEquals(0, fseek(file, 0, SEEK_SET))
     val header = "Kotlin/Native dump 1.0.8"

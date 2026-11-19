@@ -11758,6 +11758,14 @@ final class kotlin.native.internal/OpaqueFunction : kotlin/Function<kotlin/Any?>
 }
 
 // Targets: [native]
+final class kotlin.native.runtime/AsyncMemoryDump { // kotlin.native.runtime/AsyncMemoryDump|null[0]
+    final val isCompleted // kotlin.native.runtime/AsyncMemoryDump.isCompleted|{}isCompleted[0]
+        final fun <get-isCompleted>(): kotlin/Boolean // kotlin.native.runtime/AsyncMemoryDump.isCompleted.<get-isCompleted>|<get-isCompleted>(){}[0]
+
+    final fun waitForCompletion(): kotlin/Boolean // kotlin.native.runtime/AsyncMemoryDump.waitForCompletion|waitForCompletion(){}[0]
+}
+
+// Targets: [native]
 final class kotlin.native.runtime/GCInfo { // kotlin.native.runtime/GCInfo|null[0]
     constructor <init>(kotlin/Long, kotlin/Long, kotlin/Long, kotlin/Long, kotlin/Long, kotlin/Long, kotlin/Long?, kotlin/Long?, kotlin/Long?, kotlin/Long?, kotlin.native.runtime/RootSetStatistics, kotlin/Long, kotlin.collections/Map<kotlin/String, kotlin.native.runtime/SweepStatistics>, kotlin.collections/Map<kotlin/String, kotlin.native.runtime/MemoryUsage>, kotlin.collections/Map<kotlin/String, kotlin.native.runtime/MemoryUsage>) // kotlin.native.runtime/GCInfo.<init>|<init>(kotlin.Long;kotlin.Long;kotlin.Long;kotlin.Long;kotlin.Long;kotlin.Long;kotlin.Long?;kotlin.Long?;kotlin.Long?;kotlin.Long?;kotlin.native.runtime.RootSetStatistics;kotlin.Long;kotlin.collections.Map<kotlin.String,kotlin.native.runtime.SweepStatistics>;kotlin.collections.Map<kotlin.String,kotlin.native.runtime.MemoryUsage>;kotlin.collections.Map<kotlin.String,kotlin.native.runtime.MemoryUsage>){}[0]
 
@@ -12119,7 +12127,7 @@ final object kotlin.native.runtime/Debugging { // kotlin.native.runtime/Debuggin
 
     final fun dumpMemory(kotlin/Long): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemory|dumpMemory(kotlin.Long){}[0]
     final fun dumpMemory(kotlin/Long, kotlin.native.runtime/MemoryDumpOptions = ...): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemory|dumpMemory(kotlin.Long;kotlin.native.runtime.MemoryDumpOptions){}[0]
-    final fun dumpMemoryAsync(kotlin/Long, kotlin.native.runtime/MemoryDumpOptions = ...): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemoryAsync|dumpMemoryAsync(kotlin.Long;kotlin.native.runtime.MemoryDumpOptions){}[0]
+    final fun dumpMemoryAsync(kotlin/Long, kotlin.native.runtime/MemoryDumpOptions = ...): kotlin.native.runtime/AsyncMemoryDump? // kotlin.native.runtime/Debugging.dumpMemoryAsync|dumpMemoryAsync(kotlin.Long;kotlin.native.runtime.MemoryDumpOptions){}[0]
 }
 
 // Targets: [native]

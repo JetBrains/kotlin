@@ -248,8 +248,13 @@ void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, bool value);
 bool Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*);
 RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOptions(
         ObjHeader*, int fd, bool omitPrimitiveArrayPayloads);
-RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryAsyncWithOptions(
+RUNTIME_NOTHROW void* Kotlin_native_runtime_Debugging_dumpMemoryAsyncWithOptions(
         ObjHeader*, int fd, bool omitPrimitiveArrayPayloads);
+RUNTIME_NOTHROW bool Kotlin_native_runtime_AsyncMemoryDump_isCompleted(
+        ObjHeader*, void* handle);
+RUNTIME_NOTHROW bool Kotlin_native_runtime_AsyncMemoryDump_waitForCompletion(
+        ObjHeader*, void* handle);
+RUNTIME_NOTHROW void Kotlin_native_runtime_AsyncMemoryDump_dispose(void* handle);
 
 void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
 

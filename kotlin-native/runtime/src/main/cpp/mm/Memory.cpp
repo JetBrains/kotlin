@@ -6,6 +6,12 @@
 #include "Memory.h"
 #include "mm/MemoryPrivate.hpp"
 
+#include <condition_variable>
+#include <memory>
+#include <mutex>
+#include <new>
+#include <system_error>
+
 // tvOS/watchOS sysroots mark fork(2) unavailable; those targets write in-process like Windows.
 #if !KONAN_WINDOWS && !KONAN_TVOS && !KONAN_WATCHOS
 #define KONAN_DUMP_MAY_FORK 1
@@ -256,7 +262,34 @@ extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryWithOp
     return success;
 }
 
-extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryAsyncWithOptions(
+namespace {
+
+struct AsyncDumpState : Pinned {
+    std::mutex mutex;
+    std::condition_variable cv;
+    bool done = false;
+    bool success = false;
+};
+
+struct AsyncDumpHandle : Pinned {
+    explicit AsyncDumpHandle(std::shared_ptr<AsyncDumpState> state) noexcept : state(std::move(state)) {}
+    std::shared_ptr<AsyncDumpState> state;
+};
+
+#if KONAN_DUMP_MAY_FORK
+bool waitForDumpChild(pid_t pid) noexcept {
+    int status = 0;
+    pid_t waited;
+    do {
+        waited = waitpid(pid, &status, 0);
+    } while (waited < 0 && errno == EINTR);
+    return waited == pid && WIFEXITED(status) && WEXITSTATUS(status) == 0;
+}
+#endif
+
+} // namespace
+
+extern "C" RUNTIME_NOTHROW void* Kotlin_native_runtime_Debugging_dumpMemoryAsyncWithOptions(
         ObjHeader*, int fd, bool omitPrimitiveArrayPayloads) {
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
@@ -264,6 +297,16 @@ extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryAsyncW
     threadData->suspensionData().requestThreadsSuspension("Memory dump");
     CallsCheckerIgnoreGuard ignoreGuard;
     mm::WaitForThreadsSuspension();
+
+    std::shared_ptr<AsyncDumpState> state;
+    std::unique_ptr<AsyncDumpHandle> handle;
+    try {
+        state = std::make_shared<AsyncDumpState>();
+        handle = std::make_unique<AsyncDumpHandle>(state);
+    } catch (const std::bad_alloc&) {
+        mm::ResumeThreads();
+        return nullptr;
+    }
 
     // Publish before fork so the child walks a consistent snapshot and does not touch live threads.
     mm::PrepareForMemoryDump();
@@ -276,20 +319,59 @@ extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemoryAsyncW
     }
     if (pid > 0) {
         mm::ResumeThreads();
-        // Reap the writer so it cannot linger as a zombie. The caller still must not close the
-        // dump fd until the write finishes; this thread does not signal completion.
-        ScopedThread(ScopedThread::attributes().name("Memory dump waitpid"), [pid]() {
-            int status = 0;
-            while (waitpid(pid, &status, 0) < 0 && errno == EINTR) {
-            }
-        }).detach();
-        return true;
+        try {
+            // Reap the writer so it cannot linger as a zombie, and publish its exit status to the handle.
+            ScopedThread(ScopedThread::attributes().name("Memory dump waitpid"), [pid, state]() {
+                bool ok = waitForDumpChild(pid);
+                {
+                    std::lock_guard lock(state->mutex);
+                    state->success = ok;
+                    state->done = true;
+                }
+                state->cv.notify_all();
+            }).detach();
+        } catch (const std::system_error&) {
+            // If the reaper thread cannot be created, reap inline so no zombie lingers.
+            ThreadStateGuard nativeGuard(ThreadState::kNative);
+            state->success = waitForDumpChild(pid);
+            state->done = true;
+        }
+        return handle.release();
     }
     // fork failed: keep the STW write so the caller still gets a dump.
 #endif
     bool success = mm::WriteMemoryDump(fd, omitPrimitiveArrayPayloads);
     mm::ResumeThreads();
-    return success;
+    if (!success) {
+        return nullptr;
+    }
+    state->success = true;
+    state->done = true;
+    return handle.release();
+}
+
+extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_AsyncMemoryDump_isCompleted(
+        ObjHeader*, void* rawHandle) {
+    CallsCheckerIgnoreGuard ignoreGuard;
+    auto state = static_cast<AsyncDumpHandle*>(rawHandle)->state;
+    ThreadStateGuard nativeGuard(ThreadState::kNative);
+    std::lock_guard lock(state->mutex);
+    return state->done;
+}
+
+extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_AsyncMemoryDump_waitForCompletion(
+        ObjHeader*, void* rawHandle) {
+    CallsCheckerIgnoreGuard ignoreGuard;
+    auto state = static_cast<AsyncDumpHandle*>(rawHandle)->state;
+    ThreadStateGuard nativeGuard(ThreadState::kNative);
+    std::unique_lock lock(state->mutex);
+    state->cv.wait(lock, [&state] { return state->done; });
+    return state->success;
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_native_runtime_AsyncMemoryDump_dispose(void* rawHandle) {
+    CallsCheckerIgnoreGuard ignoreGuard;
+    delete static_cast<AsyncDumpHandle*>(rawHandle);
 }
 
 extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {
