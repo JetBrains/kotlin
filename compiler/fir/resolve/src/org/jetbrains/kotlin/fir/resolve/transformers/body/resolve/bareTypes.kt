@@ -27,6 +27,10 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
         return candidatesFromIntersectedTypes.firstOrNull()
     }
 
+    if (originalType is ConeUnionType) {
+        return computeRepresentativeTypeForBareType(type, originalType.primaryType)
+    }
+
     session.typeApproximator.approximateToSuperType(
         originalType,
         TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference

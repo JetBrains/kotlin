@@ -7,8 +7,8 @@ interface J<T> : I<T> {
 }
 
 fun unionToPrimary(x: I<String> | E1) {
-    if (x is <!NO_TYPE_ARGUMENTS_ON_RHS!>J<!>) {
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+    if (x is J) {
+        x.foo()
     }
 }
 
