@@ -2675,6 +2675,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("topLevelDeclarationNameWithDot.args")
+    public void testTopLevelDeclarationNameWithDot() {
+      run("topLevelDeclarationNameWithDot.args");
+    }
+
+    @Test
     @TestMetadata("unknownFriendLibraries.args")
     public void testUnknownFriendLibraries() {
       run("unknownFriendLibraries.args");
@@ -2770,6 +2776,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("tailrec.args")
     public void testTailrec() {
       run("tailrec.args");
+    }
+
+    @Test
+    @TestMetadata("topLevelDeclarationNameWithDot.args")
+    public void testTopLevelDeclarationNameWithDot() {
+      run("topLevelDeclarationNameWithDot.args");
     }
 
     @Test
