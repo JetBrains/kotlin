@@ -121,6 +121,8 @@ internal class PostInlineLowering(val context: NativeLoweringContext) : BodyLowe
                 }
 
                 if (symbols.asserts.contains(expression.symbol) && !context.config.assertsEnabled) {
+                    // The argument is dropped intentionally:
+                    // when the asserts are disabled, the `assert` argument must not be computed even if it has side effects.
                     return data.at(expression).irComposite {}
                 }
 
