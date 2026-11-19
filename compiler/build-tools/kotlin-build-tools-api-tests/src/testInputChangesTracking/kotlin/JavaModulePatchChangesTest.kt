@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.TRACK_CONFIGURATION_INPUTS
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectedLogLevelForRebuildReason
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
@@ -23,11 +23,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinStdlibLocation
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
-import java.nio.file.Path
-import javax.tools.ToolProvider
-import kotlin.io.path.createDirectories
 import kotlin.io.path.pathString
-import kotlin.io.path.writeText
 
 /**
  * The sources are members of a module patched with `-Xpatch-module` when one of the sources compiled is in a patch path,
@@ -44,6 +40,7 @@ class JavaModulePatchChangesTest : BaseCompilationTest() {
             val moduleName = "ic-scenarios/patch-module"
             trackedModule(
                 moduleName = moduleName,
+                dependencies = listOf(module(LIB_MODULE_NAME)),
                 compilationConfigAction = patchModuleConfigAction(moduleName),
                 icOptionsConfigAction = trackConfigurationInputs,
             ).editInPatchPathAndAssertIncrementalCompilation(strategyConfig)
@@ -58,6 +55,7 @@ class JavaModulePatchChangesTest : BaseCompilationTest() {
             val moduleName = "ic-scenarios/patch-module"
             module(
                 moduleName = moduleName,
+                dependencies = listOf(module(LIB_MODULE_NAME)),
                 compilationConfigAction = patchModuleConfigAction(moduleName),
                 icOptionsConfigAction = trackConfigurationInputs,
             ).editInPatchPathAndAssertIncrementalCompilation(strategyConfig)
@@ -72,6 +70,7 @@ class JavaModulePatchChangesTest : BaseCompilationTest() {
             val moduleName = "ic-scenarios/patch-module-last-source-removed"
             trackedModule(
                 moduleName = moduleName,
+                dependencies = listOf(module(LIB_MODULE_NAME)),
                 compilationConfigAction = patchModuleConfigAction(moduleName),
                 icOptionsConfigAction = trackConfigurationInputs,
             ).removeLastPatchedSourceAndAssertRebuildFails(strategyConfig)
@@ -86,6 +85,7 @@ class JavaModulePatchChangesTest : BaseCompilationTest() {
             val moduleName = "ic-scenarios/patch-module-last-source-removed"
             module(
                 moduleName = moduleName,
+                dependencies = listOf(module(LIB_MODULE_NAME)),
                 compilationConfigAction = patchModuleConfigAction(moduleName),
                 icOptionsConfigAction = trackConfigurationInputs,
             ).removeLastPatchedSourceAndAssertRebuildFails(strategyConfig)
@@ -100,6 +100,7 @@ class JavaModulePatchChangesTest : BaseCompilationTest() {
             val moduleName = "ic-scenarios/patch-module"
             trackedModule(
                 moduleName = moduleName,
+                dependencies = listOf(module(LIB_MODULE_NAME)),
                 compilationConfigAction = patchModuleConfigAction(moduleName),
                 icOptionsConfigAction = trackConfigurationInputs,
             ).addSourceOutsidePatchPathAndAssertRebuild(strategyConfig)
@@ -114,6 +115,7 @@ class JavaModulePatchChangesTest : BaseCompilationTest() {
             val moduleName = "ic-scenarios/patch-module"
             module(
                 moduleName = moduleName,
+                dependencies = listOf(module(LIB_MODULE_NAME)),
                 compilationConfigAction = patchModuleConfigAction(moduleName),
                 icOptionsConfigAction = trackConfigurationInputs,
             ).addSourceOutsidePatchPathAndAssertRebuild(strategyConfig)
@@ -165,7 +167,7 @@ class JavaModulePatchChangesTest : BaseCompilationTest() {
      * Patches the module `lib`, which exports no package, with the `patch` directory in the sources of the module [moduleName].
      */
     private fun patchModuleConfigAction(moduleName: String): (JvmCompilationOperation.Builder) -> Unit {
-        val libraryDirectory = buildLibrary()
+        val libraryDirectory = workingDirectory.resolve(LIB_MODULE_NAME).resolve("build").resolve("output")
         val patchDirectory = workingDirectory.resolve(moduleName).resolve("src").resolve("patch")
         return {
             it.compilerArguments[JvmCompilerArguments.X_MODULE_PATH] = listOf(libraryDirectory, currentKotlinStdlibLocation)
@@ -174,31 +176,11 @@ class JavaModulePatchChangesTest : BaseCompilationTest() {
         }
     }
 
-    private fun buildLibrary(): Path {
-        val sources = workingDirectory.resolve("lib-src").createDirectories()
-        val moduleInfo = sources.resolve("module-info.java").apply {
-            writeText("module lib { requires kotlin.stdlib; }")
-        }
-        val impl = sources.resolve("lib/internal/Impl.java").apply {
-            parent.createDirectories()
-            writeText("package lib.internal; public class Impl { public static String impl() { return \"impl\"; } }")
-        }
-        val destination = workingDirectory.resolve("lib").createDirectories()
-        val compiler = ToolProvider.getSystemJavaCompiler() ?: error("System Java compiler not found. Ensure running on a JDK.")
-        val exitCode = compiler.run(
-            null, null, null,
-            "-d", destination.pathString,
-            "--module-path", currentKotlinStdlibLocation.pathString,
-            moduleInfo.pathString, impl.pathString,
-        )
-        check(exitCode == 0) { "javac failed to compile the library module" }
-        return destination
-    }
-
     private val trackConfigurationInputs: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit = {
         it[TRACK_CONFIGURATION_INPUTS] = true
     }
 
-    private fun expectedLogLevelForRebuildReason(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-        if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+    private companion object {
+        const val LIB_MODULE_NAME = "ic-scenarios/patch-module-lib"
+    }
 }
