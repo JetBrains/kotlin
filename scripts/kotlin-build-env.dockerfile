@@ -46,9 +46,9 @@ RUN curl https://download.java.net/java/early_access/jdk28/21/GPL/openjdk-28-ea+
 # New naming conventions
 ENV JDK8=/usr/lib/jvm/amazon-corretto-8.512.09.1-${JDK_PLATFORM_SUFFIX} \
     JDK11=/usr/lib/jvm/amazon-corretto-11.0.33.0.10-${JDK_PLATFORM_SUFFIX} \
-    JDK17=/usr/lib/jvm/amazon-corretto-17.0.21.0.11-${JDK_PLATFORM_SUFFIX} \
-    JDK21=/usr/lib/jvm/amazon-corretto-21.0.13.0.11-${JDK_PLATFORM_SUFFIX} \
-    JDK25=/usr/lib/jvm/amazon-corretto-25.0.5.0.10-${JDK_PLATFORM_SUFFIX}
+    JDK17=/usr/lib/jvm/amazon-corretto-17.0.21.1.2-${JDK_PLATFORM_SUFFIX} \
+    JDK21=/usr/lib/jvm/amazon-corretto-21.0.13.1.2-${JDK_PLATFORM_SUFFIX} \
+    JDK25=/usr/lib/jvm/amazon-corretto-25.0.5.1.2-${JDK_PLATFORM_SUFFIX}
 
 # TeamCity JDK old naming conventions. Kotlin build still have dependencies in Maven build.
 ENV JDK_18=$JDK8 \
