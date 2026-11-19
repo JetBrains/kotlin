@@ -26,7 +26,7 @@ class PlatformBitWidthTest {
     fun `test leaf long`() {
         assertEquals(
             PlatformIntWidth.LONG,
-            createPlatformBitWidthIndex().platformWidthOf(CommonizerTarget(KonanTarget.MACOS_X64))
+            createPlatformBitWidthIndex().platformWidthOf(CommonizerTarget(KonanTarget.MACOS_ARM64))
         )
     }
 
@@ -42,7 +42,7 @@ class PlatformBitWidthTest {
     fun `test shared long`() {
         assertEquals(
             PlatformIntWidth.LONG,
-            createPlatformBitWidthIndex().platformWidthOf(CommonizerTarget(KonanTarget.MACOS_X64, KonanTarget.LINUX_X64))
+            createPlatformBitWidthIndex().platformWidthOf(CommonizerTarget(KonanTarget.MACOS_ARM64, KonanTarget.LINUX_X64))
         )
     }
 
@@ -50,7 +50,7 @@ class PlatformBitWidthTest {
     fun `test int and long`() {
         assertEquals(
             PlatformIntWidth.MIXED,
-            createPlatformBitWidthIndex().platformWidthOf(CommonizerTarget(KonanTarget.WATCHOS_ARM64, KonanTarget.MACOS_X64))
+            createPlatformBitWidthIndex().platformWidthOf(CommonizerTarget(KonanTarget.WATCHOS_ARM64, KonanTarget.MACOS_ARM64))
         )
     }
 
@@ -73,7 +73,7 @@ class PlatformBitWidthTest {
             null,
             createPlatformBitWidthIndex().platformWidthOf(
                 CommonizerTarget(
-                    LeafCommonizerTarget(KonanTarget.MACOS_X64),
+                    LeafCommonizerTarget(KonanTarget.MACOS_ARM64),
                     LeafCommonizerTarget("unknown_target")
                 )
             )
@@ -86,7 +86,7 @@ class PlatformBitWidthTest {
             null,
             createPlatformBitWidthIndex().platformWidthOf(
                 CommonizerTarget(
-                    LeafCommonizerTarget(KonanTarget.MACOS_X64),
+                    LeafCommonizerTarget(KonanTarget.MACOS_ARM64),
                     LeafCommonizerTarget(KonanTarget.LINUX_ARM32_HFP),
                     LeafCommonizerTarget("unknown_target"),
                 )

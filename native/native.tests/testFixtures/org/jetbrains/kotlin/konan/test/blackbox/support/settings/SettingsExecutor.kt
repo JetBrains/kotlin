@@ -50,7 +50,6 @@ val Settings.testProcessExecutor: Executor
                 configurables.target == hostTarget -> HostExecutor()
                 configurables is ConfigurablesWithEmulator -> EmulatorExecutor(configurables)
                 configurables is AppleConfigurables && configurables.targetTriple.isSimulator -> XcodeSimulatorExecutor(configurables)
-                configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables)
                 else -> JUnit5Assertions.fail { "Running tests for $testTarget on $hostTarget is not supported yet." }
             }
         }

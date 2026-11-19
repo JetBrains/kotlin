@@ -259,31 +259,6 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
     fun watchosArm64(configure: Action<KotlinNativeTarget>) = watchosArm64 { configure.execute(this) }
 
     @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    fun watchosX64(
-        name: String = "watchosX64",
-        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
-    ): KotlinNativeTargetWithSimulatorTests
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun watchosX64() = watchosX64("watchosX64") { }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun watchosX64(name: String) = watchosX64(name) { }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun watchosX64(
-        name: String,
-        configure: Action<KotlinNativeTargetWithSimulatorTests>
-    ) = watchosX64(name) { configure.execute(this) }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun watchosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosX64 { configure.execute(this) }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     fun watchosArm32(
         name: String = "watchosArm32",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -356,31 +331,6 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun tvosArm64(configure: Action<KotlinNativeTarget>) = tvosArm64 { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    fun tvosX64(
-        name: String = "tvosX64",
-        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
-    ): KotlinNativeTargetWithSimulatorTests
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun tvosX64() = tvosX64("tvosX64") { }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun tvosX64(name: String) = tvosX64(name) { }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun tvosX64(
-        name: String,
-        configure: Action<KotlinNativeTargetWithSimulatorTests>
-    ) = tvosX64(name) { configure.execute(this) }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun tvosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = tvosX64 { configure.execute(this) }
-
     fun tvosSimulatorArm64(
         name: String = "tvosSimulatorArm64",
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
@@ -428,31 +378,6 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
     ) = mingwX64(name) { configure.execute(this) }
 
     fun mingwX64(configure: Action<KotlinNativeTargetWithHostTests>) = mingwX64 { configure.execute(this) }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    fun macosX64(
-        name: String = "macosX64",
-        configure: KotlinNativeTargetWithHostTests.() -> Unit = { }
-    ): KotlinNativeTargetWithHostTests
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun macosX64() = macosX64("macosX64") { }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun macosX64(name: String) = macosX64(name) { }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun macosX64(
-        name: String,
-        configure: Action<KotlinNativeTargetWithHostTests>
-    ) = macosX64(name) { configure.execute(this) }
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun macosX64(configure: Action<KotlinNativeTargetWithHostTests>) = macosX64 { configure.execute(this) }
 
     fun macosArm64(
         name: String = "macosArm64",
@@ -649,18 +574,6 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         )
 
     @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun watchosX64(
-        name: String,
-        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit
-    ): KotlinNativeTargetWithSimulatorTests =
-        configureOrCreate(
-            name,
-            presets.getByName("watchosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
-            project,
-            configure
-        )
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     override fun watchosArm32(
         name: String,
         configure: KotlinNativeTarget.() -> Unit
@@ -705,18 +618,6 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun tvosX64(
-        name: String,
-        configure: KotlinNativeTargetWithSimulatorTests.() -> Unit
-    ): KotlinNativeTargetWithSimulatorTests =
-        configureOrCreate(
-            name,
-            presets.getByName("tvosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
-            project,
-            configure
-        )
-
     override fun tvosSimulatorArm64(
         name: String,
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit
@@ -746,18 +647,6 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("mingwX64") as KotlinNativeTargetWithHostTestsPreset,
-            project,
-            configure
-        )
-
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun macosX64(
-        name: String,
-        configure: KotlinNativeTargetWithHostTests.() -> Unit
-    ): KotlinNativeTargetWithHostTests =
-        configureOrCreate(
-            name,
-            presets.getByName("macosX64") as KotlinNativeTargetWithHostTestsPreset,
             project,
             configure
         )

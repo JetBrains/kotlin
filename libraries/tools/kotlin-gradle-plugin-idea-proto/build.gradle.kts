@@ -92,7 +92,6 @@ run {
                 type = "exe"
                 classifier = when (HostManager.hostOrNull) {
                     MACOS_ARM64 -> "osx-aarch_64"
-                    MACOS_X64 -> "osx-x86_64"
                     MINGW_X64 -> "windows-x86_64"
                     LINUX_X64 -> "linux-x86_64"
                     else -> null

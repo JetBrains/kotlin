@@ -32,16 +32,13 @@ enum class StringListMetrics(
                 "ios_simulator_arm64",
                 "ios_x64",
                 "watchos_arm64",
-                "watchos_x64",
                 "watchos_simulator_arm64",
                 "watchos_device_arm64",
                 "tvos_arm64",
-                "tvos_x64",
                 "tvos_simulator_arm64",
                 "linux_arm32_hfp",
                 "linux_arm64",
                 "linux_x64",
-                "macos_x64",
                 "macos_arm64",
                 "mingw_x64",
                 "wasm"
@@ -119,10 +116,10 @@ enum class StringListMetrics(
         AllowedListAnonymizer(
             "android_x64", "android_x86", "android_arm32", "android_arm64",
             "ios_arm64", "ios_x64", "ios_simulator_arm64",
-            "watchos_arm64", "watchos_x64", "watchos_simulator_arm64", "watchos_device_arm64",
-            "tvos_arm64", "tvos_x64", "tvos_simulator_arm64",
+            "watchos_arm64", "watchos_simulator_arm64", "watchos_device_arm64",
+            "tvos_arm64", "tvos_simulator_arm64",
             "linux_x64", "mingw_x64",
-            "macos_x64", "macos_arm64",
+            "macos_arm64",
             "linux_arm64", "linux_arm32_hfp",
         )
     )
@@ -130,6 +127,6 @@ enum class StringListMetrics(
 
 
     companion object {
-        const val VERSION = 9
+        const val VERSION = 10
     }
 }

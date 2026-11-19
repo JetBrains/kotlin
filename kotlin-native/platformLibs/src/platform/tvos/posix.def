@@ -21,9 +21,6 @@ excludedFunctions = getumask fchflagsat dup3 pipe2 acl_valid_link_np pfctlinput 
 excludedFunctions.tvos_arm64 = longjmperror
 excludedFunctions.tvos_simulator_arm64 = longjmperror \
     openat_dprotected_np mkfifoat mknodat openat_authenticated_np
-excludedFunctions.tvos_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np
-
-#excludedFunctions.tvos_x64 = pthread_jit_write_protect_np pthread_jit_write_protect_supported_np
 
 ---
 // Wrapper to access errno variable.

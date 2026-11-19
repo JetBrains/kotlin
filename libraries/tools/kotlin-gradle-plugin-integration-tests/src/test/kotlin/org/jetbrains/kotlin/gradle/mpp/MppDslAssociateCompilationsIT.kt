@@ -81,7 +81,6 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
     @TestMetadata(value = "new-mpp-associate-compilations")
     fun `test testRuns API for iOS`(gradleVersion: GradleVersion) {
         val iosTarget = when (HostManager.host) {
-            KonanTarget.MACOS_X64 -> "iosX64"
             KonanTarget.MACOS_ARM64 -> "iosSimulatorArm64"
             else -> null
         }

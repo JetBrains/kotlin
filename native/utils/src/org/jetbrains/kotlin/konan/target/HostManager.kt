@@ -65,11 +65,9 @@ open class HostManager() {
         IOS_X64,
         IOS_SIMULATOR_ARM64,
         WATCHOS_ARM64,
-        WATCHOS_X64,
         WATCHOS_SIMULATOR_ARM64,
         WATCHOS_DEVICE_ARM64,
         TVOS_ARM64,
-        TVOS_X64,
         TVOS_SIMULATOR_ARM64,
     )
 

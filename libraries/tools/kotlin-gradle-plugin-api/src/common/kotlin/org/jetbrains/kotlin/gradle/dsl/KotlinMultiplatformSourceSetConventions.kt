@@ -128,7 +128,7 @@ interface KotlinMultiplatformSourceSetConventions {
      * ```kotlin
      * kotlin {
      *    iosX64()
-     *    macosX64()
+     *    macosArm64()
      *
      *    sourceSets {
      *      appleMain.dependencies {
@@ -152,7 +152,7 @@ interface KotlinMultiplatformSourceSetConventions {
      * ```kotlin
      * kotlin {
      *    iosX64()
-     *    macosX64()
+     *    macosArm64()
      *
      *    sourceSets {
      *      appleTest.dependencies {
@@ -223,8 +223,8 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * ```kotlin
      * kotlin {
-     *    tvosX64()
      *    tvosArm64()
+     *    tvosSimulatorArm64()
      *
      *    sourceSets {
      *      tvosMain.dependencies {
@@ -247,8 +247,8 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * ```kotlin
      * kotlin {
-     *    tvosX64()
      *    tvosArm64()
+     *    tvosSimulatorArm64()
      *
      *    sourceSets {
      *      tvosTest.dependencies {
@@ -271,8 +271,8 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * ```kotlin
      * kotlin {
-     *    watchosX64()
      *    watchosArm64()
+     *    watchosSimulatorArm64()
      *
      *    sourceSets {
      *      watchosMain.dependencies {
@@ -295,8 +295,8 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * ```kotlin
      * kotlin {
-     *    watchosX64()
      *    watchosArm64()
+     *    watchosSimulatorArm64()
      *
      *    sourceSets {
      *      watchosTest.dependencies {
@@ -319,7 +319,6 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * ```kotlin
      * kotlin {
-     *    macosX64()
      *    macosArm64()
      *
      *    sourceSets {
@@ -343,7 +342,6 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * ```kotlin
      * kotlin {
-     *    macosX64()
      *    macosArm64()
      *
      *    sourceSets {
@@ -1265,54 +1263,6 @@ interface KotlinMultiplatformSourceSetConventions {
     val NamedDomainObjectContainer<KotlinSourceSet>.macosArm64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
-     * Static accessor for the main Kotlin Source Set of macosX64 target.
-     * Declare macosX64 target to access this source set.
-     * If macosX64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
-     *
-     * Sample:
-     *
-     * ```kotlin
-     * kotlin {
-     *    macosX64() // Target is declared, macosX64Main source set is created
-     *
-     *    sourceSets {
-     *      macosX64Main.dependencies {
-     *          // Add macosX64Main dependencies here
-     *      }
-     *    }
-     * }
-     * ```
-     *
-     * @since 2.0.20
-     */
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    val NamedDomainObjectContainer<KotlinSourceSet>.macosX64Main: NamedDomainObjectProvider<KotlinSourceSet>
-
-    /**
-     * Static accessor for the test Kotlin Source Set of macosX64 target.
-     * Declare macosX64 target to access this source set.
-     * If macosX64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
-     *
-     * Sample:
-     *
-     * ```kotlin
-     * kotlin {
-     *    macosX64() // Target is declared, macosX64Test source set is created
-     *
-     *    sourceSets {
-     *      macosX64Test.dependencies {
-     *          // Add macosX64Test dependencies here
-     *      }
-     *    }
-     * }
-     * ```
-     *
-     * @since 2.0.20
-     */
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    val NamedDomainObjectContainer<KotlinSourceSet>.macosX64Test: NamedDomainObjectProvider<KotlinSourceSet>
-
-    /**
      * Static accessor for the main Kotlin Source Set of mingwX64 target.
      * Declare mingwX64 target to access this source set.
      * If mingwX64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
@@ -1449,54 +1399,6 @@ interface KotlinMultiplatformSourceSetConventions {
      * @since 2.0.20
      */
     val NamedDomainObjectContainer<KotlinSourceSet>.tvosSimulatorArm64Test: NamedDomainObjectProvider<KotlinSourceSet>
-
-    /**
-     * Static accessor for the main Kotlin Source Set of tvosX64 target.
-     * Declare tvosX64 target to access this source set.
-     * If tvosX64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
-     *
-     * Sample:
-     *
-     * ```kotlin
-     * kotlin {
-     *    tvosX64() // Target is declared, tvosX64Main source set is created
-     *
-     *    sourceSets {
-     *      tvosX64Main.dependencies {
-     *          // Add tvosX64Main dependencies here
-     *      }
-     *    }
-     * }
-     * ```
-     *
-     * @since 2.0.20
-     */
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    val NamedDomainObjectContainer<KotlinSourceSet>.tvosX64Main: NamedDomainObjectProvider<KotlinSourceSet>
-
-    /**
-     * Static accessor for the test Kotlin Source Set of tvosX64 target.
-     * Declare tvosX64 target to access this source set.
-     * If tvosX64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
-     *
-     * Sample:
-     *
-     * ```kotlin
-     * kotlin {
-     *    tvosX64() // Target is declared, tvosX64Test source set is created
-     *
-     *    sourceSets {
-     *      tvosX64Test.dependencies {
-     *          // Add tvosX64Test dependencies here
-     *      }
-     *    }
-     * }
-     * ```
-     *
-     * @since 2.0.20
-     */
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    val NamedDomainObjectContainer<KotlinSourceSet>.tvosX64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
      * Static accessor for the main Kotlin Source Set of watchosArm32 target.
@@ -1683,54 +1585,6 @@ interface KotlinMultiplatformSourceSetConventions {
      * @since 2.0.20
      */
     val NamedDomainObjectContainer<KotlinSourceSet>.watchosSimulatorArm64Test: NamedDomainObjectProvider<KotlinSourceSet>
-
-    /**
-     * Static accessor for the main Kotlin Source Set of watchosX64 target.
-     * Declare watchosX64 target to access this source set.
-     * If watchosX64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
-     *
-     * Sample:
-     *
-     * ```kotlin
-     * kotlin {
-     *    watchosX64() // Target is declared, watchosX64Main source set is created
-     *
-     *    sourceSets {
-     *      watchosX64Main.dependencies {
-     *          // Add watchosX64Main dependencies here
-     *      }
-     *    }
-     * }
-     * ```
-     *
-     * @since 2.0.20
-     */
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    val NamedDomainObjectContainer<KotlinSourceSet>.watchosX64Main: NamedDomainObjectProvider<KotlinSourceSet>
-
-    /**
-     * Static accessor for the test Kotlin Source Set of watchosX64 target.
-     * Declare watchosX64 target to access this source set.
-     * If watchosX64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
-     *
-     * Sample:
-     *
-     * ```kotlin
-     * kotlin {
-     *    watchosX64() // Target is declared, watchosX64Test source set is created
-     *
-     *    sourceSets {
-     *      watchosX64Test.dependencies {
-     *          // Add watchosX64Test dependencies here
-     *      }
-     *    }
-     * }
-     * ```
-     *
-     * @since 2.0.20
-     */
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    val NamedDomainObjectContainer<KotlinSourceSet>.watchosX64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     // endregion
 

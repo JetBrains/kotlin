@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.native.executors.cli
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.native.executors.ExecuteRequest
 import org.jetbrains.kotlin.native.executors.HostExecutor
-import org.jetbrains.kotlin.native.executors.RosettaExecutor
 import org.jetbrains.kotlin.native.executors.XcodeSimulatorExecutor
 import kotlin.system.exitProcess
 import kotlin.time.Duration
@@ -80,7 +79,6 @@ private fun run(args: Args): Nothing {
     val executor = when {
         target == hostTarget -> HostExecutor()
         configurables is AppleConfigurables && configurables.targetTriple.isSimulator -> XcodeSimulatorExecutor(configurables)
-        configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables)
         else -> error("Cannot run for target $target")
     }
     val response = executor.execute(ExecuteRequest(args.executable).apply {

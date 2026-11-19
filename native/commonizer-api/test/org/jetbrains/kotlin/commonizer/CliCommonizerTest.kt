@@ -23,7 +23,7 @@ class CliCommonizerTest {
             konanHome = konanHome,
             inputLibraries = emptySet(),
             dependencyLibraries = emptySet(),
-            outputTargets = setOf(CommonizerTarget(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64)),
+            outputTargets = setOf(CommonizerTarget(KonanTarget.LINUX_ARM64, KonanTarget.MACOS_ARM64)),
             outputDirectory = temporaryOutputDirectory,
             additionalSettings = emptyList(),
         )

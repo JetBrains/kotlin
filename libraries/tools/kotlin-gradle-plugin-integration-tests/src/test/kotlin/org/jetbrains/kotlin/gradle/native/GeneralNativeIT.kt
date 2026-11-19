@@ -499,7 +499,6 @@ class GeneralNativeIT : KGPBaseTest() {
             val testsToExecute = buildSet {
                 add(":$hostTestTask")
                 when (HostManager.host) {
-                    KonanTarget.MACOS_X64 -> add(":iosTest")
                     KonanTarget.MACOS_ARM64 -> add(":iosArm64Test")
                     else -> {}
                 }
@@ -670,7 +669,6 @@ class GeneralNativeIT : KGPBaseTest() {
                 assertStacktrace(hostTestTask, "host")
                 val testTarget = when (HostManager.host) {
                     KonanTarget.MACOS_ARM64 -> "iosArm64"
-                    KonanTarget.MACOS_X64 -> "ios"
                     else -> throw IllegalStateException("Unsupported host: ${HostManager.host}")
                 }
                 val testTask = "${testTarget}Test"

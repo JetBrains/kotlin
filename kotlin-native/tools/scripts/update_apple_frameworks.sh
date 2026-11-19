@@ -23,7 +23,7 @@ tvos*)
   SIM_SDK=$(xcrun --show-sdk-path --sdk appletvsimulator)
   OS_NAME="tvOS"
   DEVICES=("tvos_arm64")
-  SIMULATORS=("tvos_x64" "tvos_simulator_arm64")
+  SIMULATORS=("tvos_simulator_arm64")
   ;;
 ios*)
   DEV_SDK=$(xcrun --show-sdk-path --sdk iphoneos)
@@ -37,7 +37,7 @@ watchos*)
   SIM_SDK=$(xcrun --show-sdk-path --sdk watchsimulator)
   OS_NAME="watchOS"
   DEVICES=("watchos_arm64" "watchos_device_arm64")
-  SIMULATORS=("watchos_x64" "watchos_simulator_arm64")
+  SIMULATORS=("watchos_simulator_arm64")
   ;;
 osx*)
   DEV_SDK=$(xcrun --show-sdk-path)
