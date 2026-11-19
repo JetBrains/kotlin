@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotSame
+import kotlin.test.assertSame
 
 // Must precede CompositionTests: the runtime-test class loader defines classes in generation order and
 // has no findClass, so an implementation generated above would not resolve its supertype
@@ -337,6 +338,26 @@ class CompositionTests {
         advance()
         assertEquals(2, innerCounter)
         assertEquals(2, counter)
+    }
+
+    // A SAM conversion in a composable is remembered like a lambda, otherwise the consumer never skips
+    @Test
+    fun funInterfaceConversionIsMemoized() = compositionTest {
+        val seen = mutableListOf<FunPresenter>()
+        val trigger = mutableIntStateOf(0)
+
+        compose {
+            trigger.value // read to restart this scope
+            // captured: a non-memoized conversion allocates every time; remembered: nothing invalidates
+            val captured = remember { "Hello" }
+            seen += FunPresenter { Text(captured) }
+        }
+        assertEquals(1, seen.size)
+
+        trigger.value++
+        advance()
+        assertEquals(2, seen.size)
+        assertSame(seen[0], seen[1])
     }
 
     // `@DontMemoize` keeps the conversion out of memoization, as for a lambda: a new instance every time

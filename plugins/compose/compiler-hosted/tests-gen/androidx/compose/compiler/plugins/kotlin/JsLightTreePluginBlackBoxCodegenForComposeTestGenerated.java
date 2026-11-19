@@ -34,6 +34,12 @@ public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("composableFunInterfaceRecomposition.kt")
+  public void testComposableFunInterfaceRecomposition() {
+    run("composableFunInterfaceRecomposition.kt");
+  }
+
+  @Test
   @TestMetadata("composableLambdaCapturingLocalOfInitializer.kt")
   public void testComposableLambdaCapturingLocalOfInitializer() {
     run("composableLambdaCapturingLocalOfInitializer.kt");

@@ -114,7 +114,7 @@ fun Test(%composer: Composer?, %changed: Int) {
       class <no name provided> : CustomComposable {
         @Composable
         @ComposableTarget(applier = "UI")
-        @FunctionKeyMeta(key = 1579781544, startOffset = 463, endOffset = 507)
+        @FunctionKeyMeta(key = 1828145808, startOffset = 463, endOffset = 507)
         override fun call(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(call)<Text("...>:Test.kt")
@@ -140,12 +140,12 @@ fun Test(%composer: Composer?, %changed: Int) {
         }
       }
       <no name provided>()
-    }, %composer, 0)
+    }, %composer, 0b0110)
     ClosedCustom(<block>{
       class <no name provided> : CustomComposable {
         @Composable
         @ComposableTarget(applier = "UI")
-        @FunctionKeyMeta(key = -1274072378, startOffset = 534, endOffset = 578)
+        @FunctionKeyMeta(key = 1180784046, startOffset = 534, endOffset = 578)
         override fun call(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(call)<Text("...>:Test.kt")
@@ -171,7 +171,7 @@ fun Test(%composer: Composer?, %changed: Int) {
         }
       }
       <no name provided>()
-    }, %composer, 0)
+    }, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

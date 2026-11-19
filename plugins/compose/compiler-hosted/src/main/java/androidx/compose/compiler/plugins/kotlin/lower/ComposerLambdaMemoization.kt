@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -641,16 +642,19 @@ class ComposerLambdaMemoization(
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
         // SAM conversions are handled by Kotlin compiler
         // We only need to make sure that remember is handled correctly around type operator
-        if (
-            expression.operator != IrTypeOperator.SAM_CONVERSION ||
-            currentFunctionContext?.canRemember != true
-        ) {
+        if (expression.operator != IrTypeOperator.SAM_CONVERSION) {
             return super.visitTypeOperator(expression)
         }
 
         // Unwrap function from type operator
         val functionExpression =
             expression.findSamFunctionExpr() ?: return super.visitTypeOperator(expression)
+
+        val isComposableFunInterface = expression.typeOperand.isComposableFunInterface()
+        val functionContext = currentFunctionContext?.takeIf { it.canRemember }
+        if (functionContext == null && !isComposableFunInterface) {
+            return super.visitTypeOperator(expression)
+        }
 
         // Record capture variables for this scope
         val collector = CaptureCollector()
@@ -661,7 +665,27 @@ class ComposerLambdaMemoization(
         val captures = collector.captures.toList()
         val dontMemoize = functionExpression.function.hasAnnotation(ComposeFqNames.DontMemoize)
 
-        return rememberExpression(currentFunctionContext!!, expression, captures, dontMemoize = dontMemoize)
+        if (!isComposableFunInterface) {
+            return rememberExpression(functionContext!!, expression, captures, dontMemoize = dontMemoize)
+        }
+
+        // JVM makes a capture-free class a singleton, other backends allocate it every time
+        val isSingleton = captures.isEmpty() && context.platform.isJvm()
+        val superType = expression.typeOperand
+        val implementation = FunctionReferenceBuilder(
+            functionExpression,
+            superType.classOrFail,
+            superType,
+            functionExpression.function.parent,
+            context,
+            declarationContextStack.last().declaration.symbol,
+            IrTypeSystemContextImpl(context.irBuiltIns),
+        ).build()
+        return if (functionContext == null) {
+            implementation
+        } else {
+            rememberExpression(functionContext, implementation, captures, isSingleton = isSingleton, dontMemoize = dontMemoize)
+        }
     }
 
     private fun visitNonComposableFunctionExpression(
@@ -1196,7 +1220,7 @@ internal object ComposeMemoizedLambdaOrigin : IrStatementOrigin {
         get() = "ComposeMemoizedLambdaOrigin"
 }
 
-internal fun IrType.isComposableFunInterface(): Boolean =
+private fun IrType.isComposableFunInterface(): Boolean =
     classOrNull
         ?.functions
         ?.single { it.owner.modality == Modality.ABSTRACT }

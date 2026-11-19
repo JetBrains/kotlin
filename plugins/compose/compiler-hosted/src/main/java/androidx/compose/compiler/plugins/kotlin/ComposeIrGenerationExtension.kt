@@ -113,10 +113,6 @@ class ComposeIrGenerationExtension(
             ).lower(moduleFragment)
         }
 
-        ComposableFunInterfaceLowering(pluginContext).lower(moduleFragment)
-
-        ProgressManager.checkCanceled()
-
         val functionKeyTransformer = DurableFunctionKeyTransformer(
             pluginContext,
             moduleFragment,
@@ -158,7 +154,7 @@ class ComposeIrGenerationExtension(
 
         ProgressManager.checkCanceled()
 
-        // Memoize normal lambdas and wrap composable lambdas
+        // Memoize normal lambdas, wrap composable lambdas, build classes for composable SAM conversions
         ComposerLambdaMemoization(
             pluginContext,
             moduleFragment,

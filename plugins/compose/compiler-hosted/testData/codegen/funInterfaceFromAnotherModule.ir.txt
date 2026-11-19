@@ -78,10 +78,10 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:prefix index:0 type:kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun renderer (prefix: kotlin.String): <root>.Renderer declared in <root>'
-          BLOCK type=<root>.renderer.<no name provided> origin=null
+          BLOCK type=<root>.Renderer origin=null
             CLASS LAMBDA_IMPL CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Renderer]
               thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.renderer.<no name provided>
-              CONSTRUCTOR GENERATED_MEMBER_IN_CALLABLE_REFERENCE visibility:public returnType:<root>.renderer.<no name provided> [primary]
+              CONSTRUCTOR visibility:public returnType:<root>.renderer.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS LAMBDA_IMPL CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Renderer]' type=kotlin.Unit
@@ -105,7 +105,7 @@ MODULE_FRAGMENT
                 VALUE_PARAMETER kind:Regular name:$changed index:3 type:kotlin.Int
                 annotations:
                   Composable
-                  FunctionKeyMeta(key = 867939921, startOffset = 157, endOffset = 188)
+                  FunctionKeyMeta(key = 1401311967, startOffset = 157, endOffset = 188)
                 overridden:
                   public abstract fun render (text: kotlin.String, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>.Renderer
                 BLOCK_BODY
@@ -113,7 +113,7 @@ MODULE_FRAGMENT
                     SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.renderer.<no name provided>.render' type=kotlin.Unit origin=null
                       CALL 'public abstract fun startRestartGroup (key: kotlin.Int): androidx.compose.runtime.Composer declared in androidx.compose.runtime.Composer' type=androidx.compose.runtime.Composer origin=null
                         ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.renderer.<no name provided>.render' type=androidx.compose.runtime.Composer? origin=null
-                        ARG key: CONST Int type=kotlin.Int value=867939921
+                        ARG key: CONST Int type=kotlin.Int value=1401311967
                     CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                       ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.renderer.<no name provided>.render' type=androidx.compose.runtime.Composer? origin=null
                       ARG sourceInformation: CONST String type=kotlin.String value="C(render)N(text)19@167L19:module_main_funInterfaceFromAnotherModule.kt"
@@ -175,7 +175,7 @@ MODULE_FRAGMENT
                           BRANCH
                             if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
                             then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-                              ARG key: CONST Int type=kotlin.Int value=867939921
+                              ARG key: CONST Int type=kotlin.Int value=1401311967
                               ARG dirty1: GET_VAR 'val $dirty: kotlin.Int [val] declared in <root>.renderer.<no name provided>.render' type=kotlin.Int origin=null
                               ARG dirty2: CONST Int type=kotlin.Int value=-1
                               ARG info: CONST String type=kotlin.String value="renderer.<no name provided>.render (module_main_funInterfaceFromAnotherModule.kt:19)"

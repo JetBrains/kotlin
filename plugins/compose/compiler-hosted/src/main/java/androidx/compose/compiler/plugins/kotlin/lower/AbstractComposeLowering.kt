@@ -1024,8 +1024,9 @@ abstract class AbstractComposeLowering(
 
             is IrBlock -> {
                 // Check the slice in case the block was generated as expression
-                // (e.g. inlined intrinsic remember call)
-                this.isStaticExpression
+                // (e.g. inlined intrinsic remember call), or a singleton class of a composable SAM
+                // conversion marked by memoization
+                this.isStaticExpression || this.isStaticFunctionExpression
             }
             else -> false
         }
