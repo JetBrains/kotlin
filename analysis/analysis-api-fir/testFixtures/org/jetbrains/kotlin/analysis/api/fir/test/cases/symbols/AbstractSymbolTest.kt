@@ -86,8 +86,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         disablePsiBasedLogic: Boolean,
     ) {
         val markerProvider = testServices.expressionMarkerProvider
-        val analyzeContext = testServices.ktTestModuleStructure.allMainKtFiles.firstNotNullOfOrNull {
-            markerProvider.getBottommostElementOfTypeAtCaretOrNull<KtElement>(it, "context")
+        // A code fragment is analyzed in its own session: the context caret marks the context element of the fragment instead
+        val analyzeContext = if (mainFile is KtCodeFragment) {
+            null
+        } else {
+            testServices.ktTestModuleStructure.allMainKtFiles.firstNotNullOfOrNull {
+                markerProvider.getBottommostElementOfTypeAtCaretOrNull<KtElement>(it, "context")
+            }
         }
 
         val directives = mainModule.testModule.directives

@@ -1262,6 +1262,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleJSSingleSymbolByPsiTestGenerate
     }
 
     @Test
+    @TestMetadata("entryInExpressionCodeFragmentDestructuringDeclaration.kt")
+    public void testEntryInExpressionCodeFragmentDestructuringDeclaration() {
+      run("entryInExpressionCodeFragmentDestructuringDeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
     public void testEntryUnderscoreInDestructuringDeclaration() {
       run("entryUnderscoreInDestructuringDeclaration.kt");
