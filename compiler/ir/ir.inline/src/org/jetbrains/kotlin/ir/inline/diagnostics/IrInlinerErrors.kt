@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.ir.inline.diagnostics
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
@@ -17,32 +16,29 @@ import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.util.BodyPrintingStrategy
 import org.jetbrains.kotlin.ir.util.KotlinLikeDumpOptions
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import kotlin.getValue
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.*
 
 object IrInlinerErrors : KtDiagnosticsContainer() {
     val IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by
-    deprecationError3<PsiElement, Visibility, IrDeclaration, IrDeclaration>(
+    deprecationError3<Visibility, IrDeclaration, IrDeclaration>(
         LanguageFeature.ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs,
     )
 
     val IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING by
-    deprecationError4<PsiElement, Visibility, IrDeclaration, IrDeclaration, List<IrInlinedFunctionBlock>>(
+    deprecationError4<Visibility, IrDeclaration, IrDeclaration, List<IrInlinedFunctionBlock>>(
         LanguageFeature.ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs,
     )
 
     val IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION by
-    deprecationError3<PsiElement, Visibility, IrDeclaration, IrDeclaration>(
+    deprecationError3<Visibility, IrDeclaration, IrDeclaration>(
         LanguageFeature.ForbidExposingLessVisibleTypesInInline,
     )
 
     val IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING by
-    deprecationError4<PsiElement, Visibility, IrDeclaration, IrDeclaration, List<IrInlinedFunctionBlock>>(
+    deprecationError4<Visibility, IrDeclaration, IrDeclaration, List<IrInlinedFunctionBlock>>(
         LanguageFeature.ForbidExposingLessVisibleTypesInInline,
     )
 
-    val IR_SYNTHETIC_ACCESSOR_LOWERING_WARNING by warning1<PsiElement, String>()
+    val IR_SYNTHETIC_ACCESSOR_LOWERING_WARNING by warning1<String>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultSerializationErrorMessages

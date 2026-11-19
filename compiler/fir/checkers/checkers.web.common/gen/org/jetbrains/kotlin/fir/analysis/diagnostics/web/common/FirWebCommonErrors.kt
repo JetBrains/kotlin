@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics.web.common
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJsQualifierOnMembersAndNonExternals
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitVarInJsModuleFile
 import org.jetbrains.kotlin.diagnostics.*
@@ -21,11 +20,6 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.psi.KtAnonymousInitializer
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtParameter
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WEB_COMMON_DIAGNOSTICS_LIST]
@@ -33,53 +27,53 @@ import org.jetbrains.kotlin.psi.KtParameter
 @Suppress("IncorrectFormatting")
 object FirWebCommonErrors : KtDiagnosticsContainer() {
     // Annotations
-    val WRONG_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val JS_MODULE_PROHIBITED_ON_VAR: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_VAR", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_NON_EXTERNAL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val NESTED_JS_MODULE_PROHIBITED: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NESTED_JS_MODULE_PROHIBITED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val JS_MODULE_PROHIBITED_ON_MEMBER: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_MEMBER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL", ProhibitJsQualifierOnMembersAndNonExternals, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL", ProhibitJsQualifierOnMembersAndNonExternals, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE: KtDiagnosticFactoryForDeprecation1<String> = KtDiagnosticFactoryForDeprecation1("JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE", ProhibitVarInJsModuleFile, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtElement::class, getRendererFactory())
+    val WRONG_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val JS_MODULE_PROHIBITED_ON_VAR: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_VAR", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_NON_EXTERNAL", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val NESTED_JS_MODULE_PROHIBITED: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NESTED_JS_MODULE_PROHIBITED", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val JS_MODULE_PROHIBITED_ON_MEMBER: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_MEMBER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_QUALIFIER_PROHIBITED_ON_NON_EXTERNAL", ProhibitJsQualifierOnMembersAndNonExternals, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_QUALIFIER_PROHIBITED_ON_NON_TOP_LEVEL", ProhibitJsQualifierOnMembersAndNonExternals, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE: KtDiagnosticFactoryForDeprecation1<String> = KtDiagnosticFactoryForDeprecation1("JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE", ProhibitVarInJsModuleFile, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, getRendererFactory())
 
     // Externals
-    val NESTED_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())
-    val WRONG_EXTERNAL_DECLARATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WRONG_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())
-    val NESTED_CLASS_IN_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_CLASS_IN_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())
-    val COMPANION_OBJECT_IN_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_OBJECT_IN_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())
-    val INLINE_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INLINE_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtDeclaration::class, getRendererFactory())
-    val NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())
-    val EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtParameter::class, getRendererFactory())
-    val EXTERNAL_ANONYMOUS_INITIALIZER: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_ANONYMOUS_INITIALIZER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnonymousInitializer::class, getRendererFactory())
-    val EXTERNAL_DELEGATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DELEGATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val EXTERNAL_DELEGATED_CONSTRUCTOR_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DELEGATED_CONSTRUCTOR_CALL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val WRONG_BODY_OF_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_BODY_OF_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val CANNOT_CHECK_FOR_EXTERNAL_INTERFACE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("CANNOT_CHECK_FOR_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val UNCHECKED_CAST_TO_EXTERNAL_INTERFACE: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val EXTERNAL_INTERFACE_AS_CLASS_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_INTERFACE_AS_CLASS_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val NAMED_COMPANION_IN_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAMED_COMPANION_IN_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val NESTED_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val WRONG_EXTERNAL_DECLARATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WRONG_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val NESTED_CLASS_IN_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_CLASS_IN_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val COMPANION_OBJECT_IN_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_OBJECT_IN_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val INLINE_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INLINE_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val EXTERNAL_ANONYMOUS_INITIALIZER: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_ANONYMOUS_INITIALIZER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val EXTERNAL_DELEGATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DELEGATION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val EXTERNAL_DELEGATED_CONSTRUCTOR_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DELEGATED_CONSTRUCTOR_CALL", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val WRONG_BODY_OF_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_BODY_OF_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val CANNOT_CHECK_FOR_EXTERNAL_INTERFACE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("CANNOT_CHECK_FOR_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val UNCHECKED_CAST_TO_EXTERNAL_INTERFACE: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val EXTERNAL_INTERFACE_AS_CLASS_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_INTERFACE_AS_CLASS_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val NAMED_COMPANION_IN_EXTERNAL_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAMED_COMPANION_IN_EXTERNAL_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
 
     // Export
-    val NESTED_JS_EXPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_JS_EXPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE: KtDiagnosticFactory0 = KtDiagnosticFactory0("MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val WRONG_JS_EXPORT_TARGET_VISIBILITY: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_EXPORT_TARGET_VISIBILITY", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val WRONG_EXPORTED_DECLARATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WRONG_EXPORTED_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val NESTED_JS_EXPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_JS_EXPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE: KtDiagnosticFactory0 = KtDiagnosticFactory0("MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val WRONG_JS_EXPORT_TARGET_VISIBILITY: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_EXPORT_TARGET_VISIBILITY", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val WRONG_EXPORTED_DECLARATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WRONG_EXPORTED_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
 
     // JsCode
-    val JSCODE_ARGUMENT_NON_CONST_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_ARGUMENT_NON_CONST_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val JSCODE_ARGUMENT_NON_CONST_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_ARGUMENT_NON_CONST_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
 
     // Reflection
-    val UNSUPPORTED_REFLECTION_API: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNSUPPORTED_REFLECTION_API", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val UNSUPPORTED_REFLECTION_API: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNSUPPORTED_REFLECTION_API", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirWebCommonErrorsDefaultMessages
 }

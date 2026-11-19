@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.MATERIALIZED_SCHEMA_INFO
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.SchemaInfoDiagnostics.GENERATED_FROM_SOURCE_SCHEMA
@@ -254,7 +253,6 @@ internal fun <A> info1(positioningStrategy: AbstractSourceElementPositioningStra
     return DiagnosticFactory1DelegateProvider(
         Severity.INFO,
         positioningStrategy,
-        KtElement::class,
         container = container,
     )
 }

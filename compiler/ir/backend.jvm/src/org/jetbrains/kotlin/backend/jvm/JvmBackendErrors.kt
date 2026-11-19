@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.CLASS_ID
@@ -17,30 +16,30 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 object JvmBackendErrors : KtDiagnosticsContainer() {
-    val CONFLICTING_JVM_DECLARATIONS by error1<PsiElement, String>(DECLARATION_SIGNATURE_OR_DEFAULT)
-    val CONFLICTING_INHERITED_JVM_DECLARATIONS by error1<PsiElement, String>(DECLARATION_SIGNATURE_OR_DEFAULT)
-    val ACCIDENTAL_OVERRIDE by error1<PsiElement, String>(DECLARATION_SIGNATURE_OR_DEFAULT)
+    val CONFLICTING_JVM_DECLARATIONS by error1<String>(DECLARATION_SIGNATURE_OR_DEFAULT)
+    val CONFLICTING_INHERITED_JVM_DECLARATIONS by error1<String>(DECLARATION_SIGNATURE_OR_DEFAULT)
+    val ACCIDENTAL_OVERRIDE by error1<String>(DECLARATION_SIGNATURE_OR_DEFAULT)
 
-    val TYPEOF_SUSPEND_TYPE by error0<PsiElement>()
-    val TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND by error1<PsiElement, String>()
+    val TYPEOF_SUSPEND_TYPE by error0()
+    val TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND by error1<String>()
 
-    val SUSPENSION_POINT_INSIDE_MONITOR by error1<PsiElement, String>()
+    val SUSPENSION_POINT_INSIDE_MONITOR by error1<String>()
 
-    val SCRIPT_CAPTURING_NESTED_CLASS by error2<PsiElement, String, String>()
-    val SCRIPT_CAPTURING_OBJECT by error1<PsiElement, String>()
-    val SCRIPT_CAPTURING_INTERFACE by error1<PsiElement, String>()
-    val SCRIPT_CAPTURING_ENUM by error1<PsiElement, String>()
-    val SCRIPT_CAPTURING_ENUM_ENTRY by error1<PsiElement, String>()
+    val SCRIPT_CAPTURING_NESTED_CLASS by error2<String, String>()
+    val SCRIPT_CAPTURING_OBJECT by error1<String>()
+    val SCRIPT_CAPTURING_INTERFACE by error1<String>()
+    val SCRIPT_CAPTURING_ENUM by error1<String>()
+    val SCRIPT_CAPTURING_ENUM_ENTRY by error1<String>()
 
-    val INLINE_CALL_CYCLE by error1<PsiElement, Name>()
+    val INLINE_CALL_CYCLE by error1<Name>()
 
-    val NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC by error0<PsiElement>()
+    val NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC by error0()
 
-    val DUPLICATE_CLASS_NAMES by error2<PsiElement, String, String>()
+    val DUPLICATE_CLASS_NAMES by error2<String, String>()
 
-    val PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by deprecationError1<PsiElement, ClassId>(LanguageFeature.ForbidExposingLessVisibleTypesInInline)
+    val PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by deprecationError1<ClassId>(LanguageFeature.ForbidExposingLessVisibleTypesInInline)
 
-    val NON_LOCAL_RETURN_IN_DISABLED_INLINE by error0<PsiElement>(SourceElementPositioningStrategies.DEFAULT)
+    val NON_LOCAL_RETURN_IN_DISABLED_INLINE by error0(SourceElementPositioningStrategies.DEFAULT)
 
     val INCONSISTENT_TARGET_LIST_FOR_LAMBDA_ANNOTATION by warningWithoutSource()
 

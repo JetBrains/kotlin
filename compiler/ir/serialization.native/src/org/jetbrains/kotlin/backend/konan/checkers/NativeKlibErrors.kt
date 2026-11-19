@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.checkers
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.error1
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.render
 
 object NativeKlibErrors : KtDiagnosticsContainer() {
-    val LEAKED_VOLATILE_FIELD by error1<PsiElement, IrCall>()
+    val LEAKED_VOLATILE_FIELD by error1<IrCall>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDefaultNativeKlibErrorMessages
 }

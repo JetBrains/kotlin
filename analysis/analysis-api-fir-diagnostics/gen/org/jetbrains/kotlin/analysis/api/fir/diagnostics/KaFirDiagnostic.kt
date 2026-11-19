@@ -10649,6 +10649,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface StringAsCOrObjcVariadicArgument : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<StringAsCOrObjcVariadicArgument>
+            get() = StringAsCOrObjcVariadicArgument::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface VariadicObjcSpreadIsSupportedOnlyForArrayof : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<VariadicObjcSpreadIsSupportedOnlyForArrayof>
             get() = VariadicObjcSpreadIsSupportedOnlyForArrayof::class

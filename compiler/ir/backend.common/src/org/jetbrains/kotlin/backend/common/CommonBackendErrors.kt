@@ -5,35 +5,29 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.EVALUATION_ERROR_EXPLANATION
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.TAILREC_MODIFIER
-import org.jetbrains.kotlin.diagnostics.error0
-import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
-import org.jetbrains.kotlin.diagnostics.warning0
-import org.jetbrains.kotlin.diagnostics.warningWithoutSource
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
 object CommonBackendErrors : KtDiagnosticsContainer() {
-    val EVALUATION_ERROR by error1<PsiElement, String>()
+    val EVALUATION_ERROR by error1<String>()
 
-    val INLINE_CALL_CYCLE by error1<PsiElement, IrFunction>()
+    val INLINE_CALL_CYCLE by error1<IrFunction>()
 
     val IR_DUMP_WARNING by warningWithoutSource()
 
-    val NON_TAIL_RECURSIVE_CALL by warning0<PsiElement>(REFERENCED_NAME_BY_QUALIFIED)
+    val NON_TAIL_RECURSIVE_CALL by warning0(REFERENCED_NAME_BY_QUALIFIED)
 
-    val NO_TAIL_CALLS_FOUND by warning0<PsiElement>(TAILREC_MODIFIER)
+    val NO_TAIL_CALLS_FOUND by warning0(TAILREC_MODIFIER)
 
-    val TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED by warning0<PsiElement>(REFERENCED_NAME_BY_QUALIFIED)
+    val TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED by warning0(REFERENCED_NAME_BY_QUALIFIED)
 
-    val TAILREC_ON_VIRTUAL_MEMBER_ERROR by error0<PsiElement>(TAILREC_MODIFIER)
+    val TAILREC_ON_VIRTUAL_MEMBER_ERROR by error0(TAILREC_MODIFIER)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultCommonBackendErrorMessages

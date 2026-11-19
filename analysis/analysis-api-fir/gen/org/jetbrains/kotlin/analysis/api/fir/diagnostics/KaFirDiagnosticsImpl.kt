@@ -7506,6 +7506,11 @@ internal class StringAsVariadicObjcParamIsAmbiguousImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.StringAsVariadicObjcParamIsAmbiguous
 
+internal class StringAsCOrObjcVariadicArgumentImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.StringAsCOrObjcVariadicArgument
+
 internal class VariadicObjcSpreadIsSupportedOnlyForArrayofImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

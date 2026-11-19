@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.psi.KtElement
 
 object FirJsPlainObjectsErrors : KtDiagnosticsContainer() {
-    val NON_EXTERNAL_DECLARATIONS_NOT_SUPPORTED by error1<KtElement, String>()
-    val ONLY_INTERFACES_ARE_SUPPORTED by error1<KtElement, String>()
-    val IMPLEMENTING_OF_JS_PLAIN_OBJECT_IS_NOT_SUPPORTED by error1<KtElement, String>()
-    val METHODS_ARE_NOT_ALLOWED_INSIDE_JS_PLAIN_OBJECT by error0<KtElement>()
-    val JS_PLAIN_OBJECT_CAN_EXTEND_ONLY_OTHER_JS_PLAIN_OBJECTS by error1<KtElement, String>()
+    val NON_EXTERNAL_DECLARATIONS_NOT_SUPPORTED by error1<String>()
+    val ONLY_INTERFACES_ARE_SUPPORTED by error1<String>()
+    val IMPLEMENTING_OF_JS_PLAIN_OBJECT_IS_NOT_SUPPORTED by error1<String>()
+    val METHODS_ARE_NOT_ALLOWED_INSIDE_JS_PLAIN_OBJECT by error0()
+    val JS_PLAIN_OBJECT_CAN_EXTEND_ONLY_OTHER_JS_PLAIN_OBJECTS by error1<String>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDefaultErrorMessagesJsPlainObjects
 }

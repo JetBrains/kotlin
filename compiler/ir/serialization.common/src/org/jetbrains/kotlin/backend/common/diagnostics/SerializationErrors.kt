@@ -5,19 +5,12 @@
 
 package org.jetbrains.kotlin.backend.common.diagnostics
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.diagnostics.SerializationDiagnosticRenderers.CONFLICTING_KLIB_SIGNATURES_DATA
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
-import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
-import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.error1
-import org.jetbrains.kotlin.diagnostics.errorWithoutSource
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
-import org.jetbrains.kotlin.diagnostics.strongWarningWithoutSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
@@ -28,7 +21,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
 
 object SerializationErrors : KtDiagnosticsContainer() {
-    val CONFLICTING_KLIB_SIGNATURES_ERROR by error1<PsiElement, ConflictingKlibSignaturesData>()
+    val CONFLICTING_KLIB_SIGNATURES_ERROR by error1<ConflictingKlibSignaturesData>()
     val KLIB_LOADING_ERROR by errorWithoutSource()
     val KLIB_LOADING_WARNING by strongWarningWithoutSource()
     val KLIB_LOADING_INFO = KtSourcelessDiagnosticFactory("KLIB_LOADING_INFO", Severity.INFO, getRendererFactory())

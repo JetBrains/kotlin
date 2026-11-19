@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.WarningLevel
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import kotlin.reflect.KClass
 
 @RequiresOptIn("Please use DiagnosticReporter.reportOn method if possible")
 annotation class InternalDiagnosticFactoryMethod
@@ -58,7 +57,6 @@ sealed class KtDiagnosticFactoryN(
     name: String,
     severity: Severity,
     val defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    val psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory
 ) : AbstractKtDiagnosticFactory(name, severity, rendererFactory)
 
@@ -66,9 +64,8 @@ class KtDiagnosticFactory0(
     name: String,
     severity: Severity,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -111,9 +108,8 @@ class KtDiagnosticFactory1<A>(
     name: String,
     severity: Severity,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -161,9 +157,8 @@ class KtDiagnosticFactory2<A, B>(
     name: String,
     severity: Severity,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -216,9 +211,8 @@ class KtDiagnosticFactory3<A, B, C>(
     name: String,
     severity: Severity,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -276,9 +270,8 @@ class KtDiagnosticFactory4<A, B, C, D>(
     name: String,
     severity: Severity,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -354,63 +347,58 @@ class KtDiagnosticFactoryForDeprecation0(
     name: String,
     featureForError: LanguageFeature,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory0>(
     name,
     featureForError,
-    KtDiagnosticFactory0("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType, rendererFactory),
-    KtDiagnosticFactory0("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType, rendererFactory)
+    KtDiagnosticFactory0("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, rendererFactory),
+    KtDiagnosticFactory0("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, rendererFactory)
 )
 
 class KtDiagnosticFactoryForDeprecation1<A>(
     name: String,
     featureForError: LanguageFeature,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory1<A>>(
     name,
     featureForError,
-    KtDiagnosticFactory1("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType, rendererFactory),
-    KtDiagnosticFactory1("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType, rendererFactory)
+    KtDiagnosticFactory1("$name$WARNING", Severity.WARNING, defaultPositioningStrategy,rendererFactory),
+    KtDiagnosticFactory1("$name$ERROR", Severity.ERROR, defaultPositioningStrategy,rendererFactory)
 )
 
 class KtDiagnosticFactoryForDeprecation2<A, B>(
     name: String,
     featureForError: LanguageFeature,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory2<A, B>>(
     name,
     featureForError,
-    KtDiagnosticFactory2("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType, rendererFactory),
-    KtDiagnosticFactory2("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType, rendererFactory)
+    KtDiagnosticFactory2("$name$WARNING", Severity.WARNING, defaultPositioningStrategy,rendererFactory),
+    KtDiagnosticFactory2("$name$ERROR", Severity.ERROR, defaultPositioningStrategy,rendererFactory)
 )
 
 class KtDiagnosticFactoryForDeprecation3<A, B, C>(
     name: String,
     featureForError: LanguageFeature,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory3<A, B, C>>(
     name,
     featureForError,
-    KtDiagnosticFactory3("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType, rendererFactory),
-    KtDiagnosticFactory3("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType, rendererFactory)
+    KtDiagnosticFactory3("$name$WARNING", Severity.WARNING, defaultPositioningStrategy,rendererFactory),
+    KtDiagnosticFactory3("$name$ERROR", Severity.ERROR, defaultPositioningStrategy,rendererFactory)
 )
 
 class KtDiagnosticFactoryForDeprecation4<A, B, C, D>(
     name: String,
     featureForError: LanguageFeature,
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory4<A, B, C, D>>(
     name,
     featureForError,
-    KtDiagnosticFactory4("$name$WARNING", Severity.WARNING, defaultPositioningStrategy, psiType, rendererFactory),
-    KtDiagnosticFactory4("$name$ERROR", Severity.ERROR, defaultPositioningStrategy, psiType, rendererFactory)
+    KtDiagnosticFactory4("$name$WARNING", Severity.WARNING, defaultPositioningStrategy,rendererFactory),
+    KtDiagnosticFactory4("$name$ERROR", Severity.ERROR, defaultPositioningStrategy,rendererFactory)
 )
