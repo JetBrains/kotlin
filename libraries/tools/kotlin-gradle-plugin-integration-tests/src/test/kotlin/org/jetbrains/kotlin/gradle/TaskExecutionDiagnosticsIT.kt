@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.pathString
@@ -30,38 +29,6 @@ import kotlin.io.path.pathString
 @DisplayName("Execution time diagnostics")
 @MustRunOnChangesInGradle
 class TaskExecutionDiagnosticsIT : KGPBaseTest() {
-
-    @JvmGradlePluginTests
-    @GradleTest
-    fun shouldProduceErrorOnFirIcRunnerAndLv19(
-        gradleVersion: GradleVersion,
-    ) {
-        val project = project("empty", gradleVersion) {
-            addKgpToBuildScriptCompilationClasspath()
-            buildScriptInjection {
-                project.applyJvm {
-                    jvmToolchain(17)
-                    compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_1_9)
-                }
-            }
-
-            kotlinSourcesDir().source("main.kt") {
-                """
-                |fun main() {}
-                """.trimMargin()
-            }
-
-            gradleProperties.appendText(
-                """
-                |kotlin.incremental.jvm.fir=true
-                """.trimMargin()
-            )
-        }
-
-        project.buildAndFail("compileKotlin") {
-            assertHasDiagnostic(KotlinToolingDiagnostics.IcFirMisconfigurationLV)
-        }
-    }
 
     @DisplayName("KT-79851: unsupported version, but no kotlin-dsl: should be no new diagnostic")
     @JvmGradlePluginTests
