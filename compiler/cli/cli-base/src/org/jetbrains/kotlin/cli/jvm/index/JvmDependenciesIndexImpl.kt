@@ -16,7 +16,10 @@ import kotlin.concurrent.withLock
  * When searching for a class, the index returns only the first result and does not search for all possible results. This is legal in
  * compiler mode because it has a single-module view.
  */
-class JvmDependenciesIndexImpl(roots: List<JavaRoot>) : JvmDependenciesIndexBase(roots) {
+class JvmDependenciesIndexImpl(
+    roots: List<JavaRoot>,
+    rootEntryFactory: JvmRootEntryFactory = JvmRootEntryFactory.VFS,
+) : JvmDependenciesIndexBase(roots, rootEntryFactory) {
     // holds the request and the result last time we searched for class
     // helps improve several scenarios, LazyJavaResolverContext.findClassInJava being the most important
     private var lastClassFileSearch: Pair<ClassSearchRequest, Collection<BinaryClassFileHandle>>? = null

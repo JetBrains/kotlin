@@ -33,7 +33,10 @@ import kotlin.concurrent.withLock
  *
  * Lock order: the read lock of [JvmDependenciesDynamicCompoundIndex] is taken before the lock of a child index.
  */
-abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : JvmDependenciesIndex {
+abstract class JvmDependenciesIndexBase(
+    protected val roots: List<JavaRoot>,
+    private val rootEntryFactory: JvmRootEntryFactory = JvmRootEntryFactory.VFS,
+) : JvmDependenciesIndex {
     protected val lock = ReentrantLock()
 
     private val maxIndex: Int
@@ -64,7 +67,7 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
 
     override val indexedRoots by lazy { roots.asSequence() }
 
-    private val rootEntries: List<JvmRootEntry> by lazy { roots.map { VfsRootEntry(it.file) } }
+    private val rootEntries: List<JvmRootEntry> by lazy { roots.map(rootEntryFactory::createRootEntry) }
 
     private val packageCache: Array<out MutableMap<String, JvmRootEntry?>> by lazy {
         Array(roots.size) { Object2ObjectOpenHashMap<String, JvmRootEntry?>() }

@@ -34,3 +34,12 @@ interface JvmRootEntry {
 
     fun toHandle(root: JavaRoot): BinaryClassFileHandle
 }
+
+/** Creates the top [JvmRootEntry] of each [JavaRoot] of an index, selecting the file-system backend of the root. */
+fun interface JvmRootEntryFactory {
+    fun createRootEntry(root: JavaRoot): JvmRootEntry
+
+    companion object {
+        val VFS: JvmRootEntryFactory = JvmRootEntryFactory { VfsRootEntry(it.file) }
+    }
+}
