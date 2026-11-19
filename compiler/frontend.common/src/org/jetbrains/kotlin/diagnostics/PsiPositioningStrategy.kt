@@ -11,25 +11,17 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-/**
- * Overriding `isValid` can lead to a loss of diagnostics in tests.
- *
- * Note that it's only called in tests. In the real world, the diagnostics are still reported.
- *
- * Instead of filtering diagnostics using `isValid`, the checker should be adapted.
- */
-@RequiresOptIn
-annotation class DiagnosticLossRisk
-
 // TODO: move back to frontend.common-psi after fixing KT-91911
-open class PsiPositioningStrategy<in E : PsiElement> {
-    open fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
+open class PsiPositioningStrategy<in E : PsiElement> : PositioningStrategy() {
+    override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
         @Suppress("UNCHECKED_CAST")
-        return mark((diagnostic.element as KtPsiSourceElement).psi as E)
+        return mark(diagnostic.element.unwrapPsi() as E)
     }
 
     open fun mark(element: E): List<TextRange> {
@@ -37,9 +29,11 @@ open class PsiPositioningStrategy<in E : PsiElement> {
     }
 
     @DiagnosticLossRisk
-    open fun isValid(element: E): Boolean {
-        return !hasSyntaxErrors(element)
+    override fun isValid(element: KtSourceElement): Boolean {
+        return !hasSyntaxErrors(element.unwrapPsi())
     }
+
+    protected fun AbstractKtSourceElement.unwrapPsi(): PsiElement = (this as KtPsiSourceElement).psi
 }
 
 fun markElement(element: PsiElement): List<TextRange> {

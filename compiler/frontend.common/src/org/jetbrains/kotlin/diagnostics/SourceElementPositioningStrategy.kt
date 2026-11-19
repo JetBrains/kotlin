@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtMissingSourceElement
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 
 @OptIn(DiagnosticLossRisk::class)
 class SourceElementPositioningStrategy(
@@ -30,8 +31,13 @@ class SourceElementPositioningStrategy(
         return when (val element = diagnostic.element) {
             is KtMissingSourceElement -> improperTextRanges
             is KtOffsetsOnlySourceElement -> listOf(PossiblyImproperTextRange(element.startOffset, element.endOffset))
-            is KtPsiSourceElement -> psiStrategy.markDiagnostic(diagnostic)
-            is KtLightSourceElement -> lightTreeStrategy.markKtDiagnostic(element, diagnostic)
+            is KtSourceElement -> {
+                val strategy = when (element) {
+                    is KtPsiSourceElement -> psiStrategy
+                    is KtLightSourceElement -> lightTreeStrategy
+                }
+                strategy.markDiagnostic(diagnostic)
+            }
         }
     }
 
@@ -39,8 +45,13 @@ class SourceElementPositioningStrategy(
         return when (element) {
             is KtMissingSourceElement -> true
             is KtOffsetsOnlySourceElement -> true
-            is KtPsiSourceElement -> psiStrategy.isValid(element.psi)
-            is KtLightSourceElement -> lightTreeStrategy.isValid(element.lighterASTNode, element.treeStructure)
+            is KtSourceElement -> {
+                val strategy = when (element) {
+                    is KtPsiSourceElement -> psiStrategy
+                    is KtLightSourceElement -> lightTreeStrategy
+                }
+                strategy.isValid(element)
+            }
         }
     }
 }

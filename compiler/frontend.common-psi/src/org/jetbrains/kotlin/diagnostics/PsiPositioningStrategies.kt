@@ -30,14 +30,15 @@ import org.jetbrains.kotlin.utils.sure
 object PsiPositioningStrategies {
     open class DeclarationHeader<T : PsiElement>(private val checkValidity: Boolean) : PsiPositioningStrategy<T>() {
         @OptIn(DiagnosticLossRisk::class)
-        override fun isValid(element: T): Boolean {
+        override fun isValid(element: KtSourceElement): Boolean {
+            val psi = element.unwrapPsi()
             if (checkValidity &&
-                element is KtNamedDeclaration &&
-                element !is KtObjectDeclaration &&
-                element !is KtSecondaryConstructor &&
-                element !is KtFunction
+                psi is KtNamedDeclaration &&
+                psi !is KtObjectDeclaration &&
+                psi !is KtSecondaryConstructor &&
+                psi !is KtFunction
             ) {
-                if (element.nameIdentifier == null) {
+                if (psi.nameIdentifier == null) {
                     return false
                 }
             }
@@ -77,8 +78,8 @@ object PsiPositioningStrategies {
         }
 
         @DiagnosticLossRisk
-        override fun isValid(element: PsiElement): Boolean {
-            if (element is PsiErrorElement) return true
+        override fun isValid(element: KtSourceElement): Boolean {
+            if (element.unwrapPsi() is PsiErrorElement) return true
             return DEFAULT.isValid(element)
         }
     }
@@ -104,8 +105,8 @@ object PsiPositioningStrategies {
         }
 
         @OptIn(DiagnosticLossRisk::class)
-        override fun isValid(element: KtDeclaration): Boolean {
-            return !hasSyntaxErrors(getElementToMark(element))
+        override fun isValid(element: KtSourceElement): Boolean {
+            return !hasSyntaxErrors(getElementToMark(element.unwrapPsi() as KtDeclaration))
         }
 
         private fun getElementToMark(declaration: KtDeclaration): PsiElement {
@@ -325,8 +326,8 @@ object PsiPositioningStrategies {
         }
 
         @OptIn(DiagnosticLossRisk::class)
-        override fun isValid(element: PsiElement): Boolean {
-            return if (element is KtDeclaration)
+        override fun isValid(element: KtSourceElement): Boolean {
+            return if (element.unwrapPsi() is KtDeclaration)
                 DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK.isValid(element)
             else
                 DEFAULT.isValid(element)
@@ -1198,7 +1199,7 @@ object PsiPositioningStrategies {
         }
 
         @OptIn(DiagnosticLossRisk::class)
-        override fun isValid(element: PsiElement): Boolean = true
+        override fun isValid(element: KtSourceElement): Boolean = true
     }
 
     val NON_FINAL_MODIFIER_OR_NAME: PsiPositioningStrategy<KtModifierListOwner> =
