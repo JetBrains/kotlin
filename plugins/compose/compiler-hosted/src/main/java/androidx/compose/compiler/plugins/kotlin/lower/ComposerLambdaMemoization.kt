@@ -659,8 +659,9 @@ class ComposerLambdaMemoization(
         super.visitFunctionExpression(functionExpression)
         stopCollector(collector)
         val captures = collector.captures.toList()
+        val dontMemoize = functionExpression.function.hasAnnotation(ComposeFqNames.DontMemoize)
 
-        return rememberExpression(currentFunctionContext!!, expression, captures)
+        return rememberExpression(currentFunctionContext!!, expression, captures, dontMemoize = dontMemoize)
     }
 
     private fun visitNonComposableFunctionExpression(
