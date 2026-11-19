@@ -334,6 +334,18 @@ package app;
  *   @lib/OnClick(value = [200, 100])
  *   public final fun multiJava2(): kotlin/Unit
  *
+ *   // signature: multiJava3()V
+ *   @lib/OnClick(value = [200])
+ *   public final fun multiJava3(): kotlin/Unit
+ *
+ *   // signature: multiJava4()V
+ *   @lib/OnClick(value = [200, 100])
+ *   public final fun multiJava4(): kotlin/Unit
+ *
+ *   // signature: multiJava5()V
+ *   @lib/OnClick(value = [200])
+ *   public final fun multiJava5(): kotlin/Unit
+ *
  *   // signature: plainIntConstant()V
  *   @app/Bind(id = 200)
  *   public final fun plainIntConstant(): kotlin/Unit
@@ -551,17 +563,17 @@ public final class MyActivity {
     public final void multi0() {
     }
 
-    @VarargValue(ids = {200})
+    @VarargValue(ids = {app.B.id.textView})
     @MultiValue(ids = {app.B.id.textView})
     public final void multi1() {
     }
 
-    @VarargValue(ids = {200, 2})
+    @VarargValue(ids = {app.B.id.textView, app.B.a3})
     @MultiValue(ids = {app.B.id.textView, app.B.a3})
     public final void multi2() {
     }
 
-    @VarargValue(ids = {200, 2})
+    @VarargValue(ids = {app.B.id.textView, app.B.a3})
     @MultiValue(ids = {app.B.id.textView, app.B.a3})
     public final void multi3() {
     }
@@ -593,6 +605,18 @@ public final class MyActivity {
 
     @lib.OnClick(value = {app.B.id.textView, app.R.layout.mainActivity})
     public final void multiJava2() {
+    }
+
+    @lib.OnClick(value = {app.B.id.textView})
+    public final void multiJava3() {
+    }
+
+    @lib.OnClick(value = {app.B.id.textView, app.R.layout.mainActivity})
+    public final void multiJava4() {
+    }
+
+    @lib.OnClick(value = {app.B.id.textView})
+    public final void multiJava5() {
     }
     public final int propA = app.B.id.textView;
 

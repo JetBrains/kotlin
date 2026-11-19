@@ -1,0 +1,181 @@
+package app;
+
+public class B {
+
+    public static class id {
+        public static final int textView = 200;
+    }
+    public static final int a3 = 2;
+}
+
+////////////////////
+
+package test;
+
+import app.B;
+import kotlin.reflect.KClass;
+
+/**
+ * public final class test/MyActivity : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: emptyArrayCall()V
+ *   @test/VarargValueString(ids = [])
+ *   public final fun emptyArrayCall(): kotlin/Unit
+ *
+ *   // signature: namedNonArray()V
+ *   @test/VarargValue(ids = [])
+ *   public final fun namedNonArray(): kotlin/Unit
+ *
+ *   // signature: nestedArrays()V
+ *   @test/VarargArrays(ids = [[1, 2], [3]])
+ *   public final fun nestedArrays(): kotlin/Unit
+ *
+ *   // signature: realSpread()V
+ *   @test/VarargValue(ids = [200, 2])
+ *   public final fun realSpread(): kotlin/Unit
+ *
+ *   // signature: realSpreadClassLiteral()V
+ *   @test/VarargClasses(ids = [])
+ *   public final fun realSpreadClassLiteral(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class MyActivity {
+
+    public MyActivity() {
+        super();
+    }
+
+    @VarargValue(ids = {app.B.id.textView, app.B.a3})
+    public final void realSpread() {
+    }
+
+    @VarargValueString(ids = {})
+    public final void emptyArrayCall() {
+    }
+
+    @VarargArrays(ids = {1, 2, 3})
+    public final void nestedArrays() {
+    }
+
+    @VarargValue(ids = {2})
+    public final void namedNonArray() {
+    }
+
+    @VarargClasses(ids = {Unresolved.class})
+    public final void realSpreadClassLiteral() {
+    }
+}
+
+////////////////////
+
+package test;
+
+import app.B;
+import kotlin.reflect.KClass;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class test/VarargArrays : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(vararg ids: kotlin/IntArray (* kotlin/Array<out kotlin/IntArray> *))
+ *
+ *   // getter: ids()[[I
+ *   public final val ids: kotlin/Array<out kotlin/IntArray>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface VarargArrays {
+
+    public abstract int[][] ids();
+}
+
+////////////////////
+
+package test;
+
+import app.B;
+import kotlin.reflect.KClass;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class test/VarargClasses : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(vararg ids: kotlin/reflect/KClass<*> (* kotlin/Array<out kotlin/reflect/KClass<*>> *))
+ *
+ *   // getter: ids()[Ljava/lang/Class;
+ *   public final val ids: kotlin/Array<out kotlin/reflect/KClass<*>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface VarargClasses {
+
+    public abstract java.lang.Class<?>[] ids();
+}
+
+////////////////////
+
+package test;
+
+import app.B;
+import kotlin.reflect.KClass;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class test/VarargValue : kotlin/Annotation {
+ *
+ *   // signature: <init>([I)V
+ *   public constructor(vararg ids: kotlin/Int (* kotlin/IntArray *))
+ *
+ *   // getter: ids()[I
+ *   public final val ids: kotlin/IntArray
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface VarargValue {
+
+    public abstract int[] ids();
+}
+
+////////////////////
+
+package test;
+
+import app.B;
+import kotlin.reflect.KClass;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class test/VarargValueString : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(vararg ids: kotlin/String (* kotlin/Array<out kotlin/String> *))
+ *
+ *   // getter: ids()[Ljava/lang/String;
+ *   public final val ids: kotlin/Array<out kotlin/String>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface VarargValueString {
+
+    public abstract java.lang.String[] ids();
+}
