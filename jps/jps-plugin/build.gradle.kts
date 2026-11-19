@@ -80,15 +80,23 @@ dependencies {
     testImplementation(libs.kotlinx.serialization.json)
 }
 
-// The directory with the Build Tools API implementation for the 'testWithBuildToolsApi' task. The IDE gets the same
-// directory as the published `kotlin-build-tools-impl-for-ide` jar.
-val btaImplHome = configurations.dependencyScope("btaImplHome")
-val btaImplHomeResolvable = configurations.resolvable("btaImplHomeResolvable") {
-    extendsFrom(btaImplHome.get())
+// The directory with the Build Tools API implementation for the 'testWithBuildToolsApi' task:
+// `JpsBtaToolchainLoader` loads the implementation from a directory of jars, so the implementation is
+// collected there with its whole run-time classpath.
+val btaImpl = configurations.dependencyScope("btaImpl")
+val btaImplClasspath = configurations.resolvable("btaImplClasspath") {
+    extendsFrom(btaImpl.get())
 }
 
 dependencies {
-    btaImplHome(project(":prepare:ide-plugin-dependencies:kotlin-build-tools-impl-for-ide", configuration = "btaImplHomeElements"))
+    btaImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
+}
+
+val btaImplHome = layout.buildDirectory.dir("btaImplHome")
+val prepareBtaImplHome = tasks.register<Sync>("prepareBtaImplHome") {
+    description = "Collects the Build Tools API implementation with its run-time classpath for the 'testWithBuildToolsApi' task."
+    from(btaImplClasspath)
+    into(btaImplHome)
 }
 
 sourceSets {
@@ -187,7 +195,11 @@ projectTests {
         skipInLocalBuild = false,
     ) {
         configureJpsTests()
-        addClasspathProperty(btaImplHomeResolvable.get(), "kotlin.jps.build.tools.impl.home")
+        addClasspathDirectoryProperty(
+            btaImplHome,
+            files(prepareBtaImplHome),
+            "kotlin.jps.build.tools.impl.home",
+        )
     }
 
     testGenerator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt", doNotSetFixturesSourceSetDependency = true) {
