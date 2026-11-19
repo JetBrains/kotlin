@@ -18,6 +18,8 @@ val isKotlinNativeEnabled = project.kotlinBuildProperties.isKotlinNativeEnabled.
 dependencyAnalysis {
     issues {
         all {
+            onUnusedAnnotationProcessors { severity("fail")}
+            onModuleStructure { severity("fail")}
             onDuplicateClassWarnings { severity("fail") }
         }
 
