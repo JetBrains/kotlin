@@ -16,13 +16,12 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
+import kotlin.io.path.extension
 
 abstract class AbstractReturnTargetSymbolTest : AbstractAnalysisApiBasedTest() {
     val commentRegex = Regex("""/\* (.+@\(.+\)|null) \*/""")
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val original = mainFile.text
         val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             buildString {
                 contextFile.accept(object : KtTreeVisitorVoid() {
@@ -52,8 +51,6 @@ abstract class AbstractReturnTargetSymbolTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        if (actual != original) {
-            testServices.assertions.assertEqualsToFile(testDataPath, actual)
-        }
+        assertEqualsToTestOutputFile(actual, extension = testDataPath.extension)
     }
 }
