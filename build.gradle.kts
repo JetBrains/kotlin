@@ -600,6 +600,7 @@ tasks {
         dependsOn(":compiler:util:test")
         dependsOn(":core:error.handling:check")
         dependsOn(":core:names:check")
+        dependsOn(":core:names.jvm:check")
         dependsOn(":core:language.model:check")
         dependsOn(":core:language.targets:check")
         dependsOn(":core:language.targets.jvm:check")

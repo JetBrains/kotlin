@@ -256,6 +256,7 @@ include(
     ":native:cinterop.deserialization",
     ":core:error.handling",
     ":core:names",
+    ":core:names.jvm",
     ":core:language.model",
     ":core:language.targets",
     ":core:language.targets.jvm",

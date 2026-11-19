@@ -48,6 +48,7 @@ object CompilerModules {
         ":core:util.runtime",
         ":core:error.handling",
         ":core:names",
+        ":core:names.jvm",
         ":core:language.model",
         ":core:language.targets",
         ":core:language.targets.jvm",
@@ -197,6 +198,7 @@ object CompilerModules {
     val analysisApiSyntaxSurfaceDependencies = listOf(
         ":core:error.handling",
         ":core:names",
+        ":core:names.jvm",
         ":core:language.model",
     )
 
@@ -428,6 +430,7 @@ object CompilerModules {
     ":kotlin-compiler-runner-unshaded",
     ":daemon-common",
     ":core:names",
+    ":core:names.jvm",
     ":core:language.model",
     ":core:language.targets",
     ":core:language.targets.jvm",
