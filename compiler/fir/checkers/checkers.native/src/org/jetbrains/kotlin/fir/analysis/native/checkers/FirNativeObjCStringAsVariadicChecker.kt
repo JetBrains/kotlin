@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.isNullableString
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -34,11 +35,11 @@ internal object FirNativeObjCStringAsVariadicChecker : FirFunctionCallChecker(Mp
         val isObjC = symbol.isObjCMethod(context.session)
         if (!isObjC && !symbol.isCFunctionOrGlobalAccessor(context.session)) return
 
-        checkVarargArguments(expression, isObjC)
+        checkVarargArguments(expression, reportStringAsError = isObjC)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkVarargArguments(expression: FirFunctionCall, isObjC: Boolean) {
+    private fun checkVarargArguments(expression: FirFunctionCall, reportStringAsError: Boolean) {
         val argumentMapping = expression.resolvedArgumentMapping ?: return
         for ([argument, parameter] in argumentMapping) {
             if (!parameter.isVararg || argument !is FirVarargArgumentsExpression) continue
@@ -47,7 +48,7 @@ internal object FirNativeObjCStringAsVariadicChecker : FirFunctionCallChecker(Mp
                 if (element is FirSpreadArgumentExpression) {
                     val spreadExpression = element.expression
                     if (spreadExpression is FirFunctionCall && spreadExpression.isArrayOfCall()) {
-                        checkVarargArguments(spreadExpression, isObjC)
+                        checkVarargArguments(spreadExpression, reportStringAsError = false)
                     }
                     continue
                 }
@@ -55,10 +56,10 @@ internal object FirNativeObjCStringAsVariadicChecker : FirFunctionCallChecker(Mp
                 val type = element.resolvedType.fullyExpandedType()
                 if (!type.isString && !type.isNullableString) continue
 
-                val diagnostic = if (isObjC && type.isString) {
+                val diagnostic = if (reportStringAsError && element.resolvedType.abbreviatedTypeOrSelf.isString) {
                     FirNativeErrors.STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS
                 } else {
-                    FirNativeErrors.STRING_AS_VARIADIC_ARGUMENT
+                    FirNativeErrors.STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT
                 }
                 reporter.reportOn(element.source, diagnostic, context)
             }

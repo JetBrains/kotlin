@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.PROPERTY_MUST_BE_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.STRING_AS_VARIADIC_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.SUBTYPE_OF_HIDDEN_FROM_OBJC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.THROWS_LIST_EMPTY
@@ -207,12 +207,13 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS,
-            "Passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string.",
+            "Passing 'String' as a variadic Objective-C argument is ambiguous; " +
+                    "cast it to 'NSString' or pass with '.cstr' as a C string.",
         )
         map.put(
-            STRING_AS_VARIADIC_ARGUMENT,
-            "Passing 'String' as variadic argument implicitly converts it to C string. " +
-                    "Use '.cstr' to pass C string explicitly or cast to 'NSString' to pass Objective-C object.",
+            STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT,
+            "Passing 'String' as a variadic C or Objective-C argument is ambiguous; " +
+                    "cast it to 'NSString' or pass with '.cstr' as a C string.",
         )
         map.put(
             VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF,
