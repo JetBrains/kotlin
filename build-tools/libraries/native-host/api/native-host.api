@@ -1,0 +1,42 @@
+public abstract interface class org/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost$Companion;
+	public abstract fun canLinkBinaries (Ljava/lang/String;)Z
+	public abstract fun canRunBinaries (Ljava/lang/String;)Z
+	public static fun current ()Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;
+	public abstract fun getArchitecture ()Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostArchitecture;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getOs ()Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;
+	public abstract fun getTargetName ()Ljava/lang/String;
+	public abstract fun isLinux ()Z
+	public abstract fun isMacOs ()Z
+	public abstract fun isSupported ()Z
+	public abstract fun isWindows ()Z
+	public static fun of (Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostArchitecture;)Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;
+	public static fun supportedHosts ()Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost$Companion {
+	public final fun current ()Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;
+	public final fun of (Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostArchitecture;)Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;
+	public final fun supportedHosts ()Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostArchitecture : java/lang/Enum {
+	public static final field ARM64 Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostArchitecture;
+	public static final field UNKNOWN Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostArchitecture;
+	public static final field X64 Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostArchitecture;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostArchitecture;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostArchitecture;
+}
+
+public final class org/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs : java/lang/Enum {
+	public static final field LINUX Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;
+	public static final field MACOS Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;
+	public static final field UNKNOWN Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;
+	public static final field WINDOWS Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;
+}
+
