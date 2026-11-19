@@ -1,0 +1,2 @@
+@kotlin.jvm.JvmStatic
+fun empty(): Range

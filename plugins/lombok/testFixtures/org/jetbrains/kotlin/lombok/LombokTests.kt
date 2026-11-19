@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok
 
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
@@ -60,6 +61,21 @@ abstract class AbstractLLLombokDiagnosticsTest : AbstractLLDiagnosticsTest() {
         builder.defaultDirectives {
             +AnalysisApiTestDirectives.IGNORE_UNKNOWN_FILES
         }
+    }
+}
+
+// ---------------------------- Analysis API symbols ----------------------------
+
+/**
+ * Builds Analysis API symbols for Lombok-generated declarations and restores them from their pointers in a new
+ * read action, as the IDE does for light classes.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.AbstractSymbolByFqNameTest
+ */
+abstract class AbstractLombokSymbolByFqNameTest : AbstractSymbolByFqNameTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.enableLombok()
     }
 }
 
