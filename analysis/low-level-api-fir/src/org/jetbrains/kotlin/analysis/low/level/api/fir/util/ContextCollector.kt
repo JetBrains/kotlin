@@ -693,6 +693,12 @@ private class ContextCollectorVisitor(
     override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor(regularClass) {
         dumpContext(regularClass, ContextKind.SELF)
 
+        // Like `runAllPhasesForLocalClassLikeDeclarations`, store a local class before its annotations and header,
+        // so that the class is visible in its own annotations, type parameters and supertypes.
+        if (regularClass.isLocal) {
+            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
+        }
+
         context.withClassHeader(regularClass) {
             processRawAnnotations(regularClass)
         }
@@ -718,10 +724,6 @@ private class ContextCollectorVisitor(
                     }
                 }
             }
-        }
-
-        if (regularClass.isLocal) {
-            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
         }
     }
 
