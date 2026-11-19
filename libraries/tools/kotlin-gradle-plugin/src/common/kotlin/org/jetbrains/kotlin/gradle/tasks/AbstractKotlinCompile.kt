@@ -171,6 +171,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
     @get:Internal
+    internal abstract val icEventReport: Property<Boolean>
+
+    @get:Internal
     protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objectFactory
         .property(
             objectFactory.newInstance<GradleCompileTaskProvider>(this, project, incrementalModuleInfoProvider)

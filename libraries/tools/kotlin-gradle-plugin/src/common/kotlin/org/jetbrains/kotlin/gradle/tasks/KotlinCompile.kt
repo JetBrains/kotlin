@@ -421,6 +421,7 @@ abstract class KotlinCompile @Inject constructor(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
             reportingSettings = reportingSettings(),
+            icEventReport = icEventReport.get(),
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = scriptExtensions.get().toTypedArray(),
             compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),

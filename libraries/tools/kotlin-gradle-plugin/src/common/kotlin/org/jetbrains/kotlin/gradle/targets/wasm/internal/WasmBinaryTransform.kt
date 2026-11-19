@@ -260,6 +260,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
             outputFiles = emptyList(),
             taskPath = parameters.pathProvider.get(),
             reportingSettings = ReportingSettings(),
+            icEventReport = false,
             kotlinScriptExtensions = emptyArray(),
             allWarningsAsErrors = false,
             compilerExecutionSettings = CompilerExecutionSettings(
