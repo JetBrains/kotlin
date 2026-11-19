@@ -712,8 +712,8 @@ private fun BackendChecker.checkCanUnwrapVariadicArguments(elements: List<IrVara
                 checkCanHandleArgumentForVarargParameter(expression.arguments[0], isObjCMethod)
             else
                 reportError(element, "When calling variadic " +
-                        (if (isObjCMethod) "Objective-C methods " else "C functions ") +
-                        "the spread operator is supported only for '*arrayOf(...)' or '*Array.of(...)'.")
+                        (if (isObjCMethod) "Objective-C methods, " else "C functions, ") +
+                        "the spread operator is supported only for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.")
         }
     }
 }

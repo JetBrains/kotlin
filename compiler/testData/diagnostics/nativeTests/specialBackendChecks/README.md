@@ -241,13 +241,13 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t5.kt
 fun foo() = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, "qzz")
                                                                                 ^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t6.kt
-/tmp/t6.kt:13:95: error: when calling variadic Objective-C methods, the spread operator is supported only for '*arrayOf(...)' or '*Array.of(...)'.
+/tmp/t6.kt:13:95: error: when calling variadic Objective-C methods, the spread operator is supported only for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun foo(s: Array<Any?>) = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, *s)
                                                                                               ^^
-/tmp/t6.kt:14:113: error: when calling variadic Objective-C methods, the spread operator is supported only for '*arrayOf(...)' or '*Array.of(...)'.
+/tmp/t6.kt:14:113: error: when calling variadic Objective-C methods, the spread operator is supported only for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun bar(s: Array<Any?>) = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, *arrayOf(*arrayOf(*s)))
                                                                                                                 ^^
-/tmp/t6.kt:15:112: error: when calling variadic Objective-C methods, the spread operator is supported only for '*arrayOf(...)' or '*Array.of(...)'.
+/tmp/t6.kt:15:112: error: when calling variadic Objective-C methods, the spread operator is supported only for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun arrayDotOf(s: Array<Any?>) = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, *Array.of(*s))
                                                                                                                ^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t61.kt
@@ -255,13 +255,13 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t61.k
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t62.kt
 /tmp/t62.kt:4:1: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t7.kt
-/tmp/t7.kt:13:40: error: when calling variadic C functions, the spread operator is supported only for '*arrayOf(...)' or '*Array.of(...)'.
+/tmp/t7.kt:13:40: error: when calling variadic C functions, the spread operator is supported only for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun foo(s: Array<Any?>) = NSLog("zzz", *s)
                                        ^^
-/tmp/t7.kt:14:58: error: when calling variadic C functions, the spread operator is supported only for '*arrayOf(...)' or '*Array.of(...)'.
+/tmp/t7.kt:14:58: error: when calling variadic C functions, the spread operator is supported only for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun bar(s: Array<Any?>) = NSLog("zzz", *arrayOf(*arrayOf(*s)))
                                                          ^^
-/tmp/t7.kt:15:57: error: when calling variadic C functions, the spread operator is supported only for '*arrayOf(...)' or '*Array.of(...)'.
+/tmp/t7.kt:15:57: error: when calling variadic C functions, the spread operator is supported only for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun arrayDotOf(s: Array<Any?>) = NSLog("zzz", *Array.of(*s))
                                                         ^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t3.kt
