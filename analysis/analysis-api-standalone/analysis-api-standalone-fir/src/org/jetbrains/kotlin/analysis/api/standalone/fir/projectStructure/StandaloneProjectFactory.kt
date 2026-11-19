@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStand
 import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneJvmDependenciesIndex
 import org.jetbrains.kotlin.analysis.api.standalone.fir.java.KotlinStandaloneJavaModuleAccessibilityChecker
 import org.jetbrains.kotlin.analysis.api.standalone.fir.java.KotlinStandaloneJavaModuleAnnotationsProvider
+import org.jetbrains.kotlin.analysis.api.standalone.fir.java.StandaloneJavaModuleResolver
 import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory.registerJavaPsiFacade
 import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
@@ -70,12 +71,10 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
-import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -226,7 +225,7 @@ object StandaloneProjectFactory {
         initialiseVirtualFileFinderServices(
             environment,
             modules,
-            projectStructureProvider.allSourceFiles,
+            projectStructureProvider,
             languageVersionSettings,
             jdkHome,
         )
@@ -235,18 +234,18 @@ object StandaloneProjectFactory {
     private fun initialiseVirtualFileFinderServices(
         environment: KotlinCoreProjectEnvironmentBase,
         modules: List<KaModule>,
-        sourceFiles: List<PsiFileSystemItem>,
+        projectStructureProvider: KotlinStaticProjectStructureProvider,
         languageVersionSettings: LanguageVersionSettings,
         jdkHome: Path?,
     ) {
         val project = environment.project
+        val sourceFiles = projectStructureProvider.allSourceFiles
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
         val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, null)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
         val jdkRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
-
         val libraryRoots = getAllBinaryRoots(modules, environment.environment)
 
         val rootsWithSingleJavaFileRoots = buildList {
@@ -304,18 +303,19 @@ object StandaloneProjectFactory {
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 
-        // To implement the platform components required by the Analysis API for its own implementation of `JavaModuleResolver`, we can use
-        // the compiler's `CliJavaModuleResolver`. This is a bit of an indirection (CLI java module resolver -> platform components ->
+        // To implement the platform components required by the Analysis API for its own implementation of `JavaModuleResolver`, we use a
+        // Standalone-specific compiler resolver. This is a bit of an indirection (compiler Java module resolver -> platform components ->
         // Analysis API java module resolver), but it's preferable over exposing `JavaModuleResolver` to all platforms. Furthermore, we can
         // still benefit from the common Analysis API implementation, for example its caching for Java module annotations.
         //
         // Note that the registered `JavaModuleResolver` will still be the `KaFirJavaModuleResolver` registered by the Analysis API engine,
-        // not `CliJavaModuleResolver`.
-        val delegateJavaModuleResolver = CliJavaModuleResolver(
+        // not `StandaloneJavaModuleResolver`.
+        val delegateJavaModuleResolver = StandaloneJavaModuleResolver(
             javaModuleGraph,
-            emptyList(),
+            javaModuleFinder,
             javaModuleFinder.systemModules.toList(),
-            classpathFinder = fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
+            projectStructureProvider,
+            project,
         )
         project.registerService(
             KotlinJavaModuleAccessibilityChecker::class.java,
