@@ -6,30 +6,26 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiPrimitiveType
-import com.intellij.psi.PsiTypes
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.components.resolveToSymbol
 import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityChecker
+import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityError
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -40,6 +36,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryMod
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.light.classes.symbol.withMultiplatformLightClassSupport
 import org.jetbrains.kotlin.name.CallableId
@@ -513,6 +510,82 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             assert(call.symbol is KaNamedFunctionSymbol)
         }
     }
+
+    @Test
+    fun testJavaModuleResolverUsesProjectStructureProviderForSharedFile() {
+        val setup = buildJavaModuleResolutionTestSession()
+        val sharedFile = setup.session.modulesWithFiles.getValue(setup.sourceA).single { it.name == "shared.kt" }
+        val dependencyFile = setup.session.modulesWithFiles.getValue(setup.dependency).single { it.name == "Dependency.java" }
+
+        val owner = KotlinProjectStructureProvider.getModule(setup.session.project, sharedFile, useSiteModule = null)
+        Assertions.assertSame(setup.sourceA, owner)
+
+        val checker = KotlinJavaModuleAccessibilityChecker.getInstance(setup.session.project)
+        Assertions.assertNull(checker.checkAccessibility(sharedFile.virtualFile, dependencyFile.virtualFile, FqName("dependency")))
+    }
+
+    @Test
+    fun testJavaModuleResolverDoesNotCacheContextDependentOwnership() {
+        val setup = buildJavaModuleResolutionTestSession()
+        val dependencyFile = setup.session.modulesWithFiles.getValue(setup.dependency).single { it.name == "Dependency.java" }
+        val contextualVirtualFile = LightVirtualFile("context.kt", KotlinFileType.INSTANCE, "")
+        val contextualFile = PsiManager.getInstance(setup.session.project).findFile(contextualVirtualFile) as KtFile
+        val checker = KotlinJavaModuleAccessibilityChecker.getInstance(setup.session.project)
+
+        contextualFile.contextModule = setup.sourceA
+        Assertions.assertNull(checker.checkAccessibility(contextualVirtualFile, dependencyFile.virtualFile, FqName("dependency")))
+
+        contextualFile.contextModule = setup.sourceB
+        Assertions.assertEquals(
+            KotlinJavaModuleAccessibilityError.ModuleDoesNotReadModule("dependency"),
+            checker.checkAccessibility(contextualVirtualFile, dependencyFile.virtualFile, FqName("dependency")),
+        )
+    }
+
+    private fun buildJavaModuleResolutionTestSession(): JavaModuleResolutionTestSetup {
+        val root = testDataPath("javaModuleResolver")
+        lateinit var sourceA: KaSourceModule
+        lateinit var sourceB: KaSourceModule
+        lateinit var dependency: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                dependency = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(root.resolve("dependency"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "dependency"
+                    }
+                )
+                sourceA = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(root.resolve("sourceA"))
+                        addSourceRoot(root.resolve("shared.kt"))
+                        addRegularDependency(dependency)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "sourceA"
+                    }
+                )
+                sourceB = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(root.resolve("sourceB"))
+                        addSourceRoot(root.resolve("shared.kt"))
+                        addRegularDependency(dependency)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "sourceB"
+                    }
+                )
+            }
+        }
+        return JavaModuleResolutionTestSetup(session, sourceA, sourceB, dependency)
+    }
+
+    private data class JavaModuleResolutionTestSetup(
+        val session: StandaloneAnalysisAPISession,
+        val sourceA: KaSourceModule,
+        val sourceB: KaSourceModule,
+        val dependency: KaSourceModule,
+    )
 
     /**
      * [org.jetbrains.kotlin.analysis.project.structure.impl.KotlinStandaloneProjectStructureProvider.getModule] creates a fresh
