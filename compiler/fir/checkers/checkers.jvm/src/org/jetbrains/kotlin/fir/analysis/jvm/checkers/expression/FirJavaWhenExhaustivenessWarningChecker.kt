@@ -23,7 +23,7 @@ object FirJavaWhenExhaustivenessWarningChecker : FirWhenExpressionChecker(MppChe
         if (!expression.isExhaustive) return
         val variable = expression.subjectVariable ?: return
         // Take the type of the initializer to account for smart casts.
-        val initializerType = variable.initializer!!.resolvedType
+        val initializerType = variable.initializer?.resolvedType ?: return
         // Take the type of the variable to account for explicit variable types overriding the inferred type
         val variableType = variable.returnTypeRef.coneType
         val enhancedType = variableType.enhancedTypeForWarning
