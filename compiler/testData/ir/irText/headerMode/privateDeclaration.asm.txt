@@ -228,11 +228,11 @@ public final class TestClass : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
-        LINENUMBER (101)
+        LINENUMBER (102)
           ALOAD (0)
           INVOKESPECIAL (TestClass, privateNonInlineMiddle, ()V)
         LABEL (L2)
-        LINENUMBER (102)
+        LINENUMBER (103)
           RETURN
         LABEL (L3)
     }
@@ -242,13 +242,13 @@ public final class TestClass : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
-        LINENUMBER (88)
+        LINENUMBER (89)
           NEW (TestClass$InlineChain)
           DUP
           INVOKESPECIAL (TestClass$InlineChain, <init>, ()V)
           INVOKEVIRTUAL (TestClass$InlineChain, used, ()V)
         LABEL (L2)
-        LINENUMBER (89)
+        LINENUMBER (90)
           RETURN
         LABEL (L3)
     }
@@ -258,23 +258,23 @@ public final class TestClass : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
-        LINENUMBER (91)
+        LINENUMBER (92)
           ALOAD (0)
           ASTORE (2)
         LABEL (L2)
           ICONST_0
           ISTORE (3)
         LABEL (L3)
-        LINENUMBER (112)
+        LINENUMBER (113)
           NEW (TestClass$InlineChain)
           DUP
           INVOKESPECIAL (TestClass$InlineChain, <init>, ()V)
           INVOKEVIRTUAL (TestClass$InlineChain, used, ()V)
         LABEL (L4)
-        LINENUMBER (113)
+        LINENUMBER (114)
           NOP
         LABEL (L5)
-        LINENUMBER (92)
+        LINENUMBER (93)
           RETURN
         LABEL (L6)
     }
@@ -312,17 +312,17 @@ public final class TestClass : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
-        LINENUMBER (71)
+        LINENUMBER (72)
           NEW (TestClass$MixedClass)
           DUP
           INVOKESPECIAL (TestClass$MixedClass, <init>, ()V)
           INVOKEVIRTUAL (TestClass$MixedClass, used, ()V)
         LABEL (L2)
-        LINENUMBER (72)
+        LINENUMBER (73)
           INVOKESTATIC (TestClass, access$getMixedCompanion$p, ()LTestClass$MixedCompanion;)
           INVOKEVIRTUAL (TestClass$MixedCompanion, used, ()V)
         LABEL (L3)
-        LINENUMBER (73)
+        LINENUMBER (74)
           RETURN
         LABEL (L4)
     }
@@ -332,7 +332,7 @@ public final class TestClass : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
-        LINENUMBER (81)
+        LINENUMBER (82)
           NEW (TestClass$NestedMixedOuter$Nested)
           DUP
           INVOKESPECIAL (TestClass$NestedMixedOuter$Nested, <init>, ()V)
@@ -353,11 +353,11 @@ public final class TestClass : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
-        LINENUMBER (49)
+        LINENUMBER (50)
           INVOKESTATIC (TestClass, access$getUsedByInlineCompanion$p, ()LTestClass$UsedByInlineCompanion;)
           INVOKEVIRTUAL (TestClass$UsedByInlineCompanion, companionFun, ()V)
         LABEL (L2)
-        LINENUMBER (50)
+        LINENUMBER (51)
           RETURN
         LABEL (L3)
     }
@@ -367,12 +367,12 @@ public final class TestClass : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
-        LINENUMBER (37)
+        LINENUMBER (38)
           ALOAD (0)
           BIPUSH (42)
           INVOKESTATIC (TestClass, access$setUsedBackingFieldByInline$p, (LTestClass;I)V)
         LABEL (L2)
-        LINENUMBER (38)
+        LINENUMBER (39)
           RETURN
         LABEL (L3)
     }
@@ -382,11 +382,11 @@ public final class TestClass : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
-        LINENUMBER (42)
+        LINENUMBER (43)
           ALOAD (0)
           INVOKESTATIC (TestClass, access$usedByInline, (LTestClass;)V)
         LABEL (L2)
-        LINENUMBER (43)
+        LINENUMBER (44)
           RETURN
         LABEL (L3)
     }
@@ -396,12 +396,12 @@ public final class TestClass : java/lang/Object {
           ICONST_0
           ISTORE (1)
         LABEL (L1)
-        LINENUMBER (32)
+        LINENUMBER (33)
           ALOAD (0)
           INVOKESTATIC (TestClass, access$getUsedPropertyByInline$p, (LTestClass;)Ljava/lang/String;)
           ASTORE (2)
         LABEL (L2)
-        LINENUMBER (33)
+        LINENUMBER (34)
           RETURN
         LABEL (L3)
     }

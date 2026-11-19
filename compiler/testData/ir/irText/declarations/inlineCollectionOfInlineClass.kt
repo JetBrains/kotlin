@@ -1,5 +1,5 @@
 // DUMP_IR_DIFFERENCE: JKLIB
-//   JKlib tests compile against a real JDK, whose default methods (`forEach`, `stream`, `spliterator`, ...) add fake overrides.
+// ^ JKlib tests compile against JDK 17 instead of the mock JDK.
 // KT-64271
 
 inline class IT(val x: Int)
