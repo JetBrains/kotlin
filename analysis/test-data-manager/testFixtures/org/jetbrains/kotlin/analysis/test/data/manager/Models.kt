@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.test.data.manager
 
+import java.nio.file.Path
+
 /**
  * Represents a discovered test with its variant chain information.
  */
@@ -56,4 +58,13 @@ internal data class VariantChainConflict(
 internal data class TestError(
     val testName: String,
     val exception: String,
+)
+
+/**
+ * A test data file that doesn't match the output of [testName], from a [TestDataAssertionError].
+ */
+internal data class TestDataProblem(
+    val testName: String,
+    val kind: TestDataAssertionError.Kind,
+    val file: Path,
 )

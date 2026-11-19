@@ -78,11 +78,10 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
 
         val actual = buildList {
             listener.getMismatchesByPath().forEach { [path, chains] -> add("mismatch: $path $chains") }
+            listener.getTestDataProblems().map { "problem: ${it.testName} ${it.kind} ${tempDir.relativize(it.file)}" }.sorted().forEach(::add)
             listener.getTestErrors().forEach { add("error: ${it.testName} - ${it.exception}") }
             listener.getTestsWithErrors().forEach { _ -> add("failed test") }
         }.joinToString("\n")
-            // The message holds the absolute temporary path, which the listener may truncate
-            .replace(Regex("File should not exist: .*"), "File should not exist: <path>")
 
         assertEquals(expected.trimIndent(), actual)
     }
@@ -95,6 +94,7 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
             actual = "actual",
             expected = """
                 mismatch: testData/analysis/api/symbols.kt [[]]
+                problem: FakeGoldenAnalysisApiTestGenerated.testSymbols MISMATCH test.txt
                 failed test
             """,
         )
@@ -107,39 +107,42 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
             actual = "actual",
             expected = """
                 mismatch: testData/analysis/api/symbols.kt [[]]
+                problem: FakeGoldenAnalysisApiTestGenerated.testSymbols MISSING_FILE test.txt
                 failed test
             """,
         )
     }
 
     @Test
-    fun `redundant variant file is an error`() {
+    fun `redundant variant file is a mismatch`() {
         setupFiles("test.txt" to "same", "test.js.txt" to "same")
         assertClassified(
             variantChain = listOf("js"),
             actual = "same",
             expected = """
-                error: FakeGoldenAnalysisApiTestGenerated.testSymbols - AssertionFailedError: "test.js.txt" had the same content as "test.txt". Delete the prefixed file.
+                mismatch: testData/analysis/api/symbols.kt [[]]
+                problem: FakeGoldenAnalysisApiTestGenerated.testSymbols REDUNDANT_FILE test.js.txt
                 failed test
             """,
         )
     }
 
     @Test
-    fun `unexpected file is an error`() {
+    fun `unexpected file is a mismatch`() {
         setupFiles("test.txt" to "unexpected")
         assertClassified(
             variantChain = emptyList(),
             actual = null,
             expected = """
-                error: FakeGoldenAnalysisApiTestGenerated.testSymbols - AssertionFailedError: File should not exist: <path>
+                mismatch: testData/analysis/api/symbols.kt [[]]
+                problem: FakeGoldenAnalysisApiTestGenerated.testSymbols UNEXPECTED_FILE test.txt
                 failed test
             """,
         )
     }
 
     @Test
-    fun `several failures of one test are an error`() {
+    fun `several failures of one test are classified one by one`() {
         setupFiles("test.txt" to "expected", "other.txt" to "expected")
         val failures = listOf("test.kt", "other.kt").map { fileName ->
             runCatching {
@@ -157,8 +160,9 @@ internal class FileUpdateTrackingListenerIntegrationTest : AbstractFakeTestInteg
         assertClassified(
             failure = MultipleFailuresError("Multiple Failures", failures),
             expected = """
-                error: FakeGoldenAnalysisApiTestGenerated.testSymbols - MultipleFailuresError: Multiple Failures (2 failures)
-                	org.opentest4j.AssertionFailedError: Actual data differs from file c...
+                mismatch: testData/analysis/api/symbols.kt [[]]
+                problem: FakeGoldenAnalysisApiTestGenerated.testSymbols MISMATCH other.txt
+                problem: FakeGoldenAnalysisApiTestGenerated.testSymbols MISMATCH test.txt
                 failed test
             """,
         )
