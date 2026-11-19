@@ -173,6 +173,15 @@ class MyActivity(
     @OnClick(B.id.textView, app.R.layout.mainActivity)
     fun multiJava2() {}
 
+    @OnClick(value = [B.id.textView])
+    fun multiJava3() {}
+
+    @OnClick(value = [B.id.textView, app.R.layout.mainActivity])
+    fun multiJava4() {}
+
+    @OnClick(value = intArrayOf(B.id.textView))
+    fun multiJava5() {}
+
     const val propA = B.id.textView
     val propB = B.id.textView
     var propC = B.id.textView
