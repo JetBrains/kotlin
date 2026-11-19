@@ -154,7 +154,6 @@ class FileDeserializationStateImpl(
         symbolTable = linker.symbolTable,
         libraryFile = fileReader,
         fileSymbol = file.symbol,
-        enqueueLocalTopLevelDeclaration = ::addIdSignature,
         deserializedSymbolPostProcessor = linker.deserializedSymbolPostProcessor,
         irInterner = linker.irInterner,
         deserializePublicSymbolWithOwnerInUnknownFile = { idSignature, symbolKind ->
