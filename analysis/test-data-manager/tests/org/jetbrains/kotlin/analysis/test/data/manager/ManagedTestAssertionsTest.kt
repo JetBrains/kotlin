@@ -373,7 +373,7 @@ class ManagedTestAssertionsTest {
     }
 
     @Test
-    fun `CHECK mode (checkTestData) - golden missing creates and throws`() {
+    fun `CHECK mode (checkTestData) - golden missing throws without creating`() {
         TestDataManagerMode.isExplicitCheckOverride = true
         setupFiles()
 
@@ -381,12 +381,13 @@ class ManagedTestAssertionsTest {
             runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.CHECK)
         }
 
-        assertFileState("test.txt: content")
-        assertTrue(ex.message!!.startsWith("Expected data file did not exist, created: "))
+        assertFileState("")
+        assertTrue(ex.message!!.startsWith("Expected data file did not exist: "))
+        assertFalse(ex.message!!.contains("created"))
     }
 
     @Test
-    fun `CHECK mode (checkTestData) - redundant deletes and throws`() {
+    fun `CHECK mode (checkTestData) - redundant throws without deleting`() {
         TestDataManagerMode.isExplicitCheckOverride = true
         setupFiles(
             "test.txt" to "same",
@@ -397,8 +398,8 @@ class ManagedTestAssertionsTest {
             runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.CHECK)
         }
 
-        assertFileState("test.txt: same")
-        assertTrue(ex.message!!.contains("Deleted"))
+        assertFileState("test.txt: same\ntest.js.txt: same")
+        assertTrue(ex.message!!.contains("Delete the prefixed file"))
     }
 
     @Test
@@ -1014,7 +1015,7 @@ class ManagedTestAssertionsTest {
     // --- CHECK mode (checkTestData) ---
 
     @Test
-    fun `CHECK mode (checkTestData) - null actual deletes and throws when file exists`() {
+    fun `CHECK mode (checkTestData) - null actual throws without deleting when file exists`() {
         TestDataManagerMode.isExplicitCheckOverride = true
         setupFiles("test.txt" to "unexpected")
 
@@ -1022,9 +1023,9 @@ class ManagedTestAssertionsTest {
             runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.CHECK)
         }
 
-        assertFileState("")
+        assertFileState("test.txt: unexpected")
         assertTrue(ex.message!!.contains("File should not exist"))
-        assertTrue(ex.message!!.contains("deleted"))
+        assertFalse(ex.message!!.contains("deleted"))
     }
 
     // --- Path tracking with null actual ---
