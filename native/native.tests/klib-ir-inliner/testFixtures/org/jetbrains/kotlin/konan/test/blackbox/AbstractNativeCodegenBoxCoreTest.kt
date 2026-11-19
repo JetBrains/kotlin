@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeCodegenTest
+import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.configuration.setupStepsForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.handlers.FileCheckHandler
 import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunnerGroupingStage
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
@@ -26,6 +29,8 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -37,14 +42,19 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         super.configure(builder)
         commonConfiguration {
+            globalDefaults {
+                frontend = FrontendKinds.FIR
+                targetPlatform = NativePlatforms.unspecifiedNativePlatform
+                targetBackend = TargetBackend.NATIVE
+                dependencyKind = DependencyKind.Binary
+            }
+
             defaultDirectives {
                 OPT_IN with listOf(
                     "kotlin.native.internal.InternalForKotlinNative",
                     "kotlin.experimental.ExperimentalNativeApi"
                 )
             }
-
-            commonConfigurationForNativeCodegenTest()
 
             useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper)
             useAdditionalService { ReflectionPackageNameAnnotation }
@@ -64,7 +74,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
 
             // Because of package escaping various dumps for grouping mode would be different from
             // the regular one, so we don't want all the frontend handlers to be set up, only some specific ones.
-            setupStepsForNativeFirstStageUpToSerialization(
+            commonConfigurationForNativeFirstStageUpToSerialization(
                 includeBasicFirHandlers = true,
                 includeDumpFirHandlers = false
             )

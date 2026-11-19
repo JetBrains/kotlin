@@ -42,7 +42,7 @@ fun TestConfigurationBuilder.commonConfigurationForNativeFirstStageUpToSerializa
  * Sets up directives and services which are applicable for both stages of
  * any native codegen test.
  */
-fun TestConfigurationBuilderBase<*, *>.commonConfigurationForNativeCodegenTest(
+fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
     firParser: FirParser = FirParser.LightTree,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
@@ -61,6 +61,15 @@ fun TestConfigurationBuilderBase<*, *>.commonConfigurationForNativeCodegenTest(
     }
     configureFirParser(firParser)
 
+    facadeStep(::FirCliNativeFacade)
+    firHandlersStep { }
+
+    facadeStep(::Fir2IrCliNativeFacade)
+    irHandlersStep { }
+
+    facadeStep(::NativePreSerializationLoweringCliFacade)
+    loweredIrHandlersStep { }
+
     useAdditionalSourceProviders(
         ::CoroutineHelpersSourceFilesProvider,
         ::AdditionalDiagnosticsSourceFilesProvider,
@@ -78,8 +87,7 @@ fun TestConfigurationBuilder.setupStepsForNativeFirstStageUpToSerialization(
     includeBasicFirHandlers: Boolean = true,
     includeDumpFirHandlers: Boolean = true
 ) {
-    facadeStep(::FirCliNativeFacade)
-    firHandlersStep {
+    configureFirHandlersStep {
         commonFirHandlersForCodegenTest()
         if (includeBasicFirHandlers) {
             useHandlers(
@@ -96,13 +104,11 @@ fun TestConfigurationBuilder.setupStepsForNativeFirstStageUpToSerialization(
         }
     }
 
-    facadeStep(::Fir2IrCliNativeFacade)
-    irHandlersStep {
+    configureIrHandlersStep {
         commonIrHandlersForCodegenTest()
     }
 
-    facadeStep(::NativePreSerializationLoweringCliFacade)
-    loweredIrHandlersStep {
+    configureLoweredIrHandlersStep {
         useHandlers(::IrDiagnosticsHandler)
     }
 }
