@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.util.computeTransformedLibraryVersionChecksum
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.Serializable
@@ -42,6 +43,7 @@ import kotlin.test.assertTrue
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib consumption")
 @MustRunOnChangesInGradle
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 class UklibConsumptionIT : KGPBaseTest() {
 
     @GradleAndroidTest
