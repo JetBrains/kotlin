@@ -115,7 +115,7 @@ open class KotlinxBenchmarkingPlugin : BenchmarkingPlugin() {
             group = BENCHMARKING_GROUP
             description = "Convert from kotlinx-benchmark report to the benchmarking report for Kotlin/Native."
 
-            convertJMHReportClasspath.from(configurations.detachedConfiguration(dependencies.project(":benchmarksReports")))
+            convertJMHReportClasspath.from(configurations.detachedConfiguration(dependencies.project(":convertJMHReport")))
             inputFile.fileProvider(benchmark.runBenchmark.map { it.reportFile })
             outputFile.set(layout.buildDirectory.file("nativeBenchResults.json"))
             if (benchmark.prefixBenchmarksWithApplicationName.get()) {

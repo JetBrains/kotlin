@@ -45,6 +45,7 @@ include(":benchmarksAnalyzer")
 include(":benchmarksKotlinxAdapter")
 include(":benchmarksLauncher")
 include(":benchmarksReports")
+include(":convertJMHReport")
 knownGroups.forEach {
     include(":$it")
 }
