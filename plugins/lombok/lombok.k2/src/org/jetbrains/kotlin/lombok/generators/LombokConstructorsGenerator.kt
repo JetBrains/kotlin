@@ -54,7 +54,7 @@ class LombokConstructorsGenerator(session: FirSession) :
     override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean =
         parts.any { part -> part.generatesStaticFactory(owner) }
 
-    private val cache: FirCache<FirClassSymbol<*>, Collection<FirFunctionSymbol<*>>?, MemberGenerationContext?> =
+    private val cache: FirCache<FirClassSymbol<*>, Collection<FirFunctionSymbol<*>>?, MemberGenerationContext> =
         session.firCachesFactory.createCache(::createConstructors)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
@@ -79,11 +79,11 @@ class LombokConstructorsGenerator(session: FirSession) :
         return cache.getValue(context.owner, context)?.filterIsInstance<FirConstructorSymbol>().orEmpty()
     }
 
-    private fun createConstructors(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?): Collection<FirFunctionSymbol<*>>? {
+    private fun createConstructors(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Collection<FirFunctionSymbol<*>>? {
         return buildList {
             parts.forEach {
                 with(it) {
-                    addIfNonClashing(classSymbol, context?.declaredScope)
+                    addIfNonClashing(classSymbol, context)
                 }
             }
         }.takeIf { it.isNotEmpty() }?.map { it.symbol }

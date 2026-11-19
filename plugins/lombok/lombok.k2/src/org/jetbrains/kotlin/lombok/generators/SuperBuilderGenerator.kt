@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -110,6 +111,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
         builder: SuperBuilder,
+        context: NestedClassGenerationContext,
     ) {
         val classTypeParameterSymbol = FirTypeParameterSymbol()
         val builderTypeParameterSymbol = FirTypeParameterSymbol()
@@ -182,7 +184,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                     )
                 ).toFirResolvedTypeRef()
             } else {
-                val superBuilder = builderClassesCache.getValue(builderKey) ?: return@firstNotNullOfOrNull null
+                val superBuilder = builderClassesCache.getValue(builderKey, context) ?: return@firstNotNullOfOrNull null
 
                 superBuilder.constructType(
                     typeArguments = arrayOf(

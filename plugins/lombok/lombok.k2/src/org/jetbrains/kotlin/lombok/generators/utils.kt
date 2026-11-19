@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirExtension
+import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
@@ -397,7 +398,8 @@ abstract class LombokDeclarationKey : GeneratedDeclarationKey()
 fun remapTypeParameterBounds(
     newTypeParameters: Collection<FirTypeParameter>,
     originalTypeParameters: Collection<FirTypeParameterRef>,
-    session: FirSession
+    typeResolver: PluginTypeResolver?,
+    session: FirSession,
 ) {
     val substitution = buildMap {
         originalTypeParameters.forEachZipped(newTypeParameters) { original, copy -> this[original.symbol] = copy.symbol.toConeType() }
@@ -406,7 +408,8 @@ fun remapTypeParameterBounds(
 
     for (typeParameter in newTypeParameters) {
         val remappedBounds = typeParameter.bounds.map { bound ->
-            bound.withReplacedConeType(substitutor.substituteOrNull(bound.coneType))
+            val type = if (typeResolver != null && bound is FirUserTypeRef) typeResolver.resolveUserType(bound) else bound
+            type.withReplacedConeType(substitutor.substituteOrNull(type.coneType))
         }
         typeParameter.replaceBounds(remappedBounds)
     }
