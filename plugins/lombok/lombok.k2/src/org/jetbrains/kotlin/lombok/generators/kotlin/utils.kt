@@ -53,11 +53,11 @@ internal fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId)
  * property always carries its parameter's name, and no two declarations of a class can share one.
  */
 @OptIn(DirectDeclarationsAccess::class)
-fun FirRegularClass.promotedPropertiesByName(): Map<Name, FirPropertySymbol> =
-    declarations.asSequence()
-        .filterIsInstance<FirProperty>()
-        .filter { it.fromPrimaryConstructor == true }
-        .associateBy({ it.name }, { it.symbol })
+fun FirRegularClassSymbol.promotedPropertiesByName(): Map<Name, FirPropertySymbol> =
+    declarationSymbols.asSequence()
+        .filterIsInstance<FirPropertySymbol>()
+        .filter { it.fromPrimaryConstructor }
+        .associateBy({ it.name }, { it })
 
 /**
  * Builds `@JvmStatic` annotation call. If `JvmStatic` symbol can't be found (stdlib is missing), then an error reference is generated.
