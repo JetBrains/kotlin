@@ -251,6 +251,11 @@ internal class ComposableTypeTransformer(
     }
 
     override fun visitField(declaration: IrField): IrStatement {
+        // with @JvmField the backend reads an external field directly instead of its getter, so
+        // the field needs the same once-only guard as external functions (KT-91591)
+        if (declaration.getPackageFragment() is IrExternalPackageFragment && !externalTransformedDecls.add(declaration)) {
+            return declaration
+        }
         declaration.type = declaration.type.remapType()
         return super.visitField(declaration)
     }

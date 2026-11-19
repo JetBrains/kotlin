@@ -1695,6 +1695,41 @@ class ComposeCrossModuleTests : AbstractCodegenTest() {
         )
     }
 
+    // KT-91591: every read of an external @JvmField keeps the declared Function2
+    @Test
+    fun testComposableTypeRemappingOfExternalJvmField() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Icons.kt" to """
+                        package base
+
+                        import androidx.compose.runtime.Composable
+
+                        class Icons(@JvmField val back: @Composable () -> String)
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                        package main
+
+                        import base.Icons
+
+                        fun first(i: Icons): Any = i.back
+                        fun second(i: Icons): Any = i.back
+                    """
+                )
+            ),
+            validate = { bytecode ->
+                val fieldReads = Regex("GETFIELD base/Icons.back : (\\S+)")
+                    .findAll(bytecode)
+                    .map { it.groupValues[1] }
+                    .toList()
+                assertEquals(List(2) { "Lkotlin/jvm/functions/Function2;" }, fieldReads)
+            }
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
