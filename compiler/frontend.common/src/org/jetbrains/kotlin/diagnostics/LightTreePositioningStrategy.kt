@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE
 import org.jetbrains.kotlin.util.getChildren
 
 // TODO: move back to frontend.common-psi after fixing KT-91911
-open class LightTreePositioningStrategy {
-    open fun markKtDiagnostic(element: KtSourceElement, diagnostic: KtDiagnostic): List<TextRange> {
+open class LightTreePositioningStrategy : PositioningStrategy() {
+    override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
+        val element = diagnostic.element as KtLightSourceElement
         return mark(element.lighterASTNode, element.startOffset, element.endOffset, element.treeStructure)
     }
 
@@ -32,8 +33,8 @@ open class LightTreePositioningStrategy {
     }
 
     @DiagnosticLossRisk
-    open fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
-        return !hasSyntaxErrors(node, tree)
+    override fun isValid(element: KtSourceElement): Boolean {
+        return !hasSyntaxErrors(element.lighterASTNode, element.treeStructure)
     }
 }
 
@@ -92,7 +93,7 @@ fun LighterASTNode.nonFillerLastChildOrSelf(tree: FlyweightCapableTreeStructure<
 
 fun LighterASTNode.isFiller(): Boolean = tokenType in FILLER_TOKENS
 
-private fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
+fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
     if (node.tokenType == TokenType.ERROR_ELEMENT) return true
 
     val children = node.getChildren(tree)

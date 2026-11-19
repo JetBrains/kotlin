@@ -132,8 +132,10 @@ object LightTreePositioningStrategies {
         ): List<TextRange> = markElement(getElementToMark(node, tree), startOffset, endOffset, tree, node)
 
         @OptIn(DiagnosticLossRisk::class)
-        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean =
-            super.isValid(getElementToMark(node, tree), tree)
+        override fun isValid(element: KtSourceElement): Boolean {
+            val elementToMark = getElementToMark(element.lighterASTNode, element.treeStructure)
+            return !hasSyntaxErrors(elementToMark, element.treeStructure)
+        }
 
         private fun getElementToMark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode {
             val [returnTypeRef, nameIdentifierOrPlaceHolder] = when {
@@ -1265,21 +1267,23 @@ object LightTreePositioningStrategies {
     }
 
     val UNREACHABLE_CODE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
-        override fun markKtDiagnostic(element: KtSourceElement, diagnostic: KtDiagnostic): List<TextRange> {
+        override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
+            val element = diagnostic.element as KtSourceElement
+
             @Suppress("UNCHECKED_CAST")
             val typed = diagnostic as KtDiagnosticWithParameters2<Set<KtSourceElement>, Set<KtSourceElement>>
             with(UnreachableCodeLightTreeHelper(element.treeStructure)) {
                 val reachable = typed.a.map { it.lighterASTNode }.toSet()
                 val unreachable = typed.b.map { it.lighterASTNode }.toSet()
                 if (!element.lighterASTNode.hasChildrenInSet(reachable)) {
-                    return super.markKtDiagnostic(element, diagnostic)
+                    return super.markDiagnostic(diagnostic)
                 }
 
                 val nodesToMark = element.lighterASTNode.getLeavesOrReachableChildren(reachable, unreachable)
                     .removeReachableElementsWithMeaninglessSiblings(reachable)
 
                 if (nodesToMark.isEmpty()) {
-                    return super.markKtDiagnostic(element, diagnostic)
+                    return super.markDiagnostic(diagnostic)
                 }
 
                 val ranges = nodesToMark.flatMap {
@@ -1342,7 +1346,7 @@ object LightTreePositioningStrategies {
         }
 
         @OptIn(DiagnosticLossRisk::class)
-        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean = true
+        override fun isValid(element: KtSourceElement): Boolean = true
     }
 
     val NON_FINAL_MODIFIER_OR_NAME: LightTreePositioningStrategy = ModifierSetBasedLightTreePositioningStrategy(
