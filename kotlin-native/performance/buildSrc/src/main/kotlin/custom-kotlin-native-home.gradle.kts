@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.kotlinNativeHome
 
 // We are using bootstrap version of KGP, but we want to use a different compiler version.
 // This instructs KGP to look for the Native compiler in a given folder.
+// NOTE: KGP still adds compiler plugins (e.g. `kotlin("plugin.serialization")`) in the bootstrap version, which is not
+// guaranteed to be binary compatible with this compiler. So don't apply them to projects with Native targets
 extra["kotlin.native.home"] = kotlinNativeHome.toString()
 
 private fun Task.dependsOnKotlinNativeHome() {
