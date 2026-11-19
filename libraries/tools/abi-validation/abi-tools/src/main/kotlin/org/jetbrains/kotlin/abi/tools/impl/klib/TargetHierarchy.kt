@@ -53,8 +53,7 @@ internal object TargetHierarchy {
                 "apple",
                 Node(
                     "macos",
-                    Node("macosArm64"),
-                    Node("macosX64")
+                    Node("macosArm64")
                 ),
                 Node(
                     "ios",
@@ -66,13 +65,11 @@ internal object TargetHierarchy {
                 Node(
                     "tvos",
                     Node("tvosArm64"),
-                    Node("tvosX64"),
                     Node("tvosSimulatorArm64")
                 ),
                 Node(
                     "watchos",
                     Node("watchosArm64"),
-                    Node("watchosX64"),
                     Node("watchosSimulatorArm64"),
                     Node("watchosDeviceArm64"),
                     Node("watchosX86")
