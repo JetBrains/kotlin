@@ -57,6 +57,7 @@ public annotation class SymbolName(val name: String)
 @SymbolNameIsInternal
 @SinceKotlin("2.4")
 public annotation class ForceNativeThreadState {
+    @SinceKotlin("2.5")
     public annotation class AllowExceptions
 }
 
