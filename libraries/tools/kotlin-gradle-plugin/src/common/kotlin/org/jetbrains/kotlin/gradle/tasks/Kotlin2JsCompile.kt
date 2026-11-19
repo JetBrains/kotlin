@@ -356,6 +356,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
             reportingSettings = reportingSettings(),
+            icEventReport = icEventReport.get(),
             incrementalCompilationEnvironment = icEnv,
             compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
             toolingDiagnosticsContext = toolingDiagnosticsContext,

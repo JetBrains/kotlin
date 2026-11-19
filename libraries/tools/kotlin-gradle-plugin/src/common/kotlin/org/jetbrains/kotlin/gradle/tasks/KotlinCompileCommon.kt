@@ -155,6 +155,7 @@ abstract class KotlinCompileCommon @Inject constructor(
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             reportingSettings = reportingSettings(),
+            icEventReport = icEventReport.get(),
             outputFiles = allOutputFiles(),
             compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
             toolingDiagnosticsCollector = toolingDiagnosticsCollector,

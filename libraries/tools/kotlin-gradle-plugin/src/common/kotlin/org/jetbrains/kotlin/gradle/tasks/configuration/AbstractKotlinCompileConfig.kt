@@ -58,6 +58,8 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
             task.systemPropertiesService.value(compilerSystemPropertiesService).disallowChanges()
 
+            task.icEventReport.value(propertiesProvider.icEventReport).disallowChanges()
+
             task.kotlinCompilerArgumentsLogLevel.value(propertiesProvider.kotlinCompilerArgumentsLogLevel).disallowChanges()
 
             propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
