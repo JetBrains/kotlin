@@ -20,6 +20,8 @@ standardPublicJars()
 
 dependencies {
     compileOnly(project(":kotlin-gradle-plugin"))
+    // kotlin-gradle-plugin-api bundles kotlin-native-utils, so it is not on the classpath of projects in this build
+    compileOnly(project(":native:kotlin-native-utils"))
     compileOnly(project(":compiler:cli"))
 }
 

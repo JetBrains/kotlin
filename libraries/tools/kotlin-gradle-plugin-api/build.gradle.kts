@@ -1,3 +1,5 @@
+import gradle.GradlePluginVariant
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -7,6 +9,7 @@ plugins {
     id("generated-sources")
     id("kgp-jacoco-on-the-fly")
     id("kgp-jacoco-instrumenter")
+    id("asm-deprecating-transformer")
 }
 
 pluginApiReference {
@@ -32,9 +35,10 @@ pluginApiReference {
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-annotations"))
-    commonApi(project(":native:kotlin-native-utils")) { // TODO: consider removing in KT-70247
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-util-klib")
-    }
+    // kotlin-native-utils is bundled into this jar instead of published as a dependency (TODO: remove in KT-70247),
+    // so that HostManager can be deprecated for build scripts below. Its own dependency stays a dependency.
+    commonCompileOnly(project(":native:kotlin-native-utils"))
+    commonApi(project(":kotlin-util-io"))
     commonApi(project(":kotlin-tooling-core"))
     commonApi(project(":build-tools:libraries:native-host"))
     commonApi(project(":compiler:build-tools:kotlin-build-tools-api"))
@@ -42,10 +46,49 @@ dependencies {
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
 
     embedded(project(":kotlin-gradle-compiler-types")) { isTransitive = false }
+    embedded(project(":native:kotlin-native-utils")) { isTransitive = false }
+}
+
+// HostManager is internal to Kotlin/Native, but build scripts reach it through this module. Deprecating the bundled
+// copy warns them without changing the class for Kotlin/Native itself.
+asmDeprecation {
+    val embeddedConfigurations = listOf(configurations.getByName("embedded")) + GradlePluginVariant.values().map { variant ->
+        configurations.getByName("${sourceSets.getByName(variant.sourceSetName).name}Embedded")
+    }
+    deprecateClassesByPattern(
+        inputConfigurations = embeddedConfigurations,
+        pattern = "org.jetbrains.kotlin.konan.target.HostManager*",
+        deprecationMessage = """
+            HostManager is internal to Kotlin/Native and will be hidden from build scripts in a future Kotlin release.
+            Use org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost instead: KotlinNativeHost.current(), or kotlin.nativeHost
+            in a multiplatform build script, and kotlin.hostNativeTarget() to declare the host target.
+            See https://youtrack.jetbrains.com/issue/KT-74608 for details.
+        """.trimIndent(),
+    )
+}
+
+GradlePluginVariant.values().forEach { variant ->
+    val jarTaskName = sourceSets.getByName(variant.sourceSetName).jarTaskName
+    val taskSuffix = jarTaskName.replaceFirstChar { it.uppercase() }
+    asmDeprecation {
+        tasks.registerDumpDeprecationsTask(jarTaskName, taskSuffix)
+        val checkTask = tasks.registerCheckDeprecationsTask(
+            jarTaskName,
+            taskSuffix,
+            expectedFileDoesNotExistMessage = "Run ./gradlew ${project.path}:dumpDeprecationsFor$taskSuffix to create the expected deprecations.",
+            checkFailureMessage = """
+                The classes deprecated in the jar of ${project.path} changed. Only HostManager from kotlin-native-utils should be deprecated.
+                Run ./gradlew ${project.path}:dumpDeprecationsFor$taskSuffix to see the difference. Context: https://youtrack.jetbrains.com/issue/KT-74608
+            """.trimIndent(),
+        )
+        tasks.named("check") { dependsOn(checkTask) }
+    }
 }
 
 apiValidation {
     nonPublicMarkers += "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi"
+    // Bundled kotlin-native-utils classes are that module's API, not this one's
+    ignoredPackages += listOf("org.jetbrains.kotlin.konan", "org.jetbrains.kotlin.backend.konan")
 }
 
 tasks {
