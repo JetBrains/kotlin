@@ -41,12 +41,19 @@ internal class KotlinWrapperPre2_5_20(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T = when (type) {
-        JvmPlatformToolchain::class.java -> JvmPlatformToolchainWrapper(base.getToolchain(type))
-        JsPlatformToolchain::class.java -> JsPlatformToolchainWrapper(base.getToolchain(type))
-        WasmPlatformToolchain::class.java -> WasmPlatformToolchainWrapper(base.getToolchain(type))
-        KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainWrapper(base.getToolchain(type))
-        else -> base.getToolchain(type)
+        JvmPlatformToolchain::class.java -> JvmPlatformToolchainWrapper(getBaseToolchain(type))
+        JsPlatformToolchain::class.java -> JsPlatformToolchainWrapper(getBaseToolchain(type))
+        WasmPlatformToolchain::class.java -> WasmPlatformToolchainWrapper(getBaseToolchain(type))
+        KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainWrapper(getBaseToolchain(type))
+        else -> getBaseToolchain(type)
     } as T
+
+    // Implementations before 2.5.20 throw IllegalStateException from getToolchain only for a toolchain they don't provide
+    private fun <T : KotlinToolchains.Toolchain> getBaseToolchain(type: Class<T>): T = try {
+        base.getToolchain(type)
+    } catch (e: IllegalStateException) {
+        throw UnsupportedToolchainException(type, base.getCompilerVersion()).apply { initCause(e) }
+    }
 
     override fun createBuildSession(): KotlinToolchains.BuildSession {
         return BuildSessionWrapper(this, base.createBuildSession())

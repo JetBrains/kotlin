@@ -312,6 +312,12 @@ public final class org/jetbrains/kotlin/buildtools/api/SourcesChanges$Unknown : 
 	public static final field INSTANCE Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges$Unknown;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/UnsupportedToolchainException : java/lang/IllegalStateException {
+	public fun <init> (Ljava/lang/Class;Ljava/lang/String;)V
+	public final fun getCompilerVersion ()Ljava/lang/String;
+	public final fun getToolchainType ()Ljava/lang/Class;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/AbiFilters {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Companion;
 	public static final field EXCLUDE_ANNOTATED_WITH Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Option;

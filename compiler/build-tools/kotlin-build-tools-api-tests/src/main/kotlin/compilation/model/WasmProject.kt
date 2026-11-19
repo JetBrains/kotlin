@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.UnsupportedToolchainException
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
@@ -72,9 +73,7 @@ fun BaseCompilationTest.wasmProject(executionStrategy: CompilerExecutionStrategy
 fun KotlinToolchains.assumeWasmIsSupported() {
     try {
         wasm
-    } catch (e: Throwable) {
-        if (e.message?.startsWith("Unsupported") == true) {
-            assumeTrue(false) { "Kotlin/Wasm is not supported on this version" }
-        } else throw e
+    } catch (_: UnsupportedToolchainException) {
+        assumeTrue(false) { "Kotlin/Wasm is not supported on this version" }
     }
 }
