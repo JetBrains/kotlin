@@ -5,14 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.component.internal
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.API_SCOPE
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.IMPLEMENTATION_SCOPE
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.RUNTIME_ONLY_SCOPE
+import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -35,6 +41,7 @@ import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
  * Both configurations use the dedicated [KotlinUsages.KOTLIN_WIT_RUNTIME_DEPENDENCIES] usage,
  * so the consumable one is not selected for regular runtime resolution instead of the runtime elements of the project,
  * while the resolvable one still falls back to the klibs of dependencies without WIT declarations variant.
+ * Neither of them declares the artifact type, it is requested only by the artifact view of [witDirectories].
  */
 internal val WitPreparationSetupAction = KotlinCompilationSideEffect { compilation ->
     if (compilation !is KotlinJsIrCompilation) return@KotlinCompilationSideEffect
@@ -43,29 +50,43 @@ internal val WitPreparationSetupAction = KotlinCompilationSideEffect { compilati
 
     if (target.wasmTargetType != KotlinWasmTargetType.WASI) return@KotlinCompilationSideEffect
 
-    val runtimeDependencyConfiguration = compilation.configurations.runtimeDependencyConfiguration
-
-    createWitResolvableConfiguration(
-        compilation,
-        runtimeDependencyConfiguration,
-    )
+    createWitResolvableConfiguration(compilation)
 
     if (compilation.isMain()) {
-        createWitOutputConsumableConfiguration(
-            compilation,
-            runtimeDependencyConfiguration,
-        )
+        createWitOutputConsumableConfiguration(compilation)
     }
 }
 
-private fun createWitResolvableConfiguration(
+/**
+ * WIT directories of the runtime dependencies of this compilation:
+ * the `wit` directories of project dependencies and the WIT declarations extracted from klibs by [WitExtractionTransform].
+ *
+ * Dependencies without WIT declarations, such as Java libraries, are skipped,
+ * because their artifacts can't be transformed to [KOTLIN_WASM_WIT_ARTIFACT_TYPE].
+ */
+internal fun KotlinJsIrCompilation.witDirectories(project: Project): FileCollection =
+    project.configurations.getByName(witConfigurationName).incoming
+        .artifactView { view ->
+            view.attributes {
+                it.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KOTLIN_WASM_WIT_ARTIFACT_TYPE)
+            }
+        }.files
+
+private fun Project.extendFromRuntimeDependencyScopes(
+    configuration: Configuration,
     compilation: KotlinJsIrCompilation,
-    runtimeDependencyConfiguration: Configuration?,
 ) {
+    listOf(API_SCOPE, IMPLEMENTATION_SCOPE, RUNTIME_ONLY_SCOPE).forEach { scope ->
+        // TODO(KT-91337): for associated compilations, this holds main output and triggers main compile.
+        configuration.extendsFrom(compilationDependencyConfigurationByScope(compilation, scope))
+    }
+}
+
+private fun createWitResolvableConfiguration(compilation: KotlinJsIrCompilation) {
     val target = compilation.target
     val project = target.project
 
-    val witConfiguration = compilation.project.configurations.maybeCreateResolvable(compilation.witConfigurationName) {
+    val witConfiguration = project.configurations.maybeCreateResolvable(compilation.witConfigurationName) {
         description = "Resolves WIT declarations."
         setInvisibleIfSupported()
         attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_WIT_RUNTIME_DEPENDENCIES))
@@ -74,13 +95,10 @@ private fun createWitResolvableConfiguration(
         usesPlatformOf(target)
     }
 
-    runtimeDependencyConfiguration?.let { witConfiguration.extendsFrom(it) }
+    project.extendFromRuntimeDependencyScopes(witConfiguration, compilation)
 }
 
-private fun createWitOutputConsumableConfiguration(
-    compilation: KotlinJsIrCompilation,
-    runtimeDependencyConfiguration: Configuration?,
-) {
+private fun createWitOutputConsumableConfiguration(compilation: KotlinJsIrCompilation) {
     val target = compilation.target
     val project = target.project
 
@@ -89,14 +107,12 @@ private fun createWitOutputConsumableConfiguration(
         setInvisibleIfSupported()
         attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_WIT_RUNTIME_DEPENDENCIES))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KOTLIN_WASM_WIT_ARTIFACT_TYPE)
         usesPlatformOf(target)
 
-        project.artifacts.add(
-            compilation.witOutputConfigurationName,
-            project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME)
-        )
+        outgoing.artifact(project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME)) {
+            it.type = KOTLIN_WASM_WIT_ARTIFACT_TYPE
+        }
     }
 
-    runtimeDependencyConfiguration?.let { witOutputConfiguration.extendsFrom(it) }
+    project.extendFromRuntimeDependencyScopes(witOutputConfiguration, compilation)
 }

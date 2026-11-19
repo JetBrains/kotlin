@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.witDirectories
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableDefaultJsDomApiDependency
@@ -69,17 +70,17 @@ class WitConfigurationsTest {
     }
 
     @Test
-    fun `WIT configuration resolves a WASI project dependency to its wit directory`() {
+    fun `WIT directories of a WASI project dependency are its wit directory`() {
         val (lib, app) = buildLibAndApp()
 
         assertEquals(
             setOf(lib.layout.projectDirectory.dir(WIT_DIRECTORY_NAME).asFile),
-            app.configurations.getByName("wasmWasiWit").incoming.artifacts.artifactFiles.files,
+            app.wasmWasiMainCompilation().witDirectories(app).files,
         )
     }
 
     @Test
-    fun `a Java project declared in commonMain resolves like it does for the JS runtime classpath`() {
+    fun `a Java project declared in commonMain has no WIT directories`() {
         val root = buildProject(projectBuilder = { withName("root") })
         val javaLib = buildProject(projectBuilder = { withParent(root).withName("java-lib") }) {
             plugins.apply("java-library")
@@ -100,8 +101,8 @@ class WitConfigurationsTest {
         app.evaluate()
 
         assertEquals(
-            setOf(javaLib.tasks.getByName("jar").outputs.files.singleFile),
-            app.configurations.getByName("wasmWasiWit").incoming.artifacts.artifactFiles.files,
+            emptySet(),
+            app.wasmWasiMainCompilation().witDirectories(app).files,
         )
     }
 
