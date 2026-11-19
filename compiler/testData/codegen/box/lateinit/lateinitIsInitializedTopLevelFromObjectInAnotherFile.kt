@@ -1,3 +1,5 @@
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS,Wasm-JS:2.4
+
 // KT-89375
 // The check is made from an object initializer, triggered from another file.
 

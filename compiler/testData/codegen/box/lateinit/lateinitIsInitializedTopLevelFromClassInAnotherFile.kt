@@ -1,3 +1,5 @@
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS,Wasm-JS:2.4
+
 // KT-89375
 // Like lateinitIsInitializedTopLevelFromClass.kt, but the check is triggered from another file.
 
