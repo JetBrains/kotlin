@@ -8,7 +8,6 @@
 package kotlin.concurrent.atomics
 
 import kotlin.concurrent.atomicGetField
-import kotlin.concurrent.atomicSetField
 import kotlin.concurrent.compareAndExchangeField
 import kotlin.concurrent.compareAndSetField
 import kotlin.concurrent.getAndAddField
@@ -20,20 +19,6 @@ import kotlin.internal.InlineOnly
 import kotlin.reflect.KMutableProperty0
 
 // ---- Int properties, mirroring AtomicInt ----
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.load(): Int {
-    return this.atomicGetField()
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.store(newValue: Int): Unit {
-    this.atomicSetField(newValue)
-}
 
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi
@@ -158,20 +143,6 @@ public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi
 @InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Long>.load(): Long {
-    return this.atomicGetField()
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Long>.store(newValue: Long): Unit {
-    this.atomicSetField(newValue)
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
 public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Long>.exchange(newValue: Long): Long {
     return this.getAndSetField(newValue)
 }
@@ -292,20 +263,6 @@ public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi
 @InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.load(): Boolean {
-    return this.atomicGetField()
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.store(newValue: Boolean): Unit {
-    this.atomicSetField(newValue)
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
 public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.exchange(newValue: Boolean): Boolean {
     return this.getAndSetField(newValue)
 }
@@ -326,20 +283,6 @@ public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 
 
 // ---- reference properties, mirroring AtomicReference ----
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<T>.load(): T {
-    return this.atomicGetField()
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<T>.store(newValue: T): Unit {
-    this.atomicSetField(newValue)
-}
 
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi

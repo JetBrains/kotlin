@@ -23,14 +23,14 @@ class WithCompanion {
     companion object {
         @Volatile var c: Int = 0
         fun onStatic() {
-            this::c.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>load<!>()
+            this::c.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>exchange<!>(0)
             WithCompanion::c.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>compareAndSet<!>(0, 1)
         }
     }
 }
 
 fun onStaticTopLevel() {
-    ::topLevel.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>store<!>(1)
+    ::topLevel.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>exchange<!>(1)
     ::topLevel.<!VOLATILE_INTRINSIC_CALL_ON_STATIC_PROPERTY!>incrementAndFetch<!>()
 }
 
@@ -64,14 +64,14 @@ open class Foo {
         this::l -= 1L
         this::i.update { it + 1 }
         val r: String = this::s.updateAndFetch { it + "!" }
-        Foo()::i.load()
-        (this::i).store(42)
-        this::withPrivateSetter.store(1)
+        Foo()::i.exchange(0)
+        (this::i).exchange(42)
+        this::withPrivateSetter.exchange(1)
 
         object {
             fun local() {
                 class Local {
-                    val xx = this@Foo::i.load()
+                    val xx = this@Foo::i.exchange(0)
                 }
             }
         }
@@ -79,49 +79,49 @@ open class Foo {
 
     fun onNonLiteral() {
         val p = this::i
-        p.<!VOLATILE_INTRINSIC_CALL_ON_NON_LITERAL!>load<!>()
+        p.<!VOLATILE_INTRINSIC_CALL_ON_NON_LITERAL!>exchange<!>(0)
     }
 
     fun onNonVolatile() {
-        this::nonVolatile.<!VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE!>load<!>()
+        this::nonVolatile.<!VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE!>exchange<!>(0)
         ::nonVolatileTopLevel.<!VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE!>incrementAndFetch<!>()
-        this::delegated.<!VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE!>load<!>()
+        this::delegated.<!VOLATILE_INTRINSIC_CALL_ON_NON_VOLATILE!>exchange<!>(0)
     }
 
     fun onCustomAccessors() {
-        this::withCustomGetter.<!VOLATILE_INTRINSIC_CALL_ON_PROPERTY_WITH_CUSTOM_ACCESSORS!>load<!>()
+        this::withCustomGetter.<!VOLATILE_INTRINSIC_CALL_ON_PROPERTY_WITH_CUSTOM_ACCESSORS!>exchange<!>(0)
     }
 
     fun onUnsupportedType() {
         this::short.<!VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE!>compareAndSet<!>(0, 1)
         this::nullableInt.<!VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE!>compareAndSet<!>(null, 1)
-        this::uint.<!VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE!>load<!>()
+        this::uint.<!VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE!>exchange<!>(0u)
         this::i.<!VOLATILE_INTRINSIC_CALL_ON_UNSUPPORTED_TYPE!>compareAndSet<!><Int>(0, 1)
     }
 
     inline fun inlineFun() {
-        this::i.<!VOLATILE_INTRINSIC_CALL_IN_INLINE_FUNCTION!>load<!>()
-        run { this::i.<!VOLATILE_INTRINSIC_CALL_IN_INLINE_FUNCTION!>load<!>() }
+        this::i.<!VOLATILE_INTRINSIC_CALL_IN_INLINE_FUNCTION!>exchange<!>(0)
+        run { this::i.<!VOLATILE_INTRINSIC_CALL_IN_INLINE_FUNCTION!>exchange<!>(0) }
     }
 
     inner class InnerSubclass : Foo() {
         fun innerOk() {
-            this@Foo::i.load()
+            this@Foo::i.exchange(0)
             // Access to `InnerSubclass.i`, which is inherited from `Foo.i` declared lexically above.
-            this::i.load()
+            this::i.exchange(0)
         }
     }
 }
 
 class Subclass : Foo() {
     fun notAccessible() {
-        this::i.<!VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>load<!>()
+        this::i.<!VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>exchange<!>(0)
     }
 }
 
 class Other {
     fun notAccessible(foo: Foo) {
-        foo::i.<!VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>load<!>()
+        foo::i.<!VOLATILE_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>exchange<!>(0)
     }
 }
 

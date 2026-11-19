@@ -44,8 +44,6 @@ import org.jetbrains.kotlin.ir.util.defaultType
  *    stored in static fields (see `FirVolatileIntrinsicApplicabilityChecker`);
  *  * there is no field updater for `boolean` fields, so atomic operations on `Boolean` volatile properties are reported as errors.
  *
- * `load()` and `store()` are plain volatile accesses, and are thus supported for all properties.
- *
  * Field updaters perform access and receiver type checks on each call; HotSpot usually eliminates them after inlining,
  * but the code is expected to be somewhat slower than with `VarHandle`.
  */

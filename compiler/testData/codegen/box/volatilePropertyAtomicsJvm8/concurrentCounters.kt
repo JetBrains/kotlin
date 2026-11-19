@@ -21,7 +21,7 @@ class Counters {
             this::longs += 2L
             this::updates.update { it + 3 }
             // An increment built on top of the emulated compareAndExchange.
-            var current = this::exchanges.load()
+            var current = exchanges
             while (true) {
                 val witness = this::exchanges.compareAndExchange(current, current + 1)
                 if (witness == current) break

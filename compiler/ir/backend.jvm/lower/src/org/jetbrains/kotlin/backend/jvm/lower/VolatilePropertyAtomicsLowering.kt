@@ -47,8 +47,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  * calls is a property reference literal (this is guaranteed by `FirVolatileIntrinsicApplicabilityChecker`), so the reference
  * is never materialized. The checker also prohibits properties stored in static fields (top-level properties and properties of
  * objects), so the backing field is always an instance field. Instead:
- *  * `load()`/`store()` become plain reads/writes of the (volatile) backing field;
- *  * read-modify-write operations become calls to a JDK primitive which performs an atomic operation on the backing field.
+ *  * the operations become calls to a JDK primitive which performs an atomic operation on the backing field.
  *    The primitive object is stored in a `private static final synthetic` field generated next to the backing field
  *    (one per volatile property which is used with such intrinsics). There are two implementations, depending on the JVM target:
  *      * [VarHandleVolatilePropertyAtomicsLowering] (JVM 9+) uses `java.lang.invoke.VarHandle`;
@@ -72,7 +71,7 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
 
     /**
      * Returns a description of the kind of properties that the given backing field belongs to,
-     * if read-modify-write operations on it are not supported by this implementation (to be used in the error message),
+     * if atomic operations on it are not supported by this implementation (to be used in the error message),
      * or `null` otherwise.
      */
     protected open fun unsupportedPropertyKind(field: IrField): String? = null
@@ -134,12 +133,9 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
         check(!field.isStatic) { "Atomic intrinsics on properties stored in static fields are prohibited by the frontend: ${expression.render()}" }
         val receiverExpression = checkNotNull(boundReceiver) { "Instance field without receiver: ${expression.render()}" }
 
-        // load/store are plain volatile accesses, they're supported everywhere.
-        if (kind != IntrinsicKind.LOAD && kind != IntrinsicKind.STORE) {
-            unsupportedPropertyKind(field)?.let { propertyKind ->
-                context.diagnosticReporter.at(expression, irFile).report(JvmBackendErrors.VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9, propertyKind)
-                return expression
-            }
+        unsupportedPropertyKind(field)?.let { propertyKind ->
+            context.diagnosticReporter.at(expression, irFile).report(JvmBackendErrors.VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9, propertyKind)
+            return expression
         }
 
         val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
@@ -175,8 +171,6 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
         val minusOne = { if (isLong) irLong(-1) else irInt(-1) }
 
         val result = when (kind) {
-            IntrinsicKind.LOAD -> load(access)
-            IntrinsicKind.STORE -> irSetField(irGet(access.receiver), access.field, arg(0))
             IntrinsicKind.EXCHANGE -> getAndSet(access, arg(0))
             IntrinsicKind.COMPARE_AND_SET -> compareAndSet(access, arg(0), arg(1))
             IntrinsicKind.COMPARE_AND_EXCHANGE -> compareAndExchange(access, arguments[0], arguments[1])
@@ -194,7 +188,8 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
         return if (result.type == resultType || resultType.isUnit()) result else irImplicitCast(result, resultType)
     }
 
-    protected fun IrBuilderWithScope.load(access: FieldAccess): IrExpression =
+    /** A (volatile) read of the backing field. */
+    protected fun IrBuilderWithScope.readField(access: FieldAccess): IrExpression =
         irGetField(irGet(access.receiver), access.field)
 
     /**
@@ -214,7 +209,7 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
         val invoke = irBuiltIns.functionN(1).functions.single { it.name == OperatorNameConventions.INVOKE }
         val loop = irDoWhile()
         loop.body = irBlock {
-            +irSet(old, load(access))
+            +irSet(old, readField(access))
             +irSet(new, irCall(invoke.symbol, access.field.type).apply {
                 dispatchReceiver = transform
                 arguments[1] = irGet(old)
@@ -249,7 +244,7 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
         val witness = irTemporary(value = null, nameHint = "witness", irType = access.field.type, isMutable = true)
         val isPrimitive = access.field.type.isPrimitiveType()
         val loop = irDoWhile()
-        loop.body = irSet(witness, load(access))
+        loop.body = irSet(witness, readField(access))
         loop.condition = irIfThenElse(
             irBuiltIns.booleanType,
             if (isPrimitive) irEquals(irGet(witness), expected()) else irEqeqeq(irGet(witness), expected()),
@@ -345,8 +340,6 @@ internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val co
     }
 
     private enum class IntrinsicKind(val functionName: String) {
-        LOAD("load"),
-        STORE("store"),
         EXCHANGE("exchange"),
         COMPARE_AND_SET("compareAndSet"),
         COMPARE_AND_EXCHANGE("compareAndExchange"),

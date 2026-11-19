@@ -20,22 +20,6 @@ import kotlin.reflect.KMutableProperty0
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi
 @InlineOnly
-@JvmName("loadInt")
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.load(): Int {
-    throw NotImplementedError("Implementation is intrinsic")
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-@JvmName("storeInt")
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.store(newValue: Int): Unit {
-    throw NotImplementedError("Implementation is intrinsic")
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
 @JvmName("exchangeInt")
 public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.exchange(newValue: Int): Int {
     throw NotImplementedError("Implementation is intrinsic")
@@ -159,22 +143,6 @@ public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 
 
 // ---- Long properties, mirroring AtomicLong ----
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-@JvmName("loadLong")
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Long>.load(): Long {
-    throw NotImplementedError("Implementation is intrinsic")
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-@JvmName("storeLong")
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Long>.store(newValue: Long): Unit {
-    throw NotImplementedError("Implementation is intrinsic")
-}
 
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi
@@ -306,22 +274,6 @@ public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi
 @InlineOnly
-@JvmName("loadBoolean")
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.load(): Boolean {
-    throw NotImplementedError("Implementation is intrinsic")
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-@JvmName("storeBoolean")
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.store(newValue: Boolean): Unit {
-    throw NotImplementedError("Implementation is intrinsic")
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
 @JvmName("exchangeBoolean")
 public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.exchange(newValue: Boolean): Boolean {
     throw NotImplementedError("Implementation is intrinsic")
@@ -345,22 +297,6 @@ public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 
 
 // ---- reference properties, mirroring AtomicReference ----
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-@JvmName("loadReference")
-public actual inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<T>.load(): T {
-    throw NotImplementedError("Implementation is intrinsic")
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-@JvmName("storeReference")
-public actual inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<T>.store(newValue: T): Unit {
-    throw NotImplementedError("Implementation is intrinsic")
-}
 
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi

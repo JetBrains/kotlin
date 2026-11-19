@@ -23,8 +23,6 @@ class Supported {
         this::l.update { it + 1 }
         this::s.compareAndSet("", "a")
         this::s.compareAndExchange("a", "b")
-        // load/store are plain volatile accesses.
-        this::b.store(this::b.load())
     }
 
     fun unsupportedBoolean() {

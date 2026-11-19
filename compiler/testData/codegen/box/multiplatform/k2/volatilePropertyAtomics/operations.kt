@@ -16,8 +16,8 @@ class IntHolder {
     @Volatile var x: Int = 0
 
     fun test(): String {
-        if (this::x.load() != 0) return "Int: load"
-        this::x.store(5)
+        if (x != 0) return "Int: initial"
+        x = 5
         if (x != 5) return "Int: store"
         if (this::x.exchange(7) != 5 || x != 7) return "Int: exchange"
         if (!this::x.compareAndSet(7, 8) || x != 8) return "Int: compareAndSet 1"
@@ -46,14 +46,14 @@ class LongHolder {
     @Volatile var x: Long = 0L
 
     fun test(): String {
-        this::x.store(Long.MAX_VALUE - 1)
+        x = Long.MAX_VALUE - 1
         if (this::x.incrementAndFetch() != Long.MAX_VALUE) return "Long: incrementAndFetch"
         if (this::x.fetchAndAdd(-Long.MAX_VALUE) != Long.MAX_VALUE || x != 0L) return "Long: fetchAndAdd"
         if (!this::x.compareAndSet(0L, 1L shl 40)) return "Long: compareAndSet"
         if (this::x.compareAndExchange(1L shl 40, 3L) != 1L shl 40) return "Long: compareAndExchange"
         this::x += 2L
         this::x -= 1L
-        if (this::x.load() != 4L) return "Long: plusAssign/minusAssign"
+        if (x != 4L) return "Long: plusAssign/minusAssign"
         if (this::x.updateAndFetch { it * 1_000_000_000_000L } != 4_000_000_000_000L) return "Long: updateAndFetch"
         if (this::x.decrementAndFetch() != 3_999_999_999_999L) return "Long: decrementAndFetch"
         return "OK"
@@ -64,12 +64,12 @@ class BooleanHolder {
     @Volatile var x: Boolean = false
 
     fun test(): String {
-        if (this::x.load()) return "Boolean: load"
+        if (x) return "Boolean: initial"
         if (!this::x.compareAndSet(false, true) || !x) return "Boolean: compareAndSet 1"
         if (this::x.compareAndSet(false, true)) return "Boolean: compareAndSet 2"
         if (!this::x.exchange(false) || x) return "Boolean: exchange"
         if (this::x.compareAndExchange(false, true) || !x) return "Boolean: compareAndExchange"
-        this::x.store(false)
+        x = false
         if (x) return "Boolean: store"
         return "OK"
     }
@@ -79,7 +79,7 @@ class StringHolder {
     @Volatile var x: String = "a"
 
     fun test(): String {
-        val a = this::x.load()
+        val a = x
         val b = a + "b"
         if (!this::x.compareAndSet(a, b) || x != "ab") return "String: compareAndSet 1"
         if (this::x.exchange("c") !== b) return "String: exchange"

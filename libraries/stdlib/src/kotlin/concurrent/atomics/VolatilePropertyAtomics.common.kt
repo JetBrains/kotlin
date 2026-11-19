@@ -25,34 +25,6 @@ import kotlin.reflect.KMutableProperty0
 // ---- Int properties, mirroring AtomicInt ----
 
 /**
- * Atomically loads the value of the referenced volatile property.
- *
- * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
- * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
- * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
- *
- * @see kotlin.concurrent.atomics.AtomicInt.load
- */
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.load(): Int
-
-/**
- * Atomically stores the [new value][newValue] into the referenced volatile property.
- *
- * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
- * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
- * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
- *
- * @see kotlin.concurrent.atomics.AtomicInt.store
- */
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.store(newValue: Int): Unit
-
-/**
  * Atomically stores the [new value][newValue] into the referenced volatile property and returns the old value.
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
@@ -297,34 +269,6 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 
 
 // ---- Long properties, mirroring AtomicLong ----
-
-/**
- * Atomically loads the value of the referenced volatile property.
- *
- * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
- * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
- * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
- *
- * @see kotlin.concurrent.atomics.AtomicLong.load
- */
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Long>.load(): Long
-
-/**
- * Atomically stores the [new value][newValue] into the referenced volatile property.
- *
- * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
- * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
- * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
- *
- * @see kotlin.concurrent.atomics.AtomicLong.store
- */
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Long>.store(newValue: Long): Unit
 
 /**
  * Atomically stores the [new value][newValue] into the referenced volatile property and returns the old value.
@@ -573,34 +517,6 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 // ---- Boolean properties, mirroring AtomicBoolean ----
 
 /**
- * Atomically loads the value of the referenced volatile property.
- *
- * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
- * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
- * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
- *
- * @see kotlin.concurrent.atomics.AtomicBoolean.load
- */
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.load(): Boolean
-
-/**
- * Atomically stores the [new value][newValue] into the referenced volatile property.
- *
- * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
- * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
- * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
- *
- * @see kotlin.concurrent.atomics.AtomicBoolean.store
- */
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.store(newValue: Boolean): Unit
-
-/**
  * Atomically stores the [new value][newValue] into the referenced volatile property and returns the old value.
  *
  * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
@@ -650,34 +566,6 @@ public expect inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 
 
 // ---- reference properties, mirroring AtomicReference ----
-
-/**
- * Atomically loads the value of the referenced volatile property.
- *
- * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
- * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
- * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
- *
- * @see kotlin.concurrent.atomics.AtomicReference.load
- */
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public expect inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<T>.load(): T
-
-/**
- * Atomically stores the [new value][newValue] into the referenced volatile property.
- *
- * This function can only be called on a property reference literal (e.g. `this::foo`) of a `var` property
- * whose backing field is annotated with [kotlin.concurrent.Volatile], and is accessible at the call site.
- * Top-level properties and properties of objects are not supported: use the matching `Atomic*` class for them.
- *
- * @see kotlin.concurrent.atomics.AtomicReference.store
- */
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public expect inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<T>.store(newValue: T): Unit
 
 /**
  * Atomically stores the [new value][newValue] into the referenced volatile property and returns the old value.

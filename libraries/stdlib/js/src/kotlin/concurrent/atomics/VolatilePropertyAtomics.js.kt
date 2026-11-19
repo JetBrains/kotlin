@@ -20,20 +20,6 @@ import kotlin.reflect.KMutableProperty0
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi
 @InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.load(): Int {
-    return get()
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.store(newValue: Int): Unit {
-    set(newValue)
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
 public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Int>.exchange(newValue: Int): Int {
     val old = get()
     set(newValue)
@@ -162,20 +148,6 @@ public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 
 
 // ---- Long properties, mirroring AtomicLong ----
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Long>.load(): Long {
-    return get()
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Long>.store(newValue: Long): Unit {
-    set(newValue)
-}
 
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi
@@ -312,20 +284,6 @@ public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi
 @InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.load(): Boolean {
-    return get()
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.store(newValue: Boolean): Unit {
-    set(newValue)
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
 public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<Boolean>.exchange(newValue: Boolean): Boolean {
     val old = get()
     set(newValue)
@@ -352,20 +310,6 @@ public actual inline fun @receiver:AccessibleVolatilePropertyLiteral KMutablePro
 
 
 // ---- reference properties, mirroring AtomicReference ----
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<T>.load(): T {
-    return get()
-}
-
-@SinceKotlin("2.5")
-@ExperimentalAtomicApi
-@InlineOnly
-public actual inline fun <T> @receiver:AccessibleVolatilePropertyLiteral KMutableProperty0<T>.store(newValue: T): Unit {
-    set(newValue)
-}
 
 @SinceKotlin("2.5")
 @ExperimentalAtomicApi

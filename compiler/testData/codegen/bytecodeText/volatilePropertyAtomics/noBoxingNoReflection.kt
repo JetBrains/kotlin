@@ -10,8 +10,6 @@ class A {
     @Volatile var l: Long = 0L
     @Volatile var s: String = ""
 
-    fun load(): Int = this::i.load()
-    fun store() { this::i.store(1) }
     fun cas(): Boolean = this::i.compareAndSet(0, 1)
     fun increment(): Long = this::l.incrementAndFetch()
     fun exchange(): String = this::s.exchange("a")
