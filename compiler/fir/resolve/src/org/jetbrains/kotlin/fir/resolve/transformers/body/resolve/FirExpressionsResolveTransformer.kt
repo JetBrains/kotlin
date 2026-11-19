@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.QualifiedAccessUsage
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
@@ -106,8 +107,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirExpression = whileAnalysing(session, qualifiedAccessExpression) {
         transformQualifiedAccessExpression(
             qualifiedAccessExpression, data,
-            isUsedAsReceiver = false,
-            isUsedAsGetClassReceiver = false,
+            usage = QualifiedAccessUsage.STANDALONE,
             isUsedForContextSensitiveAlternative = false,
         )
     }
@@ -115,8 +115,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
-        isUsedAsReceiver: Boolean,
-        isUsedAsGetClassReceiver: Boolean,
+        usage: QualifiedAccessUsage,
         isUsedForContextSensitiveAlternative: Boolean,
     ): FirExpression {
         if (qualifiedAccessExpression.hasResolvedType && qualifiedAccessExpression.calleeReference !is FirSimpleNamedReference) {
@@ -201,8 +200,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             else -> {
                 val transformedCallee = resolveQualifiedAccessAndSelectCandidate(
                     qualifiedAccessExpression,
-                    isUsedAsReceiver,
-                    isUsedAsGetClassReceiver,
+                    usage,
                     // Set the correct call site. For assignment LHSs, it's the assignment, otherwise it's the qualified access itself.
                     callSite = when (data) {
                         is AssignmentLValue -> data.variableAssignment
@@ -332,8 +330,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             context.withReturnTypeCalculator(AlreadyComputedOrError) {
                 transformQualifiedAccessExpression(
                     simpleNameAlternative, mode,
-                    isUsedAsReceiver = false,
-                    isUsedAsGetClassReceiver = false,
+                    usage = QualifiedAccessUsage.STANDALONE,
                     isUsedForContextSensitiveAlternative = true,
                 )
             }
@@ -508,8 +505,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return when (this) {
             is FirPropertyAccessExpression -> transformQualifiedAccessExpression(
                 this, resolutionMode,
-                isUsedAsReceiver = true,
-                isUsedAsGetClassReceiver,
+                usage = if (isUsedAsGetClassReceiver) QualifiedAccessUsage.GET_CLASS_RECEIVER else QualifiedAccessUsage.RECEIVER,
                 isUsedForContextSensitiveAlternative = false,
             )
             else -> transformSingle(this@FirExpressionsResolveTransformer, resolutionMode)
@@ -531,14 +527,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     protected open fun resolveQualifiedAccessAndSelectCandidate(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
-        isUsedAsReceiver: Boolean,
-        isUsedAsGetClassReceiver: Boolean,
+        usage: QualifiedAccessUsage,
         callSite: FirElement,
         data: ResolutionMode,
     ): FirExpression {
-        return callResolver.resolveVariableAccessAndSelectCandidate(
-            qualifiedAccessExpression, isUsedAsReceiver, isUsedAsGetClassReceiver, callSite, data
-        )
+        return callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression, usage, callSite, data)
     }
 
     fun transformSuperReceiver(

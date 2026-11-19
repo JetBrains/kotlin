@@ -392,8 +392,7 @@ class FirCallResolver(
 
     fun resolveVariableAccessAndSelectCandidate(
         qualifiedAccess: FirQualifiedAccessExpression,
-        isUsedAsReceiver: Boolean,
-        isUsedAsGetClassReceiver: Boolean,
+        usage: QualifiedAccessUsage,
         callSite: FirElement,
         resolutionMode: ResolutionMode,
         /**
@@ -415,7 +414,7 @@ class FirCallResolver(
             collectCandidates(
                 qualifiedAccess,
                 callee.name,
-                isUsedAsGetClassReceiver = isUsedAsGetClassReceiver,
+                isUsedAsGetClassReceiver = usage.isUsedAsGetClassReceiver,
                 callSite = callSite,
                 resolutionMode = resolutionMode,
                 isNestedIntoOuterCallResolution = isNestedIntoOuterCallResolution,
@@ -425,7 +424,7 @@ class FirCallResolver(
         // Even if it's not receiver, it makes sense to continue qualifier if resolution is unsuccessful
         // just to try to resolve to package/class and then report meaningful error at FirStandaloneQualifierChecker
         @OptIn(ApplicabilityDetail::class)
-        if (isUsedAsReceiver || !basicResult.isSuccess) {
+        if (usage.isUsedAsReceiver || !basicResult.isSuccess) {
             val explicitReceiver = qualifiedAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier
             val diagnosticFromTypeArguments = if (explicitReceiver != null && explicitReceiver.typeArguments.isNotEmpty()) {
                 ConeTypeArgumentsForOuterClass(explicitReceiver.source!!)
@@ -461,9 +460,9 @@ class FirCallResolver(
             //     A.B // should be resolved to A.B
             // }
             @OptIn(ApplicabilityDetail::class)
-            if (!result.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirClassLikeSymbol })) {
+            if (!result.isSuccess || (usage.isUsedAsReceiver && result.candidates.all { it.symbol is FirClassLikeSymbol })) {
                 components.resolveRootPartOfQualifier(
-                    callee, qualifiedAccess, nonFatalDiagnosticFromExpression, isUsedAsReceiver
+                    callee, qualifiedAccess, nonFatalDiagnosticFromExpression, usage.isUsedAsReceiver
                 )
                     ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !result.isSuccess }
                     ?.let { return it.qualifier }

@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.symbol
-import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
-import org.jetbrains.kotlin.fir.resolve.calls.ConeSimpleNameForContextSensitiveResolution
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.calls.UnsuccessfulContextSensitiveResolutionArgument
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
@@ -183,7 +180,7 @@ fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
 
         val newExpression = callResolver.resolveVariableAccessAndSelectCandidate(
             newAccess,
-            isUsedAsReceiver = false, isUsedAsGetClassReceiver = false,
+            usage = QualifiedAccessUsage.STANDALONE,
             callSite = newAccess,
             ResolutionMode.ContextIndependent,
             isNestedIntoOuterCallResolution = true,
