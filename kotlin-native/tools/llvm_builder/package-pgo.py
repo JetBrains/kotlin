@@ -3,6 +3,7 @@
 # Use of this source code is governed by the Apache 2.0 license.
 
 import argparse
+import ctypes
 import json
 import os
 import platform
@@ -93,7 +94,29 @@ def build_parser():
 
 
 def run(command, cwd=None, env=None):
+    print("Running:", command, flush=True)
     subprocess.run(command, cwd=cwd, env={**os.environ, **(env or {})}, check=True)
+
+
+def seed_gradle_home(source, destination):
+    """Clone downloaded dependencies and Gradle distributions without sharing writes."""
+    destination.mkdir()
+    clonefile = ctypes.CDLL(None, use_errno=True).clonefile
+    clonefile.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int]
+    clonefile.restype = ctypes.c_int
+    for relative in ("caches/modules-2", "wrapper/dists"):
+        src, dst = source / relative, destination / relative
+        if not src.is_dir():
+            continue
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        print(f"Seed Gradle cache with copy-on-write: {src} -> {dst}", flush=True)
+        if clonefile(os.fsencode(src), os.fsencode(dst), 0) != 0:
+            error = ctypes.get_errno()
+            raise OSError(error, f"Cannot clone {src} to {dst}: {os.strerror(error)}")
+    # Gradle dependency-cache lock state and GC bookkeeping are not portable.
+    modules = destination / "caches/modules-2"
+    for name in ("modules-2.lock", "gc.properties"):
+        (modules / name).unlink(missing_ok=True)
 
 
 def find_xcode(version=None, build=None):
@@ -129,7 +152,7 @@ def prepare_local_plugins(kotlin_repo, gradle_home):
         if len(matches) != 1:
             raise RuntimeError(f"Expected one {name} JAR, got {matches}")
         jars[name] = str(matches[0].resolve())
-    init_dir = gradle_home.parent / "gradle-training" / "init.d"
+    init_dir = gradle_home / "init.d"
     init_dir.mkdir(parents=True, exist_ok=True)
     replacements = "[\n" + ",\n".join(
         f"    {json.dumps(name)}: {json.dumps(jar)}" for name, jar in jars.items()
@@ -176,8 +199,15 @@ def main():
     training_compiler = work_dir / "kn-instrumented"
     training_project = work_dir / "training-project"
     profile = output / "common.profdata"
+    gradle_home = work_dir / "gradle-home"
+    gradle_seed = Path(os.environ.get("GRADLE_USER_HOME", Path.home() / ".gradle")).expanduser().resolve()
+    # Each stage must exit its JVM and flush its profiles before the next stage.
+    gradle_opts = os.environ.get("GRADLE_OPTS", "").strip()
+    gradle_opts = f"{gradle_opts} -Dorg.gradle.daemon=false -Dorg.gradle.configuration-cache=false".strip()
+    gradle_env = {"GRADLE_USER_HOME": str(gradle_home), "GRADLE_OPTS": gradle_opts}
 
     try:
+        seed_gradle_home(gradle_seed, gradle_home)
         for name in ["instrumented", "optimized", "build-raw", "training-raw"]:
             (work_dir / name).mkdir(exist_ok=True)
 
@@ -217,26 +247,21 @@ def main():
             *[task for task, _ in LOCAL_PLUGINS.values()], # package compiler plugins
         ], cwd=kotlin_repo, env={
             **kotlin_xcode_env,
-            "GRADLE_USER_HOME": str(work_dir / "gradle-kotlin"),
+            **gradle_env,
             "LLVM_PROFILE_FILE": str(work_dir / "build-raw/%m-%p.profraw"),
         })
         shutil.copytree(kotlin_repo / "kotlin-native/dist", training_compiler, symlinks=True)
 
-        prepare_local_plugins(kotlin_repo, work_dir / "gradle-kotlin")
+        prepare_local_plugins(kotlin_repo, gradle_home)
 
         print("3/5: Compile training project", flush=True)
         run([
             "git", "clone", "--depth", "1", "--branch", args.training_branch,
             args.training_repo, training_project,
         ])
-        # TODO: verify the clean-host repository/proxy setup before making any
-        # Gradle network workaround part of this workflow.
-        gradle_opts = os.environ.get("GRADLE_OPTS", "").strip()
-        gradle_opts = f"{gradle_opts} -Dorg.gradle.configuration-cache=false".strip()
         run(["bash", "-euo", "pipefail", "-c", args.training_command], cwd=training_project, env={
             **kotlin_xcode_env,
-            "GRADLE_USER_HOME": str(work_dir / "gradle-training"),
-            "GRADLE_OPTS": gradle_opts,
+            **gradle_env,
             "LLVM_PROFILE_FILE": str(work_dir / "training-raw/%m-%p.profraw"),
             "ORG_GRADLE_PROJECT_kotlin.native.home": str(training_compiler),
         })
@@ -249,7 +274,7 @@ def main():
         if not args.save_temporary_files:
             for name in [
                 "llvm-instrumented", "kn-instrumented", "training-project",
-                "build-raw", "training-raw", "gradle-training",
+                "build-raw", "training-raw", "gradle-home",
             ]:
                 path = work_dir / name
                 if path.exists():

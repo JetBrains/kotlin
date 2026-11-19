@@ -112,7 +112,9 @@ located in `/Applications` by `Contents/version.plist`, and the script
 fails before creating the output directory if either is missing. If Kotlin's Xcode is 
 configured to be auto provisioned, e.g. via `KONAN_USE_INTERNAL_SERVER`, the latter check 
 would be skipped. If the training build project requires yet another Xcode version, set
-that via DEVELOPER_DIR env var in `--training-command`.
+that via DEVELOPER_DIR env var in `--training-command`. Kotlin and the training project
+share one isolated Gradle user home. Before building, the script seeds `caches/modules-2`
+and `wrapper/dists` from `GRADLE_USER_HOME` (or `~/.gradle`).
 
 `--target` restricts the build to a single Kotlin/Native target's platform libraries; 
 by default platform libraries for all targets are built. `--save-temporary-files` keeps 
