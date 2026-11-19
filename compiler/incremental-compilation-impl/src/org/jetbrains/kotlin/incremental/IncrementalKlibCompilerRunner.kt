@@ -242,7 +242,7 @@ abstract class IncrementalKlibCompilerRunner<Args : CommonKlibBasedCompilerArgum
         jsCache.clearCacheForRemovedClasses(changesCollector)
     }
 
-    abstract fun getCompiler(args: Args): CLICompiler<Args>
+    protected abstract fun getCompiler(args: Args): CLICompiler<Args>
 
     override fun runCompiler(
         sourcesToCompile: List<File>,
