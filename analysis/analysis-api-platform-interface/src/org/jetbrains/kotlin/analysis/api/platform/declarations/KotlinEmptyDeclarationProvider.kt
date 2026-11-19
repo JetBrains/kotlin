@@ -22,10 +22,12 @@ public object KotlinEmptyDeclarationProvider : KotlinDeclarationProvider {
     @KaExperimentalApi
     override val mayHaveTopLevelKotlinClassLikeDeclaration: (classId: ClassId) -> Boolean = { false }
     override fun getTopLevelProperties(callableId: CallableId): List<KtProperty> = emptyList()
+    override fun getTopLevelDestructuringDeclarationEntries(callableId: CallableId): List<KtDestructuringDeclarationEntry> = emptyList()
     override fun getTopLevelFunctions(callableId: CallableId): List<KtNamedFunction> = emptyList()
     override fun getTopLevelCallableFiles(callableId: CallableId): List<KtFile> = emptyList()
     override fun getTopLevelFunctionFiles(callableId: CallableId): List<KtFile> = emptyList()
     override fun getTopLevelPropertyFiles(callableId: CallableId): List<KtFile> = emptyList()
+    override fun getTopLevelDestructuringDeclarationEntryFiles(callableId: CallableId): List<KtFile> = emptyList()
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
     @KaExperimentalApi
     override val mayHaveTopLevelCallable: (packageFqName: FqName, name: Name) -> Boolean = { _, _ -> false }

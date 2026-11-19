@@ -337,9 +337,10 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
     override fun getTopLevelPropertySymbolsTo(
         destination: MutableList<FirPropertySymbol>,
         callableId: CallableId,
-        properties: Collection<KtProperty>,
+        variables: Collection<KtVariableDeclaration>,
     ) {
-        destination += propertyCache.getValue(callableId, properties)
+        // Compiled code has no destructuring declarations, so all the variables are properties
+        destination += propertyCache.getValue(callableId, variables.filterIsInstance<KtProperty>())
     }
 
     override fun hasPackage(fqName: FqName): Boolean =

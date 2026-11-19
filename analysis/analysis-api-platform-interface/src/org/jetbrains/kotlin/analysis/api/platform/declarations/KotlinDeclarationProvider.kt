@@ -66,11 +66,24 @@ public interface KotlinDeclarationProvider : KotlinComposableProvider {
     public val mayHaveTopLevelKotlinClassLikeDeclaration: ((classId: ClassId) -> Boolean)?
         get() = null
 
+    /**
+     * Returns the top-level properties with the given [callableId].
+     */
     public fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty>
+
+    /**
+     * Returns the entries with the given [callableId] of top-level destructuring declarations.
+     */
+    public fun getTopLevelDestructuringDeclarationEntries(callableId: CallableId): Collection<KtDestructuringDeclarationEntry>
+
+    /**
+     * Returns the top-level functions with the given [callableId].
+     */
     public fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction>
 
     /**
-     * Returns the files which may contain top-level functions or properties with the given [callableId].
+     * Returns the files which may contain top-level functions, properties or entries of top-level destructuring declarations with the given
+     * [callableId].
      */
     public fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile>
 
@@ -89,6 +102,15 @@ public interface KotlinDeclarationProvider : KotlinComposableProvider {
      * [getTopLevelCallableFiles], which also includes the files with top-level functions.
      */
     public fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> = getTopLevelCallableFiles(callableId)
+
+    /**
+     * Returns the files which may contain entries with the given [callableId] of top-level destructuring declarations.
+     *
+     * The result may be a superset of the files which contain such entries. The default implementation returns
+     * [getTopLevelCallableFiles], which also includes the files with top-level functions and properties.
+     */
+    public fun getTopLevelDestructuringDeclarationEntryFiles(callableId: CallableId): Collection<KtFile> =
+        getTopLevelCallableFiles(callableId)
 
     public fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>
 

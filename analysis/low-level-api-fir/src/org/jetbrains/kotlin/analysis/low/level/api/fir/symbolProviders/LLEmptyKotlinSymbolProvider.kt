@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
 
 internal class LLEmptyKotlinSymbolProvider(session: FirSession) : LLKotlinSymbolProvider(session) {
     override val symbolNamesProvider: FirSymbolNamesProvider
@@ -80,7 +80,7 @@ internal class LLEmptyKotlinSymbolProvider(session: FirSession) : LLKotlinSymbol
     override fun getTopLevelPropertySymbolsTo(
         destination: MutableList<FirPropertySymbol>,
         callableId: CallableId,
-        properties: Collection<KtProperty>,
+        variables: Collection<KtVariableDeclaration>,
     ) {
     }
 

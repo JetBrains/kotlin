@@ -83,6 +83,21 @@ internal fun KaFirSymbol<*>.findPsi(): PsiElement? {
     return firSymbol.findPsi(analysisSession.analysisScope)
 }
 
+/**
+ * Whether the entries of this destructuring declaration are properties rather than local variables:
+ * top-level and member declarations (not allowed, but desugared like script ones) and script top-level declarations.
+ *
+ * Keep in sync with `KtDestructuringDeclarationStubSerializingElementFactory.shouldCreateStub`.
+ */
+@KaImplementationDetail
+val KtDestructuringDeclaration.hasNonLocalEntries: Boolean
+    get() = when (val container = parent) {
+        // The content of an expression code fragment is local, though it is a direct child of the fragment file
+        is KtCodeFragment -> false
+        is KtFile, is KtClassBody -> true
+        else -> container?.parent is KtScript
+    }
+
 @KaImplementationDetail
 fun FirBasedSymbol<*>.findPsi(scope: GlobalSearchScope): PsiElement? {
     return if (
@@ -97,20 +112,6 @@ fun FirBasedSymbol<*>.findPsi(scope: GlobalSearchScope): PsiElement? {
 
 internal val KtDestructuringDeclarationEntry.entryName: Name
     get() = if (isSingleUnderscore) SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else nameAsSafeName
-
-/**
- * Whether the entries of this destructuring declaration are properties rather than local variables:
- * top-level and member declarations (not allowed, but desugared like script ones) and script top-level declarations.
- *
- * Keep in sync with `KtDestructuringDeclarationStubSerializingElementFactory.shouldCreateStub`.
- */
-internal val KtDestructuringDeclaration.hasNonLocalEntries: Boolean
-    get() = when (val container = parent) {
-        // The content of an expression code fragment is local, though it is a direct child of the fragment file
-        is KtCodeFragment -> false
-        is KtFile, is KtClassBody -> true
-        else -> container?.parent is KtScript
-    }
 
 internal val KtParameter.parameterName: Name
     get() = when {

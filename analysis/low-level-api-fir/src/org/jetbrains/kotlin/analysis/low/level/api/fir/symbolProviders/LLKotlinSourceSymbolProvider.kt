@@ -315,15 +315,24 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     override fun getTopLevelPropertySymbolsTo(
         destination: MutableList<FirPropertySymbol>,
         callableId: CallableId,
-        properties: Collection<KtProperty>,
+        variables: Collection<KtVariableDeclaration>,
     ) {
-        destination += getTopLevelPropertySymbols(callableId, properties.mapTo(mutableSetOf()) { it.containingKtFile })
+        destination += getTopLevelPropertySymbols(callableId, variables.mapTo(mutableSetOf()) { it.containingKtFile })
     }
 
     private val propertyCache: FirCache<CallableId, List<FirPropertySymbol>, Collection<KtFile>?> =
         session.firCachesFactory.createCache { callableId, context ->
-            computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context, declarationProvider::getTopLevelPropertyFiles)
+            computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context, ::getTopLevelVariableFiles)
         }
+
+    /**
+     * The files of top-level properties and of entries of top-level destructuring declarations, as raw FIR builds a property for each
+     * such entry.
+     */
+    private fun getTopLevelVariableFiles(callableId: CallableId): Collection<KtFile> = buildSet {
+        addAll(declarationProvider.getTopLevelPropertyFiles(callableId))
+        addAll(declarationProvider.getTopLevelDestructuringDeclarationEntryFiles(callableId))
+    }
 
     private fun getTopLevelPropertySymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirPropertySymbol> {
         return propertyCache.getValue(callableId, callableFiles)

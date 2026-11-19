@@ -15,18 +15,31 @@ import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 @KaPlatformInterface
 public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) : KotlinDeclarationProvider {
+    /**
+     * The declarations of the file and of its script, along with the entries of their destructuring declarations, which are top-level
+     * callables like properties.
+     */
     private val topLevelDeclarations: Sequence<KtDeclaration>
         get() {
             return sequence {
                 for (child in kotlinFile.declarations) {
                     if (child is KtScript) {
-                        yieldAll(child.declarations)
+                        for (scriptDeclaration in child.declarations) {
+                            yieldWithDestructuringDeclarationEntries(scriptDeclaration)
+                        }
                     } else {
-                        yield(child)
+                        yieldWithDestructuringDeclarationEntries(child)
                     }
                 }
             }
         }
+
+    private suspend fun SequenceScope<KtDeclaration>.yieldWithDestructuringDeclarationEntries(declaration: KtDeclaration) {
+        yield(declaration)
+        if (declaration is KtDestructuringDeclaration) {
+            yieldAll(declaration.entries)
+        }
+    }
 
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
         return getDeclarationsByClassId(classId).filterIsInstance<KtClassLikeDeclaration>().firstOrNull()
@@ -105,6 +118,10 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
         return getTopLevelCallables(callableId)
     }
 
+    override fun getTopLevelDestructuringDeclarationEntries(callableId: CallableId): Collection<KtDestructuringDeclarationEntry> {
+        return getTopLevelCallables(callableId)
+    }
+
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> {
         return getTopLevelCallables(callableId)
     }
@@ -119,6 +136,10 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
 
     override fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> {
         return getTopLevelProperties(callableId).ifNotEmpty { listOf(kotlinFile) }.orEmpty()
+    }
+
+    override fun getTopLevelDestructuringDeclarationEntryFiles(callableId: CallableId): Collection<KtFile> {
+        return getTopLevelDestructuringDeclarationEntries(callableId).ifNotEmpty { listOf(kotlinFile) }.orEmpty()
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {

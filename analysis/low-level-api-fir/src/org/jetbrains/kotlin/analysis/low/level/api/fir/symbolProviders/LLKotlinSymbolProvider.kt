@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
 
 /**
  * A [FirSymbolProvider] which provides symbols from Kotlin sources via [KotlinDeclarationProvider].
@@ -69,18 +69,21 @@ internal abstract class LLKotlinSymbolProvider(session: FirSession) :
     )
 
     /**
-     * Maps the [FirPropertySymbol]s with the given [callableId] for known [properties] to [destination].
+     * Maps the [FirPropertySymbol]s with the given [callableId] for known [variables] to [destination].
      *
-     * As the [properties] are already known, this function is optimized to avoid declaration provider accesses. However, the given property
-     * declarations have to be coherent with [KotlinDeclarationProvider.getTopLevelProperties]. In other words, the properties must be
-     * chosen such that the resulting [FirPropertySymbol]s are the same as the result of [getTopLevelPropertySymbolsTo] without known
-     * declarations.
+     * The [variables] are top-level properties and entries of top-level destructuring declarations, as raw FIR builds a property for each
+     * such entry.
+     *
+     * As the [variables] are already known, this function is optimized to avoid declaration provider accesses. However, the given
+     * declarations have to be coherent with [KotlinDeclarationProvider.getTopLevelProperties] and
+     * [KotlinDeclarationProvider.getTopLevelDestructuringDeclarationEntries]. In other words, the variables must be chosen such that the
+     * resulting [FirPropertySymbol]s are the same as the result of [getTopLevelPropertySymbolsTo] without known declarations.
      */
     @FirSymbolProviderInternals
     abstract fun getTopLevelPropertySymbolsTo(
         destination: MutableList<FirPropertySymbol>,
         callableId: CallableId,
-        properties: Collection<KtProperty>,
+        variables: Collection<KtVariableDeclaration>,
     )
 
     override fun toString(): String {

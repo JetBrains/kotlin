@@ -168,12 +168,16 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
         index.topLevelPropertiesByCallableId[callableId].elementsInScope()
 
+    override fun getTopLevelDestructuringDeclarationEntries(callableId: CallableId): Collection<KtDestructuringDeclarationEntry> =
+        index.topLevelDestructuringDeclarationEntriesByCallableId[callableId].elementsInScope()
+
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
         index.topLevelFunctionsByCallableId[callableId].elementsInScope()
 
     override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> = buildSet {
         getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
         getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
+        getTopLevelDestructuringDeclarationEntries(callableId).mapTo(this) { it.containingKtFile }
     }
 
     override fun getTopLevelFunctionFiles(callableId: CallableId): Collection<KtFile> =
@@ -181,6 +185,9 @@ class KotlinStandaloneDeclarationProvider internal constructor(
 
     override fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> =
         getTopLevelProperties(callableId).mapTo(mutableSetOf()) { it.containingKtFile }
+
+    override fun getTopLevelDestructuringDeclarationEntryFiles(callableId: CallableId): Collection<KtFile> =
+        getTopLevelDestructuringDeclarationEntries(callableId).mapTo(mutableSetOf()) { it.containingKtFile }
 }
 
 /**

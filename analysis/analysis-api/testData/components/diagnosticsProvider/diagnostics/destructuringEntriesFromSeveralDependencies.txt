@@ -10,15 +10,4 @@ Diagnostics from other.kt:
   <NO DIAGNOSTICS>
 
 Diagnostics from main.kt:
-  for PSI element of type KtNameReferenceExpression at (32,5-6)
-    UNRESOLVED_REFERENCE      text ranges: [(109,110)]
-      PSI: KtNameReferenceExpression at (32,5-6)
-  for PSI element of type KtNameReferenceExpression at (33,5-6)
-    UNRESOLVED_REFERENCE      text ranges: [(115,116)]
-      PSI: KtNameReferenceExpression at (33,5-6)
-  for PSI element of type KtNameReferenceExpression at (35,5-6)
-    UNRESOLVED_REFERENCE      text ranges: [(127,128)]
-      PSI: KtNameReferenceExpression at (35,5-6)
-  for PSI element of type KtNameReferenceExpression at (36,5-6)
-    UNRESOLVED_REFERENCE      text ranges: [(133,134)]
-      PSI: KtNameReferenceExpression at (36,5-6)
+  <NO DIAGNOSTICS>

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import java.time.Duration
 
 /**
@@ -138,15 +139,21 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
             getTopLevelFunctionSymbolsTo(destination, callableId, functions)
         }
 
+    /**
+     * The entries of top-level destructuring declarations are properties in FIR, so they are looked up along with the properties.
+     */
     @OptIn(FirSymbolProviderInternals::class)
     private fun getTopLevelPropertySymbolsFromCache(callableId: CallableId): List<FirPropertySymbol> =
         getCallablesFromCache(
             callableId,
             propertyCache,
-            declarationProvider::getTopLevelProperties,
-        ) { destination, callableId, properties ->
-            getTopLevelPropertySymbolsTo(destination, callableId, properties)
+            ::getTopLevelVariables,
+        ) { destination, callableId, variables ->
+            getTopLevelPropertySymbolsTo(destination, callableId, variables)
         }
+
+    private fun getTopLevelVariables(callableId: CallableId): List<KtVariableDeclaration> =
+        declarationProvider.getTopLevelProperties(callableId) + declarationProvider.getTopLevelDestructuringDeclarationEntries(callableId)
 
     /**
      * Retrieves all callables of type [S] from the given [cache] or loads them with [getCallables] and [provide].
