@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.analysis.test.data.manager
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.handleMissingFile
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.isGoldenTest
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.normalizeContent
-import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.updatedTestDataPaths
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.io.path.*
 
 /**
@@ -27,23 +26,24 @@ import kotlin.io.path.*
 object ManagedTestAssertions {
 
     /**
-     * Thread-safe set of test data paths (absolute path strings) that were updated during the current run.
-     * Used by incremental mode to determine which variant tests to run.
+     * The file modifications made while [recordFileActions] is on, in order, before [drainFileActions] collapses them.
      */
-    private val updatedTestDataPaths: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    private val recordedFileActions = ConcurrentLinkedQueue<RecordedFileAction>()
+
+    private class RecordedFileAction(val testDataPath: Path, val file: Path, val existedBefore: Boolean, val existsAfter: Boolean)
 
     /**
-     * Auto-updates the [updatedTestDataPaths] set if [trackUpdatedPaths] is true.
+     * Runs the modification of [file] in [block], recording it if [recordFileActions] is on.
      *
      * This function must wrap all modification actions
      */
     context(context: TestDataContext)
-    private inline fun update(block: () -> Unit) {
-        if (trackUpdatedPaths) {
-            updatedTestDataPaths.add(context.testDataPath.toString())
-        }
-
+    private inline fun modify(file: Path, block: () -> Unit) {
+        val existedBefore = file.exists()
         block()
+        if (recordFileActions) {
+            recordedFileActions.add(RecordedFileAction(context.testDataPath, file, existedBefore, file.exists()))
+        }
     }
 
     /**
@@ -67,18 +67,22 @@ object ManagedTestAssertions {
         get() = context.variantChain.isEmpty()
 
     /**
-     * When true, file writes in UPDATE mode will record the test data path in [updatedTestDataPaths].
+     * When true, every file creation, update and deletion is recorded for [drainFileActions].
+     * Set by the test data manager runner: plain test runs don't collect them.
      */
     @Volatile
-    internal var trackUpdatedPaths: Boolean = false
+    internal var recordFileActions: Boolean = false
 
     /**
-     * Returns the set of updated test data paths collected so far and clears the internal set.
+     * Returns the files changed since the previous call, one [FileAction] per file with its net effect:
+     * an update followed by a deletion is a deletion, a creation followed by a deletion is nothing.
      */
-    internal fun drainUpdatedTestDataPaths(): Set<String> {
-        val snapshot = updatedTestDataPaths.toSet()
-        updatedTestDataPaths.clear()
-        return snapshot
+    internal fun drainFileActions(): List<FileAction> {
+        val recorded = generateSequence { recordedFileActions.poll() }.toList()
+        return recorded.groupBy { it.file }.mapNotNull { [file, actions] ->
+            val kind = FileAction.Kind.of(actions.first().existedBefore, actions.last().existsAfter) ?: return@mapNotNull null
+            FileAction(actions.first().testDataPath, file, kind)
+        }
     }
 
     /**
@@ -175,7 +179,7 @@ object ManagedTestAssertions {
         val nextContent = normalizeContent(nextExistingFile.readText())
 
         if (writeTargetContent == nextContent) {
-            if (isModificationAllowed) update {
+            if (isModificationAllowed) modify(writeTargetFile) {
                 writeTargetFile.deleteIfExists()
             }
 
@@ -207,7 +211,7 @@ object ManagedTestAssertions {
         val writeTargetFile = context.writeTargetFile
         if (!writeTargetFile.exists()) return
 
-        if (isModificationAllowed) update {
+        if (isModificationAllowed) modify(writeTargetFile) {
             writeTargetFile.deleteIfExists()
         }
 
@@ -231,10 +235,12 @@ object ManagedTestAssertions {
     }
 
     context(context: TestDataContext)
-    private fun writeFile(content: String): Unit = update {
+    private fun writeFile(content: String) {
         val path = context.writeTargetFile
-        path.createParentDirectories()
-        path.writeText(content)
+        modify(path) {
+            path.createParentDirectories()
+            path.writeText(content)
+        }
     }
 
     context(context: TestDataContext)
