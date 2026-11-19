@@ -14,6 +14,8 @@ val testFixturesModules = listOf(
     ":generators:test-generator",
     ":kotlin-build-common",
     ":js:js.tests",
+    ":wasm:wasm.tests",
+    ":native:native.tests",
 )
 
 val mainModules = listOf(
