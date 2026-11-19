@@ -1,0 +1,17 @@
+final class Module_main_funInterfaceFromAnotherModuleKt$renderer$1 {
+    // source: 'module_main_funInterfaceFromAnotherModule.kt'
+    enclosing method Module_main_funInterfaceFromAnotherModuleKt.renderer(Ljava/lang/String;)LRenderer;
+    synthetic final field $prefix: java.lang.String
+    inner (anonymous) class Module_main_funInterfaceFromAnotherModuleKt$renderer$1
+    method <init>(p0: java.lang.String): void
+    private final static method render$lambda$0(p0: Module_main_funInterfaceFromAnotherModuleKt$renderer$1, p1: java.lang.String, p2: int, p3: androidx.compose.runtime.Composer, p4: int): kotlin.Unit
+    public final method render(p0: java.lang.String, p1: androidx.compose.runtime.Composer, p2: int): void
+}
+
+public final class Module_main_funInterfaceFromAnotherModuleKt {
+    // source: 'module_main_funInterfaceFromAnotherModule.kt'
+    inner (anonymous) class Module_main_funInterfaceFromAnotherModuleKt$renderer$1
+    private final static method Text$lambda$0(p0: java.lang.String, p1: int, p2: androidx.compose.runtime.Composer, p3: int): kotlin.Unit
+    public final static method Text(p0: java.lang.String, p1: androidx.compose.runtime.Composer, p2: int): void
+    public final static method renderer(p0: java.lang.String): Renderer
+}
