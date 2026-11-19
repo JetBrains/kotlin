@@ -82,6 +82,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("funInterfaceFromAnotherModule.kt")
+  public void testFunInterfaceFromAnotherModule() {
+    run("funInterfaceFromAnotherModule.kt");
+  }
+
+  @Test
   @TestMetadata("functionReference.kt")
   public void testFunctionReference() {
     run("functionReference.kt");
