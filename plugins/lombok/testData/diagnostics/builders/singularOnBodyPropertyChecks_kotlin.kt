@@ -19,11 +19,11 @@ class SingularChecksOnParameters(
 @Builder
 class SingularChecksOnProperties {
     // Should be UNSUPPORTED_SINGULAR_TYPE, as for a parameter
-    @Singular("number") var numbers: IntArray = IntArray(0)
+    <!UNSUPPORTED_SINGULAR_TYPE!>@Singular("number")<!> var numbers: IntArray = IntArray(0)
     // Should be CANNOT_SINGULARIZE_NAME, as for a parameter
-    @Singular var stuff: List<String> = emptyList()
+    <!CANNOT_SINGULARIZE_NAME!>@Singular<!> var stuff: List<String> = emptyList()
     // Should be BUILDER_DEFAULT_AND_SINGULAR_MIXED, as for a parameter
-    @Singular("item") @Builder.Default var items: List<String> = emptyList()
+    @Singular("item") <!BUILDER_DEFAULT_AND_SINGULAR_MIXED!>@Builder.Default<!> var items: List<String> = emptyList()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration, stringLiteral */

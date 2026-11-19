@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: CODEGEN
-// Should be FRONTEND (SINGULAR_REQUIRES_GUAVA) once body properties are checked like parameters
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FULL_JDK
 // ISSUE: KT-90709
@@ -14,14 +13,10 @@ import lombok.Singular
 // so the same error is expected for it.
 @Builder
 class UseGuavaWithoutGuavaProperties {
-    // Should be SINGULAR_REQUIRES_GUAVA, as for a parameter
-    @Singular("word") var words: List<String> = emptyList()
-    // Should be SINGULAR_REQUIRES_GUAVA, as for a parameter
-    @Singular("tag") var tags: Set<String> = emptySet()
-    // Should be SINGULAR_REQUIRES_GUAVA, as for a parameter
-    @Singular("sortedItem") var sorted: java.util.SortedSet<String> = java.util.TreeSet()
-    // Should be SINGULAR_REQUIRES_GUAVA, as for a parameter
-    @Singular("mapping") var mappings: Map<String, Int> = emptyMap()
+    <!SINGULAR_REQUIRES_GUAVA!>@Singular("word")<!> var words: List<String> = emptyList()
+    <!SINGULAR_REQUIRES_GUAVA!>@Singular("tag")<!> var tags: Set<String> = emptySet()
+    <!SINGULAR_REQUIRES_GUAVA!>@Singular("sortedItem")<!> var sorted: java.util.SortedSet<String> = java.util.TreeSet()
+    <!SINGULAR_REQUIRES_GUAVA!>@Singular("mapping")<!> var mappings: Map<String, Int> = emptyMap()
     var plain: List<String> = emptyList()
 }
 
