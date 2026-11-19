@@ -47,6 +47,7 @@ class FirDataFrameExtensionRegistrar(
         if (contextReader != null) {
             +::ImportedSchemasGenerator.bind(predicate)
             +::ImportedSchemasCompanionGenerator.bind(predicate)
+            +::ImportedSchemasCompanionSupertype.bind(predicate)
             +::ImportedSchemasCheckers
             +ImportedSchemasService.getFactory(contextReader)
         }
