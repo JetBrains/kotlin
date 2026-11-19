@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.PLATFORM_DE
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.frontend.fir.DeprecatedTestFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -199,6 +200,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
             testServices.compilerConfigurationProvider.getPackagePartProviderFactory(emptyModule)
         )
         val moduleName = Name.identifier(emptyModule.name)
+        @OptIn(DeprecatedTestFacade::class)
         val libraryList = FirFrontendFacade.initializeLibraryList(
             emptyModule, moduleName, targetPlatform, configuration, testServices
         )

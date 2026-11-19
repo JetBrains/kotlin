@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.DeprecatedTestFacade
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJvmResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.services.PlatformModuleProvider
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.test.services.fir.OnlyTestsWithTypeAliasesMetaConfig
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        @OptIn(DeprecatedTestFacade::class)
         jvmTestConfigurationWithSingleFrontendFacade(frontendFacade = ::FirFrontendFacade)
         enableLazyResolvePhaseChecking()
         configureFirParser(parser)
@@ -66,6 +68,7 @@ open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersio
         }
 
         configureFirParser(FirParser.LightTree)
+        @OptIn(DeprecatedTestFacade::class)
         jvmTestConfigurationWithSingleFrontendFacade(frontendFacade = ::FirFrontendFacade)
 
         firHandlersStep {

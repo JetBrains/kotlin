@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_THIRD_PARTY_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.DeprecatedTestFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
@@ -87,6 +88,7 @@ abstract class AbstractForeignAnnotationsTestBase(
             ::CoroutineHelpersSourceFilesProvider,
         )
 
+        @OptIn(DeprecatedTestFacade::class)
         facadeStep(::FirFrontendFacade)
         firHandlersStep {
             useHandlers(

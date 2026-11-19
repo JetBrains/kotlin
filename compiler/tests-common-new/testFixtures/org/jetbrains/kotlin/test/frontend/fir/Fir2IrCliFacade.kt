@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade.Companion.shouldRunFirFrontendFacade
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade.Companion.shouldRunFirFrontendFacade
 
 abstract class Fir2IrCliFacade<Phase, InputPipelineArtifact, OutputPipelineArtifact>(
     testServices: TestServices,

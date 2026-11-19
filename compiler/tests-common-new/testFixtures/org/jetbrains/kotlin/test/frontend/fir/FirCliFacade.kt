@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade.Companion.shouldRunFirFrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
@@ -64,6 +63,25 @@ abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
         return firOutputs.map {
             val correspondingModule = modulesFromTheSameStructure.getValue(it.session.moduleData.name.asString())
             it.toTestOutputPart(correspondingModule, testServices)
+        }
+    }
+
+    companion object {
+        fun shouldRunFirFrontendFacade(
+            module: TestModule,
+            testServices: TestServices,
+        ): Boolean {
+            val shouldRunAnalysis = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
+
+            if (!shouldRunAnalysis) {
+                return false
+            }
+
+            return if (module.languageVersionSettings.supportsFeature(MultiPlatformProjects)) {
+                module.isLeafModuleInMppGraph(testServices)
+            } else {
+                true
+            }
         }
     }
 }

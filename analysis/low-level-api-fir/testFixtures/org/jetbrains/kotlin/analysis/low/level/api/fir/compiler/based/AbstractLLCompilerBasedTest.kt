@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.EXPLICITLY_GENERATE_PLUGIN_FILES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.frontend.fir.DeprecatedTestFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifactImpl
@@ -125,6 +126,7 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
         useFailureSuppressors(::LLFirTestSuppressor)
     }
 
+    @OptIn(DeprecatedTestFacade::class)
     inner class LowLevelFirFrontendFacade(
         testServices: TestServices,
         private val facadeFactory: LLFirAnalyzerFacadeFactory,

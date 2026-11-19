@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.configuration.commonBackendHandlersForCodegenTe
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.DeprecatedTestFacade
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJvmResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -43,6 +44,7 @@ import java.net.URLClassLoader
 
 open class AbstractFirScriptAndReplCodegenTest(
     val parser: FirParser,
+    @OptIn(DeprecatedTestFacade::class)
     val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade
 ) : AbstractKotlinCompilerJvmTest() {
 
