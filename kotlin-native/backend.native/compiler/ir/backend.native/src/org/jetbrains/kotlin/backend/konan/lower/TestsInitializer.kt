@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
+import org.jetbrains.kotlin.backend.konan.sourcesModules
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.SetDeclarationsParentVisitor
@@ -22,10 +24,24 @@ import kotlin.collections.plus
 internal class TestsInitializer(private val context: NativeLoweringContext) : FileLoweringPass {
     private val symbols = context.symbols
 
+    private val sourcesModules = context.configuration.sourcesModules
+            ?: error("sourcesModules must have been set in the configuration by the frontend phase")
+
+    /**
+     * Only the tests of the modules compiled from sources (including the `-Xinclude`d libraries) are to be registered.
+     * Usually, the test initializers of the other libraries don't even get here: being private and unreferenced they aren't
+     * deserialized. But when building with caches a library is deserialized in full, so its test initializers
+     * must be skipped explicitly, otherwise its tests would leak to the test binaries depending on that library.
+     * Note: the same skip is done for [TestsDumper][org.jetbrains.kotlin.backend.konan.lower.TestsDumper] as well.
+     */
+    private fun shouldProcessFile(irFile: IrFile): Boolean =
+            irFile.moduleDescriptor in sourcesModules
+
     override fun lower(irFile: IrFile) {
         for (idx in irFile.declarations.indices) {
             val function = irFile.declarations[idx] as? IrSimpleFunction ?: continue
             if (!function.hasAnnotation(symbols.testInitializer)) continue
+            if (!shouldProcessFile(irFile)) return
             irFile.declarations[idx] = context.irFactory.buildField {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
