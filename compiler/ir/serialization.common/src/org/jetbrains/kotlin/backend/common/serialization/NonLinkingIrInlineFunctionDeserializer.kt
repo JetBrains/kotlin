@@ -206,7 +206,6 @@ class NonLinkingIrInlineFunctionDeserializer(
             detachedSymbolTable,
             fileReader,
             dummyFileSymbol,
-            enqueueLocalTopLevelDeclaration = {},
             irInterner,
             deserializePublicSymbolWithOwnerInUnknownFile = { signature, symbolKind ->
                 symbolResolver?.invoke(signature, symbolKind)

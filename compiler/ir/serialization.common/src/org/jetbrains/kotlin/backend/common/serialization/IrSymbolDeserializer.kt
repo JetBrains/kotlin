@@ -21,7 +21,6 @@ class IrSymbolDeserializer(
     private val symbolTable: ReferenceSymbolTable,
     private val libraryFile: IrLibraryFile,
     private val fileSymbol: IrFileSymbol,
-    private val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     irInterner: IrInterningService,
     private val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
@@ -69,9 +68,6 @@ class IrSymbolDeserializer(
     private fun deserializeSymbolWithOwnerMaybeInOtherFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         if (!signature.isPubliclyVisible) {
             return deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
-                if (signature.hasTopLevel) {
-                    enqueueLocalTopLevelDeclaration(signature.topLevelSignature())
-                }
                 referenceDeserializedSymbol(symbolKind, signature)
             }
         }

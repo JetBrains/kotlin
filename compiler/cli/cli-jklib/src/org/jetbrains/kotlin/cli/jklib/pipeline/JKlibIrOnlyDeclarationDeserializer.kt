@@ -142,7 +142,6 @@ internal class JKlibIrOnlyDeclarationDeserializer(
             symbolTable,
             reader,
             irFile.symbol,
-            enqueueLocalTopLevelDeclaration = {},
             irInterner,
             deserializePublicSymbolWithOwnerInUnknownFile = { signature, symbolKind ->
                 resolvePublicSymbol(signature, symbolKind) ?: referenceUnbound(signature, symbolKind)
