@@ -5,6 +5,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
+    id("test-data-manager")
     id("test-inputs-check")
 }
 
