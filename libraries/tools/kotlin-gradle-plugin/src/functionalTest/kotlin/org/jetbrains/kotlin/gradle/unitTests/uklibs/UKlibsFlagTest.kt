@@ -7,9 +7,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationS
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.gradle.util.setUklibResolutionStrategy
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 class UKlibsFlagTests {
 
     @Test

@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.EmptyConsumingF
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.findAllConsumableFor
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.validateKgpModelIsUklibCompliantAndCreateKgpFragments
 import org.jetbrains.kotlin.gradle.util.*
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 class UklibFromKGPFragmentsGMTTests {
 
     @Test

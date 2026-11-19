@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.util.*
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalWasmDsl::class)
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 class UklibFragmentPlatformAttributeTests {
 
     @Test

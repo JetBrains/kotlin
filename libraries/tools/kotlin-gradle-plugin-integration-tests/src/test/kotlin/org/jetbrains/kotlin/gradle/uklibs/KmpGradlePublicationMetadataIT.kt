@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
@@ -49,6 +50,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @GradleTest
     fun `kmp publication with uklibs - with jvm target`(version: GradleVersion) {
         val producer = kmpProducer(
@@ -67,6 +69,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @GradleTest
     fun `kmp publication with uklibs - with stub jvm target`(version: GradleVersion) {
         val producer = kmpProducer(
@@ -85,6 +88,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @GradleAndroidTest
     @AndroidTestVersions(
         minVersion = TestVersions.AGP.AGP_88,
@@ -125,6 +129,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @GradleAndroidTest
     fun `kmp publication with uklibs - with stub jvm target - with legacy android library target`(
         version: GradleVersion,

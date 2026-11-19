@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.unitTests.uklibs.MavenComponent.MockArtifactT
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.incremental.createDirectory
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
@@ -42,6 +43,7 @@ class UklibResolutionTestsWithMockComponents {
     @field:TempDir
     lateinit var tmpDir: File
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - direct dependency on a pure uklib component`() {
         val repo = generateMockRepository(
@@ -105,6 +107,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - direct dependency on a kmp jvm only component`() {
         val repo = generateMockRepository(
@@ -184,6 +187,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - direct dependency on a jvm + metadata variant - selects metadata as a fallback`() {
         val repo = generateMockRepository(
@@ -256,6 +260,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - direct dependency on a KMP component`() {
         val repo = generateMockRepository(
@@ -329,6 +334,7 @@ class UklibResolutionTestsWithMockComponents {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - fallback to metadata variant when platform variant is missing and filter out metadata jar`() {
         val repo = generateMockRepository(
@@ -438,6 +444,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - fallback to metadata variant for transitive dependencies`() {
         val repo = generateMockRepository(
@@ -509,6 +516,7 @@ class UklibResolutionTestsWithMockComponents {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - all configurations can resolve dom-api-compat`() {
         val consumer = uklibConsumer {
@@ -584,6 +592,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - all configurations can resolve stdlib`() {
         val consumer = uklibConsumer {
@@ -719,6 +728,7 @@ class UklibResolutionTestsWithMockComponents {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - all configurations can resolve direct POM-only JVM dependencies`() {
         val repo = generateMockRepository(
@@ -793,6 +803,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - all configurations can resolve classified POM dependencies - KT-81467`() {
         val repo = generateMockRepository(
@@ -875,6 +886,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - resolution with annotations`() {
         val consumer = uklibConsumer {
@@ -942,6 +954,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - resolution with legacy KMP`() {
         val consumer = uklibConsumer {
@@ -1086,6 +1099,7 @@ class UklibResolutionTestsWithMockComponents {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - all configurations can resolve direct Gradle JVM dependencies`() {
         val repo = generateMockRepository(
@@ -1169,6 +1183,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - KMP and Uklib variants in a single component`() {
         val repo = generateMockRepository(
@@ -1281,6 +1296,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - lenient resolution fallback variant is used with -js platform dependencies`() {
         val repo = generateMockRepository(
@@ -1423,6 +1439,7 @@ class UklibResolutionTestsWithMockComponents {
         }
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - legacy android library resolves fallback variant - in KMP publication without JVM + androidLibrary target`() {
         val repo = generateMockRepository(
@@ -1477,6 +1494,7 @@ class UklibResolutionTestsWithMockComponents {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - legacy android library resolves fallback variant - in KMP publication with JVM`() {
         val repo = generateMockRepository(
@@ -1551,6 +1569,7 @@ class UklibResolutionTestsWithMockComponents {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - legacy android library resolves fallback variant - in KMP publication with JVM and new android`() {
         val repo = generateMockRepository(
@@ -1627,6 +1646,7 @@ class UklibResolutionTestsWithMockComponents {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - resolvable configuration without attributes prefers JVM variants over fallback - KT-81488`() {
         val repo = generateMockRepository(
@@ -1664,6 +1684,7 @@ class UklibResolutionTestsWithMockComponents {
         )
     }
 
+    @Disabled("KT-91874: The Uklib prototype is going to be removed")
     @Test
     fun `uklib resolution - pre-HMPP resolution with serialization json resolution - KT-81488`() {
         val consumer = uklibConsumer {

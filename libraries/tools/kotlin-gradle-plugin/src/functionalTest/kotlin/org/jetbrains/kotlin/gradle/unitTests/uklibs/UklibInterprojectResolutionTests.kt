@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.tooling.core.closure
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 class UklibInterprojectResolutionTests {
 
     @Test

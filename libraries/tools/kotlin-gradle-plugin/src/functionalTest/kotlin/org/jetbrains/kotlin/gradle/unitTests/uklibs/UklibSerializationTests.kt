@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.IncompatibleU
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.serializeToZipArchive
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import org.jetbrains.kotlin.incremental.createDirectory
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.io.TempDir
 import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
 
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 class UklibSerializationTests {
 
     @field:TempDir
