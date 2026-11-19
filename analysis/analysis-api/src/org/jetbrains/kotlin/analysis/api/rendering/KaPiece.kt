@@ -405,6 +405,8 @@ public class KaPiece<T> private constructor() {
          * The body of a class, containing its member declarations, including the braces and the leading space, e.g. ` { ... }`.
          * Nothing is rendered for an empty body. The rendered members and their layout are controlled by [KaRenderingOption.ClassMembers],
          * [KaRenderingOption.ClassMemberOrdering], and [KaRenderingOption.ExtraLineBetweenMembers].
+         * Each run of consecutive [companion][KaCallableSymbol.isCompanion] members, except enum entries, is rendered in its own
+         * `companion { }` block.
          */
         public val ClassBody: KaPiece<KaClassSymbol> = create()
 

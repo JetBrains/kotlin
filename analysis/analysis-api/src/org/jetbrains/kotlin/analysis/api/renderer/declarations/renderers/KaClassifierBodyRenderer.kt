@@ -81,42 +81,39 @@ public abstract class KaClassifierBodyWithMembersRenderer : KaClassifierBodyRend
             .filter { it !is KaConstructorSymbol || !it.isPrimary }
             .let { declarationRenderer.bodyMemberScopeSorter.sortMembers(analysisSession, it, symbol) }
 
-        val [companionBlockMembers, otherMembers] = members.partition { symbol is KaClassSymbol && it.isCompanionBlockMember }
-        val otherMembersToPrint = renderMembers(analysisSession, otherMembers, declarationRenderer, printer)
-        val companionBlockMembersToPrint = renderMembers(analysisSession, companionBlockMembers, declarationRenderer, printer)
+        val membersToPrint = members.mapNotNull { member ->
+            val rendered = prettyPrintWithSettingsFrom(printer) {
+                declarationRenderer.renderDeclaration(analysisSession, member, this)
+            }
+            if (rendered.isNotEmpty()) member to rendered else null
+        }
 
-        if (otherMembersToPrint.isEmpty() && companionBlockMembersToPrint.isEmpty() && !renderEmptyBodyForEmptyMemberScope(symbol)) return
+        if (membersToPrint.isEmpty() && !renderEmptyBodyForEmptyMemberScope(symbol)) return
 
+        val canHaveCompanionBlocks = symbol is KaClassSymbol
         printer.withIndentInBraces {
-            printMembers(analysisSession, otherMembersToPrint, declarationRenderer, printer)
-
-            if (symbol is KaClassSymbol && companionBlockMembersToPrint.isNotEmpty()) {
-                val lastOtherMember = otherMembersToPrint.lastOrNull()?.first
-                if (lastOtherMember != null) {
-                    val firstCompanionBlockMember = companionBlockMembersToPrint.first().first
+            var lastPrintedMember: KaDeclarationSymbol? = null
+            for (run in membersToPrint.splitIntoRuns { canHaveCompanionBlocks && it.first.isCompanionBlockMember }) {
+                val firstMember = run.first().first
+                if (lastPrintedMember != null) {
                     val separator = declarationRenderer.codeStyle
-                        .getSeparatorBetweenMembers(analysisSession, lastOtherMember, firstCompanionBlockMember)
+                        .getSeparatorBetweenMembers(analysisSession, lastPrintedMember, firstMember)
                     append(separator)
                 }
+                lastPrintedMember = run.last().first
 
-                " ".separated(
-                    { declarationRenderer.keywordsRenderer.renderKeyword(analysisSession, KtTokens.COMPANION_KEYWORD, symbol, printer) },
-                    { withIndentInBraces { printMembers(analysisSession, companionBlockMembersToPrint, declarationRenderer, printer) } },
-                )
+                if (canHaveCompanionBlocks && firstMember.isCompanionBlockMember) {
+                    " ".separated(
+                        {
+                            declarationRenderer.keywordsRenderer.renderKeyword(analysisSession, KtTokens.COMPANION_KEYWORD, symbol, printer)
+                        },
+                        { withIndentInBraces { printMembers(analysisSession, run, declarationRenderer, printer) } },
+                    )
+                } else {
+                    printMembers(analysisSession, run, declarationRenderer, printer)
+                }
             }
         }
-    }
-
-    private fun renderMembers(
-        analysisSession: KaSession,
-        members: List<KaDeclarationSymbol>,
-        declarationRenderer: KaDeclarationRenderer,
-        printer: PrettyPrinter,
-    ): List<Pair<KaDeclarationSymbol, String>> = members.mapNotNull { member ->
-        val rendered = prettyPrintWithSettingsFrom(printer) {
-            declarationRenderer.renderDeclaration(analysisSession, member, this)
-        }
-        if (rendered.isNotEmpty()) member to rendered else null
     }
 
     private fun printMembers(
@@ -137,9 +134,23 @@ public abstract class KaClassifierBodyWithMembersRenderer : KaClassifierBodyRend
 }
 
 /**
- * Whether the member is rendered in the `companion { }` block of its class: every [companion][KaCallableSymbol.isCompanion] member,
+ * Whether the member is rendered in a `companion { }` block of its class: every [companion][KaCallableSymbol.isCompanion] member,
  * including the static members of Java classes, except enum entries, which keep their place at the start of the enum body.
  */
 @OptIn(KaExperimentalApi::class)
 private val KaDeclarationSymbol.isCompanionBlockMember: Boolean
     get() = this is KaCallableSymbol && this !is KaEnumEntrySymbol && isCompanion
+
+/**
+ * Splits the list into runs of consecutive elements with the same [key], e.g., the members of each `companion { }` block and the members
+ * between them.
+ */
+private inline fun <T> List<T>.splitIntoRuns(key: (T) -> Boolean): List<List<T>> = buildList<MutableList<T>> {
+    for (element in this@splitIntoRuns) {
+        val previousRun = lastOrNull()
+        if (previousRun == null || key(previousRun.last()) != key(element)) {
+            add(mutableListOf())
+        }
+        last().add(element)
+    }
+}

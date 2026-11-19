@@ -164,30 +164,32 @@ private object ClassBodyRenderer : KaPieceRenderer<KaClassSymbol>(KaPiece.ClassB
 
             output.withIndent {
                 val enumEntries = members.filterIsInstance<KaEnumEntrySymbol>()
-                val [companionBlockMembers, otherMembers] = members
-                    .filter { it !is KaEnumEntrySymbol }
-                    .partition { it is KaCallableSymbol && it.isCompanion }
+                val otherMembers = members.filter { it !is KaEnumEntrySymbol }
 
                 enumEntries.forEachIndexed { index, entry ->
                     output.newLine()
                     render(entry, KaPiece.Symbol)
                     when {
                         index < enumEntries.lastIndex -> output.punctuation(",")
-                        otherMembers.isNotEmpty() || companionBlockMembers.isNotEmpty() -> output.punctuation(";")
+                        otherMembers.isNotEmpty() -> output.punctuation(";")
                     }
                 }
 
-                renderMembers(otherMembers, afterOtherContent = enumEntries.isNotEmpty())
-
-                if (companionBlockMembers.isNotEmpty()) {
-                    renderLineBreak(afterOtherContent = enumEntries.isNotEmpty() || otherMembers.isNotEmpty())
-                    output.keyword(KtTokens.COMPANION_KEYWORD)
-                    output.punctuation("{")
-                    output.withIndent {
-                        renderMembers(companionBlockMembers, afterOtherContent = false)
+                var afterOtherContent = enumEntries.isNotEmpty()
+                for (run in otherMembers.splitIntoRuns { it.isCompanionBlockMember }) {
+                    if (run.first().isCompanionBlockMember) {
+                        renderLineBreak(afterOtherContent)
+                        output.keyword(KtTokens.COMPANION_KEYWORD)
+                        output.punctuation("{")
+                        output.withIndent {
+                            renderMembers(run, afterOtherContent = false)
+                        }
+                        output.newLine()
+                        output.punctuation("}")
+                    } else {
+                        renderMembers(run, afterOtherContent)
                     }
-                    output.newLine()
-                    output.punctuation("}")
+                    afterOtherContent = true
                 }
             }
 
@@ -216,6 +218,24 @@ private object ClassBodyRenderer : KaPieceRenderer<KaClassSymbol>(KaPiece.ClassB
             output.newLine()
         }
         output.newLine()
+    }
+}
+
+/** Whether the member is rendered in a `companion { }` block of its class. Enum entries are filtered out before the check. */
+private val KaSymbol.isCompanionBlockMember: Boolean
+    get() = this is KaCallableSymbol && isCompanion
+
+/**
+ * Splits the list into runs of consecutive elements with the same [key], e.g., the members of each `companion { }` block and the members
+ * between them.
+ */
+private inline fun <T> List<T>.splitIntoRuns(key: (T) -> Boolean): List<List<T>> = buildList<MutableList<T>> {
+    for (element in this@splitIntoRuns) {
+        val previousRun = lastOrNull()
+        if (previousRun == null || key(previousRun.last()) != key(element)) {
+            add(mutableListOf())
+        }
+        last().add(element)
     }
 }
 

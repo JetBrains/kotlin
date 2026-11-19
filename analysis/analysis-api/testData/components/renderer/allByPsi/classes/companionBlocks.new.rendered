@@ -1,8 +1,4 @@
 class Owner {
-  companion object {
-    fun bar()
-  }
-
   companion {
     fun foo(p: Int): Int
 
@@ -15,6 +11,10 @@ class Owner {
       set(value: Int)
 
     private fun privateFoo()
+  }
+
+  companion object {
+    fun bar()
   }
 }
 
