@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.config.*
@@ -122,10 +123,9 @@ class WasmFirstStageEnvironmentConfigurator(
         configuration.libraries = libraries
         configuration.friendLibraries = friends
 
-        if (isMainModule(module, testServices)) {
-            // set the output name to be used by WebKlibSerializationPipelinePhase
-            configuration.perModuleOutputName = WASM_BASE_FILE_NAME
-        }
+        // Recorded as the KLIB's `jsOutputName`, which names the module's files in the multimodule and single-module modes.
+        configuration.perModuleOutputName =
+            shortOutputNameOfEscapedModule(module) ?: WASM_BASE_FILE_NAME.takeIf { isMainModule(module, testServices) }
 
         configuration.klibRelativePathBases = module.directives[KLIB_RELATIVE_PATH_BASES].applyIf(testServices.cliBasedFacadesEnabled) {
             val modulePath = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(module).canonicalPath
@@ -136,7 +136,21 @@ class WasmFirstStageEnvironmentConfigurator(
             configuration.addSourcesForDependsOnClosure(module, testServices)
         }
     }
+
+    /**
+     * `<raw module name>_<hash of the escaped name>` for a module with an escaped name, unique within a batch, or `null`.
+     * Files named after an escaped name (`<test class>.<test method>.<module>`) exceed MAX_PATH on Windows.
+     */
+    private fun shortOutputNameOfEscapedModule(module: TestModule): String? {
+        val rawName = module.name.removePrefix(testServices.escapedModuleNamePrefix)
+        if (rawName == module.name) return null
+        val readablePart = rawName.replace(NON_FILE_NAME_CHARACTERS, "_").take(MAX_RAW_MODULE_NAME_LENGTH_IN_OUTPUT_NAME)
+        return "${readablePart}_${module.name.cityHash64String()}"
+    }
 }
+
+private val NON_FILE_NAME_CHARACTERS = Regex("[^A-Za-z0-9_-]")
+private const val MAX_RAW_MODULE_NAME_LENGTH_IN_OUTPUT_NAME = 24
 
 open class WasmSecondStageEnvironmentConfigurator(
     testServices: TestServices,

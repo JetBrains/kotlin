@@ -23,3 +23,14 @@ abstract class ModuleStructureExtractor @OptIn(TestInfrastructureInternals::clas
         val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")
     }
 }
+
+/**
+ * The prefix which [org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME] adds to the names
+ * of the modules of the current test, so that the modules of different tests of a grouped batch don't clash.
+ */
+val TestServices.escapedModuleNamePrefix: String
+    get() {
+        (val className, val methodName, val _ = tags) = testInfo
+        val classPart = className.substringAfter("$").replace("$", ".")
+        return "$classPart.$methodName."
+    }

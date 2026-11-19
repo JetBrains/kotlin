@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
+internal const val DEV_MODE_DIRECTORY_NAME = "dev"
+
 internal data class WasmCompilationMode<T>(
     val directoryName: String,
     val compilation: T,
@@ -15,7 +17,7 @@ internal fun <T> wasmCompilationModes(
     dceCompilation: T?,
     optimisedCompilation: T?,
 ): List<WasmCompilationMode<T>> = buildList {
-    add(WasmCompilationMode("dev", compilation))
+    add(WasmCompilationMode(DEV_MODE_DIRECTORY_NAME, compilation))
     dceCompilation?.let { add(WasmCompilationMode("dce", it)) }
     optimisedCompilation?.let { add(WasmCompilationMode("optimized", it)) }
 }

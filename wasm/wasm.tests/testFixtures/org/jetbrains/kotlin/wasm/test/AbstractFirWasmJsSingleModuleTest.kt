@@ -23,29 +23,6 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmBackendSingleModuleFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerWithPrecompiled
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunnerWithPrecompiled
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
-import org.junit.jupiter.api.BeforeAll
-
-abstract class AbstractWasmJsCodegenSingleModuleRegularStdTest(
-    pathToTestDir: String,
-    testGroupOutputDirPrefix: String,
-) : AbstractWasmJsCodegenSingleModuleTestBase(pathToTestDir, testGroupOutputDirPrefix) {
-    companion object {
-        @JvmStatic
-        private var precompileIsDone = false
-
-        @BeforeAll
-        @JvmStatic
-        @Synchronized
-        fun precompileTestDependencies() {
-            if (!precompileIsDone) {
-                precompileWasmModules(PrecompileSetup.REGULAR)
-                precompileWasmModules(PrecompileSetup.NEW_EXCEPTION_PROPOSAL)
-                precompileWasmModules(PrecompileSetup.STACK_SWITCHING_PROPOSAL)
-                precompileIsDone = true
-            }
-        }
-    }
-}
 
 @WasmFirCompilerExtraTest
 abstract class AbstractWasmJsCodegenSingleModuleTestBase(
@@ -74,19 +51,12 @@ abstract class AbstractWasmJsCodegenSingleModuleTestBase(
     }
 }
 
-open class AbstractFirWasmJsCodegenSingleModuleBoxTest(
-    testGroupOutputDirPrefix: String = "codegen/singleModuleBox/",
-) : AbstractWasmJsCodegenSingleModuleRegularStdTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
-)
-
-open class AbstractFirWasmJsCodegenSingleModuleInteropTest : AbstractWasmJsCodegenSingleModuleRegularStdTest(
+open class AbstractFirWasmJsCodegenSingleModuleInteropTest : AbstractWasmJsCodegenSingleModuleTestBase(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop",
     testGroupOutputDirPrefix = "codegen/wasmJsSingleModuleInterop"
 )
 
-open class AbstractFirWasmTypeScriptExportSingleModuleTest : AbstractWasmJsCodegenSingleModuleRegularStdTest(
+open class AbstractFirWasmTypeScriptExportSingleModuleTest : AbstractWasmJsCodegenSingleModuleTestBase(
     "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
     "typescript-export-single-module/"
 ) {
@@ -109,21 +79,6 @@ open class AbstractFirWasmJsSteppingSingleModuleTest(
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunnerWithPrecompiled
 
-    companion object {
-        @JvmStatic
-        private var precompileIsDone = false
-
-        @BeforeAll
-        @JvmStatic
-        @Synchronized
-        fun precompileTestDependencies() {
-            if (!precompileIsDone) {
-                precompileWasmModules(PrecompileSetup.DEBUG_FRIENDLY)
-                precompileIsDone = true
-            }
-        }
-    }
-
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -140,7 +95,7 @@ open class AbstractFirWasmJsSteppingSingleModuleTest(
 open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTest(
     pathToTestDir: String = "compiler/testData/codegen/box/coroutines",
     testGroupOutputDirPrefix: String = "codegen/singleModuleBoxStackSwitching"
-) : AbstractWasmJsCodegenSingleModuleRegularStdTest(pathToTestDir, testGroupOutputDirPrefix) {
+) : AbstractWasmJsCodegenSingleModuleTestBase(pathToTestDir, testGroupOutputDirPrefix) {
 
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmStackSwitchingWithPrecompiledRunner

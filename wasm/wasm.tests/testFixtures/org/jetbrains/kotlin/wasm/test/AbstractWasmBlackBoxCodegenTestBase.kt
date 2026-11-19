@@ -110,6 +110,8 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     additionalSourceProvider: Constructor<AdditionalSourceProvider>?,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
     additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
+    // The grouped suites extract the common files too, so that a batch declares them once, see `WasmTestHelpersModuleTransformer`
+    extractCommonFilesToHelpersModule: Boolean = false,
 ) {
     globalDefaults {
         frontend = targetFrontend
@@ -137,7 +139,9 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     }
 
     @OptIn(org.jetbrains.kotlin.test.TestInfrastructureInternals::class)
-    useModuleStructureTransformers(WasmCoroutineHelpersModuleTransformer)
+    useModuleStructureTransformers(
+        if (extractCommonFilesToHelpersModule) WasmTestHelpersModuleTransformer else WasmCoroutineHelpersModuleTransformer
+    )
 
     useFailureSuppressors(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
