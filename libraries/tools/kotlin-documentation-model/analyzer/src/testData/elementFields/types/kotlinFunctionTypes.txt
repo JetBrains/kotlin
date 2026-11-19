@@ -10,7 +10,6 @@ constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequenc
   ],
   "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].valueParameters[0].type:
@@ -33,7 +32,6 @@ fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bou
   ],
   "classLikeId": "kotlin/Any///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/].valueParameters[0].type:
@@ -95,7 +93,6 @@ fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam
   ],
   "classLikeId": "kotlin/String///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].valueParameters[0].type:
@@ -117,7 +114,6 @@ fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam
   ],
   "classLikeId": "kotlin/String///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -145,7 +141,6 @@ val function: (T) -> String [example/Types/function/#/PointingToDeclaration/].ty
       ],
       "classLikeId": "kotlin/String///PointingToDeclaration/",
       "isMarkedNullable": false,
-      "isEnhancedNullability": false,
       "annotations": []
     }
   },
@@ -183,7 +178,6 @@ val nullableFunction: ((T) -> String)? [example/Types/nullableFunction/#/Pointin
       ],
       "classLikeId": "kotlin/String///PointingToDeclaration/",
       "isMarkedNullable": false,
-      "isEnhancedNullability": false,
       "annotations": []
     }
   },
@@ -221,7 +215,6 @@ val extensionFunction: String.(T) -> Int [example/Types/extensionFunction/#/Poin
       ],
       "classLikeId": "kotlin/Int///PointingToDeclaration/",
       "isMarkedNullable": false,
-      "isEnhancedNullability": false,
       "annotations": []
     }
   },
@@ -237,7 +230,6 @@ val extensionFunction: String.(T) -> Int [example/Types/extensionFunction/#/Poin
       ],
       "classLikeId": "kotlin/String///PointingToDeclaration/",
       "isMarkedNullable": false,
-      "isEnhancedNullability": false,
       "annotations": []
     }
   },
@@ -274,7 +266,6 @@ val suspendFunction: suspend (T) -> Unit [example/Types/suspendFunction/#/Pointi
       ],
       "classLikeId": "kotlin/Unit///PointingToDeclaration/",
       "isMarkedNullable": false,
-      "isEnhancedNullability": false,
       "annotations": []
     }
   },
@@ -308,6 +299,6 @@ class Types [example/Types///PointingToDeclaration/].typeParameters[0].upperBoun
   ],
   "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
+

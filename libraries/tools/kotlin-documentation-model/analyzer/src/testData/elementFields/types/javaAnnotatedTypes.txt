@@ -10,6 +10,6 @@ var annotated: String [example/JavaTypes/annotated/#/PointingToDeclaration/].typ
   ],
   "classLikeId": "kotlin/String///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
+

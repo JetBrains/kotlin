@@ -10,7 +10,6 @@ val annotated: String [example/Types/annotated/#/PointingToDeclaration/].type:
   ],
   "classLikeId": "kotlin/String///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": [
     {
       "classLikeId": "example/TypeLabel///PointingToDeclaration/",
@@ -18,3 +17,4 @@ val annotated: String [example/Types/annotated/#/PointingToDeclaration/].type:
     }
   ]
 }
+

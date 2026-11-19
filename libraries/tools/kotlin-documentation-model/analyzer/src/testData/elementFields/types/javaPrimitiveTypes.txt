@@ -10,7 +10,6 @@ var primitive: Int [example/JavaTypes/primitive/#/PointingToDeclaration/].type:
   ],
   "classLikeId": "kotlin/Int///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -25,7 +24,6 @@ var boxed: Int [example/JavaTypes/boxed/#/PointingToDeclaration/].type:
   ],
   "classLikeId": "kotlin/Int///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -40,7 +38,6 @@ var primitiveBoolean: Boolean [example/JavaTypes/primitiveBoolean/#/PointingToDe
   ],
   "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -55,7 +52,6 @@ var boxedBoolean: Boolean [example/JavaTypes/boxedBoolean/#/PointingToDeclaratio
   ],
   "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -70,7 +66,6 @@ var primitiveByte: Byte [example/JavaTypes/primitiveByte/#/PointingToDeclaration
   ],
   "classLikeId": "kotlin/Byte///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -85,7 +80,6 @@ var boxedByte: Byte [example/JavaTypes/boxedByte/#/PointingToDeclaration/].type:
   ],
   "classLikeId": "kotlin/Byte///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -100,7 +94,6 @@ var primitiveShort: Short [example/JavaTypes/primitiveShort/#/PointingToDeclarat
   ],
   "classLikeId": "kotlin/Short///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -115,7 +108,6 @@ var boxedShort: Short [example/JavaTypes/boxedShort/#/PointingToDeclaration/].ty
   ],
   "classLikeId": "kotlin/Short///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -130,7 +122,6 @@ var primitiveLong: Long [example/JavaTypes/primitiveLong/#/PointingToDeclaration
   ],
   "classLikeId": "kotlin/Long///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -145,7 +136,6 @@ var boxedLong: Long [example/JavaTypes/boxedLong/#/PointingToDeclaration/].type:
   ],
   "classLikeId": "kotlin/Long///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -160,7 +150,6 @@ var primitiveChar: Char [example/JavaTypes/primitiveChar/#/PointingToDeclaration
   ],
   "classLikeId": "kotlin/Char///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -175,7 +164,6 @@ var boxedChar: Char [example/JavaTypes/boxedChar/#/PointingToDeclaration/].type:
   ],
   "classLikeId": "kotlin/Char///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -190,7 +178,6 @@ var primitiveFloat: Float [example/JavaTypes/primitiveFloat/#/PointingToDeclarat
   ],
   "classLikeId": "kotlin/Float///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -205,7 +192,6 @@ var boxedFloat: Float [example/JavaTypes/boxedFloat/#/PointingToDeclaration/].ty
   ],
   "classLikeId": "kotlin/Float///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -220,7 +206,6 @@ var primitiveDouble: Double [example/JavaTypes/primitiveDouble/#/PointingToDecla
   ],
   "classLikeId": "kotlin/Double///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -235,7 +220,6 @@ var boxedDouble: Double [example/JavaTypes/boxedDouble/#/PointingToDeclaration/]
   ],
   "classLikeId": "kotlin/Double///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -250,7 +234,6 @@ var boxedVoid: Void [example/JavaTypes/boxedVoid/#/PointingToDeclaration/].type:
   ],
   "classLikeId": "java.lang/Void///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -265,6 +248,6 @@ var reference: String [example/JavaTypes/reference/#/PointingToDeclaration/].typ
   ],
   "classLikeId": "kotlin/String///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
+

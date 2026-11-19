@@ -10,7 +10,6 @@ interface Base [example/Base///PointingToDeclaration/].typeParameters[0].upperBo
   ],
   "classLikeId": "kotlin/Any///PointingToDeclaration/",
   "isMarkedNullable": true,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -25,7 +24,6 @@ constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequenc
   ],
   "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].valueParameters[0].type:
@@ -57,7 +55,6 @@ val nullable: String? [example/Types/nullable/#/PointingToDeclaration/].type:
   ],
   "classLikeId": "kotlin/String///PointingToDeclaration/",
   "isMarkedNullable": true,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -80,7 +77,6 @@ val nested: Map<String, List<T?>> [example/Types/nested/#/PointingToDeclaration/
             ],
             "classLikeId": "kotlin/String///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         },
@@ -107,7 +103,6 @@ val nested: Map<String, List<T?>> [example/Types/nested/#/PointingToDeclaration/
             ],
             "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         }
@@ -116,7 +111,6 @@ val nested: Map<String, List<T?>> [example/Types/nested/#/PointingToDeclaration/
   ],
   "classLikeId": "kotlin.collections/Map///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -139,7 +133,6 @@ val projections: Map<in String, out List<*>> [example/Types/projections/#/Pointi
             ],
             "classLikeId": "kotlin/String///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         },
@@ -159,7 +152,6 @@ val projections: Map<in String, out List<*>> [example/Types/projections/#/Pointi
             ],
             "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         }
@@ -168,7 +160,6 @@ val projections: Map<in String, out List<*>> [example/Types/projections/#/Pointi
   ],
   "classLikeId": "kotlin.collections/Map///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -183,7 +174,6 @@ class Types [example/Types///PointingToDeclaration/].typeParameters[0].upperBoun
   ],
   "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 class Types [example/Types///PointingToDeclaration/].superTypes[0]:
@@ -216,7 +206,6 @@ class Types [example/Types///PointingToDeclaration/].superTypes[0]:
             ],
             "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         }
@@ -225,7 +214,6 @@ class Types [example/Types///PointingToDeclaration/].superTypes[0]:
   ],
   "classLikeId": "example/Base///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -240,7 +228,6 @@ fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[
   ],
   "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
@@ -265,7 +252,6 @@ fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[
   ],
   "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].valueParameters[0].type:
@@ -296,7 +282,6 @@ interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeP
   ],
   "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeParameters[0].upperBounds[1]:
@@ -321,6 +306,6 @@ interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeP
   ],
   "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
+

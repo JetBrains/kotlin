@@ -16,7 +16,7 @@ import kotlin.text.ifEmpty
 /** Shared golden-file assertions for the golden test suites. */
 abstract class AbstractKdmGoldenTest {
     protected fun assertMatchesGoldenFile(bundle: KdBundle, testDataFile: File) {
-        val actual = Json(from = KdJson) { prettyPrint = true }
+        val actual = json
             .encodeToString(KdBundle.serializer(), bundle) + "\n"
         assertMatchesGoldenTextFile(actual, testDataFile, ".kdm.json")
     }

@@ -5,10 +5,19 @@
 
 package org.jetbrains.kotlin.documentation.analyzer
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths
+import org.jetbrains.kotlin.documentation.KdJson
 import java.io.File
 import java.nio.file.Files
+
+internal val json = Json(from = KdJson) {
+    prettyPrint = true
+    @OptIn(ExperimentalSerializationApi::class)
+    prettyPrintIndent = "  "
+}
 
 internal fun createTempSourceRoot(): File = Files.createTempDirectory("kdm-analyzer-test").toFile()
 
