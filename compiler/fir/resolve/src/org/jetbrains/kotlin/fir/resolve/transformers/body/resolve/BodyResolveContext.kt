@@ -1045,7 +1045,7 @@ class BodyResolveContext(
     fun <T> withPropertyAccessor(
         property: FirProperty,
         accessor: FirPropertyAccessor,
-        forContracts: Boolean = false,
+        hideBackingField: Boolean = false,
         f: () -> T
     ): T {
         if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
@@ -1062,7 +1062,7 @@ class BodyResolveContext(
                 storeValueParameterIfNeeded(parameter, holder.session)
             }
 
-            if (!forContracts && !property.isInstanceExtension && property.returnTypeRef !is FirImplicitTypeRef &&
+            if (!hideBackingField && !property.isInstanceExtension && property.returnTypeRef !is FirImplicitTypeRef &&
                 property.symbol is FirRegularPropertySymbol && property.delegate == null &&
                 property.contextParameters.isEmpty()
             ) {
