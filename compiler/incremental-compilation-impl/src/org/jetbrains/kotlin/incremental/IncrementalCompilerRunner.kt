@@ -159,10 +159,15 @@ abstract class IncrementalCompilerRunner<
                 "Configuration inputs: $configurationInputs"
             }
         }
-        val hashedConfigurationInputs = computeHashedConfigurationInputs(configurationInputs, untrackedInputs(allSourceFiles, args))
+        // Untracked inputs that cannot be computed are left out of the hash, so the next build they are computed in is non-incremental too.
+        val untrackedInputs = runCatching { untrackedInputs(allSourceFiles, args) }
+        val hashedConfigurationInputs = computeHashedConfigurationInputs(configurationInputs, untrackedInputs.getOrDefault(emptyMap()))
         val trackChangedFiles = changedFiles is DeterminableFiles.ToBeComputed
-        val result = when (val result =
-            tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector, hashedConfigurationInputs)) {
+        val failure = untrackedInputs.exceptionOrNull()?.let { ICResult.Failed(IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE, it) }
+        val result = when (
+            val result = failure
+                ?: tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector, hashedConfigurationInputs)
+        ) {
             is ICResult.Completed -> {
                 reporter.debug { "Incremental compilation completed" }
                 result.exitCode
@@ -285,6 +290,11 @@ abstract class IncrementalCompilerRunner<
         if (!lastBuildInfoFile.exists()) { // Perf optimization: short-circuit early
             return ICResult.RequiresRebuild(UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
         }
+        try {
+            rebuildReason(allSourceFiles, args)?.let { return ICResult.RequiresRebuild(it) }
+        } catch (e: Throwable) {
+            return ICResult.Failed(IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE, e)
+        }
         val fragmentContext = if (!icFeatures.enableUnsafeIncrementalCompilationForMultiplatform) { //see KT-62686
             FragmentContext.fromCompilerArguments(args)
         } else {
@@ -319,7 +329,6 @@ abstract class IncrementalCompilerRunner<
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
                 }
-                rebuildReason(allSourceFiles, args)?.let { return ICResult.RequiresRebuild(it) }
 
                 // Step 2: Compute files to recompile
                 val compilationMode = try {
