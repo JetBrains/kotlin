@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
-import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -974,22 +973,26 @@ class CallAndReferenceGenerator(
             }
         }
         return visitor.withAnnotationMode {
-            val annotationCall = annotation.toAnnotationCall()
+            val annotationCall = annotation.toAnnotationCall(firConstructorSymbol)
+            val isJavaOrBinaryAnnotation = annotation !is FirAnnotationCall
+            val requiredArgumentIndices =
+                if (isJavaOrBinaryAnnotation) firConstructorSymbol?.requiredArgumentIndices().orEmpty() else emptySet()
             irAnnotation
                 .applyReceiversAndArguments(annotationCall, declarationSiteSymbol = firConstructorSymbol, explicitReceiverExpression = null)
                 .applyTypeArgumentsWithTypealiasConstructorRemapping(firConstructorSymbol?.fir, annotationCall?.typeArguments.orEmpty())
-                .filterOutErrorArgsInAnnotation(isJavaOrBinaryAnnotation = annotation !is FirAnnotationCall)
+                .filterOutErrorArgsInAnnotation(isJavaOrBinaryAnnotation, requiredArgumentIndices)
         }
     }
 
-    private fun FirAnnotation.toAnnotationCall(): FirAnnotationCall? {
+    private fun FirAnnotation.toAnnotationCall(
+        firConstructorSymbol: FirConstructorSymbol?,
+    ): FirAnnotationCall? {
         if (this is FirAnnotationCall) return this
+        val constructorSymbol = firConstructorSymbol ?: return null
         return buildAnnotationCall {
             useSiteTarget = this@toAnnotationCall.useSiteTarget
             annotationTypeRef = this@toAnnotationCall.annotationTypeRef
             val symbol = annotationTypeRef.coneType.fullyExpandedType().toRegularClassSymbol() ?: return null
-
-            val constructorSymbol = symbol.unsubstitutedScope().getDeclaredConstructors().firstOrNull() ?: return null
 
             val argumentToParameterToMapping = constructorSymbol.valueParameterSymbols.mapNotNull {
                 val parameter = it.fir
@@ -1010,13 +1013,27 @@ class CallAndReferenceGenerator(
         }
     }
 
+    private fun FirConstructorSymbol.requiredArgumentIndices(): Set<Int> {
+        // Annotation constructors have no context parameters or receivers; the offset only mirrors the IrAnnotation argument layout.
+        val argumentOffset = contextParameterSymbols.size +
+                (if (dispatchReceiverType != null) 1 else 0) +
+                (if (isExtension) 1 else 0)
+        return valueParameterSymbols.mapIndexedNotNull { index, parameter ->
+            if (parameter.hasDefaultValue) null else argumentOffset + index
+        }.toSet()
+    }
+
     /**
      * Drops erroneous arguments from this annotation if it is an [IrAnnotation], so that no error nodes reach the backend.
      *
-     * The default value of the parameter applies, if any. Error elements of array arguments are removed from the array. Nested
-     * annotations are cleaned up recursively.
+     * For Java and binary annotations ([isJavaOrBinaryAnnotation]), a missing or erroneous argument at one of
+     * [requiredArgumentIndices] drops the whole annotation, in both normal and Kapt modes. Kotlin-source annotations are never
+     * dropped whole: in Kapt mode only their erroneous arguments are removed. For optional arguments, the default applies after
+     * an erroneous value is removed. Error elements of array arguments are removed from the array, and nested annotations are
+     * cleaned up recursively.
      *
-     * The cleanup is done only in two cases:
+     * The [isJavaOrBinaryAnnotation] flag is true when the FIR annotation is not a Kotlin-source
+     * [FirAnnotationCall]. Cleanup is done only in two cases:
      * - In Kapt stub generation mode ([Fir2IrConfiguration.skipBodies]), for all annotations: Kapt generates stubs for code that
      *   does not have to resolve, so frontend errors do not stop the compilation, and error nodes must not reach the backend.
      * - For annotations that do not come from Kotlin sources ([isJavaOrBinaryAnnotation]): Java sources and binaries are not
@@ -1025,18 +1042,23 @@ class CallAndReferenceGenerator(
      *
      * Errors in annotations from Kotlin sources are reported by the frontend and stop the compilation before fir2ir.
      */
-    private fun IrExpression.filterOutErrorArgsInAnnotation(isJavaOrBinaryAnnotation: Boolean): IrExpression {
-        fun IrElement?.cleanUp(): Boolean {
+    private fun IrExpression.filterOutErrorArgsInAnnotation(
+        isJavaOrBinaryAnnotation: Boolean,
+        requiredArgumentIndices: Set<Int>,
+    ): IrExpression {
+        fun IrElement?.cleanUp(requiredArgumentIndices: Set<Int>? = null): Boolean {
             return when (this) {
                 is IrErrorExpression -> true
                 is IrGetClass -> this.argument.type is IrErrorType
                 is IrAnnotation -> {
+                    var lostRequiredArgument = requiredArgumentIndices.orEmpty().any { this.arguments.getOrNull(it) == null }
                     for ([i, expression] in this.arguments.withIndex()) {
                         if (expression.cleanUp()) {
                             this.arguments[i] = null
+                            if (i in requiredArgumentIndices.orEmpty()) lostRequiredArgument = true
                         }
                     }
-                    false
+                    lostRequiredArgument
                 }
                 is IrVararg -> {
                     this.elements.removeAll { it.cleanUp() }
@@ -1046,7 +1068,12 @@ class CallAndReferenceGenerator(
             }
         }
 
-        if (this is IrAnnotation && (configuration.skipBodies || isJavaOrBinaryAnnotation)) cleanUp()
+        if (this is IrAnnotation && (configuration.skipBodies || isJavaOrBinaryAnnotation)) {
+            val lostRequiredArgument = cleanUp(requiredArgumentIndices)
+            if (isJavaOrBinaryAnnotation && lostRequiredArgument) {
+                return IrErrorCallExpressionImpl(startOffset, endOffset, type, "Annotation has an invalid required argument")
+            }
+        }
         return this
     }
 

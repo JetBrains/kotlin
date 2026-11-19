@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -128,8 +127,15 @@ class JKlibJavaInteropIntegrationTest {
         }
     }
 
+    /**
+     * A binary Java class extends a nested Kotlin class from a KLIB. The class file's `InnerClasses`
+     * attribute records the nested `ClassId` even though the nested class is supplied by the KLIB.
+     * The Java-source variant is covered by
+     * `CompileKotlinAgainstCustomBinariesTest.testBinarySignatureReferencesNestedJavaClassFromSource`.
+     *
+     * ISSUE: KT-87507
+     */
     @Test
-    @Disabled("The fix is reverted due to KT-87507")
     fun testJavaExtendingNestedKotlinClassFromKlib(@TempDir tempDir: File) {
         val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
         val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path

@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.resolution.getFirstStarImportCandidate
+import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
+import org.jetbrains.kotlin.java.direct.util.MemberResolutionResult
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
@@ -69,6 +71,15 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         assertNotNull(found) { "findAnnotation should find @Deprecated on class" }
         val notFound = javaClass.findAnnotation(FqName("Override"))
         assertNull(notFound) { "findAnnotation should return null for missing annotation" }
+    }
+
+    @Test
+    fun testTextBlockAnnotationArgument() {
+        val textBlock = "\"\"\"\n        first\n        second\n        \"\"\""
+        val javaClass = parseFirstClass("@Tag($textBlock) class Foo {}")
+        val argument = javaClass.annotations.single().arguments.single() as JavaLiteralAnnotationArgument
+
+        assertEquals("first\nsecond\n", argument.value)
     }
 
     @Test
@@ -538,6 +549,23 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testExternalFieldResolutionClassifiesEnumEntry() {
+        val enumClassId = ClassId.topLevel(FqName("com.example.MyEnum"))
+        val session = createSessionWithSymbols(
+            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS, enumEntries = listOf("VALUE")))
+        )
+
+        val result = session.resolveExternalFieldValue(
+            classQualifier = enumClassId.asSingleFqName().asString(),
+            qualifierClassId = enumClassId,
+            fieldName = "VALUE",
+            currentPackage = FqName("com.example"),
+        )
+
+        assertEquals(MemberResolutionResult.EnumEntry(enumClassId, Name.identifier("VALUE")), result)
+    }
+
+    @Test
     fun testEnumValueArgumentBareNoImport() {
         // Bare identifier with no static import: className is null, so we treat it as an entry
         // name against the parameter's expected type. isResolved must be true to signal the FIR
@@ -599,6 +627,26 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         assertEquals("hello", arguments["text"])
         assertEquals(42, arguments["number"])
         assertEquals(44.toByte(), arguments["truncated"])
+    }
+
+    @Test
+    fun testCommentsInConstantAnnotationArgumentsAreIgnored() {
+        val argumentSource = """
+            class Holder {
+                @Anno(value = /* before */ 1 /* around plus */ + 2 /* after */)
+                void annotated() {}
+            }
+        """.trimIndent()
+        val annotation = parseFirstClass(argumentSource).methods.single().annotations.single()
+        assertEquals(3, (annotation.arguments.single() as JavaLiteralAnnotationArgument).value)
+
+        val defaultSource = """
+            @interface Anno {
+                int value() default /* default */ 7;
+            }
+        """.trimIndent()
+        val default = parseFirstClass(defaultSource).methods.single().annotationParameterDefaultValue
+        assertEquals(7, (default as JavaLiteralAnnotationArgument).value)
     }
 
     @Test

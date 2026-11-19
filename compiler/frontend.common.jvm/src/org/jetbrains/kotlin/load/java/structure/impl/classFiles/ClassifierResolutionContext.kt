@@ -39,7 +39,7 @@ class ClassifierResolutionContext private constructor(
 ) {
     constructor(classesByQName: ClassIdToJavaClass) : this(classesByQName, ImmutableHashMap.empty(), ImmutableHashMap.empty())
 
-    internal data class Result(val classifier: JavaClassifier?, val qualifiedName: String)
+    internal data class Result(val classifier: JavaClassifier?, val qualifiedName: String, val classId: ClassId? = null)
 
     private class InnerClassInfo(val outerInternalName: String, val simpleName: String)
 
@@ -55,7 +55,7 @@ class ClassifierResolutionContext private constructor(
         }
     }
 
-    private fun resolveClass(classId: ClassId) = Result(classesByQName(classId), classId.asSingleFqName().asString())
+    private fun resolveClass(classId: ClassId) = Result(classesByQName(classId), classId.asSingleFqName().asString(), classId)
     internal fun resolveTypeParameter(name: String) = Result(typeParameters.getOrNull(name), name)
 
     internal fun copyForMember() = ClassifierResolutionContext(classesByQName, typeParameters, innerClasses)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.structure
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.name.ClassId
 
 interface JavaType : ListBasedJavaAnnotationOwner
 
@@ -29,6 +30,9 @@ interface JavaClassifierType : JavaType {
     val typeArguments: List<JavaType?>
 
     val isRaw: Boolean
+
+    /** The recorded class ID, including nested-class boundaries, if it is known. */
+    val classifierClassId: ClassId? get() = null
 
     val classifierQualifiedName: String
     val presentableText: String

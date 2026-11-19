@@ -15,21 +15,23 @@ import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.model.JavaPrimitiveTypeOverAst
+import org.jetbrains.kotlin.java.direct.model.createJavaType
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
-import org.jetbrains.kotlin.java.direct.resolution.hasEnumEntry
+import org.jetbrains.kotlin.java.direct.resolution.isInheritedTo
 import org.jetbrains.kotlin.java.direct.resolution.resolve
 import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
 import org.jetbrains.kotlin.java.direct.resolution.resolveImportedClassName
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import kotlin.experimental.inv
 
 internal data class StaticMemberReference(
     val qualifier: String,
@@ -39,7 +41,15 @@ internal data class StaticMemberReference(
 
 internal sealed interface MemberResolutionResult {
     data class EnumEntry(val enumClassId: ClassId, val entryName: Name) : MemberResolutionResult
-    data class Constant(val value: Any) : MemberResolutionResult
+
+    /**
+     * A constant variable (JLS 4.12.4). Its [value] is computed on first access, so a caller that only
+     * classifies an expression can check for [Constant] without evaluating the initializer. The value is
+     * `null` if evaluation fails.
+     */
+    class Constant(compute: () -> Any?) : MemberResolutionResult {
+        val value: Any? by lazy(LazyThreadSafetyMode.PUBLICATION, compute)
+    }
 
     /** A field that is found but is not a constant variable; it still shadows later scopes (JLS 6.4.1). */
     data object NonConstantField : MemberResolutionResult
@@ -125,36 +135,15 @@ private fun resolveSingleStaticImport(name: String, resolutionContext: JavaResol
  * annotation arguments and annotation-method default values (JLS 9.6.1 / 9.7).
  *
  * @param containingClass the class the expression is written in, if any; simple names are looked up
- *   among its fields first.
- * @param customExternalConstantResolver optional override for external constant resolution,
- *   primarily used by tests.
+ *   in it and its enclosing classes before imports.
  */
 class ConstantEvaluator private constructor(
     private val tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
     private val containingClass: JavaClassOverAst?,
-    private val customExternalConstantResolver: ExternalConstantResolver?,
 ) {
-    /**
-     * Override for external constant resolution, primarily used by tests. Calls use one of these
-     * argument shapes:
-     * - `(qualifier, classId, fieldName)` when the qualifier resolves to a class; the text is
-     *   informational and the class ID is authoritative;
-     * - `(qualifier, null, fieldName)` when the qualifier does not resolve to a class, which can
-     *   still name a JVM facade class and must be split at its last dot.
-     *
-     * Simple names are never resolved externally. Production resolution is performed directly
-     * through [resolveExternalFieldValue] when no test hook is supplied.
-     */
-    fun interface ExternalConstantResolver {
-        fun resolve(classQualifier: String, qualifierClassId: ClassId?, fieldName: String): Any?
-    }
-
     /** Evaluator for an expression written inside [containingClass], i.e. a field initializer. */
-    constructor(
-        containingClass: JavaClassOverAst,
-        customExternalConstantResolver: ExternalConstantResolver? = null,
-    ) : this(containingClass.tree, containingClass.resolutionContext, containingClass, customExternalConstantResolver)
+    constructor(containingClass: JavaClassOverAst) : this(containingClass.tree, containingClass.memberResolutionContext, containingClass)
 
     /**
      * Evaluator for an expression written outside of any member — an annotation argument or an
@@ -163,8 +152,89 @@ class ConstantEvaluator private constructor(
     constructor(
         tree: LightSyntaxTree,
         resolutionContext: JavaResolutionContext,
-        customExternalConstantResolver: ExternalConstantResolver? = null,
-    ) : this(tree, resolutionContext, resolutionContext.scopeContext.containingClass as? JavaClassOverAst, customExternalConstantResolver)
+    ) : this(tree, resolutionContext, resolutionContext.scopeContext.containingClass as? JavaClassOverAst)
+
+    /**
+     * Checks whether [node] is a constant expression without evaluating references.
+     *
+     * It must accept exactly the forms [evaluate] handles. A separate value-free pass is needed
+     * because FIR queries `JavaField.hasConstantNotNullInitializer` during Java class
+     * enhancement, before the bodies of referenced Kotlin `const val`s are resolved. Evaluating them
+     * there would force premature body resolution or run into resolution cycles. References are
+     * resolved as in [evaluate], but the lazy [MemberResolutionResult.Constant] value is never read.
+     */
+    internal fun isConstantExpression(node: LightNode): Boolean = when (tree.getType(node)) {
+        JavaSyntaxElementType.LITERAL_EXPRESSION -> evaluateLiteral(node) != null
+        JavaSyntaxElementType.BINARY_EXPRESSION -> {
+            val children = tree.childrenWithoutCommentsAndWhitespace(node)
+            children.size == 3 && isConstantBinaryOperator(tree.getType(children[1])) &&
+                    isConstantExpression(children[0]) && isConstantExpression(children[2])
+        }
+        JavaSyntaxElementType.PREFIX_EXPRESSION -> {
+            val children = tree.childrenWithoutCommentsAndWhitespace(node)
+            children.size == 2 && isConstantPrefixOperator(tree.getType(children[0])) && isConstantExpression(children[1])
+        }
+        JavaSyntaxElementType.PARENTH_EXPRESSION -> {
+            val children = tree.childrenWithoutCommentsAndWhitespace(node)
+            val expression = children.firstOrNull {
+                tree.getType(it) != JavaSyntaxTokenType.LPARENTH && tree.getType(it) != JavaSyntaxTokenType.RPARENTH
+            }
+            expression != null && isConstantExpression(expression)
+        }
+        JavaSyntaxElementType.REFERENCE_EXPRESSION -> resolveReference(node) is MemberResolutionResult.Constant
+        JavaSyntaxElementType.POLYADIC_EXPRESSION -> {
+            val children = tree.childrenWithoutCommentsAndWhitespace(node)
+            children.size >= 3 && children.size % 2 == 1 &&
+                    children.indices.filter { it % 2 == 0 }.all { isConstantExpression(children[it]) } &&
+                    children.indices.filter { it % 2 == 1 }.all { isConstantBinaryOperator(tree.getType(children[it])) }
+        }
+        JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> isConstantTypeCastExpression(node)
+        else -> false
+    }
+
+    private fun isConstantPrefixOperator(operator: SyntaxElementType): Boolean = when (operator) {
+        JavaSyntaxTokenType.MINUS, JavaSyntaxTokenType.PLUS, JavaSyntaxTokenType.TILDE, JavaSyntaxTokenType.EXCL -> true
+        else -> false
+    }
+
+    private fun isConstantBinaryOperator(operator: SyntaxElementType): Boolean = when (operator) {
+        JavaSyntaxTokenType.PLUS,
+        JavaSyntaxTokenType.MINUS,
+        JavaSyntaxTokenType.ASTERISK,
+        JavaSyntaxTokenType.DIV,
+        JavaSyntaxTokenType.PERC,
+        JavaSyntaxTokenType.GTGT,
+        JavaSyntaxTokenType.LTLT,
+        JavaSyntaxTokenType.GTGTGT,
+        JavaSyntaxTokenType.AND,
+        JavaSyntaxTokenType.OR,
+        JavaSyntaxTokenType.XOR,
+        JavaSyntaxTokenType.EQEQ,
+        JavaSyntaxTokenType.NE,
+        JavaSyntaxTokenType.LT,
+        JavaSyntaxTokenType.LE,
+        JavaSyntaxTokenType.GT,
+        JavaSyntaxTokenType.GE,
+        JavaSyntaxTokenType.ANDAND,
+        JavaSyntaxTokenType.OROR
+            -> true
+        else -> false
+    }
+
+    private fun isConstantTypeCastExpression(node: LightNode): Boolean {
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
+        val typeNode = children.firstOrNull { tree.getType(it) == JavaSyntaxElementType.TYPE } ?: return false
+        val castType = createJavaType(typeNode, tree, resolutionContext)
+        val classifierType = castType as? JavaClassifierType
+        val isStringType = classifierType?.classifierQualifiedName == "String" ||
+                classifierType?.classifierQualifiedName == "java.lang.String"
+        val isConstantCastType = castType is JavaPrimitiveTypeOverAst || isStringType
+        if (!isConstantCastType) return false
+        val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
+        if (rparenthIndex < 0) return false
+        val operand = children.getOrNull(rparenthIndex + 1) ?: return false
+        return isConstantExpression(operand)
+    }
 
     /**
      * Evaluates a constant expression node and returns the computed value.
@@ -187,7 +257,7 @@ class ConstantEvaluator private constructor(
         JavaLiteralParser.evaluateLiteral(node, tree)
 
     private fun evaluateBinaryExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         if (children.size < 3) return null
 
         val lhs = evaluate(children[0]) ?: return null
@@ -198,7 +268,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluatePolyadicExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         if (children.size < 3) return null
 
         var result = evaluate(children[0]) ?: return null
@@ -237,10 +307,9 @@ class ConstantEvaluator private constructor(
             return JavaLiteralParser.evaluateNumericBinaryOp(lhs, operator, rhs)
         }
 
+        // Binary numeric promotion (JLS 5.6): a `char` operand is promoted to `int`, so `'a' + 1` is `int` 98.
         if (lhs is Char && rhs is Number) {
-            return JavaLiteralParser.evaluateNumericBinaryOp(lhs.code, operator, rhs)?.let { result ->
-                if (result is Int && operator == JavaSyntaxTokenType.PLUS) result.toChar() else result
-            }
+            return JavaLiteralParser.evaluateNumericBinaryOp(lhs.code, operator, rhs)
         }
         if (lhs is Number && rhs is Char) {
             return JavaLiteralParser.evaluateNumericBinaryOp(lhs, operator, rhs.code)
@@ -253,26 +322,31 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluatePrefixExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         if (children.size < 2) return null
 
         val operator = tree.getType(children[0])
         val operand = evaluate(children[1]) ?: return null
 
+        // Unary numeric promotion (JLS 5.6): `byte`, `short` and `char` operands are promoted to `int`.
+        val promoted = when (operand) {
+            is Byte -> operand.toInt()
+            is Short -> operand.toInt()
+            is Char -> operand.code
+            else -> operand
+        }
         return when (operator) {
-            JavaSyntaxTokenType.MINUS -> when (operand) {
-                is Int -> -operand
-                is Long -> -operand
-                is Float -> -operand
-                is Double -> -operand
+            JavaSyntaxTokenType.MINUS -> when (promoted) {
+                is Int -> -promoted
+                is Long -> -promoted
+                is Float -> -promoted
+                is Double -> -promoted
                 else -> null
             }
-            JavaSyntaxTokenType.PLUS -> operand
-            JavaSyntaxTokenType.TILDE -> when (operand) {
-                is Int -> operand.inv()
-                is Long -> operand.inv()
-                is Short -> operand.inv()
-                is Byte -> operand.inv()
+            JavaSyntaxTokenType.PLUS -> if (promoted is Number) promoted else null
+            JavaSyntaxTokenType.TILDE -> when (promoted) {
+                is Int -> promoted.inv()
+                is Long -> promoted.inv()
                 else -> null
             }
             JavaSyntaxTokenType.EXCL -> (operand as? Boolean)?.let { !it }
@@ -281,7 +355,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluateParensExpression(node: LightNode): Any? {
-        val innerExpr = tree.getChildren(node).firstOrNull {
+        val innerExpr = tree.childrenWithoutCommentsAndWhitespace(node).firstOrNull {
             val t = tree.getType(it)
             t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
         } ?: return null
@@ -289,7 +363,7 @@ class ConstantEvaluator private constructor(
     }
 
     private fun evaluateTypeCastExpression(node: LightNode): Any? {
-        val children = tree.getChildren(node)
+        val children = tree.childrenWithoutCommentsAndWhitespace(node)
         val typeNode = children.firstOrNull { tree.getType(it) == JavaSyntaxElementType.TYPE } ?: return null
         val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
         if (rparenthIndex < 0) return null
@@ -313,7 +387,7 @@ class ConstantEvaluator private constructor(
         val reference = resolveQualifiedMemberReference(nameParts, resolutionContext)
 
         // Resolve the class qualifier as a type name (via the unit's imports + same-package + java.lang
-        // probes, JLS 6.5.5) before passing it to the cross-language callback. Without this,
+        // probes, JLS 6.5.5) before passing it to the cross-language resolver. Without this,
         // `SdkConstants.R_CLASS` — written under `import com.android.SdkConstants;` in a Java source —
         // could only be interpreted as either a current-package class or a `<root>.SdkConstants`
         // top-level class — neither of which exists. A qualified name like `p.X.Y` is classified left
@@ -327,9 +401,7 @@ class ConstantEvaluator private constructor(
                     ?: MemberResolutionResult.Unresolved(reference)
             }
         }
-        // No class adapter. If `resolvedClassId` is null, the qualifier is not a class java-direct
-        // resolves (a JVM facade, or a class FIR serves as a builtin). Otherwise the session has no
-        // symbol provider, which happens only in unit tests with the custom resolver hook.
+        // No class adapter: the qualifier is a JVM facade or a class FIR serves as a builtin.
         resolveExternalReference(reference.qualifier, resolvedClassId, reference.memberName)?.let { return it }
 
         // A Kotlin file facade is a JVM class, but it does not have a class symbol of its own.
@@ -343,19 +415,18 @@ class ConstantEvaluator private constructor(
         return MemberResolutionResult.Unresolved(reference)
     }
 
-    private fun resolveExternalReference(classQualifier: String, qualifierClassId: ClassId?, fieldName: String): MemberResolutionResult? {
-        val resolver = customExternalConstantResolver
-        return if (resolver != null) {
-            resolver.resolve(classQualifier, qualifierClassId, fieldName)?.let(MemberResolutionResult::Constant)
-        } else {
-            resolutionContext.fileContext.session.resolveExternalFieldValue(
-                classQualifier,
-                qualifierClassId,
-                fieldName,
-                resolutionContext.packageFqName,
-            )
-        }
-    }
+    private fun resolveExternalReference(
+        classQualifier: String,
+        qualifierClassId: ClassId?,
+        fieldName: String,
+        inheritingPackage: FqName? = null,
+    ): MemberResolutionResult? = resolutionContext.fileContext.session.resolveExternalFieldValue(
+        classQualifier,
+        qualifierClassId,
+        fieldName,
+        resolutionContext.packageFqName,
+        inheritingPackage,
+    )
 
     /**
      * Resolves a bare name through lexical scopes, single-static imports, then static star
@@ -364,10 +435,9 @@ class ConstantEvaluator private constructor(
      * annotation-argument fallback.
      */
     private fun resolveSimpleName(name: String): MemberResolutionResult {
-        val visited = mutableSetOf<ClassId>()
         var currentClass: JavaClass? = containingClass
         while (currentClass != null) {
-            findMember(currentClass, name, visited)?.let { return it }
+            findMember(currentClass, name, mutableSetOf())?.let { return it }
             currentClass = currentClass.outerClass
         }
 
@@ -387,35 +457,41 @@ class ConstantEvaluator private constructor(
             val javaClass = classId?.let { classifierAdapterFor(it, c = resolutionContext) }
             if (javaClass != null) {
                 findMember(javaClass, name, mutableSetOf())?.let { return it }
+                continue
             }
             resolveExternalReference(className.asString(), null, name)?.let { return it }
         }
         return MemberResolutionResult.Unresolved(unresolvedImport)
     }
 
-    /** Looks [memberName] up among the fields of [javaClass] and then of its supertypes (JLS 8.3). */
-    private fun findMember(javaClass: JavaClass, memberName: String, visited: MutableSet<ClassId>): MemberResolutionResult? {
+    /**
+     * Looks [memberName] up among the fields of [javaClass] and then of its supertypes (JLS 8.3).
+     * [inheritingPackage] is `null` for the named class itself and the subclass package for its
+     * supertypes; see [isInheritedTo].
+     */
+    private fun findMember(
+        javaClass: JavaClass,
+        memberName: String,
+        visited: MutableSet<ClassId>,
+        inheritingPackage: FqName? = null,
+    ): MemberResolutionResult? {
         val classId = javaClass.classId ?: return null
         if (!visited.add(classId)) return null
 
         if (javaClass is JavaClassOverAst) {
             val field = javaClass.fields.firstOrNull { it.name.asString() == memberName }
-            if (field != null) {
+            if (field != null && field.visibility.isInheritedTo(inheritingPackage, classId.packageFqName)) {
                 if (field.isEnumEntry) return MemberResolutionResult.EnumEntry(classId, field.name)
-                return field.initializerValue?.let(MemberResolutionResult::Constant)
-                    ?: MemberResolutionResult.NonConstantField
+                return if (field.hasConstantNotNullInitializer) MemberResolutionResult.Constant { field.initializerValue }
+                else MemberResolutionResult.NonConstantField
             }
         } else {
-            val session = resolutionContext.fileContext.session
-            if (session.hasEnumEntry(classId, memberName)) {
-                return MemberResolutionResult.EnumEntry(classId, Name.identifier(memberName))
-            }
-            resolveExternalReference(classId.asSingleFqName().asString(), classId, memberName)?.let { return it }
+            resolveExternalReference(classId.asSingleFqName().asString(), classId, memberName, inheritingPackage)?.let { return it }
         }
 
         for (supertype in javaClass.supertypes) {
             val superClass = supertype.classifier as? JavaClass ?: continue
-            findMember(superClass, memberName, visited)?.let { return it }
+            findMember(superClass, memberName, visited, classId.packageFqName)?.let { return it }
         }
         return null
     }

@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirNullSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -32,6 +35,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
@@ -47,6 +51,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ConstantValueKind
 import java.io.File
 
 /**
@@ -187,6 +192,7 @@ internal fun libraryClassSymbol(
     superClassId: ClassId? = null,
     classKind: ClassKind = ClassKind.CLASS,
     enumEntries: List<String> = emptyList(),
+    constProperties: Map<String, Int> = emptyMap(),
 ): FirRegularClassSymbol = buildRegularClass {
     moduleData = FirBinaryDependenciesModuleData(Name.special("<test>"))
     origin = FirDeclarationOrigin.Library
@@ -209,6 +215,25 @@ internal fun libraryClassSymbol(
                 isStatic = true
             }
             isLocal = false
+        }
+    }
+    for (property in constProperties) {
+        val propertyName = property.key
+        val propertyValue = property.value
+        val propertyNameIdentifier = Name.identifier(propertyName)
+        declarations += buildProperty {
+            moduleData = this@buildRegularClass.moduleData
+            origin = FirDeclarationOrigin.Library
+            returnTypeRef = buildResolvedTypeRef { coneType = StandardTypes.Int }
+            this.name = propertyNameIdentifier
+            initializer = buildLiteralExpression(source = null, kind = ConstantValueKind.Int, value = propertyValue, setType = true)
+            symbol = FirRegularPropertySymbol(CallableId(classId, propertyNameIdentifier))
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public).apply {
+                isConst = true
+                isStatic = true
+            }
+            isLocal = false
+            isVar = false
         }
     }
 }.symbol

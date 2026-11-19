@@ -18,7 +18,7 @@ public final class p/Delegator {
     // source: 'main.kt'
     private synthetic final field $$delegate_0: p.Greeter
     public method <init>(@org.jetbrains.annotations.NotNull p0: p.Greeter): void
-    public @p.Marker method greet(): java.lang.String
+    public method greet(): java.lang.String
 }
 
 @kotlin.Metadata

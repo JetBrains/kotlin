@@ -75,16 +75,20 @@ internal object JavaLiteralParser {
     }
 
     /**
-     * Unescapes the textual body of a Java string/character literal (the content
-     * between the surrounding quotes). Supports standard escapes (`\n`, `\t`, `\r`,
+     * Unescapes the textual body of a Java string, text-block, or character literal (the content
+     * between the surrounding delimiters). Supports standard escapes (`\n`, `\t`, `\r`, `\s`,
      * `\b`, `\f`, `\'`, `\"`, `\\`), unicode escapes (`\uXXXX`), and 1–3 digit octal
-     * escapes.
+     * escapes. When [isTextBlock] is true, a backslash followed by a line terminator is also removed.
      */
-    fun unescapeJavaString(text: String): String {
+    fun unescapeJavaString(text: String, isTextBlock: Boolean = false): String {
         val sb = StringBuilder(text.length)
         var i = 0
         while (i < text.length) {
             if (text[i] == '\\' && i + 1 < text.length) {
+                if (isTextBlock && text[i + 1] == '\n') {
+                    i += 2
+                    continue
+                }
                 when (text[i + 1]) {
                     'n' -> {
                         sb.append('\n'); i += 2
@@ -109,6 +113,9 @@ internal object JavaLiteralParser {
                     }
                     '\\' -> {
                         sb.append('\\'); i += 2
+                    }
+                    's' -> {
+                        sb.append(' '); i += 2
                     }
                     'u' -> {
                         if (i + 5 < text.length) {
@@ -155,8 +162,8 @@ internal object JavaLiteralParser {
     /**
      * Evaluates a `LITERAL_EXPRESSION` AST node to its Java value (String, Char, Boolean,
      * Number, or `null`). The single token child's type determines the kind:
-     * string/character literals are unescaped via [unescapeJavaString]; numeric literal
-     * tokens are routed through the [parseIntegerLiteral] / [parseLongLiteral] /
+     * string, text-block, and character literals are unescaped via [unescapeJavaString]; numeric
+     * literals are routed through the [parseIntegerLiteral] / [parseLongLiteral] /
      * [parseFloatLiteral] / [parseDoubleLiteral] helpers; boolean and null keywords
      * produce the obvious constants.
      *
@@ -172,6 +179,7 @@ internal object JavaLiteralParser {
             JavaSyntaxTokenType.STRING_LITERAL -> {
                 if (text.length >= 2) unescapeJavaString(text.substring(1, text.length - 1)) else text
             }
+            JavaSyntaxTokenType.TEXT_BLOCK_LITERAL -> parseTextBlockLiteral(text)
             JavaSyntaxTokenType.CHARACTER_LITERAL -> {
                 if (text.length >= 3) unescapeJavaString(text.substring(1, text.length - 1)).firstOrNull() else null
             }
@@ -185,6 +193,50 @@ internal object JavaLiteralParser {
             else -> null
         }
     }
+
+    private fun parseTextBlockLiteral(text: String): String? {
+        val normalizedText = text.replace("\r\n", "\n").replace('\r', '\n')
+        if (!normalizedText.startsWith("\"\"\"") || !normalizedText.endsWith("\"\"\"")) return null
+
+        val openingLineEnd = normalizedText.indexOf('\n', startIndex = 3)
+        if (openingLineEnd < 0 || normalizedText.substring(3, openingLineEnd).any { !it.isJavaWhitespace() }) {
+            return null
+        }
+
+        val content = normalizedText.substring(openingLineEnd + 1, normalizedText.length - 3)
+        val lines = content.splitLinesPreservingTrailingEmpty()
+        val incidentalIndent = lines.indices.mapNotNull { index ->
+            val line = lines[index]
+            if (index == lines.lastIndex || line.any { !it.isJavaWhitespace() }) {
+                line.leadingJavaWhitespaceCount()
+            } else {
+                null
+            }
+        }.minOrNull() ?: 0
+
+        val strippedLines = lines.map { line ->
+            val leadingWhitespace = line.leadingJavaWhitespaceCount()
+            line.drop(minOf(incidentalIndent, leadingWhitespace)).trimEnd { it.isJavaWhitespace() }
+        }
+        return unescapeJavaString(strippedLines.joinToString("\n"), isTextBlock = true)
+    }
+
+    private fun String.splitLinesPreservingTrailingEmpty(): List<String> {
+        val lines = mutableListOf<String>()
+        var lineStart = 0
+        for (index in indices) {
+            if (this[index] == '\n') {
+                lines += substring(lineStart, index)
+                lineStart = index + 1
+            }
+        }
+        lines += substring(lineStart)
+        return lines
+    }
+
+    private fun Char.isJavaWhitespace(): Boolean = this == ' ' || this == '\t' || this == '\u000C'
+
+    private fun String.leadingJavaWhitespaceCount(): Int = takeWhile { it.isJavaWhitespace() }.length
 
     /**
      * Evaluates a numeric binary operation with Java-ish promotion
