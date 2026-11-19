@@ -69,14 +69,9 @@ python3 analysis/test-data-manager/test-data-manager.py check --path <dir-or-fil
 | 0    | `RECOVERED`                                                     | The test failed and then passed on a rerun within the run: nothing to do.                                                                          |
 | 1    | `MISMATCH`, `MISSING_FILE`                                      | Intended change: `update --rerun <runId>`. Otherwise diff `actualFile` with `comparedFile` (in the module report, linked from the summary JSON; a missing file has only `actualFile`). After a golden file changes, its variants may be listed too, as `REDUNDANT_FILE` or `MISSING_FILE`: the same `update` settles them. |
 | 1    | `REDUNDANT_FILE`, `UNEXPECTED_FILE`                             | The file has to go, `update` deletes it: it equals the file it falls back to, or the test produces nothing for it. There is no output to diff.     |
-| 1    | `TEST ERROR`                                                    | The test crashed; `update` won't fix it. A known problem (below): `check --rerun <runId>`. Otherwise fix the code or the test; the stack trace is in the module report (`testErrors[].stackTrace`). |
+| 1    | `TEST ERROR`                                                    | The test crashed; `update` won't fix it. Fix the code or the test; the stack trace is in the module report (`testErrors[].stackTrace`). |
 | 2    | `ERROR …`, `GRADLE FAILURE`, `e: …`                             | Fix what the line names (a path, a compilation error) and rerun. `is an output file`: pass the test data file it names. `matches no managed test`: a new test data file needs `./gradlew generateTests`; otherwise the files aren't managed, use the area's own runner. |
 | 130  | `Interrupted …`                                                 | The run was interrupted; run it again.                                                                                                             |
-
-Known problems, not caused by your change:
-
-- `TEST ERROR` with `BuiltinsVirtualFileProvider duplicated` in a random `:analysis:stubs` test: a flake that `update`
-  retries by itself and `check` doesn't.
 
 Options, the JSON summary and direct Gradle calls: [test-data-manager/README.md](test-data-manager/README.md#wrapper-script-recommended-for-agents-and-scripts)
 and [test-data-manager-convention](../repo/gradle-build-conventions/test-data-manager-convention/README.md).
