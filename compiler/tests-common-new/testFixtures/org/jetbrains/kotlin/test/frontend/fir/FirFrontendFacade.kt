@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
+import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade.Companion.shouldRunFirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
 import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.FrontendFacade
@@ -59,6 +60,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import kotlin.io.path.absolutePathString
 
+
+@RequiresOptIn(
+    message = """`FirFrontendFacade` is deprecated in favor of CLI-based facades.
+        |Consider using `FirCliJvmFacade`, `FirCliWebFacade`, `FirCliNativeFacade` or `FirCliMetadataFrontendFacade` depending on platform""".trimMargin(),
+    level = RequiresOptIn.Level.ERROR
+)
+annotation class DeprecatedTestFacade
+
+@DeprecatedTestFacade
 open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(
@@ -453,23 +463,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         else -> testInfraError("Unsupported targetPlatform: $targetPlatform")
                     }
                 }
-            }
-        }
-
-        fun shouldRunFirFrontendFacade(
-            module: TestModule,
-            testServices: TestServices,
-        ): Boolean {
-            val shouldRunAnalysis = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
-
-            if (!shouldRunAnalysis) {
-                return false
-            }
-
-            return if (module.languageVersionSettings.supportsFeature(MultiPlatformProjects)) {
-                module.isLeafModuleInMppGraph(testServices)
-            } else {
-                true
             }
         }
     }
