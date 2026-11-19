@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -100,6 +102,11 @@ dependencies {
 projectTests {
     testTask(maxHeapSize = testMaxHeapSizeSmall) {
         workingDir = rootDir
+
+        testFederation {
+            smokeTests()
+        }
+
         jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
         environment("CI", kotlinBuildProperties.isTeamcityBuild.get())
         if (project.providers.gradleProperty("generate.golden").orElse("false").get().toBooleanStrict()) {

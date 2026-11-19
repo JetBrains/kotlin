@@ -89,11 +89,8 @@ projectTests {
         }
 
         testFederation {
-            // KTI-3196
-            smokeTests { skip() }
-            contractTests { skip() }
+            notCompatibleWithTestFederation("KTI-3196")
         }
-
 
         testData(project(":compiler").isolated, "testData/codegen/box")
         testData(project(":compiler").isolated, "testData/codegen/boxJvm")

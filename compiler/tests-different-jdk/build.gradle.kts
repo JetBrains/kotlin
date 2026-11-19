@@ -62,9 +62,9 @@ projectTests {
             filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
 
             testFederation {
-                // No smoke tests are defined here, yet, and 'CustomJvmTargetOnJvmBaseTest' is defined to fail if no tests are executed
-                smokeTests { skip() }
-                contractTests { skip() }
+                notCompatibleWithTestFederation(
+                    "No smoke tests are defined here, yet, and 'CustomJvmTargetOnJvmBaseTest' is defined to fail if no tests are executed"
+                )
             }
 
             systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")

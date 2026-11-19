@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -59,6 +62,12 @@ projectTests {
         )
     ) {
         workingDir = rootDir
+
+        testFederation {
+            smokeTests()
+            contractTestsFor(Jvm)
+        }
+
         addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
         addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")
         addClasspathProperty(kotlinxSerializationGradlePluginClasspath, "kotlin.script.test.kotlinx.serialization.plugin.classpath")
@@ -81,4 +90,3 @@ projectTests {
     withDist()
     withTestScriptDefinition()
 }
-

@@ -2,6 +2,12 @@ import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.Domain.Native
+import org.jetbrains.kotlin.testFederation.testFederation
 
 description = "Atomicfu Compiler Plugin"
 val buildFeatures = serviceOf<BuildFeatures>()
@@ -190,6 +196,10 @@ projectTests {
         // IncrementalK2JVMWithAtomicfuRunnerTestGenerated needs the compiler distribution.
         @OptIn(KotlinCompilerDistUsage::class)
         withDist()
+
+        testFederation {
+            contractTestsFor(Jvm, Js, AnalysisApi)
+        }
     }
 
     nativeTestTask(
@@ -206,6 +216,10 @@ projectTests {
         // Kotlin test infra uses reflection to access JDK internals.
         // With JDK 11, some JVM args are required to silence the warnings caused by that:
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
+
+        testFederation {
+            contractTestsFor(CommonBackend, Native)
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateAtomicfuTestsKt") {

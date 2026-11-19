@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -87,8 +89,16 @@ projectTests {
     }
     // Tasks that run different sorts of tests. Most frequent use case: running specific tests at TeamCity.
     nativeTestTask("infrastructureTest", "infrastructure")
-    nativeTestTask("stdlibTest", "stdlib")
-    nativeTestTask("kotlinTestLibraryTest", "kotlin-test")
+    nativeTestTask("stdlibTest", "stdlib") {
+        testFederation {
+            smokeTests()
+        }
+    }
+    nativeTestTask("kotlinTestLibraryTest", "kotlin-test") {
+        testFederation {
+            smokeTests()
+        }
+    }
     nativeTestTask("partialLinkageTest", "partial-linkage")
     nativeTestTask("cinteropTest", "cinterop")
     nativeTestTask("debuggerTest", "debugger")
@@ -114,6 +124,10 @@ projectTests {
                 "kotlin.native.internal.fullCrossDistEnabled",
                 kotlinBuildProperties.stringProperty("kotlin.native.pathToDarwinDist").orNull != null
             )
+        }
+
+        testFederation {
+            smokeTests()
         }
     }
 

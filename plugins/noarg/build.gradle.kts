@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
+
 description = "Kotlin NoArg Compiler Plugin"
 
 plugins {
@@ -50,7 +54,11 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask()
+    testTask {
+        testFederation {
+            contractTestsFor(Jvm, AnalysisApi)
+        }
+    }
 
     testGenerator("org.jetbrains.kotlin.noarg.TestGeneratorKt", generateTestsInBuildDirectory = true)
 

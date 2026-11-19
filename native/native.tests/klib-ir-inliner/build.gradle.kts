@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -88,6 +90,10 @@ projectTests {
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
 
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
+
+        testFederation {
+            contractTestsFor(CommonBackend)
+        }
     }
 
     commonBackendTestTask("test")

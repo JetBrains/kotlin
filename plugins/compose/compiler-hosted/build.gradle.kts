@@ -1,6 +1,11 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -146,6 +151,9 @@ projectTests {
         addClasspathProperty(testJsRuntime, "compose.compiler.test.js.classpath")
         useJsIrBoxTests(buildDir = layout.buildDirectory)
 
+        testFederation {
+            contractTestsFor(CommonBackend, Jvm, Js, AnalysisApi)
+        }
     }
 
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
@@ -162,4 +170,3 @@ projectTests {
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()
 }
-

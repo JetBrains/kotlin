@@ -1,5 +1,8 @@
 import TestCompilePaths.PARCELIZE_COMPILER_PLUGIN_CLASSPATH
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
 import java.util.zip.ZipFile
 
 description = "Parcelize compiler plugin"
@@ -123,6 +126,10 @@ val prepareRobolectricDependencies = tasks.register("prepareRobolectricDependenc
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
+        testFederation {
+            contractTestsFor(Jvm, AnalysisApi)
+        }
+
         val robolectricDependencies = prepareRobolectricDependencies.map { it.destinationDir }
         inputs.files(robolectricDependencies)
             .withNormalizer(ClasspathNormalizer::class)

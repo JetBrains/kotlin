@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -49,6 +52,10 @@ projectTests {
         allowUnsafe = true, // KT-85212
     ) {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")
+
+        testFederation {
+            contractTestsFor(AnalysisApi)
+        }
     }
 
     testGenerator(
