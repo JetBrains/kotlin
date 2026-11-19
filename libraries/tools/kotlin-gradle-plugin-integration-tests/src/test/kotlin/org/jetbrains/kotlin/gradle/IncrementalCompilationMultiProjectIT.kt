@@ -419,10 +419,6 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
     }
 }
 
-class IncrementalCompilationJvmMultiProjectFirRunnerIT : IncrementalCompilationJvmMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
-}
-
 abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilationBaseIT() {
 
     protected abstract val compileKotlinTaskName: String
