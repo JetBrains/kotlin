@@ -253,7 +253,22 @@ class Fir2IrTypeConverter(
                 val approximated = type.approximateForIrOrNull()!!
                 approximated.toIrType(typeOrigin)
             }
-            is ConeUnionType -> if (canBeNull(session)) builtins.anyNType else builtins.anyType
+            is ConeUnionType -> {
+                val errorUnionElements = (sequenceOf(type.primaryType) + type.richErrorTypes.asSequence())
+                    .mapTo(ArrayList(type.richErrorTypes.size + 1)) {
+                        when (val irType = it.toIrType()) {
+                            is IrSimpleType -> irType
+                            is IrDynamicType -> error("unexpected dynamic type in a union type")
+                            is IrErrorType -> return irType
+                        }
+                    }
+                irRichErrorType(
+                    anyClassifier = builtins.anyClass,
+                    nullability = if (canBeNull(session)) SimpleTypeNullability.MARKED_NULLABLE else SimpleTypeNullability.NOT_SPECIFIED,
+                    errorUnionElements = errorUnionElements,
+                    annotations = with(annotationGenerator) { annotations.toIrAnnotations() },
+                )
+            }
             is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> createErrorType()
         }
     }

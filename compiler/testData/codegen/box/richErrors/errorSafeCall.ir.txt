@@ -51,48 +51,48 @@ FILE fqName:<root> fileName:/errorSafeCall.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              ARG arg0: BLOCK type=kotlin.Any origin=ERROR_SAFE_CALL
-                VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any [val]
-                  CALL 'public final fun produceUnion (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-                WHEN type=kotlin.Any origin=null
+              ARG arg0: BLOCK type=kotlin.Any[kotlin.Int | <root>.Foo] origin=ERROR_SAFE_CALL
+                VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any[kotlin.String | <root>.Foo] [val]
+                  CALL 'public final fun produceUnion (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
+                WHEN type=kotlin.Any[kotlin.Int | <root>.Foo] origin=null
                   BRANCH
                     if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError
-                      GET_VAR 'val tmp_1: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
-                    then: GET_VAR 'val tmp_1: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                      GET_VAR 'val tmp_1: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
+                    then: GET_VAR 'val tmp_1: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
                       ARG <this>: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                        GET_VAR 'val tmp_1: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                        GET_VAR 'val tmp_1: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
               ARG arg1: CONST Int type=kotlin.Int value=2
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL 1"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Foo
-            BLOCK type=kotlin.Any origin=ERROR_SAFE_CALL
-              VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any [val]
-                CALL 'public final fun produceUnion2 (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-              WHEN type=kotlin.Any origin=null
+            BLOCK type=kotlin.Any[kotlin.Int | <root>.Foo] origin=ERROR_SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any[kotlin.String | <root>.Foo] [val]
+                CALL 'public final fun produceUnion2 (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
+              WHEN type=kotlin.Any[kotlin.Int | <root>.Foo] origin=null
                 BRANCH
                   if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError
-                    GET_VAR 'val tmp_2: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
-                  then: GET_VAR 'val tmp_2: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                    GET_VAR 'val tmp_2: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
+                  then: GET_VAR 'val tmp_2: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
                     ARG <this>: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                      GET_VAR 'val tmp_2: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                      GET_VAR 'val tmp_2: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL 2"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              ARG arg0: BLOCK type=kotlin.Any origin=ERROR_SAFE_CALL
+              ARG arg0: BLOCK type=kotlin.Any[kotlin.String | kotlin.RichError] origin=ERROR_SAFE_CALL
                 VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any [val]
                   CALL 'public final fun produceAny (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-                WHEN type=kotlin.Any origin=null
+                WHEN type=kotlin.Any[kotlin.String | kotlin.RichError] origin=null
                   BRANCH
                     if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError
                       GET_VAR 'val tmp_3: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
@@ -107,10 +107,10 @@ FILE fqName:<root> fileName:/errorSafeCall.kt
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Foo
-            BLOCK type=kotlin.Any origin=ERROR_SAFE_CALL
+            BLOCK type=kotlin.Any[kotlin.String | kotlin.RichError] origin=ERROR_SAFE_CALL
               VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Any [val]
                 CALL 'public final fun produceErrorAsAny (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-              WHEN type=kotlin.Any origin=null
+              WHEN type=kotlin.Any[kotlin.String | kotlin.RichError] origin=null
                 BRANCH
                   if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError
                     GET_VAR 'val tmp_4: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
@@ -131,11 +131,11 @@ FILE fqName:<root> fileName:/errorSafeCall.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun produceErrorAsAny (): kotlin.Any declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo' type=<root>.Foo origin=null
-  FUN name:produceUnion visibility:public modality:FINAL returnType:kotlin.Any
+  FUN name:produceUnion visibility:public modality:FINAL returnType:kotlin.Any[kotlin.String | <root>.Foo]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun produceUnion (): kotlin.Any declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun produceUnion (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>'
         CONST String type=kotlin.String value="ok"
-  FUN name:produceUnion2 visibility:public modality:FINAL returnType:kotlin.Any
+  FUN name:produceUnion2 visibility:public modality:FINAL returnType:kotlin.Any[kotlin.String | <root>.Foo]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun produceUnion2 (): kotlin.Any declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun produceUnion2 (): kotlin.Any[kotlin.String | <root>.Foo] declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo' type=<root>.Foo origin=null

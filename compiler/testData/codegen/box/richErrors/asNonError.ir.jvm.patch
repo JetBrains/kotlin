@@ -2,7 +2,7 @@
 +++ b/asNonError.ir.jvm.txt
 @@ -56,7 +56,7 @@
                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError?
-                 GET_VAR 'val tmp_1: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                 GET_VAR 'val tmp_1: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
                then: THROW type=kotlin.Nothing
 -                CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.ClassCastException' type=kotlin.ClassCastException origin=null
 +                CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.ClassCastException' type=java.lang.ClassCastException origin=null
@@ -11,7 +11,7 @@
                then: TYPE_OP type=kotlin.Any origin=CAST typeOperand=kotlin.Any
 @@ -70,7 +70,7 @@
                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError
-                 GET_VAR 'val tmp_2: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                 GET_VAR 'val tmp_2: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
                then: THROW type=kotlin.Nothing
 -                CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.ClassCastException' type=kotlin.ClassCastException origin=null
 +                CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.ClassCastException' type=java.lang.ClassCastException origin=null
@@ -20,14 +20,14 @@
                then: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
 @@ -112,15 +112,15 @@
                    if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError?
-                     GET_VAR 'val tmp_5: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                     GET_VAR 'val tmp_5: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
                    then: THROW type=kotlin.Nothing
 -                    CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.ClassCastException' type=kotlin.ClassCastException origin=null
 +                    CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.ClassCastException' type=java.lang.ClassCastException origin=null
                  BRANCH
                    if: CONST Boolean type=kotlin.Boolean value=true
                    then: TYPE_OP type=kotlin.Any origin=CAST typeOperand=kotlin.Any
-                     GET_VAR 'val tmp_5: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                     GET_VAR 'val tmp_5: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
            RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
              CONST String type=kotlin.String value="FAIL 1"
 -        CATCH parameter=val e: kotlin.ClassCastException declared in <root>.box
@@ -39,14 +39,14 @@
          try: BLOCK type=kotlin.Nothing origin=null
 @@ -133,15 +133,15 @@
                    if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError
-                     GET_VAR 'val tmp_6: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                     GET_VAR 'val tmp_6: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
                    then: THROW type=kotlin.Nothing
 -                    CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.ClassCastException' type=kotlin.ClassCastException origin=null
 +                    CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.ClassCastException' type=java.lang.ClassCastException origin=null
                  BRANCH
                    if: CONST Boolean type=kotlin.Boolean value=true
                    then: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
-                     GET_VAR 'val tmp_6: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                     GET_VAR 'val tmp_6: kotlin.Any[kotlin.String | <root>.Foo] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.Foo] origin=null
            RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
              CONST String type=kotlin.String value="FAIL 2"
 -        CATCH parameter=val e: kotlin.ClassCastException declared in <root>.box
@@ -58,14 +58,14 @@
          BLOCK type=kotlin.Any? origin=null
 @@ -180,15 +180,15 @@
                    if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError?
-                     GET_VAR 'val tmp_9: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+                     GET_VAR 'val tmp_9: kotlin.Any?[kotlin.String? | <root>.Foo] declared in <root>.box' type=kotlin.Any?[kotlin.String? | <root>.Foo] origin=null
                    then: THROW type=kotlin.Nothing
 -                    CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.ClassCastException' type=kotlin.ClassCastException origin=null
 +                    CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.ClassCastException' type=java.lang.ClassCastException origin=null
                  BRANCH
                    if: CONST Boolean type=kotlin.Boolean value=true
                    then: TYPE_OP type=kotlin.Any origin=CAST typeOperand=kotlin.Any
-                     GET_VAR 'val tmp_9: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+                     GET_VAR 'val tmp_9: kotlin.Any?[kotlin.String? | <root>.Foo] declared in <root>.box' type=kotlin.Any?[kotlin.String? | <root>.Foo] origin=null
            RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
              CONST String type=kotlin.String value="FAIL 3"
 -        CATCH parameter=val e: kotlin.ClassCastException declared in <root>.box
@@ -77,7 +77,7 @@
          BLOCK type=kotlin.Any? origin=null
 @@ -199,7 +199,7 @@
                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.RichError
-                 GET_VAR 'val tmp_10: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+                 GET_VAR 'val tmp_10: kotlin.Any?[kotlin.String? | <root>.Foo] declared in <root>.box' type=kotlin.Any?[kotlin.String? | <root>.Foo] origin=null
                then: THROW type=kotlin.Nothing
 -                CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.ClassCastException' type=kotlin.ClassCastException origin=null
 +                CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.ClassCastException' type=java.lang.ClassCastException origin=null

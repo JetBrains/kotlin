@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.irRichErrorType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -975,39 +976,49 @@ fun IrType.remapTypeParameters(
     srcToDstParameterMap: Map<IrTypeParameter, IrTypeParameter>? = null
 ): IrType =
     when (this) {
-        is IrSimpleType -> {
-            val classifier = classifier.owner
-            when {
-                classifier is IrTypeParameter -> {
-                    val newClassifier =
-                        srcToDstParameterMap?.get(classifier) ?: if (classifier.parent == source)
-                            target.typeParameters[classifier.index]
-                        else
-                            classifier
-                    IrSimpleTypeImpl(newClassifier.symbol, nullability, arguments, annotations)
-                }
-
-                classifier is IrClass ->
-                    IrSimpleTypeImpl(
-                        classifier.symbol,
-                        nullability,
-                        arguments.memoryOptimizedMap {
-                            when (it) {
-                                is IrTypeProjection -> makeTypeProjection(
-                                    it.type.remapTypeParameters(source, target, srcToDstParameterMap),
-                                    it.variance
-                                )
-                                is IrStarProjection -> it
-                            }
-                        },
-                        annotations
-                    )
-
-                else -> this
-            }
-        }
+        is IrSimpleType -> this.remapTypeParameters(source, target, srcToDstParameterMap)
         else -> this
     }
+
+private fun IrSimpleType.remapTypeParameters(
+    source: IrTypeParametersContainer,
+    target: IrTypeParametersContainer,
+    srcToDstParameterMap: Map<IrTypeParameter, IrTypeParameter>? = null
+): IrSimpleType {
+    if (errorUnionElements.isNotEmpty()) {
+        return irRichErrorType(
+            anyClassifier = classifier,
+            nullability = nullability,
+            errorUnionElements = errorUnionElements.map { it.remapTypeParameters(source, target, srcToDstParameterMap) },
+            annotations = annotations,
+        )
+    }
+    return when (val classifier = classifier.owner) {
+        is IrTypeParameter -> {
+            val newClassifier =
+                srcToDstParameterMap?.get(classifier) ?: if (classifier.parent == source)
+                    target.typeParameters[classifier.index]
+                else
+                    classifier
+            IrSimpleTypeImpl(newClassifier.symbol, nullability, arguments, annotations)
+        }
+        is IrClass -> IrSimpleTypeImpl(
+            classifier.symbol,
+            nullability,
+            arguments.memoryOptimizedMap {
+                when (it) {
+                    is IrTypeProjection -> makeTypeProjection(
+                        it.type.remapTypeParameters(source, target, srcToDstParameterMap),
+                        it.variance
+                    )
+                    is IrStarProjection -> it
+                }
+            },
+            annotations
+        )
+        else -> this
+    }
+}
 
 fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
     this.declarations += declaration
