@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.classTypeParameterSymbols
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeIllegalProjectionInExpansion
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInvalidStaticReceiverInCallableReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequired
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePlaceholderProjectionInQualifierResolution
@@ -34,10 +35,12 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockLf
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.constructType
+import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
@@ -216,6 +219,10 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
                     FirErrors.CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING,
                 )
             )
+        }
+
+        if (lhsType.fullyExpandedType().contains { it is ConeErrorType && it.diagnostic is ConeIllegalProjectionInExpansion }) {
+            reporter.reportOn(lhs.source, FirErrors.ILLEGAL_PROJECTION_IN_TYPEALIAS_EXPANSION)
         }
     }
 }
