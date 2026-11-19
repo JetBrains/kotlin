@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmModuleMappings
 import org.jetbrains.kotlin.cli.jvm.index.nio.JarFilePool
 import org.jetbrains.kotlin.cli.jvm.index.nio.NioRootEntryFactory
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.useJavaDirect
 import org.jetbrains.kotlin.config.useNioJvmDependenciesIndex
 import java.io.Closeable
@@ -21,12 +25,16 @@ import java.io.Closeable
  * The archives of the NIO entries belong to [jarPool], which [close] releases; the owner closes the indexes when its environment is
  * disposed. Handles stay usable afterwards: a later read opens its archive again.
  */
-class JvmClasspathIndexes(useNioEntries: Boolean) : Closeable {
+class JvmClasspathIndexes(
+    useNioEntries: Boolean,
+    languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+) : Closeable {
 
     constructor(configuration: CompilerConfiguration) : this(
         configuration.useNioJvmDependenciesIndex &&
                 configuration.useJavaDirect &&
-                configuration[JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM] != false
+                configuration[JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM] != false,
+        configuration.languageVersionSettings,
     )
 
     val javaFileManagerIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true)
@@ -38,6 +46,9 @@ class JvmClasspathIndexes(useNioEntries: Boolean) : Closeable {
     val jarPool: JarFilePool? = if (useNioEntries) JarFilePool.createIfUnmappingPossible() else null
 
     private val nioRootEntryFactory = NioRootEntryFactory(jarPool)
+
+    /** The `.kotlin_module` mappings of the roots, read through the entries of [classFinderIndex]. */
+    val moduleMappings = JvmModuleMappings(languageVersionSettings, if (useNioEntries) nioRootEntryFactory else JvmRootEntryFactory.VFS)
 
     /** Adds [roots] to both indexes and returns the index over them with VFS entries. */
     fun addRoots(roots: List<JavaRoot>): JvmDependenciesIndex {

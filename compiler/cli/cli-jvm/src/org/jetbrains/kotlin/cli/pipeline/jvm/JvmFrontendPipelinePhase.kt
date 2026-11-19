@@ -670,7 +670,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         return ProjectEnvironmentWithCoreEnvironmentEmulation(
             project,
             listOfNotNull(projectEnvironment.jarFileSystem, projectEnvironment.environment.jrtFileSystem, localFileSystem),
-            { JvmPackagePartProvider(configuration.languageVersionSettings, it) },
+            { JvmPackagePartProvider(classpathIndexes.moduleMappings, it) },
             initialRoots, configuration,
             projectEnvironment,
             classpathRootsResolver,

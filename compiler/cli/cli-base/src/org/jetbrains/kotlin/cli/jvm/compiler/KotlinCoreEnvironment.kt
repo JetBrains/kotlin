@@ -244,7 +244,7 @@ class KotlinCoreEnvironment private constructor(
     }
 
     fun createPackagePartProvider(classpath: JvmClasspath): JvmPackagePartProvider {
-        return JvmPackagePartProvider(configuration.languageVersionSettings, classpath).apply {
+        return JvmPackagePartProvider(classpathIndexes.moduleMappings, classpath).apply {
             addRoots(initialRoots, configuration)
             packagePartProviders += this
         }

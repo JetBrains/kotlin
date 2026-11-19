@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.JAVA_MODULE_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathRootMatcher
+import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntryFactory
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -24,23 +26,31 @@ import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.PrintStream
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Loads `.kotlin_module` mappings from the binary roots accepted by [acceptsRoot].
  *
- * Compiler code uses the [JvmClasspath] constructor. The root filter is an implementation seam for hosts that select roots in
+ * Compiler code uses the [JvmClasspath] constructors. The root filter is an implementation seam for hosts that select roots in
  * their own terms (e.g. Analysis API adapters over `GlobalSearchScope`); it is not meant to be exposed through compiler APIs.
  */
 class JvmPackagePartProvider(
-    languageVersionSettings: LanguageVersionSettings,
-    private val acceptsRoot: (VirtualFile) -> Boolean,
-) : JvmPackagePartProviderBase<VirtualFile>() {
+    private val moduleMappings: JvmModuleMappings,
+    private val acceptsRoot: (JavaRoot) -> Boolean,
+) : JvmPackagePartProviderBase<JvmClasspathRootId>() {
+    constructor(languageVersionSettings: LanguageVersionSettings, acceptsRoot: (VirtualFile) -> Boolean) :
+            this(JvmModuleMappings(languageVersionSettings), { root: JavaRoot -> acceptsRoot(root.file) })
+
+    constructor(moduleMappings: JvmModuleMappings, classpath: JvmClasspath) :
+            this(moduleMappings, classpath.rootFilter())
+
     constructor(languageVersionSettings: LanguageVersionSettings, classpath: JvmClasspath) :
-            this(languageVersionSettings, JvmClasspathRootMatcher(classpath)::accepts)
+            this(JvmModuleMappings(languageVersionSettings), classpath)
 
-    override val deserializationConfiguration = CommonCompilerDeserializationConfiguration(languageVersionSettings)
+    override val deserializationConfiguration: CommonCompilerDeserializationConfiguration
+        get() = moduleMappings.deserializationConfiguration
 
-    override val loadedModules: MutableList<ModuleMappingInfo<VirtualFile>> = SmartList()
+    override val loadedModules: MutableList<ModuleMappingInfo<JvmClasspathRootId>> = SmartList()
 
     private var allPackageNamesCache: Set<String>? = null
 
@@ -52,24 +62,70 @@ class JvmPackagePartProvider(
 
     // TODO: redesign to avoid cache-unfriendly usages, see KT-76516
     fun addRoots(roots: List<JavaRoot>, configuration: CompilerConfiguration) {
-        for ((val root = file, val type) in roots) {
-            if (type != JavaRoot.RootType.BINARY) continue
+        for (root in roots) {
+            if (root.type != JavaRoot.RootType.BINARY) continue
             if (!acceptsRoot(root)) continue
 
-            val metaInf = root.findChild("META-INF") ?: continue
-            for (moduleFile in metaInf.children) {
-                if (!moduleFile.name.endsWith(ModuleMapping.MAPPING_FILE_EXT)) continue
-
-                tryLoadModuleMapping(
-                    { moduleFile.contentsToByteArray() }, moduleFile.toString(), moduleFile.path,
-                    deserializationConfiguration, configuration
-                )?.let {
-                    loadedModules.add(ModuleMappingInfo(root, it, moduleFile.nameWithoutExtension))
-                    allPackageNamesCache = null
-                }
+            for (moduleFile in moduleMappings.moduleFiles(root)) {
+                moduleFile.reportErrors(configuration)
+                val mapping = moduleFile.mapping ?: continue
+                loadedModules.add(ModuleMappingInfo(root.id, mapping, moduleFile.name))
+                allPackageNamesCache = null
             }
         }
     }
+}
+
+/**
+ * The parsed `.kotlin_module` files in `META-INF` of binary roots, read through the entries of [rootEntries] once per root and shared
+ * by the [JvmPackagePartProvider]s of an environment.
+ */
+class JvmModuleMappings(
+    languageVersionSettings: LanguageVersionSettings,
+    private val rootEntries: JvmRootEntryFactory = JvmRootEntryFactory.VFS,
+) {
+    val deserializationConfiguration: CommonCompilerDeserializationConfiguration =
+        CommonCompilerDeserializationConfiguration(languageVersionSettings)
+
+    private val moduleFilesByRoot = ConcurrentHashMap<JavaRoot, List<ModuleFile>>()
+
+    internal fun moduleFiles(root: JavaRoot): List<ModuleFile> = moduleFilesByRoot.computeIfAbsent(root, ::readModuleFiles)
+
+    private fun readModuleFiles(root: JavaRoot): List<ModuleFile> {
+        val metaInf = rootEntries.createRootEntry(root).findChild("META-INF") ?: return emptyList()
+        return metaInf.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }.map { entry ->
+            val handle = entry.toHandle(root)
+            var incompatibleVersion: MetadataVersion? = null
+            var readError: EOFException? = null
+            val mapping = try {
+                ModuleMapping.loadModuleMapping(handle.readBytes(), handle.toString(), deserializationConfiguration) {
+                    incompatibleVersion = it
+                }
+            } catch (e: EOFException) {
+                readError = e
+                null
+            }
+            ModuleFile(entry.nameWithoutExtension, handle.pathForDiagnostics, mapping, incompatibleVersion, readError)
+        }
+    }
+
+    internal class ModuleFile(
+        val name: String,
+        private val path: String,
+        val mapping: ModuleMapping?,
+        private val incompatibleVersion: MetadataVersion?,
+        private val readError: EOFException?,
+    ) {
+        fun reportErrors(configuration: CompilerConfiguration) {
+            incompatibleVersion?.let { reportIncompatibleModuleMapping(it, path, configuration) }
+            readError?.let { reportModuleMappingReadError(it, path, configuration) }
+        }
+    }
+}
+
+private fun JvmClasspath.rootFilter(): (JavaRoot) -> Boolean {
+    val matcher = JvmClasspathRootMatcher(this)
+    return { root -> matcher.accepts(root.file) }
 }
 
 fun tryLoadModuleMapping(
@@ -80,14 +136,27 @@ fun tryLoadModuleMapping(
     configuration: CompilerConfiguration
 ): ModuleMapping? = try {
     ModuleMapping.loadModuleMapping(getModuleBytes(), debugName, deserializationConfiguration) { incompatibleVersion ->
-        configuration.report(
-            JAVA_MODULE_RESOLUTION_ERROR,
-            "Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is " +
-                    "$incompatibleVersion, expected version is ${MetadataVersion.INSTANCE}.",
-            CompilerMessageLocation.create(modulePath)
-        )
+        reportIncompatibleModuleMapping(incompatibleVersion, modulePath, configuration)
     }
 } catch (e: EOFException) {
+    reportModuleMappingReadError(e, modulePath, configuration)
+    null
+}
+
+private fun reportIncompatibleModuleMapping(
+    incompatibleVersion: MetadataVersion,
+    modulePath: String,
+    configuration: CompilerConfiguration,
+) {
+    configuration.report(
+        JAVA_MODULE_RESOLUTION_ERROR,
+        "Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is " +
+                "$incompatibleVersion, expected version is ${MetadataVersion.INSTANCE}.",
+        CompilerMessageLocation.create(modulePath)
+    )
+}
+
+private fun reportModuleMappingReadError(e: EOFException, modulePath: String, configuration: CompilerConfiguration) {
     configuration.report(
         JAVA_MODULE_RESOLUTION_ERROR,
         "Error occurred when reading the module: ${e.message}", CompilerMessageLocation.create(modulePath)
@@ -96,5 +165,4 @@ fun tryLoadModuleMapping(
         String(ByteArrayOutputStream().also { e.printStackTrace(PrintStream(it)) }.toByteArray()),
         CompilerMessageLocation.create(modulePath)
     )
-    null
 }
