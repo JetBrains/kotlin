@@ -6112,6 +6112,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonLocalDestructuringDeclaration : KaFirDiagnostic<KtDestructuringDeclaration> {
+        override val diagnosticClass: KClass<NonLocalDestructuringDeclaration>
+            get() = NonLocalDestructuringDeclaration::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ExpectedDeclarationWithBody : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass: KClass<ExpectedDeclarationWithBody>
             get() = ExpectedDeclarationWithBody::class

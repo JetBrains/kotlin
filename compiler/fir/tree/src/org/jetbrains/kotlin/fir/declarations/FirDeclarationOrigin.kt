@@ -59,7 +59,7 @@ sealed class FirDeclarationOrigin(
          * initialized from it.
          *
          * A script top-level container is a local variable of the script. A container outside of scripts is a private property: such
-         * declarations are not allowed (KT-58563), but their entries are still desugared into properties.
+         * declarations are not allowed (`NON_LOCAL_DESTRUCTURING_DECLARATION`), but their entries are still desugared into properties.
          * Containers of local destructuring declarations have the [Source] origin.
          */
         object DestructuringDeclarationContainer : Synthetic()

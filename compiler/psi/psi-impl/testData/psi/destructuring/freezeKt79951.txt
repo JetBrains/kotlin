@@ -10,11 +10,10 @@ KtFile: freezeKt79951.kt
     <empty list>
   PsiWhiteSpace('\n\n')
   DESTRUCTURING_DECLARATION
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(val)('val')
-        PsiErrorElement:Expecting a name
-          <empty list>
-      PsiErrorElement:Expecting ')'
+    PsiElement(LPAR)('(')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(val)('val')
+      PsiErrorElement:Expecting a name
         <empty list>
+    PsiErrorElement:Expecting ')'
+      <empty list>

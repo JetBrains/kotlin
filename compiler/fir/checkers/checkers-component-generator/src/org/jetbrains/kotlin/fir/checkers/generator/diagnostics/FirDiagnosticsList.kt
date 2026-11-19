@@ -1782,6 +1782,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val DESTRUCTURING_SHORT_FORM_UNDERSCORE by warning<KtElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING by error<KtElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val NON_LOCAL_DESTRUCTURING_DECLARATION by error<KtDestructuringDeclaration>(PositioningStrategy.DESTRUCTURING_DECLARATION_ENTRIES)
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {

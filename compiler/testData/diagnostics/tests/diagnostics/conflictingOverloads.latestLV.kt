@@ -35,8 +35,8 @@ enum class <!CLASSIFIER_REDECLARATION!>B<!>
 val <!REDECLARATION!>u<!> = 10
 val <!REDECLARATION!>u<!> = 20
 
-val <!SYNTAX!>(a,b)<!> = 30 <!UNRESOLVED_REFERENCE!>to<!> 40
-val <!SYNTAX!>(c,d)<!> = 50 <!UNRESOLVED_REFERENCE!>to<!> 60
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(a,b)<!> = 30 <!UNRESOLVED_REFERENCE!>to<!> 40
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(c,d)<!> = 50 <!UNRESOLVED_REFERENCE!>to<!> 60
 
 typealias <!CLASSIFIER_REDECLARATION!>TA<!> = A
 typealias <!CLASSIFIER_REDECLARATION!>TA<!> = B
@@ -73,8 +73,8 @@ class <!CONFLICTING_OVERLOADS!>mest<!>
 private <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun()<!> {}
 
 class ErrorDestructuring {
-    val <!SYNTAX!>(a, b)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
-    val <!SYNTAX!>(c, d)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(a, b)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(c, d)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, enumDeclaration,

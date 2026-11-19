@@ -478,4 +478,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
         PositioningStrategies.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
     )
+
+    val DESTRUCTURING_DECLARATION_ENTRIES = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DESTRUCTURING_DECLARATION_ENTRIES,
+        PositioningStrategies.DESTRUCTURING_DECLARATION_ENTRIES,
+    )
 }

@@ -7,7 +7,7 @@ class Foo {
     val aProp: Int = 1
 }
 
-<!SYNTAX!>(val name = fullName)<!> = <!UNRESOLVED_REFERENCE!>person<!>
+<!NON_LOCAL_DESTRUCTURING_DECLARATION!>(val name = fullName)<!> = <!UNRESOLVED_REFERENCE!>person<!>
 
 fun destructureEmptyShort(person: Person) {
     (val<!SYNTAX!><!>) = person

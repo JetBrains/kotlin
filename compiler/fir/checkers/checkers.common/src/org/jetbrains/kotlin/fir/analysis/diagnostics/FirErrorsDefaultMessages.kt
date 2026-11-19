@@ -637,6 +637,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_INTERNAL_PUBLISHED_API
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_LOCAL_DESTRUCTURING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_LOCAL_SUSPENSION_POINT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_MEMBER_FUNCTION_NO_BODY
@@ -3341,6 +3342,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             },
         )
         map.put(NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING, "Underscore in name-based destructuring without renaming is forbidden.")
+        map.put(NON_LOCAL_DESTRUCTURING_DECLARATION, "Destructuring declarations are only allowed for local variables.")
 
         map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' is only allowed on top level, in named objects, in companion objects or companion blocks.")
         map.put(CONST_VAL_WITH_GETTER, "Const 'val' cannot have a getter.")

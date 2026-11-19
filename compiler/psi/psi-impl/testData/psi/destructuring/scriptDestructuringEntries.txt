@@ -261,15 +261,14 @@ KtFile: scriptDestructuringEntries.kts
           DESTRUCTURING_DECLARATION
             PsiElement(val)('val')
             PsiWhiteSpace(' ')
-            PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-              PsiElement(LPAR)('(')
-              DESTRUCTURING_DECLARATION_ENTRY
-                PsiElement(IDENTIFIER)('j')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              DESTRUCTURING_DECLARATION_ENTRY
-                PsiElement(IDENTIFIER)('k')
-              PsiElement(RPAR)(')')
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('j')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(IDENTIFIER)('k')
+            PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')

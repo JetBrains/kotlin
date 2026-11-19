@@ -1482,6 +1482,25 @@ object LightTreePositioningStrategies {
         }
     }
 
+    /**
+     * Marks the brackets of a destructuring declaration together with its entries, e.g., `(a, b)` in `val (a, b) = pair`.
+     */
+    val DESTRUCTURING_DECLARATION_ENTRIES: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val opening = tree.findChildByType(node, DESTRUCTURING_OPENING_BRACKETS)
+                ?: return super.mark(node, startOffset, endOffset, tree)
+            val closing = tree.findChildByType(node, DESTRUCTURING_CLOSING_BRACKETS)
+                ?: tree.findLastChildByType(node, KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY)
+                ?: opening
+            return markRange(opening, closing, startOffset, endOffset, tree, node)
+        }
+    }
+
     val DEPRECATION: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -1514,6 +1533,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.safeAccess(node: Light
     findChildByType(node, ALL_SAFE_ACCESSES)
 
 private val DOT_OR_SAFE_ACCESSES = TokenSet.orSet(ALL_SAFE_ACCESSES, TokenSet.create(DOT))
+
+private val DESTRUCTURING_OPENING_BRACKETS = TokenSet.create(LPAR, LBRACKET)
+private val DESTRUCTURING_CLOSING_BRACKETS = TokenSet.create(RPAR, RBRACKET)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.dotOrSafeAccess(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, DOT_OR_SAFE_ACCESSES)

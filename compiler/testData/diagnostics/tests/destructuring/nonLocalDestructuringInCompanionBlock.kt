@@ -7,7 +7,7 @@ data class X(val a: Int, val b: String)
 
 class A {
     companion {
-        val <!SYNTAX!>(a, b)<!> = X(1, "")
+        val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(a, b)<!> = X(1, "")
     }
 
     fun use() = b.length

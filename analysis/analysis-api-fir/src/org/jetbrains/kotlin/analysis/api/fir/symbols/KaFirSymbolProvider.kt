@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.components.resolutionFacade
 import org.jetbrains.kotlin.analysis.api.fir.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.fir.hasNonLocalEntries
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSymbolProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -167,15 +167,12 @@ internal class KaFirSymbolProvider(
     override fun symbol(entry: KtDestructuringDeclarationEntry): KaVariableSymbol = withPsiValidityAssertion(entry) {
         when (val parent = entry.parent) {
             is KtDestructuringDeclaration -> {
-                if (parent.parent?.parent is KtScript) {
+                if (parent.hasNonLocalEntries) {
                     KaFirKotlinPropertySymbol.create(entry, analysisSession)
                 } else {
                     KaFirLocalVariableSymbol(entry, analysisSession)
                 }
             }
-
-            // The parser wraps the entries of a top-level or member destructuring declaration in an error element (KT-58563)
-            is PsiErrorElement -> KaFirKotlinPropertySymbol.create(entry, analysisSession)
 
             else -> errorWithFirSpecificEntries("Unexpected type of parent", psi = entry) {
                 withPsiEntry("parent", parent)

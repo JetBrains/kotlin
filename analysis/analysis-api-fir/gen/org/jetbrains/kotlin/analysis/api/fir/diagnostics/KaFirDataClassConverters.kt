@@ -1411,6 +1411,12 @@ private fun KaDiagnosticConverterBuilder.addConversions25() {
             token,
         )
     }
+    add(FirErrors.NON_LOCAL_DESTRUCTURING_DECLARATION) { firDiagnostic ->
+        NonLocalDestructuringDeclarationImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_NAMES) { firDiagnostic ->
         ExpectActualIncompatibleTypeParameterNamesImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),

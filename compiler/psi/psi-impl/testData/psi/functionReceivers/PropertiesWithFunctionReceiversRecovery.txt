@@ -310,12 +310,11 @@ KtFile: PropertiesWithFunctionReceiversRecovery.kt
                     PsiElement(IDENTIFIER)('T')
             PsiElement(GT)('>')
       PsiElement(DOT)('.')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('A')
-      PsiErrorElement:Expecting ')'
-        PsiElement(LT)('<')
+    PsiElement(LPAR)('(')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('A')
+    PsiErrorElement:Expecting ')'
+      PsiElement(LT)('<')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('B')
   PsiErrorElement:Expecting a top level declaration
@@ -446,11 +445,10 @@ KtFile: PropertiesWithFunctionReceiversRecovery.kt
               PsiElement(DOT)('.')
       PsiErrorElement:Expecting '.' before a property name
         PsiElement(IDENTIFIER)('foo')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      PsiErrorElement:Expecting a name
-        <empty list>
-      PsiElement(RPAR)(')')
+    PsiElement(LPAR)('(')
+    PsiErrorElement:Expecting a name
+      <empty list>
+    PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')

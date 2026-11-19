@@ -9,10 +9,10 @@ data class Person(val id: Int, val name: String?)
 val person = Person(42, null)
 
 <!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
-val <!SYNTAX!>[first, second]<!> = person
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>[first, second]<!> = person
 
 <!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
-<!SYNTAX!>[val id, var name]<!> = person
+<!NON_LOCAL_DESTRUCTURING_DECLARATION!>[val id, var name]<!> = person
 
 @JsExport
 fun main() {
