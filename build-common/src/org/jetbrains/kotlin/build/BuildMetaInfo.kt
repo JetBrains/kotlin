@@ -111,6 +111,7 @@ abstract class BuildMetaInfo {
         "profilePhases",
         "renderInternalDiagnosticNames",
         "reportOutputFiles",
+        "reportMemory",
         "reportPerf",
         "script",
         "verbose",

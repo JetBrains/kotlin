@@ -95,6 +95,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.progressiveMode = from.progressiveMode
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
     to.reportAllWarnings = from.reportAllWarnings
+    to.reportMemory = from.reportMemory
     to.reportOutputFiles = from.reportOutputFiles
     to.reportPerf = from.reportPerf
     to.returnValueChecker = from.returnValueChecker

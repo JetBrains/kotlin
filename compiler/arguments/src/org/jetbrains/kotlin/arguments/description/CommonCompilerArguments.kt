@@ -283,6 +283,20 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
     }
 
+    compilerArgument {
+        name = "Xreport-memory"
+        description = """
+            |Add the memory used by each compilation phase to the performance statistics of '-Xreport-perf' and '-Xdump-perf' (Experimental):
+            |  the peak heap usage, the bytes allocated, and the number and pause time of garbage collections.
+        """.trimMargin().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+    }
+
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xdump-perf"

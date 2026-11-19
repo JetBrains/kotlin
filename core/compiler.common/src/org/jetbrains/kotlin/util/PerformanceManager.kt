@@ -324,7 +324,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         finishPhase(phaseType)
     }
 
-    open fun notifyCompilationFinished() {
+    protected open fun notifyCompilationFinished() {
         ensureNotFinalizedAndSameThread()
         isFinalized = true
 

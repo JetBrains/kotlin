@@ -775,6 +775,17 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_REPORT_ALL_WARNINGS", KotlinReleaseVersion(2, 0, 0))
 
     /**
+     * Add the memory used by each compilation phase to the performance statistics of '-Xreport-perf' and '-Xdump-perf' (Experimental):
+     *   the peak heap usage, the bytes allocated, and the number and pause time of garbage collections.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_REPORT_MEMORY: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_REPORT_MEMORY", KotlinReleaseVersion(2, 5, 20))
+
+    /**
      * Report the source-to-output file mapping.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
