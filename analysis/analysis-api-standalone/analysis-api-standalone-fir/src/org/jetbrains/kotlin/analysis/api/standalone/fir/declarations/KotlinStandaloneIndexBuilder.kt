@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.deepCopy
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal class KotlinStandaloneIndexBuilder private constructor(
     project: Project,
@@ -266,6 +267,8 @@ internal class KotlinStandaloneIndexBuilder private constructor(
      * Thanks to [findSharedDecompiledFile], we imitate the same behavior once for each [VirtualFile] and
      * cache the decompiler that results in a [KtDecompiledFile] via [SharedIndexableDecompiledFile].
      *
+     * Built-in files are an exception: they don't go through [findSharedDecompiledFile], as their decompiler is known from the file type.
+     *
      * Since we know all possible [SharedIndexableDecompiledFile.kotlinDecompiler] values,
      * we can safely skipp all checks on the way and directly instantiate required [KtDecompiledFile] files.
      */
@@ -294,19 +297,27 @@ internal class KotlinStandaloneIndexBuilder private constructor(
 
     @OptIn(KtPlatformInterface::class)
     fun collectDecompiledFilesFromBuiltins() {
+        val decompilers = ClassFileDecompilers.getInstance().EP_NAME.extensionList
+        val decompiler = decompilers.firstIsInstanceOrNull<KotlinBuiltInDecompiler>() ?: return
         for (virtualFile in BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles()) {
             if (cacheService != null) {
                 val sharedFiles = cacheService.getOrProcessBinaryRoot(virtualFile) { root ->
-                    setOfNotNull(findSharedDecompiledFile(root)?.first)
+                    setOfNotNull(findSharedBuiltinFile(root, decompiler))
                 }
 
                 sharedFiles.mapTo(decompiledFilesFromBuiltins, this::materializeSharedDecompiledFile)
             } else {
-                val [_, ktFile] = findSharedDecompiledFile(virtualFile) ?: continue
-                decompiledFilesFromBuiltins += IndexableFile(virtualFile, ktFile, isShared = true)
+                val sharedFile = findSharedBuiltinFile(virtualFile, decompiler) ?: continue
+                decompiledFilesFromBuiltins += materializeSharedDecompiledFile(sharedFile)
             }
         }
     }
+
+    /**
+     * The counterpart of [findSharedDecompiledFile] for a built-in file. It checks that the file can be decompiled without creating PSI.
+     */
+    private fun findSharedBuiltinFile(virtualFile: VirtualFile, decompiler: KotlinBuiltInDecompiler): SharedIndexableDecompiledFile? =
+        if (decompiler.stubBuilder.hasStub(virtualFile)) SharedIndexableDecompiledFile(virtualFile, decompiler) else null
 
     private val providedSourceFiles = mutableSetOf<KtFile>()
 
