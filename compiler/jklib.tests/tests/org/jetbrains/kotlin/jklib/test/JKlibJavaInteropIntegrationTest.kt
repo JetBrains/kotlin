@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jklib.K2JKlibCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.test.MockLibraryUtilExt
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -80,10 +80,10 @@ class JKlibJavaInteropIntegrationTest {
                 """.trimIndent()
             )
         }
-        val jarB = MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+        val jarB = MockLibraryUtil.compileJavaFilesLibraryToJar(
             libBDir.path,
             "libB",
-            extraClasspath = listOf(jarA.path)
+            extraClasspath = listOf(jarA.path),
         )
 
         val mainDir = File(tempDir, "main").apply { mkdirs() }
@@ -187,10 +187,10 @@ class JKlibJavaInteropIntegrationTest {
             )
         }
 
-        val jarB = MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+        val jarB = MockLibraryUtil.compileJavaFilesLibraryToJar(
             libBDir.path,
             "libB",
-            extraClasspath = listOf(jarA.path)
+            extraClasspath = listOf(jarA.path),
         )
 
         val mainDir = File(tempDir, "main").apply { mkdirs() }
