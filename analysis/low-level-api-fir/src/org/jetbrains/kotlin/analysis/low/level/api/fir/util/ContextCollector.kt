@@ -767,6 +767,38 @@ private class ContextCollectorVisitor(
         }
     }
 
+    override fun visitWhenExpression(whenExpression: FirWhenExpression) {
+        withProcessor(whenExpression) {
+            dumpContext(whenExpression, ContextKind.SELF)
+
+            onActive {
+                processList(whenExpression.annotations)
+
+                // Like `FirControlFlowStatementsResolveTransformer`, keep the subject variable in a separate scope,
+                // so that it isn't visible after the `when`.
+                context.withWhenExpression(whenExpression, bodyHolder.session) {
+                    dumpContext(whenExpression, ContextKind.BODY)
+                    processChildren(whenExpression)
+                }
+            }
+        }
+    }
+
+    override fun visitCatch(catch: FirCatch) {
+        withProcessor(catch) {
+            dumpContext(catch, ContextKind.SELF)
+
+            onActive {
+                // Like `FirControlFlowStatementsResolveTransformer`, keep the parameter in a separate scope,
+                // so that it isn't visible after the `try` expression.
+                context.forBlock(bodyHolder.session) {
+                    dumpContext(catch, ContextKind.BODY)
+                    processChildren(catch)
+                }
+            }
+        }
+    }
+
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
         withLocalVariableHolder(
             onEnter = { /* empty */ },
