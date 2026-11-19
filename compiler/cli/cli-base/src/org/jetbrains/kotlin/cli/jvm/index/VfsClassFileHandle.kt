@@ -36,7 +36,7 @@ class VfsClassFileHandle(private val file: VirtualFile, val root: JavaRoot) : Vi
     override fun readBytes(): ByteArray = file.contentsToByteArray()
 
     override fun sibling(nameWithExtension: String): BinaryClassFileHandle? =
-        file.parent?.findChild(nameWithExtension)?.let { VfsClassFileHandle(it, root) }
+        file.parent?.findChild(nameWithExtension)?.takeIf { !it.isDirectory }?.let { VfsClassFileHandle(it, root) }
 
     override fun equals(other: Any?): Boolean =
         this === other ||
@@ -55,4 +55,5 @@ class VfsClassFileHandle(private val file: VirtualFile, val root: JavaRoot) : Vi
  */
 @VirtualFileBasedApi
 val BinaryClassFileHandle.virtualFile: VirtualFile
-    get() = (this as VirtualFileBackedClassFileHandle).virtualFile
+    get() = (this as? VirtualFileBackedClassFileHandle)?.virtualFile
+        ?: error("$this has no VirtualFile: VirtualFile lookups need an index with VFS entries")
