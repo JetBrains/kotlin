@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.plugin.sandbox.ExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.plugin.sandbox.PluginAnnotationsProvider
+import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -28,6 +29,9 @@ import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
  */
 fun TestConfigurationBuilder.configureOptionalTestCompilerPlugin() {
     useDirectives(CompilerPluginsDirectives)
+    defaultDirectives {
+        +PluginSandboxDirectives.ENABLE_SANDBOX
+    }
 
     val directive = CompilerPluginsDirectives.WITH_FIR_TEST_COMPILER_PLUGIN
 
