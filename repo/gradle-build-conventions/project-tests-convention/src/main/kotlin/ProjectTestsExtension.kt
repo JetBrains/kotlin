@@ -5,10 +5,12 @@
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.Directory
 import org.gradle.api.project.IsolatedProject
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceSet
@@ -266,6 +268,21 @@ abstract class ProjectTestsExtension(val project: Project) {
             }
             configure()
         }
+        if (fixturesSourceSet != null) {
+            // The fixtures jar holds only this project's generator, not the shared generator code it calls
+            val sharedGeneratorClasspath = project.configurations
+                .getByName(fixturesSourceSet.runtimeClasspathConfigurationName)
+                .incoming
+                .artifactView {
+                    componentFilter { it is ProjectComponentIdentifier && it.projectPath in SHARED_GENERATOR_PROJECT_PATHS }
+                }
+                .files
+            generatorTask.configure {
+                inputs.files(sharedGeneratorClasspath)
+                    .withPropertyName("sharedGeneratorClasspath")
+                    .withNormalizer(ClasspathNormalizer::class.java)
+            }
+        }
         if (generateTestsInBuildDirectory) {
             project.sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
                 generatedDir(project, generatorTask.map { generationPath })
@@ -307,4 +324,8 @@ abstract class ProjectTestsExtension(val project: Project) {
     }
 
     private fun String.toSystemIndependentPath(): String = replace('\\', '/')
+
+    private companion object {
+        val SHARED_GENERATOR_PROJECT_PATHS = setOf(":generators", ":generators:test-generator")
+    }
 }
