@@ -237,6 +237,12 @@ public class PhasedScriptingLightTreeTestGenerated extends AbstractPhasedJvmDiag
     }
 
     @Test
+    @TestMetadata("nonLocalDestructuringDeclarationsScript.kts")
+    public void testNonLocalDestructuringDeclarationsScript() {
+      run("nonLocalDestructuringDeclarationsScript.kts");
+    }
+
+    @Test
     @TestMetadata("objectCapturesProperty.kts")
     public void testObjectCapturesProperty() {
       run("objectCapturesProperty.kts");

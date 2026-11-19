@@ -1,0 +1,32 @@
+KaLocalVariableSymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
+  annotations: []
+  callableId: null
+  contextParameters: []
+  contextReceivers: []
+  isActual: false
+  isCompanion: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isVal: true
+  location: LOCAL
+  modality: FINAL
+  name: c
+  origin: SOURCE
+  psi: KtDestructuringDeclarationEntry
+  realPsi: KtDestructuringDeclarationEntry
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(fragment.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaDanglingFileModule "Temporary file"
+  deprecation: null
+  importableFqName: null

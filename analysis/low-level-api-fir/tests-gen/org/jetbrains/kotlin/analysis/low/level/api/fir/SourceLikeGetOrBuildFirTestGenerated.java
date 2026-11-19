@@ -3128,6 +3128,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("destructuringReceiver.kt")
+    public void testDestructuringReceiver() {
+      run("destructuringReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("destructuringTopLevel.kt")
     public void testDestructuringTopLevel() {
       run("destructuringTopLevel.kt");
@@ -3137,6 +3143,24 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("destructuringTopLevel2.kt")
     public void testDestructuringTopLevel2() {
       run("destructuringTopLevel2.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringTopLevelReceiver.kt")
+    public void testDestructuringTopLevelReceiver() {
+      run("destructuringTopLevelReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringTopLevelTypeAnnotation.kt")
+    public void testDestructuringTopLevelTypeAnnotation() {
+      run("destructuringTopLevelTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringTypeAnnotation.kt")
+    public void testDestructuringTypeAnnotation() {
+      run("destructuringTypeAnnotation.kt");
     }
 
     @Test
