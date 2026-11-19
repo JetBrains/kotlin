@@ -29,7 +29,7 @@ class PathClassFileHandle internal constructor(private val entry: PathRootEntry,
         get() = root.libraryPath()
 
     override val pathForDiagnostics: String
-        get() = entry.path.toString()
+        get() = entry.pathForDiagnostics
 
     override fun readBytes(): ByteArray = Files.readAllBytes(entry.path)
 
