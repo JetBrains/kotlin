@@ -74,7 +74,8 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(recorded, recordedExecutions(), "The build cache should restore the recording unchanged")
         assertContains(result.quotableOutput, CONFIGURATION_CACHE_REUSED)
-        assertEquals(expectedReplay, result.replayedTestMessages)
+        assertEquals(1, result.replayedTestMessages.flows.size)
+        assertEquals(expectedReplay, result.replayedTestMessages.withoutFlowIds())
     }
 
     /**
@@ -92,7 +93,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
 
         assertEquals(TaskOutcome.UP_TO_DATE, result.fixtureTaskOutcome)
         assertContains(result.quotableOutput, CONFIGURATION_CACHE_REUSED)
-        assertEquals(expectedReplay, result.replayedTestMessages)
+        assertEquals(expectedReplay, result.replayedTestMessages.withoutFlowIds())
     }
 
     /** The same, with the configuration cache out of the picture. */
@@ -109,7 +110,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
             "Configuration cache entry" in result.quotableOutput,
             "This test is only worth anything while the configuration cache stays out of the build",
         )
-        assertEquals(expectedReplay, result.replayedTestMessages)
+        assertEquals(expectedReplay, result.replayedTestMessages.withoutFlowIds())
     }
 
     /**
@@ -130,12 +131,15 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         assertContains(result.quotableOutput, CONFIGURATION_CACHE_REUSED)
 
         val replayed = result.replayedTestMessages
-        assertEquals(expectedReplay, replayed.inFlow(REPLAY_FLOW_ID))
-        assertEquals(expectedSecondTaskReplay, replayed.inFlow(SECOND_TASK_FLOW_ID))
+        // Which numbered flow a task got is nothing a test can know, so each is found by a test of
+        // its own: a task's tests all share the flow its replay was sent under.
+        assertEquals(2, replayed.flows.size, "The two test tasks should replay under a flow each: $replayed")
+        assertEquals(expectedReplay, replayed.inFlow(replayed.flowOf(FIXTURE_IGNORED_TEST)).withoutFlowIds())
+        assertEquals(expectedSecondTaskReplay, replayed.inFlow(replayed.flowOf(SECOND_TASK_TEST)).withoutFlowIds())
         assertEquals(
             expectedReplay.size + expectedSecondTaskReplay.size,
             replayed.size,
-            "Every replayed message should carry the flow of the task it was recorded for",
+            "Every replayed message should be in one of the two flows",
         )
     }
 
@@ -168,7 +172,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(
             replayedFailedTest,
-            result.replayedTestMessages.about("failing()"),
+            result.replayedTestMessages.about("failing()").withoutFlowIds(),
         )
     }
 
@@ -187,7 +191,7 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(
             List(4) { replayedFailedTest }.flatten(),
-            result.replayedTestMessages.about("failing()"),
+            result.replayedTestMessages.about("failing()").withoutFlowIds(),
             "The first attempt and its three retries should each be replayed",
         )
     }
@@ -207,12 +211,9 @@ private const val FIXTURE_NESTED_CLASS = $$"$$FIXTURE_CLASS$NestedTests"
 private const val FIXTURE_IGNORED_TEST = "$FIXTURE_CLASS.ignored()"
 private const val FIXTURE_FAILING_TEST = "$FIXTURE_CLASS.failing()"
 
-private const val REPLAY_FLOW_ID = "TestReplay$FIXTURE_TASK_PATH"
-
-/** The fixture's second test task, whose one test is all it runs, and the flow of its replay. */
+/** The fixture's second test task, whose one test is all it runs. */
 private const val SECOND_TASK_PATH = ":repo:test-inventory-fixture:secondTest"
 private const val SECOND_TASK_CLEAN_PATH = ":repo:test-inventory-fixture:cleanSecondTest"
-private const val SECOND_TASK_FLOW_ID = "TestReplay$SECOND_TASK_PATH"
 private const val SECOND_TASK_TEST =
     "org.jetbrains.kotlin.testInventory.SecondTestInventoryFixtureTest.recordedBySecondTestTask()"
 
@@ -263,32 +264,37 @@ private val expectedRecording = """
 
 """.trimIndent()
 
+/*
+ * The messages the expectations are built of carry no flow id: the service numbers a flow per
+ * replayed task, and which number a task got is nothing a test can know. Where the flows are still
+ * asserted is `flows` and `flowOf` below.
+ */
 /** The replay of the fixture's one ignored test, which TeamCity is told about before it is finished. */
 private val replayedIgnoredTest = listOf(
-    "[testStarted name='$FIXTURE_IGNORED_TEST' flowId='$REPLAY_FLOW_ID']",
-    "[testIgnored name='$FIXTURE_IGNORED_TEST' flowId='$REPLAY_FLOW_ID']",
-    "[testFinished name='$FIXTURE_IGNORED_TEST' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+    "[testStarted name='$FIXTURE_IGNORED_TEST']",
+    "[testIgnored name='$FIXTURE_IGNORED_TEST']",
+    "[testFinished name='$FIXTURE_IGNORED_TEST' duration='<ms>']",
 )
 
 /** The replay of one attempt at the fixture's one failing test. */
 private val replayedFailedTest = listOf(
-    "[testStarted name='$FIXTURE_FAILING_TEST' flowId='$REPLAY_FLOW_ID']",
-    "[testFailed name='$FIXTURE_FAILING_TEST' message='$FAILURE_DETAILS_UNAVAILABLE' flowId='$REPLAY_FLOW_ID']",
-    "[testFinished name='$FIXTURE_FAILING_TEST' duration='<ms>' flowId='$REPLAY_FLOW_ID']",
+    "[testStarted name='$FIXTURE_FAILING_TEST']",
+    "[testFailed name='$FIXTURE_FAILING_TEST' message='$FAILURE_DETAILS_UNAVAILABLE']",
+    "[testFinished name='$FIXTURE_FAILING_TEST' duration='<ms>']",
 )
 
-private fun replayedTest(name: String, flowId: String = REPLAY_FLOW_ID) = listOf(
-    "[testStarted name='$name' flowId='$flowId']",
-    "[testFinished name='$name' duration='<ms>' flowId='$flowId']",
+private fun replayedTest(name: String) = listOf(
+    "[testStarted name='$name']",
+    "[testFinished name='$name' duration='<ms>']",
 )
 
-/** What a replay of the fixture's second test task has to say - its one test, in its own flow. */
-private val expectedSecondTaskReplay = replayedTest(SECOND_TASK_TEST, SECOND_TASK_FLOW_ID)
+/** What a replay of the fixture's second test task has to say - its one test, in a flow of its own. */
+private val expectedSecondTaskReplay = replayedTest(SECOND_TASK_TEST)
 
 private fun replayedSuite(name: String, vararg contents: List<String>): List<String> = buildList {
-    add("[testSuiteStarted name='$name' flowId='$REPLAY_FLOW_ID']")
+    add("[testSuiteStarted name='$name']")
     contents.forEach(::addAll)
-    add("[testSuiteFinished name='$name' flowId='$REPLAY_FLOW_ID']")
+    add("[testSuiteFinished name='$name']")
 }
 
 /** The messages of [groups], one after another, so that a nesting can be written as one. */
@@ -357,6 +363,19 @@ private fun List<String>.about(testName: String): List<String> = filter { testNa
 
 /** The messages of one task's replay, for a build that replayed more than one test task. */
 private fun List<String>.inFlow(flowId: String): List<String> = filter { "flowId='$flowId'" in it }
+
+/** The flow ids the replayed messages were sent under - one per replayed test task. */
+private val List<String>.flows: Set<String>
+    get() = mapNotNull { FLOW_ID_ATTRIBUTE.find(it)?.groupValues?.get(1) }.toSet()
+
+/** The flow one test was replayed under; every message of a task's replay shares it. */
+private fun List<String>.flowOf(testName: String): String =
+    FLOW_ID_ATTRIBUTE.find(first { testName in it })!!.groupValues[1]
+
+/** Every flow id taken off, for comparing against the expectations, which carry none. */
+private fun List<String>.withoutFlowIds(): List<String> = map { FLOW_ID_ATTRIBUTE.replace(it, "") }
+
+private val FLOW_ID_ATTRIBUTE = Regex(" flowId='([^']*)'")
 
 /**
  * Runs [tasks] with [cache] as the only build cache the build can reach - empty at the start of every

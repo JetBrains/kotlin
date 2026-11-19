@@ -20,9 +20,16 @@ import java.io.File
  * Apart from [TestBuildCacheTeamCityCompatibilityService] because a build service is not something
  * a test can instantiate. The messages are bodies, without the `##teamcity[` and `]`: a whole line
  * would be read by the build running a test of this as one of its own tests.
+ *
+ * [flowId] is the name of the flow every message is sent under, which keeps a replay apart from
+ * whatever runs alongside it. It is a label and nothing more - nothing outside the build it was
+ * sent in ever refers to it - so [TestBuildCacheTeamCityCompatibilityService] hands each task a
+ * short numbered one: a replay can run six figures of messages, and the flow id rides on every
+ * one of them, which is a fifth of the bytes a replay writes.
  */
 internal class TestExecutionsReplay(
     private val taskPath: String,
+    private val flowId: String,
     private val warn: (String, Throwable?) -> Unit,
 ) {
     private companion object {
@@ -37,8 +44,8 @@ internal class TestExecutionsReplay(
     }
 
     /**
-     * The tests recorded in [executionsFile], in the order they have to be sent, under a flow of
-     * this task's own so that TeamCity keeps them apart from whatever runs alongside.
+     * The tests recorded in [executionsFile], in the order they have to be sent, under this
+     * replay's [flowId] so that TeamCity keeps them apart from whatever runs alongside.
      *
      * The file is read and parsed when the sequence is first iterated, all of it before anything is
      * emitted: a recording that turns out unreadable partway through is not worth half a replay.
@@ -52,8 +59,6 @@ internal class TestExecutionsReplay(
         val replayTree = read(executionsFile) ?: return@sequence
         replay(replayTree)
     }
-
-    private val flowId = "TestReplay$taskPath"
 
     /** The runner drops suites named after the task, and a task is named by its last path segment. */
     private val taskName = taskPath.substringAfterLast(':')

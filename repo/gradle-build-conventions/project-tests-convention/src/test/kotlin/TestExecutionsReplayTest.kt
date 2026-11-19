@@ -207,7 +207,7 @@ class TestExecutionsReplayTest {
      */
     @Test
     fun `a suite a task names after itself is gone, and the class is part of the name`() {
-        val messages = TestExecutionsReplay(":some:project:jsNodeTest") { message, _ -> warnings += message }
+        val messages = TestExecutionsReplay(":some:project:jsNodeTest", FLOW_ID) { message, _ -> warnings += message }
             .messagesFor(
                 write(
                     """
@@ -226,8 +226,8 @@ class TestExecutionsReplayTest {
 
         assertEquals(
             listOf(
-                "testStarted name='$TEST_CLASS.passes()' flowId='TestReplay:some:project:jsNodeTest'",
-                "testFinished name='$TEST_CLASS.passes()' duration='1' flowId='TestReplay:some:project:jsNodeTest'",
+                "testStarted name='$TEST_CLASS.passes()' $FLOW",
+                "testFinished name='$TEST_CLASS.passes()' duration='1' $FLOW",
             ),
             messages,
         )
@@ -278,9 +278,9 @@ class TestExecutionsReplayTest {
         )
     }
 
-    /** One service replays every task of a build, so a replay has to say which task it is about. */
+    /** One service replays every task of a build, and tells them apart by the flow it hands each. */
     @Test
-    fun `the flow of a replay is the task's own`() {
+    fun `every message carries the flow the replay was given`() {
         val recording = write(
             """
             {"type":"header","formatVersion":1,"taskPath":":another:project:test"}
@@ -294,13 +294,13 @@ class TestExecutionsReplayTest {
             """
         )
 
-        val messages = TestExecutionsReplay(":another:project:test") { message, _ -> warnings += message }
+        val messages = TestExecutionsReplay(":another:project:test", "R7") { message, _ -> warnings += message }
             .messagesFor(recording)
             .toList()
 
         assertTrue(
-            messages.all { "flowId='TestReplay:another:project:test'" in it },
-            "Every message should carry the flow of the task it was recorded for: $messages",
+            messages.all { "flowId='R7'" in it },
+            "Every message should carry the flow the replay was given: $messages",
         )
     }
 
@@ -309,7 +309,7 @@ class TestExecutionsReplayTest {
     fun `a recording that is not there is replayed as nothing`() {
         val missing = File(directory, "not-written.jsonl")
 
-        val messages = TestExecutionsReplay(TASK_PATH) { message, _ -> warnings += message }
+        val messages = TestExecutionsReplay(TASK_PATH, FLOW_ID) { message, _ -> warnings += message }
             .messagesFor(missing)
             .toList()
 
@@ -334,7 +334,7 @@ class TestExecutionsReplayTest {
     @Test
     fun `a recording of a later format is replayed as nothing`() {
         val failures = mutableListOf<Throwable?>()
-        val messages = TestExecutionsReplay(TASK_PATH) { message, failure ->
+        val messages = TestExecutionsReplay(TASK_PATH, FLOW_ID) { message, failure ->
             warnings += message
             failures += failure
         }.messagesFor(
@@ -380,7 +380,7 @@ class TestExecutionsReplayTest {
 
     /** Collected, so that a test sees the warnings a replay produced as it went. */
     private fun replayOf(document: String): List<String> =
-        TestExecutionsReplay(TASK_PATH) { message, _ -> warnings += message }
+        TestExecutionsReplay(TASK_PATH, FLOW_ID) { message, _ -> warnings += message }
             .messagesFor(write(document))
             .toList()
 
@@ -395,5 +395,8 @@ private const val TEST_CLASS = "com.example.SomeTest"
 /** A nested test class, spelled the way the JVM names one. */
 private const val NESTED_CLASS = $$"com.example.SomeTest$Nested"
 
-/** How every message of a replay of [TASK_PATH] ends. */
-private const val FLOW = "flowId='TestReplay$TASK_PATH'"
+/** The flow id the tests hand a replay, the kind the service numbers per build. */
+private const val FLOW_ID = "R1"
+
+/** How every message of a replay carrying [FLOW_ID] ends. */
+private const val FLOW = "flowId='$FLOW_ID'"

@@ -12,6 +12,7 @@ import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSuccessResult
 import java.io.File
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Reports the tests of the test tasks served from the Gradle Build Cache to TeamCity.
@@ -34,6 +35,13 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
     /** Read once: every event wants the same map, and reading it finalizes the parameters. */
     private val executionsFiles: Map<String, File> by lazy { parameters.executionsFiles.get() }
 
+    /**
+     * One flow number per replayed task, so that the flow ids stay short: a flow id is a label
+     * nothing outside its build refers to, and it rides on every message of a replay that runs
+     * six figures of them.
+     */
+    private val flowNumbers = AtomicInteger()
+
     override fun onFinish(event: FinishEvent) {
         if (event !is TaskFinishEvent) return
         val taskPath = event.descriptor.taskPath
@@ -41,7 +49,8 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         val result = event.result as? TaskSuccessResult ?: return
         if (!result.isFromCache && !result.isUpToDate) return
 
-        val replay = TestExecutionsReplay(taskPath) { message, failure -> log.warn(message, failure) }
+        val flowId = "R${flowNumbers.incrementAndGet()}"
+        val replay = TestExecutionsReplay(taskPath, flowId) { message, failure -> log.warn(message, failure) }
         var count = 0
         for (message in replay.messagesFor(executionsFile)) {
             println("##teamcity[$message]")
@@ -52,6 +61,7 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         // a log whose replay was cut short - which TeamCity does to the tail of a large one.
         // Never block this thread to wait for TeamCity: Gradle stops the listener executor when the
         // build finishes and fails the build if it cannot, see the 5 s sleep tried on 2026-10-03.
-        println("TestReplay: $count messages of $taskPath emitted")
+        // The flow is named so a short id stays traceable to its task from the log alone.
+        println("TestReplay: $count messages of $taskPath emitted in flow $flowId")
     }
 }
