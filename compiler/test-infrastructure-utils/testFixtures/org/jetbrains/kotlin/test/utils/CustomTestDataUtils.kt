@@ -15,8 +15,6 @@ private const val REVERSED_PREFIX = ".reversed"
 private const val PARTIAL_BODY_PREFIX = ".partialBody"
 private const val REPL_SUFFIX = ".repl.kts"
 
-const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|partialBody|ll|latestLV|disabled)(\\.repl)?\\.kts?\$"
-
 val File.isLatestLVTestData: Boolean
     get() = isCustomTestDataWithPrefix(LATEST_LV_PREFIX)
 

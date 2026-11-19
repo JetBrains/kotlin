@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_UNDERSCORE_PREFIX
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.WITHOUT_UNDERSCORE_PREFIX
 import org.jetbrains.kotlin.incremental.*
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.js.test.JsEs6Test
 import org.jetbrains.kotlin.js.test.JsInlineAnonymousFunctionsTest
 import org.jetbrains.kotlin.js.test.runners.*
 import org.jetbrains.kotlin.js.test.runners.tsexport.*
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -26,7 +24,6 @@ fun main(args: Array<String>) {
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
     val k1BoxTestDir = "multiplatform/k1"
     val k2BoxTestDir = "multiplatform/k2"
-    val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
 
     // TODO: repair these tests
     //generateTestDataForReservedWords()
@@ -259,27 +256,22 @@ fun main(args: Array<String>) {
                 model(
                     relativeRootPath = "klibSerializationTests",
                     pattern = KT_WITHOUT_UNDERSCORE_PREFIX,
-                    excludedPattern = excludedFirTestdataPattern,
                 )
                 model(
                     relativeRootPath = "testsWithJsStdLib",
                     pattern = KT_WITHOUT_UNDERSCORE_PREFIX,
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 )
                 model(
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = KT_WITHOUT_UNDERSCORE_PREFIX,
-                    excludedPattern = excludedFirTestdataPattern,
                 )
                 model(
                     relativeRootPath = "testsWithAnyBackend",
                     pattern = KT_WITHOUT_UNDERSCORE_PREFIX,
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 )
                 model(
                     relativeRootPath = "irInliner",
                     pattern = KT_WITHOUT_UNDERSCORE_PREFIX,
-                    excludedPattern = excludedFirTestdataPattern,
                 )
             }
         }
