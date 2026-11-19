@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.build.wasmtools.WasmToolsExtension
 
-extensions.create<WasmToolsExtension>(
+val wasmToolsExtension = extensions.create<WasmToolsExtension>(
     "wasmToolsKotlinBuild",
     project,
 )
