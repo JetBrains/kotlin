@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 
+import TestCompilePaths.KOTLIN_NATIVE_IMAGE_DIST_PATH
+
 plugins {
     id("common-configuration")
     kotlin("jvm")
@@ -236,6 +238,7 @@ val businessLogicTestSuits = setOf(
     "testLint",
     "testIcEvents",
     "testNative", // smoke tests for Native running even when kotlin.native.enabled == false
+    "testNativeImage",
 )
 
 val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
@@ -352,6 +355,22 @@ testing {
             }
         }
 
+        named<JvmTestSuite>("testNativeImage") {
+            dependencies {
+                implementation(project(":daemon-common"))
+            }
+            targets.all {
+                testTask.configure {
+                    enabled = kotlinBuildProperties.booleanProperty("kotlin.build.native-image.kotlin-daemon", false).get()
+                    dependsOn(":kotlin-compiler-native-image:kotlincNativeImageDist")
+                    addClasspathProperty(
+                        files(rootDir.resolve("prepare/compiler-native-image/build/dist")),
+                        KOTLIN_NATIVE_IMAGE_DIST_PATH,
+                    )
+                }
+            }
+        }
+
         named<JvmTestSuite>("testDefaultOptions") testSuite@{
             dependencies {
                 implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
@@ -438,7 +457,9 @@ testing {
 }
 
 tasks.named("check") {
-    dependsOn(testing.suites.matching { it.name != "testExample" }) // do not run example tests by default
+    // do not run example tests and the native image suite by default:
+    // the native image suite builds a GraalVM native image distribution, which is too expensive for regular runs
+    dependsOn(testing.suites.matching { it.name != "testExample" && it.name != "testNativeImage" })
 }
 
 val checkCompatibilityCoverageTask = checkCompatibilityCoverage(

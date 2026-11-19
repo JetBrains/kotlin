@@ -290,20 +290,18 @@ data class DaemonOptions(
 val DaemonOptions.runFilesPathOrDefault: String
     get() = if (runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else runFilesPath
 
-fun makeRunFileDigest(javaLanguageVersion: JavaLanguageVersion, compilerId: CompilerId): String {
-    if (compilerId.isNativeImage) {
-        // The executable identifies the image. The compiler version keeps daemons started from an older version of
-        // a distribution that was rebuilt in place apart from the newer ones, and java.home is passed to the daemon
-        // by its first client and determines the JDK the compilations run against, so include both in the digest.
-        val entries = buildList {
-            add("native-image")
-            add("compilerVersion=${compilerId.compilerVersion}")
-            add("javaHome=${CompilerSystemProperties.JAVA_HOME.value}")
-            addAll(compilerId.compilerClasspath.distinct().sorted())
-        }
-        return entries.digest().toHexString()
+fun makeRunFileDigest(javaLanguageVersion: JavaLanguageVersion, compilerId: CompilerId): String = if (compilerId.isNativeImage) {
+    // Native image executables have baked-in java language version, so including it in the digest is wrong
+    // therefore, we include only properties that are explicitly unique
+    val entries = buildList {
+        add("native-image")
+        add(compilerId.compilerVersion)
+        add("${CompilerSystemProperties.JAVA_HOME.value}")
+        addAll(compilerId.compilerClasspath.distinct().sorted())
     }
-    return makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { File(it).toPath() })
+    entries.digest().toHexString()
+} else {
+    makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { File(it).toPath() })
 }
 
 fun makeRunFileDigest(javaLanguageVersion: JavaLanguageVersion, compilerClasspath: List<Path>): String {
