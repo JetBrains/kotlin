@@ -1,5 +1,1 @@
-public final class CodeFragment {
-    // source: 'fragment.kt'
-    public method <init>(): void
-    public final static method run(): a.A
-}
+(149,150) JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE Symbol is declared in module 'moduleA', which the current module does not depend on.
