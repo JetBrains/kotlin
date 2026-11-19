@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.starProjectedType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -44,6 +45,7 @@ class JvmReflectSymbols(val context: JvmBackendContext, irModule: IrModuleFragme
                 addValueParameter("receiver", irBuiltIns.anyNType)
                 addValueParameter("value", irBuiltIns.anyNType)
             }
+            klass.addFunction("getType", context.symbols.javaLangClass.starProjectedType)
         }
 
     val javaLangReflectMethod: IrClassSymbol =
@@ -120,6 +122,9 @@ class JvmReflectSymbols(val context: JvmBackendContext, irModule: IrModuleFragme
 
     val javaLangReflectFieldSet: IrSimpleFunctionSymbol =
         javaLangReflectField.functionByName("set")
+
+    val javaLangReflectFieldGetType: IrSimpleFunctionSymbol =
+        javaLangReflectField.functionByName("getType")
 
     val javaLangReflectMethodInvoke: IrSimpleFunctionSymbol =
         javaLangReflectMethod.functionByName("invoke")

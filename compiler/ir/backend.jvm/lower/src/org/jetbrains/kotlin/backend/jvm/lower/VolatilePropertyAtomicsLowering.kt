@@ -12,18 +12,16 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -49,51 +47,77 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  * calls is a property reference literal (this is guaranteed by `FirVolatileIntrinsicApplicabilityChecker`), so the reference
  * is never materialized. Instead:
  *  * `load()`/`store()` become plain reads/writes of the (volatile) backing field;
- *  * read-modify-write operations become calls to the access mode methods of a `java.lang.invoke.VarHandle`, which is
- *    stored in a `private static final synthetic` field generated next to the backing field (one per volatile property
- *    which is used with such intrinsics). Since [java.lang.invoke.VarHandle] methods are signature polymorphic,
- *    the calls are generated with exact (unboxed) signatures, which allows the JIT to intrinsify them;
+ *  * read-modify-write operations become calls to a JDK primitive which performs an atomic operation on the backing field.
+ *    The primitive object is stored in a `private static final synthetic` field generated next to the backing field
+ *    (one per volatile property which is used with such intrinsics). There are two implementations, depending on the JVM target:
+ *      * [VarHandleVolatilePropertyAtomicsLowering] (JVM 9+) uses `java.lang.invoke.VarHandle`;
+ *      * [FieldUpdaterVolatilePropertyAtomicsLowering] (JVM 1.8) uses `java.util.concurrent.atomic.Atomic*FieldUpdater`;
  *  * `update`, `fetchAndUpdate` and `updateAndFetch` become a CAS loop; the transform lambda is invoked directly
  *    and later inlined by [DirectInvokeLowering].
  *
- * The resulting bytecode is equivalent to the following Java code:
- *
- *     class Counter {
- *         private static final /* synthetic */ VarHandle value$VH =
- *             MethodHandles.lookup().unreflectVarHandle(Counter.class.getDeclaredField("value"));
- *         private volatile int value = 0;
- *
- *         public int inc() { return (int) value$VH.getAndAdd(this, 1) + 1; } // invokevirtual VarHandle.getAndAdd(LCounter;I)I
- *     }
- *
- * `VarHandle` is only available since JDK 9, so the intrinsics are prohibited for older JVM targets.
- *
- * The phase must run before:
+ * The phases must run before:
  *  * [PropertyReferenceLowering], which materializes property references;
  *  * [DirectInvokeLowering], which inlines directly invoked lambdas;
- *  * [MoveOrCopyCompanionObjectFieldsLowering], since this lowering uses the final (static) fields of object properties;
+ *  * [MoveOrCopyCompanionObjectFieldsLowering], since these lowerings use the final (static) fields of object properties;
  *  * `StaticInitializersLowering`, which moves the initializers of the generated fields into `<clinit>`.
  */
-internal class VolatilePropertyAtomicsLowering(private val context: JvmBackendContext) : FileLoweringPass,
+internal abstract class AbstractVolatilePropertyAtomicsLowering(protected val context: JvmBackendContext) : FileLoweringPass,
     IrElementTransformerVoidWithContext() {
 
-    private val symbols = context.symbols
-    private val irBuiltIns = context.irBuiltIns
+    protected val symbols = context.symbols
+    protected val irBuiltIns = context.irBuiltIns
 
-    /** `VarHandle` fields to add, per host class; they are added after the file is processed to not disturb the traversal. */
-    private val pendingVarHandleFields = mutableMapOf<IrClass, MutableList<IrField>>()
+    /** Whether this implementation is used for the current JVM target. Exactly one implementation is applicable. */
+    protected abstract val isApplicable: Boolean
+
+    /**
+     * Returns a description of the kind of properties that the given backing field belongs to,
+     * if atomic operations on it are not supported by this implementation (to be used in the error message), or `null` otherwise.
+     */
+    protected open fun unsupportedPropertyKind(field: IrField): String? = null
+
+    /** Atomically sets the field to [newValue] and returns the old value. */
+    protected abstract fun IrBlockBuilder.getAndSet(access: FieldAccess, newValue: IrExpression): IrExpression
+
+    /** Atomically sets the field to [newValue] if its current value is [expected]; returns `true` on success. */
+    protected abstract fun IrBlockBuilder.compareAndSet(access: FieldAccess, expected: IrExpression, newValue: IrExpression): IrExpression
+
+    /** Atomically sets the field to [newValue] if its current value is [expected]; returns the witness value. */
+    protected abstract fun IrBlockBuilder.compareAndExchange(
+        access: FieldAccess, expected: () -> IrExpression, newValue: () -> IrExpression,
+    ): IrExpression
+
+    /** Atomically adds [delta] to the field (of type `Int` or `Long`) and returns the old value. */
+    protected abstract fun IrBlockBuilder.getAndAdd(access: FieldAccess, delta: IrExpression): IrExpression
+
+    /** Atomically adds [delta] to the field (of type `Int` or `Long`) and returns the new value. */
+    protected open fun IrBlockBuilder.addAndGet(access: FieldAccess, delta: () -> IrExpression): IrExpression =
+        plus(getAndAdd(access, delta()), delta())
+
+    /** The backing field of a volatile property, and the (already evaluated) receiver if the field is not static. */
+    protected class FieldAccess(val field: IrField, val receiver: IrValueDeclaration?)
+
+    /** `VarHandle`s and field updaters are typed by the erased JVM type of the field. */
+    protected val FieldAccess.erasedType: IrType
+        get() = field.type.let { type ->
+            if (type.classifierOrNull is IrTypeParameterSymbol) type.erasedUpperBound.defaultType.mergeNullability(type) else type
+        }
+
+    /** `VarHandle` / field updater fields to add, per host class; they are added after the file is processed to not disturb the traversal. */
+    private val pendingHelperFields = mutableMapOf<IrClass, MutableList<IrField>>()
 
     private lateinit var irFile: IrFile
 
     override fun lower(irFile: IrFile) {
+        if (!isApplicable) return
         this.irFile = irFile
         irFile.transformChildrenVoid()
-        for ([host, fields] in pendingVarHandleFields) {
+        for ([host, fields] in pendingHelperFields) {
             // Put the fields first, so that they're initialized before any other static initializer
             // which may use the intrinsics.
             host.declarations.addAll(0, fields)
         }
-        pendingVarHandleFields.clear()
+        pendingHelperFields.clear()
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -104,16 +128,19 @@ internal class VolatilePropertyAtomicsLowering(private val context: JvmBackendCo
         val [property, boundReceiver] = expression.arguments[receiverIndex]!!.propertyReferenceTarget()
             ?: error("Atomic intrinsic call on a non-literal property reference: ${expression.render()}")
 
-        if (context.config.target < JvmTarget.JVM_9) {
-            context.diagnosticReporter.at(expression, irFile).report(JvmBackendErrors.VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9)
-            return expression
-        }
-
         // For properties of objects and companion objects, use the static field, which will be created by
         // MoveOrCopyCompanionObjectFieldsLowering.
         val field = context.cachedDeclarations.getStaticBackingField(property)
             ?: property.backingField
             ?: error("Volatile property is supposed to have a backing field: ${property.render()}")
+
+        // load/store are plain volatile accesses, they're supported everywhere.
+        if (kind != IntrinsicKind.LOAD && kind != IntrinsicKind.STORE) {
+            unsupportedPropertyKind(field)?.let { propertyKind ->
+                context.diagnosticReporter.at(expression, irFile).report(JvmBackendErrors.VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9, propertyKind)
+                return expression
+            }
+        }
 
         val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         val regularArguments = expression.symbol.owner.parameters
@@ -138,42 +165,44 @@ internal class VolatilePropertyAtomicsLowering(private val context: JvmBackendCo
                 val temporary = irTemporary(argument)
                 return@map { irGet(temporary) }
             }
-            +lowerIntrinsic(kind, field, receiver, arguments, expression.type)
+            +lowerIntrinsic(kind, FieldAccess(field, receiver), arguments, expression.type)
         }
     }
 
     private fun IrBlockBuilder.lowerIntrinsic(
         kind: IntrinsicKind,
-        field: IrField,
-        receiver: IrValueDeclaration?,
+        access: FieldAccess,
         arguments: List<() -> IrExpression>,
         resultType: IrType,
     ): IrExpression {
         fun arg(index: Int): IrExpression = arguments[index]()
 
-        val valueType = field.type.erasedForVarHandle()
-        val one = { if (valueType.isLong()) irLong(1) else irInt(1) }
-        val minusOne = { if (valueType.isLong()) irLong(-1) else irInt(-1) }
+        val isLong = access.field.type.isLong()
+        val one = { if (isLong) irLong(1) else irInt(1) }
+        val minusOne = { if (isLong) irLong(-1) else irInt(-1) }
 
         val result = when (kind) {
-            IntrinsicKind.LOAD -> irGetField(receiver?.let { irGet(it) }, field)
-            IntrinsicKind.STORE -> irSetField(receiver?.let { irGet(it) }, field, arg(0))
-            IntrinsicKind.EXCHANGE -> varHandleCall(field, receiver, "getAndSet", valueType, arg(0))
-            IntrinsicKind.COMPARE_AND_SET -> varHandleCall(field, receiver, "compareAndSet", irBuiltIns.booleanType, arg(0), arg(1))
-            IntrinsicKind.COMPARE_AND_EXCHANGE -> varHandleCall(field, receiver, "compareAndExchange", valueType, arg(0), arg(1))
-            IntrinsicKind.FETCH_AND_ADD -> varHandleCall(field, receiver, "getAndAdd", valueType, arg(0))
-            IntrinsicKind.ADD_AND_FETCH -> plus(varHandleCall(field, receiver, "getAndAdd", valueType, arg(0)), arg(0))
-            IntrinsicKind.FETCH_AND_INCREMENT -> varHandleCall(field, receiver, "getAndAdd", valueType, one())
-            IntrinsicKind.INCREMENT_AND_FETCH -> plus(varHandleCall(field, receiver, "getAndAdd", valueType, one()), one())
-            IntrinsicKind.FETCH_AND_DECREMENT -> varHandleCall(field, receiver, "getAndAdd", valueType, minusOne())
-            IntrinsicKind.DECREMENT_AND_FETCH -> plus(varHandleCall(field, receiver, "getAndAdd", valueType, minusOne()), minusOne())
-            IntrinsicKind.PLUS_ASSIGN -> irComposite(resultType = irBuiltIns.unitType) { +varHandleCall(field, receiver, "getAndAdd", valueType, arg(0)) }
-            IntrinsicKind.MINUS_ASSIGN -> irComposite(resultType = irBuiltIns.unitType) { +varHandleCall(field, receiver, "getAndAdd", valueType, unaryMinus(arg(0))) }
+            IntrinsicKind.LOAD -> load(access)
+            IntrinsicKind.STORE -> irSetField(access.receiver?.let { irGet(it) }, access.field, arg(0))
+            IntrinsicKind.EXCHANGE -> getAndSet(access, arg(0))
+            IntrinsicKind.COMPARE_AND_SET -> compareAndSet(access, arg(0), arg(1))
+            IntrinsicKind.COMPARE_AND_EXCHANGE -> compareAndExchange(access, arguments[0], arguments[1])
+            IntrinsicKind.FETCH_AND_ADD -> getAndAdd(access, arg(0))
+            IntrinsicKind.ADD_AND_FETCH -> addAndGet(access, arguments[0])
+            IntrinsicKind.FETCH_AND_INCREMENT -> getAndAdd(access, one())
+            IntrinsicKind.INCREMENT_AND_FETCH -> addAndGet(access, one)
+            IntrinsicKind.FETCH_AND_DECREMENT -> getAndAdd(access, minusOne())
+            IntrinsicKind.DECREMENT_AND_FETCH -> addAndGet(access, minusOne)
+            IntrinsicKind.PLUS_ASSIGN -> irComposite(resultType = irBuiltIns.unitType) { +getAndAdd(access, arg(0)) }
+            IntrinsicKind.MINUS_ASSIGN -> irComposite(resultType = irBuiltIns.unitType) { +getAndAdd(access, unaryMinus(arg(0))) }
             IntrinsicKind.UPDATE, IntrinsicKind.FETCH_AND_UPDATE, IntrinsicKind.UPDATE_AND_FETCH ->
-                casLoop(kind, field, receiver, arg(0))
+                casLoop(kind, access, arg(0))
         }
         return if (result.type == resultType || resultType.isUnit()) result else irImplicitCast(result, resultType)
     }
+
+    protected fun IrBuilderWithScope.load(access: FieldAccess): IrExpression =
+        irGetField(access.receiver?.let { irGet(it) }, access.field)
 
     /**
      * ```
@@ -182,29 +211,24 @@ internal class VolatilePropertyAtomicsLowering(private val context: JvmBackendCo
      * do {
      *     old = <field>
      *     new = transform(old)
-     * } while (!VH.compareAndSet(receiver, old, new))
+     * } while (!compareAndSet(old, new))
      * old / new / Unit
      * ```
      */
-    private fun IrBlockBuilder.casLoop(
-        kind: IntrinsicKind,
-        field: IrField,
-        receiver: IrValueDeclaration?,
-        transform: IrExpression,
-    ): IrExpression {
-        val old = irTemporary(value = null, nameHint = "old", irType = field.type, isMutable = true)
-        val new = irTemporary(value = null, nameHint = "new", irType = field.type, isMutable = true)
+    private fun IrBlockBuilder.casLoop(kind: IntrinsicKind, access: FieldAccess, transform: IrExpression): IrExpression {
+        val old = irTemporary(value = null, nameHint = "old", irType = access.field.type, isMutable = true)
+        val new = irTemporary(value = null, nameHint = "new", irType = access.field.type, isMutable = true)
         val invoke = irBuiltIns.functionN(1).functions.single { it.name == OperatorNameConventions.INVOKE }
-        +irDoWhile().apply {
-            body = irBlock {
-                +irSet(old, irGetField(receiver?.let { irGet(it) }, field))
-                +irSet(new, irCall(invoke.symbol, field.type).apply {
-                    dispatchReceiver = transform
-                    arguments[1] = irGet(old)
-                })
-            }
-            condition = irNot(varHandleCall(field, receiver, "compareAndSet", irBuiltIns.booleanType, irGet(old), irGet(new)))
+        val loop = irDoWhile()
+        loop.body = irBlock {
+            +irSet(old, load(access))
+            +irSet(new, irCall(invoke.symbol, access.field.type).apply {
+                dispatchReceiver = transform
+                arguments[1] = irGet(old)
+            })
         }
+        loop.condition = irNot(compareAndSet(access, irGet(old), irGet(new)))
+        +loop
         return when (kind) {
             IntrinsicKind.UPDATE -> irUnit()
             IntrinsicKind.FETCH_AND_UPDATE -> irGet(old)
@@ -214,50 +238,52 @@ internal class VolatilePropertyAtomicsLowering(private val context: JvmBackendCo
     }
 
     /**
-     * Generates `VH.<name>(receiver?, args...)` with an exact signature, as javac would do for a signature polymorphic call,
-     * see [PolymorphicSignatureLowering].
+     * Emulates `compareAndExchange` with [compareAndSet], for implementations which don't have it natively:
+     * ```
+     * var witness: T
+     * do {
+     *     witness = <field>
+     * } while (witness == expected && !compareAndSet(expected, newValue))
+     * witness
+     * ```
+     * If the loop exits because the witness differs from the expected value, the witness is the value which was observed
+     * by the (volatile) read; otherwise, the CAS succeeded and the witness is equal to the expected value.
+     * Values are compared like in [compareAndSet]: by value for primitives, by identity for references.
      */
-    private fun IrBuilderWithScope.varHandleCall(
-        field: IrField,
-        receiver: IrValueDeclaration?,
-        name: String,
-        returnType: IrType,
-        vararg arguments: IrExpression,
+    protected fun IrBlockBuilder.emulatedCompareAndExchange(
+        access: FieldAccess, expected: () -> IrExpression, newValue: () -> IrExpression,
     ): IrExpression {
-        val valueType = field.type.erasedForVarHandle()
-        val parameterTypes = listOfNotNull(receiver?.let { field.parentAsClass.defaultType }) + arguments.map { valueType }
-        val method = polymorphicSignatureInstantiation(name, parameterTypes, returnType)
-        return irCall(method.symbol, returnType).apply {
-            dispatchReceiver = irGetField(null, varHandleFieldFor(field))
-            var index = 1
-            if (receiver != null) this.arguments[index++] = irGet(receiver)
-            for (argument in arguments) this.arguments[index++] = argument
-        }
+        val witness = irTemporary(value = null, nameHint = "witness", irType = access.field.type, isMutable = true)
+        val isPrimitive = access.field.type.isPrimitiveType()
+        val loop = irDoWhile()
+        loop.body = irSet(witness, load(access))
+        loop.condition = irIfThenElse(
+            irBuiltIns.booleanType,
+            if (isPrimitive) irEquals(irGet(witness), expected()) else irEqeqeq(irGet(witness), expected()),
+            irNot(compareAndSet(access, expected(), newValue())),
+            irFalse(),
+        )
+        +loop
+        return irGet(witness)
     }
 
-    private val polymorphicSignatureInstantiations = mutableMapOf<Triple<String, List<IrType>, IrType>, IrSimpleFunction>()
-
-    private fun polymorphicSignatureInstantiation(name: String, parameterTypes: List<IrType>, returnType: IrType): IrSimpleFunction =
-        polymorphicSignatureInstantiations.getOrPut(Triple(name, parameterTypes, returnType)) {
-            context.irFactory.buildFun {
-                this.name = Name.identifier(name)
-                this.returnType = returnType
-                origin = JvmLoweredDeclarationOrigin.POLYMORPHIC_SIGNATURE_INSTANTIATION
-                isExternal = true
-            }.apply {
-                parent = symbols.varHandle.owner
-                parameters += createDispatchReceiverParameterWithClassParent()
-                parameterTypes.forEachIndexed { index, type -> addValueParameter("$$index", type) }
-            }
-        }
-
-    /** Returns the `private static final VarHandle <field>$VH` field for the given volatile field, creating it if needed. */
-    private fun varHandleFieldFor(field: IrField): IrField = field::volatileVarHandleField.getOrSetIfNull {
+    /**
+     * Returns the `private static final <type> <field><suffix>` field for the given volatile field, creating it if needed.
+     * [buildInitializer] is invoked with a builder whose scope is the new field (so that, in particular, caller-sensitive
+     * methods like `MethodHandles.lookup()` are called from `<clinit>` of the host class, which has private access to the field).
+     */
+    protected fun helperFieldFor(
+        field: IrField,
+        suffix: String,
+        type: IrType,
+        origin: IrDeclarationOrigin,
+        buildInitializer: JvmIrBuilder.(host: IrClass) -> IrExpression,
+    ): IrField = field::volatileAtomicsHelperField.getOrSetIfNull {
         val host = field.parentAsClass
         context.irFactory.buildField {
-            name = Name.identifier("${field.name.asString()}\$VH")
-            type = symbols.varHandle.defaultType
-            origin = JvmLoweredDeclarationOrigin.VOLATILE_VAR_HANDLE_FIELD
+            name = Name.identifier("${field.name.asString()}$suffix")
+            this.type = type
+            this.origin = origin
             visibility = DescriptorVisibilities.PRIVATE
             isFinal = true
             isStatic = true
@@ -265,27 +291,29 @@ internal class VolatilePropertyAtomicsLowering(private val context: JvmBackendCo
             parent = host
             initializer = context.createJvmIrBuilder(symbol).run {
                 at(field)
-                // MethodHandles.lookup().unreflectVarHandle(Host.class.getDeclaredField("field"))
-                // `lookup()` is caller-sensitive: it's called from `<clinit>` of the host class, so it has private access to the field.
-                irExprBody(irCall(symbols.lookupUnreflectVarHandle).apply {
-                    dispatchReceiver = irCall(symbols.methodHandlesLookup)
-                    arguments[1] = irCall(symbols.javaLangReflectSymbols.getDeclaredField).apply {
-                        dispatchReceiver = javaClassReference(host.defaultType)
-                        arguments[1] = irString(field.name.asString())
-                        // The field may be renamed later by RenameFieldsLowering in case of a JVM declaration clash.
-                        field::callsReferencingNameReflectively.getOrSetIfNull { mutableListOf() }.add(this)
-                    }
-                })
+                irExprBody(buildInitializer(host))
             }
-            pendingVarHandleFields.getOrPut(host) { mutableListOf() }.add(this)
+            pendingHelperFields.getOrPut(host) { mutableListOf() }.add(this)
         }
     }
 
-    /** `VarHandle`s are typed by the erased JVM type of the field, so type parameters are replaced with their erased upper bounds. */
-    private fun IrType.erasedForVarHandle(): IrType =
-        if (classifierOrNull is IrTypeParameterSymbol) erasedUpperBound.defaultType.mergeNullability(this) else this
+    /** `Host.class.getDeclaredField("<field>")` */
+    protected fun JvmIrBuilder.getDeclaredField(host: IrClass, field: IrField): IrExpression =
+        irCall(symbols.javaLangReflectSymbols.getDeclaredField).apply {
+            dispatchReceiver = javaClassReference(host.defaultType)
+            putFieldName(field, 1)
+        }
 
-    private fun IrBuilderWithScope.plus(left: IrExpression, right: IrExpression): IrExpression =
+    /**
+     * Puts the JVM name of [field] as a string argument at [index], and makes sure it's kept in sync
+     * if the field is renamed later by [RenameFieldsLowering] in case of a JVM declaration clash.
+     */
+    protected fun IrCall.putFieldName(field: IrField, index: Int) {
+        arguments[index] = IrConstImpl.string(startOffset, endOffset, irBuiltIns.stringType, field.name.asString())
+        field::callsReferencingNameReflectively.getOrSetIfNull { mutableListOf() }.add(ReflectiveFieldNameUsage(this, index))
+    }
+
+    protected fun IrBuilderWithScope.plus(left: IrExpression, right: IrExpression): IrExpression =
         irCall(left.type.binaryOperator(OperatorNameConventions.PLUS)).apply {
             dispatchReceiver = left
             arguments[1] = right
@@ -351,10 +379,14 @@ internal class VolatilePropertyAtomicsLowering(private val context: JvmBackendCo
     }
 }
 
-private var IrField.volatileVarHandleField: IrField? by irAttribute(copyByDefault = false)
+/** The `VarHandle` / field updater field generated for this volatile backing field. */
+private var IrField.volatileAtomicsHelperField: IrField? by irAttribute(copyByDefault = false)
+
+/** A call which passes the JVM name of a field as a string constant [argumentIndex], e.g. `Class.getDeclaredField("x")`. */
+internal data class ReflectiveFieldNameUsage(val call: IrCall, val argumentIndex: Int)
 
 /**
- * Calls which pass the JVM name of this field as a string argument at index 1, e.g. `Class.getDeclaredField("x")` generated by
- * [VolatilePropertyAtomicsLowering]. [RenameFieldsLowering] keeps them in sync when it renames the field.
+ * Calls which pass the JVM name of this field as a string argument, generated by [AbstractVolatilePropertyAtomicsLowering].
+ * [RenameFieldsLowering] keeps them in sync when it renames the field.
  */
-internal var IrField.callsReferencingNameReflectively: MutableList<IrCall>? by irAttribute(copyByDefault = false)
+internal var IrField.callsReferencingNameReflectively: MutableList<ReflectiveFieldNameUsage>? by irAttribute(copyByDefault = false)

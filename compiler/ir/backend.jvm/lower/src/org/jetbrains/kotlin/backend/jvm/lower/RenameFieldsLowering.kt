@@ -40,8 +40,9 @@ internal class RenameFieldsLowering(private val context: JvmBackendContext) : Cl
             val index = count[oldName] ?: 0
             if (index != 0 && !field.visibility.isPublicAPI) {
                 field.name = Name.identifier("$oldName$$index")
-                field.callsReferencingNameReflectively?.forEach { call ->
-                    call.arguments[1] = IrConstImpl.string(call.startOffset, call.endOffset, context.irBuiltIns.stringType, field.name.asString())
+                field.callsReferencingNameReflectively?.forEach { [call, argumentIndex] ->
+                    call.arguments[argumentIndex] =
+                        IrConstImpl.string(call.startOffset, call.endOffset, context.irBuiltIns.stringType, field.name.asString())
                 }
             }
             count[oldName] = index + 1

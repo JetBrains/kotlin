@@ -1,6 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // DONT_TARGET_EXACT_BACKEND: JVM
-// JVM is tested in boxModernJdk/testsWithJava11/volatilePropertyAtomics, since VarHandle requires JDK 9+.
+// JVM is tested in boxModernJdk/testsWithJava11/volatilePropertyAtomics (VarHandle, JVM 9+) and box/volatilePropertyAtomicsJvm8
+// (field updaters, JVM 1.8, which do not support static and Boolean properties).
 // `@Volatile` is an optional expectation without actuals on JS and Wasm, so it can only be used in common code there.
 // WITH_STDLIB
 // OPT_IN: kotlin.concurrent.atomics.ExperimentalAtomicApi

@@ -41,7 +41,8 @@ private val jvmFilePhases = createFilePhases(
     ::VarargLowering,
 
     ::JvmLateinitLowering,
-    ::VolatilePropertyAtomicsLowering,
+    ::VarHandleVolatilePropertyAtomicsLowering,
+    ::FieldUpdaterVolatilePropertyAtomicsLowering,
     ::JvmInventNamesForLocalClasses,
 
     ::PrepareCallableReferencesForInlining,

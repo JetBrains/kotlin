@@ -36,6 +36,7 @@ object JvmLoweredDeclarationOrigin {
     val INTERFACE_COMPANION_PRIVATE_INSTANCE by IrDeclarationOriginImpl.Synthetic
     val POLYMORPHIC_SIGNATURE_INSTANTIATION by IrDeclarationOriginImpl.Synthetic
     val VOLATILE_VAR_HANDLE_FIELD by IrDeclarationOriginImpl.Synthetic
+    val VOLATILE_FIELD_UPDATER_FIELD by IrDeclarationOriginImpl.Synthetic
     val ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER by IrDeclarationOriginImpl.Synthetic
     val OBJECT_SUPER_CONSTRUCTOR_PARAMETER by IrDeclarationOriginImpl.Synthetic
     val CONTINUATION_CLASS by IrDeclarationOriginImpl.Regular

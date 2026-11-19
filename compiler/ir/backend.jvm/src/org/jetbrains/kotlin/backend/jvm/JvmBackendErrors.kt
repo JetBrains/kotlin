@@ -44,7 +44,7 @@ object JvmBackendErrors : KtDiagnosticsContainer() {
 
     val INCONSISTENT_TARGET_LIST_FOR_LAMBDA_ANNOTATION by warningWithoutSource()
 
-    val VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9 by error0<PsiElement>()
+    val VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9 by error1<PsiElement, String>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultJvmErrorMessages
@@ -80,7 +80,8 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(JvmBackendErrors.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", STRING, STRING)
         map.put(
             JvmBackendErrors.VOLATILE_INTRINSIC_CALL_REQUIRES_JVM_9,
-            "Atomic operations on volatile properties require JVM target 9 or higher. Specify a newer JVM target with '-jvm-target'."
+            "Atomic operations on {0} require JVM target 9 or higher. Specify a newer JVM target with '-jvm-target'.",
+            STRING,
         )
 
         map.put(

@@ -66,6 +66,7 @@ class JvmSymbols(
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
     private val javaLangInvokePackage: IrPackageFragment = createPackage(FqName("java.lang.invoke"))
     private val javaUtilPackage: IrPackageFragment = createPackage(FqName("java.util"))
+    private val javaUtilConcurrentAtomicPackage: IrPackageFragment by lazy { createPackage(FqName("java.util.concurrent.atomic")) }
 
 
     private val kotlinInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.internal"))
@@ -114,6 +115,7 @@ class JvmSymbols(
                 "java.lang" -> javaLangPackage
                 "java.lang.invoke" -> javaLangInvokePackage
                 "java.util" -> javaUtilPackage
+                "java.util.concurrent.atomic" -> javaUtilConcurrentAtomicPackage
                 "kotlin.internal" -> kotlinInternalPackage
                 else -> error("Other packages are not supported yet: $fqName")
             }
@@ -303,7 +305,7 @@ class JvmSymbols(
 
     /**
      * `java.lang.invoke.VarHandle`. Its access mode methods are signature polymorphic, so calls to them are generated
-     * through ad-hoc instantiations, see [org.jetbrains.kotlin.backend.jvm.lower.VolatilePropertyAtomicsLowering].
+     * through ad-hoc instantiations, see [org.jetbrains.kotlin.backend.jvm.lower.VarHandleVolatilePropertyAtomicsLowering].
      */
     val varHandle: IrClassSymbol by lazy {
         createClass(FqName("java.lang.invoke.VarHandle"), classModality = Modality.ABSTRACT)
@@ -336,6 +338,53 @@ class JvmSymbols(
     /** `java.lang.invoke.MethodHandles.Lookup.unreflectVarHandle(java.lang.reflect.Field)` */
     val lookupUnreflectVarHandle: IrSimpleFunctionSymbol by lazy {
         methodHandlesClass.owner.declarations.filterIsInstance<IrClass>().single().symbol.functionByName("unreflectVarHandle")
+    }
+
+    /**
+     * Stubs of `java.util.concurrent.atomic.Atomic{Integer,Long,Reference}FieldUpdater`, used to lower atomic intrinsics
+     * on volatile properties for JVM targets without `VarHandle` (1.8),
+     * see [org.jetbrains.kotlin.backend.jvm.lower.FieldUpdaterVolatilePropertyAtomicsLowering].
+     */
+    inner class FieldUpdaterSymbols internal constructor(fqName: FqName, valueType: IrType, isReference: Boolean) {
+        val klass: IrClassSymbol = createClass(fqName, classModality = Modality.ABSTRACT) { updaterClass ->
+            updaterClass.addFunction("newUpdater", updaterClass.defaultType, isStatic = true).apply {
+                addValueParameter("tclass", javaLangClass.starProjectedType)
+                if (isReference) addValueParameter("vclass", javaLangClass.starProjectedType)
+                addValueParameter("fieldName", irBuiltIns.stringType)
+            }
+            fun addMethod(name: String, returnType: IrType, vararg parameterNames: String) =
+                updaterClass.addFunction(name, returnType, modality = Modality.ABSTRACT).apply {
+                    addValueParameter("obj", irBuiltIns.anyNType)
+                    for (parameterName in parameterNames) addValueParameter(parameterName, valueType)
+                }
+            addMethod("getAndSet", valueType, "newValue")
+            addMethod("compareAndSet", irBuiltIns.booleanType, "expect", "update")
+            if (!isReference) {
+                addMethod("getAndAdd", valueType, "delta")
+                addMethod("addAndGet", valueType, "delta")
+            }
+        }
+
+        /** The index of the `fieldName` argument of [newUpdater]. */
+        val newUpdaterFieldNameIndex: Int = if (isReference) 2 else 1
+
+        val newUpdater: IrSimpleFunctionSymbol get() = klass.functionByName("newUpdater")
+        val getAndSet: IrSimpleFunctionSymbol get() = klass.functionByName("getAndSet")
+        val compareAndSet: IrSimpleFunctionSymbol get() = klass.functionByName("compareAndSet")
+        val getAndAdd: IrSimpleFunctionSymbol get() = klass.functionByName("getAndAdd")
+        val addAndGet: IrSimpleFunctionSymbol get() = klass.functionByName("addAndGet")
+    }
+
+    val atomicIntegerFieldUpdater: FieldUpdaterSymbols by lazy {
+        FieldUpdaterSymbols(FqName("java.util.concurrent.atomic.AtomicIntegerFieldUpdater"), irBuiltIns.intType, isReference = false)
+    }
+
+    val atomicLongFieldUpdater: FieldUpdaterSymbols by lazy {
+        FieldUpdaterSymbols(FqName("java.util.concurrent.atomic.AtomicLongFieldUpdater"), irBuiltIns.longType, isReference = false)
+    }
+
+    val atomicReferenceFieldUpdater: FieldUpdaterSymbols by lazy {
+        FieldUpdaterSymbols(FqName("java.util.concurrent.atomic.AtomicReferenceFieldUpdater"), irBuiltIns.anyNType, isReference = true)
     }
 
     val javaLangDeprecatedWithDeprecatedFlag: IrClassSymbol =
