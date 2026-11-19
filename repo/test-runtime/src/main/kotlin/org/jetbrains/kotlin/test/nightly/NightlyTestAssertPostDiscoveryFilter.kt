@@ -18,7 +18,8 @@ import java.util.function.UnaryOperator
 
 private val nightlyTag = TestTag.create(nightlyTagKey)
 
-private val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
+private val isTeamCityBuild: Boolean =
+    System.getProperty("kotlin.build.teamcity")?.toBoolean() ?: (System.getenv("TEAMCITY_VERSION") != null)
 
 /**
  * Asserts that the tests tagged as [NightlyTest] are only discovered by the test runs which explicitly include the `nightly` tag,
