@@ -31,9 +31,9 @@ import kotlin.test.assertIs
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class GradleTestVersions(
-    val minVersion: String = TestVersions.Gradle.MIN_SUPPORTED,
-    val maxVersion: String = TestVersions.Gradle.MAX_SUPPORTED,
-    val additionalVersions: Array<String> = [],
+    val minVersion: TestVersions.Gradle = TestVersions.Gradle.MIN_SUPPORTED,
+    val maxVersion: TestVersions.Gradle = TestVersions.Gradle.MAX_SUPPORTED,
+    val additionalVersions: Array<TestVersions.Gradle> = [],
 )
 
 /**
@@ -80,30 +80,30 @@ annotation class GradleTestExtraStringArguments(
 annotation class GradleTest
 
 /**
- * The only Gradle version to test (`gradle.integration.tests.gradle.version.filter`), set by version-specific TeamCity tasks.
+ * The only Gradle version to test ([GRADLE_VERSION_FILTER_PROPERTY]), assigned by version-specific tasks.
  * `null` tests all versions.
  */
-val gradleTestVersionFilter: GradleVersion? = System.getProperty("gradle.integration.tests.gradle.version.filter")
-    ?.let { GradleVersion.version(it) }
-
-/**
- * The Gradle versions of all version-specific TeamCity tasks (`gradle.integration.tests.gradle.versions`).
- * Other versions are dropped before sharding, as no task would run them. `null` keeps all versions.
- */
-val gradleTestVersions: Set<GradleVersion>? = System.getProperty("gradle.integration.tests.gradle.versions")
-    ?.split(";")?.map { GradleVersion.version(it) }?.toSet()
+val gradleTestVersionFilter: GradleVersion? = System.getProperty(GRADLE_VERSION_FILTER_PROPERTY)
+    ?.let { requestedVersion ->
+        val version = requireNotNull(TestVersions.Gradle.entries.find { it.version == requestedVersion }) {
+            "Unknown Gradle test version '$requestedVersion' for $GRADLE_VERSION_FILTER_PROPERTY"
+        }
+        GradleVersion.version(version)
+    }
 
 /**
  * Keeps only the [Arguments] whose first argument (the Gradle version) matches [gradleTestVersionFilter].
  *
- * Call it after [shard], so that the invocations are sharded as if there was no version filter:
+ * Applies [shard] before filtering, so that the invocations are sharded as if there was no version filter:
  * every task running with a different [gradleTestVersionFilter] computes the same assignment of the full matrix
  * and only runs its own Gradle version from it. Invocations sharing a Gradle version are placed on neighbouring shards,
  * so each shard only runs few Gradle versions in total, across all tasks.
  */
-private fun Iterable<Arguments>.filterByGradleTestVersion(): List<Arguments> {
-    val versionFilter = gradleTestVersionFilter ?: return toList()
-    return filter { arguments -> assertIs<GradleVersion>(arguments.get().first()) == versionFilter }
+private fun Iterable<Arguments>.shardAndFilterIfNeeded(context: ExtensionContext): Stream<Arguments> {
+    val versionFilter = gradleTestVersionFilter
+    return shard(context)
+        .filter { arguments -> versionFilter == null || assertIs<GradleVersion>(arguments.get().first()) == versionFilter }
+        .stream()
 }
 
 inline fun <reified T : Annotation> findAnnotationOrNull(context: ExtensionContext): T? {
@@ -141,7 +141,7 @@ inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T
 
 open class GradleParameterResolver : ParameterResolver {
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
-        return parameterContext.parameter.type == GradleVersion::class.java
+        return parameterContext.parameter.type == org.gradle.util.GradleVersion::class.java
     }
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any? {
@@ -163,32 +163,26 @@ open class GradleArgumentsProvider : ArgumentsProvider {
                     extraArguments.map { extraArgument -> Arguments.of(gradleVersion, extraArgument) }
                 } else listOf(Arguments.of(gradleVersion))
             }
-            .shard(context)
-            .filterByGradleTestVersion()
-            .stream()
+            .shardAndFilterIfNeeded(context)
     }
 
     protected fun gradleVersions(context: ExtensionContext): Set<GradleVersion> {
-        return run {
-            val versionsAnnotation = findAnnotationOrNull<GradleTestVersions>(context) ?: GradleTestVersions()
+        val versionsAnnotation = findAnnotationOrNull<GradleTestVersions>(context) ?: GradleTestVersions()
 
         val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
         // Max is used for cases when test is annotated with `@GradleTestVersions(minVersion = LATEST)` but MAX_SUPPORTED isn't latest
         val maxGradleVersion = maxOf(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
 
-        if (!testFederationAllTestsRequested) return@run setOf(maxGradleVersion)
+        if (!testFederationAllTestsRequested) return setOf(maxGradleVersion)
 
-            val additionalGradleVersions = versionsAnnotation
-                .additionalVersions
-                .map(GradleVersion::version)
-            additionalGradleVersions.forEach {
-                assert(it in minGradleVersion..maxGradleVersion) {
-                    "Additional Gradle version ${it.version} should be between ${minGradleVersion.version} and ${maxGradleVersion.version}"
-                }
+        val additionalGradleVersions = versionsAnnotation.additionalVersions.map { GradleVersion.version(it) }
+        additionalGradleVersions.forEach {
+            assert(it in minGradleVersion..maxGradleVersion) {
+                "Additional Gradle version ${it.version} should be between ${minGradleVersion.version} and ${maxGradleVersion.version}"
             }
+        }
 
-            setOf(minGradleVersion, *additionalGradleVersions.toTypedArray(), maxGradleVersion)
-        }.filterTo(mutableSetOf()) { version -> gradleTestVersions == null || version in gradleTestVersions }
+        return setOf(minGradleVersion, *additionalGradleVersions.toTypedArray(), maxGradleVersion)
     }
 
     protected fun extraArguments(context: ExtensionContext): Array<out String>? {
@@ -278,9 +272,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
                 if (testFederationAllTestsRequested) toList()
                 else toList().takeLast(1)
             }
-            .shard(context)
-            .filterByGradleTestVersion()
-            .stream()
+            .shardAndFilterIfNeeded(context)
     }
 
     private fun Set<GradleVersion>.gradleVersionsWorkingWithJdk(
@@ -404,9 +396,7 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
                     }
             }
             .map { Arguments.of(it.gradleVersion, it.agpVersion, it.jdkVersion) }
-            .shard(context)
-            .filterByGradleTestVersion()
-            .stream()
+            .shardAndFilterIfNeeded(context)
     }
 
     data class AgpTestArguments(
@@ -456,26 +446,19 @@ class GradleAndCompilerVersionArgumentsProvider : GradleArgumentsProvider() {
     ): Stream<out Arguments> {
         val compilerVersions = compilerVersions(context)
         val gradleVersions = gradleVersions(context)
-        val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
-            .map { GradleVersion.version(it) }
 
         return compilerVersions
             .flatMap { compilerVersion ->
                 gradleVersions.map { gradleVersion ->
-                    gradleVersion to compilerVersion
+                    Arguments.of(gradleVersion, compilerVersion)
                 }
-            }
-            .asSequence()
-            .filter { pair -> versionFilter.map { pair.first == it }.orElse(true) }
-            .map { it: Pair<GradleVersion, String> ->
-                Arguments.of(it.first, it.second)
             }
             .run {
                 /* We only take the last configuration in smoke test mode */
                 if (!testFederationAllTestsRequested) toList().takeLast(1)
                 else toList()
             }
-            .stream()
+            .shardAndFilterIfNeeded(context)
     }
 
     protected fun compilerVersions(context: ExtensionContext): Set<String> {
@@ -510,7 +493,7 @@ class GradleAndCompilerVersionArgumentsProvider : GradleArgumentsProvider() {
 
 /**
  * Disables a parametrized test if any of argument providers doesn't have arguments to provide.
- * When gradle.integration.tests.gradle.version.filter property is used, all arguments of a GradleArgumentsProvider may be filtered out.
+ * When [GRADLE_VERSION_FILTER_PROPERTY] is set, all arguments of a GradleArgumentsProvider may be filtered out.
  * If such a test is not disabled, it will fail with initialization error (unless it allows zero invocations).
  */
 class DisabledIfNoArgumentsProvided : ExecutionCondition {

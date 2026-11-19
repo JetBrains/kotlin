@@ -841,6 +841,7 @@ Not connected to any 'lifecycleTestTask':
   - :kotlin-gradle-plugin-integration-tests:kgpJvmTests [Gradle]
   - :kotlin-gradle-plugin-integration-tests:kgpMppTests [Gradle]
   - :kotlin-gradle-plugin-integration-tests:kgpOtherTests [Gradle]
+  - :kotlin-gradle-plugin-integration-tests:kgpSwiftPMImportTestsWithMaxGradleVersion [Gradle]
   - :kotlin-gradle-plugin-integration-tests:kgpWasmJsTests [Gradle]
   - :kotlin-gradle-plugin-integration-tests:kgpWasmTests [Gradle]
   - :kotlin-gradle-plugin-integration-tests:kgpWasmWasiTests [Gradle]
