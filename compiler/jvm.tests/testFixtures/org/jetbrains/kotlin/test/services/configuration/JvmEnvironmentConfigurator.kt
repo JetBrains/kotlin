@@ -177,6 +177,11 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_VALHALLA -> null
             TestJdkKind.FULL_JDK -> null
         }
+
+        fun getJavacReleaseOptions(jdkKind: TestJdkKind): List<String> {
+            val release = jdkKind.release ?: return emptyList()
+            return listOf("--release", release)
+        }
     }
 
     override val directiveContainers: List<DirectivesContainer>
@@ -276,7 +281,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         configuration.registerModuleDependencies(module)
 
         if (ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
-            configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
+            configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, jdkKind, module)
         }
 
         if (IGNORED_ANNOTATIONS_FOR_BRIDGES in module.directives) {
@@ -312,7 +317,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 "PROVIDE_JAVA_AS_BINARIES should be used only in combination with ENABLE_FOREIGN_ANNOTATIONS"
             }
             if (javaModuleInfoFiles.isNotEmpty()) {
-                configuration.addJavaBinaryRootsByJavaModules(configurationKind, javaModuleInfoFiles)
+                configuration.addJavaBinaryRootsByJavaModules(configurationKind, jdkKind, javaModuleInfoFiles)
             } else {
                 val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath }
                 val additionalClassPath = testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath.orEmpty()
@@ -320,9 +325,8 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                     compileJavaFilesLibraryToJar(
                         testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module).path,
                         "${module.name}-$JAVA_BINARIES_JAR_NAME",
+                        extraJavacOptions = getJavacReleaseOptions(jdkKind),
                         extraClasspath = jvmClasspathRoots + additionalClassPath,
-                        assertions = JUnit5Assertions,
-                        useJava11 = registeredDirectives[JDK_KIND].singleOrNull() == TestJdkKind.FULL_JDK_11,
                     )
                 )
             }
@@ -361,6 +365,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
     private fun CompilerConfiguration.addJavaBinaryRootsByJavaModules(
         configurationKind: ConfigurationKind,
+        jdkKind: TestJdkKind,
         javaModuleInfoFiles: List<TestFile>
     ) {
         val classPath = jvmClasspathRoots.map(File::getAbsolutePath)
@@ -376,10 +381,9 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             val javaModuleBinary = compileJavaFilesLibraryToJar(
                 javaModuleDir.path,
                 "$javaModuleName-$JAVA_BINARIES_JAR_NAME",
+                extraJavacOptions = getJavacReleaseOptions(jdkKind),
                 extraClasspath = classPath,
                 extraModulepath = modulePath,
-                assertions = JUnit5Assertions,
-                useJava11 = true
             )
             addModularRootIfNotNull(isModularJava = true, javaModuleName, javaModuleBinary)
         }
@@ -387,13 +391,14 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
     private fun CompilerConfiguration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(
         configurationKind: ConfigurationKind,
+        jdkKind: TestJdkKind,
         module: TestModule
     ) {
         val moduleDependencies = module.allDependencies.map { it.dependencyModule }
         val javaModuleInfoFilesFromModuleDependencies = moduleDependencies.mapNotNull { moduleDependency ->
             moduleDependency.javaFiles.singleOrNull { javaFile -> javaFile.name == MODULE_INFO_FILE }
         }
-        addJavaBinaryRootsByJavaModules(configurationKind, javaModuleInfoFilesFromModuleDependencies)
+        addJavaBinaryRootsByJavaModules(configurationKind, jdkKind, javaModuleInfoFilesFromModuleDependencies)
     }
 
     private fun configureDefaultJvmTarget(configuration: CompilerConfiguration) {

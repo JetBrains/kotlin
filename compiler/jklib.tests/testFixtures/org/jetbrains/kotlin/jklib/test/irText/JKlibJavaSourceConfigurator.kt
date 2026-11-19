@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.additionalClassPathForJavaCompilationOrAnalysis
-import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.javaFiles
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
@@ -98,7 +97,6 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
                 MockLibraryUtil.compileJavaFilesLibraryToJar(
                     JavaForeignAnnotationType.Java8Annotations.path,
                     "java8-annotations",
-                    assertions = testServices.assertions,
                     extraOptions = listOf("-Xlint:-options")
                 )
             }

@@ -15,32 +15,32 @@
  */
 package org.jetbrains.kotlin.test
 
-enum class TestJdkKind(val requiresSeparateProcess: Boolean = false) {
-    MOCK_JDK,
+enum class TestJdkKind(val requiresSeparateProcess: Boolean = false, val release: String?) {
+    MOCK_JDK(release = null),
 
     // Differs from common mock JDK only by one additional 'nonExistingMethod' in Collection and constructor from Double in Throwable
     // It's needed to test the way we load additional built-ins members that neither in black nor white lists
     // Also, now it contains new methods in java.lang.String introduced in JDK 11
-    MODIFIED_MOCK_JDK,
+    MODIFIED_MOCK_JDK(release = null),
 
     // JDK found at $JDK_1_8
-    FULL_JDK_8,
+    FULL_JDK_8(release = "8"),
 
     // JDK found at $JDK_11_0
-    FULL_JDK_11(requiresSeparateProcess = true),
+    FULL_JDK_11(requiresSeparateProcess = true, release = "11"),
 
     // JDK found at $JDK_17_0
-    FULL_JDK_17(requiresSeparateProcess = true),
+    FULL_JDK_17(requiresSeparateProcess = true, release = "17"),
 
     // JDK found at $JDK_21_0
-    FULL_JDK_21(requiresSeparateProcess = true),
+    FULL_JDK_21(requiresSeparateProcess = true, release = "21"),
 
     // JDK found at $JDK_25_0
-    FULL_JDK_25(requiresSeparateProcess = true),
+    FULL_JDK_25(requiresSeparateProcess = true, release = "25"),
 
     // JDK found at $JDK_VALHALLA
-    FULL_JDK_VALHALLA(requiresSeparateProcess = true),
+    FULL_JDK_VALHALLA(requiresSeparateProcess = true, release = null),
 
     // JDK found at java.home
-    FULL_JDK,
+    FULL_JDK(release = null),
 }
