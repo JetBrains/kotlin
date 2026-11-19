@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.classHierarchyIdsSymbolName
-import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.interfaceTableRecordsSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.interfaceTableSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.interfaceVTableSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer

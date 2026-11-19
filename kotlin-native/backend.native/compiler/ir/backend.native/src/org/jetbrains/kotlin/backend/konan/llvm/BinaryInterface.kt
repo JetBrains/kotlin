@@ -50,7 +50,6 @@ object KonanBinaryInterface {
 
     internal const val MANGLE_CLASS_IDS_PREFIX = "kclassids"
     internal const val MANGLE_ITABLE_PREFIX = "kifacetable"
-    internal const val MANGLE_ITABLE_RECORDS_PREFIX = "kifacerecords"
     internal const val MANGLE_IFACE_VTABLE_PREFIX = "kifacevtable"
 
     private val mangler = object : AbstractKonanIrMangler(withReturnType = true, allowOutOfScopeTypeParameters = true) {}
@@ -89,9 +88,6 @@ object KonanBinaryInterface {
 
     internal fun interfaceTableSymbolName(name: String): String =
             globalHierarchySymbolName(name, MANGLE_ITABLE_PREFIX)
-
-    internal fun interfaceTableRecordsSymbolName(name: String): String =
-            globalHierarchySymbolName(name, MANGLE_ITABLE_RECORDS_PREFIX)
 
     /** The vtable of the methods of one interface as implemented by one class. */
     internal fun interfaceVTableSymbolName(className: String, interfaceName: String): String =

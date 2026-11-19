@@ -253,7 +253,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: NativeBacke
             // The type info of such an obj class is built at runtime, by `createTypeInfo` in ObjCExport.mm,
             // whatever value written here never gets used.
             irClass.isKotlinObjCClass() -> 0
-            // The numbering will be done by later by the final link. This runtime should not rely on this field
+            // The numbering will be done later by the final link. This runtime should not rely on this field
             // and use `TypeInfo.classHierarchyIds_` instead.
             context.hierarchyWillBeLaidOutByFinalLink -> 0
             !context.hasGlobalHierarchyAnalysis() -> {
