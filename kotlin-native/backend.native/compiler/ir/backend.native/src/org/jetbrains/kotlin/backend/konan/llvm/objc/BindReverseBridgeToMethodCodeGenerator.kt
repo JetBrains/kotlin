@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.llvm.objc
 import org.jetbrains.kotlin.backend.konan.ir.annotations.BindReverseBridgeToMethod
 import org.jetbrains.kotlin.backend.konan.ir.annotations.allBindReverseBridgeToMethod
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
+import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
+import org.jetbrains.kotlin.backend.konan.ir.bridgeDirectionsTo
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmCallable
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedObjCReverseBridge
@@ -22,8 +24,10 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.findOverriddenMethodOfAny
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.simpleFunctions
+import org.jetbrains.kotlin.ir.util.target
 import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
 
 /**
@@ -46,8 +50,8 @@ internal fun CodeGenerator.KotlinToObjCMethodAdapter(adapter: ReverseBridgeAdapt
 
 /**
  * Collects `@BindReverseBridgeToMethod` annotations from the given file,
- * grouped by target class, and resolves each to a [ReverseBridgeAdapter]
- * containing the vtable index and bridge function pointer.
+ * grouped by target class, and resolves each to the [ReverseBridgeAdapter]s
+ * containing the vtable index or itable place and bridge function pointer.
  *
  * The result is used by [processBindClassToObjCNameAnnotations] to create
  * combined type adapters with both class binding and reverse bridges.
@@ -56,19 +60,19 @@ internal fun CodeGenerator.collectReverseBridgeAdapters(file: IrFile): Map<IrCla
     val bridgesByClass = file.allBindReverseBridgeToMethod.groupBy { it.targetClass }
     return bridgesByClass.mapValues { [irClass, bridges] ->
         val layoutBuilder = generationState.context.getLayoutBuilder(irClass)
-        bridges.map { bridge ->
-            resolveReverseBridgeAdapter(irClass, layoutBuilder, bridge) ?: error(
+        bridges.flatMap { bridge ->
+            resolveReverseBridgeAdapters(irClass, layoutBuilder, bridge) ?: error(
                     "Cannot bind ${bridge.bridgeFunction.render()} to '${bridge.targetMethod}'"
             )
         }
     }.filterValues { it.isNotEmpty() }
 }
 
-private fun CodeGenerator.resolveReverseBridgeAdapter(
+private fun CodeGenerator.resolveReverseBridgeAdapters(
         irClass: IrClass,
         layoutBuilder: ClassLayoutBuilder,
         bridge: BindReverseBridgeToMethod,
-): ReverseBridgeAdapter? {
+): List<ReverseBridgeAdapter>? {
     val candidates = irClass.simpleFunctions()
             .filter { it.name.asString() == bridge.targetMethod }
             .map { with(layoutBuilder) { it.getLoweredVersion() } }
@@ -93,12 +97,33 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
         ClassLayoutBuilder.InterfaceTablePlace.INVALID
     }
 
-    return ReverseBridgeAdapter(
+    val kotlinImpl = getLlvmFunctionFrom(bridge.bridgeFunction)
+    val adapter = ReverseBridgeAdapter(
             selector = bridge.targetMethod,
             itablePlace = itablePlace,
             vtableIndex = vtableIndex,
-            kotlinImpl = getLlvmFunctionFrom(bridge.bridgeFunction),
+            kotlinImpl = kotlinImpl,
     )
+    if (isInterfaceMethod) return listOf(adapter)
+    return listOf(adapter) + implementedInterfaceSlotAdapters(targetFunction, bridge.targetMethod, kotlinImpl)
+}
+
+private fun CodeGenerator.implementedInterfaceSlotAdapters(
+        targetFunction: IrSimpleFunction,
+        selector: String,
+        kotlinImpl: LlvmCallable,
+): List<ReverseBridgeAdapter> {
+    val bridgesPolicy = generationState.config.bridgesPolicy
+    val implementation = targetFunction.target
+    if (!implementation.bridgeDirectionsTo(targetFunction, bridgesPolicy).allNotNeeded()) return emptyList()
+    return targetFunction.allOverriddenFunctions
+            .filter { it.parentAsClass.isInterface && it.findOverriddenMethodOfAny() == null }
+            .filter { implementation.bridgeDirectionsTo(it, bridgesPolicy).allNotNeeded() }
+            .map { generationState.context.getLayoutBuilder(it.parentAsClass).itablePlace(it) }
+            .distinct()
+            .map { itablePlace ->
+                ReverseBridgeAdapter(selector = selector, itablePlace = itablePlace, vtableIndex = -1, kotlinImpl = kotlinImpl)
+            }
 }
 
 private fun IrSimpleFunction.hasMatchingSignatureTo(bridgeFunction: IrSimpleFunction): Boolean {

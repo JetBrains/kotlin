@@ -17,6 +17,13 @@ extension ExportedKotlinPackages.kotlin.collections {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        open func hasNext() -> Swift.Bool {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.BooleanIterator.self {
+                return kotlin_collections_BooleanIterator_hasNext(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.BooleanIterator.hasNext': a Swift subclass must override it and must not call super.")
+            }
+        }
         public final func next() -> Swift.Bool {
             return kotlin_collections_BooleanIterator_next(self.__externalRCRef())
         }
@@ -40,6 +47,13 @@ extension ExportedKotlinPackages.kotlin.collections {
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        open func hasNext() -> Swift.Bool {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.IntIterator.self {
+                return kotlin_collections_IntIterator_hasNext(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.IntIterator.hasNext': a Swift subclass must override it and must not call super.")
+            }
         }
         public final func next() -> Swift.Int32 {
             return kotlin_collections_IntIterator_next(self.__externalRCRef())
@@ -273,10 +287,24 @@ package func kotlin_Number_toShort__reverse_swift(_ `self`: Swift.UnsafeMutableR
     return _result
 }
 
+@_cdecl("kotlin_collections_BooleanIterator_hasNext__reverse_swift")
+package func kotlin_collections_BooleanIterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlin.collections.BooleanIterator.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Bool = _self.hasNext()
+    return _result
+}
+
 @_cdecl("kotlin_collections_BooleanIterator_nextBoolean__reverse_swift")
 package func kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = ExportedKotlinPackages.kotlin.collections.BooleanIterator.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Bool = _self.nextBoolean()
+    return _result
+}
+
+@_cdecl("kotlin_collections_IntIterator_hasNext__reverse_swift")
+package func kotlin_collections_IntIterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Bool = _self.hasNext()
     return _result
 }
 

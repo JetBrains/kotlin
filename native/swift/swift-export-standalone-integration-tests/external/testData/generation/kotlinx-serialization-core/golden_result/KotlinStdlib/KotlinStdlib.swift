@@ -6681,6 +6681,13 @@ extension ExportedKotlinPackages.kotlin.collections {
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
+        open func hasNext() -> Swift.Bool {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.ByteIterator.self {
+                return kotlin_collections_ByteIterator_hasNext(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.ByteIterator.hasNext': a Swift subclass must override it and must not call super.")
+            }
+        }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
@@ -6705,6 +6712,13 @@ extension ExportedKotlinPackages.kotlin.collections {
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
+        open func hasNext() -> Swift.Bool {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.IntIterator.self {
+                return kotlin_collections_IntIterator_hasNext(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.IntIterator.hasNext': a Swift subclass must override it and must not call super.")
+            }
+        }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
@@ -6728,6 +6742,13 @@ extension ExportedKotlinPackages.kotlin.collections {
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        open func hasNext() -> Swift.Bool {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.CharIterator.self {
+                return kotlin_collections_CharIterator_hasNext(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.CharIterator.hasNext': a Swift subclass must override it and must not call super.")
+            }
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
@@ -7802,10 +7823,24 @@ package func kotlin_Throwable_message_get__reverse_swift(_ `self`: Swift.UnsafeM
     return _result ?? nil
 }
 
+@_cdecl("kotlin_collections_ByteIterator_hasNext__reverse_swift")
+package func kotlin_collections_ByteIterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Bool = _self.hasNext()
+    return _result
+}
+
 @_cdecl("kotlin_collections_ByteIterator_nextByte__reverse_swift")
 package func kotlin_collections_ByteIterator_nextByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
     let _self = ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int8 = _self.nextByte()
+    return _result
+}
+
+@_cdecl("kotlin_collections_CharIterator_hasNext__reverse_swift")
+package func kotlin_collections_CharIterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlin.collections.CharIterator.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Bool = _self.hasNext()
     return _result
 }
 
@@ -7848,6 +7883,13 @@ package func kotlin_collections_Collection_iterator__reverse_swift(_ `self`: Swi
 package func kotlin_collections_Collection_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.collections.Collection.Type.self) as! any ExportedKotlinPackages.kotlin.collections.Collection
     let _result: Swift.Int32 = _self.size
+    return _result
+}
+
+@_cdecl("kotlin_collections_IntIterator_hasNext__reverse_swift")
+package func kotlin_collections_IntIterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Bool = _self.hasNext()
     return _result
 }
 
