@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
@@ -1228,4 +1230,38 @@ private const val MAX_RESTART_ARGUMENT_COUNT = 22
 internal object ComposeMemoizedLambdaOrigin : IrStatementOrigin {
     override val debugName: String
         get() = "ComposeMemoizedLambdaOrigin"
+}
+
+internal fun IrType.isComposableFunInterface(): Boolean =
+    classOrNull
+        ?.functions
+        ?.single { it.owner.modality == Modality.ABSTRACT }
+        ?.owner
+        ?.hasComposableAnnotation() == true
+
+internal fun IrTypeOperatorCall.findSamFunctionExpr(): IrFunctionExpression? {
+    val argument = argument
+    val operator = operator
+    val type = typeOperand
+    val functionClass = type.classOrNull
+
+    val isFunInterfaceConversion = operator == IrTypeOperator.SAM_CONVERSION &&
+            functionClass != null &&
+            functionClass.owner.isFun
+
+    return if (isFunInterfaceConversion) {
+        // if you modify this logic, make sure to update visitTypeOperator
+        when {
+            argument is IrFunctionExpression && argument.origin.isLambda -> argument
+            // some expressions are wrapped with additional implicit cast operator
+            // unwrapping that allows to avoid SAM conversion that capture FunctionN and box params.
+            argument is IrTypeOperatorCall && argument.operator == IrTypeOperator.IMPLICIT_CAST -> {
+                val functionExpr = argument.argument
+                functionExpr as? IrFunctionExpression
+            }
+            else -> null
+        }
+    } else {
+        null
+    }
 }

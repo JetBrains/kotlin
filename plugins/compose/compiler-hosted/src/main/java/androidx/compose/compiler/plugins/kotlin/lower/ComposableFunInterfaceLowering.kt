@@ -18,10 +18,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -31,16 +29,12 @@ import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.IMPLICIT_CAST
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.SAM_CONVERSION
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
@@ -104,39 +98,4 @@ private fun IrFunction.referencesOuterDeclarations(funInterfaceType: IrType): Bo
     acceptVoid(visitor)
     visitor.visitTypeRecursively(this, funInterfaceType)
     return referenced
-}
-
-private fun IrType.isComposableFunInterface(): Boolean =
-    classOrNull
-        ?.functions
-        ?.single { it.owner.modality == Modality.ABSTRACT }
-        ?.owner
-        ?.hasComposableAnnotation() == true
-
-internal fun IrTypeOperatorCall.findSamFunctionExpr(): IrFunctionExpression? {
-    val argument = argument
-    val operator = operator
-    val type = typeOperand
-    val functionClass = type.classOrNull
-
-    val isFunInterfaceConversion = operator == SAM_CONVERSION &&
-            functionClass != null &&
-            functionClass.owner.isFun
-
-    return if (isFunInterfaceConversion) {
-        // if you modify this logic, make sure to update wrapping of type operators
-        // in ComposerLambdaMemoization.kt
-        when {
-            argument is IrFunctionExpression && argument.origin.isLambda -> argument
-            // some expressions are wrapped with additional implicit cast operator
-            // unwrapping that allows to avoid SAM conversion that capture FunctionN and box params.
-            argument is IrTypeOperatorCall && argument.operator == IMPLICIT_CAST -> {
-                val functionExpr = argument.argument
-                functionExpr as? IrFunctionExpression
-            }
-            else -> null
-        }
-    } else {
-        null
-    }
 }
