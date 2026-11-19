@@ -67,7 +67,12 @@ internal class JvmPropertiesLowering(
                 currentScope!!.scope.scopeOwnerSymbol,
                 expression.startOffset,
                 expression.endOffset
-            ).irUnit()
+            ).irComposite {
+                expression.arguments.forEach {
+                    if (it != null) +it
+                }
+                +irUnit()
+            }
         }
 
         if (!property.accessorShouldBeUsed(simpleFunction) ||
