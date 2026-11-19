@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiJavaModule
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -206,20 +205,15 @@ abstract class IncrementalJvmCompilerRunnerBase(
 
     /**
      * The sources are members of a module patched with `-Xpatch-module` when one of the sources compiled is in a patch path and no
-     * `module-info.java` is among them (see `ClasspathRootsResolver`). That module and the classes in the patch paths are not tracked
-     * otherwise, so they are compared with the last successful build.
+     * `module-info.java` is among them (see `ClasspathRootsResolver`). That module and whether a patch path has classes are not tracked
+     * otherwise, so they are compared with the last successful build. A change to a `module-info.java` among the sources causes a
+     * rebuild by itself (see `JvmSourcesToCompileCalculator`).
      */
     override fun untrackedInputs(allSourceFiles: List<File>, args: K2JVMCompilerArguments): Map<BuildAttribute, String> {
         val patches = javaModulePatches(args)
         if (patches.isEmpty()) return emptyMap()
-        // Like the compiler, a module-info.java that is a Java source root or directly in one, once for each root.
-        val moduleInfoFiles = javaSourceRoots(args).map { if (it.isDirectory) File(it, PsiJavaModule.MODULE_INFO_FILE) else it }
-            .filter { it.isFile && it.name == PsiJavaModule.MODULE_INFO_FILE }
         val patchedModules = patchesWithSources(patches, javaModuleSources(allSourceFiles, args)).keys
-        // With its contents, since an edit can add or remove the module declaration.
-        val moduleInfos = moduleInfoFiles.map { "${it.canonicalPath}: ${it.readText()}" }.sorted()
-        val description = "$moduleInfos $patchedModules ${hasClasses(patches)}"
-        return mapOf(BuildAttribute.JAVA_MODULE_PATCH_CHANGED to description)
+        return mapOf(BuildAttribute.JAVA_MODULE_PATCH_CHANGED to "$patchedModules ${hasClasses(patches)}")
     }
 
     /**

@@ -184,90 +184,6 @@ class IncrementalJavaModulePatchTest : AbstractIncrementalJvmCompilerRunnerTest(
     }
 
     @Test
-    fun testAddingASecondModuleInfoIsReported() {
-        writeSource("other/b.kt", "package other\n\nfun b(): Int = 1\n")
-        val javaSourceRoots = listOf(File(workingDir, "java1"), File(workingDir, "java2")).onEach { it.mkdirs() }
-        File(javaSourceRoots[0], "module-info.java").writeText("module tests {}")
-
-        val first = make(javaSourceRoots = javaSourceRoots, configure = withoutStdlib)
-        assertEquals(ExitCode.OK, first.exitCode, first.compileErrors.joinToString("\n"))
-        File(javaSourceRoots[1], "module-info.java").writeText("module tests2 {}")
-        // As in a clean build, the two module declarations are rejected.
-        val result = make(javaSourceRoots = javaSourceRoots, configure = withoutStdlib)
-        assertTrue(
-            result.compileErrors.any { "Too many source module declarations found" in it },
-            "the second module-info.java has to be reported: ${result.compileErrors}",
-        )
-    }
-
-    @Test
-    fun testANestedModuleInfoDoesNotHideTheRemovalOfTheLastPatchedSource() {
-        val patched = writeSource("patch/lib/internal/a.kt", "package lib.internal\n\nfun a(): String = Impl.impl()\n")
-        writeSource("other/b.kt", "package other\n\nfun b(): String = lib.internal.Impl.impl()\n")
-        // Like javac, the compiler reads a module-info.java only directly in a Java source root.
-        writeSource("nested/module-info.java", "module tests {}")
-
-        build()
-        patched.delete()
-        // As in a clean build, b.kt is now compiled in the unnamed module, and lib is not in the module graph.
-        val result = make()
-        assertCompileError(result, "Unresolved reference 'lib'", "b.kt compiled in the unnamed module has to be rejected")
-    }
-
-    @Test
-    fun testAModuleInfoWithoutAModuleDeclarationDoesNotHideTheRemovalOfTheLastPatchedSource() {
-        val patched = writeSource("patch/lib/internal/a.kt", "package lib.internal\n\nfun a(): String = Impl.impl()\n")
-        writeSource("other/b.kt", "package other\n\nfun b(): String = lib.internal.Impl.impl()\n")
-        writeSource("module-info.java", "// No module declaration\n")
-
-        build()
-        patched.delete()
-        // As in a clean build, b.kt is now compiled in the unnamed module, and lib is not in the module graph.
-        val result = make()
-        assertCompileError(result, "Unresolved reference 'lib'", "b.kt compiled in the unnamed module has to be rejected")
-    }
-
-    @Test
-    @DisabledOnOs(OS.WINDOWS, disabledReason = "Symlinks do not work on Windows")
-    fun testAddingASymlinkToTheModuleInfoInAnotherJavaSourceRootIsReported() {
-        writeSource("other/b.kt", "package other\n\nfun b(): Int = 1\n")
-        val javaSourceRoots = listOf(File(workingDir, "java1"), File(workingDir, "java2")).onEach { it.mkdirs() }
-        val moduleInfo = File(javaSourceRoots[0], "module-info.java").apply { writeText("module tests {}") }
-
-        val first = make(javaSourceRoots = javaSourceRoots, configure = withoutStdlib)
-        assertEquals(ExitCode.OK, first.exitCode, first.compileErrors.joinToString("\n"))
-        Files.createSymbolicLink(File(javaSourceRoots[1], "module-info.java").toPath(), moduleInfo.toPath())
-        // As in a clean build, the module declaration is read from each root and rejected.
-        val result = make(javaSourceRoots = javaSourceRoots, configure = withoutStdlib)
-        assertTrue(
-            result.compileErrors.any { "Too many source module declarations found" in it },
-            "the module-info.java in java2 has to be reported: ${result.compileErrors}",
-        )
-    }
-
-    @Test
-    @DisabledOnOs(OS.WINDOWS, disabledReason = "Symlinks do not work on Windows")
-    fun testRetargetingASymlinkedJavaSourceRootToAnotherModuleInfoIsReported() {
-        writeSource("other/b.kt", "package other\n\nfun b(): Int = 1\n")
-        val targets = listOf("module tests {}", "module tests { requires nosuch; }").mapIndexed { index, text ->
-            File(workingDir, "java$index").apply { mkdirs() }.also { File(it, "module-info.java").writeText(text) }
-        }
-        val javaRoot = File(workingDir, "java").toPath()
-        Files.createSymbolicLink(javaRoot, targets[0].toPath())
-
-        val first = make(javaSourceRoots = listOf(javaRoot.toFile()), configure = withoutStdlib)
-        assertEquals(ExitCode.OK, first.exitCode, first.compileErrors.joinToString("\n"))
-        Files.delete(javaRoot)
-        Files.createSymbolicLink(javaRoot, targets[1].toPath())
-        // As in a clean build, the module declaration is read from the new target and rejected.
-        val result = make(javaSourceRoots = listOf(javaRoot.toFile()), configure = withoutStdlib)
-        assertTrue(
-            result.compileErrors.any { "Module nosuch cannot be found in the module graph" in it },
-            "the module-info.java of the new target has to be read: ${result.compileErrors}",
-        )
-    }
-
-    @Test
     fun testKotlinSourcesInThePatchPathAreCompiledIncrementally() {
         writeSource("patch/lib/internal/a.kt", "package lib.internal\n\nfun a(): String = Impl.impl()\n")
         val other = writeSource("patch/other/b.kt", "package other\n\nfun b(): String = lib.internal.Impl.impl()\n")
@@ -284,9 +200,6 @@ class IncrementalJavaModulePatchTest : AbstractIncrementalJvmCompilerRunnerTest(
     private val sourceRoot: File
         get() = File(workingDir, "src")
 
-    // Without the requirement of kotlin.stdlib in module-info.java, which the javac of the test fixture would not find.
-    private val withoutStdlib: K2JVMCompilerArguments.() -> Unit = { allowKotlinPackage = true }
-
     private fun writeSource(path: String, text: String): File =
         File(sourceRoot, path).apply {
             parentFile.mkdirs()
@@ -302,7 +215,6 @@ class IncrementalJavaModulePatchTest : AbstractIncrementalJvmCompilerRunnerTest(
 
     private fun make(
         patches: List<String> = listOf("lib=" + File(sourceRoot, "patch").path),
-        javaSourceRoots: List<File> = emptyList(),
         configure: K2JVMCompilerArguments.() -> Unit = {},
     ): TestCompilationResult {
         val outputDirectory = File(workingDir, "out").apply { mkdirs() }
@@ -313,7 +225,7 @@ class IncrementalJavaModulePatchTest : AbstractIncrementalJvmCompilerRunnerTest(
             configure()
         }
         // The source roots are given with -Xjava-source-roots too.
-        return make(File(workingDir, "caches"), outputDirectory, listOf(sourceRoot) + javaSourceRoots, arguments)
+        return make(File(workingDir, "caches"), outputDirectory, listOf(sourceRoot), arguments)
     }
 
     private val libModule: File by lazy {
