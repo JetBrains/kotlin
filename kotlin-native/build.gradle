@@ -196,7 +196,7 @@ tasks.register("distDef", Sync) {
     into(nativeDistribution.map { it.platformLibsDefinitions })
     dependsOn ":kotlin-native:platformLibs:updateDefFileDependencies"
 
-    platformManager.targetValues.each { target ->
+    platformManager.targetValues.findAll { !(it.name in EnabledTargetsKt.removedTargetNames) }.each { target ->
         from(it.project.project(":kotlin-native:platformLibs").isolated.projectDirectory.dir("src/platform/${target.family.name().toLowerCase()}")) {
             into target.visibleName
             include '**/*.def'
@@ -688,9 +688,7 @@ String platformName(KonanTarget target) {
 }
 
 Map<KonanTarget, File> createConfigurations(List<File> bundles) {
-    def hostTargets = platformManager.enabledByHost.keySet().findAll {
-        it.name != 'macos_x64'
-    } as Set
+    def hostTargets = platformManager.enabledByHost.keySet()
     def result = hostTargets.collectEntries { target ->
         [ (target): bundles.find { it.name.contains(platformName(target)) }]
     }

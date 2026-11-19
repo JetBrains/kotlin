@@ -131,11 +131,6 @@ dependencies {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         }
     }
-    implicitDependencies("org.jetbrains.kotlinx:atomicfu-macosx64:0.25.0"){
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
     implicitDependencies("org.jetbrains.kotlinx:atomicfu-iossimulatorarm64:0.25.0"){
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
