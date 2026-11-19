@@ -76,6 +76,7 @@ private fun AbstractTestDataModuleTask.wireOptions(extension: TestDataManagerExt
     goldenOnly.convention(project.providers.gradleProperty(TestDataManagerOption.GOLDEN_ONLY).map { it.toBoolean() })
     incremental.convention(project.providers.gradleProperty(TestDataManagerOption.INCREMENTAL).map { it.toBoolean() })
     runId.convention(project.providers.gradleProperty(TestDataManagerOption.RUN_ID))
+    rerunId.convention(project.providers.gradleProperty(TestDataManagerOption.RERUN_ID))
     output.convention(project.providers.gradleProperty(TestDataManagerOption.OUTPUT))
 
     /**

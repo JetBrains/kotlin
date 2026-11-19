@@ -400,6 +400,7 @@ def gradle_command(root: Path, args: argparse.Namespace, modules: List[str], run
     task = task_name(args.mode)
     options = {
         "runId": run_id,
+        "rerunId": args.rerun,
         "testDataPath": ",".join(args.paths) or None,
         "testClassPattern": args.class_pattern,
         "goldenOnly": "true" if args.golden_only else None,
@@ -580,10 +581,47 @@ def print_summary(summary: dict, merged: Dict[str, list]) -> None:
     print(f"Summary: {summary['summary']}")
 
 
-def delete_old_runs(directory: Path) -> None:
+def failed_test_data_paths(output_directory: Path, run_id: str) -> Tuple[List[str], List[str]]:
     """
-    Keeps the files of the [KEPT_RUNS] most recent runs in [directory]. A run with only a log is still running, or was
-    killed before its summary: it counts only when older than [UNFINISHED_RUN_AGE].
+    The test data paths of the tests that failed in the run [run_id], with a problem or a test error, from its summary
+    in [output_directory] and its module reports; and the errors: what failed there and can't be rerun.
+    """
+    summary_file = output_directory / f"{run_id}.summary.json"
+    try:
+        summary = json.loads(summary_file.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return [], [f"No summary of the run '{run_id}' to rerun: {summary_file}; the {KEPT_RUNS} most recent runs are kept"]
+
+    paths: Set[str] = set()
+    errors = []
+    for module in summary["modules"]:
+        if module["status"] in ("PASSED", "SKIPPED"):
+            continue
+        if module["report"] is None:
+            errors.append(f"{module['project']}: no report in the run '{run_id}', so its failures are unknown")
+            continue
+        try:
+            report = json.loads(Path(module["report"]).read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            errors.append(f"{module['project']}: the report of the run '{run_id}' is gone: {module['report']}")
+            continue
+        if report["runErrors"]:
+            errors.append(f"{module['project']}: the run '{run_id}' failed there with run errors, so its failures are "
+                          f"unknown: {report['runErrors'][0]}")
+        for failure in report["problems"] + report["testErrors"]:
+            if failure.get("testDataPath"):
+                paths.add(failure["testDataPath"])
+            else:
+                errors.append(f"{module['project']}: {failure['test']} failed without a test data path, so it can't be rerun")
+    if not paths and not errors:
+        errors.append(f"The run '{run_id}' has no failed tests to rerun")
+    return sorted(paths), errors
+
+
+def delete_old_runs(directory: Path, kept_run: Optional[str] = None) -> None:
+    """
+    Keeps the files of the [KEPT_RUNS] most recent runs in [directory], and of [kept_run]. A run with only a log is
+    still running, or was killed before its summary: it counts only when older than [UNFINISHED_RUN_AGE].
     """
     suffixes = (".summary.json", ".gradle.log")
     runs: Dict[str, float] = {}
@@ -595,6 +633,8 @@ def delete_old_runs(directory: Path) -> None:
         if run_id in runs or modified < unfinished_before:
             runs[run_id] = max(runs.get(run_id, 0.0), modified)
     for run_id in sorted(runs, key=runs.get, reverse=True)[KEPT_RUNS:]:
+        if run_id == kept_run:
+            continue
         for suffix in suffixes:
             (directory / f"{run_id}{suffix}").unlink(missing_ok=True)
 
@@ -646,11 +686,16 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
                              "with --path only those whose generated tests may have test data under the paths")
     parser.add_argument("--run-id", type=valid_run_id,
                         help="id of the run, naming the module reports and the Gradle log (default: a new UUID)")
+    parser.add_argument("--rerun", type=valid_run_id, metavar="RUN_ID",
+                        help="instead of --path, the test data files of the tests that failed in the run RUN_ID, with a "
+                             "problem or a test error; this run has its own id")
     parser.add_argument("--verbose", action="store_true", help="verbose output of the modules, in the Gradle log")
     parser.add_argument("--json", action="store_true", help="print the summary file instead of the text output")
     parser.add_argument("--gradle-arg", action="append", default=[], dest="gradle_args",
                         help="extra Gradle argument (repeatable); one starting with '-' needs '=': --gradle-arg=--offline")
     args = parser.parse_args(argv)
+    if args.rerun and args.paths:
+        parser.error("--rerun takes the paths of the failed tests, so it can't be combined with --path")
 
     root = root or Path(__file__).resolve().parents[2]
     # UUIDv7 (Python 3.14+) only sorts better; any unique id names the reports of one run
@@ -662,6 +707,12 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     output_directory.mkdir(parents=True, exist_ok=True)
     skipped: List[str] = []
     selection_errors: List[str] = []
+    if args.rerun:
+        args.paths, selection_errors = failed_test_data_paths(output_directory, args.rerun)
+        if not args.paths:
+            modules = []
+        print(f"Rerunning {len(args.paths)} test data file{'' if len(args.paths) == 1 else 's'} of the run {args.rerun}",
+              file=sys.stderr)
     if args.paths:
         entries = split_entries(args.paths)
         if not entries:
@@ -669,9 +720,10 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
             modules = []
         args.paths = [runner_entry(entry, root, Path.cwd()) for entry in entries]
     if args.paths and not args.modules:
-        selected, selection_errors = select_modules(root, modules, args.paths, Path.cwd())
+        selected, path_errors = select_modules(root, modules, args.paths, Path.cwd())
+        selection_errors += path_errors
         # Nothing is selected when a path doesn't exist: the modules aren't skipped for having no tests
-        if selected or not selection_errors:
+        if selected or not path_errors:
             skipped = [module for module in modules if module not in selected]
         modules = selected
 
@@ -699,7 +751,7 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     summary = summarize(args.mode.upper(), run_id, modules, reports, merged, has_filters, gradle_exit_code, gradle_log,
                         summary_file, skipped, selection_errors, gradle_output, interrupted)
     write_atomically(summary_file, json.dumps(summary, indent=2) + "\n")
-    delete_old_runs(output_directory)
+    delete_old_runs(output_directory, kept_run=args.rerun)
 
     if args.json:
         print(json.dumps(summary, indent=2))
