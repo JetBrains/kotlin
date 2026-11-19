@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import org.jetbrains.kotlin.test.util.CompiledLibraryCache
@@ -86,22 +85,22 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         val annotationPath = registeredDirectives[ForeignAnnotationsDirectives.ANNOTATIONS_PATH].singleOrNull()
             ?: JavaForeignAnnotationType.Java8Annotations
         val jsr305JarFile = createJsr305Jar(configuration)
-        val useJava11ToCompileIncludedJavaFiles =
-            registeredDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND].singleOrNull() == TestJdkKind.FULL_JDK_11
+        val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(registeredDirectives)
+        val javacOptions = JvmEnvironmentConfigurator.getJavacReleaseOptions(jdkKind)
         val foreignAnnotationsJar =
-            libraryCache.getOrCompile("foreign-annotations-${annotationPath.name}-${useJava11ToCompileIncludedJavaFiles}") {
+            libraryCache.getOrCompile("foreign-annotations-${annotationPath.name}-$javacOptions") {
                 val javaFilesDir = createTempDirectory().toFile().also {
                     File(annotationPath.path).copyRecursively(it)
                 }
                 MockLibraryUtil.compileJavaFilesLibraryToJar(
                     javaFilesDir.path,
                     "foreign-annotations",
-                    assertions = JUnit5Assertions,
+                    extraJavacOptions = javacOptions,
                     extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath,
-                    useJava11 = useJava11ToCompileIncludedJavaFiles
                 )
             }
-        configuration.addModularRootIfNotNull(useJava11ToCompileIncludedJavaFiles, "java9_annotations", foreignAnnotationsJar)
+        val annotationsJarOnModulePath = jdkKind == TestJdkKind.FULL_JDK_11
+        configuration.addModularRootIfNotNull(annotationsJarOnModulePath, "java9_annotations", foreignAnnotationsJar)
         testServices.register(
             AdditionalClassPathForJavaCompilationOrAnalysis::class,
             AdditionalClassPathForJavaCompilationOrAnalysis(listOf(jsr305JarFile.absolutePath))
@@ -140,7 +139,6 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
                 MockLibraryUtil.compileJavaFilesLibraryToJar(
                     target.path,
                     "jsr-305-test-annotations",
-                    assertions = JUnit5Assertions,
                     extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath
                 )
             }
@@ -169,7 +167,6 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             MockLibraryUtil.compileJavaFilesLibraryToJar(
                 jsr305FilesDir.path,
                 "jsr305",
-                assertions = JUnit5Assertions,
                 extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
             )
         }

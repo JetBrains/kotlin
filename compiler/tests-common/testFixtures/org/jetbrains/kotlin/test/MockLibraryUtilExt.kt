@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test
 
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import java.io.File
 
 object MockLibraryUtilExt {
@@ -26,8 +25,7 @@ object MockLibraryUtilExt {
             extraOptions,
             extraJavacOptions,
             extraClasspath,
-            extraModulepath = listOf(),
-            JUnit5Assertions
+            extraModulepath = listOf()
         )
     }
 
@@ -41,7 +39,6 @@ object MockLibraryUtilExt {
         extraOptions: List<String> = emptyList(),
         extraJavacOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
-        useJava11: Boolean = false,
     ): File {
         return MockLibraryUtil.compileJvmLibraryToJar(
             sourcesPath,
@@ -52,7 +49,6 @@ object MockLibraryUtilExt {
             extraJavacOptions,
             extraClasspath,
             extraModulepath = listOf(),
-            useJava11
         )
     }
 }

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.KtAssert.assertTrue
-import org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlinSources
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
@@ -66,7 +65,6 @@ object MockLibraryUtil {
         extraJavacOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
         extraModulepath: List<String> = emptyList(),
-        useJava11: Boolean = false,
     ): File {
         return compileLibraryToJar(
             sourcesPath,
@@ -78,7 +76,6 @@ object MockLibraryUtil {
             extraJavacOptions,
             extraClasspath,
             extraModulepath,
-            useJava11,
         )
     }
 
@@ -90,8 +87,6 @@ object MockLibraryUtil {
         extraJavacOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
         extraModulepath: List<String> = emptyList(),
-        assertions: Assertions,
-        useJava11: Boolean = false
     ): File {
         return compileJvmLibraryToJar(
             sourcesPath, jarName, addSources,
@@ -100,11 +95,9 @@ object MockLibraryUtil {
             extraJavacOptions,
             extraClasspath,
             extraModulepath,
-            useJava11,
         )
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun compileLibraryToJar(
         sourcesPath: String,
         contentDir: File,
@@ -115,10 +108,7 @@ object MockLibraryUtil {
         extraJavacOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
         extraModulepath: List<String> = emptyList(),
-        useJava11: Boolean = false,
     ): File {
-        assertTrue("Module path can be used only for compilation using javac 9 and higher", useJava11 || extraModulepath.isEmpty())
-
         val classesDir = File(contentDir, "classes")
 
         val srcFile = File(sourcesPath)
@@ -148,7 +138,7 @@ object MockLibraryUtil {
                 add("-d")
                 add(classesDir.path)
 
-                if (useJava11 && extraModulepath.isNotEmpty()) {
+                if (extraModulepath.isNotEmpty()) {
                     add("--module-path")
                     add(extraModulepath.joinToString(File.pathSeparator))
                 }
@@ -157,8 +147,7 @@ object MockLibraryUtil {
                 addAll(extraJavacOptions)
             }
 
-            val jdkHome = if (useJava11) KtTestUtil.getJdk11Home() else null
-            compileJavaFiles(javaFiles, options, jdkHome).assertSuccessful()
+            compileJavaFiles(javaFiles, options).assertSuccessful()
         }
 
         return createJarFile(contentDir, classesDir, jarName, sourcesPath.takeIf { addSources })
