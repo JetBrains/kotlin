@@ -1,3 +1,13 @@
+public final class org/jetbrains/kotlin/name/JvmFileClassNaming {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/JvmFileClassNaming;
+	public static final fun fileClassFqName (Lorg/jetbrains/kotlin/name/FqName;Ljava/lang/String;)Lorg/jetbrains/kotlin/name/FqName;
+	public static final fun fileClassFqName (Lorg/jetbrains/kotlin/name/FqName;Ljava/lang/String;Z)Lorg/jetbrains/kotlin/name/FqName;
+	public static synthetic fun fileClassFqName$default (Lorg/jetbrains/kotlin/name/FqName;Ljava/lang/String;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/name/FqName;
+	public static final fun fileClassName (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun fileClassName (Ljava/lang/String;Z)Ljava/lang/String;
+	public static synthetic fun fileClassName$default (Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/name/JvmPropertyAccessorNaming {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/name/JvmPropertyAccessorNaming;
 	public static final fun getterName (Ljava/lang/String;)Ljava/lang/String;
