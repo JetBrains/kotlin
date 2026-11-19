@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.load.java
 
 /**
- * Names of JVM parameters which hold the underlying value of an inline class.
+ * Names of JVM parameters and local variables which hold the underlying value of an inline class.
  *
- * Such a parameter is named `$v$c$<encoded fq name of the inline class>$$<original parameter name>`. The debugger
+ * Such a parameter or local variable is named `$v$c$<encoded fq name of the inline class>$$<original name>`. The debugger
  * recognizes the prefix and renders the slot back as an instance of the inline class, and the name cannot clash with
  * any user-declared variable, which the previously used `arg0` did (KT-73995).
  *

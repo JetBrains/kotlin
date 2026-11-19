@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.load.java.ValueClassParameterNames
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Builds the name of a parameter which holds the underlying value of the inline class [bound].
+ * Builds the name of a parameter or a local variable which holds the underlying value of the inline class [bound].
  * The format and its contract are documented on [ValueClassParameterNames].
  */
 fun Name.withValueClassParameterName(bound: IrClass): Name =

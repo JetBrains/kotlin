@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.ValueClassParameterNames
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -362,6 +363,22 @@ class MemoizedInlineClassReplacements(
                 name = name.withValueClassParameterName(type.erasedUpperBound)
                 hasFixedName = true
             }
+        }
+    }
+
+    /**
+     * Encodes the value class origin into the name of the local [variable] if its JVM slot holds the underlying value of an
+     * inline class. The contract is the same as for parameters, see [ValueClassParameterNames].
+     *
+     * The new name also reaches the captured fields of lambdas and local classes, the spilled variables of coroutines,
+     * and the copies of the variable in inlined code.
+     */
+    fun encodeValueClassOriginIntoName(variable: IrVariable) {
+        val name = variable.name
+        if (name.isSpecial || ValueClassParameterNames.decodeValueClassParameterNameOrNull(name.asString()) != null) return
+        val type = variable.type
+        if (type.isInlineClassType() && !type.isStoredBoxed()) {
+            variable.name = name.withValueClassParameterName(type.erasedUpperBound)
         }
     }
 
