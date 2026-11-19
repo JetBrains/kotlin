@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.documentation.analyzer
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.documentation.*
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
@@ -48,12 +46,6 @@ abstract class AbstractElementDumpGoldenTest : AbstractKdmGoldenTest() {
         }
         assertMatchesGoldenTextFile(actual, file, extension)
     }
-}
-private val json = Json(from = KdJson) {
-    prettyPrint = true
-    @OptIn(ExperimentalSerializationApi::class)
-    prettyPrintIndent = "  "
-    encodeDefaults = true
 }
 
 /**

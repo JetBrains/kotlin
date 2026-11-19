@@ -128,6 +128,7 @@ ignored:
  - libraries/tools/gradle/fus-statistics-gradle-plugin/ReadMe.md
  - libraries/tools/ide-plugin-dependencies-validator/README.md
  - libraries/tools/jdk-api-validator/ReadMe.md
+ - libraries/tools/kotlin-documentation-model/analyzer/README.md
  - libraries/tools/kotlin-gradle-plugin-annotations/ReadMe.md
  - libraries/tools/kotlin-gradle-plugin-api/ReadMe.md
  - libraries/tools/kotlin-gradle-plugin-api/dokka-template/ReadMe.md

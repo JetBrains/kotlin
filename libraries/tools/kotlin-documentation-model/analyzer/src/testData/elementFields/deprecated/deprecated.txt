@@ -2,7 +2,6 @@ fragment main
 constructor() [sample/OldClass/OldClass/#/PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "WARNING",
   "replaceWith": null
 }
@@ -10,7 +9,6 @@ constructor() [sample/OldClass/OldClass/#/PointingToDeclaration/].deprecated:
 fun oldFunction(): Unit [sample/OldClass/oldFunction/#/PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "WARNING",
   "replaceWith": null
 }
@@ -18,7 +16,6 @@ fun oldFunction(): Unit [sample/OldClass/oldFunction/#/PointingToDeclaration/].d
 val oldProperty: String [sample/OldClass/oldProperty/#/PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "WARNING",
   "replaceWith": null
 }
@@ -26,7 +23,6 @@ val oldProperty: String [sample/OldClass/oldProperty/#/PointingToDeclaration/].d
 fun getAccessors(): String [sample/OldClass/getAccessors/#/PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "WARNING",
   "replaceWith": null
 }
@@ -34,7 +30,6 @@ fun getAccessors(): String [sample/OldClass/getAccessors/#/PointingToDeclaration
 fun setAccessors(value: String): Unit [sample/OldClass/setAccessors/#kotlin.String/PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "WARNING",
   "replaceWith": null
 }
@@ -42,7 +37,6 @@ fun setAccessors(value: String): Unit [sample/OldClass/setAccessors/#kotlin.Stri
 class OldClass [sample/OldClass///PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "ERROR",
   "replaceWith": {
     "imports": [],
@@ -56,7 +50,6 @@ class OldClass [sample/OldClass///PointingToDeclaration/].deprecated:
 constructor() [sample/OldJava/OldJava/#/PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "WARNING",
   "replaceWith": null
 }
@@ -64,7 +57,6 @@ constructor() [sample/OldJava/OldJava/#/PointingToDeclaration/].deprecated:
 fun oldMethod(): Unit [sample/OldJava/oldMethod/#/PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "WARNING",
   "replaceWith": null
 }
@@ -72,7 +64,6 @@ fun oldMethod(): Unit [sample/OldJava/oldMethod/#/PointingToDeclaration/].deprec
 class OldJava [sample/OldJava///PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "WARNING",
   "replaceWith": null
 }
@@ -80,7 +71,7 @@ class OldJava [sample/OldJava///PointingToDeclaration/].deprecated:
 typealias OldAlias = String [sample/OldAlias///PointingToDeclaration/].deprecated:
 {
   "since": null,
-  "message": {},
   "level": "WARNING",
   "replaceWith": null
 }
+

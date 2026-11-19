@@ -10,7 +10,6 @@ fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String..
   ],
   "classLikeId": "kotlin/String///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/].returnType:
@@ -24,7 +23,6 @@ fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String..
   ],
   "classLikeId": "kotlin/Unit///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -39,7 +37,6 @@ var primitiveArray: IntArray [example/JavaTypes/primitiveArray/#/PointingToDecla
   ],
   "classLikeId": "kotlin/IntArray///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -70,7 +67,6 @@ var referenceArray: Array<Array<String>> [example/JavaTypes/referenceArray/#/Poi
                       ],
                       "classLikeId": "kotlin/String///PointingToDeclaration/",
                       "isMarkedNullable": false,
-                      "isEnhancedNullability": false,
                       "annotations": []
                     }
                   }
@@ -79,7 +75,6 @@ var referenceArray: Array<Array<String>> [example/JavaTypes/referenceArray/#/Poi
             ],
             "classLikeId": "kotlin/Array///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         }
@@ -88,6 +83,6 @@ var referenceArray: Array<Array<String>> [example/JavaTypes/referenceArray/#/Poi
   ],
   "classLikeId": "kotlin/Array///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
+

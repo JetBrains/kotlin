@@ -10,7 +10,6 @@ fun definitelyNotNull(value: R & Any): R & Any [example/Types/definitelyNotNull/
   ],
   "classLikeId": "kotlin/Any///PointingToDeclaration/",
   "isMarkedNullable": true,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 fun definitelyNotNull(value: R & Any): R & Any [example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/].valueParameters[0].type:
@@ -35,3 +34,4 @@ fun definitelyNotNull(value: R & Any): R & Any [example/Types/definitelyNotNull/
     "annotations": []
   }
 }
+

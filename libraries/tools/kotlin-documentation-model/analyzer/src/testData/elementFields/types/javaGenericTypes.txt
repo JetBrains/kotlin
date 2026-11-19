@@ -10,7 +10,6 @@ constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParamet
   ],
   "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
@@ -35,7 +34,6 @@ constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParamet
   ],
   "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -50,7 +48,6 @@ fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].t
   ],
   "classLikeId": "kotlin/Number///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
@@ -75,7 +72,6 @@ fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].t
   ],
   "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].valueParameters[0].type:
@@ -123,7 +119,6 @@ var parameterized: MutableList<String> [example/JavaTypes/parameterized/#/Pointi
             ],
             "classLikeId": "kotlin/String///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         }
@@ -132,7 +127,6 @@ var parameterized: MutableList<String> [example/JavaTypes/parameterized/#/Pointi
   ],
   "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -155,7 +149,6 @@ var nested: MutableMap<String, MutableList<T>> [example/JavaTypes/nested/#/Point
             ],
             "classLikeId": "kotlin/String///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         },
@@ -182,7 +175,6 @@ var nested: MutableMap<String, MutableList<T>> [example/JavaTypes/nested/#/Point
             ],
             "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         }
@@ -191,7 +183,6 @@ var nested: MutableMap<String, MutableList<T>> [example/JavaTypes/nested/#/Point
   ],
   "classLikeId": "kotlin.collections/MutableMap///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -206,7 +197,6 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].u
   ],
   "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[1]:
@@ -231,7 +221,6 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].u
   ],
   "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 class JavaTypes [example/JavaTypes///PointingToDeclaration/].superTypes[0]:
@@ -264,7 +253,6 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].superTypes[0]:
             ],
             "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
             "isMarkedNullable": false,
-            "isEnhancedNullability": false,
             "annotations": []
           }
         }
@@ -273,7 +261,6 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].superTypes[0]:
   ],
   "classLikeId": "example/Base///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
 
@@ -288,6 +275,6 @@ interface Base [example/Base///PointingToDeclaration/].typeParameters[0].upperBo
   ],
   "classLikeId": "kotlin/Any///PointingToDeclaration/",
   "isMarkedNullable": false,
-  "isEnhancedNullability": false,
   "annotations": []
 }
+
