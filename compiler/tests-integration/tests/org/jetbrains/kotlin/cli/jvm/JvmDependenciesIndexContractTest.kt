@@ -82,13 +82,17 @@ abstract class JvmDependenciesIndexContractTestBase {
         return dir
     }
 
-    /** Creates a jar under [tempDir] with the given entries (empty content by default). */
+    /**
+     * Creates a jar under [tempDir] with the given entries. The file [entries] hold one placeholder byte, because FastJar takes an entry
+     * without content for a directory; [content] gives the contents of further files.
+     */
     protected fun jar(name: String, vararg entries: String, content: Map<String, ByteArray> = emptyMap()): Path {
         val jar = tempDir.resolve(name)
         jar.parent.createDirectories()
         ZipOutputStream(jar.outputStream()).use { out ->
             for (entry in entries) {
                 out.putNextEntry(ZipEntry(entry))
+                if (!entry.endsWith("/")) out.write(0)
                 out.closeEntry()
             }
             for (entry in content) {
