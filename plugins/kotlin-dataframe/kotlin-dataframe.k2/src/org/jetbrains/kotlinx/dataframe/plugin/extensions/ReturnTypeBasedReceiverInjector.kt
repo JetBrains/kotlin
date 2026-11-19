@@ -117,6 +117,8 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
         if (callable is FirConstructorSymbol) return null
         val dispatchReceiverType = callable.dispatchReceiverType ?: return null
         val containingClass = session.firProvider.getContainingClass(callable) as? FirClassSymbol<*> ?: return null
+        // This doesn't work in REPL snippets, exclude the mechanism there
+        if (containingClass.origin == FirDeclarationOrigin.Synthetic.ReplContainerClass) return null
         val receiverParameter = buildReceiverParameter {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData

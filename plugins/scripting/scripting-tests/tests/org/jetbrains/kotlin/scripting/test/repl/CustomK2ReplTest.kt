@@ -309,7 +309,7 @@ class CustomK2ReplTest {
         if (!isK2) return
         val dataFramePluginClasspath = System.getProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath")!!
         val dataframe = runBlocking {
-            dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:1.0.0-Beta2")
+            dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:1.0.0-rc02")
         }.valueOrThrow()
         evalAndCheckSnippetsResultVals(
             sequenceOf(
