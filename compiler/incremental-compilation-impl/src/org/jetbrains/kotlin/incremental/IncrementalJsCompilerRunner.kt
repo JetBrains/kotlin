@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
-import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import java.io.File
 
 fun makeJsIncrementally(
@@ -90,7 +89,7 @@ class IncrementalJsCompilerRunner(
     override fun createCacheManager(
         icContext: IncrementalCompilationContext, args: CommonJsAndWasmCompilerArguments
     ): IncrementalKlibCachesManager {
-        return IncrementalKlibCachesManager(icContext, cacheDirectory, "js")
+        return IncrementalKlibCachesManager(icContext, cacheDirectory, KlibCachePlatform.JS)
     }
 
     @Suppress("UNCHECKED_CAST")
