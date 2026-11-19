@@ -1,8 +1,8 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// IGNORE_BACKEND: JKLIB
-// ^ KT-91302: Properties of annotation classes read from a KLIB are missing.
 // SKIP_KT_DUMP
+// DUMP_IR_DIFFERENCE: JKLIB
+// ^ The properties of annotation classes read from a KLIB come in a different order and without initializer.
 
 // MODULE: lib
 // FILE: lib.kt

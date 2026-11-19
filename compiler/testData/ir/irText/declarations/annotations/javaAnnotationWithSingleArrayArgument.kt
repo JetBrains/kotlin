@@ -1,6 +1,7 @@
-// IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
+// DUMP_IR_DIFFERENCE: JKLIB
+// ^ JKlib tests compile against JDK 17 instead of the mock JDK.
 
 // FILE: A.java
 
