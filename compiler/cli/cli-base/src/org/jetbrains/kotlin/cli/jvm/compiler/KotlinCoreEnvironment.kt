@@ -18,6 +18,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiElementFinder
@@ -161,7 +162,7 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    private val classpathIndexes = JvmClasspathIndexes(configuration)
+    private val classpathIndexes = JvmClasspathIndexes(configuration).also { Disposer.register(projectEnvironment.project, it::close) }
 
     val packagePartProviders: List<JvmPackagePartProvider>
         field = mutableListOf<JvmPackagePartProvider>()

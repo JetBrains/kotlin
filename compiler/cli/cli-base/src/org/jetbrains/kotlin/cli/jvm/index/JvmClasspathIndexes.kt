@@ -11,15 +11,17 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.useJavaDirect
 import org.jetbrains.kotlin.config.useNioJvmDependenciesIndex
+import java.io.Closeable
 
 /**
  * The classpath indexes of a compiler environment, extended together when roots are added during a compilation (e.g. by scripting).
  *
  * [javaFileManagerIndex] serves the PSI Java view and always has VFS entries. With NIO entries enabled, [classFinderIndex] is a separate
  * index over the same roots whose roots get NIO entries where available ([NioRootEntryFactory]); otherwise it is [javaFileManagerIndex].
- * The archives of the NIO entries belong to [jarPool].
+ * The archives of the NIO entries belong to [jarPool], which [close] releases; the owner closes the indexes when its environment is
+ * disposed. Handles stay usable afterwards: a later read opens its archive again.
  */
-class JvmClasspathIndexes(useNioEntries: Boolean) {
+class JvmClasspathIndexes(useNioEntries: Boolean) : Closeable {
 
     constructor(configuration: CompilerConfiguration) : this(
         configuration.useNioJvmDependenciesIndex &&
@@ -43,5 +45,9 @@ class JvmClasspathIndexes(useNioEntries: Boolean) {
         javaFileManagerIndex.addIndex(index)
         if (classFinderIndex !== javaFileManagerIndex) classFinderIndex.addIndex(JvmDependenciesIndexImpl(roots, nioRootEntryFactory))
         return index
+    }
+
+    override fun close() {
+        jarPool?.close()
     }
 }

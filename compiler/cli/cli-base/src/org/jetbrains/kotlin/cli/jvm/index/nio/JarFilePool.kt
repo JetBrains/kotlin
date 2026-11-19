@@ -17,6 +17,7 @@ import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * The jar archives read by NIO root entries ([JarRootEntry]), with the reader of FastJar but without its VFS layer.
@@ -63,7 +64,7 @@ class JarFilePool private constructor(private val unmapBuffer: MappedByteBuffer.
         val openFile = synchronized(openFiles) {
             openFiles.getOrPut(jar) {
                 val file = RandomAccessFile(jar.toFile(), "r")
-                OpenFile(file, mappedBuffer(file))
+                OpenFile(jar, file, mappedBuffer(file)).also { openArchives.merge(jar, 1, Int::plus) }
             }.also { it.users++ }
         }
         try {
@@ -99,7 +100,7 @@ class JarFilePool private constructor(private val unmapBuffer: MappedByteBuffer.
      * An open archive; guarded by the lock of [openFiles], except for reading [buffer], which is guarded by the instance.
      * Lock order: the lock of [openFiles] is taken before the instance lock.
      */
-    private class OpenFile(val file: RandomAccessFile, val buffer: LargeDynamicMappedBuffer) {
+    private class OpenFile(val jar: Path, val file: RandomAccessFile, val buffer: LargeDynamicMappedBuffer) {
         var users = 0
         var isReleased = false
         private var isClosed = false
@@ -116,12 +117,19 @@ class JarFilePool private constructor(private val unmapBuffer: MappedByteBuffer.
                 isClosed = true
                 buffer.unmap()
                 file.close()
+                openArchives.computeIfPresent(jar) { _, count -> (count - 1).takeIf { it > 0 } }
             }
         }
     }
 
     companion object {
         private const val MAX_OPEN_FILES = 20
+
+        /** The number of pools which have each archive open, over all pools of the process. */
+        private val openArchives = ConcurrentHashMap<Path, Int>()
+
+        /** Whether any pool of the process has the archive [jar] open; for leak checks in tests. */
+        fun isOpenInAnyPool(jar: Path): Boolean = openArchives.containsKey(jar)
 
         /** Creates a pool, or returns `null` if mapped buffers cannot be unmapped on this JVM (then FastJar is not used either). */
         fun createIfUnmappingPossible(): JarFilePool? = prepareCleanerCallback()?.let { callback -> JarFilePool { callback(this) } }

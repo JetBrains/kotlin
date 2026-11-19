@@ -10,6 +10,7 @@ import com.intellij.core.CoreJavaFileManager
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.util.io.URLUtil
@@ -643,7 +644,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         }
 
         // REPL updates classpath dynamically
-        val classpathIndexes = JvmClasspathIndexes(configuration)
+        val classpathIndexes = JvmClasspathIndexes(configuration).also { Disposer.register(parentDisposable, it::close) }
         classpathIndexes.addRoots(roots).indexedRoots.forEach {
             projectEnvironment.addSourcesToClasspath(it.file)
         }
