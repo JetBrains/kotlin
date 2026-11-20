@@ -94,15 +94,27 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
          * The oldest ABI version supported by  the compiler.
          *
          * Note: At the moment this is 1.6.0 (corresponds to the compiler versions 1.6.x). But we are going to raise this limit
-         * at least up to 1.8.0 (compiler 1.9.20) in the future releases.
+         * at least up to 1.8.0 (compiler 1.9.20) in the future releases. See also [FIRST_SUPPORTED_WITHOUT_DEPRECATION].
          */
         val FIRST_SUPPORTED = KotlinAbiVersion(1, 6, 0)
 
         /**
          * The oldest version of the compiler that can produce KLIBs consumable by the current compiler version.
-         * See [FIRST_SUPPORTED].
+         * See also [FIRST_SUPPORTED].
          */
         const val FIRST_SUPPORTED_COMPILER_VERSION = "1.6.0"
+
+        /**
+         * The ABI version that matches the Kotlin compiler version (1.9.20), since which we do support
+         * backward compatibility of Klibs.
+         */
+        val FIRST_SUPPORTED_WITHOUT_DEPRECATION = KotlinAbiVersion(1, 8, 0)
+
+        /**
+         * The oldest version of the compiler that can produce KLIBs consumable by the current compiler version without
+         * deprecation warning. See also [FIRST_SUPPORTED_WITHOUT_DEPRECATION].
+         */
+        const val FIRST_SUPPORTED_WITHOUT_DEPRECATION_COMPILER_VERSION = "1.9.20"
 
         /**
          * Versions before 1.4.1 were the active development phase.
