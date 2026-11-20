@@ -28,8 +28,8 @@ FILE: main.kt
     public final fun <E : R|kotlin/Any|> funA(intA: R|InterfaceA<E>|, intB: R|InterfaceB<E>|): R|kotlin/Unit| {
     }
     public final fun <E : R|kotlin/Enum<E>|, R|InterfaceC|> funB(): R|kotlin/Unit| {
-        R|/funA<CS errors: /funA>#|<R|InterfaceC!|>(Q|JavaHelper|.R|/JavaHelper.createInterfaceA*s|<R|InterfaceC!|>(), Q|InterfaceB|.R|/InterfaceB.Companion.default|<R|InterfaceC!|>())
-        R|/funA|<R|E|>(Q|JavaHelper|.R|/JavaHelper.createInterfaceA*s|<R|E!|>(), Q|InterfaceB|.R|/InterfaceB.Companion.default|<R|E|>())
-        R|/funA<CS errors: /funA>#|<R|InterfaceC|>(R|/createInterfaceAKotlin|<R|InterfaceC|>(), Q|InterfaceB|.R|/InterfaceB.Companion.default|<R|InterfaceC|>())
-        R|/funA|<R|E|>(R|/createInterfaceAKotlin|<R|E|>(), Q|InterfaceB|.R|/InterfaceB.Companion.default|<R|E|>())
+        R|/funA<CS errors: /funA>#|<R|InterfaceC!|>(Q|JavaHelper|.R|/JavaHelper.createInterfaceA*s|<R|InterfaceC!|>(), Q|InterfaceB(.<companion>)|.R|/InterfaceB.Companion.default|<R|InterfaceC!|>())
+        R|/funA|<R|E|>(Q|JavaHelper|.R|/JavaHelper.createInterfaceA*s|<R|E!|>(), Q|InterfaceB(.<companion>)|.R|/InterfaceB.Companion.default|<R|E|>())
+        R|/funA<CS errors: /funA>#|<R|InterfaceC|>(R|/createInterfaceAKotlin|<R|InterfaceC|>(), Q|InterfaceB(.<companion>)|.R|/InterfaceB.Companion.default|<R|InterfaceC|>())
+        R|/funA|<R|E|>(R|/createInterfaceAKotlin|<R|E|>(), Q|InterfaceB(.<companion>)|.R|/InterfaceB.Companion.default|<R|E|>())
     }

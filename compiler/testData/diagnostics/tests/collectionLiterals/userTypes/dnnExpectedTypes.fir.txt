@@ -27,10 +27,10 @@ FILE: dnnExpectedTypes.kt
     public final fun <T> expectThroughTV(a: R|T|, b: R|T & Any|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/expectThroughTV|<R|C<kotlin/Int>|>(Q|C|.R|/C.Companion.regular|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>())
-        R|/expectThroughTV|<R|C<kotlin/Int>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>())
-        R|/expectThroughTV|<R|C<kotlin/Int>|>(Q|C|.R|/C.Companion.regular|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
-        R|/expectThroughTV|<R|C<kotlin/Int>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
-        R|/expectThroughTV|<R|C<out it(kotlin/Number & kotlin/Comparable<*>)>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Long|>(vararg(Long(42))))
-        R|/expectThroughTV|<R|C<out it(kotlin/Number & kotlin/Comparable<*>)>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Long|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/expectThroughTV|<R|C<kotlin/Int>|>(Q|C(.<companion>)|.R|/C.Companion.regular|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>())
+        R|/expectThroughTV|<R|C<kotlin/Int>?|>(Q|C(.<companion>)|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>())
+        R|/expectThroughTV|<R|C<kotlin/Int>|>(Q|C(.<companion>)|.R|/C.Companion.regular|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/expectThroughTV|<R|C<kotlin/Int>?|>(Q|C(.<companion>)|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/expectThroughTV|<R|C<out it(kotlin/Number & kotlin/Comparable<*>)>?|>(Q|C(.<companion>)|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Long|>(vararg(Long(42))))
+        R|/expectThroughTV|<R|C<out it(kotlin/Number & kotlin/Comparable<*>)>?|>(Q|C(.<companion>)|.R|/C.Companion.nullable|<R|kotlin/Long|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
     }

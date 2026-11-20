@@ -41,5 +41,5 @@ FILE: test3.kt
     }
 FILE: test4.kt
     public final fun test4(): R|kotlin/Int| {
-        ^test4 Q|some/Map|.R|some/Map.Companion.of|()
+        ^test4 Q|some/Map(.<companion>)|.R|some/Map.Companion.of|()
     }

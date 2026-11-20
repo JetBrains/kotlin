@@ -40,9 +40,9 @@ FILE: localClassWithCompanionObject.kt
         }
 
         local final fun test(): R|kotlin/Unit| {
-            R|<local>/takeInt|(Q|<local>/SomeClass|.R|<local>/SomeClass.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass(.<companion>)|.R|<local>/SomeClass.Companion.foo|())
             R|<local>/takeInt|(Q|<local>/SomeClass.Companion|.R|<local>/SomeClass.Companion.foo|())
-            R|<local>/takeInt|(Q|<local>/SomeClass.Nested|.R|<local>/SomeClass.Nested.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass.Nested(.<companion>)|.R|<local>/SomeClass.Nested.Companion.foo|())
             R|<local>/takeInt|(Q|<local>/SomeClass.Nested.Companion|.R|<local>/SomeClass.Nested.Companion.foo|())
         }
 

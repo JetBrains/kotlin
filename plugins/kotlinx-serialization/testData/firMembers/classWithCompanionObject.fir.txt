@@ -44,14 +44,14 @@ FILE: classWithCompanionObject.kt
         }
 
         lval instance: R|SomeClass| = R|/SomeClass.SomeClass|(Int(42))
-        lval string: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|SomeClass|>(R|<local>/serializer|, R|<local>/instance|)
+        lval string: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|SomeClass|>(R|<local>/serializer|, R|<local>/instance|)
         when () {
             !=(R|<local>/string|, R|<local>/targetString|) ->  {
                 ^box <strcat>(String(Incorrect serialization result: expected ), R|<local>/targetString|, String(, got ), R|<local>/string|)
             }
         }
 
-        lval instance2: R|SomeClass| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|SomeClass|>(R|<local>/serializer|, R|<local>/string|)
+        lval instance2: R|SomeClass| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.decodeFromString|<R|SomeClass|>(R|<local>/serializer|, R|<local>/string|)
         when () {
             !=(R|<local>/instance2|.R|/SomeClass.i|, R|<local>/instance|.R|/SomeClass.i|) ->  {
                 ^box <strcat>(String(Incorrect deserialization result: expected ), R|<local>/instance|.R|/SomeClass.i|, String(, got ), R|<local>/instance2|.R|/SomeClass.i|)

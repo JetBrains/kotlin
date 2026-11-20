@@ -25,8 +25,8 @@ FILE: entriesPropertyWithJvmStaticClashOn.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|A|.R|/A.Companion.entries|
-        R|kotlin/with|<R|A.Companion|, R|kotlin/Int|>(Q|A|, <L> = with@fun R|A.Companion|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        Q|A(.<companion>)|.R|/A.Companion.entries|
+        R|kotlin/with|<R|A.Companion|, R|kotlin/Int|>(Q|A(.<companion>)|, <L> = with@fun R|A.Companion|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ this@R|special/anonymous|.R|/A.Companion.entries|
         }
         )

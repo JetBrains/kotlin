@@ -66,6 +66,6 @@ FILE: builderExplicitBuildersWithIncompatibleTypeParameters_kotlin.kt
 
     }
     public final fun main(): R|kotlin/Unit| {
-        lval obj: <ERROR TYPE REF: Unresolved name: build> = Q|ExplicitBuilderWithTypeParametersLessThanRequired|.R|/ExplicitBuilderWithTypeParametersLessThanRequired.Companion.builder|<R|kotlin/Int|>().<Unresolved name: build>#()
-        lval obj2: <ERROR TYPE REF: Unresolved name: build> = Q|ExplicitBuilderWithTypeParametersMoreThanRequired|.R|/ExplicitBuilderWithTypeParametersMoreThanRequired.Companion.builder|<R|kotlin/String|>().<Unresolved name: build>#()
+        lval obj: <ERROR TYPE REF: Unresolved name: build> = Q|ExplicitBuilderWithTypeParametersLessThanRequired(.<companion>)|.R|/ExplicitBuilderWithTypeParametersLessThanRequired.Companion.builder|<R|kotlin/Int|>().<Unresolved name: build>#()
+        lval obj2: <ERROR TYPE REF: Unresolved name: build> = Q|ExplicitBuilderWithTypeParametersMoreThanRequired(.<companion>)|.R|/ExplicitBuilderWithTypeParametersMoreThanRequired.Companion.builder|<R|kotlin/String|>().<Unresolved name: build>#()
     }

@@ -90,14 +90,14 @@ FILE: privatePropertiesSerialization.kt
             this@R|special/anonymous|.R|kotlinx/serialization/json/JsonBuilder.encodeDefaults| = Boolean(true)
         }
         )
-        lval s: R|kotlin/String| = R|<local>/j|.R|kotlinx/serialization/json/Json.encodeToString|<R|Derived|>(Q|Derived|.R|/Derived.Companion.serializer|(), R|<local>/c|)
+        lval s: R|kotlin/String| = R|<local>/j|.R|kotlinx/serialization/json/Json.encodeToString|<R|Derived|>(Q|Derived(.<companion>)|.R|/Derived.Companion.serializer|(), R|<local>/c|)
         when () {
             !=(R|<local>/s|, R|<local>/targetString|) ->  {
                 ^test R|<local>/s|
             }
         }
 
-        lval d: R|Derived| = R|<local>/j|.R|kotlinx/serialization/json/Json.decodeFromString|<R|Derived|>(Q|Derived|.R|/Derived.Companion.serializer|(), String({"ctor":43,"body":"43"}))
+        lval d: R|Derived| = R|<local>/j|.R|kotlinx/serialization/json/Json.decodeFromString|<R|Derived|>(Q|Derived(.<companion>)|.R|/Derived.Companion.serializer|(), String({"ctor":43,"body":"43"}))
         ^test R|<local>/d|.R|/Parent.checkDeser|(Int(43), String(43))
         ^test String(OK)
     }

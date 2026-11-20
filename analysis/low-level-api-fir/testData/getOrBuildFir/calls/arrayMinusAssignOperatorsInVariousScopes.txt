@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] arrayMinusAssignOperatorsInVariousScopes.kt
     private final operator [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/Any|.set([ResolvedTo(STATUS)] i: R|kotlin/Int|, [ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun usageFoo(): R|kotlin/Unit| {
          {
-            [ResolvedTo(BODY_RESOLVE)] lval <array>: R|Foo.Companion| = Q|Foo|
+            [ResolvedTo(BODY_RESOLVE)] lval <array>: R|Foo.Companion| = Q|Foo(.<companion>)|
             [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = Int(1)
             R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/Foo.Companion.get|(R|<local>/<index_0>|).R|kotlin/Int.minus|(Int(5)))
         }

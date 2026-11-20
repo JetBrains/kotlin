@@ -21,7 +21,7 @@ FILE: objectAccessInLambdaWithDynamicReceiver.kt
     public final fun test(): R|kotlin/Unit| {
         R|/jso|(<L> = jso@fun R|dynamic|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|/G.G|()
-            Q|G|.R|/G.Companion.foo|
+            Q|G(.<companion>)|.R|/G.Companion.foo|
         }
         )
     }

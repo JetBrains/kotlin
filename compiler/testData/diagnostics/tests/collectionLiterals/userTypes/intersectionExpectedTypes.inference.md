@@ -391,13 +391,13 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
 ### Call 8
 
 ```
-put#(Q|A|.R|/A.Companion.of|())
+put#(Q|A(.<companion>)|.R|/A.Companion.of|())
 ```
 
 #### Candidate 1: `FirNamedFunctionSymbol <local>/Box.put` --- `fun put(x: A): Unit`
 ##### Resolution Stages > CheckArguments:
 
-1. `A <: TypeVariable(X)` _from Argument Q|A|.R|/A.Companion.of|()_
+1. `A <: TypeVariable(X)` _from Argument Q|A(.<companion>)|.R|/A.Companion.of|()_
 2. Combine `A <: TypeVariable(X)` with `TypeVariable(X) <: TypeVariable(T)?`
     1. `A <: TypeVariable(T)`
 

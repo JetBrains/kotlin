@@ -78,16 +78,16 @@ FILE: genericWithClassUpperBound.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        lval serial: R|kotlinx/serialization/KSerializer<Box<Leaf>>| = Q|Box|.R|/Box.Companion.serializer|<R|Leaf|>(Q|Leaf|.R|/Leaf.Companion.serializer|())
+        lval serial: R|kotlinx/serialization/KSerializer<Box<Leaf>>| = Q|Box(.<companion>)|.R|/Box.Companion.serializer|<R|Leaf|>(Q|Leaf(.<companion>)|.R|/Leaf.Companion.serializer|())
         lval target: R|kotlin/String| = String({"content":{"value":"x"}})
-        lval decoded: R|Box<Leaf>| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|Box<Leaf>|>(R|<local>/serial|, R|<local>/target|)
+        lval decoded: R|Box<Leaf>| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.decodeFromString|<R|Box<Leaf>|>(R|<local>/serial|, R|<local>/target|)
         when () {
             !=(R|<local>/decoded|.R|SubstitutionOverride</Box.content: R|Leaf|>|.R|/Leaf.value|, String(x)) ->  {
                 ^box <strcat>(String(Incorrect deserialization: ), R|<local>/decoded|.R|SubstitutionOverride</Box.content: R|Leaf|>|.R|/Leaf.value|)
             }
         }
 
-        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|Box<Leaf>|>(R|<local>/serial|, R|<local>/decoded|)
+        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|Box<Leaf>|>(R|<local>/serial|, R|<local>/decoded|)
         when () {
             !=(R|<local>/encoded|, R|<local>/target|) ->  {
                 ^box <strcat>(String(Incorrect serialization: ), R|<local>/encoded|)

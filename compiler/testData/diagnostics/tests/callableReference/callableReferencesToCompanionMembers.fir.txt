@@ -18,11 +18,11 @@ FILE: callableReferencesToCompanionMembers.kt
         }
 
     }
-    public final val x1: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|Foo|::R|/Foo.Companion.bar|
+    public final val x1: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|Foo(.<companion>)|::R|/Foo.Companion.bar|
         public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
     public final val x2: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|Foo.Companion|::R|/Foo.Companion.bar|
         public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
-    public final val x3: R|kotlin/reflect/KProperty0<kotlin/Int>| = Q|Foo|::R|/Foo.Companion.baz|
+    public final val x3: R|kotlin/reflect/KProperty0<kotlin/Int>| = Q|Foo(.<companion>)|::R|/Foo.Companion.baz|
         public get(): R|kotlin/reflect/KProperty0<kotlin/Int>|
     public final val x4: R|kotlin/reflect/KProperty0<kotlin/Int>| = Q|Foo.Companion|::R|/Foo.Companion.baz|
         public get(): R|kotlin/reflect/KProperty0<kotlin/Int>|

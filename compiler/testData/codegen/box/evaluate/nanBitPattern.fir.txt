@@ -3,9 +3,9 @@ FILE: nanBitPattern.kt
         public get(): R|kotlin/Int|
     public final const [EvaluatedValue=Long(9221120237041090560)] val doubleNaNBits: R|kotlin/Long| = Long(9221120237041090560)
         public get(): R|kotlin/Long|
-    public final const [EvaluatedValue=Float(NaN)] val floatNaN: R|kotlin/Float| = Q|kotlin/Float|.R|kotlin/Float.Companion.NaN|
+    public final const [EvaluatedValue=Float(NaN)] val floatNaN: R|kotlin/Float| = Q|kotlin/Float(.<companion>)|.R|kotlin/Float.Companion.NaN|
         public get(): R|kotlin/Float|
-    public final const [EvaluatedValue=Double(NaN)] val doubleNaN: R|kotlin/Double| = Q|kotlin/Double|.R|kotlin/Double.Companion.NaN|
+    public final const [EvaluatedValue=Double(NaN)] val doubleNaN: R|kotlin/Double| = Q|kotlin/Double(.<companion>)|.R|kotlin/Double.Companion.NaN|
         public get(): R|kotlin/Double|
     public final const [EvaluatedValue=Float(NaN)] val floatPositiveDivisionNaN: R|kotlin/Float| = Float(0.0).R|kotlin/Float.div|(Float(0.0))
         public get(): R|kotlin/Float|

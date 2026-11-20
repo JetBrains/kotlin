@@ -47,19 +47,19 @@ FILE: incompleteConstructorCall.kt
         }
 
     }
-    public final val test: R|Outer.Companion| = Q|Outer|<R|kotlin/String|>
+    public final val test: R|Outer.Companion| = Q|Outer(.<companion>)|<R|kotlin/String|>
         public get(): R|Outer.Companion|
-    public final val test2: R|Outer.Nested.Companion| = Q|Outer.Nested|<R|kotlin/String|>
+    public final val test2: R|Outer.Nested.Companion| = Q|Outer.Nested(.<companion>)|<R|kotlin/String|>
         public get(): R|Outer.Nested.Companion|
-    public final val test3: R|Outer.Inner.Companion| = Q|Outer.Inner|<R|kotlin/Double|>
+    public final val test3: R|Outer.Inner.Companion| = Q|Outer.Inner(.<companion>)|<R|kotlin/Double|>
         public get(): R|Outer.Inner.Companion|
     public final val test4: R|Outer.Obj| = Q|Outer.Obj|
         public get(): R|Outer.Obj|
-    public final val test5: R|Outer.Companion| = Q|Outer|
+    public final val test5: R|Outer.Companion| = Q|Outer(.<companion>)|
         public get(): R|Outer.Companion|
-    public final val test6: R|Outer.Nested.Companion| = Q|Outer.Nested|
+    public final val test6: R|Outer.Nested.Companion| = Q|Outer.Nested(.<companion>)|
         public get(): R|Outer.Nested.Companion|
-    public final val test7: R|Outer.Inner.Companion| = Q|Outer.Inner|
+    public final val test7: R|Outer.Inner.Companion| = Q|Outer.Inner(.<companion>)|
         public get(): R|Outer.Inner.Companion|
     public final val test8: R|Outer.Obj| = Q|Outer.Obj|
         public get(): R|Outer.Obj|

@@ -108,9 +108,9 @@ FILE: serializerViaCompanion.kt
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
             public open override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/PartiallyOverridden|): R|kotlin/Unit| {
-                lval compositeOutput: R|kotlinx/serialization/encoding/CompositeEncoder| = R|<local>/encoder|.R|kotlinx/serialization/encoding/Encoder.beginStructure|(Q|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.Companion.descriptor|)
-                R|<local>/compositeOutput|.R|kotlinx/serialization/encoding/CompositeEncoder.encodeIntElement|(Q|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.Companion.descriptor|, Int(0), R|<local>/value|.R|com/example/PartiallyOverridden.i|.R|kotlin/Int.plus|(Int(10)))
-                R|<local>/compositeOutput|.R|kotlinx/serialization/encoding/CompositeEncoder.endStructure|(Q|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.Companion.descriptor|)
+                lval compositeOutput: R|kotlinx/serialization/encoding/CompositeEncoder| = R|<local>/encoder|.R|kotlinx/serialization/encoding/Encoder.beginStructure|(Q|com/example/PartiallyOverridden(.<companion>)|.R|com/example/PartiallyOverridden.Companion.descriptor|)
+                R|<local>/compositeOutput|.R|kotlinx/serialization/encoding/CompositeEncoder.encodeIntElement|(Q|com/example/PartiallyOverridden(.<companion>)|.R|com/example/PartiallyOverridden.Companion.descriptor|, Int(0), R|<local>/value|.R|com/example/PartiallyOverridden.i|.R|kotlin/Int.plus|(Int(10)))
+                R|<local>/compositeOutput|.R|kotlinx/serialization/encoding/CompositeEncoder.endStructure|(Q|com/example/PartiallyOverridden(.<companion>)|.R|com/example/PartiallyOverridden.Companion.descriptor|)
             }
 
             public final fun serializer(): R|kotlinx/serialization/KSerializer<com/example/PartiallyOverridden>|
@@ -142,7 +142,7 @@ FILE: serializerViaCompanion.kt
                 lvar iv: R|kotlin/Int?| = Null(null)
                 loop@while(Boolean(true)) {
                     when (lval i: R|kotlin/Int| = R|<local>/dec|.R|kotlinx/serialization/encoding/CompositeDecoder.decodeElementIndex|(this@R|com/example/PartiallyWithoutType.Companion|.R|com/example/PartiallyWithoutType.Companion.descriptor|)) {
-                        ==($subj$, Q|kotlinx/serialization/encoding/CompositeDecoder|.R|kotlinx/serialization/encoding/CompositeDecoder.Companion.DECODE_DONE|) ->  {
+                        ==($subj$, Q|kotlinx/serialization/encoding/CompositeDecoder(.<companion>)|.R|kotlinx/serialization/encoding/CompositeDecoder.Companion.DECODE_DONE|) ->  {
                             break@@@[Boolean(true)]
                         }
                         ==($subj$, Int(0)) ->  {
@@ -208,53 +208,53 @@ FILE: serializerViaCompanion.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        R|com/example/encodeAndDecode|<R|com/example/WithCompanion|>(Q|com/example/WithCompanion|.R|com/example/WithCompanion.Companion.serializer|(), R|com/example/WithCompanion.WithCompanion|(Int(1)), String({"i":1}))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|com/example/encodeAndDecode|<R|com/example/WithCompanion|>(Q|com/example/WithCompanion(.<companion>)|.R|com/example/WithCompanion.Companion.serializer|(), R|com/example/WithCompanion.WithCompanion|(Int(1)), String({"i":1}))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^box R|<local>/it|
         }
         ) }
-        R|com/example/encodeAndDecode|<R|com/example/WithNamedCompanion|>(Q|com/example/WithNamedCompanion|.R|com/example/WithNamedCompanion.Named.serializer|(), R|com/example/WithNamedCompanion.WithNamedCompanion|(Int(2)), String({"i":2}))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|com/example/encodeAndDecode|<R|com/example/WithNamedCompanion|>(Q|com/example/WithNamedCompanion(.<companion>)|.R|com/example/WithNamedCompanion.Named.serializer|(), R|com/example/WithNamedCompanion.WithNamedCompanion|(Int(2)), String({"i":2}))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^box R|<local>/it|
         }
         ) }
-        R|com/example/encodeAndDecode|<R|com/example/WithExplicitType|>(Q|com/example/WithExplicitType|.R|com/example/WithExplicitType.Companion.serializer|(), R|com/example/WithExplicitType.WithExplicitType|(Int(3)), String({"i":3}))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|com/example/encodeAndDecode|<R|com/example/WithExplicitType|>(Q|com/example/WithExplicitType(.<companion>)|.R|com/example/WithExplicitType.Companion.serializer|(), R|com/example/WithExplicitType.WithExplicitType|(Int(3)), String({"i":3}))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^box R|<local>/it|
         }
         ) }
-        R|com/example/encodeAndDecode|<R|com/example/FullyOverridden|>(Q|com/example/FullyOverridden|.R|com/example/FullyOverridden.Companion.serializer|(), R|com/example/FullyOverridden.FullyOverridden|(Int(4)), String("i=4"))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|com/example/encodeAndDecode|<R|com/example/FullyOverridden|>(Q|com/example/FullyOverridden(.<companion>)|.R|com/example/FullyOverridden.Companion.serializer|(), R|com/example/FullyOverridden.FullyOverridden|(Int(4)), String("i=4"))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^box R|<local>/it|
         }
         ) }
-        R|com/example/encodeAndDecode|<R|com/example/PartiallyOverridden|>(Q|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.Companion.serializer|(), R|com/example/PartiallyOverridden.PartiallyOverridden|(Int(5)), String({"i":15}), R|com/example/PartiallyOverridden.PartiallyOverridden|(Int(15)))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|com/example/encodeAndDecode|<R|com/example/PartiallyOverridden|>(Q|com/example/PartiallyOverridden(.<companion>)|.R|com/example/PartiallyOverridden.Companion.serializer|(), R|com/example/PartiallyOverridden.PartiallyOverridden|(Int(5)), String({"i":15}), R|com/example/PartiallyOverridden.PartiallyOverridden|(Int(15)))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^box R|<local>/it|
         }
         ) }
         when () {
-            !=(Q|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.serialName|, String(Partially-Overridden)) ->  {
-                ^box Q|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.serialName|
+            !=(Q|com/example/PartiallyOverridden(.<companion>)|.R|com/example/PartiallyOverridden.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.serialName|, String(Partially-Overridden)) ->  {
+                ^box Q|com/example/PartiallyOverridden(.<companion>)|.R|com/example/PartiallyOverridden.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.serialName|
             }
         }
 
-        R|com/example/encodeAndDecode|<R|com/example/PartiallyWithoutType|>(Q|com/example/PartiallyWithoutType|.R|com/example/PartiallyWithoutType.Companion.serializer|(), R|com/example/PartiallyWithoutType.PartiallyWithoutType|(Int(6)), String({"i":6}), R|com/example/PartiallyWithoutType.PartiallyWithoutType|(Int(16)))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|com/example/encodeAndDecode|<R|com/example/PartiallyWithoutType|>(Q|com/example/PartiallyWithoutType(.<companion>)|.R|com/example/PartiallyWithoutType.Companion.serializer|(), R|com/example/PartiallyWithoutType.PartiallyWithoutType|(Int(6)), String({"i":6}), R|com/example/PartiallyWithoutType.PartiallyWithoutType|(Int(16)))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^box R|<local>/it|
         }
         ) }
         when () {
-            !=(Q|com/example/PartiallyWithoutType|.R|com/example/PartiallyWithoutType.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.serialName|, <getClass>(Q|com/example/PartiallyWithoutType|).R|SubstitutionOverride<kotlin/reflect/KClass.qualifiedName: R|kotlin/String?|>|) ->  {
-                ^box Q|com/example/PartiallyWithoutType|.R|com/example/PartiallyWithoutType.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.serialName|
+            !=(Q|com/example/PartiallyWithoutType(.<companion>)|.R|com/example/PartiallyWithoutType.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.serialName|, <getClass>(Q|com/example/PartiallyWithoutType|).R|SubstitutionOverride<kotlin/reflect/KClass.qualifiedName: R|kotlin/String?|>|) ->  {
+                ^box Q|com/example/PartiallyWithoutType(.<companion>)|.R|com/example/PartiallyWithoutType.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.serialName|
             }
         }
 
         ^box String(OK)
     }
     private final fun <T> encodeAndDecode(serializer: R|kotlinx/serialization/KSerializer<T>|, value: R|T|, expectedEncoded: R|kotlin/String|, expectedDecoded: R|T?| = Null(null)): R|kotlin/String?| {
-        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|T|>(R|<local>/serializer|, R|<local>/value|)
+        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|T|>(R|<local>/serializer|, R|<local>/value|)
         when () {
             !=(R|<local>/encoded|, R|<local>/expectedEncoded|) ->  {
                 ^encodeAndDecode R|<local>/encoded|
             }
         }
 
-        lval decoded: R|T| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|T|>(R|<local>/serializer|, R|<local>/encoded|)
+        lval decoded: R|T| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.decodeFromString|<R|T|>(R|<local>/serializer|, R|<local>/encoded|)
         when () {
             !=(R|<local>/decoded|, R|<local>/expectedDecoded| ?: R|<local>/value|) ->  {
                 ^encodeAndDecode <strcat>(String(DECODED=), R|<local>/decoded|.R|kotlin/toString|())

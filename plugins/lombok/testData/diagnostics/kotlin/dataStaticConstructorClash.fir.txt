@@ -164,12 +164,12 @@ FILE: dataStaticConstructorClash.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|ClashBySameArity|.R|/ClashBySameArity.Companion.of|(String(name))
-        Q|NoClashByDifferentArity|.R|/NoClashByDifferentArity.Companion.of|(String(name))
-        Q|NoClashByDifferentArity|.R|/NoClashByDifferentArity.Companion.of|()
-        Q|NoClashByDifferentArityInClass|.R|/NoClashByDifferentArityInClass.Companion.of|(String(name))
-        Q|DataWithNoArgs|.R|/DataWithNoArgs.Companion.of|()
-        Q|DataWithVararg|.R|/DataWithVararg.Companion.of|()
+        Q|ClashBySameArity(.<companion>)|.R|/ClashBySameArity.Companion.of|(String(name))
+        Q|NoClashByDifferentArity(.<companion>)|.R|/NoClashByDifferentArity.Companion.of|(String(name))
+        Q|NoClashByDifferentArity(.<companion>)|.R|/NoClashByDifferentArity.Companion.of|()
+        Q|NoClashByDifferentArityInClass(.<companion>)|.R|/NoClashByDifferentArityInClass.Companion.of|(String(name))
+        Q|DataWithNoArgs(.<companion>)|.R|/DataWithNoArgs.Companion.of|()
+        Q|DataWithVararg(.<companion>)|.R|/DataWithVararg.Companion.of|()
         Q|DataObject|.R|/DataObject.of|()
-        Q|WithDataCompanion|.R|/WithDataCompanion.Companion.of|()
+        Q|WithDataCompanion(.<companion>)|.R|/WithDataCompanion.Companion.of|()
     }

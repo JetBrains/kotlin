@@ -26,6 +26,9 @@ open class FirResolvedQualifierRenderer {
         } else {
             printer.print(resolvedQualifier.packageFqName.asString().replace(".", "/"))
         }
+        if (resolvedQualifier.resolvedToCompanionObject) {
+            printer.print("(.<companion>)")
+        }
         if (resolvedQualifier.isNullableLhsForCallableReference) {
             printer.print("?")
         }

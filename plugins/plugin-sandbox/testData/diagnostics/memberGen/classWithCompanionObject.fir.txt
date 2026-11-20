@@ -19,6 +19,6 @@ FILE: classWithCompanionObject.kt
     public final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/takeInt|(Q|SomeClass|.R|/SomeClass.Companion.foo|())
+        R|/takeInt|(Q|SomeClass(.<companion>)|.R|/SomeClass.Companion.foo|())
         R|/takeInt|(Q|SomeClass.Companion|.R|/SomeClass.Companion.foo|())
     }

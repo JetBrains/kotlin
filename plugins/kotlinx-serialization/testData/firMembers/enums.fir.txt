@@ -92,7 +92,7 @@ FILE: enums.kt
 
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/InternalSerializationApi|)) [evaluated = vararg(<getClass>(Q|kotlinx/serialization/InternalSerializationApi|))]) public final fun testSerializers(): R|kotlin/String| {
-        lval cs: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>| = (Q|Holder|.R|/Holder.Companion.serializer|() as R|kotlinx/serialization/internal/GeneratedSerializer<*>|).R|SubstitutionOverride<kotlinx/serialization/internal/GeneratedSerializer.childSerializers: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|>|()
+        lval cs: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>| = (Q|Holder(.<companion>)|.R|/Holder.Companion.serializer|() as R|kotlinx/serialization/internal/GeneratedSerializer<*>|).R|SubstitutionOverride<kotlinx/serialization/internal/GeneratedSerializer.childSerializers: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|>|()
         lval str1: R|kotlin/String| = R|<local>/cs|.R|SubstitutionOverride<kotlin/Array.get: R|kotlinx/serialization/KSerializer<*>|>|(Int(0)).R|kotlin/Any.toString|()
         when () {
             R|<local>/str1|.R|kotlin/text/contains|(String(kotlinx.serialization.internal.EnumSerializer)).R|kotlin/Boolean.not|() ->  {
@@ -110,7 +110,7 @@ FILE: enums.kt
         }
 
         lval h: R|Holder| = R|/Holder.Holder|(Q|Plain|.R|/Plain.B|, Q|WithNames|.R|/WithNames.ENTRY1|)
-        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|Holder|>(Q|Holder|.R|/Holder.Companion.serializer|(), R|<local>/h|)
+        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|Holder|>(Q|Holder(.<companion>)|.R|/Holder.Companion.serializer|(), R|<local>/h|)
         when () {
             !=(R|<local>/s|, String({"p":"B","w":"A"})) ->  {
                 ^testSerialization R|<local>/s|

@@ -22,7 +22,7 @@ FILE: differentFunctionalTypes.kt
     }
     context(<unused var>: R|kotlin/Int|, <unused var>: R|kotlin/String|)
     public final fun test(): R|kotlin/Unit| {
-        lval p: R|Diff| = Q|Diff|.R|/Diff.Companion.of|(vararg(context(<unused var>: R|kotlin/Int|, <unused var>: R|kotlin/String|) of@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval p: R|Diff| = Q|Diff(.<companion>)|.R|/Diff.Companion.of|(vararg(context(<unused var>: R|kotlin/Int|, <unused var>: R|kotlin/String|) of@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^@of Unit
         }
         ))

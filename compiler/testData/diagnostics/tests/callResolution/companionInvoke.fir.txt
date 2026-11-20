@@ -23,5 +23,5 @@ FILE: companionInvoke.kt
 
     }
     public final fun foo(): R|kotlin/Unit| {
-        Q|Method|.R|/Method.Companion.invoke|(String(asd))
+        Q|Method(.<companion>)|.R|/Method.Companion.invoke|(String(asd))
     }

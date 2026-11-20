@@ -94,7 +94,7 @@ FILE: abstractAndSealed.kt
             }
         }
 
-        lval serial: R|kotlinx/serialization/KSerializer<Bottom>| = Q|Bottom|.R|/Bottom.Companion.serializer|()
+        lval serial: R|kotlinx/serialization/KSerializer<Bottom>| = Q|Bottom(.<companion>)|.R|/Bottom.Companion.serializer|()
         lval j: R|kotlinx/serialization/json/Json| = R|kotlinx/serialization/json/Json|(<L> = Json@fun R|kotlinx/serialization/json/JsonBuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|kotlinx/serialization/json/JsonBuilder.encodeDefaults| = Boolean(true)
         }
@@ -123,24 +123,24 @@ FILE: abstractAndSealed.kt
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/ExperimentalSerializationApi|)) [evaluated = vararg(<getClass>(Q|kotlinx/serialization/ExperimentalSerializationApi|))]) public final fun testKinds(): R|kotlin/String| {
         when () {
-            !=(Q|I|.R|/I.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.SEALED|) ->  {
+            !=(Q|I(.<companion>)|.R|/I.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.SEALED|) ->  {
                 ^testKinds String(Not sealed: I)
             }
         }
 
         when () {
-            !=(Q|X|.R|/X.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.SEALED|) ->  {
+            !=(Q|X(.<companion>)|.R|/X.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.SEALED|) ->  {
                 ^testKinds String(Not sealed: X)
             }
         }
 
         when () {
-            !=(Q|Y|.R|/Y.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.OPEN|) ->  {
+            !=(Q|Y(.<companion>)|.R|/Y.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.OPEN|) ->  {
                 ^testKinds String(Not polymorphic: Y)
             }
         }
 
-        lval serial: R|kotlinx/serialization/KSerializer<Bottom>| = Q|Bottom|.R|/Bottom.Companion.serializer|()
+        lval serial: R|kotlinx/serialization/KSerializer<Bottom>| = Q|Bottom(.<companion>)|.R|/Bottom.Companion.serializer|()
         when () {
             !=(R|<local>/serial|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/StructureKind.CLASS|) ->  {
                 ^testKinds String(Not class: Bottom)

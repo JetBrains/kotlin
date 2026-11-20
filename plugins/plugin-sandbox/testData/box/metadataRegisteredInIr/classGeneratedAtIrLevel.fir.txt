@@ -153,8 +153,8 @@ FILE: main.kt
         }
 
         when () {
-            !=(Q|SourceWithCompanion|.R|/SourceWithCompanion.Companion.x|, Int(42)) ->  {
-                ^box <strcat>(String(FAIL companion.x: ), Q|SourceWithCompanion|.R|/SourceWithCompanion.Companion.x|)
+            !=(Q|SourceWithCompanion(.<companion>)|.R|/SourceWithCompanion.Companion.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL companion.x: ), Q|SourceWithCompanion(.<companion>)|.R|/SourceWithCompanion.Companion.x|)
             }
         }
 
@@ -166,7 +166,7 @@ FILE: main.kt
         }
 
         when () {
-            !=(Q|WithNestedFamily|.R|/WithNestedFamily.Companion.fromCompanion|(), String(from-companion)) ->  {
+            !=(Q|WithNestedFamily(.<companion>)|.R|/WithNestedFamily.Companion.fromCompanion|(), String(from-companion)) ->  {
                 ^box String(FAIL companion fn)
             }
         }

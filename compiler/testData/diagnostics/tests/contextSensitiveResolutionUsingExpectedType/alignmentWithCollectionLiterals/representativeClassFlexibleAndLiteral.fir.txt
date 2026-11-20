@@ -24,7 +24,7 @@ FILE: test.kt
     }
     public final fun testIntegerLiteral(): R|kotlin/Int| {
         ^testIntegerLiteral when (lval <when-subject>: R|kotlin/Long| = Long(10000000000)) {
-            ==($subj$, Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|) ->  {
+            ==($subj$, Q|kotlin/Long(.<companion>)|.R|kotlin/Long.Companion.MAX_VALUE|) ->  {
                 Int(1)
             }
             else ->  {
@@ -35,7 +35,7 @@ FILE: test.kt
     }
     public final fun testIntegerLiteralAmbiguousType(): R|kotlin/Int| {
         ^testIntegerLiteralAmbiguousType when (lval <when-subject>: R|kotlin/Int| = Int(1)) {
-            ==($subj$, Q|kotlin/Int|.R|kotlin/Int.Companion.MAX_VALUE|) ->  {
+            ==($subj$, Q|kotlin/Int(.<companion>)|.R|kotlin/Int.Companion.MAX_VALUE|) ->  {
                 Int(1)
             }
             else ->  {
@@ -48,6 +48,6 @@ FILE: test.kt
         ^select R|<local>/x|
     }
     public final fun testIntegerLiteralInSelect(): R|kotlin/Unit| {
-        R|/select|<R|kotlin/Long|>(Long(10000000000), Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|)
+        R|/select|<R|kotlin/Long|>(Long(10000000000), Q|kotlin/Long(.<companion>)|.R|kotlin/Long.Companion.MAX_VALUE|)
         R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|kotlin/Int|>(Int(0), <Unresolved name: MAX_VALUE>#)
     }

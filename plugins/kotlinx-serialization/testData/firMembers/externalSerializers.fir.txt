@@ -37,14 +37,14 @@ FILE: externalSerializers.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        lval encodedForClass: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|com/example/Data|>(R|com/example/ClassSerializer.ClassSerializer|(), R|com/example/Data.Data|(Int(1)))
+        lval encodedForClass: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|com/example/Data|>(R|com/example/ClassSerializer.ClassSerializer|(), R|com/example/Data.Data|(Int(1)))
         when () {
             !=(R|<local>/encodedForClass|, String({"j":1})) ->  {
                 ^box R|<local>/encodedForClass|
             }
         }
 
-        lval encodedForObject: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|com/example/Data|>(Q|com/example/ObjectSerializer|, R|com/example/Data.Data|(Int(2)))
+        lval encodedForObject: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|com/example/Data|>(Q|com/example/ObjectSerializer|, R|com/example/Data.Data|(Int(2)))
         when () {
             !=(R|<local>/encodedForObject|, String({"j":2})) ->  {
                 ^box R|<local>/encodedForObject|

@@ -47,14 +47,14 @@ FILE: multipleProperties.kt
             this@R|special/anonymous|.R|/SomeClass.body| = String(x)
         }
         )
-        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|SomeClass|>(Q|SomeClass|.R|/SomeClass.Companion.serializer|(), R|<local>/c|)
+        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|SomeClass|>(Q|SomeClass(.<companion>)|.R|/SomeClass.Companion.serializer|(), R|<local>/c|)
         when () {
             !=(R|<local>/s|, R|<local>/targetString|) ->  {
                 ^test R|<local>/s|
             }
         }
 
-        lval i: R|SomeClass| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|SomeClass|>(Q|SomeClass|.R|/SomeClass.Companion.serializer|(), R|<local>/s|)
+        lval i: R|SomeClass| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.decodeFromString|<R|SomeClass|>(Q|SomeClass(.<companion>)|.R|/SomeClass.Companion.serializer|(), R|<local>/s|)
         when () {
             !=(R|<local>/i|.R|/SomeClass.ctor|, R|<local>/c|.R|/SomeClass.ctor|) ->  {
                 ^test String(Incorrect ctor)

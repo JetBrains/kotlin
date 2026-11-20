@@ -33,7 +33,7 @@ FILE: kt84299.kt
         }
 
     }
-    public final val delegated: R|kotlin/String| by Q|X|
+    public final val delegated: R|kotlin/String| by Q|X(.<companion>)|
         public get(): R|kotlin/String| {
             ^ D|/delegated|.R|/X.Companion.getValue|(Null(null), ::R|/delegated|)
         }
@@ -44,13 +44,13 @@ FILE: kt84299.kt
         ^foo String()
     }
     public final fun testCallableReferences(): R|kotlin/Unit| {
-        lval delegated: R|kotlin/String| by Q|X|
+        lval delegated: R|kotlin/String| by Q|X(.<companion>)|
             local get(): R|kotlin/String| {
                 ^ D|<local>/delegated|.R|/X.Companion.getValue|(Null(null), ::R|<local>/delegated|)
             }
 
-        Q|X|.R|/X.Companion.plusAssign|(String())
-        lval x: R|kotlin/String| = R|/foo|(Q|X|::R|/X.Companion.baz|)
+        Q|X(.<companion>)|.R|/X.Companion.plusAssign|(String())
+        lval x: R|kotlin/String| = R|/foo|(Q|X(.<companion>)|::R|/X.Companion.baz|)
     }
     public final object Y : R|kotlin/Any| {
         private constructor(): R|Y| {
@@ -119,15 +119,15 @@ FILE: kt84299.kt
         }
 
     }
-    public final val delegatedZ2: R|kotlin/String| by Q|Z2|
+    public final val delegatedZ2: R|kotlin/String| by Q|Z2(.<companion>)|
         public get(): R|kotlin/String| {
             ^ D|/delegatedZ2|.R|/Z2.Companion.getValue|(Null(null), ::R|/delegatedZ2|)
         }
     public final fun testZ2(): R|kotlin/Unit| {
-        lval delegatedZ2: R|kotlin/String| by Q|Z2|
+        lval delegatedZ2: R|kotlin/String| by Q|Z2(.<companion>)|
             local get(): R|kotlin/String| {
                 ^ D|<local>/delegatedZ2|.R|/Z2.Companion.getValue|(Null(null), ::R|<local>/delegatedZ2|)
             }
 
-        Q|Z2|.R|/Z2.Companion.plusAssign|(String())
+        Q|Z2(.<companion>)|.R|/Z2.Companion.plusAssign|(String())
     }

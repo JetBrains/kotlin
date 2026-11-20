@@ -27,8 +27,8 @@ FILE: entriesPropertyImportedClashOn.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|foo/A|.R|foo/A.Companion.entries|
-        R|kotlin/with|<R|foo/A.Companion|, R|kotlin/Int|>(Q|foo/A|, <L> = with@fun R|foo/A.Companion|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        Q|foo/A(.<companion>)|.R|foo/A.Companion.entries|
+        R|kotlin/with|<R|foo/A.Companion|, R|kotlin/Int|>(Q|foo/A(.<companion>)|, <L> = with@fun R|foo/A.Companion|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ this@R|special/anonymous|.R|foo/A.Companion.entries|
         }
         )

@@ -38,6 +38,6 @@ FILE: Owner.kt
     }
 FILE: test.kt
     public final fun foo(): R|kotlin/Unit| {
-        lval internalBuilder: R|Owner.OwnerBuilder| = Q|Owner|.R|/Owner.Companion.internalBuilder|()
-        lval builder: R|Owner.OwnerBuilder| = Q|Owner|.R|/Owner.Companion.builder|(Int(1))
+        lval internalBuilder: R|Owner.OwnerBuilder| = Q|Owner(.<companion>)|.R|/Owner.Companion.internalBuilder|()
+        lval builder: R|Owner.OwnerBuilder| = Q|Owner(.<companion>)|.R|/Owner.Companion.builder|(Int(1))
     }

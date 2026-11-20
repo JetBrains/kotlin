@@ -8,14 +8,14 @@ FILE: serializableObject.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|FooBar|>(Q|FooBar|.R|/FooBar.serializer|(), Q|FooBar|)
+        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|FooBar|>(Q|FooBar|.R|/FooBar.serializer|(), Q|FooBar|)
         when () {
             !=(R|<local>/encoded|, String({})) ->  {
                 ^box R|<local>/encoded|
             }
         }
 
-        lval decoded: R|FooBar| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|FooBar|>(Q|FooBar|.R|/FooBar.serializer|(), R|<local>/encoded|)
+        lval decoded: R|FooBar| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.decodeFromString|<R|FooBar|>(Q|FooBar|.R|/FooBar.serializer|(), R|<local>/encoded|)
         when () {
             !==(R|<local>/decoded|, Q|FooBar|) ->  {
                 ^box String(Incorrect object instance)

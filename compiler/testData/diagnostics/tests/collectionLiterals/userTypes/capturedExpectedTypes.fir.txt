@@ -24,9 +24,9 @@ FILE: capturedExpectedTypes.kt
         R|<local>/d|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|>|(Q|C.Companion|.R|/C.Companion.of|())
         R|<local>/e|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /Setter.set>#|(<Not a superclass of 'List' expected>#())
         R|<local>/f|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /Setter.set>#|(<Not a superclass of 'List' expected>#())
-        lval x: R|kotlin/Any?| = R|/select|<R|CapturedType(in C)|>(R|/materializeIn|<R|C|>(), Q|C|.R|/C.Companion.of|())
+        lval x: R|kotlin/Any?| = R|/select|<R|CapturedType(in C)|>(R|/materializeIn|<R|C|>(), Q|C(.<companion>)|.R|/C.Companion.of|())
         lval y: R|kotlin/Any?| = R|/select|<R|CapturedType(in C)|>(R|/materializeIn|<R|C|>(), Q|C.Companion|.R|/C.Companion.of|())
-        R|/selectDnn|<R|CapturedType(in C?)|>(R|/materializeIn|<R|C?|>(), Q|C|.R|/C.Companion.of|())
+        R|/selectDnn|<R|CapturedType(in C?)|>(R|/materializeIn|<R|C?|>(), Q|C(.<companion>)|.R|/C.Companion.of|())
         R|/selectDnn|<R|CapturedType(in C?)|>(R|/materializeIn|<R|C?|>(), Q|C.Companion|.R|/C.Companion.of|())
     }
     public final fun <D> materializeIn(): R|Setter<in D>| {

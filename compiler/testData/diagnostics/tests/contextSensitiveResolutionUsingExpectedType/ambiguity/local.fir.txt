@@ -129,7 +129,7 @@ FILE: local.kt
             ($subj$ is R|foo/Sealed.String|) ->  {
                 Int(5)
             }
-            ==($subj$, Q|foo/Sealed|.R|foo/Sealed.Companion.CompanionB|) ->  {
+            ==($subj$, Q|foo/Sealed(.<companion>)|.R|foo/Sealed.Companion.CompanionB|) ->  {
                 Int(7)
             }
             else ->  {
@@ -244,10 +244,10 @@ FILE: local.kt
                 ($subj$ is R|foo/Sealed.String|) ->  {
                     Int(5)
                 }
-                ==($subj$, Q|foo/Sealed|.R|foo/Sealed.Companion.CompanionA|) ->  {
+                ==($subj$, Q|foo/Sealed(.<companion>)|.R|foo/Sealed.Companion.CompanionA|) ->  {
                     Int(6)
                 }
-                ==($subj$, Q|foo/Sealed|.R|foo/Sealed.Companion.CompanionB|) ->  {
+                ==($subj$, Q|foo/Sealed(.<companion>)|.R|foo/Sealed.Companion.CompanionB|) ->  {
                     Int(7)
                 }
                 else ->  {

@@ -838,7 +838,7 @@ digraph kt44814_kt {
     }
     ($subj$ is R|FirLightSourceElement|) ->  {
         lval modifierListNode: R|LighterASTNode| = this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.treeStructure|).R|kotlin/collections/find|<R|LighterASTNode?|>(<L> = find@fun <anonymous>(it: R|LighterASTNode?|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
-            ^ ==(R|<local>/it|?.{ $subj$.R|/LighterASTNode.tokenType| }, Q|TokenType|.R|/TokenType.Companion.MODIFIER_LIST|)
+            ^ ==(R|<local>/it|?.{ $subj$.R|/LighterASTNode.tokenType| }, Q|TokenType(.<companion>)|.R|/TokenType.Companion.MODIFIER_LIST|)
         }
         ) ?: ^getModifierList Null(null)
         R|/FirModifierList.FirLightModifierList.FirLightModifierList|(R|<local>/modifierListNode|, this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.treeStructure|)
@@ -1158,9 +1158,9 @@ digraph kt44814_kt {
                 369 [label="Access qualifier /FirModifierList [2]"];
                 370 [label="Function call arguments exit [2]"];
             }
-            371 [label="Function call enter: Q|FirModifierList|.R|/FirModifierList.Companion.boxImpl|() [2]"];
-            372 [label="Function call exit: Q|FirModifierList|.R|/FirModifierList.Companion.boxImpl|() [2]" style="filled" fillcolor=yellow];
-            373 [label="Jump: ^box Q|FirModifierList|.R|/FirModifierList.Companion.boxImpl|() [2]"];
+            371 [label="Function call enter: Q|FirModifierList(.<companion>)|.R|/FirModifierList.Companion.boxImpl|() [2]"];
+            372 [label="Function call exit: Q|FirModifierList(.<companion>)|.R|/FirModifierList.Companion.boxImpl|() [2]" style="filled" fillcolor=yellow];
+            373 [label="Jump: ^box Q|FirModifierList(.<companion>)|.R|/FirModifierList.Companion.boxImpl|() [2]"];
             374 [label="Stub [2]" style="filled" fillcolor=gray];
             375 [label="Exit block [2]" style="filled" fillcolor=gray];
         }

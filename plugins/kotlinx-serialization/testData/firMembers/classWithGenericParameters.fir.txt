@@ -45,16 +45,16 @@ FILE: classWithGenericParameters.kt
     }
     public final fun box(): R|kotlin/String| {
         lval box: R|GenericBox<kotlin/String, kotlin/Boolean>| = R|/GenericBox.GenericBox|<R|kotlin/String|, R|kotlin/Boolean|>(Int(42), String(foo), R|kotlin/collections/listOf|<R|kotlin/Boolean|>(vararg(Boolean(true), Boolean(false))))
-        lval serial: R|kotlinx/serialization/KSerializer<GenericBox<kotlin/String, kotlin/Boolean>>| = Q|GenericBox|.R|/GenericBox.Companion.serializer|<R|kotlin/String|, R|kotlin/Boolean|>(Q|kotlin/String|.R|kotlinx/serialization/builtins/serializer|(), Q|kotlin/Boolean|.R|kotlinx/serialization/builtins/serializer|())
+        lval serial: R|kotlinx/serialization/KSerializer<GenericBox<kotlin/String, kotlin/Boolean>>| = Q|GenericBox(.<companion>)|.R|/GenericBox.Companion.serializer|<R|kotlin/String|, R|kotlin/Boolean|>(Q|kotlin/String(.<companion>)|.R|kotlinx/serialization/builtins/serializer|(), Q|kotlin/Boolean(.<companion>)|.R|kotlinx/serialization/builtins/serializer|())
         lval target: R|kotlin/String| = String({"i":42,"t":"foo","vs":[true,false]})
-        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|GenericBox<kotlin/String, kotlin/Boolean>|>(R|<local>/serial|, R|<local>/box|)
+        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|GenericBox<kotlin/String, kotlin/Boolean>|>(R|<local>/serial|, R|<local>/box|)
         when () {
             !=(R|<local>/target|, R|<local>/s|) ->  {
                 ^box <strcat>(String(Incorrect serialization: ), R|<local>/s|)
             }
         }
 
-        lval decoded: R|GenericBox<kotlin/String, kotlin/Boolean>| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|GenericBox<kotlin/String, kotlin/Boolean>|>(R|<local>/serial|, R|<local>/s|)
+        lval decoded: R|GenericBox<kotlin/String, kotlin/Boolean>| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.decodeFromString|<R|GenericBox<kotlin/String, kotlin/Boolean>|>(R|<local>/serial|, R|<local>/s|)
         when () {
             !=(R|<local>/box|.R|SubstitutionOverride</GenericBox.t: R|kotlin/String|>|, R|<local>/decoded|.R|SubstitutionOverride</GenericBox.t: R|kotlin/String|>|) || !=(R|<local>/box|.R|SubstitutionOverride</GenericBox.vs: R|kotlin/collections/List<kotlin/Boolean>|>|, R|<local>/decoded|.R|SubstitutionOverride</GenericBox.vs: R|kotlin/collections/List<kotlin/Boolean>|>|) ->  {
                 ^box String(Incorrect deserialization)
