@@ -12,12 +12,10 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.common.lower.enumEntriesMap
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
-import org.jetbrains.kotlin.backend.konan.ir.OverriddenFunctionInfo
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
@@ -31,7 +29,6 @@ import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 
@@ -311,27 +308,14 @@ internal object VirtualTablesLookup {
 internal val IrSimpleFunction.needsVirtualTrampoline: Boolean
     get() = isOverridable && bridgeTarget == null
 
-context(config: NativeSecondStageCompilationConfig)
-internal val IrSimpleFunction.needsCacheEntryPointForFinalFakeOverride: Boolean
-    get() = config.produce.isCache && isFakeOverride && !isOverridable && isExported
-            /*
-            On the one hand, a cache entry point for a fake override of an Objective-C method is not needed:
-            Kotlin subclasses of Objective-C classes must be final (KT-23529); so, this method couldn't have been
-            overridable in the previous version, and the caller couldn't have been used a virtual trampoline.
-
-            On the other hand, generation of such a cache entry point is tricky as it needs to call an Objective-C method
-            but the generation bypasses the interop lowering that normally handles such calls: it happens much later
-            and in LLVM IR instead of Kotlin IR. Wrong generation of them caused KT-90589.
-
-            So here we mark such methods as not needing a cache entry point:
-            */
-            && !target.isExternalObjCClassMethod()
-
 /*
  * Special trampoline function that performs the vtable/itable lookup and dispatches to the actual virtual
  * implementation (which lives at `<name>-impl`). The trampoline occupies the public symbol name,
- * so virtual call sites emit a plain `call @<name>` and stay decoupled from concrete vtable layouts:
- * a change to a class's vtable/itable does not invalidate cached callers in other files.
+ * so virtual call sites emit a plain `call @<name>` and stay decoupled from concrete vtable layouts.
+ *
+ * Note: incremental compilation doesn't exploit this decoupling at the moment: the cached callers in other files
+ * are still rebuilt whenever the file of the class changes. Skipping that (with "weak", link-time only, dependencies)
+ * turned out to be unsound: the changed file may stop providing the trampoline at all (KT-89876, KT-91381).
  */
 internal fun CodeGenerator.getVirtualFunctionTrampoline(irFunction: IrSimpleFunction): LlvmFunction {
     /*
@@ -352,8 +336,7 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
             val proto = LlvmFunctionProto(
                     name = targetName,
                     signature = LlvmFunctionSignature(irFunction, this),
-                    // A link-time dependency only: recompilation is not needed if only the trampoline's impl has changed.
-                    origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass, weak = true),
+                    origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass),
                     linkage = linkageOf(irFunction)
             )
             if (isExternal(irFunction))
@@ -381,16 +364,8 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
                 }
                 generateFunction(this, proto, needSafePoint = false, startLocation = location, endLocation = location) {
                     val args = proto.signature.parameterTypes.indices.map { param(it) }
-                    val callee = if (irFunction.isOverridable) {
-                        val receiver = param(0)
-                        with(VirtualTablesLookup) { getVirtualImpl(receiver, irFunction) }
-                    } else {
-                        // KT-87777: reference the inherited implementation directly, without relying on virtual lookups.
-                        val implementation = OverriddenFunctionInfo(irFunction, irFunction, context.config.bridgesPolicy)
-                                .getImplementation(context)
-                                ?: error("No implementation for the final fake override ${irFunction.render()}")
-                        codegen.getLlvmFunctionFrom(implementation)
-                    }
+                    val receiver = param(0)
+                    val callee = with(VirtualTablesLookup) { getVirtualImpl(receiver, irFunction) }
                     val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                     ret(result)
                 }.also { llvmFunction ->

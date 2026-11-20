@@ -760,15 +760,8 @@ internal class CodeGeneratorVisitor(
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         context.log { "visitFunction                  : ${ir2string(declaration)}" }
 
-        // KT-87777: Cached callers may still reference the trampoline of an inherited method that has become final.
-        // The solution is still building the "trampoline", but its body will directly call the parent's method.
-        val needCacheEntryPoint = context(context.config) {
-            declaration.needsCacheEntryPointForFinalFakeOverride
-        }
-
-        if (declaration.needsVirtualTrampoline || needCacheEntryPoint) {
+        if (declaration.needsVirtualTrampoline)
             buildVirtualFunctionTrampoline(declaration)
-        }
 
         handleStaticInitializer(declaration)
 
@@ -2460,15 +2453,10 @@ internal class CodeGeneratorVisitor(
             function: IrSimpleFunction, args: List<LLVMValueRef>,
             resultLifetime: Lifetime, superClass: IrClass? = null, resultSlot: LLVMValueRef? = null): LLVMValueRef {
         //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
-        val throughCacheEntryPoint = context(context.config) { function.needsCacheEntryPointForFinalFakeOverride }
-        return when {
-            superClass == null && function.isOverridable ->
-                callVirtual(function, args, resultLifetime, resultSlot)
-            superClass == null && throughCacheEntryPoint && function.target.isOverridable ->
-                // A cached caller must not bind to the inherited implementation: the class may override it later (KT-91377).
-                callVirtual(function.target, args, resultLifetime, resultSlot)
-            else -> callDirect(function, args, resultLifetime, resultSlot)
-        }
+        return if (superClass == null && function.isOverridable)
+            callVirtual(function, args, resultLifetime, resultSlot)
+        else
+            callDirect(function, args, resultLifetime, resultSlot)
     }
 
     //-------------------------------------------------------------------------//
@@ -2571,6 +2559,12 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     fun callDirect(function: IrSimpleFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef {
+        if (function.isFakeOverride) {
+            // The call binds to the implementation inherited by the class, which is located somewhere
+            // in the superclasses chain. But what is inherited is defined by the class itself
+            // (e.g., it may get its own override later), so the caller must be rebuilt whenever the class changes (KT-91377).
+            generationState.dependenciesTracker.add(function.parentAsClass)
+        }
         val functionDeclarations = codegen.getLlvmFunctionFrom(function.target)
         return call(function, functionDeclarations, args, resultLifetime, resultSlot)
     }
@@ -2826,7 +2820,7 @@ internal class CodeGeneratorVisitor(
                                 fileIdProvider.sortedFileIds
                             }
                             is DependenciesTracker.DependencyKind.CertainFiles ->
-                                dependency.kind.files.map { it.name }
+                                dependency.kind.files.map { it.fileId }
                         }
                         files.map { ctorProto(fileCtorName(library.uniqueName, it)) }
                     }

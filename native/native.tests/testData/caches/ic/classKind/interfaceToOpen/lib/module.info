@@ -9,11 +9,13 @@ STEP 1:
     modifications:
         U : file1.1.kt -> file1.kt
     modified cache: file1.kt
-    unchanged cache: file2.kt
+    // TODO(OSIP-1297): must be "unchanged cache". It relied on the "weak" (link-time only) dependencies, which are removed for now.
+    modified cache: file2.kt
 
 // file1.kt: open class -> interface
 STEP 2:
     modifications:
         U : file1.2.kt -> file1.kt
     modified cache: file1.kt
-    unchanged cache: file2.kt
+    // TODO(OSIP-1297): must be "unchanged cache". It relied on the "weak" (link-time only) dependencies, which are removed for now.
+    modified cache: file2.kt

@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: lib1, lib2
+    arguments: -Xpartial-linkage-loglevel=warning
+    modifications:
+        U : main.kt -> main.kt
+
+STEP 1:
+    dependencies: lib1, lib2
+    arguments: -Xpartial-linkage-loglevel=warning
+    modifications:
+        U : main.1.kt -> main.kt
