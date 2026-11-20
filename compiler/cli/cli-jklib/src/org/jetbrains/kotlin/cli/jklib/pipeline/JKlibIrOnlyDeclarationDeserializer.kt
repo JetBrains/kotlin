@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.FileEntryDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.IrDeclarationDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
-import org.jetbrains.kotlin.backend.common.serialization.IrFileDeserializerImpl
+import org.jetbrains.kotlin.backend.common.serialization.IrFileDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
@@ -175,7 +175,7 @@ internal class JKlibIrOnlyDeclarationDeserializer(
         }
 
         private val fileDeserializer by lazy {
-            IrFileDeserializerImpl(irFile, reader, fileProto, symbolDeserializer, declarationDeserializer)
+            IrFileDeserializer(irFile, reader, fileProto, symbolDeserializer, declarationDeserializer)
         }
 
         /** Deserializes the annotations of [irFile] the first time it is called, like the IR linker does. */
