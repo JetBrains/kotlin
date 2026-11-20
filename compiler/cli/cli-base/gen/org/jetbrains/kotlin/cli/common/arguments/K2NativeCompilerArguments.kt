@@ -39,7 +39,7 @@ Currently this option is disabled by default on other platforms.""",
 
     @Argument(
         value = "-Xallocator",
-        valueDescription = "std | mimalloc | custom",
+        valueDescription = "std | custom",
         description = "Allocator used at runtime.",
     )
     var allocator: String? = null
@@ -276,10 +276,12 @@ This library must be one of the ones passed with '-library'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @all:Deprecated("Use '-Xbinary=gc=<gc>'")
     @Argument(
         value = "-Xgc",
         valueDescription = "<gc>",
-        description = "GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.",
+        description = "GC to use – 'noop', 'stms', and 'cms' are currently supported.",
+        deprecatedVersion = "1.9.20",
     )
     var gc: String? = null
         set(value) {
@@ -772,10 +774,12 @@ This library must be one of the ones passed with '-library'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @all:Deprecated("The legacy memory model is no longer supported, 'experimental' is the only available one")
     @Argument(
         value = "-memory-model",
         valueDescription = "<model>",
-        description = "Choose the memory model to be used – 'strict' and 'experimental' are currently supported.",
+        description = "Choose the memory model to be used – only 'experimental' is supported.",
+        deprecatedVersion = "1.9.20",
     )
     var memoryModel: String? = null
         set(value) {

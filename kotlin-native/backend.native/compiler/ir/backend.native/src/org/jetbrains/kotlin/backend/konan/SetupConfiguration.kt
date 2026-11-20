@@ -83,13 +83,15 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
-    val memoryModelFromArgument = when (arguments.memoryModel) {
+    @Suppress("DEPRECATION")
+    val memoryModelArgument = arguments.memoryModel
+    val memoryModelFromArgument = when (memoryModelArgument) {
         "relaxed" -> MemoryModel.RELAXED
         "strict" -> MemoryModel.STRICT
         "experimental" -> MemoryModel.EXPERIMENTAL
         null -> null
         else -> {
-            report(KONAN_ARGUMENT_ERROR, "Unsupported memory model ${arguments.memoryModel}")
+            report(KONAN_ARGUMENT_ERROR, "Unsupported memory model $memoryModelArgument")
             null
         }
     }
@@ -159,7 +161,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(this@setupFromArguments, arguments.preLinkCaches))
     putIfNotNull(OVERRIDE_KONAN_PROPERTIES, parseOverrideKonanProperties(arguments, this@setupFromArguments))
 
-    val gcFromArgument = when (arguments.gc) {
+    @Suppress("DEPRECATION")
+    val gcArgument = arguments.gc
+    val gcFromArgument = when (gcArgument) {
         null -> null
         "noop" -> GC.NOOP
         "stms" -> GC.STOP_THE_WORLD_MARK_AND_SWEEP
@@ -171,13 +175,13 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
                     "$fullName (or: $short)"
                 }
             }
-            report(KONAN_ARGUMENT_ERROR, "Unsupported argument -Xgc=${arguments.gc}. Use -Xbinary=gc= with values ${validValues}")
+            report(KONAN_ARGUMENT_ERROR, "Unsupported argument -Xgc=$gcArgument. Use -Xbinary=gc= with values ${validValues}")
             null
         }
     }
     if (gcFromArgument != null) {
         val newValue = gcFromArgument.shortcut
-        report(KONAN_ARGUMENT_WARNING, "-Xgc=${arguments.gc} compiler argument is deprecated. Use -Xbinary=gc=${newValue} instead")
+        report(KONAN_ARGUMENT_WARNING, "-Xgc=$gcArgument compiler argument is deprecated. Use -Xbinary=gc=${newValue} instead")
     }
     // TODO: revise priority and/or report conflicting values.
     if (get(BinaryOptions.gc) == null) {

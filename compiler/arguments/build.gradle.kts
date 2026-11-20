@@ -44,6 +44,7 @@ dependencies {
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(project(":compiler:config.jvm"))
+    testImplementation(project(":native:kotlin-native-utils"))
 
     testCompileOnly(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
