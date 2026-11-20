@@ -316,7 +316,7 @@ FILE: builderOnMemberMethod_kotlin.kt
         lval sink: R|Sink| = R|/Sink.Sink|()
         R|<local>/sink|.R|/Sink.builder|().R|/Sink.UnitBuilder.item|(String(a)).R|/Sink.UnitBuilder.item|(String(b)).R|/Sink.UnitBuilder.build|()
         R|kotlin/test/assertEquals|<R|kotlin/collections/List<kotlin/String>|>(R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(a), String(b))), R|<local>/sink|.R|/Sink.got|)
-        lval multi: R|Multi| = Q|Multi|.R|/Multi.Companion.ctorBuilder|().R|/Multi.CtorBuilder.id|(Int(7)).R|/Multi.CtorBuilder.build|()
+        lval multi: R|Multi| = Q|Multi(.<companion>)|.R|/Multi.Companion.ctorBuilder|().R|/Multi.CtorBuilder.id|(Int(7)).R|/Multi.CtorBuilder.build|()
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(7), R|<local>/multi|.R|/Multi.id|)
         R|kotlin/test/assertEquals|<R|kotlin/String|>(String(touched 7 with x), R|<local>/multi|.R|/Multi.touchBuilder|().R|/Multi.TouchBuilder.note|(String(x)).R|/Multi.TouchBuilder.build|())
         lval twoMethods: R|TwoMethods| = R|/TwoMethods.TwoMethods|()
