@@ -76,8 +76,8 @@ internal object ComposableSingletons%TestKt {
             }
             val value = <block>{
               val tmp0_group = failed.fold({
-                val tmp1_return = "Ok"
-                tmp1_return
+                val tmp0 = "Ok"
+                tmp0
               }
               ) { it: Exception ->
                 %composer.startReplaceGroup(<>)

@@ -2772,6 +2772,25 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
         """
     )
 
+    // Regression test for b/588316326
+    @Test
+    fun testNestedInlineSwitchReturnsValue() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test(a: Boolean, b: Boolean): String =
+                pick(a, { "y" }, { pick(b, { "z" }, { "w" }) })
+
+            @Composable
+            fun TestNonConst(a: Boolean, b: Boolean): String =
+                pick(a, { a.toString() }, { pick(b, { a.toString() }, { b.toString() }) })
+        """,
+        extra = """
+            inline fun <R> pick(c: Boolean, t: () -> R, f: () -> R): R = if (c) t() else f()
+        """
+    )
+
     /**
      * This is a regression test against a bug that, in certain cases, prevented execution of
      * non-local `return` statements inside lambdas called from `when` expressions.
