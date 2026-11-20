@@ -251,7 +251,7 @@ private fun createCompoundArrayAccessCall(
         // The explicit receiver in this case is a synthetic FirFunctionCall to `get`, which does not have a corresponding PSI. So
         // we use the `lhsArrayAccessExpression` as the supplement.
         val operationPartiallyAppliedSymbol = firOperationCall.toPartiallyAppliedSymbol(lhsArrayAccessExpression) ?: return null
-        val operationArgumentsMapping = listOfNotNull(lhsArrayAccessExpression, rhsExpression)
+        val operationArgumentsMapping = listOfNotNull(rhsExpression)
             .zip(operationPartiallyAppliedSymbol.signature.valueParameters)
             .toMap()
         val operationCall = KaFirSimpleFunctionCall(
@@ -275,7 +275,7 @@ private fun createCompoundArrayAccessCall(
         setterAttempt = setterError
     } else {
         val setPartiallyAppliedSymbol = firCall.toPartiallyAppliedSymbol(arrayExpression) ?: return null
-        val setArgumentsMapping = mapOf(indexExpressions.last() to setPartiallyAppliedSymbol.signature.valueParameters.last())
+        val setArgumentsMapping = indexExpressions.zip(setPartiallyAppliedSymbol.signature.valueParameters).toMap()
         val setCall = KaFirSimpleFunctionCall(
             backingPartiallyAppliedSymbol = setPartiallyAppliedSymbol,
             backingArgumentMapping = setArgumentsMapping,
@@ -315,7 +315,7 @@ private fun buildOperationCallForCompoundVariableAccess(
 ): KaFunctionCall<KaNamedFunctionSymbol>? {
     val operationPartiallyAppliedSymbol = firOperationCall.toPartiallyAppliedSymbol(leftOperandPsi) ?: return null
 
-    val operationArgumentsMapping = listOfNotNull(leftOperandPsi, rightOperandPsi)
+    val operationArgumentsMapping = listOfNotNull(rightOperandPsi)
         .zip(operationPartiallyAppliedSymbol.signature.valueParameters)
         .toMap()
 

@@ -90,10 +90,10 @@ KtPostfixExpression(128,136): 'm["a"]++'
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           "a" -> (KaVariableSignature:
-            name = v
+            name = k
             receiverType = null
-            returnType = kotlin.Int
-            symbol = v: V
+            returnType = kotlin.String
+            symbol = k: K
             contextParameters = []
             callableId = null)
         }
