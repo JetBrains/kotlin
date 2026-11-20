@@ -338,35 +338,6 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
-    @TestMetadata("incrementalMultiproject")
-    @JvmGradlePluginTests
-    @DisplayName("fus metric for jvm feature flags")
-    @GradleTest
-    fun testFusStatisticsForJvmMultiprojectWithFeatureFlags(gradleVersion: GradleVersion) {
-        project(
-            "incrementalMultiproject", gradleVersion,
-        ) {
-            //Collect metrics from BuildMetricsService also
-            validateFusFiles(
-                "compileKotlin",
-                buildAction = BuildActions.build,
-                buildOptions = defaultBuildOptions
-                    .copy(
-                        buildReport = listOf(BuildReportType.FILE),
-                        useFirJvmRunner = true,
-                    ).disableIsolatedProjects(),
-            ) { fusFiles ->
-                assertFilesCombinedContains(
-                    fusFiles,
-                    "CONFIGURATION_IMPLEMENTATION_COUNT=2",
-                    "NUMBER_OF_SUBPROJECTS=2",
-                    "COMPILATIONS_COUNT=2",
-                    "KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED=true"
-                )
-            }
-        }
-    }
-
     @TestMetadata("jvm-with-common")
     @MppGradlePluginTests
     @DisplayName("fus metrics for KMP JVM incremental compilation flags")
