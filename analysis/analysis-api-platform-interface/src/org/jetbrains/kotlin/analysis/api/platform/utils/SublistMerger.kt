@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.platform.utils
 
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 
 /**
@@ -25,7 +24,7 @@ public class SublistMerger<A : Any>(
 
     public inline fun <reified R : A> merge(create: (List<R>) -> A?) {
         val [specificElements, remainingElements] = this.remainingElements.partitionIsInstance<_, R>()
-        destination.addIfNotNull(create(specificElements))
+        create(specificElements)?.let { destination.add(it) }
         this.remainingElements = remainingElements
     }
 
