@@ -52,8 +52,8 @@ internal fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId)
  * property's initializer and so would force body resolution from inside a generation callback. A promoted
  * property always carries its parameter's name, and no two declarations of a class can share one.
  */
-@OptIn(DirectDeclarationsAccess::class)
 fun FirRegularClassSymbol.promotedPropertiesByName(): Map<Name, FirPropertySymbol> =
+    @OptIn(DirectDeclarationsAccess::class)
     declarationSymbols.asSequence()
         .filterIsInstance<FirPropertySymbol>()
         .filter { it.fromPrimaryConstructor }

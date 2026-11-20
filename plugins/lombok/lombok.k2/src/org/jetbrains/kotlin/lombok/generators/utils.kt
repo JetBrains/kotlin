@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
-import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
@@ -284,14 +283,13 @@ val FirNamedFunctionSymbol.hasCanEqualJvmSignature: Boolean
  * Members are requested only up to TYPES: this runs within the STATUS phase of [this], and a phase can only request a
  * lazy resolve into a strictly earlier one. Matching parameter types needs nothing later.
  */
-@OptIn(SymbolInternals::class)
 fun FirClassSymbol<*>.findSuperclassCanEqual(session: FirSession): FirNamedFunctionSymbol? {
     var superClassSymbol = getSuperClassSymbolOrAny(session)
     while (superClassSymbol != null && superClassSymbol.classId != StandardClassIds.Any) {
         var canEqual: FirNamedFunctionSymbol? = null
         superClassSymbol.processAllDeclaredCallables(session, memberRequiredPhase = FirResolvePhase.TYPES) {
             if (canEqual == null && it is FirNamedFunctionSymbol && it.hasCanEqualJvmSignature &&
-                it.fir.status.visibility != Visibilities.Private
+                @OptIn(SymbolInternals::class) it.fir.status.visibility != Visibilities.Private
             ) {
                 canEqual = it
             }
@@ -320,9 +318,8 @@ val FirValueParameterSymbol.isAnyOrJavaObjectType: Boolean
 val FirValueParameterSymbol.erasesToJavaObject: Boolean
     get() = matchesJavaObjectType { it.erasesToJavaObject }
 
-@OptIn(SymbolInternals::class)
 private inline fun FirValueParameterSymbol.matchesJavaObjectType(matchesResolvedType: (ConeKotlinType) -> Boolean): Boolean =
-    when (val typeRef = fir.returnTypeRef) {
+    when (@OptIn(SymbolInternals::class) val typeRef = fir.returnTypeRef) {
         is FirResolvedTypeRef -> matchesResolvedType(typeRef.coneType)
         is FirJavaTypeRef -> ((typeRef.type as? JavaClassifierType)?.classifier as? JavaClass)?.fqName ==
                 LombokNames.JAVA_OBJECT_ID.asSingleFqName()
@@ -336,11 +333,11 @@ private inline fun FirValueParameterSymbol.matchesJavaObjectType(matchesResolved
  * The bounds are read as they are rather than via `resolvedBounds`: this runs from `getCallableNamesForClass`,
  * which is too early to request a lazy resolve. A bound that is not resolved yet does not match.
  */
-@OptIn(SymbolInternals::class)
 private val ConeKotlinType.erasesToJavaObject: Boolean
     get() {
         val type = lowerBoundIfFlexible()
         return if (type is ConeTypeParameterType) {
+            @OptIn(SymbolInternals::class)
             type.lookupTag.typeParameterSymbol.fir.bounds.all { it is FirResolvedTypeRef && it.coneType.erasesToJavaObject }
         } else {
             type.isAnyOrNullableAny
@@ -419,8 +416,8 @@ fun remapTypeParameterBounds(
     }
 }
 
-@OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
 internal fun FirClassSymbol<*>.primaryConstructorParameters(): List<FirValueParameter>? {
+    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     val primaryConstructor = fir.declarations.filterIsInstance<FirConstructor>().firstOrNull { it.isPrimary } ?: return null
     return primaryConstructor.valueParameters.takeIf { parameters -> parameters.none { it.isVararg } }
 }

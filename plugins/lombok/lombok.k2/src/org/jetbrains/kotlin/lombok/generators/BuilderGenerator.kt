@@ -123,9 +123,8 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         superTypeRefs += listOf(session.builtinTypes.anyType)
     }
 
-    @OptIn(DirectDeclarationsAccess::class, SymbolInternals::class)
     override fun MutableList<BuilderDescription<Builder>>.addAnnotatedCallables(owner: FirRegularClassSymbol) {
-        for (declarationSymbol in owner.declarationSymbols) {
+        for (declarationSymbol in @OptIn(DirectDeclarationsAccess::class) owner.declarationSymbols) {
             if (declarationSymbol is FirFunctionSymbol<*>) {
                 // Left alone; `FirLombokBuilderChecker` reports it as
                 // `BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS`.
@@ -135,6 +134,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 // whatever the function returns, which need not be this class.
                 if (declarationSymbol is FirConstructorSymbol && !owner.canBeInstantiatedByBuilder) continue
                 getBuilder(declarationSymbol)?.let { builder ->
+                    @OptIn(SymbolInternals::class)
                     val items = calculateBuilderItems(owner.fir, declarationSymbol, emptyMap())
                     add(BuilderDescription(builder, declarationSymbol, items))
                 }

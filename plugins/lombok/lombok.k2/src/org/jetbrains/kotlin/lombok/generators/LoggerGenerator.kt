@@ -187,9 +187,9 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
      * can shadow the logger, and requesting a scope would run the other Lombok generators for this very class in the
      * middle of generating the members of its companion object.
      */
-    @OptIn(DirectDeclarationsAccess::class)
     private fun FirClassSymbol<*>.declaresConflictingLogProperty(): Boolean {
         val logFieldOrPropertyName = Name.identifier(session.lombokService.config.logFieldName)
+        @OptIn(DirectDeclarationsAccess::class)
         return declarationSymbols.any {
             it is FirVariableSymbol<*> && it.name == logFieldOrPropertyName && !it.hasReceiverOrContextParameters
         }
