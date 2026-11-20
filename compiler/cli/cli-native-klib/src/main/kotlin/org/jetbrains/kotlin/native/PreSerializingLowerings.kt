@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -29,7 +30,8 @@ fun <T : NativePhaseContext> PhaseEngine<T>.runPreSerializationLowerings(
 ): Fir2IrOutput {
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
-        configuration.languageVersionSettings
+        configuration.languageVersionSettings,
+        configuration.parseTreeKind,
     )
     val loweringContext = NativePreSerializationLoweringContext(
         fir2IrOutput.fir2irActualizedResult.irBuiltIns,

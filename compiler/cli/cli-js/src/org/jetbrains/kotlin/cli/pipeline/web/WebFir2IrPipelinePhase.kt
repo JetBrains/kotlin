@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -122,7 +123,11 @@ private fun runWebKlibCallCheckers(
     configuration: CompilerConfiguration,
     fir2IrActualizedResult: Fir2IrActualizedResult,
 ) {
-    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
+    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+        diagnosticReporter,
+        configuration.languageVersionSettings,
+        configuration.parseTreeKind,
+    )
 
     val irModuleFragment = fir2IrActualizedResult.irModuleFragment
 

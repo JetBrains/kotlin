@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.util.PhaseType
@@ -46,7 +46,8 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
         val diagnosticReporter = DiagnosticsCollectorImpl()
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter,
-            configuration.languageVersionSettings
+            configuration.languageVersionSettings,
+            configuration.parseTreeKind,
         )
         val outputFile = getAbiCheckKlibArtifactFile(module.name)
 

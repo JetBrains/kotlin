@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.util.sortDeclarationsInFunctionInterfaceFile
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -161,6 +162,7 @@ private fun LinkKlibsContext.createIrLinker(): KonanIrLinker {
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             config.configuration.diagnosticsCollector,
             config.languageVersionSettings,
+            config.configuration.parseTreeKind,
     )
 
     return KonanIrLinker(

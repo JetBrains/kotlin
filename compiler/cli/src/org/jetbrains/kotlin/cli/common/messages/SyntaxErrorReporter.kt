@@ -19,12 +19,17 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.InternalDiagnosticFactoryMethod
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
+import org.jetbrains.kotlin.diagnostics.SimpleDiagnosticContext
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
 object SyntaxErrorReporter {
     class SyntaxErrorReport(val isHasErrors: Boolean, val isAllErrorsAtEof: Boolean)
+
+    private val psiDiagnosticContext = SimpleDiagnosticContext(PsiParseTreeKind)
 
     fun reportSyntaxErrors(file: PsiElement, diagnosticCollector: BaseDiagnosticsCollector): SyntaxErrorReport {
         return reportSyntaxErrors(file) { element, message ->
@@ -33,7 +38,7 @@ object SyntaxErrorReporter {
                 KtRealPsiSourceElement(element),
                 message,
                 positioningStrategy = null,
-                DiagnosticContext.Default, // syntax errors couldn't be suppressed anyway
+                psiDiagnosticContext, // syntax errors can't be suppressed anyway
             )
             val context = object : DiagnosticContext {
                 override val containingFile: KtSourceFile
@@ -45,6 +50,9 @@ object SyntaxErrorReporter {
 
                 override val languageVersionSettings: LanguageVersionSettings
                     get() = LanguageVersionSettingsImpl.DEFAULT
+
+                override val parseTreeKind: ParseTreeKind
+                    get() = PsiParseTreeKind
             }
             diagnosticCollector.report(diagnostic, context)
         }

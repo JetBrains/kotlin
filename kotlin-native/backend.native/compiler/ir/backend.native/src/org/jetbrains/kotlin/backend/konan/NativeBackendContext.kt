@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -150,6 +151,7 @@ internal class NativeBackendContext(
             KtDiagnosticReporterWithImplicitIrBasedContext(
                     configuration.diagnosticsCollector,
                     config.languageVersionSettings,
+                    configuration.parseTreeKind,
             ),
             config.partialLinkageIssues,
     )

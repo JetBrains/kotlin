@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.RenderingInternals
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
+import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.util.Multimap
@@ -204,7 +206,11 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             .groupBy(keySelector = { it.start..it.end }, valueTransform = { it.tag })
             .mapValues { [_, value] -> value.toSet() }
 
-        val consumer = DebugDiagnosticConsumer(result, diagnosedRangesToDiagnosticNames)
+        val consumer = DebugDiagnosticConsumer(
+            result,
+            diagnosedRangesToDiagnosticNames,
+            SimpleDiagnosticContext(firFile.moduleData.session.syntaxComponent.parseTreeKind),
+        )
         val shouldRenderDynamic = DiagnosticsDirectives.MARK_DYNAMIC_CALLS in module.directives
 
         object : FirDefaultVisitorVoid() {
@@ -460,7 +466,8 @@ private val KtSourceElement.operatorSignIfBinary: KtSourceElement?
 
 private class DebugDiagnosticConsumer(
     private val result: MutableList<KtDiagnostic>,
-    private val diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
+    private val diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>,
+    private val diagnosticContext: DiagnosticContext,
 ) {
     private companion object {
         private val allowedKindsForDebugInfo = setOf(
@@ -506,7 +513,7 @@ private class DebugDiagnosticConsumer(
             factory.severity,
             factory,
             factory.defaultPositioningStrategy,
-            DiagnosticContext.Default,
+            diagnosticContext,
         )
 
         result.add(diagnostic)
@@ -534,7 +541,7 @@ private class DebugDiagnosticConsumer(
             factory.severity,
             factory,
             factory.defaultPositioningStrategy,
-            DiagnosticContext.Default,
+            diagnosticContext,
         )
 
         result.add(diagnostic)
@@ -774,6 +781,8 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         }
     }
 
+    private val psiDiagnosticContext = SimpleDiagnosticContext(PsiParseTreeKind)
+
     protected fun collectSyntaxDiagnostics(
         part: FirOutputPartForDependsOnModule,
         destination: ListMultimap<FirFile, DiagnosticWithKmpCompilationMode>,
@@ -786,7 +795,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         KtRealPsiSourceElement(it),
                         it.errorDescription,
                         positioningStrategy = null,
-                        DiagnosticContext.Default, // syntax errors couldn't be suppressed anyway
+                        psiDiagnosticContext, // syntax errors can't be suppressed anyway
                     )!!
                 }
             } else {

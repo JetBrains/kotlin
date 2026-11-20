@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -38,7 +39,8 @@ object WebKlibInliningPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifact, W
         processIncrementalCompilationRoundIfNeeded(configuration, firOutput, fir2IrResult)
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,
-            configuration.languageVersionSettings
+            configuration.languageVersionSettings,
+            configuration.parseTreeKind,
         )
 
         val transformedResult = if (configuration.wasmCompilation) {
