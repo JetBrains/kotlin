@@ -52,12 +52,6 @@ projectTests {
     withMockJdkRuntime()
     withStdlibCommon()
 
-    testTask {
-        filter {
-            excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
-        }
-    }
-
     testTask(taskName = "specConsistencyTests", skipInLocalBuild = false) {
         filter {
             includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
