@@ -76,4 +76,10 @@ void * _Nullable _kotlin_swift_List_get(void * self, int32_t index);
 
 void * _Nullable _kotlin_swift_MutableList_set(void * self, int32_t index, void * _Nullable element);
 
+void * _kotlin_swift_List_subList(void * self, int32_t fromIndex, int32_t toIndex);
+
+void * _kotlin_swift_SubList_set(void * self, int32_t index, void * _Nullable element);
+
+void * _kotlin_swift_SubList_setAll(void * self, int32_t index, void * elements);
+
 NS_ASSUME_NONNULL_END
