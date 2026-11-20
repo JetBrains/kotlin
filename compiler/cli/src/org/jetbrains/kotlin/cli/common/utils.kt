@@ -46,7 +46,7 @@ fun incrementalCompilationIsEnabled(arguments: CommonCompilerArguments): Boolean
 }
 
 fun incrementalCompilationIsEnabledForJs(arguments: CommonCompilerArguments): Boolean {
-    return arguments.incrementalCompilation ?: IncrementalCompilation.isEnabledForJs()
+    return arguments.incrementalCompilation ?: false
 }
 
 fun <F> checkKotlinPackageUsage(

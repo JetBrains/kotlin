@@ -22,14 +22,9 @@ import java.util.List;
 
 public class IncrementalCompilation {
     public static final String INCREMENTAL_COMPILATION_JVM_PROPERTY = "kotlin.incremental.compilation";
-    public static final String INCREMENTAL_COMPILATION_JS_PROPERTY = "kotlin.incremental.compilation.js";
 
     public static boolean isEnabledForJvm() {
         return Boolean.valueOf(System.getProperty(INCREMENTAL_COMPILATION_JVM_PROPERTY));
-    }
-
-    public static boolean isEnabledForJs() {
-        return Boolean.valueOf(System.getProperty(INCREMENTAL_COMPILATION_JS_PROPERTY));
     }
 
     @Deprecated
@@ -39,15 +34,8 @@ public class IncrementalCompilation {
     }
 
     @Deprecated
-    @TestOnly
-    public static void setIsEnabledForJs(boolean value) {
-        System.setProperty(INCREMENTAL_COMPILATION_JS_PROPERTY, String.valueOf(value));
-    }
-
-    @Deprecated
     public static void toJvmArgs(List<String> jvmArgs) {
         if (isEnabledForJvm()) addJvmSystemFlag(jvmArgs, INCREMENTAL_COMPILATION_JVM_PROPERTY);
-        if (isEnabledForJs()) addJvmSystemFlag(jvmArgs, INCREMENTAL_COMPILATION_JS_PROPERTY);
     }
 
     private static void addJvmSystemFlag(List<String> jvmArgs, String name) {
