@@ -27,6 +27,14 @@ fun main(args: Array<String>) {
                 modelForDirectoryBasedTest("incremental/multiModule", "common", extension = null, excludeParentDirs = true)
             }
 
+            testClass<AbstractIncrementalJsKlibMultiModuleWithKlibSnapshotsCompilerRunnerTest> {
+                modelForDirectoryBasedTest(
+                    "incremental/multiModule", "common", extension = null, excludeParentDirs = true,
+                    // Klib snapshots do not track inline function bodies yet
+                    excludedPattern = "^(inlineFunctionInlined|inlineFunctionTwoPackageParts|transitiveInlining)$",
+                )
+            }
+
             // TODO: https://youtrack.jetbrains.com/issue/KT-61602/JS-K2-ICL-Fix-muted-tests
             testClass<AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
