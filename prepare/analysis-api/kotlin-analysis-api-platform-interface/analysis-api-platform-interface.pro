@@ -42,8 +42,5 @@
 # From KotlinPackagePartProviderFactory
 -dontwarn org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
-# From KotlinFileBasedDeclarationProvider, SublistMerger and 'mergeSpecificProviders'
--dontwarn org.jetbrains.kotlin.utils.CollectionsKt
-
 # From projectStructure/utils.kt
 -dontwarn org.jetbrains.kotlin.utils.SortUtilsKt

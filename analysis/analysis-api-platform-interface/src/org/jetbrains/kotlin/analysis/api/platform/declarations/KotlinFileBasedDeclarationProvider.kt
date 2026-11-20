@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 @KaPlatformInterface
 public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) : KotlinDeclarationProvider {
@@ -77,7 +76,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
                 }
 
                 if (chunks.size == 1) {
-                    yieldIfNotNull(element)
+                    yield(element)
                     continue
                 }
 
