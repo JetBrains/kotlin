@@ -1,31 +1,31 @@
 FILE fqName:<root> fileName:/instanceOfUnionType.kt
   PROPERTY name:x1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Any visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] visibility:private [final,static]
       EXPRESSION_BODY
         CONST String type=kotlin.String value=""
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL returnType:kotlin.Any
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL returnType:kotlin.Any[kotlin.String | <root>.E1 | <root>.E2]
       correspondingProperty: PROPERTY name:x1 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-x1> (): kotlin.Any declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Any visibility:private [final,static]' type=kotlin.Any origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-x1> (): kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] visibility:private [final,static]' type=kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] origin=null
   PROPERTY name:x2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Any visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.E2' type=<root>.E2 origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x2> visibility:public modality:FINAL returnType:kotlin.Any
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x2> visibility:public modality:FINAL returnType:kotlin.Any[kotlin.String | <root>.E1 | <root>.E2]
       correspondingProperty: PROPERTY name:x2 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-x2> (): kotlin.Any declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Any visibility:private [final,static]' type=kotlin.Any origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-x2> (): kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] visibility:private [final,static]' type=kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] origin=null
   PROPERTY name:x3 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Any? visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] visibility:private [final,static]
       EXPRESSION_BODY
         CONST Null type=kotlin.Nothing? value=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x3> visibility:public modality:FINAL returnType:kotlin.Any?
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x3> visibility:public modality:FINAL returnType:kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2]
       correspondingProperty: PROPERTY name:x3 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-x3> (): kotlin.Any? declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Any? visibility:private [final,static]' type=kotlin.Any? origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-x3> (): kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] visibility:private [final,static]' type=kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] origin=null
   CLASS CLASS name:E1 modality:FINAL visibility:public superTypes:[kotlin.RichError]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.E1
     CONSTRUCTOR visibility:public returnType:<root>.E1 [primary]
@@ -123,53 +123,53 @@ FILE fqName:<root> fileName:/instanceOfUnionType.kt
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: BLOCK type=kotlin.Boolean origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any [val]
-              CALL 'public final fun <get-x1> (): kotlin.Any declared in <root>' type=kotlin.Any origin=GET_PROPERTY
+            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] [val]
+              CALL 'public final fun <get-x1> (): kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] declared in <root>' type=kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] origin=GET_PROPERTY
             WHEN type=kotlin.Boolean origin=OROR
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.E1
-                  GET_VAR 'val tmp_2: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_2: kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] origin=null
                 then: CONST Boolean type=kotlin.Boolean value=true
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.E2
-                  GET_VAR 'val tmp_2: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_2: kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] origin=null
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL 1"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: BLOCK type=kotlin.Boolean origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any [val]
-              CALL 'public final fun <get-x2> (): kotlin.Any declared in <root>' type=kotlin.Any origin=GET_PROPERTY
+            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] [val]
+              CALL 'public final fun <get-x2> (): kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] declared in <root>' type=kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] origin=GET_PROPERTY
             WHEN type=kotlin.Boolean origin=OROR
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-                  GET_VAR 'val tmp_3: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_3: kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] origin=null
                 then: CONST Boolean type=kotlin.Boolean value=true
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.E1
-                  GET_VAR 'val tmp_3: kotlin.Any declared in <root>.box' type=kotlin.Any origin=null
+                  GET_VAR 'val tmp_3: kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] declared in <root>.box' type=kotlin.Any[kotlin.String | <root>.E1 | <root>.E2] origin=null
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL 1"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: BLOCK type=kotlin.Boolean origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Any? [val]
-              CALL 'public final fun <get-x3> (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=GET_PROPERTY
+            VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] [val]
+              CALL 'public final fun <get-x3> (): kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] declared in <root>' type=kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] origin=GET_PROPERTY
             WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: WHEN type=kotlin.Boolean origin=ANDAND
                   BRANCH
                     if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Nothing?
-                      GET_VAR 'val tmp_4: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+                      GET_VAR 'val tmp_4: kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] declared in <root>.box' type=kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] origin=null
                     then: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.E1
-                      GET_VAR 'val tmp_4: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+                      GET_VAR 'val tmp_4: kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] declared in <root>.box' type=kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] origin=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CONST Boolean type=kotlin.Boolean value=false
                 then: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.E2
-                  GET_VAR 'val tmp_4: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+                  GET_VAR 'val tmp_4: kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] declared in <root>.box' type=kotlin.Any?[kotlin.String? | <root>.E1 | <root>.E2] origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
