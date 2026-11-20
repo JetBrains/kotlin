@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.incremental.libraryDiff.klib
 
+import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSymbol
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.LookupSymbolSet
 import org.jetbrains.kotlin.incremental.classpathDiff.toLookupSymbol
 import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
@@ -66,4 +68,14 @@ internal object KlibSnapshotShrinker {
     private fun KlibSnapshot.classIds(): List<ClassId> = when (this) {
         is PackageFragmentSnapshot -> classInfos.map { it.classId }
     }
+}
+
+/** Shrinks the current klib snapshot against the lookups of this build and saves it for the next build. */
+internal fun shrinkAndSaveKlibSnapshot(
+    classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
+    lookupStorage: LookupStorage,
+    lazyKlibSnapshot: LazyKlibSnapshot,
+    reporter: ClasspathSnapshotBuildReporter,
+) {
+    TODO("KT-90559 step 1")
 }

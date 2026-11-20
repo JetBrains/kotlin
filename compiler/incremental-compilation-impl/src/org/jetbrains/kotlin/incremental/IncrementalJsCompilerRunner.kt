@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.*
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -23,12 +20,16 @@ import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.dirtyFiles.KlibSnapshotBasedImpactDeterminer
 import org.jetbrains.kotlin.incremental.dirtyFiles.getClasspathChanges
 import org.jetbrains.kotlin.incremental.dirtyFiles.getRemovedClassesChanges
 import org.jetbrains.kotlin.incremental.js.*
+import org.jetbrains.kotlin.incremental.libraryDiff.klib.LazyKlibSnapshot
+import org.jetbrains.kotlin.incremental.libraryDiff.klib.shrinkAndSaveKlibSnapshot
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
@@ -39,12 +40,13 @@ fun makeJsIncrementally(
     cachesDir: File,
     sourceRoots: Iterable<File>,
     args: K2JSCompilerArguments,
-    buildHistoryFile: File,
+    buildHistoryFile: File?,
     messageCollector: MessageCollector = MessageCollector.NONE,
     reporter: ICReporter = DoNothingICReporter,
     scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     modulesApiHistory: ModulesApiHistory = EmptyModulesApiHistory,
     providedChangedFiles: ChangedFiles? = null,
+    classpathChanges: ClasspathChanges = ClasspathChanges.NotAvailableForJSCompiler,
 ) {
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
         .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
@@ -56,6 +58,7 @@ fun makeJsIncrementally(
             buildHistoryFile = buildHistoryFile,
             modulesApiHistory = modulesApiHistory,
             scopeExpansion = scopeExpansion,
+            classpathChanges = classpathChanges,
         )
         compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles ?: ChangedFiles.DeterminableFiles.ToBeComputed)
     }
@@ -88,6 +91,7 @@ class IncrementalJsCompilerRunner(
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     pluginsLoader: PluginsLoader? = null,
     override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
+    private val classpathChanges: ClasspathChanges = ClasspathChanges.NotAvailableForJSCompiler,
 ) : IncrementalCompilerRunner<CommonJsAndWasmCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
@@ -100,13 +104,30 @@ class IncrementalJsCompilerRunner(
     override val shouldTrackChangesInLookupCache
         get() = false
 
+    private val lazyKlibSnapshot: LazyKlibSnapshot? =
+        when (classpathChanges) {
+            is ClasspathChanges.ClasspathSnapshotEnabled -> {
+                LazyKlibSnapshot(
+                    classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles,
+                    classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
+                    ClasspathSnapshotBuildReporter(reporter),
+                )
+            }
+            else -> null
+        }
+
+    // With klib snapshots, library changes are computed from the snapshots
     override val shouldTrackLibrarySetChanges
-        get() = true
+        get() = lazyKlibSnapshot == null
+
 
     override val shouldStoreFullFqNamesInLookupCache
         get() = false
 
-    override fun createCacheManager(icContext: IncrementalCompilationContext, args: CommonJsAndWasmCompilerArguments): IncrementalJsCachesManager {
+    override fun createCacheManager(
+        icContext: IncrementalCompilationContext,
+        args: CommonJsAndWasmCompilerArguments,
+    ): IncrementalJsCachesManager {
         return IncrementalJsCachesManager(icContext, KlibMetadataSerializerProtocol, cacheDirectory)
     }
 
@@ -123,29 +144,34 @@ class IncrementalJsCompilerRunner(
         args: CommonJsAndWasmCompilerArguments,
         messageCollector: MessageCollector,
     ): CompilationMode {
-        if (buildHistoryFile == null) {
-            error("The build is configured to use the build-history based IC approach, but doesn't specify the buildHistoryFile")
+        val libraryChanges = if (lazyKlibSnapshot == null) {
+            if (buildHistoryFile == null) {
+                error("The build is configured to use the build-history based IC approach, but doesn't specify the buildHistoryFile")
+            }
+            if (!buildHistoryFile.isFile) {
+                return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
+            }
+            val lastBuildInfo =
+                BuildInfo.read(lastBuildInfoFile, messageCollector)
+                    ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
+
+            val libs = parseLibrariesArgument(args.libraries)
+            //TODO(valtman) check for JS
+            getClasspathChanges(libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
+        } else {
+            KlibSnapshotBasedImpactDeterminer(caches, classpathChanges, lazyKlibSnapshot, reporter).determineChangedAndImpactedSymbols()
         }
-        if (!buildHistoryFile.isFile) {
-            return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
-        }
-        val lastBuildInfo =
-            BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
 
         val dirtyFiles = dirtyFilesProvider.getInitializedDirtyFiles(caches, changedFiles)
 
-        val libs = parseLibrariesArgument(args.libraries)
-        //TODO(valtman) check for JS
-        val classpathChanges = getClasspathChanges(libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
-
-        when (classpathChanges) {
+        when (libraryChanges) {
             is ChangesEither.Unknown -> {
-                reporter.info { "Could not get classpath's changes: ${classpathChanges.reason}" }
-                return CompilationMode.Rebuild(classpathChanges.reason)
+                reporter.info { "Could not get classpath's changes: ${libraryChanges.reason}" }
+                return CompilationMode.Rebuild(libraryChanges.reason)
             }
             is ChangesEither.Known -> {
-                dirtyFiles.addByDirtySymbols(classpathChanges.lookupSymbols)
-                dirtyFiles.addByDirtyClasses(classpathChanges.fqNames)
+                dirtyFiles.addByDirtySymbols(libraryChanges.lookupSymbols)
+                dirtyFiles.addByDirtyClasses(libraryChanges.fqNames)
             }
         }
 
@@ -158,6 +184,17 @@ class IncrementalJsCompilerRunner(
             return CompilationMode.Rebuild(BuildAttribute.DEP_CHANGE_REMOVED_ENTRY)
         }
         return CompilationMode.Incremental(dirtyFiles)
+    }
+
+    override fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: IncrementalJsCachesManager) {
+        super.performWorkAfterCompilation(compilationMode, exitCode, caches)
+
+        // No need to shrink and save the klib snapshot if exitCode != ExitCode.OK as the task will fail anyway
+        if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled && lazyKlibSnapshot != null && exitCode == ExitCode.OK) {
+            reporter.measure(SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
+                shrinkAndSaveKlibSnapshot(classpathChanges, caches.lookupCache, lazyKlibSnapshot, ClasspathSnapshotBuildReporter(reporter))
+            }
+        }
     }
 
     override fun makeServices(
