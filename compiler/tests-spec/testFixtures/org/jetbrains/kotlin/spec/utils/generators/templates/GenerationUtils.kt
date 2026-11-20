@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.spec.utils.generators.templates
 
-import org.jetbrains.kotlin.spec.utils.tasks.generateTests
-
 fun generationSpecTestDataConfigGroup(regenerateTests: Boolean = false, body: () -> Unit) {
     body()
-    if (regenerateTests) generateTests()
 }
 
 fun generationLinkedSpecTestDataConfig(body: GenerationLinkedSpecTestDataConfig.() -> Unit) =
