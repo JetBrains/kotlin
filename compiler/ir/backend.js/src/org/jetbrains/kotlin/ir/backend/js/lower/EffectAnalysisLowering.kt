@@ -48,7 +48,8 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
                 dependOn(it)
             }
 
-        fun maybeVisit(owner: IrFunction): Effects {
+        fun maybeVisit(ownerOrFakeOverride: IrFunction): Effects {
+            val owner = ownerOrFakeOverride.resolveFakeOverrideOrSelf()
             owner.effects?.let { return it }
             val effectsAnnotation = owner.getAnnotation(EffectAnalysisClassIds.annotation.asSingleFqName())
             if (effectsAnnotation != null) {
@@ -172,15 +173,34 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             }
         }
 
+        override fun visitDynamicOperatorExpression(
+            expression: IrDynamicOperatorExpression,
+            data: Effects.Lazy,
+        ) {
+            if (
+                expression.operator.isAssignmentOperator
+                || expression.operator == IrDynamicOperator.INVOKE
+                || expression.operator == IrDynamicOperator.ARRAY_ACCESS
+            ) {
+                data.dependOnNew(expression) {
+                    if (expression.operator == IrDynamicOperator.ARRAY_ACCESS && expression.arguments.size == 1) {
+                        it.setAtLeast(EffectsKind.READ)
+                    } else {
+                        it.setAtLeast(EffectsKind.WRITE)
+                    }
+                }
+            }
+            super.visitDynamicOperatorExpression(expression, data)
+        }
+
         val IrFunction.isFinal: Boolean
             get() {
                 if (this.isStatic) return true
                 if (this !is IrSimpleFunction) return true
-                if (this.modality == Modality.FINAL) return true
-                (this.parent as? IrClass)?.let {
-                    return it.modality == Modality.FINAL
+                this.parentClassOrNull?.let {
+                    if (it.modality == Modality.FINAL) return true
                 }
-                return true
+                return this.modality == Modality.FINAL
             }
     }
 }
