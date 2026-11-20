@@ -32,13 +32,6 @@ KtArrayAccessExpression(178,195): 'b[x, x as String]'
         callableId = /B.get
       typeArgumentsMapping = {}
       valueArgumentMapping = {
-        x -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Any
-          symbol = i: kotlin.Any
-          contextParameters = []
-          callableId = null),
         x as String -> (KaVariableSignature:
           name = j
           receiverType = null
