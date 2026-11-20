@@ -376,7 +376,6 @@ include(
     ":kotlin-reflect",
     ":compiler:tests-java8",
     ":compiler:tests-different-jdk",
-    ":compiler:tests-spec",
     ":generators",
     ":generators:test-generator",
     ":generators:tree-generator-common",
