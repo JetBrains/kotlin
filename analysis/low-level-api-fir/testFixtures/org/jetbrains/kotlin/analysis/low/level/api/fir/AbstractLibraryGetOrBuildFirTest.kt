@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.FirRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.firRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.LLFirSessionCache
@@ -16,7 +17,9 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompilerDirectory
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -29,7 +32,15 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator()
 
     override fun configureTest(builder: TestConfigurationBuilder) {
-        val renderingOptionsBuilder = FirRenderingOptions.Builder().apply { renderKtText = true }
+        val renderingOptionsBuilder = FirRenderingOptions.Builder().apply {
+            renderKtText = true
+
+            // The FIR source kind of a library declaration only depends on the test mode: the IDE mode builds FIR from stubs, which
+            // have a source, while the Standalone mode deserializes FIR from library files without one. `checkSourceKind` checks it
+            // in all tests, and it's only rendered for the tests that check where library declarations come from, so that the
+            // Standalone tests share the results of the IDE mode tests otherwise.
+            renderSourceKind = false
+        }
 
         builder.forTestsMatching("*/js/*") {
             this.defaultsProviderBuilder.targetPlatform = JsPlatforms.defaultJsPlatform
@@ -44,6 +55,7 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
         builder.forTestsMatching("*/containerSource/*") {
             renderingOptionsBuilder.renderKtFileName = true
             renderingOptionsBuilder.renderContainerSource = true
+            renderingOptionsBuilder.renderSourceKind = true
         }
         super.configureTest(builder)
         with(builder) {
@@ -62,7 +74,21 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
         val session = LLFirSessionCache.getInstance(mainModule.ktModule.project).getSession(ktModule, preferBinary = true)
         val fir = FirDeclarationForCompiledElementSearcher(session).findNonLocalDeclaration(declaration)
 
+        checkSourceKind(fir, testServices)
         testServices.assertions.assertEqualsToTestOutputFile(renderActualFir(fir, declaration, testServices.firRenderingOptions))
+    }
+
+    /**
+     * Checks that the source kind of [fir] is the one expected in the test mode, as most tests don't render it.
+     */
+    private fun checkSourceKind(fir: FirDeclaration, testServices: TestServices) {
+        val expectedSourceKind = when (configurator.analysisApiMode) {
+            AnalysisApiMode.Ide -> KtRealSourceElementKind
+            AnalysisApiMode.Standalone -> null
+        }
+        testServices.assertions.assertEquals(expectedSourceKind, fir.source?.kind) {
+            "Unexpected FIR source kind of a library declaration in ${configurator.analysisApiMode} mode"
+        }
     }
 
     private fun getElementToSearch(ktFile: KtFile, moduleStructure: TestModuleStructure): KtDeclaration? {

@@ -4,7 +4,6 @@ public final class Explicit public constructor() {
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Explicit : R|kotlin/Any| {

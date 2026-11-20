@@ -5,7 +5,6 @@ public abstract class Foo<T : Foo.T> public constructor() {
     }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public abstract [ResolvedTo(BODY_RESOLVE)] class Foo<[ResolvedTo(BODY_RESOLVE)] T : R|Foo.T|> : R|kotlin/Any| {

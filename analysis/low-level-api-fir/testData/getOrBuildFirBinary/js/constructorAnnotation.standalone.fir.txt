@@ -3,7 +3,6 @@ KT element text:
 public final class Cls @Y public constructor() {
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Cls : R|kotlin/Any| {

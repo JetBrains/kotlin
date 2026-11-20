@@ -2,7 +2,6 @@ KT element: KtProperty
 KT element text:
 internal var internalVariable2: kotlin.String /* compiled code */
 FIR element: FirPropertyImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 internal final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var internalVariable2: R|kotlin/String|

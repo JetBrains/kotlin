@@ -4,7 +4,6 @@ KT element text:
 internal final class Foo public constructor() {
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 @R|kotlin/PublishedApi|() internal final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false, LazyPublishedApiEffectiveVisibilityKey=public] class Foo : R|kotlin/Any| {

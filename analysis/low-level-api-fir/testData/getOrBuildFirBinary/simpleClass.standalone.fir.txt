@@ -4,7 +4,6 @@ public final class FooBar public constructor() {
     public final fun doSmth(): kotlin.Unit { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class FooBar : R|kotlin/Any| {

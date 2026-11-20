@@ -13,7 +13,6 @@ public interface X {
     }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public abstract [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=true] interface X : R|kotlin/Any| {
