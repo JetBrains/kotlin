@@ -87,6 +87,17 @@ def detect_vsdevcmd():
     return vsdevcmd_path
 
 
+def distribution_cmake_flags(components: List[str] = None) -> List[str]:
+    if not components:
+        return []
+    # These links are actually copies on Windows, so limit them to save space.
+    return [
+        '-DLLVM_DISTRIBUTION_COMPONENTS=' + ';'.join(components),
+        '-DCLANG_LINKS_TO_CREATE=clang++',
+        '-DLLD_SYMLINKS_TO_CREATE=ld.lld',
+    ]
+
+
 def construct_cmake_flags(
         bootstrap_llvm_path: str = None,
         install_path: str = None,
@@ -121,11 +132,7 @@ def construct_cmake_flags(
         cmake_args.append("-DLLVM_ENABLE_ZLIB=FORCE_ON")
 
     if not building_bootstrap:
-        if distribution_components:
-            cmake_args.append('-DLLVM_DISTRIBUTION_COMPONENTS=' + ';'.join(distribution_components))
-            # These links are actually copies on windows, so they're wasting precious disk space.
-            cmake_args.append("-DCLANG_LINKS_TO_CREATE=clang++")
-            cmake_args.append("-DLLD_SYMLINKS_TO_CREATE=ld.lld")
+        cmake_args.extend(distribution_cmake_flags(distribution_components))
 
         if host_is_windows():
             # CMake is not tolerant to backslashes

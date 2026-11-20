@@ -87,7 +87,7 @@ options are mutually exclusive; earlier stages keep their original configuration
 2. Build Kotlin/Native against it, including the LLVM code linked into both JNI libraries.
 3. Compile a training project with that compiler.
 4. Merge the training profiles into one shared IR profile.
-5. Build and package optimized LLVM with ThinLTO and that profile.
+5. Build optimized LLVM with ThinLTO and that profile, then package both dev and essentials distributions.
 
 Configure the Kotlin/Native build prerequisites first (see
 [BUILDING_LLVM.md](../../BUILDING_LLVM.md)). The script locates the Kotlin checkout
@@ -130,17 +130,17 @@ using the bootstrap's `llvm-profdata` without `--sparse`.
 its default LLVM source and builds the bootstrap. Use matching, fixed LLVM sources
 and bootstrap for reproducible builds.
 
-The final LLVM package defaults to essentials. Like `package.py`, the script
-accepts `--build-targets` and `--distribution-components`, each followed by one or
-more values. The defaults are:
+One final LLVM build produces both `llvm-dev/` (full development distribution)
+and `llvm/` (essentials), each with a `.tar.gz` archive and `.sha256` checksum,
+alongside `common.profdata`. `--distribution-components` controls only essentials
+and defaults to:
 
 ```shell
---build-targets install-distribution \
 --distribution-components clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers
 ```
 
-Override the component list as needed, or use `--build-targets install` for a full
-development distribution.
+Kotlin/Native is built only for training. Build the final Kotlin/Native
+distribution against the optimized LLVM separately.
 
 Following Kotlin Compiler Plugins in Kotlin repo are packaged and used while building
 the training project via init script.

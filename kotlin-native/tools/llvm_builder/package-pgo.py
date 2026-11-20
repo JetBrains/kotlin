@@ -12,7 +12,10 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
+
+import package as llvm_package
 
 
 # newer xcode's libc++ versions reject parts of LLVM 21.1.6's sources.
@@ -83,11 +86,10 @@ def build_parser():
         "--xcode-llvm-version", default=DEFAULT_LLVM_XCODE_VERSION,
         help="Xcode version used for the LLVM builds; its macOS SDK must be compatible with the LLVM sources",
     )
-    parser.add_argument("--build-targets", nargs="+", default=["install-distribution"], help="Final LLVM install targets")
     parser.add_argument(
         "--distribution-components", nargs="+",
         default=["clang", "libclang", "lld", "llvm-cov", "llvm-profdata", "llvm-ar", "clang-resource-headers"],
-        help="Final LLVM distribution components",
+        help="Essentials distribution components; the dev distribution always uses the full install",
     )
     parser.add_argument("--save-temporary-files", action="store_true", help="Keep intermediate builds, training project and profiles")
     return parser
@@ -96,6 +98,43 @@ def build_parser():
 def run(command, cwd=None, env=None):
     print("Running:", command, flush=True)
     subprocess.run(command, cwd=cwd, env={**os.environ, **(env or {})}, check=True)
+
+
+def wait_for_gradle_daemons(gradle_home, timeout=120):
+    """Wait for this isolated home's single-use JVMs to flush native profiles."""
+    pids = {int(log.name.split("-")[1].split(".")[0]) for log in (gradle_home / "daemon").glob("*/daemon-*.out.log")}
+    marker = f" KONAN_PGO_BUILD_PROCESS_MARKER={gradle_home} "
+    deadline = time.monotonic() + timeout
+    while pids:
+        result = subprocess.run(
+            ["ps", "eww", "-p", ",".join(map(str, sorted(pids))), "-o", "pid=,command="],
+            capture_output=True, text=True,
+        )
+        if result.returncode not in (0, 1):
+            raise RuntimeError(f"Cannot check Gradle daemon shutdown: {result.stderr}")
+        # Log PIDs may have been reused. Only wait for this build's marker.
+        pids = {int(line.split()[0]) for line in result.stdout.splitlines()
+                if marker in f" {line} "}
+        if not pids:
+            return
+        if time.monotonic() >= deadline:
+            raise RuntimeError(f"Gradle daemons have not exited; profiles are not ready: {sorted(pids)}")
+        time.sleep(0.1)
+
+
+def package_essentials(build_dir, dev_llvm, essentials_llvm, components, env):
+    staging = build_dir.parent / "essentials-install"
+    staging.mkdir()
+    # Apply package.py's essentials settings only after the full dev install.
+    run([
+        "cmake", build_dir, *llvm_package.distribution_cmake_flags(components),
+    ], env=env)
+    # DESTDIR stages the configured install prefix without modifying the dev package.
+    run(["ninja", "-C", build_dir, "install-distribution"], env={**env, "DESTDIR": str(staging)})
+    staged_install = staging / dev_llvm.relative_to(dev_llvm.anchor)
+    staged_install.rename(essentials_llvm)
+    archive = llvm_package.create_archive(str(essentials_llvm), str(essentials_llvm))
+    llvm_package.create_checksum_file(archive, f"{archive}.sha256")
 
 
 def seed_gradle_home(source, destination):
@@ -204,7 +243,10 @@ def main():
     # Each stage must exit its JVM and flush its profiles before the next stage.
     gradle_opts = os.environ.get("GRADLE_OPTS", "").strip()
     gradle_opts = f"{gradle_opts} -Dorg.gradle.daemon=false -Dorg.gradle.configuration-cache=false".strip()
-    gradle_env = {"GRADLE_USER_HOME": str(gradle_home), "GRADLE_OPTS": gradle_opts}
+    gradle_env = {
+        "GRADLE_USER_HOME": str(gradle_home), "GRADLE_OPTS": gradle_opts,
+        "KONAN_PGO_BUILD_PROCESS_MARKER": str(gradle_home), # only used for identifying the build process
+    }
 
     try:
         seed_gradle_home(gradle_seed, gradle_home)
@@ -250,6 +292,7 @@ def main():
             **gradle_env,
             "LLVM_PROFILE_FILE": str(work_dir / "build-raw/%m-%p.profraw"),
         })
+        wait_for_gradle_daemons(gradle_home)
         shutil.copytree(kotlin_repo / "kotlin-native/dist", training_compiler, symlinks=True)
 
         prepare_local_plugins(kotlin_repo, gradle_home)
@@ -266,6 +309,8 @@ def main():
             "ORG_GRADLE_PROJECT_kotlin.native.home": str(training_compiler),
         })
 
+        # Wait for daemon processes to exit and finish writing profiles before merging.
+        wait_for_gradle_daemons(gradle_home)
         print("4/5: Merge training profiles", flush=True)
         raw_profiles = sorted((work_dir / "training-raw").glob("*.profraw"))
         if not raw_profiles:
@@ -280,21 +325,24 @@ def main():
                 if path.exists():
                     shutil.rmtree(path)
 
-        print("5/5: Build and package optimized LLVM", flush=True)
+        print("5/5: Build optimized LLVM and package dev and essentials distributions", flush=True)
+        dev_llvm = output / "llvm-dev"
         package_args = [
             "--llvm-sources", llvm_sources,
             "--stage0", stage0,
             "--num-stages", "1",
             "--lto", "thin",
             "--pgo-profile", profile,
-            "--install-path", output / "llvm",
-            "--build-targets", *args.build_targets,
-            "--distribution-components", *args.distribution_components,
+            "--install-path", dev_llvm,
+            # Both installs must finish before the outer workflow removes the build directory.
+            "--save-temporary-files",
             "--pack",
         ]
-        if args.save_temporary_files:
-            package_args.append("--save-temporary-files")
         run([sys.executable, package_script, *package_args], cwd=work_dir / "optimized", env={"DEVELOPER_DIR": str(llvm_xcode)})
+        package_essentials(
+            work_dir / "optimized/llvm-stage-1-build", dev_llvm, output / "llvm", args.distribution_components,
+            {"DEVELOPER_DIR": str(llvm_xcode)},
+        )
     # Failed runs retain unfinished intermediates for diagnostics. Cleanup below runs only on success.
     except BaseException:
         print(f"Unfinished intermediates retained at: {work_dir}", file=sys.stderr)
