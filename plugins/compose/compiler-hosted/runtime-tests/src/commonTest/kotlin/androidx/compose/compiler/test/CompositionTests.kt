@@ -29,6 +29,24 @@ import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotSame
+import kotlin.test.assertSame
+
+// Must precede CompositionTests: the runtime-test class loader defines classes in generation order and
+// has no findClass, so an implementation generated above would not resolve its supertype
+fun interface FunPresenter {
+    @Composable
+    fun Content()
+}
+
+fun interface FunConsumer<T> {
+    @Composable
+    fun consume(t: T)
+}
+
+fun interface FunListener {
+    fun onEvent()
+}
 
 @MustRunAlways
 class CompositionTests {
@@ -320,6 +338,213 @@ class CompositionTests {
         advance()
         assertEquals(2, innerCounter)
         assertEquals(2, counter)
+    }
+
+    // A SAM conversion in a composable is remembered like a lambda, otherwise the consumer never skips
+    @Test
+    fun funInterfaceConversionIsMemoized() = compositionTest {
+        val seen = mutableListOf<FunPresenter>()
+        val trigger = mutableIntStateOf(0)
+
+        compose {
+            trigger.value // read to restart this scope
+            // captured: a non-memoized conversion allocates every time; remembered: nothing invalidates
+            val captured = remember { "Hello" }
+            seen += FunPresenter { Text(captured) }
+        }
+        assertEquals(1, seen.size)
+
+        trigger.value++
+        advance()
+        assertEquals(2, seen.size)
+        assertSame(seen[0], seen[1])
+    }
+
+    // `@DontMemoize` keeps the conversion out of memoization, as for a lambda: a new instance every time
+    @Test
+    fun funInterfaceConversionWithDontMemoizeIsNotMemoized() = compositionTest {
+        val seen = mutableListOf<FunPresenter>()
+        val trigger = mutableIntStateOf(0)
+
+        compose {
+            trigger.value // read to restart this scope
+            val captured = remember { "Hello" }
+            seen += FunPresenter @DontMemoize { Text(captured) }
+        }
+        assertEquals(1, seen.size)
+
+        trigger.value++
+        advance()
+        assertEquals(2, seen.size)
+        assertNotSame(seen[0], seen[1])
+    }
+
+    // Same for a non-composable fun interface
+    @Test
+    fun samConversionWithDontMemoizeIsNotMemoized() = compositionTest {
+        val seen = mutableListOf<FunListener>()
+        val trigger = mutableIntStateOf(0)
+
+        compose {
+            trigger.value // read to restart this scope
+            val captured = remember { "Hello" }
+            seen += FunListener @DontMemoize { captured.length }
+        }
+        assertEquals(1, seen.size)
+
+        trigger.value++
+        advance()
+        assertEquals(2, seen.size)
+        assertNotSame(seen[0], seen[1])
+    }
+
+    // A conversion in an inline function is copied to each call site, with the reified type substituted
+    // and the crossinline lambda inlined into the implementation
+    @Test
+    fun funInterfaceInInlineFunction() = compositionTest {
+        compose {
+            makeReifiedPresenter<String>().Content()
+            makeDecoratedPresenter { "decorated" }.Content()
+        }
+        validate {
+            Text("String")
+            Text("decorated")
+        }
+    }
+
+    // `FunConsumer<in String>`: the generated `consume` takes `Any`, the body uses `String`, so the
+    // implementation narrows it, memoized or not
+    @Test
+    fun funInterfaceInVarianceNarrowsParameter() = compositionTest {
+        val outer: FunConsumer<in String> = FunConsumer { Text(it.uppercase()) }
+        compose {
+            val inner: FunConsumer<in String> = FunConsumer { Text(it.lowercase()) }
+            outer.consume("Hello")
+            inner.consume("World")
+        }
+        validate {
+            Text("HELLO")
+            Text("world")
+        }
+    }
+
+    // A conversion in a property initializer captures `this` and a constructor parameter, which
+    // memoization doesn't see as captures. Switching to another holder must still show the new one
+    @Test
+    fun funInterfaceInPropertyInitializerTellsInstancesApart() = compositionTest {
+        var holder by mutableStateOf(PresenterHolder("a", "b"))
+
+        compose { ShowPresenters(holder) }
+        validate {
+            Text("a")
+            Text("b")
+        }
+
+        holder = PresenterHolder("c", "d")
+        advance()
+        validate {
+            Text("c")
+            Text("d")
+        }
+    }
+
+    // The caller can't tell if the instance changed (it comes from `remember`), so the implementation
+    // compares it like a method compares `this`: skips while it's the same, runs for a new one
+    @Test
+    fun funInterfaceSkipsWhileTheInstanceIsTheSame() = compositionTest {
+        val executions = mutableListOf<String>()
+        var label by mutableStateOf("a")
+        val tick = mutableIntStateOf(0)
+
+        compose {
+            tick.value // read to restart this scope
+            val text = label
+            val presenter = remember(text) {
+                FunPresenter {
+                    executions += text
+                    Text(text)
+                }
+            }
+            presenter.Content()
+        }
+        validate { Text("a") }
+
+        tick.value++
+        advance()
+        validate { Text("a") }
+        assertEquals(listOf("a"), executions)
+
+        label = "b"
+        advance()
+        validate { Text("b") }
+        assertEquals(listOf("a", "b"), executions)
+    }
+
+    // Each instance captures its own `var`: equal values don't make the instances equal
+    @Test
+    fun funInterfaceCapturingVarRunsTheNewInstance() = compositionTest {
+        val tick = mutableIntStateOf(0)
+        val relabel = mutableListOf<(String) -> Unit>()
+        var presenter by mutableStateOf(varPresenter("a", tick, relabel))
+
+        compose { presenter.Content() }
+        validate { Text("a") }
+
+        presenter = varPresenter("a", tick, relabel)
+        advance()
+        validate { Text("a") }
+
+        relabel[1]("b")
+        tick.value++ // read only by the implementation, which restarts alone
+        advance()
+        validate { Text("b") }
+    }
+
+    // A capture-free conversion skips when only the enclosing scope restarts and restarts alone when
+    // a state it reads changes. The state is a parameter: reading one from outside is a capture
+    @Test
+    fun capturelessFunInterfaceSkipsAndRestartsOnItsOwn() = compositionTest {
+        capturelessExecutions = 0
+        val count = mutableIntStateOf(0)
+        val tick = mutableIntStateOf(0)
+        var enclosingExecutions = 0
+
+        compose {
+            tick.value // read to restart this scope
+            enclosingExecutions++
+            val consumer = FunConsumer<State<Int>> { state ->
+                capturelessExecutions++
+                Text("count=${state.value}")
+            }
+            consumer.consume(count)
+        }
+        validate { Text("count=0") }
+        assertEquals(1, capturelessExecutions)
+
+        tick.value++
+        advance()
+        validate { Text("count=0") }
+        assertEquals(2, enclosingExecutions)
+        assertEquals(1, capturelessExecutions)
+
+        count.value++
+        advance()
+        validate { Text("count=1") }
+        assertEquals(2, enclosingExecutions)
+        assertEquals(2, capturelessExecutions)
+    }
+
+    // A conversion in an `init` block captures a local of the block; two holders must still differ
+    @Test
+    fun funInterfaceInInitBlockTellsInstancesApart() = compositionTest {
+        var holder by mutableStateOf(InitPresenterHolder("a"))
+
+        compose { holder.presenter.Content() }
+        validate { Text("a") }
+
+        holder = InitPresenterHolder("c")
+        advance()
+        validate { Text("c") }
     }
 
     // regression test for KT-74102
@@ -815,6 +1040,49 @@ internal fun ConsumeChildState(state: ChildState, result: MutableState<Boolean>)
 fun Wrapper(content: @Composable () -> Unit) {
     content()
 }
+
+inline fun <reified T : Any> makeReifiedPresenter(): FunPresenter = FunPresenter {
+    Text(T::class.simpleName!!)
+}
+
+inline fun makeDecoratedPresenter(crossinline text: () -> String): FunPresenter = FunPresenter {
+    Text(text())
+}
+
+class PresenterHolder(parameter: String, private val property: String) {
+    // captures the constructor parameter
+    val byParameter = FunPresenter { Text(parameter) }
+
+    // captures the instance
+    val byInstance = FunPresenter { Text(property) }
+}
+
+@Composable
+fun ShowPresenters(holder: PresenterHolder) {
+    holder.byParameter.Content()
+    holder.byInstance.Content()
+}
+
+class InitPresenterHolder(label: String) {
+    val presenter: FunPresenter
+
+    init {
+        val local = label
+        presenter = FunPresenter { Text(local) }
+    }
+}
+
+fun varPresenter(label: String, tick: State<Int>, relabel: MutableList<(String) -> Unit>): FunPresenter {
+    var current = label
+    relabel += { current = it }
+    return FunPresenter {
+        tick.value
+        Text(current)
+    }
+}
+
+// Counted by the capture-free conversion in capturelessFunInterfaceSkipsAndRestartsOnItsOwn
+var capturelessExecutions = 0
 
 class FakeResult(val value: Exception?) {
     inline fun fold(

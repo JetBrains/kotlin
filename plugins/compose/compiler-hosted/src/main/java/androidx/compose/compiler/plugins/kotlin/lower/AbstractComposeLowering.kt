@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -1025,8 +1024,9 @@ abstract class AbstractComposeLowering(
 
             is IrBlock -> {
                 // Check the slice in case the block was generated as expression
-                // (e.g. inlined intrinsic remember call)
-                this.isStaticExpression
+                // (e.g. inlined intrinsic remember call), or a singleton class of a composable SAM
+                // conversion marked by memoization
+                this.isStaticExpression || this.isStaticFunctionExpression
             }
             else -> false
         }
@@ -1760,7 +1760,9 @@ abstract class AbstractComposeLowering(
         if (body == null || this !is IrSimpleFunction)
             return false
 
-        if (isLocal && parentClassOrNull?.origin != JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+        // Local functions and members of local classes don't restart, except the method of a
+        // composable SAM conversion class
+        if (isLocal && !isComposableFunInterfaceImplementation) {
             return false
         }
 

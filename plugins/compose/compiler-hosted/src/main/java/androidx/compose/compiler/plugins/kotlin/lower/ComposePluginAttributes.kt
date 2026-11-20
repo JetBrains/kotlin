@@ -32,6 +32,8 @@ internal var IrFunction.isComposableReferenceInvoke: Boolean by irFlag(copyByDef
  */
 internal var IrFunction.composableReferenceBoundParameterCount: Int? by irAttribute(copyByDefault = true)
 
+internal var IrFunction.isComposableFunInterfaceImplementation: Boolean by irFlag(copyByDefault = true)
+
 internal var IrExpression.isStaticFunctionExpression: Boolean by irFlag(copyByDefault = true)
 
 internal var IrExpression.isStaticExpression: Boolean by irFlag(copyByDefault = true)
