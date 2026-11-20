@@ -1,0 +1,75 @@
+package test;
+
+/**
+ * public final class test/L : java/util/ArrayList<error/NonExistentClass> (* = kotlin/collections/ArrayList^<error/NonExistentClass> *) {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class L extends java.util.ArrayList<Gen> {
+
+    public L() {
+        super(0);
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    public final java.lang.Object remove(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public java.lang.Object removeAt(int p0) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public final int size() {
+        return 0;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // field: a:Ljava/util/ArrayList;
+ *   // getter: getA()Ljava/util/ArrayList;
+ *   public final val a: java/util/ArrayList<error/NonExistentClass>? (* = kotlin/collections/ArrayList^<error/NonExistentClass>? *)
+ *     public final get
+ *
+ *   // field: m:Ljava/util/HashMap;
+ *   // getter: getM()Ljava/util/HashMap;
+ *   public final val m: java/util/HashMap<kotlin/String, error/NonExistentClass>? (* = kotlin/collections/HashMap^<kotlin/String, error/NonExistentClass>? *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class LibraryTypeAliasesKt {
+    @org.jetbrains.annotations.Nullable()
+    private static final java.util.ArrayList<Gen> a = null;
+
+    @org.jetbrains.annotations.Nullable()
+    public static final java.util.ArrayList<Gen> getA() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public static final java.util.HashMap<java.lang.String, Gen> getM() {
+        return null;
+    }
+    @org.jetbrains.annotations.Nullable()
+    private static final java.util.HashMap<java.lang.String, Gen> m = null;
+}
