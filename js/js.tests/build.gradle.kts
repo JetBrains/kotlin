@@ -148,21 +148,31 @@ fun Test.forwardProperties() {
     }
 }
 
+/**
+ * Sets up the batches of the grouping test engine, which runs the codegen box tests (see `AbstractJsTwoStageCodegenBoxTestBase`).
+ * `enableGroupingTestEngine` of the `test` task puts the engine on the test runtime classpath of the whole project, not of
+ * that task only, so it runs the two-stage tests of every task whose tags select them.
+ */
+fun Test.setUpGroupedJsBoxTests() {
+    setUpJsBoxTests()
+    groupingEngineSettings(batchSize = 50, simultaneousBatches = 12)
+}
+
 projectTests {
     val swcTag = "swc"
     val swcEnabledLocally = kotlinBuildProperties.booleanProperty("kotlin.js.enable.swc.tests")
 
-    jsTestTask {
+    jsTestTask(enableGroupingTestEngine = true) {
         if (swcEnabledLocally.get()) {
             with(swcKotlinBuild) { setupSwc() }
         } else {
             useJUnitPlatform { excludeTags(swcTag) }
         }
-        setUpJsBoxTests()
+        setUpGroupedJsBoxTests()
     }
 
     jsTestTask(taskName = "jsTest", tag = "!es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
-        setUpJsBoxTests()
+        setUpGroupedJsBoxTests()
     }
 
     jsTestTask(taskName = "jsES6Test", tag = "es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
@@ -170,7 +180,7 @@ projectTests {
     }
 
     jsTestTask(taskName = "jsES5InlineAnonymousFunctionsTest", tag = "!es6 & jsInlineAnonymousFunctions", skipInLocalBuild = true) {
-        setUpJsBoxTests()
+        setUpGroupedJsBoxTests()
     }
 
     jsTestTask(taskName = "jsES6InlineAnonymousFunctionsTest", tag = "es6 & jsInlineAnonymousFunctions", skipInLocalBuild = true) {
