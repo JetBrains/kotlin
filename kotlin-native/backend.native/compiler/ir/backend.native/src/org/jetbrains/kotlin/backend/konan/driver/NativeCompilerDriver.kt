@@ -64,7 +64,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
 
         val objCExportedInterface = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput).also {
-                engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, it))
+                engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, frontendOutput.klibModuleDescriptors, it))
             }
         }
         if (config.omitFrameworkBinary) {
@@ -159,7 +159,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
 
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runK1Frontend(config) }
                 ?: return
-        performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPhase(CreateTestBundlePhase, frontendOutput.moduleDescriptor) }
+        performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPhase(CreateTestBundlePhase, frontendOutput) }
         val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
         val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput)
         engine.runBackend(backendContext, linkKlibsOutput.irModulesToCompile, performanceManager)

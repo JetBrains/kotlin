@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
-import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 
-internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
-        getDescriptorsFromLibraries((config.loadedKlibs.exported + config.loadedKlibs.included).toSet())
+internal fun Map<KotlinLibrary, ModuleDescriptor>.getExportedDependencies(
+        config: NativeSecondStageCompilationConfig,
+): List<ModuleDescriptor> =
+        getDescriptorsFromLibraries(config.exportedLibraries())
 
 /**
  * Same as [getExportedDependencies], but in reverse topological order: a module always precedes the modules
@@ -30,19 +28,25 @@ internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageC
  * that list: two libraries that no dependency edge relates still swap if the CLI passes them in the other
  * order.
  */
-internal fun ModuleDescriptor.getExportedDependenciesInCanonicalRTO(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> {
-    return getExportedDependencies(config).sortedBy { module ->
-        config.klibDag.libraryReverseTopoRank.getValue((module.klibModuleOrigin as DeserializedKlibModuleOrigin).library)
-    }
+internal fun Map<KotlinLibrary, ModuleDescriptor>.getExportedDependenciesInCanonicalRTO(
+        config: NativeSecondStageCompilationConfig,
+): List<ModuleDescriptor> {
+    val exportedLibraries = config.exportedLibraries()
+    return entries
+            .filter { it.key in exportedLibraries }
+            .sortedBy { config.klibDag.libraryReverseTopoRank.getValue(it.key) }
+            .map { it.value }
 }
 
-internal fun ModuleDescriptor.getIncludedLibraryDescriptors(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
+internal fun Map<KotlinLibrary, ModuleDescriptor>.getIncludedLibraryDescriptors(
+        config: NativeSecondStageCompilationConfig,
+): List<ModuleDescriptor> =
         getDescriptorsFromLibraries(config.loadedKlibs.included.toSet())
 
-private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KotlinLibrary>) =
-    allDependencyModules.filter {
-        when (val origin = it.klibModuleOrigin) {
-            CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
-            is DeserializedKlibModuleOrigin -> origin.library in libraries
-        }
-    }
+private fun Map<KotlinLibrary, ModuleDescriptor>.getDescriptorsFromLibraries(
+        libraries: Set<KotlinLibrary>,
+): List<ModuleDescriptor> =
+        filterKeys { it in libraries }.values.toList()
+
+private fun NativeSecondStageCompilationConfig.exportedLibraries(): Set<KotlinLibrary> =
+        (loadedKlibs.exported + loadedKlibs.included).toSet()

@@ -73,7 +73,7 @@ internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, Noth
     val output = createFrontendOutput(context)
     val moduleDescriptor = output.moduleDescriptor
     dumpObjcHeader(context, moduleDescriptor)
-    context.config.configuration.sourcesModules = moduleDescriptor.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
+    context.config.configuration.sourcesModules = output.klibModuleDescriptors.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
 
     output
 }

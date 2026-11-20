@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.library.KotlinLibrary
 
 /**
  * Create internal representation of Objective-C wrapper.
@@ -23,7 +24,7 @@ internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<Na
         "ObjCExportInterface",
         outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
 ) { context, input ->
-    produceObjCExportInterface(context, input.moduleDescriptor).also {
+    produceObjCExportInterface(context, input.moduleDescriptor, input.klibModuleDescriptors).also {
         if (context.config.omitFrameworkBinary) {
             // Dump selector -> signature mapping before IR linking if omitFrameworkBinary is true.
             context.config.dumpObjcSelectorToSignatureMapping?.let { path ->
@@ -39,6 +40,7 @@ internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<Na
 
 internal data class CreateObjCFrameworkInput(
     val moduleDescriptor: ModuleDescriptor,
+    val klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
     val exportedInterface: ObjCExportedInterface,
 )
 
@@ -51,7 +53,7 @@ internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<NativeBac
     val config = context.config
     // TODO: Share this instance between multiple contexts (including NativeGenerationState)?
     val outputFiles = OutputFiles(config.outputPath, config.target, config.produce)
-    createObjCFramework(config, input.moduleDescriptor, input.exportedInterface, outputFiles.mainFile)
+    createObjCFramework(config, input.moduleDescriptor, input.klibModuleDescriptors, input.exportedInterface, outputFiles.mainFile)
 }
 
 /**
