@@ -61,6 +61,8 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NotIncludedReason
 import org.jetbrains.kotlin.lombok.LombokNames
@@ -724,6 +726,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      */
     private fun T.getBuilderFactoryName(ownerDeclarationSymbol: FirBasedSymbol<*>, containingClassSymbol: FirClassSymbol<*>): Name? {
         val shouldAddBuilderFactory = when {
+            // No builder in abstract classes
+            ownerDeclarationSymbol is FirClassSymbol && ownerDeclarationSymbol.rawStatus.modality.let {
+                it == Modality.ABSTRACT || it == Modality.SEALED
+            } -> false
             // inside Java, we always generate the factory in a containing Java class
             containingClassSymbol.hasJavaOrigin -> true
             // if a regular named function is annotated, we generate the factory outside the companion (non-"static" case)
