@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputFileContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
@@ -67,6 +68,75 @@ class JsDtsGenerationTest : BaseCompilationTest() {
                 compilationConfigAction = { it[JsDtsGenerationOperation.MODULE_KIND] = JsModuleKind.ES },
             ) {
                 assertOutputs("js-ts-generation.d.mts")
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ts-generation-no-export")
+    @DisplayName("An empty export model produces a declaration file with WHOLE_PROGRAM granularity")
+    fun emptyExportModelProducesDtsFileWithWholeProgramGranularity(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+
+        jsProject(strategyConfig) {
+            val module = module("js-ts-generation-no-export")
+            module.compile()
+
+            module.generateDts(
+                outputDirectory = module.buildDirectory.resolve("out"),
+                compilationConfigAction = {
+                    it[JsDtsGenerationOperation.GRANULARITY] = JsDtsGranularity.WHOLE_PROGRAM
+                }
+            ) {
+                assertOutputs("js-ts-generation-no-export.d.ts")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "KtSingleton")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "export as namespace")
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ts-generation-no-export")
+    @DisplayName("An empty export model produces a declaration file with PER_MODULE granularity")
+    fun emptyExportModelProducesDtsFileWithPerModuleGranularity(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+
+        jsProject(strategyConfig) {
+            val module = module("js-ts-generation-no-export")
+            module.compile()
+
+            module.generateDts(
+                outputDirectory = module.buildDirectory.resolve("out"),
+                compilationConfigAction = {
+                    it[JsDtsGenerationOperation.GRANULARITY] = JsDtsGranularity.PER_MODULE
+                }
+            ) {
+                assertOutputs("js-ts-generation-no-export.d.ts")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "KtSingleton")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "export as namespace")
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ts-generation-no-export")
+    @DisplayName("An empty export model produces a declaration file with PER_FILE granularity")
+    fun emptyExportModelProducesDtsFileWithPerFileGranularity(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+
+        jsProject(strategyConfig) {
+            val module = module("js-ts-generation-no-export")
+            module.compile()
+
+            module.generateDts(
+                outputDirectory = module.buildDirectory.resolve("out"),
+                compilationConfigAction = {
+                    it[JsDtsGenerationOperation.GRANULARITY] = JsDtsGranularity.PER_FILE
+                }
+            ) {
+                assertOutputs("js-ts-generation-no-export.d.ts")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "KtSingleton")
+                assertOutputFileContains("js-ts-generation-no-export.d.ts", "export as namespace")
             }
         }
     }
