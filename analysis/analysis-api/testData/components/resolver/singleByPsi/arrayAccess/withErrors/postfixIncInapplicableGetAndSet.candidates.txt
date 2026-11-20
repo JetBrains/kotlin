@@ -24,7 +24,15 @@ KtOperationReferenceExpression(160,162): '++'
         contextParameters = []
         callableId = /B.get
       typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.String
+          symbol = i: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
     isInBestCandidates = true
 
@@ -60,7 +68,15 @@ KtOperationReferenceExpression(160,162): '++'
         contextParameters = []
         callableId = /B.set
       typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'B', but 'String' was expected.>
     isInBestCandidates = true
 

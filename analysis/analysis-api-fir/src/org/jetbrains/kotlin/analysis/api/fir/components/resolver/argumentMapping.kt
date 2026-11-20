@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLabeledExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
@@ -107,6 +109,15 @@ private fun FirExpression.findSourceKtExpressionForCallArgument(): KtExpression?
             whenSubject?.findSourceKtExpressionForCallArgument()
         // FirBlock is a fake container for desugared expressions like `++index` or `++list[0]`
         is FirBlock -> psi as? KtExpression
+        // An index of a desugared `list[i]++` or `list[i] += x` is passed through a temporary variable whose source is the index
+        // expression
+        is FirPropertyAccessExpression if readsDesugaredIndexVariable() -> psi as? KtExpression
         else -> realPsi as? KtExpression
     }?.topParenthesizedParentOrMe()
+}
+
+private fun FirPropertyAccessExpression.readsDesugaredIndexVariable(): Boolean {
+    val variableSourceKind = calleeReference.toResolvedPropertySymbol()?.source?.kind
+    return variableSourceKind == KtFakeSourceElementKind.ArrayIndexExpressionReference ||
+            variableSourceKind is KtFakeSourceElementKind.DesugaredAugmentedAssign
 }

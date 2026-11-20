@@ -24,6 +24,14 @@ KtArrayAccessExpression(156,160): 'b[0]'
         contextParameters = []
         callableId = /B.get
       typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.String
+          symbol = i: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
     isInBestCandidates = true

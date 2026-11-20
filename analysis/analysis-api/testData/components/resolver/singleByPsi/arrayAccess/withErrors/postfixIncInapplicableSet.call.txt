@@ -85,6 +85,14 @@ KtOperationReferenceExpression(157,159): '++'
             contextParameters = []
             callableId = /B.set
           typeArgumentsMapping = {}
-          valueArgumentMapping = {}
+          valueArgumentMapping = {
+            0 -> (KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              contextParameters = []
+              callableId = null)
+          }
       ]
       diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'B', but 'String' was expected.>
