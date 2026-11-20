@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.config.reportLog as reportLogAlias
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.diagnostics.report
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 fun CompilerConfiguration.report(
     factory: KtSourcelessDiagnosticFactory,
@@ -31,6 +33,9 @@ fun CompilerConfiguration.report(
     val context = object : DiagnosticContext {
         override val languageVersionSettings: LanguageVersionSettings
             get() = this@report.languageVersionSettings
+
+        override val parseTreeKind: ParseTreeKind
+            get() = shouldNotBeCalled("Only sourceless diagnostics are reported, so they aren't linked to a parse tree")
 
         override val containingFile: KtSourceFile? get() = null
 

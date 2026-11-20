@@ -268,6 +268,9 @@ internal class KaFirCompilerFacility(
 
                 override val languageVersionSettings: LanguageVersionSettings
                     get() = analysisSession.firSession.languageVersionSettings
+
+                override val parseTreeKind: ParseTreeKind
+                    get() = PsiParseTreeKind
             }
 
             lambda.accept(object : FirDefaultVisitorVoid() {

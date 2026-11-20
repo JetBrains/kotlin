@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -135,6 +136,7 @@ class NativeDeserializerFacade(
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,
             configuration.languageVersionSettings,
+            configuration.parseTreeKind,
         )
 
         val symbolTable = SymbolTable(IdSignatureDescriptor(KonanManglerDesc), IrFactoryImpl)

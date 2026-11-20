@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.NativeCompilationConfig
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -71,7 +72,8 @@ class NativeFirstStagePhaseContext(
 
     override val diagnosticReporter: IrDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         config.configuration.diagnosticsCollector,
-        config.configuration.languageVersionSettings
+        config.configuration.languageVersionSettings,
+        config.configuration.parseTreeKind,
     )
 
     override fun log(message: String) {

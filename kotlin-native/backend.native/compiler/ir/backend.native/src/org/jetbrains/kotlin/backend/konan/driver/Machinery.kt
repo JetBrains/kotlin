@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
@@ -31,7 +32,8 @@ internal open class BasicNativeBackendPhaseContext(
 
     override val diagnosticReporter: IrDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             config.configuration.diagnosticsCollector,
-            config.configuration.languageVersionSettings
+            config.configuration.languageVersionSettings,
+            config.configuration.parseTreeKind,
     )
 
     override fun log(message: String) {

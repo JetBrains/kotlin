@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
@@ -44,7 +45,11 @@ internal fun NativeFirstStagePhaseContext.firSerializerBase(
 
     val irModuleFragment = fir2IrOutput?.fir2irActualizedResult?.irModuleFragment
     val diagnosticReporter = configuration.diagnosticsCollector
-    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
+    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+        diagnosticReporter,
+        configuration.languageVersionSettings,
+        configuration.parseTreeKind,
+    )
     return serializeModuleIntoKlib(
             moduleName = irModuleFragment?.name?.asString() ?: firResult.outputs.last().session.moduleData.name.asString(),
             irModuleFragment = irModuleFragment,

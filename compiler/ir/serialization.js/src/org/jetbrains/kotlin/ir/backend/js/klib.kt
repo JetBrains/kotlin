@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -112,6 +113,7 @@ fun loadIrForSingleModule(
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
         configuration.languageVersionSettings,
+        configuration.parseTreeKind,
     )
 
     val irLinker = JsIrLinker(
@@ -193,6 +195,7 @@ private fun getIrModuleInfoForKlib(
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
         configuration.languageVersionSettings,
+        configuration.parseTreeKind,
     )
 
     val irLinker = JsIrLinker(

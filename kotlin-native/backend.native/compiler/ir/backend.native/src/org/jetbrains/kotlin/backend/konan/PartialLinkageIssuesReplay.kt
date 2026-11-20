@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogger
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedPartialLinkageIssue
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.library.KotlinLibrary
 
@@ -53,6 +54,7 @@ internal fun replayPartialLinkageIssuesFromCaches(
             KtDiagnosticReporterWithImplicitIrBasedContext(
                     config.configuration.diagnosticsCollector,
                     config.languageVersionSettings,
+                    config.configuration.parseTreeKind,
             ),
     )
 
