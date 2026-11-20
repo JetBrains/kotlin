@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -46,7 +47,14 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     @ExperimentalTopLevelDeclarationsGenerationApi
     open fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
 
-    // Can be called on SUPERTYPES stage
+    /**
+     * Can be called during [COMPANION_GENERATION][org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPANION_GENERATION] phase.
+     *
+     * If [name] is [DEFAULT_NAME_FOR_COMPANION_OBJECT][org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT],
+     * the generated class must be a `companion object`.
+     * For any other [Name], the generated class must not be a `companion object`.
+     * Prefer generating `companion object` using [needsCompanionObject] instead.
+     */
     open fun generateNestedClassLikeDeclaration(
         owner: FirClassSymbol<*>,
         name: Name,
@@ -79,7 +87,30 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
      *   set of callable names for this class
      */
     open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> = emptySet()
+
+    /**
+     * Called during [COMPANION_GENERATION][org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPANION_GENERATION] phase.
+     *
+     * The [generateNestedClassLikeDeclaration] function will be called for each corresponding [Name] returned by this function
+     * when a [FirClassLikeSymbol] is needed for that name.
+     *
+     * To generate a `companion object`,
+     * return [DEFAULT_NAME_FOR_COMPANION_OBJECT][org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT]
+     * as part of the [Name] [Set].
+     * However, prefer using [needsCompanionObject] whenever possible,
+     * as it allows the `companion object` to be shared by multiple [FirDeclarationGenerationExtension]s.
+     *
+     * @see needsCompanionObject
+     */
     open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> = emptySet()
+
+    /**
+     * Called during [COMPANION_GENERATION][org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPANION_GENERATION] phase.
+     *
+     * If this function returns non-`null`, the compiler generates a `companion object` for [classSymbol].
+     * All generators share that `companion object`, unlike a nested class from [getNestedClassifiersNames].
+     */
+    open fun needsCompanionObject(classSymbol: FirClassSymbol<*>, context: CompanionObjectGenerationContext): GeneratedDeclarationKey? = null
 
     @ExperimentalTopLevelDeclarationsGenerationApi
     open fun getTopLevelCallableIds(): Set<CallableId> = emptySet()
@@ -105,6 +136,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
 
 typealias MemberGenerationContext = DeclarationGenerationContext.Member
 typealias NestedClassGenerationContext = DeclarationGenerationContext.Nested
+typealias CompanionObjectGenerationContext = DeclarationGenerationContext.CompanionObject
 
 sealed class DeclarationGenerationContext<T : FirContainingNamesAwareScope>(
     val owner: FirClassSymbol<*>,
@@ -130,6 +162,14 @@ sealed class DeclarationGenerationContext<T : FirContainingNamesAwareScope>(
     ) : DeclarationGenerationContext<FirNestedClassifierScope>(owner, declaredScope, typeResolver) {
         override val kind: Int
             get() = 2
+    }
+
+    class CompanionObject(
+        owner: FirClassSymbol<*>,
+        declaredScope: FirNestedClassifierScope?,
+    ) : DeclarationGenerationContext<FirNestedClassifierScope>(owner, declaredScope, typeResolver = null) {
+        override val kind: Int
+            get() = 3
     }
 
     override fun equals(other: Any?): Boolean {

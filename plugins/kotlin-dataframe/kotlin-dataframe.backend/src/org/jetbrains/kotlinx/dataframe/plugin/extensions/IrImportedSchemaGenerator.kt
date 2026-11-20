@@ -114,13 +114,6 @@ class IrImportedSchemaGenerator(
         return declaration
     }
 
-    override fun visitConstructor(declaration: IrConstructor): IrStatement {
-        if (declaration.origin.isFromDataSchemaSource()) {
-            declaration.body = generateBodyForDefaultConstructor(context, declaration)
-        }
-        return declaration
-    }
-
     private fun IrDeclarationOrigin.isFromDataSchemaSource(): Boolean =
         this is IrDeclarationOrigin.GeneratedByPlugin && this.pluginKey is ImportedSchemaCompanionKey
 }

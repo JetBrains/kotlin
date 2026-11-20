@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChe
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.processAllClassifiers
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.extensions.CompanionObjectGenerationContext
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
-import org.jetbrains.kotlin.lombok.generators.LombokCompanionObjectContributor
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
 /**
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
  * object: it is the one thing to change, it is where `REDECLARATION` used to point, and it is reported once
  * however many annotations the class carries.
  */
+// TODO: should we even have this checker?
 object FirLombokCompanionObjectChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
@@ -58,7 +59,7 @@ object FirLombokCompanionObjectChecker : FirRegularClassChecker(MppCheckerKind.P
         // The generators decide what needs a companion object; asking them keeps this from re-deriving which
         // annotation on which declaration generates a static member.
         val needsCompanionObject = context.session.extensionService.declarationGenerators.any {
-            it is LombokCompanionObjectContributor && it.needsCompanionObject(declaration.symbol)
+            it.needsCompanionObject(declaration.symbol, CompanionObjectGenerationContext(declaration.symbol, null)) != null
         }
         if (!needsCompanionObject) return
 

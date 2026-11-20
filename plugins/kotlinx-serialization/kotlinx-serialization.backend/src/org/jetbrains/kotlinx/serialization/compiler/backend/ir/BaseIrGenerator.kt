@@ -68,6 +68,9 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val jsExportIgnore = compilerContext.jsExportIgnoreClass ?: return
         val jsExportIgnoreCtor = jsExportIgnore.primaryConstructor ?: return
 
+        // Already annotated with JsExport.Ignore.
+        if (annotations.any { it.classSymbol == jsExportIgnore.symbol }) return
+
         annotations += IrAnnotationImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,

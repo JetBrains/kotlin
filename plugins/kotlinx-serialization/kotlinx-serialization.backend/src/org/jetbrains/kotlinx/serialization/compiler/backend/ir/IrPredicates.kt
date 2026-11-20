@@ -200,7 +200,7 @@ fun IrClass.getSuperClassNotAny(): IrClass? {
 }
 
 internal fun IrDeclaration.isFromPlugin(): Boolean =
-    this.origin == IrDeclarationOrigin.GeneratedByPlugin(SerializationPluginKey)
+    origin.toPluginKey<SerializationPluginKey>() != null
 
 internal fun IrConstructor.isSerializationCtor(): Boolean {
     /*kind == CallableMemberDescriptor.Kind.SYNTHESIZED does not work because DeserializedClassConstructorDescriptor loses its kind*/

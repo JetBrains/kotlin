@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 object PluginSandboxDirectives : SimpleDirectivesContainer() {
+    val ENABLE_SANDBOX by directive("Enables sandbox plugin")
     val DONT_LOAD_IN_SYNTHETIC_MODULES by directive("""
         If enabled plugin won't be applied to the synthetic modules.
         E.g. for empty module created in [${AbstractLoadedMetadataDumpHandler::class}]
     """.trimIndent())
 
     val WITH_AND_WITHOUT_PLUGIN by directive(""" Runs test with and without plugin """.trimIndent())
-    val DISABLE_PLUGIN by directive(""" Turns off plugin completely """.trimIndent())
 }
 
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -34,7 +34,7 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
         get() = listOf(PluginSandboxDirectives)
 
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
-        if (PluginSandboxDirectives.DISABLE_PLUGIN in moduleStructure.allDirectives) return
+        if (PluginSandboxDirectives.ENABLE_SANDBOX !in moduleStructure.allDirectives) return
         if (PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES in moduleStructure.allDirectives) {
             if (module !in moduleStructure.modules) {
                 return

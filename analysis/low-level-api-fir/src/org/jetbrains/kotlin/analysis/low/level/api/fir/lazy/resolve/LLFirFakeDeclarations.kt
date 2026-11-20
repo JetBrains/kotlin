@@ -74,5 +74,6 @@ private val FirDeclarationOrigin.isFakeDeclarationOrigin: Boolean
         is FirDeclarationOrigin.FromOtherReplSnippet,
         is FirDeclarationOrigin.ForeignValue,
         is FirDeclarationOrigin.Plugin,
+        is FirDeclarationOrigin.Plugin.SharedCompanion,
             -> false
     }
