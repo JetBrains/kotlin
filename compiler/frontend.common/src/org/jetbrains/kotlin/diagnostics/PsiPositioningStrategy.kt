@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 @RequiresOptIn
 annotation class DiagnosticLossRisk
 
+// TODO: move back to frontend.common-psi after fixing KT-91911
 open class PsiPositioningStrategy<in E : PsiElement> {
     open fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
         @Suppress("UNCHECKED_CAST")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE
 import org.jetbrains.kotlin.util.getChildren
 
+// TODO: move back to frontend.common-psi after fixing KT-91911
 open class LightTreePositioningStrategy {
     open fun markKtDiagnostic(element: KtSourceElement, diagnostic: KtDiagnostic): List<TextRange> {
         return mark(element.lighterASTNode, element.startOffset, element.endOffset, element.treeStructure)
@@ -86,7 +87,7 @@ private val FILLER_TOKENS = setOf(
 private fun LighterASTNode.nonFillerFirstChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
     getChildren(tree).firstOrNull { !it.isFiller() } ?: this
 
-internal fun LighterASTNode.nonFillerLastChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
+fun LighterASTNode.nonFillerLastChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
     getChildren(tree).lastOrNull { !it.isFiller() } ?: this
 
 fun LighterASTNode.isFiller(): Boolean = tokenType in FILLER_TOKENS

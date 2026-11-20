@@ -249,7 +249,7 @@ fun StringBuilder.appendComponentSchemaIfApplicable(componentName: String, type:
 }
 
 context(container: KtDiagnosticsContainer)
-internal fun <A> info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<A> {
+internal fun <A> info1(positioningStrategy: SourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(
         Severity.INFO,
         positioningStrategy,

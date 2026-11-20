@@ -56,20 +56,20 @@ class KtSourcelessDiagnosticFactory(
 sealed class KtDiagnosticFactoryN(
     name: String,
     severity: Severity,
-    val defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    val defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory
 ) : AbstractKtDiagnosticFactory(name, severity, rendererFactory)
 
 class KtDiagnosticFactory0(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtSimpleDiagnostic? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
@@ -85,7 +85,7 @@ class KtDiagnosticFactory0(
     @InternalDiagnosticFactoryMethod
     fun onOrFallback(
         element: AbstractKtSourceElement?,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
@@ -107,14 +107,14 @@ class KtDiagnosticFactory0(
 class KtDiagnosticFactory1<A>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
         a: A,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters1<A>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
@@ -132,7 +132,7 @@ class KtDiagnosticFactory1<A>(
     fun onOrFallback(
         element: AbstractKtSourceElement?,
         a: A,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
@@ -156,7 +156,7 @@ class KtDiagnosticFactory1<A>(
 class KtDiagnosticFactory2<A, B>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
@@ -164,7 +164,7 @@ class KtDiagnosticFactory2<A, B>(
         element: AbstractKtSourceElement,
         a: A,
         b: B,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters2<A, B>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
@@ -184,7 +184,7 @@ class KtDiagnosticFactory2<A, B>(
         element: AbstractKtSourceElement?,
         a: A,
         b: B,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
@@ -210,7 +210,7 @@ class KtDiagnosticFactory2<A, B>(
 class KtDiagnosticFactory3<A, B, C>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
@@ -219,7 +219,7 @@ class KtDiagnosticFactory3<A, B, C>(
         a: A,
         b: B,
         c: C,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters3<A, B, C>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
@@ -241,7 +241,7 @@ class KtDiagnosticFactory3<A, B, C>(
         a: A,
         b: B,
         c: C,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
@@ -269,7 +269,7 @@ class KtDiagnosticFactory3<A, B, C>(
 class KtDiagnosticFactory4<A, B, C, D>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
@@ -279,7 +279,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
         b: B,
         c: C,
         d: D,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters4<A, B, C, D>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
@@ -304,7 +304,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
         b: B,
         c: C,
         d: D,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        positioningStrategy: SourceElementPositioningStrategy?,
         context: DiagnosticBaseContext,
     ): KtDiagnostic? {
         return on(
@@ -346,7 +346,7 @@ private const val ERROR = "_ERROR"
 class KtDiagnosticFactoryForDeprecation0(
     name: String,
     featureForError: LanguageFeature,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory0>(
     name,
@@ -358,7 +358,7 @@ class KtDiagnosticFactoryForDeprecation0(
 class KtDiagnosticFactoryForDeprecation1<A>(
     name: String,
     featureForError: LanguageFeature,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory1<A>>(
     name,
@@ -370,7 +370,7 @@ class KtDiagnosticFactoryForDeprecation1<A>(
 class KtDiagnosticFactoryForDeprecation2<A, B>(
     name: String,
     featureForError: LanguageFeature,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory2<A, B>>(
     name,
@@ -382,7 +382,7 @@ class KtDiagnosticFactoryForDeprecation2<A, B>(
 class KtDiagnosticFactoryForDeprecation3<A, B, C>(
     name: String,
     featureForError: LanguageFeature,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory3<A, B, C>>(
     name,
@@ -394,7 +394,7 @@ class KtDiagnosticFactoryForDeprecation3<A, B, C>(
 class KtDiagnosticFactoryForDeprecation4<A, B, C, D>(
     name: String,
     featureForError: LanguageFeature,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory4<A, B, C, D>>(
     name,
