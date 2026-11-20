@@ -8,7 +8,6 @@ public final class Main public constructor() {
     public final fun contract(test: Test): kotlin.Unit { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Main : R|kotlin/Any| {

@@ -4,7 +4,6 @@ context(context: A)
 public val <A> myContextOf: A /* compiled code */
     public final inline get() { /* compiled code */ }
 FIR element: FirPropertyImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 context([ResolvedTo(BODY_RESOLVE)] context: R|A|)

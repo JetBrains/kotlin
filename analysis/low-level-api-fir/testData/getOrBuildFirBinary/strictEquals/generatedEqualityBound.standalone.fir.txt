@@ -14,7 +14,6 @@ public final data class Data public constructor(value: kotlin.Int) {
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public final data [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Data : R|kotlin/Any| {

@@ -11,7 +11,6 @@ public final inline value class ValueClass<T> public constructor(value: T) {
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 @R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=T)] class ValueClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {

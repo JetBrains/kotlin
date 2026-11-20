@@ -11,7 +11,6 @@ public final class Foo public constructor() {
         public final get() { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Foo : R|kotlin/Any| {

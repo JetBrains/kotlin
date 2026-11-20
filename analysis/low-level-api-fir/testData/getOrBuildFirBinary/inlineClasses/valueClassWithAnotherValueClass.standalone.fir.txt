@@ -11,7 +11,6 @@ public final inline value class ValueClass public constructor(value: pack.Anothe
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 @R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/AnotherValueClass), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class ValueClass : R|kotlin/Any| {

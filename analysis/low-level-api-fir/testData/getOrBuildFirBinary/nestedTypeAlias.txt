@@ -4,7 +4,6 @@ public final class Foo public constructor() {
     public typealias TA = kotlin.String
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {

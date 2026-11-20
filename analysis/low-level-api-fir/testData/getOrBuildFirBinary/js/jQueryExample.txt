@@ -6,7 +6,6 @@ KT element text:
 public abstract external class JQuery public constructor() {
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 @R|kotlin/js/JsModule|(import = String(jquery)) @R|kotlin/js/JsNonModule|() @R|kotlin/js/JsName|(name = String($)) public abstract external [ResolvedTo(BODY_RESOLVE)] class JQuery : R|kotlin/Any| {

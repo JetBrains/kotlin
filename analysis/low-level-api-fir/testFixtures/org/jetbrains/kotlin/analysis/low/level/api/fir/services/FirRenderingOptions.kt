@@ -12,6 +12,7 @@ internal data class FirRenderingOptions(
     val renderKtText: Boolean = false,
     val renderKtFileName: Boolean = false,
     val renderContainerSource: Boolean = false,
+    val renderSourceKind: Boolean = true,
 ) : TestService {
     companion object {
         val DEFAULT = FirRenderingOptions()
@@ -21,11 +22,13 @@ internal data class FirRenderingOptions(
         var renderKtText: Boolean = false
         var renderKtFileName: Boolean = false
         var renderContainerSource: Boolean = false
+        var renderSourceKind: Boolean = true
 
         fun build(): FirRenderingOptions = FirRenderingOptions(
             renderKtText,
             renderKtFileName,
             renderContainerSource,
+            renderSourceKind,
         )
     }
 }

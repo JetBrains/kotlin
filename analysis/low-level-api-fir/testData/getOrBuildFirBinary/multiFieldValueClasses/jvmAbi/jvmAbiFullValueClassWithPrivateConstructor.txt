@@ -12,7 +12,6 @@ public final value class Box<T> {
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {

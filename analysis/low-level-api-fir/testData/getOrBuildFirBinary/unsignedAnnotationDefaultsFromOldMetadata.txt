@@ -11,7 +11,6 @@ public final annotation class Defaults public constructor(
 ) : kotlin.Annotation {
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] annotation class Defaults : R|kotlin/Annotation| {

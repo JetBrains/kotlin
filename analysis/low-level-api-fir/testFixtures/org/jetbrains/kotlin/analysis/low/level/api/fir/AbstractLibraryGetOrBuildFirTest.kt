@@ -29,7 +29,15 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator()
 
     override fun configureTest(builder: TestConfigurationBuilder) {
-        val renderingOptionsBuilder = FirRenderingOptions.Builder().apply { renderKtText = true }
+        val renderingOptionsBuilder = FirRenderingOptions.Builder().apply {
+            renderKtText = true
+
+            // The FIR source kind of a library declaration only depends on the test mode: the IDE mode builds FIR from stubs, which
+            // have a source, while the Standalone mode deserializes FIR from library files without one. It's only rendered for the
+            // tests that check where library declarations come from, so that the Standalone tests share the results of the IDE mode
+            // tests otherwise.
+            renderSourceKind = false
+        }
 
         builder.forTestsMatching("*/js/*") {
             this.defaultsProviderBuilder.targetPlatform = JsPlatforms.defaultJsPlatform
@@ -44,6 +52,7 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
         builder.forTestsMatching("*/containerSource/*") {
             renderingOptionsBuilder.renderKtFileName = true
             renderingOptionsBuilder.renderContainerSource = true
+            renderingOptionsBuilder.renderSourceKind = true
         }
         super.configureTest(builder)
         with(builder) {

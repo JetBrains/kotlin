@@ -3,7 +3,6 @@ KT element text:
 public abstract value class AbstractValue public constructor(parameter: kotlin.Int) {
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public abstract value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class AbstractValue : R|kotlin/Any| {

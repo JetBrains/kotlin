@@ -3,7 +3,6 @@ KT element text:
 public sealed value class ValueClass protected constructor() {
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public sealed value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false, SealedClassInheritorsKey=[]] class ValueClass : R|kotlin/Any| {
