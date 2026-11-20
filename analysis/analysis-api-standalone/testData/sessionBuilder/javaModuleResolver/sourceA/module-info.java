@@ -1,0 +1,3 @@
+module sourceA {
+    requires dependency;
+}

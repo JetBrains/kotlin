@@ -297,6 +297,36 @@ public class FirIdeNormalAnalysisSourceLikeModuleDanglingFileCollectDiagnosticsT
   }
 
   @Test
+  @TestMetadata("javaModuleAccessWithinSourceModule.kt")
+  public void testJavaModuleAccessWithinSourceModule() {
+    run("javaModuleAccessWithinSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleAnnotations.kt")
+  public void testJavaModuleAnnotations() {
+    run("javaModuleAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleDoesNotReadSourceModule.kt")
+  public void testJavaModuleDoesNotReadSourceModule() {
+    run("javaModuleDoesNotReadSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleReadsSourceModule.kt")
+  public void testJavaModuleReadsSourceModule() {
+    run("javaModuleReadsSourceModule.kt");
+  }
+
+  @Test
+  @TestMetadata("javaModuleReadsStdlib.kt")
+  public void testJavaModuleReadsStdlib() {
+    run("javaModuleReadsStdlib.kt");
+  }
+
+  @Test
   @TestMetadata("javaNestedClass.kt")
   public void testJavaNestedClass() {
     run("javaNestedClass.kt");

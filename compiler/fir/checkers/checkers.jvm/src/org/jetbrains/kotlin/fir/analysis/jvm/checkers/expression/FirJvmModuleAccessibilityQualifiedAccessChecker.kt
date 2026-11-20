@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -29,13 +30,14 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val callableSymbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
-        if (callableSymbol.origin.fromSource) return
 
         val containingClass = callableSymbol.containingClassLookupTag()
         if (containingClass != null) {
@@ -53,8 +55,6 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
         symbol: FirClassSymbol<*>,
         element: FirElement
     ) {
-        if (symbol.origin.fromSource) return
-
         @OptIn(SymbolInternals::class)
         val sourceElement = symbol.fir.sourceElement
         val virtualFile = when (sourceElement) {
@@ -72,7 +72,12 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
         referencedPackageFqName: FqName,
         element: FirElement,
     ) {
-        val fileFromOurModule = (context.containingFileSymbol?.sourceFile as? KtVirtualFileSourceFile)?.virtualFile
+        val fileFromOurModule = when (val sourceFile = context.containingFileSymbol?.sourceFile) {
+            is KtPsiSourceFile -> (sourceFile.psiFile as? KtFile)?.analysisContext?.containingFile?.virtualFile
+                ?: sourceFile.psiFile.originalFile.virtualFile
+            is KtVirtualFileSourceFile -> sourceFile.virtualFile
+            else -> null
+        }
 
         val diagnostic = context.session.javaModuleResolverProvider.javaModuleResolver.checkAccessibility(
             fileFromOurModule, fileFromPackage, referencedPackageFqName
