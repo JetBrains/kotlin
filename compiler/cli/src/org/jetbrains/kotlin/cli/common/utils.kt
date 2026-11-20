@@ -21,22 +21,16 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.cli.CliDiagnostics
-import org.jetbrains.kotlin.cli.CliDiagnostics.KOTLIN_PACKAGE_USAGE
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentField
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentLifecycleStatus
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
@@ -46,41 +40,7 @@ fun incrementalCompilationIsEnabled(arguments: CommonCompilerArguments): Boolean
 }
 
 fun incrementalCompilationIsEnabledForJs(arguments: CommonCompilerArguments): Boolean {
-    return arguments.incrementalCompilation ?: IncrementalCompilation.isEnabledForJs()
-}
-
-fun <F> checkKotlinPackageUsage(
-    configuration: CompilerConfiguration,
-    files: Collection<F>,
-    getPackage: (F) -> FqName,
-    getMessageLocation: (F) -> CompilerMessageSourceLocation?,
-): Boolean {
-    if (configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)) {
-        return true
-    }
-    val kotlinPackage = FqName("kotlin")
-    for (file in files) {
-        if (getPackage(file).isSubpackageOf(kotlinPackage)) {
-            configuration.report(
-                KOTLIN_PACKAGE_USAGE,
-                "Only the Kotlin standard library is allowed to use the 'kotlin' package",
-                getMessageLocation(file),
-            )
-            return false
-        }
-    }
-    return true
-}
-
-fun checkKotlinPackageUsageForPsi(
-    configuration: CompilerConfiguration,
-    files: Collection<KtFile>,
-): Boolean {
-    return checkKotlinPackageUsage(
-        configuration, files,
-        getPackage = { it.packageFqName },
-        getMessageLocation = { MessageUtil.psiElementToMessageLocation(it.packageDirective!!) },
-    )
+    return arguments.incrementalCompilation ?: false
 }
 
 fun <PathProvider : Any> getLibraryFromHome(
