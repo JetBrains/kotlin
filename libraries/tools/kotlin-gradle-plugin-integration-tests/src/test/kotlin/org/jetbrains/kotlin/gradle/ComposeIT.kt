@@ -760,21 +760,15 @@ class ComposeIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("CMP-9447: composable fun interfaces compile on every target")
+    @DisplayName("CMP-9447: composable fun interfaces compile for Wasm")
     @GradleTest
     @OtherGradlePluginTests
-    fun testComposableFunInterfaceOnAllTargets(
+    fun testComposableFunInterfaceOnWasm(
         gradleVersion: GradleVersion,
     ) {
         project(
             projectName = "empty",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
-                    version = TestVersions.Kotlin.CURRENT
-                ),
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
-            ),
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://redirector.kotlinlang.org/maven/compose-dev")),
             enableGradleDaemonMemoryLimitInMb = 2048,
             enableKotlinDaemonMemoryLimitInMb = 2048,
@@ -784,19 +778,9 @@ class ComposeIT : KGPBaseTest() {
             }
             buildScriptInjection {
                 project.applyMultiplatform {
-                    // Not an Apple target: those link only on macOS
-                    linuxX64 {
-                        binaries.sharedLib()
-                    }
-                    jvm()
-
+                    // The other backends are covered by box tests of the Compose plugin, Wasm has none yet
                     @OptIn(ExperimentalWasmDsl::class)
                     wasmJs {
-                        browser()
-                        binaries.library()
-                    }
-
-                    js {
                         browser()
                         binaries.library()
                     }
@@ -895,17 +879,9 @@ class ComposeIT : KGPBaseTest() {
                 }
             }
 
-            build(":linkDebugSharedLinuxX64") {
-                assertTasksExecuted(":compileKotlinLinuxX64", ":linkDebugSharedLinuxX64")
-            }
+            // The Wasm backend lowers the plugin's output only here, not when compiling the klib
             build(":compileProductionLibraryKotlinWasmJs") {
                 assertTasksExecuted(":compileKotlinWasmJs", ":compileProductionLibraryKotlinWasmJs")
-            }
-            build(":compileProductionLibraryKotlinJs") {
-                assertTasksExecuted(":compileKotlinJs", ":compileProductionLibraryKotlinJs")
-            }
-            build(":compileKotlinJvm") {
-                assertTasksExecuted(":compileKotlinJvm")
             }
         }
     }
