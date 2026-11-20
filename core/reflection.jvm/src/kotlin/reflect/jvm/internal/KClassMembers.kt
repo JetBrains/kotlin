@@ -28,6 +28,7 @@ import kotlin.metadata.kind
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty1
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.valueParameters
@@ -83,7 +84,7 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
     } else if (kmClass != null) {
         addAll(computeDeclaredMembersFromMetadata(name))
     } else {
-        getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
+        searchMethodsByNameWithoutBuiltinMagic(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
         for (method in jClass.declaredMethods) {
             if (method.name == name && Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
                 add(JavaKNamedFunction(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
@@ -110,14 +111,9 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
 
         val propertiesFromSupertypes = getPropertiesFromSupertypes(name)
         if (propertiesFromSupertypes.isNotEmpty()) {
-            val handledProperties = hashSetOf<KProperty1<*, *>>()
-            addPropertyOverrideByMethod(propertiesFromSupertypes, this, handledProperties) {
-                getDeclaredNonStaticMethodsFromJavaClass(it)
+            addPropertyOverrideByMethod(propertiesFromSupertypes, this, handledProperties = null) {
+                searchMethodsByNameWithoutBuiltinMagic(it)
             }
-            // K1 also had logic about properties in supertypes, see `LazyJavaClassMemberScope.computeNonDeclaredProperties`.
-            // However, the only test where it can be observed
-            // `compiler/testData/ir/irText/firProblems/TypeParameterInClashingAccessor.kt` never worked in K1 reflection because of
-            // other problems: KT-81029.
         }
 
         if (jClass.isEnum && name == ENUM_ENTRIES_PROPERTY_NAME) {
@@ -133,6 +129,29 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
             }
         }
     }
+}
+
+/**
+ * Returns properties inherited from supertypes of this Java class, whose accessors are overridden by methods which are also inherited
+ * from supertypes (see example in KT-91809).
+ */
+internal fun MemberContainer<*>.computePropertiesOverridesFromSupertypes(name: String): Collection<ReflectKCallable<*>> {
+    val propertiesFromSupertypes = getPropertiesFromSupertypes(name)
+    if (propertiesFromSupertypes.isEmpty()) return emptyList()
+
+    val handledProperties = hashSetOf<KProperty1<*, *>>()
+
+    addPropertyOverrideByMethod(propertiesFromSupertypes, arrayListOf(), handledProperties) {
+        searchMethodsByNameWithoutBuiltinMagic(it)
+    }
+
+    val propertiesOverridesFromSuperTypes = arrayListOf<ReflectKCallable<*>>()
+
+    addPropertyOverrideByMethod(propertiesFromSupertypes - handledProperties, propertiesOverridesFromSuperTypes, handledProperties = null) {
+        searchMethodsInSupertypesWithoutBuiltinMagic(it)
+    }
+
+    return propertiesOverridesFromSuperTypes.map { it.createFakeOverride(this, KTypeSubstitutor.EMPTY) }
 }
 
 internal fun MemberContainer<*>.computeDeclaredMembersFromMetadata(name: String): Collection<ReflectKCallable<*>> = buildList {
@@ -249,17 +268,17 @@ private enum class MemberBelonginess {
         member.kind.isReal == (this == DECLARED)
 }
 
-internal fun MemberContainer<*>.isVisibleAsFunctionInCurrentClass(function: JavaKNamedFunction): Boolean {
+internal fun MemberContainer<*>.isVisibleAsFunctionInCurrentClass(function: ReflectKFunction): Boolean {
     if (getPropertyNamesCandidatesByAccessorName(Name.identifier(function.name)).any { propertyName ->
             getPropertiesFromSupertypes(propertyName.asString()).any { property ->
                 doesClassOverrideProperty(property) { accessorName ->
+                    // This lambda should return property accessors available in this class by their name
+                    // If 'accessorName' is current function we return only it just because we check exactly
+                    // that current method is override of accessor
                     if (function.name == accessorName)
                         listOf(function)
-                    else {
-                        // K1 code also searched in supertypes (see searchMethodsInSupertypesWithoutBuiltinMagic), but it seems useful
-                        // only for mapped builtins and their subtypes, so will be handled separately in KT-85727.
-                        getDeclaredNonStaticMethodsFromJavaClass(accessorName)
-                    }
+                    else
+                        searchMethodsByNameWithoutBuiltinMagic(accessorName) + searchMethodsInSupertypesWithoutBuiltinMagic(accessorName)
                 } && (property is KMutableProperty<*> || !JvmAbi.isSetterName(function.name))
             }
         }) return false
@@ -267,7 +286,11 @@ internal fun MemberContainer<*>.isVisibleAsFunctionInCurrentClass(function: Java
     return true
 }
 
-private fun MemberContainer<*>.getDeclaredNonStaticMethodsFromJavaClass(name: String? = null): List<JavaKNamedFunction> {
+private fun MemberContainer<*>.searchMethodsInSupertypesWithoutBuiltinMagic(name: String): Collection<ReflectKFunction> =
+    // TODO (KT-85727): filter out builtins with a different JVM name, and builtins with erased parameters.
+    getFunctionsFromSupertypes(name)
+
+private fun MemberContainer<*>.searchMethodsByNameWithoutBuiltinMagic(name: String? = null): List<JavaKNamedFunction> {
     require(kmClass == null) { "Should be called only for Java classes: $this" }
     if (jClass.isAnnotation) return emptyList()
     return jClass.declaredMethods.mapNotNull { method ->
@@ -280,7 +303,7 @@ internal fun MemberContainer<*>.getPropertiesFromSupertypes(name: String): List<
     supertypes.flatMap { supertype ->
         val supertypeKClass = supertype.classifier as? KClass<*> ?: return@flatMap emptyList()
         val substitutor = KTypeSubstitutor.create(supertype)
-        supertypeKClass.memberProperties.filter { it.name == name }.map { property ->
+        supertypeKClass.memberProperties.filter { it.name == name && it.visibility != KVisibility.PRIVATE }.map { property ->
             (property as ReflectKCallable<*>).createFakeOverride(this, substitutor) as KProperty1<*, *>
         }
     }
