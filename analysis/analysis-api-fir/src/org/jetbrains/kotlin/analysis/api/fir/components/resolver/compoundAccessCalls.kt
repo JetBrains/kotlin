@@ -228,7 +228,7 @@ private fun createCompoundArrayAccessCall(
         val getCall = KaFirSimpleFunctionCall(
             backingPartiallyAppliedSymbol = getPartiallyAppliedSymbol,
             backingArgumentMapping = getArgumentMapping,
-            backingTypeArgumentsMapping = firCall
+            backingTypeArgumentsMapping = firGetCall
                 .toFirTypeArgumentsMapping(symbol = getPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
         ).let {
@@ -257,7 +257,7 @@ private fun createCompoundArrayAccessCall(
         val operationCall = KaFirSimpleFunctionCall(
             backingPartiallyAppliedSymbol = operationPartiallyAppliedSymbol,
             backingArgumentMapping = operationArgumentsMapping,
-            backingTypeArgumentsMapping = firCall
+            backingTypeArgumentsMapping = firOperationCall
                 .toFirTypeArgumentsMapping(symbol = operationPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
         ).let {
