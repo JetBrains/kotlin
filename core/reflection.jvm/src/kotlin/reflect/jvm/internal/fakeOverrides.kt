@@ -82,8 +82,20 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
             val member = supertypeMember.createFakeOverride(kClass, substitutor)
             val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
             if (kotlinSignature in declaredKotlinSignatures) continue
+            // A function inherited in a Java class is not visible as a function if it overrides an accessor of a property inherited
+            // from another supertype. See `LazyJavaClassMemberScope.computeNonDeclaredFunctions`.
+            if (!kClass.isKotlin && member is ReflectKFunction && !member.isStatic && !kClass.isVisibleAsFunctionInCurrentClass(member)) {
+                continue
+            }
             // Inherited signatures are always compared by the Java signatures. Even for Kotlin classes.
             val javaSignature = kotlinSignature.withEqualityMode(javaSignatureMode)
+            val existingMember = result[javaSignature]
+            result[javaSignature] = if (existingMember == null) member else createIntersectionOverride(existingMember, member)
+        }
+    }
+    if (!kClass.isKotlin) {
+        for (member in kClass.computePropertiesOverridesFromSupertypes(name)) {
+            val javaSignature = member.toEquatableCallableSignature(javaSignatureMode)
             val existingMember = result[javaSignature]
             result[javaSignature] = if (existingMember == null) member else createIntersectionOverride(existingMember, member)
         }
@@ -98,6 +110,18 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
         result[member.toEquatableCallableSignature(javaSignatureMode)] = member
     }
     return result
+}
+
+internal fun MemberContainer<*>.getFunctionsFromSupertypes(name: String): List<ReflectKFunction> = buildList {
+    for (supertype in supertypes) {
+        val supertypeKClass = supertype.classifier as? MemberContainer<*> ?: continue
+        val substitutor = KTypeSubstitutor.create(supertype)
+        for (supertypeMember in getSupertypeMembersByName(supertype, supertypeKClass, name)) {
+            if (supertypeMember is ReflectKFunction && !supertypeMember.isStatic) {
+                add(supertypeMember.createFakeOverride(this@getFunctionsFromSupertypes, substitutor) as ReflectKFunction)
+            }
+        }
+    }
 }
 
 internal fun ReflectKCallable<*>.createFakeOverride(subclass: MemberContainer<*>, substitutor: KTypeSubstitutor): ReflectKCallable<*> =
