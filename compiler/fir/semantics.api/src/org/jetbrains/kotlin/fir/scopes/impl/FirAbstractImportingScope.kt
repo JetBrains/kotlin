@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
@@ -98,6 +99,7 @@ abstract class FirAbstractImportingScope(
         name: Name?,
         imports: List<FirResolvedImport>,
         crossinline processor: (S) -> Unit,
+        crossinline importedCopiesOfKind: ImportedCopies.() -> MutableMap<Pair<ClassId, S>, S>,
         crossinline buildImportedCopy: S.(ClassId) -> S,
         processCallablesByName: FirContainingNamesAwareScope.(Name, (S) -> Unit) -> Unit,
         getTopLevelCallableSymbols: (FqName, Name) -> List<S>
@@ -118,7 +120,9 @@ abstract class FirAbstractImportingScope(
                                 it.lazyResolveToPhase(FirResolvePhase.STATUS)
                             }
 
-                            processor(it.buildImportedCopy(staticsScopeOwnerSymbol.classId))
+                            val importedClassId = staticsScopeOwnerSymbol.classId
+                            val copies = importedCopies().importedCopiesOfKind()
+                            processor(copies.getOrPut(importedClassId to it) { it.buildImportedCopy(importedClassId) })
                         } else {
                             processor(it)
                         }
@@ -139,6 +143,7 @@ abstract class FirAbstractImportingScope(
             name,
             imports,
             processor,
+            { functions },
             { classId -> fir.buildImportedVersion(classId).symbol },
             FirContainingNamesAwareScope::processFunctionsByName,
             provider::getTopLevelFunctionSymbols
@@ -150,15 +155,30 @@ abstract class FirAbstractImportingScope(
             name,
             imports,
             processor,
+            { variables },
             { classId -> fir.buildImportedVersion(classId).symbol },
             FirContainingNamesAwareScope::processPropertiesByName,
             provider::getTopLevelPropertySymbols
         )
     }
 
+    private fun importedCopies(): ImportedCopies = scopeSession.getOrBuild(session, ImportedCopiesKey) { ImportedCopies() }
+
     @DelicateScopeAPI
     abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirAbstractImportingScope
 }
+
+/**
+ * Imported copies of callables by the class they are imported from and the original callable.
+ * They are kept in the scope session rather than in the session, as the originals may live only as long as the scope session
+ * (e.g., members of objects implemented by delegation).
+ */
+private class ImportedCopies {
+    val functions: MutableMap<Pair<ClassId, FirNamedFunctionSymbol>, FirNamedFunctionSymbol> = hashMapOf()
+    val variables: MutableMap<Pair<ClassId, FirVariableSymbol<*>>, FirVariableSymbol<*>> = hashMapOf()
+}
+
+private object ImportedCopiesKey : ScopeSessionKey<FirSession, ImportedCopies>()
 
 /**
  * Imported copies are built as fake overrides: they have their own parameters, and they do not have bodies.
