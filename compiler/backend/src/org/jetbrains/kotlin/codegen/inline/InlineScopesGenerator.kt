@@ -283,7 +283,7 @@ class InlineScopesGenerator {
             override fun inlineNesting(): Int = 0
 
             override fun shouldSkipVariable(variable: LocalVariableNode): Boolean =
-                !variable.name.contains(INLINE_FUN_VAR_SUFFIX)
+                getInlineDepth(variable.name.dropInlineScopeInfo()) == 0
 
             override fun computeInlineScopeInfo(node: InlineScopeNode) {
                 val variable = node.markerVariable!!
@@ -335,7 +335,7 @@ class InlineScopesGenerator {
         callSiteLineNumber: Int?,
         surroundingScopeNumber: Int?
     ): String {
-        val prefix = name.replace(INLINE_FUN_VAR_SUFFIX, "").dropInlineScopeInfo()
+        val prefix = name.dropInlineScopeInfo().dropInlineFunVarSuffixes()
         return buildString {
             append(prefix)
             append(INLINE_SCOPE_NUMBER_SEPARATOR)
@@ -416,6 +416,13 @@ private fun getInlineDepth(variableName: String): Int {
 
     return depth
 }
+
+/**
+ * Drops the [INLINE_FUN_VAR_SUFFIX] suffixes at the end of the name.
+ * A `$iv` in the middle of the name belongs to the name itself, for example to a name that encodes a value class,
+ * see [org.jetbrains.kotlin.load.java.ValueClassParameterNames].
+ */
+private fun String.dropInlineFunVarSuffixes(): String = dropLast(getInlineDepth(this) * INLINE_FUN_VAR_SUFFIX.length)
 
 private val String.isInlineLambdaName: Boolean
     get() = startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)

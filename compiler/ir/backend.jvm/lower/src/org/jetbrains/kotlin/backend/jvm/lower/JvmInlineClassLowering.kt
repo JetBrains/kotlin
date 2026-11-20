@@ -570,6 +570,14 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         return super.visitSetValue(expression)
     }
 
+    override fun visitVariable(declaration: IrVariable): IrStatement {
+        // Temporaries do not go in the local variable table, so their names are left as they are.
+        if (declaration.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE && declaration.origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR) {
+            replacements.encodeValueClassOriginIntoName(declaration)
+        }
+        return super.visitVariable(declaration)
+    }
+
     private fun buildPrimaryInlineClassConstructor(valueClass: IrClass, irConstructor: IrConstructor) {
         // Add the default primary constructor
         val primaryConstructor = valueClass.addConstructor {
