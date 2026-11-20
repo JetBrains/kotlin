@@ -68,6 +68,20 @@ KtOperationReferenceExpression(196,198): '+='
             returnType = kotlin.Int
             symbol = vararg indices: kotlin.Int
             contextParameters = []
+            callableId = null),
+          2 -> (KaVariableSignature:
+            name = indices
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg indices: kotlin.Int
+            contextParameters = []
+            callableId = null),
+          3 -> (KaVariableSignature:
+            name = indices
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg indices: kotlin.Int
+            contextParameters = []
             callableId = null)
         }
       indexArguments = [
@@ -115,10 +129,17 @@ KtOperationReferenceExpression(196,198): '+='
             contextParameters = []
             callableId = null),
           2 -> (KaVariableSignature:
-            name = value
+            name = indices
             receiverType = null
-            returnType = B
-            symbol = value: B
+            returnType = kotlin.Int
+            symbol = vararg indices: kotlin.Int
+            contextParameters = []
+            callableId = null),
+          3 -> (KaVariableSignature:
+            name = indices
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg indices: kotlin.Int
             contextParameters = []
             callableId = null)
         }

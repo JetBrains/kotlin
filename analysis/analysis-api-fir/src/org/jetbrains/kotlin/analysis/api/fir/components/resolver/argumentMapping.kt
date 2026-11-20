@@ -97,9 +97,9 @@ private fun FirExpression.findSourceKtExpressionForCallArgument(): KtExpression?
     // For other arguments (including array indices), the source is the KtExpression.
     return when (this) {
         is FirFunctionTypeConversionExpression ->
-            expression.realPsi as? KtExpression
+            expression.findSourceKtExpressionForCallArgument()
         is FirSmartCastExpression ->
-            originalExpression.realPsi as? KtExpression
+            originalExpression.findSourceKtExpressionForCallArgument()
         is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
             realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
         is FirAnonymousFunctionExpression ->
