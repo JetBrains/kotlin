@@ -569,7 +569,6 @@ KtNameReferenceExpression(392,393): 's'
 KtOperationReferenceExpression(393,395): '!!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(396,402): 'itself'
@@ -707,7 +706,6 @@ KtNameReferenceExpression(454,468): 'nullableItself'
 KtOperationReferenceExpression(468,470): '!!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtContainerNode(470,475): '["5"]'
@@ -878,7 +876,6 @@ KtValueArgumentList(557,559): '()'
 KtOperationReferenceExpression(559,561): '!!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtContainerNode(561,566): '["8"]'
@@ -1202,7 +1199,6 @@ KtNameReferenceExpression(820,825): 'child'
 KtOperationReferenceExpression(826,828): '!='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean

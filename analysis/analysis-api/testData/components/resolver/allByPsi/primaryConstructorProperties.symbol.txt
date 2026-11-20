@@ -1,0 +1,230 @@
+KtFile: 'primaryConstructorProperties.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,11): 'interface I'
+  null
+
+KtNamedFunction(12,105): 'fun f(x: I) {'
+  null
+
+KtParameterList(17,23): '(x: I)'
+  null
+
+KtParameter(18,22): 'x: I'
+  null
+
+KtTypeReference(21,22): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtUserType(21,22): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtNameReferenceExpression(21,22): 'I'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtBlockExpression(24,105): '{'
+  null
+
+KtClass(30,52): 'class A(x: I) : I by x'
+  null
+
+KtPrimaryConstructor(37,43): '(x: I)'
+  null
+
+KtParameterList(37,43): '(x: I)'
+  null
+
+KtParameter(38,42): 'x: I'
+  null
+
+KtTypeReference(41,42): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtUserType(41,42): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtNameReferenceExpression(41,42): 'I'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtSuperTypeList(46,52): 'I by x'
+  null
+
+KtDelegatedSuperTypeEntry(46,52): 'I by x'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtTypeReference(46,47): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtUserType(46,47): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtNameReferenceExpression(46,47): 'I'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtNameReferenceExpression(51,52): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      x: I
+    ]
+
+KtClass(57,82): 'class B(val x: I): I by x'
+  null
+
+KtPrimaryConstructor(64,74): '(val x: I)'
+  null
+
+KtParameterList(64,74): '(val x: I)'
+  null
+
+KtParameter(65,73): 'val x: I'
+  null
+
+KtTypeReference(72,73): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtUserType(72,73): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtNameReferenceExpression(72,73): 'I'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtSuperTypeList(76,82): 'I by x'
+  null
+
+KtDelegatedSuperTypeEntry(76,82): 'I by x'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtTypeReference(76,77): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtUserType(76,77): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtNameReferenceExpression(76,77): 'I'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtNameReferenceExpression(81,82): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      x: I
+    ]
+
+KtClass(87,103): 'class C : I by x'
+  null
+
+KtSuperTypeList(97,103): 'I by x'
+  null
+
+KtDelegatedSuperTypeEntry(97,103): 'I by x'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtTypeReference(97,98): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtUserType(97,98): 'I'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtNameReferenceExpression(97,98): 'I'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /I
+    ]
+
+KtNameReferenceExpression(102,103): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      x: I
+    ]
