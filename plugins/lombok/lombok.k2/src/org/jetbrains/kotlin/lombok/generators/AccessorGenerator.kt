@@ -39,7 +39,6 @@ import kotlin.collections.orEmpty
 
 object LombokAccessorGeneratorKey : LombokDeclarationKey()
 
-@OptIn(DirectDeclarationsAccess::class)
 class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private val lombokService: LombokService
         get() = session.lombokService
@@ -143,7 +142,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         val hasValueAnnotation = lombokService.getValue(classSymbol) != null
 
         return buildList {
-            for (declaration in classSymbol.fir.declarations) {
+            for (declaration in @OptIn(DirectDeclarationsAccess::class) classSymbol.fir.declarations) {
                 if (declaration !is FirJavaField) continue
 
                 val getter = lombokService.getGetter(declaration.symbol) ?: runIf(!declaration.isStatic) { classGetter }

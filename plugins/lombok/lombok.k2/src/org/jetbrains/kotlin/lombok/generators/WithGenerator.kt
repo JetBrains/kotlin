@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.name.Name
 
 object LombokWithGeneratorKey : LombokDeclarationKey()
 
-@OptIn(DirectDeclarationsAccess::class)
 class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private val lombokService: LombokService
         get() = session.lombokService
@@ -70,10 +69,10 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
         }.toMap()
     }
 
-    @OptIn(SymbolInternals::class)
     private fun computeNonStaticFieldsWithWithAnnotation(classSymbol: FirClassSymbol<*>): List<Pair<FirJavaField, With>>? {
         val classWith = lombokService.getWith(classSymbol)
 
+        @OptIn(DirectDeclarationsAccess::class, SymbolInternals::class)
         return classSymbol.fir.declarations
             .filterIsInstance<FirJavaField>()
             .filter { !it.isStatic }

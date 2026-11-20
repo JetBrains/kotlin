@@ -114,7 +114,6 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
      * be evaluated against the *resolved* value of that earlier parameter — whether it came from an explicit
      * builder setter call or from its own default — rather than re-reading a possibly-unset builder field.
      */
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrBlockBodyBuilder.buildBuildMethod(declaration: IrSimpleFunction, build: BuilderDeclarationType.Function.Build) {
         val builderClass = declaration.parent as IrClass
         val thisParameter = declaration.dispatchReceiverParameter!!
@@ -145,11 +144,16 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         callable.parameters.forEachIndexed { index, parameter ->
             if (parameter.kind != IrParameterKind.Regular) return@forEachIndexed
             val tempSymbol = resolvedValues[parameter.symbol] ?: return@forEachIndexed
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             call.arguments[index] = irGet(tempSymbol.owner)
         }
 
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val builderProperties = builderClass.declarations.filterIsInstance<IrProperty>()
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val entityProperties = entityClass.declarations.filterIsInstance<IrProperty>()
+
         val entityPropertyValues = mutableMapOf<IrProperty, IrExpression>()
         // Code for regular properties: generate values ...
         for (builderProperty in builderProperties) {

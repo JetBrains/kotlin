@@ -211,7 +211,6 @@ class GlobalConfig(
     }
 }
 
-@OptIn(DirectDeclarationsAccess::class)
 object ConeLombokAnnotations {
     sealed class ConeLombokAnnotation(val annotation: FirAnnotation)
 
@@ -237,7 +236,7 @@ object ConeLombokAnnotations {
     class Getter(accessLevel: AccessLevel, annotation: FirAnnotation) : AbstractAccessor(accessLevel, annotation) {
         companion object : ConeAnnotationCompanion<Getter>(LombokNames.GETTER_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Getter = Getter(
-                accessLevel = annotation.getAccessLevel(VALUE),
+                accessLevel = @OptIn(DirectDeclarationsAccess::class) annotation.getAccessLevel(VALUE),
                 annotation = annotation,
             )
         }
@@ -246,7 +245,7 @@ object ConeLombokAnnotations {
     class Setter(accessLevel: AccessLevel, annotation: FirAnnotation) : AbstractAccessor(accessLevel, annotation) {
         companion object : ConeAnnotationCompanion<Setter>(LombokNames.SETTER_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Setter = Setter(
-                accessLevel = annotation.getAccessLevel(VALUE),
+                accessLevel = @OptIn(DirectDeclarationsAccess::class) annotation.getAccessLevel(VALUE),
                 annotation = annotation,
             )
         }
@@ -255,7 +254,7 @@ object ConeLombokAnnotations {
     class With(val accessLevel: AccessLevel, annotation: FirAnnotation) : ConeLombokAnnotation(annotation) {
         companion object : ConeAnnotationCompanion<With>(LombokNames.WITH_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): With = With(
-                accessLevel = annotation.getAccessLevel(VALUE),
+                accessLevel = @OptIn(DirectDeclarationsAccess::class) annotation.getAccessLevel(VALUE),
                 annotation = annotation,
             )
         }
@@ -283,7 +282,7 @@ object ConeLombokAnnotations {
         companion object : ConeAnnotationCompanion<NoArgsConstructor>(LombokNames.NO_ARGS_CONSTRUCTOR_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): NoArgsConstructor {
                 return NoArgsConstructor(
-                    accessLevel = annotation.getAccessLevel(ACCESS),
+                    accessLevel = @OptIn(DirectDeclarationsAccess::class) annotation.getAccessLevel(ACCESS),
                     staticName = annotation.getNonBlankStringArgument(STATIC_NAME),
                     force = annotation.getBooleanArgument(FORCE) ?: false,
                     annotation = annotation,
@@ -297,12 +296,11 @@ object ConeLombokAnnotations {
         override val staticName: String? = null,
         annotation: FirAnnotation,
     ) : ConstructorAnnotation, ConeLombokAnnotation(annotation) {
-        @OptIn(SymbolInternals::class)
         override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> {
             val actualClassId = annotation.unexpandedClassId
 
             return buildList {
-                for (declaration in classSymbol.fir.declarations) {
+                for (declaration in @OptIn(DirectDeclarationsAccess::class, SymbolInternals::class) classSymbol.fir.declarations) {
                     if (declaration !is FirJavaField || declaration.isStatic) continue
 
                     when (actualClassId) {
@@ -320,7 +318,7 @@ object ConeLombokAnnotations {
         companion object : ConeAnnotationCompanion<AllArgsConstructor>(LombokNames.ALL_ARGS_CONSTRUCTOR_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): AllArgsConstructor {
                 return AllArgsConstructor(
-                    accessLevel = annotation.getAccessLevel(ACCESS),
+                    accessLevel = @OptIn(DirectDeclarationsAccess::class) annotation.getAccessLevel(ACCESS),
                     staticName = annotation.getNonBlankStringArgument(STATIC_NAME),
                     annotation = annotation,
                 )
@@ -333,10 +331,10 @@ object ConeLombokAnnotations {
         override val staticName: String? = null,
         annotation: FirAnnotation,
     ) : ConstructorAnnotation, ConeLombokAnnotation(annotation) {
-        @OptIn(SymbolInternals::class)
         override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> {
             if (!classSymbol.hasJavaOrigin) return classSymbol.primaryConstructorParameters().orEmpty()
 
+            @OptIn(DirectDeclarationsAccess::class, SymbolInternals::class)
             return classSymbol.fir.declarations
                 .filterIsInstance<FirJavaField>()
                 .filter { it.isFieldRequired() }
@@ -352,7 +350,7 @@ object ConeLombokAnnotations {
         companion object : ConeAnnotationCompanion<RequiredArgsConstructor>(LombokNames.REQUIRED_ARGS_CONSTRUCTOR_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): RequiredArgsConstructor {
                 return RequiredArgsConstructor(
-                    accessLevel = annotation.getAccessLevel(ACCESS),
+                    accessLevel = @OptIn(DirectDeclarationsAccess::class) annotation.getAccessLevel(ACCESS),
                     staticName = annotation.getNonBlankStringArgument(STATIC_NAME),
                     annotation = annotation,
                 )
@@ -397,7 +395,7 @@ object ConeLombokAnnotations {
     ) : ConeLombokAnnotation(annotation) {
         companion object : ConeAnnotationCompanion<FieldDefaults>(LombokNames.FIELD_DEFAULTS_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): FieldDefaults = FieldDefaults(
-                level = annotation.getAccessLevel(LEVEL, defaultAccessLevel = AccessLevel.NONE),
+                level = @OptIn(DirectDeclarationsAccess::class) annotation.getAccessLevel(LEVEL, defaultAccessLevel = AccessLevel.NONE),
                 makeFinal = annotation.getBooleanArgument(MAKE_FINAL) ?: false,
                 annotation = annotation,
             )
@@ -519,7 +517,7 @@ object ConeLombokAnnotations {
                     buildMethodName = getBuildMethodName(annotation),
                     builderMethodName = getBuilderMethodName(annotation),
                     requiresToBuilder = getRequiresToBuilder(annotation),
-                    accessLevel = annotation.getAccessLevel(ACCESS),
+                    accessLevel = @OptIn(DirectDeclarationsAccess::class) annotation.getAccessLevel(ACCESS),
                     setterPrefix = getSetterPrefix(annotation),
                     hasSpecifiedBuilderClassName = specifiedBuilderClassName != null,
                     annotation = annotation,
@@ -591,6 +589,7 @@ object ConeLombokAnnotations {
             val DEFAULT_GET_METHOD_NAME = Name.identifier("getLogger")
         }
 
+        @OptIn(DirectDeclarationsAccess::class)
         val accessLevel: AccessLevel = annotation.getAccessLevel(ACCESS, defaultAccessLevel = AccessLevel.PRIVATE)
         val topic: String = runIf(initializeTopic) { annotation.getStringArgument(TOPIC) } ?: ""
     }

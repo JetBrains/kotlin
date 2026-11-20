@@ -89,13 +89,13 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
      * itself declares a function of that name, which would shadow the factory, or because its companion object - the
      * very place the factory goes - already declares one.
      */
-    @OptIn(SymbolInternals::class)
     private fun staticFactoryNameIsTaken(classSymbol: FirClassSymbol<*>, staticName: Name, valueParametersCount: Int): Boolean {
         if (declaresConflictingFunction(classSymbol, staticName, valueParametersCount)) return true
 
         // The raw (non-lazy-resolving) symbol, as in `AbstractBuilderGenerator`: `resolvedCompanionObjectSymbol` would
         // `lazyResolveToPhase(COMPANION_GENERATION)` from inside a generation callback running under that very phase.
         // Only a source-declared companion matters anyway - a generated one holds nothing to clash with.
+        @OptIn(SymbolInternals::class)
         val companionSymbol = (classSymbol as? FirRegularClassSymbol)?.companionObjectSymbol ?: return false
         return declaresConflictingFunction(companionSymbol, staticName, valueParametersCount)
     }
@@ -111,8 +111,8 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
      * by the user can shadow the factory, and requesting a scope would run the Lombok generators for the very class
      * whose companion object is being generated.
      */
-    @OptIn(DirectDeclarationsAccess::class)
     private fun declaresConflictingFunction(classSymbol: FirClassSymbol<*>, staticName: Name, valueParametersCount: Int): Boolean {
+        @OptIn(DirectDeclarationsAccess::class)
         return classSymbol.declarationSymbols.any {
             it is FirNamedFunctionSymbol &&
                     it.name == staticName &&
@@ -138,7 +138,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         return any { it is T && it.symbol.checkParametersClashing(valueParametersCount) }
     }
 
-    @OptIn(SymbolInternals::class)
     fun MutableList<FirFunction>.addIfNonClashing(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext) {
         val [constructorInfo: T, targetClassSymbol: FirClassSymbol<*>] = extractConstructorInfoAndTargetClassSymbol(classSymbol) ?: return
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }
@@ -254,6 +253,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 // `constructorTypeParametersFromConstructedClass` drops them the same way. Re-declaring them left
                 // the receiver's and the constructed type's parameters unrelated, and a generic outer class was
                 // rejected with `CANNOT_INFER_PARAMETER_TYPE`.
+                @OptIn(SymbolInternals::class)
                 targetClassSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().mapTo(typeParameters) {
                     buildConstructedClassTypeParameterRef { this.symbol = it.symbol }
                 }
@@ -281,6 +281,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             val methodSymbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, staticName))
             constructorOrFactorySymbol = methodSymbol
 
+            @OptIn(SymbolInternals::class)
             val classTypeParameterSymbols = targetClassSymbol.fir.typeParameters.map { it.symbol }
             if (hasJavaOrigin) {
                 FirJavaMethodBuilder().apply {
@@ -291,6 +292,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
                     classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol)
 
+                    @OptIn(SymbolInternals::class)
                     val javaClass = targetClassSymbol.fir as FirJavaClass
                     val javaTypeParametersFromClass = javaClass.classJavaTypeParameterStack
                         .filter { it.value in classTypeParameterSymbols }
@@ -428,11 +430,11 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         }
     }
 
-    @OptIn(SymbolInternals::class)
     private fun List<FirTypeParameterSymbol>.copyTypeParametersTo(
         destination: MutableList<FirTypeParameter>,
         methodSymbol: FirFunctionSymbol<*>,
     ) = mapTo(destination) { classTypeParameter ->
+        @OptIn(SymbolInternals::class)
         buildTypeParameterCopy(classTypeParameter.fir) {
             this.symbol = FirTypeParameterSymbol()
             containingDeclarationSymbol = methodSymbol

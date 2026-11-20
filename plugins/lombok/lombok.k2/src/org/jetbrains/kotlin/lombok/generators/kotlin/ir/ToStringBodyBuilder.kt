@@ -114,15 +114,16 @@ object ToStringBodyBuilder : IrBodyBuilder<ToStringGeneratorKey>() {
      * direct descendant of `Object` too, rendering the identity hash its `toString` returns - "pretty much
      * meaningless", as `@ToString` puts it, but asked for.
      */
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun buildSuperToStringCall(
         irClass: IrClass,
         thisParam: IrValueParameter,
     ): IrExpression? {
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val superClass = irClass.superTypes
             .firstNotNullOfOrNull { type -> type.classOrNull?.owner?.takeIf { !it.isInterface } }
             ?: return null
 
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val superToStringFun = superClass.functions
             .firstOrNull {
                 it.name == OperatorNameConventions.TO_STRING &&

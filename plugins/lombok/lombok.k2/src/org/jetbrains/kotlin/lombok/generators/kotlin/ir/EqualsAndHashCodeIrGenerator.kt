@@ -185,11 +185,11 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         +irReturn(irGet(resultVar))
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun extractIncludedProperties(
         key: EqualsAndHashCodeGeneratorKey,
         irClass: IrClass,
     ): List<IrProperty> = key.propertyInfos.mapNotNull { info ->
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val property = irClass.findDeclaration<IrProperty> { it.name == info.propertyName }
         property?.takeIf { it.backingField != null || !info.ignoreWithoutBackingField }
     }
@@ -223,9 +223,9 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
 
     private fun IrProperty.typeForLombok(): IrType? = backingField?.type ?: getter?.returnType
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrBlockBodyBuilder.callHashCodeOn(receiver: IrExpression): IrExpression {
         // Use Any.hashCode — reliable cross-platform regardless of the property's static type.
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val anyHashCode = context.irBuiltIns.anyClass.owner.functions
             .single { it.name == HASHCODE_NAME && it.parameters.singleOrNull { p -> p.kind == IrParameterKind.DispatchReceiver } != null }
         return IrCallImpl(
@@ -293,9 +293,10 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         }
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun buildSuperHashCodeCall(irClass: IrClass, thisParam: IrValueParameter): IrExpression? {
         val superClass = irClass.nonInterfaceSuperclass() ?: return null
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val superHashCode = superClass.functions.firstOrNull {
             it.name == HASHCODE_NAME &&
                     it.parameters.count { p -> p.kind == IrParameterKind.Regular } == 0 &&
@@ -325,8 +326,8 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
      * Calls the generated `canEqual`, or else the user-declared one that kept it from being generated, matched the
      * way the FIR generator matches it: other overloads merely share the name and must never be called here.
      */
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrBlockBodyBuilder.buildCanEqualCall(irClass: IrClass, receiver: IrExpression, argument: IrExpression): IrExpression {
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val canEqualFunction = irClass.functions.firstOrNull {
             it.name == LombokNames.CAN_EQUAL && (it.origin as? IrDeclarationOrigin.GeneratedByPlugin)?.pluginKey is EqualsAndHashCodeGeneratorKey
         } ?: irClass.functions.first { it.name == LombokNames.CAN_EQUAL && it.hasCanEqualJvmSignature(context.irBuiltIns) }

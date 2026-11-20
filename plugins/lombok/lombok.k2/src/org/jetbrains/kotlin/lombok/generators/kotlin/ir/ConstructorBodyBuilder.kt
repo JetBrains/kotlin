@@ -52,14 +52,16 @@ object ConstructorBodyBuilder : IrBodyBuilder<ConstructorGeneratorKey>() {
      * can be called by that name - the no-args one when the factory takes no parameters, and otherwise the primary
      * one, the parameters of which the factory copies (see `RequiredArgsConstructorGeneratorPart`).
      */
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun IrBlockBodyBuilder.build(key: ConstructorGeneratorKey, declaration: IrSimpleFunction) {
         // The return type is the constructed type already, carrying the factory's own type parameters as its
         // arguments - the very ones the constructor call has to be given.
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val constructedClass = declaration.returnType.classOrNull?.owner
             ?: error("No constructed class for ${declaration.render()}")
 
         val regularParameters = declaration.parameters.filter { it.kind == IrParameterKind.Regular }
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val constructor = if (regularParameters.isEmpty()) {
             constructedClass.constructors.firstOrNull(IrConstructor::takesNoArguments)
                 ?: error("No no-args constructor for ${constructedClass.render()}")
@@ -86,13 +88,15 @@ object ConstructorBodyBuilder : IrBodyBuilder<ConstructorGeneratorKey>() {
      * does it; `AbstractConstructorGeneratorPart` only generates when it exists, hence the error for the
      * impossible case.
      */
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     fun buildConstructorBody(context: IrPluginContext, constructor: IrConstructor) {
         val ownerClass = constructor.parent as? IrClass ?: return
 
         val superType = ownerClass.superTypes.singleOrNull { it.getClass()?.kind == ClassKind.CLASS }
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val superClass = superType?.getClass() ?: context.irBuiltIns.anyClass.owner
 
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val superConstructor = superClass.constructors.firstOrNull(IrConstructor::takesNoArguments)
             ?: error("No no-args superclass constructor for ${ownerClass.render()}")
 

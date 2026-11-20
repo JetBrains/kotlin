@@ -111,7 +111,6 @@ sealed class IrBodyBuilder<T : GeneratedDeclarationKey> {
      * Returns `null` for a non-array [type], and also if `java.util.Arrays` can't be resolved, in which case the
      * caller falls back to whatever it does for an ordinary property.
      */
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     protected fun IrBuilderWithScope.findArraysFunctionByContent(
         type: IrType?,
         primitiveArrayName: Name,
@@ -125,6 +124,7 @@ sealed class IrBodyBuilder<T : GeneratedDeclarationKey> {
 
         val arraysClass = pluginContext.finderForBuiltins().findClass(LombokNames.JAVA_ARRAYS_ID) ?: return null
         val name = if (isPrimitiveArray) primitiveArrayName else objectArrayName
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         return arraysClass.owner.functions.firstOrNull { function ->
             function.name == name &&
                     function.parameters.size == parameterCount &&
