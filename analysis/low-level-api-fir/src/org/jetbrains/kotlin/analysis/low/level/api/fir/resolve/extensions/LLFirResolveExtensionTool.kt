@@ -236,6 +236,13 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
             .flatMapTo(mutableListOf()) { it.getTopLevelProperties(callableId) }
     }
 
+    override fun getTopLevelDestructuringDeclarationEntries(callableId: CallableId): Collection<KtDestructuringDeclarationEntry> {
+        forbidAnalysis {
+            return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
+                .flatMapTo(mutableListOf()) { it.getTopLevelDestructuringDeclarationEntries(callableId) }
+        }
+    }
+
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> = forbidAnalysis {
         return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
             .flatMapTo(mutableListOf()) { it.getTopLevelFunctions(callableId) }
@@ -244,6 +251,21 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> = forbidAnalysis {
         return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
             .mapTo(mutableListOf()) { it.kotlinFile }
+    }
+
+    override fun getTopLevelFunctionFiles(callableId: CallableId): Collection<KtFile> = forbidAnalysis {
+        return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
+            .flatMapTo(mutableListOf()) { it.getTopLevelFunctionFiles(callableId) }
+    }
+
+    override fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> = forbidAnalysis {
+        return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
+            .flatMapTo(mutableListOf()) { it.getTopLevelPropertyFiles(callableId) }
+    }
+
+    override fun getTopLevelDestructuringDeclarationEntryFiles(callableId: CallableId): Collection<KtFile> = forbidAnalysis {
+        return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
+            .flatMapTo(mutableListOf()) { it.getTopLevelDestructuringDeclarationEntryFiles(callableId) }
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {

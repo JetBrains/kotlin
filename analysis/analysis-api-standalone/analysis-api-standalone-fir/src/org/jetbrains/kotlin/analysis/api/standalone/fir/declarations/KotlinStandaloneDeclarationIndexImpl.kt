@@ -23,6 +23,8 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
         mutableMapOf()
     override val topLevelPropertiesByCallableId: MutableMap<CallableId, MutableSet<KotlinStandaloneIndexEntry<KtProperty>>> =
         mutableMapOf()
+    override val topLevelDestructuringDeclarationEntriesByCallableId: MutableMap<CallableId, MutableSet<KotlinStandaloneIndexEntry<KtDestructuringDeclarationEntry>>> =
+        mutableMapOf()
 
     override val classLikeDeclarationsByPackage: MutableMap<FqName, MutableSet<KotlinStandaloneIndexEntry<KtClassLikeDeclaration>>> =
         mutableMapOf()
@@ -71,6 +73,16 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
                 is KotlinStandaloneIndexRecord.TopLevelProperty -> {
                     val entry = KotlinStandaloneIndexEntry<KtProperty>(file, record.ordinal, record.callableId.callableName)
                     indexTopLevelCallable(record.callableId, entry, topLevelPropertiesByCallableId)
+                }
+
+                is KotlinStandaloneIndexRecord.TopLevelDestructuringDeclarationEntry -> {
+                    val entry = KotlinStandaloneIndexEntry<KtDestructuringDeclarationEntry>(
+                        file,
+                        record.ordinal,
+                        record.callableId.callableName,
+                    )
+
+                    indexTopLevelCallable(record.callableId, entry, topLevelDestructuringDeclarationEntriesByCallableId)
                 }
             }
         }

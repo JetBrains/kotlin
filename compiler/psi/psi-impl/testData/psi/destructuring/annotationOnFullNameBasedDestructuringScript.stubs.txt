@@ -32,7 +32,7 @@ FILE[kind=Script[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
-      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=first]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=first, isSingleUnderscore=false, isVar=true, name=first]
       REFERENCE_EXPRESSION[referencedName=x]
     DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=true, isVar=false]
       MODIFIER_LIST[]
@@ -41,7 +41,7 @@ FILE[kind=Script[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
-      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=a]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=a, isSingleUnderscore=false, isVar=true, name=a]
         REFERENCE_EXPRESSION[referencedName=first]
       REFERENCE_EXPRESSION[referencedName=x]
     DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=true, isVar=false]
@@ -52,7 +52,7 @@ FILE[kind=Script[packageFqName=<root>]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
           VALUE_ARGUMENT_LIST
-      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=b]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=b, isSingleUnderscore=false, isVar=true, name=b]
         REFERENCE_EXPRESSION[referencedName=first]
       REFERENCE_EXPRESSION[referencedName=x]
     DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=true, isVar=false]
@@ -65,7 +65,7 @@ FILE[kind=Script[packageFqName=<root>]]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               STRING_TEMPLATE
-      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=c]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=c, isSingleUnderscore=false, isVar=true, name=c]
         REFERENCE_EXPRESSION[referencedName=first]
       REFERENCE_EXPRESSION[referencedName=x]
     DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=true, isVar=false]
@@ -75,7 +75,7 @@ FILE[kind=Script[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
-      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=d]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=d, isSingleUnderscore=false, isVar=false, name=d]
         REFERENCE_EXPRESSION[referencedName=first]
       REFERENCE_EXPRESSION[referencedName=x]
     DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=true, isVar=false]
@@ -86,7 +86,7 @@ FILE[kind=Script[packageFqName=<root>]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
           VALUE_ARGUMENT_LIST
-      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=e]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=e, isSingleUnderscore=false, isVar=false, name=e]
         REFERENCE_EXPRESSION[referencedName=first]
       REFERENCE_EXPRESSION[referencedName=x]
     DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=true, isVar=false]
@@ -99,6 +99,6 @@ FILE[kind=Script[packageFqName=<root>]]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               STRING_TEMPLATE
-      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=f]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=f, isSingleUnderscore=false, isVar=false, name=f]
         REFERENCE_EXPRESSION[referencedName=first]
       REFERENCE_EXPRESSION[referencedName=x]

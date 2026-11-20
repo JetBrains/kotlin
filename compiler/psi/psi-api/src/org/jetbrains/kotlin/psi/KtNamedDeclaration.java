@@ -30,7 +30,8 @@ public interface KtNamedDeclaration extends KtDeclaration, PsiNameIdentifierOwne
 
     /**
      * Returns the fully qualified name of this declaration, or {@code null} if it cannot be determined (for example, for local declarations
-     * or an anonymous declaration).
+     * or an anonymous declaration). Missing names of nameless declarations are replaced with a special name, like in class IDs; see
+     * {@link org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt#safeFqNameForLazyResolve} for the rules.
      */
     @Nullable
     FqName getFqName();

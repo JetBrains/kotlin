@@ -1,0 +1,13 @@
+Diagnostics from declarations.kt:
+  for PSI element of type KtDestructuringDeclaration at (8,1-22)
+    NON_LOCAL_DESTRUCTURING_DECLARATION      text ranges: [(110,116)]
+      PSI: KtDestructuringDeclaration at (8,1-22)
+
+Diagnostics from declarations.kts:
+  <NO DIAGNOSTICS>
+
+Diagnostics from other.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from main.kt:
+  <NO DIAGNOSTICS>

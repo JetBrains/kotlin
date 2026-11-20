@@ -46,6 +46,18 @@ public class SourceLikeFileBasedKotlinDeclarationProviderTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("destructuring.kt")
+  public void testDestructuring() {
+    run("destructuring.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringScript.kts")
+  public void testDestructuringScript() {
+    run("destructuringScript.kts");
+  }
+
+  @Test
   @TestMetadata("local.kt")
   public void testLocal() {
     run("local.kt");

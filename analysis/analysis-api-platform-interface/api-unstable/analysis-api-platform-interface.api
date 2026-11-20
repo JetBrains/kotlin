@@ -164,6 +164,8 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public fun getProviders ()Ljava/util/List;
 	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getTopLevelDestructuringDeclarationEntries (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelDestructuringDeclarationEntryFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
@@ -193,6 +195,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/platform/decla
 	public fun getMayHaveTopLevelKotlinClassLikeDeclaration ()Lkotlin/jvm/functions/Function1;
 	public abstract fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public abstract fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public abstract fun getTopLevelDestructuringDeclarationEntries (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelDestructuringDeclarationEntryFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public abstract fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public abstract fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
@@ -255,6 +259,10 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public synthetic fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
 	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public synthetic fun getTopLevelDestructuringDeclarationEntries (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelDestructuringDeclarationEntries (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
+	public synthetic fun getTopLevelDestructuringDeclarationEntryFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelDestructuringDeclarationEntryFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
 	public synthetic fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
 	public synthetic fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
@@ -281,6 +289,8 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public final fun getKotlinFile ()Lorg/jetbrains/kotlin/psi/KtFile;
 	public fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelCallableNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
+	public fun getTopLevelDestructuringDeclarationEntries (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun getTopLevelDestructuringDeclarationEntryFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelFunctionFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;

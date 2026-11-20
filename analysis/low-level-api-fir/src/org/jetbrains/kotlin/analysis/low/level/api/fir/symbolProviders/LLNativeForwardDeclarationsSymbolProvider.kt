@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
 
 /**
  * Symbol provider for synthetic Kotlin/Native forward declarations.
@@ -105,7 +105,7 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(
-        destination: MutableList<FirPropertySymbol>, callableId: CallableId, properties: Collection<KtProperty>,
+        destination: MutableList<FirPropertySymbol>, callableId: CallableId, variables: Collection<KtVariableDeclaration>,
     ) {
     }
 

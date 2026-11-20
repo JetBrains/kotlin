@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
  */
 public final class KtNamedDeclarationUtil {
     @Nullable
-    //NOTE: use JetNamedDeclaration#getFqName instead
-    /*package private*/ static FqName getFQName(@NotNull KtNamedDeclaration namedDeclaration) {
+    private static FqName getFQName(@NotNull KtNamedDeclaration namedDeclaration) {
         Name name = namedDeclaration.getNameAsName();
         if (name == null) {
             return null;
@@ -39,11 +38,14 @@ public final class KtNamedDeclarationUtil {
     /**
      * Returns the fully qualified name of the element that lexically encloses the given {@code namedDeclaration} — its package for a
      * top-level declaration of a file or a script, or the containing class or object otherwise — or {@code null} if it cannot be
-     * determined or the declaration is local.
+     * determined or the declaration is local. A destructuring declaration entry is enclosed by the container of its destructuring
+     * declaration.
      */
     @Nullable
     public static FqName getParentFqName(@NotNull KtNamedDeclaration namedDeclaration) {
-        PsiElement parent = namedDeclaration.getParent();
+        PsiElement parent = namedDeclaration instanceof KtDestructuringDeclarationEntry
+                            ? ((KtDestructuringDeclarationEntry) namedDeclaration).getDestructuringDeclaration().getParent()
+                            : namedDeclaration.getParent();
         if (parent instanceof KtClassBody) {
             // An enum entry body is an anonymous object, so its members are local
             if (parent.getParent() instanceof KtEnumEntry) {

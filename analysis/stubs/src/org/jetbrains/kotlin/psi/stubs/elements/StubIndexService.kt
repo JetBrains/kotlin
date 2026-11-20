@@ -31,6 +31,12 @@ open class StubIndexService protected constructor() {
     open fun indexProperty(stub: KotlinPropertyStub, sink: IndexSink) {
     }
 
+    /**
+     * Called for the entries of all stubbed destructuring declarations: top-level, member and script ones.
+     */
+    open fun indexDestructuringDeclarationEntry(stub: KotlinDestructuringDeclarationEntryStub, sink: IndexSink) {
+    }
+
     open fun indexParameter(stub: KotlinParameterStub, sink: IndexSink) {
     }
 

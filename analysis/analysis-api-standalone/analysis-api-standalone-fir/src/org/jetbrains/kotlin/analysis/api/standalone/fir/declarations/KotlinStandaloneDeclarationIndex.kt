@@ -21,6 +21,11 @@ internal interface KotlinStandaloneDeclarationIndex {
     val topLevelFunctionsByCallableId: Map<CallableId, Set<KotlinStandaloneIndexEntry<KtNamedFunction>>>
     val topLevelPropertiesByCallableId: Map<CallableId, Set<KotlinStandaloneIndexEntry<KtProperty>>>
 
+    /**
+     * Entries of destructuring declarations declared directly in a file. Like properties, they are top-level callables of the package.
+     */
+    val topLevelDestructuringDeclarationEntriesByCallableId: Map<CallableId, Set<KotlinStandaloneIndexEntry<KtDestructuringDeclarationEntry>>>
+
     val classLikeDeclarationsByPackage: Map<FqName, Set<KotlinStandaloneIndexEntry<KtClassLikeDeclaration>>>
     val topLevelCallablesByPackage: Map<FqName, Set<KotlinStandaloneIndexEntry<KtCallableDeclaration>>>
 

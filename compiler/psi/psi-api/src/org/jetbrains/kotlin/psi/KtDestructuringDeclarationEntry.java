@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationEntryStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
@@ -225,13 +224,6 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationStub<Kotl
     @Nullable
     public PsiElement getOwnValOrVarKeyword() {
         return findChildByType(KtTokens.VAL_VAR);
-    }
-
-    /** Always {@code null}: a destructuring entry has no fully qualified name. */
-    @Nullable
-    @Override
-    public FqName getFqName() {
-        return null;
     }
 
     @NotNull

@@ -1,0 +1,122 @@
+FILE[kind=Facade[packageFqName=test.fqNames, facadeFqName=test.fqNames.DestructuringEntryFqNamesKt]]
+  facadeFqName: test.fqNames.DestructuringEntryFqNamesKt
+  partSimpleName: "DestructuringEntryFqNamesKt"
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=test]
+      REFERENCE_EXPRESSION[referencedName=fqNames]
+  IMPORT_LIST
+  CLASS[classId=test/fqNames/X, fqName=test.fqNames.X, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=X, superNames=[]]
+    MODIFIER_LIST[data]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=X]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.fqNames.X.a, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=test.fqNames.X.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+  DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.topA, isSingleUnderscore=false, isVar=false, name=topA]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.topB, isSingleUnderscore=false, isVar=false, name=topB]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=X]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+  CLASS[classId=test/fqNames/C, fqName=test.fqNames.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C, superNames=[]]
+    CLASS_BODY
+      DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.memberA, isSingleUnderscore=false, isVar=false, name=memberA]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.memberB, isSingleUnderscore=false, isVar=false, name=memberB]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=X]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+      CLASS[classId=test/fqNames/C.Nested, fqName=test.fqNames.C.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+        CLASS_BODY
+          DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.Nested.nestedA, isSingleUnderscore=false, isVar=false, name=nestedA]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.Nested.nestedB, isSingleUnderscore=false, isVar=false, name=nestedB]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=X]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                VALUE_ARGUMENT[isSpread=false]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+      OBJECT_DECLARATION[classId=test/fqNames/C.Companion, fqName=test.fqNames.C.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+          DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.Companion.companionA, isSingleUnderscore=false, isVar=false, name=companionA]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.C.Companion.companionB, isSingleUnderscore=false, isVar=false, name=companionB]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=X]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                VALUE_ARGUMENT[isSpread=false]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+  OBJECT_DECLARATION[classId=test/fqNames/O, fqName=test.fqNames.O, isObjectLiteral=false, isTopLevel=true, name=O, superNames=[]]
+    CLASS_BODY
+      DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.O.objectA, isSingleUnderscore=false, isVar=false, name=objectA]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.O.objectB, isSingleUnderscore=false, isVar=false, name=objectB]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=X]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+  CLASS[classId=test/fqNames/E, fqName=test.fqNames.E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=E, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=test.fqNames.E.ENTRY, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=ENTRY, superNames=[]]
+        CLASS_BODY
+          DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=enumEntryA]
+            DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=enumEntryB]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=X]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                VALUE_ARGUMENT[isSpread=false]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+  CLASS[classId=test/fqNames/<no name provided>, fqName=test.fqNames.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=null, superNames=[]]
+    CLASS_BODY
+      DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.<no name provided>.namelessA, isSingleUnderscore=false, isVar=false, name=namelessA]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=test.fqNames.<no name provided>.namelessB, isSingleUnderscore=false, isVar=false, name=namelessB]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=X]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+      PROPERTY[fqName=test.fqNames.<no name provided>.namelessProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=namelessProperty]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+  FUNCTION[fqName=test.fqNames.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Local, superNames=[]]
+      CLASS_BODY
+        DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+          DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=localClassA]
+          DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=localClassB]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=X]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]

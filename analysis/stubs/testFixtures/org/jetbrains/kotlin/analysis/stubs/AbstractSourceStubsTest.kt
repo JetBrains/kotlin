@@ -6,11 +6,16 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.impl.source.tree.FileElement
+import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 
@@ -29,10 +34,48 @@ abstract class AbstractSourceStubsTest : AbstractStubsTest() {
         for (file in mainModule.ktFiles) {
             forceStubTree(file, testServices)
             val stubBasedLocality = collectStubBasedClassLocality(file)
+            val stubBasedFqNames = collectStubBasedFqNames(file)
             file.calcTreeElement()
             assertClassLocalityMatchesAst(stubBasedLocality, testServices)
+            assertFqNamesMatchAst(file, stubBasedFqNames, testServices)
 
             recomputeAstSpine(file)
+        }
+    }
+
+    /**
+     * Computes [KtNamedDeclaration.getFqName] for every named declaration stub of the stub-based [file] without loading its AST.
+     */
+    private fun collectStubBasedFqNames(file: KtFile): Map<KtNamedDeclaration, FqName?> = withAstLoadingAssertion(file) {
+        buildMap {
+            fun visit(stub: StubElement<*>) {
+                (stub.psi as? KtNamedDeclaration)?.let { put(it, it.fqName) }
+                stub.childrenStubs.forEach(::visit)
+            }
+
+            visit(file.stub ?: error("Stub should be present for unloaded file"))
+        }
+    }
+
+    /**
+     * Checks [stubBasedFqNames] against the FqNames of the declarations of a copy of [file] that has only an AST.
+     * The loaded AST of [file] itself is not enough, as its PSI keeps reading the green stub.
+     */
+    private fun assertFqNamesMatchAst(
+        file: KtFile,
+        stubBasedFqNames: Map<KtNamedDeclaration, FqName?>,
+        testServices: TestServices,
+    ) {
+        val astFile = KtPsiFactory(file.project).createFile(file.name, file.text)
+        val astFqNames = astFile.collectDescendantsOfType<KtNamedDeclaration>().associate { declaration ->
+            Pair(declaration.textRange.startOffset, declaration::class) to declaration.fqName
+        }
+
+        for ([declaration, stubBasedFqName] in stubBasedFqNames) {
+            val astFqName = astFqNames.getValue(Pair(declaration.textRange.startOffset, declaration::class))
+            testServices.assertions.assertEquals(astFqName, stubBasedFqName) {
+                "Stub-based and AST-based FqNames differ for '${declaration.name}'"
+            }
         }
     }
 

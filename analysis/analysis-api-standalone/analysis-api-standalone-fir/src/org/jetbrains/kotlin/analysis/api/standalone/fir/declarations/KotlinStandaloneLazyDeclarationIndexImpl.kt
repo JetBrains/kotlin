@@ -31,6 +31,8 @@ internal class KotlinStandaloneLazyDeclarationIndexImpl(
         get() = computedIndex.topLevelFunctionsByCallableId
     override val topLevelPropertiesByCallableId: Map<CallableId, Set<KotlinStandaloneIndexEntry<KtProperty>>>
         get() = computedIndex.topLevelPropertiesByCallableId
+    override val topLevelDestructuringDeclarationEntriesByCallableId: Map<CallableId, Set<KotlinStandaloneIndexEntry<KtDestructuringDeclarationEntry>>>
+        get() = computedIndex.topLevelDestructuringDeclarationEntriesByCallableId
 
     override val classLikeDeclarationsByPackage: Map<FqName, Set<KotlinStandaloneIndexEntry<KtClassLikeDeclaration>>>
         get() = computedIndex.classLikeDeclarationsByPackage
