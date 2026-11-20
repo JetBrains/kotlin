@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.archive
 
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.HasProject
@@ -27,6 +28,15 @@ internal interface KotlinTargetWithKotlinArchiveSupport : HasProject {
      * False is [platformKlibFiles] is a list of directories
      */
     val doesPlatformKlibRequireUnpacking: Boolean
+
+    /**
+     * Adds target specific attributes to platform klibs extracted from a Kotlin Archive.
+     *
+     * [from] and [to] are the attributes of the extraction transform. Attributes set on [from] would be
+     * additionally required on kar artifact for transform chain to run,
+     * attributes from [to] would be set on resulting klib artifact.
+     */
+    fun configureExtractedPlatformKlibAttributes(from: AttributeContainer, to: AttributeContainer) {}
 }
 
 internal val KotlinTarget.isStoredInKotlinArchive: Provider<Boolean>

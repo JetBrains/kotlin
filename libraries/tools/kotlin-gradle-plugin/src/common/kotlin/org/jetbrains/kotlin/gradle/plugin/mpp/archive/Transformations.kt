@@ -230,6 +230,8 @@ internal fun KotlinTarget.configureTransformActionFromKarToPlatformArtifacts() {
         spec.requiresTarget(this)
 
         spec.changesState(KarState.DECOMPRESSED, KarState.PLATFORM_ARTIFACTS_EXTRACTED)
+
+        configureExtractedPlatformKlibAttributes(spec.from, spec.to)
     }
 }
 
