@@ -3,6 +3,8 @@
 // IGNORE_NATIVE: optimizationMode=NO
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:*
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:*
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
+//   Reason: Wasm produce null dereference trap on uninitialized fields
 
 abstract class Z {
     init {
