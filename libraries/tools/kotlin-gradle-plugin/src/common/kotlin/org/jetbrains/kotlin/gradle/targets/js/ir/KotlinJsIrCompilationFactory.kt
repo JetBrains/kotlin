@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJsCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTask
@@ -33,6 +34,7 @@ class KotlinJsIrCompilationFactory internal constructor(
             }
         ),
         compilationDependencyConfigurationsFactory = DefaultKotlinCompilationDependencyConfigurationsFactory.WithRuntime(),
+        compilationAssociator = KotlinJsCompilationAssociator,
         preConfigureAction = DefaultKotlinCompilationPreConfigure + { compilation ->
             if (compilation.platformType == KotlinPlatformType.wasm && compilation.isMain()) {
                 val artifactNameAppendix = (compilation.target as KotlinJsIrTarget).wasmDecamelizedDefaultNameOrNull()
