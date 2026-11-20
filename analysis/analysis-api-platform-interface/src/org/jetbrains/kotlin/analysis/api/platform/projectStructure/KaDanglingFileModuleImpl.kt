@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.createSmartPointer
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
-import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -41,7 +41,6 @@ public class KaDanglingFileModuleImpl(
         if (contextModule is KaDanglingFileModule) {
             // Only code fragments can depend on dangling files.
             // This is needed for completion, inspections and refactorings.
-            @OptIn(KaImplementationDetail::class)
             requireWithAttachment(
                 isCodeFragment,
                 message = { "Dangling file module cannot depend on another dangling file module unless it's a code fragment" },
@@ -127,4 +126,12 @@ public class KaDanglingFileModuleImpl(
             }
             return result
         }
+}
+
+@OptIn(KaExperimentalApi::class)
+private fun ExceptionAttachmentBuilder.withKaModuleEntry(name: String, module: KaModule) {
+    withEntry(name, module) { it.moduleDescription }
+    if (module is KaDanglingFileModule) {
+        withKaModuleEntry("${name}contextModule", module.contextModule)
+    }
 }
