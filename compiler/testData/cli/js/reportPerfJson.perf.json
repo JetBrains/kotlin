@@ -238,6 +238,10 @@
       "size": $UINT$
     },
     {
+      "path": "KLIB file cumulative size/Indices",
+      "size": $UINT$
+    },
+    {
       "path": "KLIB file cumulative size/Manifest file",
       "size": $UINT$
     },
