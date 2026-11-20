@@ -49,7 +49,13 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         register(PREDICATE)
     }
 
-    override val builderModality: Modality = Modality.OPEN
+    /**
+     * For `@Builder` annotation we always consider builder class modality as OPEN.
+     *
+     * However, [canHostClassLevelBuilder] does not allow us to create builder classes
+     * for abstract / sealed owner class at all
+     */
+    override fun getBuilderModality(owner: FirClassSymbol<*>): Modality = Modality.OPEN
 
     override fun getBuilder(symbol: FirBasedSymbol<*>): Builder? {
         return lombokService.getBuilder(symbol)
