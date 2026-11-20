@@ -10,10 +10,12 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinInstallSharedNpmProjectTask
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSetupSharedNpmProjectTask
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -99,6 +101,56 @@ class SharedNpmManagerProjectTest {
         assertEquals(expectedOutputDirectory, setupTask.outputDirectory.get().asFile)
 
         assertEquals("npm-manager", setupTask.rootPackageName.get())
+
+        val installTask = manager.tasks.getByName("kotlinJsInstallSharedNpmProject") as KotlinInstallSharedNpmProjectTask
+        assertEquals(
+            manager.layout.buildDirectory.dir("js/shared-npm-install").get().asFile,
+            installTask.installDirectory.get().asFile,
+        )
+    }
+
+    @Test
+    fun `an install task is registered per platform and installs the assembled shared npm project`() {
+        val root = buildProject(
+            projectBuilder = {
+                withName("root")
+            }
+        )
+        root.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
+
+        for (platformName in listOf("js", "wasmJs")) {
+            val setupTaskName = lowerCamelCaseName("kotlin", platformName, "setupSharedNpmProject")
+            val installTask = root.tasks.getByName(
+                lowerCamelCaseName("kotlin", platformName, "installSharedNpmProject")
+            ) as KotlinInstallSharedNpmProjectTask
+            val setupTask = root.tasks.getByName(setupTaskName) as KotlinSetupSharedNpmProjectTask
+
+            assertEquals(setupTask.outputDirectory.get().asFile, installTask.manifestDirectory.get().asFile)
+            assertEquals(
+                setOf(setupTaskName),
+                installTask.taskDependencies.getDependencies(installTask).map { it.name }.toSet(),
+            )
+            assertEquals(
+                root.layout.buildDirectory.dir("$platformName/shared-npm-install").get().asFile,
+                installTask.installDirectory.get().asFile,
+            )
+            assertEquals(
+                installTask.installDirectory.get().asFile.resolve("node_modules"),
+                installTask.nodeModulesDirectory.get().asFile,
+            )
+            assertEquals(
+                listOf(root.layout.projectDirectory.file("kotlin-js-store/$platformName/package-lock.json").asFile),
+                installTask.lockFile.files.toList(),
+            )
+            assertEquals(true, installTask.ignoreScripts.get())
+            assertEquals(emptyList(), installTask.args.get())
+        }
+
+        assertEquals(
+            emptyList(),
+            root.tasks.withType(KotlinInstallSharedNpmProjectTask::class.java).names
+                .filter { it.contains("wasi", ignoreCase = true) },
+        )
     }
 }
 

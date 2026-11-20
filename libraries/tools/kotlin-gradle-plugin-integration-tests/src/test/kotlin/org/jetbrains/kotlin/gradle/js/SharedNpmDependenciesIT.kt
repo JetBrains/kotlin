@@ -34,6 +34,9 @@ import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
+import kotlin.io.path.copyTo
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.createDirectories
@@ -58,6 +61,8 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
     private val mochaTools = mapOf(
         versions.mocha.name to versions.mocha.version,
     )
+
+    private val nodeJsToolchainDownload = "-Pkotlin.js.nodeJsToolchainMode=download"
 
     @DisplayName("Shared npm projects contain a package.json per compilation of the declared JS and WasmJS projects")
     @GradleTest
@@ -613,6 +618,126 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     name = "emptyKts-lib-b-second",
                     dependencies = secondDependencies,
                 )
+            }
+        }
+    }
+
+    @DisplayName("Shared npm projects install the npm dependencies of the declared JS and WasmJS projects")
+    @GradleTest
+    fun testSharedNpmProjectInstall(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            setupSharedNpmProjectForInstall()
+
+            val installTasks = arrayOf(":kotlinJsInstallSharedNpmProject", ":kotlinWasmJsInstallSharedNpmProject")
+
+            build(*installTasks, nodeJsToolchainDownload) {
+                assertTasksExecuted(*installTasks)
+                for (platform in listOf("js", "wasmJs")) {
+                    val install = projectPath.resolve("build/$platform/shared-npm-install")
+                    assertEquals("1.0.0", readPackageJson(install.resolve("node_modules/is-even/package.json")).version)
+                    assertEquals("emptyKts-lib-a", readPackageJson(install.resolve("node_modules/emptyKts-lib-a/package.json")).name)
+                    assertFileExists(install.resolve("package-lock.json"))
+                    assertFileNotExists(install.resolve("node_modules/left-pad"))
+                }
+            }
+
+            build(*installTasks, nodeJsToolchainDownload) {
+                assertConfigurationCacheReused()
+                assertTasksUpToDate(*installTasks)
+            }
+
+            build(*installTasks, nodeJsToolchainDownload, "-PaddLeftPad=true") {
+                assertTasksExecuted(*installTasks)
+                for (platform in listOf("js", "wasmJs")) {
+                    val install = projectPath.resolve("build/$platform/shared-npm-install")
+                    assertEquals("1.3.0", readPackageJson(install.resolve("node_modules/left-pad/package.json")).version)
+                }
+            }
+        }
+    }
+
+    @DisplayName("Shared npm projects install the npm dependencies from the stored lock file")
+    @GradleTest
+    fun testSharedNpmProjectInstallFromLockFile(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            setupSharedNpmProjectForInstall()
+
+            val installTask = ":kotlinJsInstallSharedNpmProject"
+            val install = projectPath.resolve("build/js/shared-npm-install")
+
+            build(installTask, nodeJsToolchainDownload) {
+                assertTasksExecuted(installTask)
+            }
+
+            val storedLockFile = projectPath.resolve("kotlin-js-store/js/package-lock.json")
+            storedLockFile.parent.createDirectories()
+            install.resolve("package-lock.json").copyTo(storedLockFile)
+            install.resolve("node_modules").toFile().deleteRecursively()
+
+            build(installTask, nodeJsToolchainDownload) {
+                assertTasksExecuted(installTask)
+                assertEquals("1.0.0", readPackageJson(install.resolve("node_modules/is-even/package.json")).version)
+                assertEquals(storedLockFile.readText(), install.resolve("package-lock.json").readText())
+            }
+        }
+    }
+
+    @DisplayName("Installing a shared npm project with an unknown npm package fails")
+    @GradleTest
+    fun testSharedNpmProjectInstallFailsForUnknownPackage(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            setupSharedNpmProjectForInstall()
+
+            buildAndFail(":kotlinJsInstallSharedNpmProject", nodeJsToolchainDownload, "-PaddUnknownPackage=true") {
+                assertTasksFailed(":kotlinJsInstallSharedNpmProject")
+            }
+        }
+    }
+
+    @DisplayName("Installing a shared npm project requires the Node.js toolchain")
+    @GradleTest
+    fun testSharedNpmProjectInstallRequiresNodeJsToolchain(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            setupSharedNpmProjectForInstall()
+
+            buildAndFail(":kotlinJsInstallSharedNpmProject") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.SharedNpmProjectNodeJsToolchainDisabled)
+            }
+        }
+    }
+
+    /**
+     * Declares `:lib-a`, with the JS and WasmJS targets depending on `is-even`, on the shared npm projects of both platforms.
+     *
+     * `left-pad` is added with the `addLeftPad` Gradle property, and an npm package that does not exist with `addUnknownPackage`.
+     */
+    @OptIn(ExperimentalWasmDsl::class)
+    private fun TestProject.setupSharedNpmProjectForInstall() {
+        plugins {
+            kotlin("multiplatform").apply(false)
+        }
+        buildScriptInjection {
+            project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
+            project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":lib-a")))
+            project.dependencies.add("kotlinNpmSharedDependenciesWasmJs", project.dependencies.project(mapOf("path" to ":lib-a")))
+        }
+
+        includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
+            buildScriptInjection {
+                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                kotlinMultiplatform.apply {
+                    js { nodejs() }
+                    wasmJs { nodejs() }
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(npm("is-even", "1.0.0"))
+                        if (project.hasProperty("addLeftPad")) {
+                            implementation(npm("left-pad", "1.3.0"))
+                        }
+                        if (project.hasProperty("addUnknownPackage")) {
+                            implementation(npm("kotlin-shared-npm-project-unknown-package-kt-91655", "1.0.0"))
+                        }
+                    }
+                }
             }
         }
     }

@@ -176,6 +176,22 @@ class ProjectIsolationIT : KGPBaseTest() {
             build("kotlinJsSetupSharedNpmProject", "kotlinWasmJsSetupSharedNpmProject") {
                 assertConfigurationCacheReused()
             }
+
+            val installTasks = arrayOf("kotlinJsInstallSharedNpmProject", "kotlinWasmJsInstallSharedNpmProject")
+            val nodeJsToolchainDownload = "-Pkotlin.js.nodeJsToolchainMode=download"
+
+            build(*installTasks, nodeJsToolchainDownload) {
+                assertTasksExecuted(":kotlinJsInstallSharedNpmProject", ":kotlinWasmJsInstallSharedNpmProject")
+                for (platform in listOf("js", "wasmJs")) {
+                    val isEven = projectPath.resolve("build/$platform/shared-npm-install/node_modules/is-even/package.json").toFile()
+                    assertEquals("1.0.0", fromSrcPackageJson(isEven)?.version, "installed is-even in $isEven")
+                }
+            }
+
+            build(*installTasks, nodeJsToolchainDownload) {
+                assertConfigurationCacheReused()
+                assertTasksUpToDate(":kotlinJsInstallSharedNpmProject", ":kotlinWasmJsInstallSharedNpmProject")
+            }
         }
     }
 }

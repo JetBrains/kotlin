@@ -2855,6 +2855,17 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object SharedNpmProjectNodeJsToolchainDisabled : ToolingDiagnosticFactory(
+        FATAL,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(taskPath: String) = build {
+            title { "Node.js toolchain is disabled" }
+                .description { "Task '$taskPath' cannot install the npm dependencies of the shared npm project, because it requires Node.js provisioned by the Node.js toolchain." }
+                .solution { "Set the Gradle property 'kotlin.js.nodeJsToolchainMode' to 'download' or 'preinstalled'." }
+        }
+    }
+
     internal object RichTypeScriptDeclarationsUnsupportedBuildToolsApiVersion : ToolingDiagnosticFactory(
         FATAL,
         DiagnosticGroup.Kgp.Misconfiguration,
