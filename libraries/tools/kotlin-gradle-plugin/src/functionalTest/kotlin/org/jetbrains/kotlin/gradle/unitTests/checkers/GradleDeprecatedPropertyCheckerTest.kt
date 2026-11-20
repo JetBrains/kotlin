@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests.checkers
 
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_TESTS_INDIVIDUAL_TASK_REPORTS
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,6 +32,20 @@ class GradleDeprecatedPropertyChecker {
                 kotlin { jvm() }
             }.evaluate().assertNoDiagnostics()
         }
+    }
+
+    @Test
+    fun `KT-91779 - kotlin tests individualTaskReports has no effect and is deprecated`() {
+        buildProjectWithMPP(
+            preApplyCode = { project.propertiesExtension.set(KOTLIN_TESTS_INDIVIDUAL_TASK_REPORTS, true.toString()) },
+        ) {
+            kotlin { jvm() }
+        }.evaluate().checkDiagnostics("IndividualTaskReportsDeprecation")
+
+        // no deprecation warning when the property is not set
+        buildProjectWithMPP {
+            kotlin { jvm() }
+        }.evaluate().assertNoDiagnostics()
     }
 
     @Test

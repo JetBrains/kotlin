@@ -71,6 +71,23 @@ fun BuildResult.assertAnyTaskHasBeenExecuted(taskPaths: Set<String>) {
 }
 
 /**
+ * Asserts any of [taskPaths] has [TaskOutcome.FAILED] execution state.
+ *
+ * Useful when the exact task that fails first is not deterministic
+ * (e.g. parallel execution without `--continue`).
+ */
+fun BuildResult.assertAnyTaskFailed(vararg taskPaths: String) {
+    val taskOutcomes = taskPaths.associateWith { taskPath -> task(taskPath)?.outcome }
+
+    assert(
+        taskOutcomes.values.any { it == TaskOutcome.FAILED }
+    ) {
+        printBuildOutput()
+        "Expected at least one Task of ${taskPaths.toList()} had outcome 'FAILED', but none did. Actual outcomes: $taskOutcomes"
+    }
+}
+
+/**
  * Asserts given [taskPaths] have [TaskOutcome.SUCCESS] execution state.
  */
 fun BuildResult.assertTasksExecuted(taskPaths: Collection<String>) {

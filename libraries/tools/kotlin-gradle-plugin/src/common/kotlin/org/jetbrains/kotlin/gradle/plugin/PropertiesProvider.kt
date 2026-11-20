@@ -331,15 +331,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE) ?: true
 
     /**
-     * Enables individual test task reporting for aggregated test tasks.
-     *
-     * By default individual test tasks will not fail build if this task will be executed,
-     * also individual html and xml reports will replaced by one consolidated html report.
-     */
-    val individualTaskReports: Boolean
-        get() = booleanProperty("kotlin.tests.individualTaskReports") ?: false
-
-    /**
      * Allow a user to choose distribution type. The following distribution types are available:
      *  - light - Doesn't include platform libraries and generates them at the user side. For 1.3 corresponds to the restricted distribution.
      *  - prebuilt - Includes all platform libraries.
@@ -1009,6 +1000,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_GENERATE_COMPILER_REF_INDEX = property("kotlin.compiler.generateCompilerRefIndex")
         val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = property("kotlin.mpp.allow.legacy.dependencies")
         val KOTLIN_DEPRECATED_TEST_PROPERTY = property("${KOTLIN_INTERNAL_NAMESPACE}.deprecatedTestProperty")
+        val KOTLIN_TESTS_INDIVIDUAL_TASK_REPORTS = property("kotlin.tests.individualTaskReports")
         val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = property("kotlin.publishJvmEnvironmentAttribute")
         val KOTLIN_PUBLICATION_FORMAT = property("kotlin.publicationFormat")
         val KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION = property("kotlin.allowIncompleteKotlinArchivePublication")

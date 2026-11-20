@@ -614,27 +614,24 @@ class GeneralNativeIT : KGPBaseTest() {
             """.trimIndent()
         )
         buildAndFail("check") {
-            assertTasksFailed(":allTests")
-            // In the aggregation report mode platform-specific tasks
-            // are executed successfully even if there are failing tests.
-            assertTasksExecuted(testsToExecute)
-            assertTasksSkipped(testsToSkip)
-
-            assertOutputContains("org.foo.test.TestKt.fail[host] FAILED")
+            assertAnyTaskFailed(*testsToExecute.toTypedArray())
+            assertTasksAreNotInTaskGraph(":allTests")
         }
 
         // Check that individual test reports are created correctly.
         buildAndFail(
             "check",
-            "-Pkotlin.tests.individualTaskReports=true",
             buildOptions = defaultBuildOptions.copy(continueAfterFailure = true)
         ) {
 
-            // In the individual report mode platform-specific tasks
-            // fail if there are failing tests.
+            // With --continue, every platform-specific task runs and fails on
+            // its own; the aggregate is wired to them through their binary results
+            // output only, so it still runs and generates the consolidated report
             assertTasksFailed(testsToExecute)
             assertTasksSkipped(testsToSkip)
+            assertTasksExecuted(":allTests")
 
+            assertOutputContains("org.foo.test.TestKt.fail[host] FAILED")
 
             fun assertStacktrace(taskName: String, targetName: String) {
                 val testReportDir = projectPath.resolve("build/test-results/$taskName")
@@ -784,7 +781,8 @@ class GeneralNativeIT : KGPBaseTest() {
             projectPath.resolve("src/commonTest/kotlin/test.kt")
                 .appendText("\nval fail: Int = error(\"\")\n")
             buildAndFail("check") {
-                assertOutputContains("Execution failed for task ':allTests'")
+                assertAnyTaskFailed(":hostTest", ":iosTest", ":iosArm64Test")
+                assertTasksAreNotInTaskGraph(":allTests")
             }
         }
     }
