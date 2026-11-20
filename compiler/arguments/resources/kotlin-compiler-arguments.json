@@ -5994,6 +5994,51 @@
                         "deprecatedMessage": null
                     },
                     {
+                        "name": "Xreport-memory",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Add the memory used by each compilation phase to the performance statistics of '-Xreport-perf' and '-Xdump-perf' (Experimental):\n  the peak heap usage, the bytes allocated, and the number and pause time of garbage collections.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.5.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
                         "name": "Xreport-output-files",
                         "shortName": null,
                         "deprecatedName": null,

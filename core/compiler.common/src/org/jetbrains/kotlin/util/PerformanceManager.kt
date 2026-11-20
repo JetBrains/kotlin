@@ -60,9 +60,19 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var currentDynamicPhase: String? = null
     private val dynamicPhaseMeasurements = LinkedHashMap<Pair<PhaseType, String>, Time>()
 
+    // Random rather than a counter: compilers loaded by different class loaders of one process would count independently
+    internal var compilationId: Long = Random().nextLong()
+    private var phaseEvent: CompilationPhaseEvent? = null
+    private var dynamicPhaseEvent: CompilationPhaseEvent? = null
+    private var isMeasuring: Boolean = false
+    private var memoryRecording: PhaseMemoryRecording? = null
+    private var memoryStats: List<MemoryStats>? = null
+
     private val klibElementStats: SortedMap<String, Long> = sortedMapOf()
 
     var isExtendedStatsEnabled: Boolean = false
+        private set
+    var isMemoryTrackingEnabled: Boolean = false
         private set
     var compilerType: CompilerType = CompilerType.K2
     var hasErrors: Boolean = false
@@ -159,6 +169,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             gcMeasurements.values.toList(),
             jitTimeMillis,
             extendedStats,
+            memoryStats,
         )
     }
 
@@ -236,6 +247,32 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
     }
 
+    /**
+     * Records the memory used by the phases of this manager and of its children (see [PerformanceManagerImpl.createChildIfNeeded])
+     * while the compilation is measured, see [measureCompilation] and [MemoryStats].
+     */
+    fun enableMemoryTracking() {
+        if (isMemoryTrackingEnabled) return
+        assertIfDebug(!isMeasuring) { "The memory tracking must be enabled before the compilation is measured" }
+        isMemoryTrackingEnabled = true
+    }
+
+    /**
+     * Measures the compilation until the returned measurement is closed, which finishes the compilation, see [notifyCompilationFinished].
+     * Closing it finishes the compilation even when it fails, so the measurements are always final and the resources used
+     * for them are released.
+     *
+     * A compilation that is already measured, like the first stage of a one-stage Kotlin/Native compilation, gets a measurement
+     * that does nothing when closed, so the compilation is finished by the code that started measuring it.
+     */
+    fun measureCompilation(): AutoCloseable {
+        assertIfDebug(!isFinalized) { "The compilation is already finished" }
+        if (isMeasuring || isFinalized) return AutoCloseable {}
+        isMeasuring = true
+        if (isMemoryTrackingEnabled) memoryRecording = PhaseMemoryRecording(compilationId)
+        return AutoCloseable { notifyCompilationFinished() }
+    }
+
     open fun addSourcesStats(files: Int, lines: Int) {
         ensureNotFinalizedAndSameThread()
 
@@ -244,6 +281,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun notifyDynamicPhaseStarted(name: String) {
+        dynamicPhaseEvent = CompilationPhaseEvent.startIfEnabled()
         currentDynamicPhaseTime = currentTime()
         currentDynamicPhase = name
     }
@@ -258,6 +296,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             dynamicPhaseMeasurements[parentPhaseType to name] =
                 (dynamicPhaseMeasurements[parentPhaseType to name] ?: Time.ZERO) + (currentTime() - localCurrentDynamicPhaseTime)
         }
+        dynamicPhaseEvent?.finish(compilationId, parentPhaseType, name)
+        dynamicPhaseEvent = null
         currentDynamicPhaseTime = null
     }
 
@@ -274,6 +314,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         phaseStartTime = currentTime()
         currentPhaseType = newPhaseType
+        phaseEvent = CompilationPhaseEvent.startIfEnabled()
     }
 
     fun notifyPhaseFinished(phaseType: PhaseType) {
@@ -283,7 +324,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         finishPhase(phaseType)
     }
 
-    open fun notifyCompilationFinished() {
+    protected open fun notifyCompilationFinished() {
         ensureNotFinalizedAndSameThread()
         isFinalized = true
 
@@ -296,6 +337,9 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         // In this case, the current phase measurement is being finished here.
         @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
         notifyCurrentPhaseFinishedIfNeeded()
+
+        memoryStats = memoryRecording?.stop()
+        memoryRecording = null
 
         if (!isExtendedStatsEnabled) return
 
@@ -336,6 +380,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + (currentTime() - localPhaseStartTime)
         }
         phaseStartTime = null
+        phaseEvent?.finish(compilationId, phaseType, null)
+        phaseEvent = null
     }
 
     internal fun <T> measureSideTime(phaseSideType: PhaseSideType, block: () -> T): T {
@@ -452,6 +498,7 @@ class PerformanceManagerImpl(targetPlatform: TargetPlatform, presentableName: St
                         it.notifyPhaseFinished(PhaseType.Initialization)
                     }
                     it.compilerType = mainPerformanceManager.compilerType
+                    it.compilationId = mainPerformanceManager.compilationId
                 }
             } else {
                 null

@@ -27,133 +27,133 @@
   },
   "dynamicStats": [
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "UpgradeCallableReferences",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "JsCodeOutliningLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "AvoidLocalFOsInInlineFunctionsLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "VersionOverloadsLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "InlineCallCycleCheckerLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "LateinitLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "SharedVariablesLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "LocalClassesInInlineLambdasLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "ArrayConstructorLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "PreSerializationPrivateFunctionInlining",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "InlineDeclarationCheckerLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "OuterThisInInlineFunctionsSpecialAccessorLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "SyntheticAccessorLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "IrValidationAfterInliningPrivateFunctionsKlibPhase",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "FunctionInlining",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "InlineFunctionSerializationPreProcessing",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "RedundantCastsRemoverLowering",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "IrValidationAfterInliningAllFunctionsKlibFirstStagePhase",
       "time": {
         "nanos": $UINT$
       }
     },
     {
-      "parentPhaseType": IrPreLowering,
+      "parentPhaseType": "IrPreLowering",
       "name": "TailrecCheckerLowering",
       "time": {
         "nanos": $UINT$

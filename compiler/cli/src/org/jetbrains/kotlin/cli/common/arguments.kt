@@ -74,6 +74,13 @@ fun CompilerConfiguration.setupCommonArguments(
     }
     put(CommonConfigurationKeys.ADDITIONAL_IR_CHECKERS, arguments.enableAdditionalIrCheckers.toList())
 
+    if (arguments.reportMemory && !arguments.reportPerf && arguments.dumpPerf == null) {
+        this.report(
+            COMPILER_ARGUMENTS_WARNING,
+            "'-Xreport-memory' has no effect unless '-Xreport-perf' or '-Xdump-perf' is specified."
+        )
+    }
+
     setupMetadataVersion(arguments, createMetadataVersion)
 
     setupLanguageVersionSettings(arguments)

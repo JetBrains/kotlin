@@ -58,6 +58,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         val performanceManager = createPerformanceManager(arguments, services).apply { compilerType = CompilerType.K2 }
         if (arguments.reportPerf || arguments.dumpPerf != null) {
             performanceManager.enableExtendedStats()
+            if (arguments.reportMemory) performanceManager.enableMemoryTracking()
         }
 
         val messageCollector = GroupingMessageCollector(
@@ -85,13 +86,11 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         }
 
         return try {
-            val result = runPhasedPipeline(argumentsInput)
             // In the case of one-stage compilation, the performance manager is shared between
             // 2 pipelines: src -> klib (this one) and klib -> binary (subsequent).
-            // In this case we are not yet finished with the performance measurement and will finalize it
-            // after the subsequent pipeline finishes.
+            // In this case the compilation is measured by the code running both, which finishes the measurement and reports it.
+            val result = performanceManager.measureCompilation().use { runPhasedPipeline(argumentsInput) }
             if (!isNativeOneStage) {
-                performanceManager.notifyCompilationFinished()
                 if (arguments.reportPerf) {
                     messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + performanceManager.getTargetInfo())
                     performanceManager.forEachStringMeasurement {

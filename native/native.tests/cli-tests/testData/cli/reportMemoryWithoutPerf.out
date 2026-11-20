@@ -1,0 +1,2 @@
+warning: '-Xreport-memory' has no effect unless '-Xreport-perf' or '-Xdump-perf' is specified.
+OK

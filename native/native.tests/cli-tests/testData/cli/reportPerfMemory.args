@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/simple.kt
+-o
+$TEMP_DIR$/reportPerfMemory
+-Xreport-perf=true
+-Xreport-memory
