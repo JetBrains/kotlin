@@ -3,12 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KaUnstableDiagnosticApi::class)
+
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.analysis.api.fir.components.toKaAnnotationTarget
+import org.jetbrains.kotlin.analysis.api.fir.components.toKaDeprecation
+import org.jetbrains.kotlin.analysis.api.fir.components.toKaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.fir.components.toKaWhenMissingCase
+import org.jetbrains.kotlin.analysis.api.fir.contracts.description.toKaContractInvocationKind
+import org.jetbrains.kotlin.analysis.api.fir.symbols.asKaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirFunctionTypeFamily
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -362,7 +370,7 @@ private fun KaDiagnosticConverterBuilder.addConversions1() {
     add(FirErrors.VERSION_REQUIREMENT_DEPRECATION_ERROR) { firDiagnostic ->
         VersionRequirementDeprecationErrorImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.b.toMavenComparableVersion(),
             firDiagnostic.c,
             firDiagnostic.d,
             firDiagnostic as KtDiagnosticWithSource,
@@ -663,8 +671,8 @@ private fun KaDiagnosticConverterBuilder.addConversions7() {
     add(FirErrors.WRONG_INVOCATION_KIND) { firDiagnostic ->
         WrongInvocationKindImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
-            firDiagnostic.c,
+            firDiagnostic.b.toKaContractInvocationKind(),
+            firDiagnostic.c.toKaContractInvocationKind(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -1080,10 +1088,10 @@ private fun KaDiagnosticConverterBuilder.addConversions17() {
     }
     add(FirErrors.EXPOSED_RECEIVER_TYPE) { firDiagnostic ->
         ExposedReceiverTypeImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -2061,7 +2069,7 @@ private fun KaDiagnosticConverterBuilder.addConversions38() {
         AmbiguousExpectsImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b.map { firModuleData ->
-                firModuleData
+                firModuleData.toKaModule()
             },
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -2571,9 +2579,9 @@ private fun KaDiagnosticConverterBuilder.addConversions49() {
     }
     add(FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE.warningFactory) { firDiagnostic ->
         LessVisibleTypeAccessInInlineWarningImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic.c,
+            firDiagnostic.c.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -2723,7 +2731,7 @@ private fun KaDiagnosticConverterBuilder.addConversions54() {
     }
     add(FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING) { firDiagnostic ->
         CannotChangeAccessPrivilegeWarningImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.asKaSymbolVisibility,
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
             firDiagnostic.c,
             firDiagnostic as KtDiagnosticWithSource,
@@ -2754,10 +2762,10 @@ private fun KaDiagnosticConverterBuilder.addConversions55() {
     }
     add(FirErrors.EXPOSED_PROPERTY_TYPE) { firDiagnostic ->
         ExposedPropertyTypeImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -2854,7 +2862,7 @@ private fun KaDiagnosticConverterBuilder.addConversions57() {
     add(FirErrors.VERSION_REQUIREMENT_DEPRECATION) { firDiagnostic ->
         VersionRequirementDeprecationImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.b.toMavenComparableVersion(),
             firDiagnostic.c,
             firDiagnostic.d,
             firDiagnostic as KtDiagnosticWithSource,
@@ -2871,8 +2879,8 @@ private fun KaDiagnosticConverterBuilder.addConversions57() {
     add(FirErrors.CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE.warningFactory) { firDiagnostic ->
         CallableReferenceToLessVisibleDeclarationInInlineWarningImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
-            firDiagnostic.c,
+            firDiagnostic.b.toKaSymbolVisibility(),
+            firDiagnostic.c.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -2971,7 +2979,7 @@ private fun KaDiagnosticConverterBuilder.addConversions59() {
         ActualWithoutExpectImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b.mapKeys { [expectActualMatchingCompatibility, _] ->
-                expectActualMatchingCompatibility
+                expectActualMatchingCompatibility.toKaExpectActualMatchingCompatibility()
             }.mapValues { [_, collection] -> 
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol)
@@ -3074,10 +3082,10 @@ private fun KaDiagnosticConverterBuilder.addConversions62() {
     }
     add(FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR) { firDiagnostic ->
         ExposedPropertyTypeInConstructorErrorImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -3254,10 +3262,10 @@ private fun KaDiagnosticConverterBuilder.addConversions66() {
     }
     add(FirErrors.EXPOSED_FUNCTION_RETURN_TYPE) { firDiagnostic ->
         ExposedFunctionReturnTypeImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -3527,10 +3535,10 @@ private fun KaDiagnosticConverterBuilder.addConversions71() {
     }
     add(FirErrors.EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING) { firDiagnostic ->
         ExposedTypeParameterBoundDeprecationWarningImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -3818,8 +3826,8 @@ private fun KaDiagnosticConverterBuilder.addConversions76() {
         WrongAnnotationTargetWithUseSiteTargetImpl(
             firDiagnostic.a,
             firDiagnostic.b,
-            firDiagnostic.c.map { kotlinTarget ->
-                kotlinTarget
+            firDiagnostic.c.mapNotNull { kotlinTarget ->
+                kotlinTarget.toKaAnnotationTarget()
             },
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -3954,7 +3962,7 @@ private fun KaDiagnosticConverterBuilder.addConversions80() {
     add(FirErrors.OVERRIDE_DEPRECATION) { firDiagnostic ->
         OverrideDeprecationImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.b.toKaDeprecation(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4217,7 +4225,7 @@ private fun KaDiagnosticConverterBuilder.addConversions86() {
     add(FirErrors.INVISIBLE_REFERENCE) { firDiagnostic ->
         InvisibleReferenceImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.b.asKaSymbolVisibility,
             firDiagnostic.c,
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -4392,8 +4400,8 @@ private fun KaDiagnosticConverterBuilder.addConversions89() {
     add(FirErrors.WRONG_ANNOTATION_TARGET_WARNING) { firDiagnostic ->
         WrongAnnotationTargetWarningImpl(
             firDiagnostic.a,
-            firDiagnostic.b.map { kotlinTarget ->
-                kotlinTarget
+            firDiagnostic.b.mapNotNull { kotlinTarget ->
+                kotlinTarget.toKaAnnotationTarget()
             },
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -4530,7 +4538,7 @@ private fun KaDiagnosticConverterBuilder.addConversions91() {
     add(FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS) { firDiagnostic ->
         SealedSupertypeInLocalClassImpl(
             firDiagnostic.a,
-            firDiagnostic.b,
+            firDiagnostic.b.toKaClassKind(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4538,8 +4546,8 @@ private fun KaDiagnosticConverterBuilder.addConversions91() {
     add(FirErrors.WRONG_ANNOTATION_TARGET) { firDiagnostic ->
         WrongAnnotationTargetImpl(
             firDiagnostic.a,
-            firDiagnostic.b.map { kotlinTarget ->
-                kotlinTarget
+            firDiagnostic.b.mapNotNull { kotlinTarget ->
+                kotlinTarget.toKaAnnotationTarget()
             },
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -4755,9 +4763,9 @@ private fun KaDiagnosticConverterBuilder.addConversions96() {
     add(FirErrors.ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT) { firDiagnostic ->
         ActualIgnorabilityNotMatchExpectImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.b.toKaReturnValueStatus(),
             firSymbolBuilder.buildSymbol(firDiagnostic.c),
-            firDiagnostic.d,
+            firDiagnostic.d.toKaReturnValueStatus(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4940,7 +4948,7 @@ private fun KaDiagnosticConverterBuilder.addConversions100() {
     add(FirErrors.INVISIBLE_SETTER) { firDiagnostic ->
         InvisibleSetterImpl(
             firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.b.asKaSymbolVisibility,
             firDiagnostic.c,
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -5056,7 +5064,7 @@ private fun KaDiagnosticConverterBuilder.addConversions102() {
     add(FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND) { firDiagnostic ->
         AmbiguousFunctionTypeKindImpl(
             firDiagnostic.a.map { functionTypeKind ->
-                functionTypeKind
+                KaFirFunctionTypeFamily(functionTypeKind)
             },
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -5457,8 +5465,8 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
     add(FirErrors.CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE.errorFactory) { firDiagnostic ->
         CallableReferenceToLessVisibleDeclarationInInlineErrorImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
-            firDiagnostic.c,
+            firDiagnostic.b.toKaSymbolVisibility(),
+            firDiagnostic.c.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -5677,14 +5685,14 @@ private fun KaDiagnosticConverterBuilder.addConversions114() {
     }
     add(FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED) { firDiagnostic ->
         NamedArgumentsNotAllowedImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaForbiddenNamedArgumentsTarget(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
     }
     add(FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE) { firDiagnostic ->
         CannotChangeAccessPrivilegeImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.asKaSymbolVisibility,
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
             firDiagnostic.c,
             firDiagnostic as KtDiagnosticWithSource,
@@ -6375,10 +6383,10 @@ private fun KaDiagnosticConverterBuilder.addConversions126() {
     }
     add(FirErrors.EXPOSED_SUPER_INTERFACE) { firDiagnostic ->
         ExposedSuperInterfaceImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6521,10 +6529,10 @@ private fun KaDiagnosticConverterBuilder.addConversions129() {
     }
     add(FirErrors.EXPOSED_TYPE_PARAMETER_BOUND) { firDiagnostic ->
         ExposedTypeParameterBoundImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6728,7 +6736,7 @@ private fun KaDiagnosticConverterBuilder.addConversions132() {
     }
     add(FirErrors.INCONSISTENT_VISIBILITY_IN_OF_OVERLOADS) { firDiagnostic ->
         InconsistentVisibilityInOfOverloadsImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.asKaSymbolVisibility,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6789,7 +6797,7 @@ private fun KaDiagnosticConverterBuilder.addConversions133() {
     }
     add(FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING) { firDiagnostic ->
         CannotWeakenAccessPrivilegeWarningImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.asKaSymbolVisibility,
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
             firDiagnostic.c,
             firDiagnostic as KtDiagnosticWithSource,
@@ -6933,7 +6941,7 @@ private fun KaDiagnosticConverterBuilder.addConversions135() {
     add(FirErrors.INCOMPATIBLE_CLASS) { firDiagnostic ->
         IncompatibleClassImpl(
             firDiagnostic.a,
-            firDiagnostic.b,
+            firDiagnostic.b.toKaIncompatibleVersionErrorData(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6999,7 +7007,7 @@ private fun KaDiagnosticConverterBuilder.addConversions137() {
     add(FirErrors.MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES) { firDiagnostic ->
         MixingFunctionalKindsInSupertypesImpl(
             firDiagnostic.a.map { functionTypeKind ->
-                functionTypeKind
+                KaFirFunctionTypeFamily(functionTypeKind)
             },
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -7164,9 +7172,9 @@ private fun KaDiagnosticConverterBuilder.addConversions141() {
     }
     add(FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE.errorFactory) { firDiagnostic ->
         LessVisibleTypeAccessInInlineErrorImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic.c,
+            firDiagnostic.c.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7321,9 +7329,9 @@ private fun KaDiagnosticConverterBuilder.addConversions144() {
     add(FirErrors.LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE.warningFactory) { firDiagnostic ->
         LessVisibleTypeInInlineAccessedSignatureWarningImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.b.toKaSymbolVisibility(),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
-            firDiagnostic.d,
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7507,9 +7515,9 @@ private fun KaDiagnosticConverterBuilder.addConversions148() {
     add(FirErrors.LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE.errorFactory) { firDiagnostic ->
         LessVisibleTypeInInlineAccessedSignatureErrorImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.b.toKaSymbolVisibility(),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
-            firDiagnostic.d,
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7902,7 +7910,7 @@ private fun KaDiagnosticConverterBuilder.addConversions159() {
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             (firDiagnostic.c as? KtPsiSourceElement)?.psi,
-            firDiagnostic.d,
+            firDiagnostic.d.toKaExpectActualAnnotationsIncompatibilityType(firSymbolBuilder),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8181,20 +8189,20 @@ private fun KaDiagnosticConverterBuilder.addConversions165() {
     }
     add(FirErrors.EXPOSED_PARAMETER_TYPE) { firDiagnostic ->
         ExposedParameterTypeImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
     }
     add(FirErrors.EXPOSED_SUPER_CLASS) { firDiagnostic ->
         ExposedSuperClassImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8724,7 +8732,7 @@ private fun KaDiagnosticConverterBuilder.addConversions175() {
     }
     add(FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE) { firDiagnostic ->
         CannotWeakenAccessPrivilegeImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.asKaSymbolVisibility,
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
             firDiagnostic.c,
             firDiagnostic as KtDiagnosticWithSource,
@@ -8805,10 +8813,10 @@ private fun KaDiagnosticConverterBuilder.addConversions176() {
 private fun KaDiagnosticConverterBuilder.addConversions177() {
     add(FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE) { firDiagnostic ->
         ExposedTypealiasExpandedTypeImpl(
-            firDiagnostic.a,
+            firDiagnostic.a.toKaSymbolVisibility(),
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
+            firDiagnostic.c.toKaRelationToType(),
+            firDiagnostic.d.toKaSymbolVisibility(),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8989,7 +8997,7 @@ private fun KaDiagnosticConverterBuilder.addConversions182() {
     add(FirErrors.INVISIBLE_REFERENCE_WARNING) { firDiagnostic ->
         InvisibleReferenceWarningImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.b.asKaSymbolVisibility,
             firDiagnostic.c,
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -9355,7 +9363,7 @@ private fun KaDiagnosticConverterBuilder.addConversions190() {
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b.map { pair ->
                 firSymbolBuilder.buildSymbol(pair.first) to pair.second.mapKeys { [mismatch, _] ->
-                                    mismatch
+                                    mismatch.toKaExpectActualMatchingCompatibility()
                                 }.mapValues { [_, collection] -> 
                                     collection.map { firBasedSymbol ->
                                                             firSymbolBuilder.buildSymbol(firBasedSymbol)

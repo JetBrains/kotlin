@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.generator
 
 import org.jetbrains.kotlin.utils.SmartPrinter
 import kotlin.reflect.KClass
+import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
+import kotlin.reflect.KTypeProjection
 
 internal fun SmartPrinter.printTypeWithShortNames(type: KType, shouldRenderFqName: (KType) -> Boolean = { false }) {
     fun typeConversion(type: KType): String {
@@ -29,7 +31,34 @@ internal fun SmartPrinter.printTypeWithShortNames(type: KType, shouldRenderFqNam
 }
 
 val KType.simpleName: String
-    get() = (classifier as KClass<*>).simpleName!!
+    get() = when (val classifier = classifier) {
+        is DiagnosticApiClass -> classifier.name
+        else -> (classifier as KClass<*>).simpleName!!
+    }
 
 val KType.qualifiedName: String
-    get() = (classifier as KClass<*>).qualifiedName!!
+    get() = when (val classifier = classifier) {
+        // The class is in the package of the generated diagnostics, so its simple name is always sufficient
+        is DiagnosticApiClass -> classifier.name
+        else -> (classifier as KClass<*>).qualifiedName!!
+    }
+
+/**
+ * A class declared in the module the diagnostics are generated into, in the package of the diagnostics.
+ *
+ * The generator cannot depend on the module it generates sources for, so such a class is known only by its [name].
+ */
+internal class DiagnosticApiClass(val name: String) : KClassifier
+
+/**
+ * A type built by the generator. Unlike the types created by `kotlin-reflect`, it can refer to a [DiagnosticApiClass].
+ */
+internal class HLType(
+    override val classifier: KClassifier,
+    override val arguments: List<KTypeProjection> = emptyList(),
+    override val isMarkedNullable: Boolean = false,
+) : KType {
+    override val annotations: List<Annotation> get() = emptyList()
+}
+
+internal fun diagnosticApiType(name: String): KType = HLType(DiagnosticApiClass(name))

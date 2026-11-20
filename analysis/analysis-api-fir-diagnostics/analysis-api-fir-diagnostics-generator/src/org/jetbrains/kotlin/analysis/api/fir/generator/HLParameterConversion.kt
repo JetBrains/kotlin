@@ -8,12 +8,17 @@ package org.jetbrains.kotlin.analysis.api.fir.generator
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
-import kotlin.reflect.full.createType
 
 sealed class HLParameterConversion {
     abstract fun convertExpression(expression: String, context: ConversionContext): String
     abstract fun convertType(type: KType): KType
     open val importsToAdd: List<String> get() = emptyList()
+
+    /**
+     * Whether the conversion yields `null` for a value which has no counterpart in the Analysis API. Such values are dropped from
+     * collections.
+     */
+    open val dropsUnsupportedValues: Boolean get() = false
 }
 
 object HLIdParameterConversion : HLParameterConversion() {
@@ -28,14 +33,16 @@ class HLCollectionParameterConversion(
     override fun convertExpression(expression: String, context: ConversionContext): String {
         val innerExpression = mappingConversion.convertExpression(parameterName, context.increaseIndent())
         return buildString {
-            appendLine("$expression.map { $parameterName ->")
+            val mapFunction = if (mappingConversion.dropsUnsupportedValues) "mapNotNull" else "map"
+            appendLine("$expression.$mapFunction { $parameterName ->")
             appendLine(innerExpression.withIndent(context.increaseIndent()))
             append("}".withIndent(context))
         }
     }
 
     override fun convertType(type: KType): KType =
-        List::class.createType(
+        HLType(
+            List::class,
             arguments = listOf(
                 KTypeProjection(
                     variance = KVariance.INVARIANT,
@@ -68,7 +75,8 @@ class HLMapParameterConversion(
     override fun convertType(type: KType): KType {
         val keyArgument = type.arguments[0]
         val valueArgument = type.arguments[1]
-        return Map::class.createType(
+        return HLType(
+            Map::class,
             arguments = listOf(
                 KTypeProjection(
                     variance = KVariance.INVARIANT,
@@ -102,7 +110,8 @@ class HLPairParameterConversion(
     override fun convertType(type: KType): KType {
         val first = type.arguments.getOrNull(0)?.type ?: return type
         val second = type.arguments.getOrNull(1)?.type ?: return type
-        return Pair::class.createType(
+        return HLType(
+            Pair::class,
             arguments = listOf(
                 KTypeProjection(
                     variance = KVariance.INVARIANT,
@@ -123,7 +132,8 @@ class HLPairParameterConversion(
 class HLFunctionCallConversion(
     private val callTemplate: String,
     private val callType: KType,
-    override val importsToAdd: List<String> = emptyList()
+    override val importsToAdd: List<String> = emptyList(),
+    override val dropsUnsupportedValues: Boolean = false,
 ) : HLParameterConversion() {
     override fun convertExpression(expression: String, context: ConversionContext) =
         callTemplate.replace("{0}", expression)

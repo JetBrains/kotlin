@@ -23,8 +23,6 @@ analysisApiArtifact {
     )
 }
 
-// The generated diagnostics expose plenty of compiler types (`FirModuleData`, `ClassKind`, …) which are shipped in
-// 'kotlin-analysis-api-implementation'. That artifact depends on this one, so the reference cannot be declared here.
 registerForeignClassUsageTasks {
     classes.from(tasks.jar)
     classpath.from(configurations.runtimeClasspath)
