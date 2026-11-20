@@ -41,6 +41,18 @@ internal val BackendWasmSymbols.mutablePropertiesConstructors
         listOf(kMutableProperty0Impl, kMutableProperty1Impl, kMutableProperty2Impl)
     )
 
+/**
+ * Stdlib classes instantiated only by the compiler as runtime carriers for property
+ * references. Their names must not be exposed by reflection, as compiler-generated
+ * property references are unnamed on the JVM.
+ */
+internal val BackendWasmSymbols.propertyReferenceImplClasses: Set<IrClassSymbol>
+    get() = setOf(
+        kLocalDelegatedPropertyImpl, kLocalDelegatedMutablePropertyImpl,
+        kProperty0Impl, kProperty1Impl, kProperty2Impl,
+        kMutableProperty0Impl, kMutableProperty1Impl, kMutableProperty2Impl,
+    )
+
 class WasmPropertyReferenceLowering(context: WasmBackendContext) : AbstractPropertyReferenceLowering<WasmBackendContext>(context) {
     private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
