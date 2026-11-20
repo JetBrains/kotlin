@@ -1,0 +1,45 @@
+FILE: builderSingularSameNameAsOtherProperty_kotlin.kt
+    @R|lombok/Builder|() public final class SingularConflict : R|kotlin/Any| {
+        public constructor(oneSheep: R|kotlin/String|, @R|lombok/Singular|(value = String(oneSheep) [evaluated = String(oneSheep)]) sheep: R|kotlin/collections/List<kotlin/String>|): R|SingularConflict| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val oneSheep: R|kotlin/String| = R|<local>/oneSheep|
+            public get(): R|kotlin/String|
+
+        field:@R|lombok/Singular|(value = String(oneSheep) [evaluated = String(oneSheep)]) public final val sheep: R|kotlin/collections/List<kotlin/String>| = R|<local>/sheep|
+            public get(): R|kotlin/collections/List<kotlin/String>|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun builder(): R|SingularConflict.SingularConflictBuilder|
+
+            private constructor(): R|SingularConflict.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open class SingularConflictBuilder : R|kotlin/Any| {
+            public open fun build(): R|SingularConflict|
+
+            public open fun oneSheep(oneSheep: R|kotlin/String|): R|SingularConflict.SingularConflictBuilder|
+
+            private final var oneSheep: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            public open fun sheep(sheep: R|kotlin/collections/Collection<kotlin/String>|): R|SingularConflict.SingularConflictBuilder|
+
+            private final var sheep: R|kotlin/collections/MutableList<kotlin/String>?|
+                private get(): R|kotlin/collections/MutableList<kotlin/String>?|
+                private set(value: R|kotlin/collections/MutableList<kotlin/String>?|): R|kotlin/Unit|
+
+            public open fun clearSheep(): R|SingularConflict.SingularConflictBuilder|
+
+            internal constructor(): R|SingularConflict.SingularConflictBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
