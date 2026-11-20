@@ -5,7 +5,7 @@
 
 // Library unique name: <org.example:bcv-klib-test>
 // Platform: NATIVE
-// Native targets: tvos_x64
+// Native targets: tvos_arm64
 // Compiler version: 1.9.22
 // ABI version: 1.8.0
 final class org.example/ShardedClass { // org.example/ShardedClass|null[0]

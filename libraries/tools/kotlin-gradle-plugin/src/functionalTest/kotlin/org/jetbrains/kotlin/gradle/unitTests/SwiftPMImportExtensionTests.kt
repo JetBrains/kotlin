@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.toSwiftPMPlatforms
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -45,6 +47,14 @@ class SwiftPMImportExtensionTests {
                 "subpackage",
             ).prettyPrinted,
             inferredPackageNames.prettyPrinted,
+        )
+    }
+
+    @Test
+    fun `published konanTargets of removed targets are ignored`() {
+        assertEquals(
+            setOf(SwiftPMDependency.Platform.iOS, SwiftPMDependency.Platform.watchOS),
+            setOf("ios_arm64", "watchos_arm64", "macos_x64", "tvos_x64", "watchos_x64", "watchos_arm32").toSwiftPMPlatforms(),
         )
     }
 

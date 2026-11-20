@@ -34,7 +34,7 @@ class KlibTargetHierarchyTest {
     @Test
     fun testTargetsList() {
         assertEquals(setOf("linuxX64"), TargetHierarchy.targets("linuxX64"))
-        assertEquals(setOf("macosX64", "macosArm64"), TargetHierarchy.targets("macos"))
+        assertEquals(setOf("tvosArm64", "tvosSimulatorArm64"), TargetHierarchy.targets("tvos"))
         assertEquals(emptySet(), TargetHierarchy.targets("unknown"))
     }
 
@@ -52,7 +52,6 @@ class KlibTargetHierarchyTest {
     fun testAllTargetsAreMapped() {
         val notMappedTargets = KonanTarget.predefinedTargets.keys
             .subtract(KlibTarget.supportedKonanNames())
-            .minus(KonanTarget.WATCHOS_ARM32.name) // KT-87513. Deprecated with error, not supported by ABI tools
         assertEquals(emptySet(), notMappedTargets,
             "Following targets are not mapped: $notMappedTargets")
     }

@@ -1,7 +1,7 @@
 // Klib ABI Dump
-// Targets: [androidNativeArm32, androidNativeArm64, iosSimulatorArm64, linuxArm64, linuxX64, macosArm64, tvosArm64, tvosSimulatorArm64, tvosX64]
+// Targets: [androidNativeArm32, androidNativeArm64, iosSimulatorArm64, linuxArm64, linuxX64, macosArm64, tvosArm64, tvosSimulatorArm64]
 // Alias: androidNative => [androidNativeArm32, androidNativeArm64]
-// Alias: apple => [iosSimulatorArm64, macosArm64, tvosArm64, tvosSimulatorArm64, tvosX64]
+// Alias: apple => [iosSimulatorArm64, macosArm64, tvosArm64, tvosSimulatorArm64]
 // Alias: linux => [linuxArm64, linuxX64]
 // Rendering settings:
 // - Signature version: 2

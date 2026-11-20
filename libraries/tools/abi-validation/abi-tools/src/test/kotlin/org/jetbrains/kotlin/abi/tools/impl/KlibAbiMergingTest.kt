@@ -71,7 +71,7 @@ class KlibAbiMergingTest {
 
     @Test
     fun divergingDumpFiles() {
-        val targets = mutableListOf("androidNativeArm64", "linuxArm64", "linuxX64", "tvosX64")
+        val targets = mutableListOf("androidNativeArm64", "linuxArm64", "linuxX64", "tvosArm64")
         val random = Random(42)
         for (i in 0 until 10) {
             val klib = KlibAbiDumpMerger()
@@ -93,7 +93,7 @@ class KlibAbiMergingTest {
         val random = Random(42)
         for (i in 0 until 10) {
             val klib = KlibAbiDumpMerger()
-            val targets = mutableListOf("androidNativeArm64", "linuxArm64", "linuxX64", "tvosX64")
+            val targets = mutableListOf("androidNativeArm64", "linuxArm64", "linuxX64", "tvosArm64")
             targets.shuffle(random)
             targets.forEach {
                 klib.merge(file("/merge/diverging/$it.api"))
@@ -121,7 +121,7 @@ class KlibAbiMergingTest {
         val klib = KlibAbiDumpMerger()
         klib.merge(file("/merge/diverging/merged.abi"))
 
-        val targets = listOf("androidNativeArm64", "linuxArm64", "linuxX64", "tvosX64")
+        val targets = listOf("androidNativeArm64", "linuxArm64", "linuxX64", "tvosArm64")
         targets.forEach { target ->
             klib.remove(KlibTarget(target))
             klib.merge(file("/merge/diverging/$target.api"))
@@ -288,7 +288,7 @@ class KlibAbiMergingTest {
             merge(loadAndRename(file("/merge/diverging/androidNativeArm64.api"), "android"))
             merge(loadAndRename(file("/merge/diverging/linuxArm64.api"), "linux"))
             merge(file("/merge/diverging/linuxX64.api"))
-            merge(file("/merge/diverging/tvosX64.api"))
+            merge(file("/merge/diverging/tvosArm64.api"))
         }
 
         val dump = dumpToFile(lib)
@@ -341,8 +341,8 @@ class KlibAbiMergingTest {
         val expectedTargetNames = listOf(
             "androidNativeArm32", "androidNativeArm64", "androidNativeX64", "androidNativeX86",
             "iosArm64", "iosSimulatorArm64", "iosX64", "linuxArm32Hfp", "linuxArm64", "linuxX64",
-            "macosArm64", "macosX64", "mingwX64", "tvosArm64", "tvosSimulatorArm64", "tvosX64",
-            "watchosArm64", "watchosDeviceArm64", "watchosSimulatorArm64", "watchosX64"
+            "macosArm64", "mingwX64", "tvosArm64", "tvosSimulatorArm64",
+            "watchosArm64", "watchosDeviceArm64", "watchosSimulatorArm64"
         )
         val expectedTargets = expectedTargetNames.asSequence().map(KlibTarget.Companion::parse).toSet()
         assertEquals(expectedTargets, lib.targets)

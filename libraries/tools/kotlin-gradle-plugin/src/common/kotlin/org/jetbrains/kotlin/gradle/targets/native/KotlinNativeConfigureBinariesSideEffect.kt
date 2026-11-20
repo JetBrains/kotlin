@@ -78,8 +78,8 @@ internal val KotlinNativeConfigureBinariesSideEffect = KotlinTargetSideEffect<Ko
 
     /**
      * We create test binaries for all platforms but test runs only for:
-     *  - host platforms: macosX64, linuxX64, mingwX64;
-     *  - simulated platforms: iosX64, tvosX64, watchosX64.
+     *  - host platforms: macosArm64, linuxX64, mingwX64;
+     *  - simulated platforms: iosX64, iosSimulatorArm64, tvosSimulatorArm64, watchosSimulatorArm64.
      * See more in [KotlinNativeTargetWithTestsConfigurator] and its subclasses.
      */
     target.binaries.test(listOf(NativeBuildType.DEBUG)) { }

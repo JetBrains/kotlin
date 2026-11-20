@@ -36,9 +36,9 @@ fun KonanTarget.supportsLibBacktrace(): Boolean =
 // TODO: Add explicit WATCHOS_DEVICE_ARM64 after compiler update.
 fun KonanTarget.supportsCoreSymbolication(): Boolean =
         this in listOf(
-                KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.IOS_X64,
-                KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64,
-                KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64
+                KonanTarget.MACOS_ARM64, KonanTarget.IOS_X64,
+                KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.TVOS_SIMULATOR_ARM64,
+                KonanTarget.WATCHOS_SIMULATOR_ARM64
         )
 
 fun KonanTarget.supportsGccUnwind(): Boolean = family == Family.ANDROID || family == Family.LINUX
@@ -88,7 +88,6 @@ fun KonanTarget.needSmallBinary() = when {
 fun KonanTarget.supportedSanitizers(): List<SanitizerKind> =
     when(this) {
         is KonanTarget.LINUX_X64 -> listOf(SanitizerKind.ADDRESS, SanitizerKind.THREAD)
-        is KonanTarget.MACOS_X64 -> listOf(SanitizerKind.THREAD)
         is KonanTarget.MACOS_ARM64 -> listOf(SanitizerKind.THREAD)
         // TODO: Enable ASAN on macOS. Currently there's an incompatibility between clang frontend version and clang_rt.asan version.
         // TODO: Consider supporting mingw.

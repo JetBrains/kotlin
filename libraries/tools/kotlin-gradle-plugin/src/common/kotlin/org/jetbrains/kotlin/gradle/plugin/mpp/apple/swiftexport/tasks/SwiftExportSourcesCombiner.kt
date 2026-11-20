@@ -43,22 +43,16 @@ private fun KonanTarget.swiftDestinationCondition(): String = when (this) {
         "os(iOS) && targetEnvironment(simulator) && arch(x86_64)"
     KonanTarget.MACOS_ARM64 ->
         "os(macOS) && arch(arm64)"
-    KonanTarget.MACOS_X64 ->
-        "os(macOS) && arch(x86_64)"
     KonanTarget.TVOS_ARM64 ->
         "os(tvOS) && !targetEnvironment(simulator) && arch(arm64)"
     KonanTarget.TVOS_SIMULATOR_ARM64 ->
         "os(tvOS) && targetEnvironment(simulator) && arch(arm64)"
-    KonanTarget.TVOS_X64 ->
-        "os(tvOS) && targetEnvironment(simulator) && arch(x86_64)"
     KonanTarget.WATCHOS_ARM64 ->
         "os(watchOS) && !targetEnvironment(simulator) && arch(arm64_32)"
     KonanTarget.WATCHOS_DEVICE_ARM64 ->
         "os(watchOS) && !targetEnvironment(simulator) && arch(arm64)"
     KonanTarget.WATCHOS_SIMULATOR_ARM64 ->
         "os(watchOS) && targetEnvironment(simulator) && arch(arm64)"
-    KonanTarget.WATCHOS_X64 ->
-        "os(watchOS) && targetEnvironment(simulator) && arch(x86_64)"
     else -> throw IllegalArgumentException("Swift Export doesn't support $this")
 }
 
@@ -74,22 +68,16 @@ private fun KonanTarget.cDestinationCondition(): String = when (this) {
         "__is_target_os(ios) && __is_target_environment(simulator) && __is_target_arch(x86_64)"
     KonanTarget.MACOS_ARM64 ->
         "__is_target_os(macos) && __is_target_arch(arm64)"
-    KonanTarget.MACOS_X64 ->
-        "__is_target_os(macos) && __is_target_arch(x86_64)"
     KonanTarget.TVOS_ARM64 ->
         "__is_target_os(tvos) && __is_target_environment(unknown) && __is_target_arch(arm64)"
     KonanTarget.TVOS_SIMULATOR_ARM64 ->
         "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(arm64)"
-    KonanTarget.TVOS_X64 ->
-        "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(x86_64)"
     KonanTarget.WATCHOS_ARM64 ->
         "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64_32)"
     KonanTarget.WATCHOS_DEVICE_ARM64 ->
         "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64)"
     KonanTarget.WATCHOS_SIMULATOR_ARM64 ->
         "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(arm64)"
-    KonanTarget.WATCHOS_X64 ->
-        "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(x86_64)"
     else -> throw IllegalArgumentException("Swift Export doesn't support $this")
 }
 

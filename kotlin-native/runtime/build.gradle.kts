@@ -94,7 +94,7 @@ bitcode {
 
     allTargets {
         val fixBrokenMacroExpansionInXcode15_3: List<String> = when (target) {
-            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
+            KonanTarget.MACOS_ARM64 -> hashMapOf(
                 "TARGET_OS_OSX" to "1",
             )
             KonanTarget.IOS_ARM64 -> hashMapOf(

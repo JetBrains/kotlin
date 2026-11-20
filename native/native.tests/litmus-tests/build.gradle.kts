@@ -33,7 +33,6 @@ dependencies {
             KonanTarget.LINUX_ARM64,
             KonanTarget.LINUX_X64,
             KonanTarget.MACOS_ARM64,
-            KonanTarget.MACOS_X64,
             KonanTarget.MINGW_X64,
         ).forEach { target ->
             // Cannot depend on `${artifact}:${litmusKtVersion}`, because its transitive dependency on

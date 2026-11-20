@@ -79,7 +79,6 @@ class CInteropCommonizerConfigurationTests {
                     KonanTarget.LINUX_ARM64,
                     KonanTarget.IOS_ARM64,
                     KonanTarget.IOS_X64,
-                    KonanTarget.MACOS_X64,
                     KonanTarget.MACOS_ARM64
                 ).identityString
             )

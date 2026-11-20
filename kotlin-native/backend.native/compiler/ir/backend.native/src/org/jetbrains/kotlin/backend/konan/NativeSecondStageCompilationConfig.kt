@@ -70,7 +70,7 @@ class NativeSecondStageCompilationConfig(
                 when (target) {
                     "ios_x64" -> {
                         put("targetTriple.$target", "x86_64-apple-ios-macabi")
-                        put("targetSysRoot.$target", "\$targetSysRoot.macos_x64")
+                        put("targetSysRoot.$target", "\$targetSysRoot.macos_arm64")
                     }
                     "ios_simulator_arm64" -> {
                         // macabi implies usage of macOS sysroot.

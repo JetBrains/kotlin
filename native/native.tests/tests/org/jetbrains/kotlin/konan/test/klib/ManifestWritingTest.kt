@@ -86,7 +86,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("regular_compilation_with_manifest_addendum_non_empty_native_targets")
     fun `Manifest of regular compilation with manifest addendum with non-empty native targets`(testInfo: TestInfo) {
-        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz", "native_targets=linux_x64,macos_x64")
+        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz", "native_targets=linux_x64,macos_arm64")
         val exception = assertThrows<CompilationToolException> {
             doManifestTest(
                 testInfo,
@@ -102,7 +102,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         doManifestTest(
             testInfo,
             // note some leading and trailing spaces
-            "-Xmanifest-native-targets=ios_arm64, ios_x64,linux_x64 ,mingw_x64,macos_x64,macos_arm64"
+            "-Xmanifest-native-targets=ios_arm64, ios_x64,linux_x64 ,mingw_x64,macos_arm64"
         )
     }
 
@@ -149,7 +149,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("metadata_compilation_with_manifest_addendum_non_empty_native_targets")
     fun `Manifest of metadata compilation with manifest addendum with non-empty native targets`(testInfo: TestInfo) {
-        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz", "native_targets=linux_x64,macos_x64")
+        val addendum = generateManifestAddendum("foo=foo", "bar=bar", "baz=baz", "native_targets=linux_x64,macos_arm64")
         val exception = assertThrows<CompilationToolException> {
             doManifestTest(
                 testInfo,
@@ -167,7 +167,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             testInfo,
             "-Xmetadata-klib",
             // note some leading and trailing spaces
-            "-Xmanifest-native-targets=ios_arm64, ios_x64,linux_x64 ,mingw_x64,macos_x64,macos_arm64",
+            "-Xmanifest-native-targets=ios_arm64, ios_x64,linux_x64 ,mingw_x64,macos_arm64",
         )
     }
 

@@ -26,10 +26,6 @@ headers = NSSystemDirectories.h \
     sys/kauth.h \
     libDER/DERItem.h \
     libDER/libDER_config.h
-headers.macos_x64 = \
-    emmintrin.h \
-    mmintrin.h \
-    xmmintrin.h
 headers.macos_arm64 = \
     arm64/hv/hv_kern_types.h
 

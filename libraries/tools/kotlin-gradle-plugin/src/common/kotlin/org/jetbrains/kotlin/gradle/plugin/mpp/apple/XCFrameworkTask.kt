@@ -46,13 +46,13 @@ internal enum class AppleTarget(
     val targetName: String,
     val targets: List<KonanTarget>,
 ) : Serializable {
-    MACOS_DEVICE("macos", listOf(KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64)),
+    MACOS_DEVICE("macos", listOf(KonanTarget.MACOS_ARM64)),
     IPHONE_DEVICE("ios", listOf(KonanTarget.IOS_ARM64)),
     IPHONE_SIMULATOR("iosSimulator", listOf(KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64)),
     WATCHOS_DEVICE("watchos", listOf(KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64)),
-    WATCHOS_SIMULATOR("watchosSimulator", listOf(KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64)),
+    WATCHOS_SIMULATOR("watchosSimulator", listOf(KonanTarget.WATCHOS_SIMULATOR_ARM64)),
     TVOS_DEVICE("tvos", listOf(KonanTarget.TVOS_ARM64)),
-    TVOS_SIMULATOR("tvosSimulator", listOf(KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64))
+    TVOS_SIMULATOR("tvosSimulator", listOf(KonanTarget.TVOS_SIMULATOR_ARM64))
 }
 
 internal class XCFrameworkTaskHolder(

@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_AS_ERROR_MESSAGE
 
 /**
  * Provides a DSL to define the structure of [KotlinSourceSets][KotlinSourceSet] inside the [KotlinSourceSetTree].
@@ -289,14 +288,6 @@ interface KotlinHierarchyBuilder {
     fun withWatchosArm64()
 
     /**
-     * Only includes Kotlin's Apple/watchosX64 target in this [group].
-     *
-     * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
-     */
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    fun withWatchosX64()
-
-    /**
      * Only includes Kotlin's Apple/watchosSimulatorArm64 target in this [group].
      *
      * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
@@ -318,14 +309,6 @@ interface KotlinHierarchyBuilder {
     fun withTvosArm64()
 
     /**
-     * Only includes Kotlin's Apple/tvosX64 target in this [group].
-     *
-     * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
-     */
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    fun withTvosX64()
-
-    /**
      * Only includes Kotlin's Apple/tvosSimulatorArm64 target in this [group].
      *
      * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
@@ -345,14 +328,6 @@ interface KotlinHierarchyBuilder {
      * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
      */
     fun withMingwX64()
-
-    /**
-     * Only includes Kotlin's Apple/macosX64 target in this [group].
-     *
-     * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
-     */
-    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
-    fun withMacosX64()
 
     /**
      * Only includes Kotlin's Apple/macosArm64 target in this [group].
