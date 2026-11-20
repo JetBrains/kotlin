@@ -44,7 +44,9 @@ KtOperationReferenceExpression(208,210): '++'
           ]
           contextParameters = []
           callableId = /B.get
-        typeArgumentsMapping = {}
+        typeArgumentsMapping = {
+          I -> (kotlin.String)
+        }
         valueArgumentMapping = {
           "key" -> (KaVariableSignature:
             name = i
