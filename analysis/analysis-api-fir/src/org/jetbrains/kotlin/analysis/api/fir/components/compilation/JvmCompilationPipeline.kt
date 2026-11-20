@@ -146,7 +146,7 @@ internal fun getIrGenerationExtensions(module: KaModule): List<IrGenerationExten
     }
 
     val moduleExtensions = KotlinCompilerPluginsProvider.getInstance(project)
-        ?.getRegisteredExtensions(unwrappedModule, IrGenerationExtension)
+        ?.getRegisteredExtensions(unwrappedModule, IrGenerationExtension::class.java)
         .orEmpty()
 
     return moduleExtensions + projectExtensions
