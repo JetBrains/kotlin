@@ -469,7 +469,9 @@ class CocoaPodsGitIT : KGPBaseTest() {
             val privateSpecGit = projectPath.resolve(privateSpecGitRepo)
             val privateSpecGitUri = privateSpecGit.toUri().toString()
 
-            buildGradleKts.addSpecRepo(privateSpecGitUri)
+            // Same URL as `pod repo add` below, but without putting the temp path into the build script
+            val privateSpecGitReference = pathReference("privateSpecGit", privateSpecGit)
+            buildGradleKts.addCocoapodsBlock("url(\"file://\" + $privateSpecGitReference)".wrapIntoBlock("specRepos"))
 
             fun podInstallSynthetic(version: String) {
                 buildGradleKts.addPod(customPodLibraryName, "version = \"$version\"")
