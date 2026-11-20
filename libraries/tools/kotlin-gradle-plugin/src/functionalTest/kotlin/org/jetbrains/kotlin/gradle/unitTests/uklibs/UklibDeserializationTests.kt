@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import org.jetbrains.kotlin.gradle.util.unzipTo
 import org.jetbrains.kotlin.incremental.createDirectory
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.io.TempDir
 import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
 
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 class UklibDeserializationTests {
 
     @field:TempDir

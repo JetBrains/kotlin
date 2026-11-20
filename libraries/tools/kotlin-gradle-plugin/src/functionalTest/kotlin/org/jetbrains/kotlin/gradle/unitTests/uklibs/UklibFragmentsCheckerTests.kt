@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFragmentsChecker
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.reflect.KProperty
 
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 internal class UklibFragmentsCheckerTests {
 
     @Test

@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.assertEquals
 
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 class KT77539UklibSkikoResolution {
 
     @field:TempDir
