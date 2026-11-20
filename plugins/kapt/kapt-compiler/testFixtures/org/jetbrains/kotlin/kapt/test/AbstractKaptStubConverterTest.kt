@@ -35,11 +35,6 @@ abstract class AbstractKaptStubConverterTest(
         doOpenInternalPackagesIfRequired()
     }
 
-    private val dumpClassifier: String = when {
-        useCollectionLiteralsBasedAnnotationResolution -> "cl"
-        else -> stubGenerationScheme.stringValue.lowercase()
-    }
-
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -52,7 +47,9 @@ abstract class AbstractKaptStubConverterTest(
             FIR_PARSER with FirParser.LightTree
             +WITH_STDLIB
             STUB_GENERATION_SCHEME with stubGenerationScheme.stringValue
-            TestDumpDirectives.DUMP_CLASSIFIER with dumpClassifier
+            if (stubGenerationScheme == JTREE) {
+                TestDumpDirectives.DUMP_CLASSIFIER with "jtree"
+            }
             if (headerMode) {
                 +KaptTestDirectives.HEADER_MODE
             }
