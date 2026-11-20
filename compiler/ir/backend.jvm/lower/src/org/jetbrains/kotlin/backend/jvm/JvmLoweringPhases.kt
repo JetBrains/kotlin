@@ -67,7 +67,7 @@ private val jvmFilePhases = createFilePhases(
     ::CollectionStubMethodLowering,
     ::JvmSingleAbstractMethodLowering,
     ::JvmInlineClassLowering,
-    ::JvmTailrecCheckerLowering,
+    ::JvmTailrecPreSerializationLowering,
     ::JvmTailrecLowering,
 
     ::MappedEnumWhenLowering,
