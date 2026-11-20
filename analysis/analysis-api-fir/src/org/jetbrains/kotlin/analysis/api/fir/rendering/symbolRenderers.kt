@@ -228,6 +228,7 @@ private object SymbolModifiersRenderer : KaPieceRenderer<KaDeclarationSymbol>(Ka
                 addIfNotNull(modalityModifier(symbol))
                 if (symbol is KaNamedFunctionSymbol) {
                     if (symbol.isOverride) add(KtTokens.OVERRIDE_KEYWORD)
+                    if (symbol.isCompanionExtension) add(KtTokens.COMPANION_KEYWORD)
                     if (symbol.isTailRec) add(KtTokens.TAILREC_KEYWORD)
                     if (symbol.isSuspend) add(KtTokens.SUSPEND_KEYWORD)
                     if (symbol.isInline) add(KtTokens.INLINE_KEYWORD)
@@ -239,6 +240,7 @@ private object SymbolModifiersRenderer : KaPieceRenderer<KaDeclarationSymbol>(Ka
                 addAll(commonModifiers(symbol))
                 addIfNotNull(modalityModifier(symbol))
                 if (symbol.isOverride) add(KtTokens.OVERRIDE_KEYWORD)
+                if (symbol.isCompanionExtension) add(KtTokens.COMPANION_KEYWORD)
                 if (symbol is KaKotlinPropertySymbol) {
                     if (symbol.isConst) add(KtTokens.CONST_KEYWORD)
                     if (symbol.isLateInit) add(KtTokens.LATEINIT_KEYWORD)
@@ -265,7 +267,6 @@ private object SymbolModifiersRenderer : KaPieceRenderer<KaDeclarationSymbol>(Ka
                 addAll(commonModifiers(symbol))
             }
             is KaJavaFieldSymbol -> {
-                // The `static` of a Java field has no Kotlin modifier keyword, so it is rendered by `JavaFieldRenderer` instead.
                 addIfNotNull(visibilityModifier(symbol))
             }
             is KaLocalVariableSymbol -> {
@@ -337,6 +338,13 @@ private object SymbolModifiersRenderer : KaPieceRenderer<KaDeclarationSymbol>(Ka
 
         return true
     }
+
+    /**
+     * Whether the callable is a companion extension, the only callable declared with the `companion` modifier. Companion block members
+     * and Java static members are [companion][KaCallableSymbol.isCompanion] too, but they cannot be extensions.
+     */
+    private val KaCallableSymbol.isCompanionExtension: Boolean
+        get() = isCompanion && isExtension
 }
 
 context(session: KaSession)

@@ -5,7 +5,7 @@ interface SomeInterface {
 }
 
 class SomeClass : SomeInterface {
-  lateinit var fau: Double
+  private val baz: Int
 
   override fun foo(x: Int, y: String): String
 
@@ -13,6 +13,6 @@ class SomeClass : SomeInterface {
     get()
     set(value: Boolean)
 
-  private val baz: Int
+  lateinit var fau: Double
 }
 

@@ -297,12 +297,6 @@ private object JavaFieldRenderer : KaPieceRenderer<KaJavaFieldSymbol>(KaPiece.Ja
     override fun render(value: KaJavaFieldSymbol, next: () -> Unit): Boolean {
         render(value to null, KaPiece.Annotations)
         render(value, KaPiece.SymbolModifiers)
-
-        if (value.isStatic) {
-            // `static` is a Java modifier and has no Kotlin keyword token, so it is not covered by `AllowedKeywords` or `Modifiers`.
-            output.append("static", KaTextAttribute.Keyword).space()
-        }
-
         output.keyword(if (value.isVal) KtTokens.VAL_KEYWORD else KtTokens.VAR_KEYWORD)
         render(value, KaPiece.SymbolName)
         output.punctuation(":").space()

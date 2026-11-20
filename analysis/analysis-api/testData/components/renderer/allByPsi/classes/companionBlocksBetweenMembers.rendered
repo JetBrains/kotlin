@@ -1,0 +1,40 @@
+class StartsWithBlock {
+  companion {
+    fun first()
+  }
+
+  fun second()
+}
+
+class BlocksBetweenMembers {
+  fun first()
+
+  companion {
+    fun second()
+
+    val third: Int
+  }
+
+  class Nested
+
+  fun fourth()
+
+  companion {
+    fun fifth()
+  }
+}
+
+enum class EnumWithBlocks {
+  A,
+  B;
+
+  companion {
+    fun first(): EnumWithBlocks
+  }
+
+  fun second()
+
+  companion {
+    fun third()
+  }
+}

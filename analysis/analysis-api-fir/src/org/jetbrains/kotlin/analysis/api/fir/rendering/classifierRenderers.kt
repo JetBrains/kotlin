@@ -175,13 +175,21 @@ private object ClassBodyRenderer : KaPieceRenderer<KaClassSymbol>(KaPiece.ClassB
                     }
                 }
 
-                val extraLineBetweenMembers = context.valueFor(KaRenderingOption.ExtraLineBetweenMembers)
-                otherMembers.forEachIndexed { index, member ->
-                    if (extraLineBetweenMembers && (enumEntries.isNotEmpty() || index > 0)) {
+                var afterOtherContent = enumEntries.isNotEmpty()
+                for (run in otherMembers.splitIntoRuns { it.isCompanionBlockMember }) {
+                    if (run.first().isCompanionBlockMember) {
+                        renderLineBreak(afterOtherContent)
+                        output.keyword(KtTokens.COMPANION_KEYWORD)
+                        output.punctuation("{")
+                        output.withIndent {
+                            renderMembers(run, afterOtherContent = false)
+                        }
                         output.newLine()
+                        output.punctuation("}")
+                    } else {
+                        renderMembers(run, afterOtherContent)
                     }
-                    output.newLine()
-                    render(member, KaPiece.Symbol)
+                    afterOtherContent = true
                 }
             }
 
@@ -190,6 +198,44 @@ private object ClassBodyRenderer : KaPieceRenderer<KaClassSymbol>(KaPiece.ClassB
         }
 
         return true
+    }
+
+    context(session: KaSession, context: KaRenderingContext, output: KaRenderingOutput)
+    private fun renderMembers(members: List<KaSymbol>, afterOtherContent: Boolean) {
+        members.forEachIndexed { index, member ->
+            renderLineBreak(afterOtherContent = afterOtherContent || index > 0)
+            render(member, KaPiece.Symbol)
+        }
+    }
+
+    /**
+     * Starts a new line for the next member, after an empty line if [afterOtherContent] and the
+     * [ExtraLineBetweenMembers][KaRenderingOption.ExtraLineBetweenMembers] option is enabled.
+     */
+    context(context: KaRenderingContext, output: KaRenderingOutput)
+    private fun renderLineBreak(afterOtherContent: Boolean) {
+        if (afterOtherContent && context.valueFor(KaRenderingOption.ExtraLineBetweenMembers)) {
+            output.newLine()
+        }
+        output.newLine()
+    }
+}
+
+/** Whether the member is rendered in a `companion { }` block of its class. Enum entries are filtered out before the check. */
+private val KaSymbol.isCompanionBlockMember: Boolean
+    get() = this is KaCallableSymbol && isCompanion
+
+/**
+ * Splits the list into runs of consecutive elements with the same [key], e.g., the members of each `companion { }` block and the members
+ * between them.
+ */
+private inline fun <T> List<T>.splitIntoRuns(key: (T) -> Boolean): List<List<T>> = buildList<MutableList<T>> {
+    for (element in this@splitIntoRuns) {
+        val previousRun = lastOrNull()
+        if (previousRun == null || key(previousRun.last()) != key(element)) {
+            add(mutableListOf())
+        }
+        last().add(element)
     }
 }
 

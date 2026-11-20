@@ -1,0 +1,16 @@
+enum class E {
+  A,
+  B;
+
+  fun regular()
+
+  companion {
+    fun fromBlock(): lib.E
+
+    fun valueOf(value: kotlin.String): lib.E
+
+    fun values(): kotlin.Array<lib.E>
+
+    val entries: kotlin.enums.EnumEntries<lib.E>
+  }
+}
