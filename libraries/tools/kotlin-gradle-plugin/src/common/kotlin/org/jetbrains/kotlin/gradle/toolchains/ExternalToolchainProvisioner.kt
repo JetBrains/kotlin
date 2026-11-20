@@ -20,6 +20,9 @@ import java.util.concurrent.ConcurrentHashMap
  * The unpacker uses the request to extract and prepare the distribution directly in a staging directory.
  * The provisioner validates the staged distribution and atomically moves it to its final installation directory,
  * where other builds can discover and reuse it. Failed attempts are not cached.
+ *
+ * An existing installation directory that lacks the required files is never replaced, because it may contain
+ * user data; provisioning fails instead, asking to remove the directory.
  */
 internal class ExternalToolchainProvisioner<R>(
     /** Toolchain name used in diagnostics and logs. */
@@ -64,11 +67,13 @@ internal class ExternalToolchainProvisioner<R>(
     private fun install(request: R, layout: ExternalToolchainInstallationLayout): File {
         val expectedFiles = requiredFiles(request)
         if (isInstalledIn(layout.installationDir, expectedFiles)) return layout.installationDir
+        checkNoIncompleteInstallation(layout.installationDir, expectedFiles)
         archiveDownloader.checkIfCanBeDownloaded()
 
         KotlinInterprocessDirectoryLock(layout.lockDir, logInfo = { logger.info("[$toolchainName] $it") }).withLock {
             // Another service or build may have installed the distribution while we waited for the lock.
             if (isInstalledIn(layout.installationDir, expectedFiles)) return@withLock
+            checkNoIncompleteInstallation(layout.installationDir, expectedFiles)
 
             layout.temporaryDir.deleteRecursively()
             try {
@@ -78,12 +83,6 @@ internal class ExternalToolchainProvisioner<R>(
                     "The $toolchainName toolchain archive '${layout.archive}' does not contain the required files: $expectedFiles"
                 }
 
-                // Repair an incomplete installation only once its replacement is ready.
-                if (layout.installationDir.exists()) {
-                    check(layout.installationDir.deleteRecursively()) {
-                        "Cannot replace the incomplete $toolchainName toolchain installation '${layout.installationDir}'"
-                    }
-                }
                 Files.move(layout.stagedDir.toPath(), layout.installationDir.toPath(), StandardCopyOption.ATOMIC_MOVE)
                 logger.info("Installed $toolchainName toolchain into '${layout.installationDir}'")
             } finally {
@@ -97,6 +96,14 @@ internal class ExternalToolchainProvisioner<R>(
 
     private companion object {
         val logger = Logging.getLogger(ExternalToolchainProvisioner::class.java)
+    }
+
+    private fun checkNoIncompleteInstallation(installationDir: File, expectedFiles: List<String>) {
+        check(!installationDir.exists()) {
+            "The $toolchainName toolchain installation '$installationDir' is incomplete, " +
+                    "it does not contain the required files: $expectedFiles. " +
+                    "It is not replaced to keep its content; remove it to install the toolchain again."
+        }
     }
 
     private fun isInstalledIn(directory: File, expectedFiles: List<String>): Boolean =

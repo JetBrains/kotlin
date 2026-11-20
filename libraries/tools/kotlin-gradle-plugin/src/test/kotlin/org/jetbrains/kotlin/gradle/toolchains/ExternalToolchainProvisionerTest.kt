@@ -113,14 +113,21 @@ class ExternalToolchainProvisionerTest {
     }
 
     @Test
-    fun `replaces an incomplete installation after extraction succeeds`() {
+    fun `does not replace an incomplete installation`() {
         val installation = temporaryDirectory.resolve("tool-133")
         installation.mkdirs()
         installation.resolve("incomplete").writeText("old data")
+        var downloads = 0
 
-        assertEquals(installation, provisioner().provision("133"))
-        assertEquals("executable", installation.resolve("bin/tool").readText())
-        assertFalse(installation.resolve("incomplete").exists())
+        val failure = assertFailsWith<IllegalStateException> { provisioner(downloaded = { downloads++ }).provision("133") }
+        assertEquals(
+            "The TestTool toolchain installation '$installation' is incomplete, it does not contain the required files: [bin/tool]. " +
+                    "It is not replaced to keep its content; remove it to install the toolchain again.",
+            failure.message,
+        )
+        assertEquals("old data", installation.resolve("incomplete").readText())
+        assertEquals(0, downloads)
+        assertFalse(temporaryDirectory.resolve("tool-133.tmp").exists())
     }
 
     @Test
