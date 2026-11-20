@@ -98,10 +98,9 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     explicitlyDeclaredFunctions[setterName].let { it?.valueParameterSymbols?.size != 1 } &&
                     setterVisibility != null
                 ) {
-                    val returnTypeRef = if (
-                        fieldAccessors?.chain ?: classAccessors?.chain ?: config.accessorsChain ||
-                        fieldAccessors?.fluent ?: classAccessors?.fluent ?: config.accessorsFluent
-                    ) {
+                    val fluentAccessors = fieldAccessors?.fluent ?: classAccessors?.fluent ?: config.accessorsFluent
+                    val chainedAccessors = fieldAccessors?.chain ?: classAccessors?.chain ?: config.accessorsChain || fluentAccessors
+                    val returnTypeRef = if (chainedAccessors) {
                         buildResolvedTypeRef { coneType = classSymbol.defaultType() }
                     } else {
                         session.builtinTypes.unitType
@@ -172,7 +171,8 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         val propertyName = field.extractPropertyNameOrNull(prefixes) ?: return null
 
         val isPrimitiveBoolean = field.returnTypeRef.isPrimitiveBoolean()
-        val functionName = if (fieldAccessors?.fluent ?: classAccessors?.fluent ?: config.accessorsFluent) {
+        val fluentAccessors = fieldAccessors?.fluent ?: classAccessors?.fluent ?: config.accessorsFluent
+        val functionName = if (fluentAccessors) {
             propertyName
         } else {
             val prefix = when (accessorInfo) {
