@@ -107,7 +107,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 
         if (!somethingIsSubstituted) return null
 
-        // Unbounded type parameters in the first component of a union are treated as primary type.
+        // Unbounded or bounded by nullable-rich-error type parameters in the first component of a union are treated as primary type.
         // But if they're substituted with a rich error type, they need to be moved to the error components.
         // To determine the errorness, we need to expand typealiases.
         // Doing so using the default fullyExpandedType would cause contract violations in SUPERTYPES phase (when typealiases are expanded).
@@ -123,7 +123,12 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             val nothingPossiblyNullable = if (substitutedPrimaryType.hasFlexibleMarkedNullability) {
                 StandardTypes.Nothing.toTrivialFlexibleType(typeContext)
             } else {
-                StandardTypes.nothing(fullyExpandedPrimaryType.canBeNull(typeContext.session))
+                // We can't use `canBeNull` because we might encounter unresolved type parameter bounds
+                // during the first round of type parameter bound resolution.
+                // This is fine because we're already looking at the fully expanded type,
+                // and `isBoundedByRichError` returns false for type parameters with nullable bounds,
+                // so in this case we wouldn't be in this branch anyway.
+                StandardTypes.nothing(fullyExpandedPrimaryType.isMarkedNullable)
             }
 
             ConeTypeUnifier.unify(nothingPossiblyNullable, adjustedRichErrorTypes, attributes, typeContext)
@@ -132,7 +137,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         }
     }
 
-    protected open fun fullyExpand(type: ConeKotlinType) : ConeKotlinType {
+    protected open fun fullyExpand(type: ConeKotlinType): ConeKotlinType {
         return type.fullyExpandedType(typeContext.session)
     }
 

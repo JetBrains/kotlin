@@ -239,6 +239,10 @@ fun createParametersSubstitutor(
     expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeSubstitutor = object : AbstractConeSubstitutor(useSiteSession.typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        // Regular type arguments are handled by `substituteArgument`,
+        // so we only land here for components of union types.
+        // We'd also land here for the original type of a DNN but that's currently bugged,
+        // see TODO(KT-91521) in `substituteArgument`.
         if (type !is ConeTypeParameterType) return null
         val projection = typeAliasMap[type.lookupTag.symbol] ?: return null
 

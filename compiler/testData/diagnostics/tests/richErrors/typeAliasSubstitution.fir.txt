@@ -46,6 +46,9 @@ FILE: typeAliasSubstitution.kt
     public final fun test7(): R|{TA<E2?>=} Box<union(primary=kotlin/Nothing?, errors=E2 | E)>| {
         ^test7 R|/Box.Box|<R|E|>(R|/E.E|())
     }
+    public final fun test7_(): R|{TA<E2?>=} Box<union(primary=kotlin/Nothing?, errors=E2 | E)>| {
+        ^test7_ R|/Box.Box|<R|kotlin/Nothing|>(Null(null))
+    }
     public final fun test8(): R|{TA<union(primary=kotlin/String, errors=E2)>=} Box<union(primary=kotlin/String, errors=E2 | E)>| {
         ^test8 R|/Box.Box|<R|E|>(R|/E.E|())
     }
@@ -63,5 +66,8 @@ FILE: typeAliasSubstitution.kt
     }
     public final typealias TAError<T> = R|Box<ERROR CLASS: Non-error component must appear first>|
     public final typealias TABoth<X, Y> = R|Box<ERROR CLASS: Non-error component must appear first>|
-    public final fun <T1 : R|{TA<kotlin/String>=} Box<union(primary=kotlin/String, errors=E)>|> bounded(a: R|union(primary=T1, errors=E2)|): R|kotlin/Unit| {
+    public final fun <T1 : R|{TA<kotlin/String>=} Box<union(primary=kotlin/String, errors=E)>|, T2 : R|{TA<T2>=} Box<union(errors=T2 | E)>|> bounded(a: R|union(primary=T1, errors=E2)|, b: R|union(primary=T2, errors=E2)|, c: <ERROR TYPE REF: Non-error component must appear first>): R|kotlin/Unit| {
+    }
+    public final fun <A, B : R|kotlin/CharSequence?|, C : R|kotlin/RichError?|> nullableBounds(a: R|{TA<A>=} Box<union(primary=A, errors=E)>|, b: R|{TA<B>=} Box<union(primary=B, errors=E)>|, c: R|{TA<C>=} Box<union(primary=C, errors=E)>|, c2: R|Box<union(primary=C, errors=E)>|): R|kotlin/Unit| {
+        lval x: R|Box<union(primary=C, errors=E)>| = R|/Box.Box|<R|C?|>(Null(null))
     }
