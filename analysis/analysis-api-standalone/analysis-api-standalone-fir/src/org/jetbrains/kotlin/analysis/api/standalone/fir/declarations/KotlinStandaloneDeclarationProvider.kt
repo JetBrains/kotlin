@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -72,7 +71,7 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
         if (facadeFqName.shortNameOrSpecial().isSpecial) return emptyList()
         return findFilesForFacadeByPackage(facadeFqName.parent()) //TODO Not work correctly for classes with JvmPackageName
-            .filter { it.javaFileFacadeFqName == facadeFqName }
+            .filter { it.jvmFacadeClassFqName == facadeFqName }
     }
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> {

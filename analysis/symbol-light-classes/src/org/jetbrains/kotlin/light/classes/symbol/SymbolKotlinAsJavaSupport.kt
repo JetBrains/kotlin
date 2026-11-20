@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.utils.LightClassMemberUtils
 import org.jetbrains.kotlin.light.classes.symbol.utils.SafeNestedNullableCaffeineCache
@@ -169,7 +168,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         val file = fileSymbol.realPsi as? KtFile ?: return null
         if (!file.facadeIsPossible()) return null
 
-        val facadeFqName = file.javaFileFacadeFqName
+        val facadeFqName = file.jvmFacadeClassFqName
         val facadeFiles = if (file.canHaveAdditionalFilesInFacade()) {
             findFilesForFacade(facadeFqName, module.contentSearchScope).filter(KtFile::isJvmMultifileClassFile)
         } else {
@@ -191,7 +190,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     }
 
     override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade {
-        return createInstanceOfLightFacade(file.javaFileFacadeFqName, listOf(file)) ?: errorWithAttachment(
+        return createInstanceOfLightFacade(file.jvmFacadeClassFqName, listOf(file)) ?: errorWithAttachment(
             "Unsupported ${file::class.simpleName}"
         ) {
             withEntry("module", file.getContainingModule().toString())
@@ -211,7 +210,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         return findFilesForFacadeByPackage(packageFqName, scope).mapNotNullTo(mutableSetOf()) { file ->
             file.takeIf { it.facadeIsPossible() }
                 ?.takeIf { facadeIsApplicable(it.getContainingModule()) }
-                ?.javaFileFacadeFqName
+                ?.jvmFacadeClassFqName
                 ?.shortName()
                 ?.asString()
         }.toSet()
@@ -270,7 +269,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     private fun Collection<KtFile>.toFacadeClasses(scope: GlobalSearchScope): List<KtLightClassForFacade> = mapNotNull { file ->
         file.takeIf { it.facadeIsPossible() }?.findContextModule(scope) { facadeIsApplicable(it) }?.let { file to it }
     }.groupBy { [file, module] ->
-        FacadeKey(file.javaFileFacadeFqName, file.isJvmMultifileClassFile, module)
+        FacadeKey(file.jvmFacadeClassFqName, file.isJvmMultifileClassFile, module)
     }.mapNotNull { [_, pairs] ->
         pairs.firstOrNull()?.let { [file, module] ->
             analyzeForLightClasses(module) {
