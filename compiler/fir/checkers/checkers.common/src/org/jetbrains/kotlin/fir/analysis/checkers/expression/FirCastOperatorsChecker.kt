@@ -38,7 +38,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
         val rUserType = expression.conversionTypeRef.coneType.finalApproximationOrSelf()
 
-        when (val it = context.session.firPlatformSpecificCastChecker.runApplicabilityCheck(expression, l.originalType, r, this)) {
+        when (val it = computeApplicability(expression, fromType = l.originalType, toType = r)) {
             Applicability.APPLICABLE -> {}
             // CAST_ERASED may not be the case if we factor in the smartcast data.
             Applicability.CAST_ERASED if l.argument is FirSmartCastExpression -> {}
@@ -51,14 +51,48 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             return
         }
 
-        context.session.firPlatformSpecificCastChecker.runApplicabilityCheck(
+        computeApplicability(
             expression,
             l.smartCastType,
             r,
-            this
         ).ifInapplicable {
             return reporter.reportInapplicabilityDiagnostic(expression, it, l, r, rUserType, forceWarning = true)
         }
+    }
+
+    context(context: CheckerContext)
+    private fun computeApplicability(
+        expression: FirTypeOperatorCall,
+        fromType: ConeKotlinType,
+        toType: ConeKotlinType,
+    ): Applicability {
+        if (toType is ConeUnionType) {
+            val applicabilities = buildSet {
+                add(computeApplicability(expression, fromType, toType.primaryType))
+                toType.richErrorTypes.mapTo(this) { computeApplicability(expression, fromType, it) }
+            }
+            return applicabilities.singleOrNull() ?: when (expression.operation) {
+                IS, NOT_IS -> when {
+                    CAST_ERASED in applicabilities -> CAST_ERASED
+                    USELESS_IS_CHECK in applicabilities -> USELESS_IS_CHECK
+                    else -> APPLICABLE
+                }
+                AS, SAFE_AS -> when {
+                    CAST_ERASED in applicabilities -> CAST_ERASED
+                    applicabilities.all { it == USELESS_CAST } -> USELESS_CAST
+                    else -> APPLICABLE
+                }
+                else -> error("Invalid operator of FirTypeOperatorCall")
+            }
+        }
+        if (fromType is ConeUnionType) {
+            val applicabilities = buildSet {
+                add(computeApplicability(expression, fromType.primaryType, toType))
+                fromType.richErrorTypes.mapTo(this) { computeApplicability(expression, it, toType) }
+            }
+            return applicabilities.singleOrNull() ?: APPLICABLE
+        }
+        return context.session.firPlatformSpecificCastChecker.runApplicabilityCheck(expression, fromType, toType, this)
     }
 
     // checks applicability with no platform-specific rules

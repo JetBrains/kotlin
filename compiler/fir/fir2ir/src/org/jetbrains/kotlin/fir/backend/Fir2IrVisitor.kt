@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -1824,60 +1825,142 @@ class Fir2IrVisitor(
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Any?): IrElement {
         return typeOperatorCall.convertWithOffsets { startOffset, endOffset ->
-            // is NonError and !is NonError is translated to !is RichError and is RichError
-            val coneType = typeOperatorCall.conversionTypeRef.coneType
-            val isNonError = coneType.classId == StandardClassIds.NonError
-            val irTypeOperand = if (isNonError) {
-                // We need to invert nullability because `is NonError` <=> `!is RichError?`
-                StandardTypes.richError(isMarkedNullable = !coneType.isMarkedNullable).toIrType()
-            } else {
-                coneType.toIrType()
-            }
             val irArgumentExpression = convertToIrExpression(typeOperatorCall.argument)
-
-            val [irType, irTypeOperator] = when (typeOperatorCall.operation) {
-                FirOperation.IS -> builtins.booleanType to if (isNonError) IrTypeOperator.NOT_INSTANCEOF else IrTypeOperator.INSTANCEOF
-                FirOperation.NOT_IS -> builtins.booleanType to if (isNonError) IrTypeOperator.INSTANCEOF else IrTypeOperator.NOT_INSTANCEOF
-                FirOperation.AS -> {
-                    if (isNonError)
-                        return generateCastToNonError(startOffset, endOffset, irTypeOperand, irArgumentExpression, isSafeCast = false)
-                    irTypeOperand to IrTypeOperator.CAST
-                }
-                FirOperation.SAFE_AS -> {
-                    if (isNonError)
-                        return generateCastToNonError(startOffset, endOffset, irTypeOperand, irArgumentExpression, isSafeCast = true)
-                    irTypeOperand.makeNullable() to IrTypeOperator.SAFE_CAST
-                }
-                else -> error("Should not be here: ${typeOperatorCall.operation} in type operator call")
-            }
-
-            IrTypeOperatorCallImpl(
-                startOffset, endOffset, irType, irTypeOperator, irTypeOperand,
-                irArgumentExpression
-            )
+            val coneType = typeOperatorCall.conversionTypeRef.coneType
+            typeOperatorCallExpression(startOffset, endOffset, coneType, typeOperatorCall.operation, irArgumentExpression)
         }
     }
 
-    private fun generateCastToNonError(
+    private fun typeOperatorCallExpression(
         startOffset: Int,
         endOffset: Int,
-        irTypeOperand: IrType,
+        coneType: ConeKotlinType,
+        operation: FirOperation,
+        irArgumentExpression: IrExpression,
+    ): IrExpression {
+        // is NonError and !is NonError is translated to !is RichError and is RichError
+        val isNonError = coneType.classId == StandardClassIds.NonError
+        val isUnion = coneType is ConeUnionType
+
+        return when (operation) {
+            IS, NOT_IS -> {
+                if (isUnion) {
+                    instanceOfUnionType(startOffset, endOffset, irArgumentExpression, coneType, operation)
+                } else {
+                    val irTypeOperator = if (operation == IS) {
+                        if (isNonError) IrTypeOperator.NOT_INSTANCEOF else IrTypeOperator.INSTANCEOF
+                    } else {
+                        if (isNonError) IrTypeOperator.INSTANCEOF else IrTypeOperator.NOT_INSTANCEOF
+                    }
+                    val irTypeOperand = if (isNonError) {
+                        // We need to invert nullability because `is NonError` <=> `!is RichError?`
+                        StandardTypes.richError(isMarkedNullable = !coneType.isMarkedNullable).toIrType()
+                    } else {
+                        coneType.toIrType()
+                    }
+                    IrTypeOperatorCallImpl(
+                        startOffset, endOffset, builtins.booleanType, irTypeOperator, irTypeOperand,
+                        irArgumentExpression
+                    )
+                }
+            }
+            AS, SAFE_AS -> {
+                val isSafeCast = operation == SAFE_AS
+                if (isNonError || isUnion) {
+                    generateCastToNonErrorOrUnion(startOffset, endOffset, coneType, irArgumentExpression, isSafeCast = isSafeCast)
+                } else {
+                    val irTypeOperator = if (isSafeCast) {
+                        IrTypeOperator.SAFE_CAST
+                    } else {
+                        IrTypeOperator.CAST
+                    }
+
+                    val irType = coneType.toIrType()
+                    IrTypeOperatorCallImpl(
+                        startOffset, endOffset, irType.makeNullable(), irTypeOperator, irType,
+                        irArgumentExpression
+                    )
+                }
+
+            }
+            else -> error("Should not be here: $operation in type operator call")
+        }
+    }
+
+    private fun instanceOfUnionType(
+        startOffset: Int,
+        endOffset: Int,
+        irArgumentExpression: IrExpression,
+        coneType: ConeUnionType,
+        operation: FirOperation,
+    ): IrBlockImpl {
+        return IrBlockImpl(startOffset, endOffset, builtins.booleanType).apply {
+            val [receiverVariable, variableSymbol] =
+                conversionScope.createTemporaryVariable(irArgumentExpression)
+            statements += receiverVariable
+            statements += instanceOfUnionType(startOffset, endOffset, variableSymbol, coneType, operation)
+        }
+    }
+
+    private fun instanceOfUnionType(
+        startOffset: Int,
+        endOffset: Int,
+        variableSymbol: IrValueSymbol,
+        coneType: ConeUnionType,
+        operation: FirOperation,
+    ): IrExpression {
+        val components = if (coneType.primaryType.isNothing) {
+            coneType.richErrorTypes
+        } else {
+            [coneType.primaryType] + coneType.richErrorTypes
+        }
+
+        return components.map {
+            // Delegate back to typeOperatorCallExpression to properly support NonError as union component.
+            typeOperatorCallExpression(startOffset, endOffset, it, operation, IrGetValueImpl(startOffset, endOffset, variableSymbol))
+        }.reduce { l, r ->
+            if (operation == IS) {
+                logicalOr(startOffset, endOffset, l, r)
+            } else {
+                logicalAnd(startOffset, endOffset, l, r)
+            }
+        }
+    }
+
+    private fun generateCastToNonErrorOrUnion(
+        startOffset: Int,
+        endOffset: Int,
+        coneType: ConeKotlinType,
         irArgumentExpression: IrExpression,
         isSafeCast: Boolean,
     ): IrBlockImpl {
-        // irTypeOperand is RichError(?) and its nullability is inverted from the FIR operand NonError(?).
-        val resultType = if (isSafeCast || !irTypeOperand.isMarkedNullable()) builtins.anyNType else builtins.anyType
+        val resultType = if (isSafeCast || coneType.canBeNull(session)) builtins.anyNType else builtins.anyType
 
         return IrBlockImpl(startOffset, endOffset, resultType).apply {
             val [receiverVariable, variableSymbol] =
-                conversionScope.createTemporaryVariableForSafeCallConstruction(irArgumentExpression)
+                conversionScope.createTemporaryVariable(irArgumentExpression)
 
             statements += receiverVariable
             statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
-                val condition = IrTypeOperatorCallImpl(
-                    startOffset, endOffset, builtins.booleanType, INSTANCEOF, irTypeOperand,
-                    IrGetValueImpl(startOffset, endOffset, variableSymbol)
-                )
+                val condition = if (coneType is ConeUnionType) {
+                    instanceOfUnionType(
+                        startOffset,
+                        endOffset,
+                        variableSymbol,
+                        coneType,
+                        NOT_IS
+                    )
+                } else {
+                    IrTypeOperatorCallImpl(
+                        startOffset,
+                        endOffset,
+                        builtins.booleanType,
+                        INSTANCEOF,
+                        // We need to invert nullability because `is NonError` <=> `!is RichError?`
+                        StandardTypes.richError(isMarkedNullable = !coneType.isMarkedNullable).toIrType(),
+                        IrGetValueImpl(startOffset, endOffset, variableSymbol)
+                    )
+                }
                 val negativeResult = if (isSafeCast) {
                     IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
                 } else {
@@ -2047,19 +2130,33 @@ class Fir2IrVisitor(
                     arguments.add(rightOperand)
                 }
             } else when (booleanOperatorExpression.kind) {
-                LogicOperationKind.AND -> {
-                    IrWhenImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.ANDAND).apply {
-                        branches.add(IrBranchImpl(leftOperand, rightOperand))
-                        branches.add(elseBranch(constFalse(rightOperand.startOffset, rightOperand.endOffset)))
-                    }
-                }
-                LogicOperationKind.OR -> {
-                    IrWhenImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.OROR).apply {
-                        branches.add(IrBranchImpl(leftOperand, constTrue(leftOperand.startOffset, leftOperand.endOffset)))
-                        branches.add(elseBranch(rightOperand))
-                    }
-                }
+                LogicOperationKind.AND -> logicalAnd(startOffset, endOffset, leftOperand, rightOperand)
+                LogicOperationKind.OR -> logicalOr(startOffset, endOffset, leftOperand, rightOperand)
             }
+        }
+    }
+
+    private fun logicalAnd(
+        startOffset: Int,
+        endOffset: Int,
+        leftOperand: IrExpression,
+        rightOperand: IrExpression,
+    ): IrWhen {
+        return IrWhenImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.ANDAND).apply {
+            branches.add(IrBranchImpl(leftOperand, rightOperand))
+            branches.add(elseBranch(constFalse(rightOperand.startOffset, rightOperand.endOffset)))
+        }
+    }
+
+    private fun logicalOr(
+        startOffset: Int,
+        endOffset: Int,
+        leftOperand: IrExpression,
+        rightOperand: IrExpression,
+    ): IrWhen {
+        return IrWhenImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.OROR).apply {
+            branches.add(IrBranchImpl(leftOperand, constTrue(leftOperand.startOffset, leftOperand.endOffset)))
+            branches.add(elseBranch(rightOperand))
         }
     }
 

@@ -44,5 +44,16 @@ fun allErrorsExcluded(x: String | Foo | Bar): Int {
     }
 }
 
+error object EO1
+error object EO2
+
+fun exhaustiveNegativeObjects(x: String | EO1 | EO1): String {
+    if (x == EO1 || x == EO1) return "error"
+
+    return when (x) {
+        is String -> x
+    }
+}
+
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, isExpression, smartcast,
 whenExpression, whenWithSubject */
