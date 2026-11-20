@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.targets.web.KotlinWebPlatformType
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSetupSharedNpmProjectTask
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.createNpmDependenciesReportResolver
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.npmSharedDependenciesConfigurationName
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.*
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -37,6 +35,8 @@ internal constructor(
 ) : Plugin<Project> {
 
     override fun apply(project: Project) {
+        // TODO KT-91824 Warn when several projects apply this plugin.
+
         // base plugin: adds `clean` task for `build/<platform>/shared-npm-project`
         project.plugins.apply(BasePlugin::class.java)
 
@@ -53,6 +53,11 @@ internal constructor(
         platform: KotlinWebPlatformType,
     ) {
         val npmDependenciesReportResolver = project.createNpmDependenciesReportResolver(platform)
+        addSharedNpmProjectsFromRegistry(
+            project,
+            project.configurations.getByName(platform.npmSharedDependenciesConfigurationName),
+            platform,
+        )
 
         val rootDirectoryName = platform.platformName
         val setupSharedNpmProjectTaskName = lowerCamelCaseName("kotlin", platform.platformName, "setupSharedNpmProject")
@@ -70,5 +75,4 @@ internal constructor(
             task.setupKotlinToolingDiagnosticsParameters(project)
         }
     }
-
 }

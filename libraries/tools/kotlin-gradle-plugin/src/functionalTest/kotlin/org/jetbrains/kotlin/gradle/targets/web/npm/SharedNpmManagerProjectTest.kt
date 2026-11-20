@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSetupSharedNpmProjectTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSharedNpmProjectsRegistry
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.utils.named
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -27,6 +29,7 @@ class SharedNpmManagerProjectTest {
                 withName("root")
             }
         )
+        KotlinSharedNpmProjectsRegistry.registerForSettings(root.gradle)
         root.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
 
         val jsBrowser = buildKotlinProject(parent = root, name = "js-browser") {
@@ -45,9 +48,7 @@ class SharedNpmManagerProjectTest {
             }
         }
 
-        for (project in listOf(jsBrowser, jsNodejs, wasmJsBrowser)) {
-            root.addSharedNpmDependency("kotlinNpmSharedDependenciesJs", project)
-            root.addSharedNpmDependency("kotlinNpmSharedDependenciesWasmJs", project)
+        listOf(jsBrowser, jsNodejs, wasmJsBrowser).forEach { project ->
             project.evaluate()
         }
 
@@ -68,6 +69,7 @@ class SharedNpmManagerProjectTest {
                 withName("root")
             }
         )
+        KotlinSharedNpmProjectsRegistry.registerForSettings(root.gradle)
 
         val manager = buildProject(
             projectBuilder = {
@@ -82,7 +84,6 @@ class SharedNpmManagerProjectTest {
                 nodejs()
             }
         }
-        manager.addSharedNpmDependency("kotlinNpmSharedDependenciesJs", lib)
         lib.evaluate()
 
         assertEquals(
@@ -90,7 +91,7 @@ class SharedNpmManagerProjectTest {
             manager.resolvedReports("kotlinNpmDependenciesReportJsResolver"),
         )
 
-        val setupTask = manager.tasks.getByName("kotlinJsSetupSharedNpmProject") as KotlinSetupSharedNpmProjectTask
+        val setupTask = manager.tasks.named<KotlinSetupSharedNpmProjectTask>("kotlinJsSetupSharedNpmProject").get()
 
         val expectedOutputDirectory = manager.layout.buildDirectory
             .dir("js/shared-npm-project")
@@ -115,11 +116,6 @@ private fun buildKotlinProject(
     )
     project.kotlin(configure)
     return project
-}
-
-private fun Project.addSharedNpmDependency(configurationName: String, project: Project) {
-    val projectDependency = dependencies.project(mapOf("path" to project.path))
-    dependencies.add(configurationName, projectDependency)
 }
 
 private fun Project.resolvedReports(resolverName: String): List<File> =

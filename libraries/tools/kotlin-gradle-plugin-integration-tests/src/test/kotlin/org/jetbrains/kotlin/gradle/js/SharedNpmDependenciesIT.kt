@@ -4,8 +4,6 @@
  */
 
 @file:OptIn(
-    ExperimentalKotlinGradlePluginApi::class,
-    DelicateKotlinGradlePluginApi::class,
     ExperimentalWasmDsl::class,
 )
 
@@ -14,14 +12,12 @@ package org.jetbrains.kotlin.gradle.js
 import org.gradle.api.attributes.Attribute
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
-import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.NpmDependencyReport
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readNpmDependencyReport
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.readPackageJsonDependencies
@@ -63,15 +59,10 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
     @GradleTest
     fun testSharedNpmProjectContent(gradleVersion: GradleVersion) {
         project("emptyKts", gradleVersion) {
+            enableWebIsolatedProjectsSupportPreview()
+            applyKotlinEcosystemSettingsPlugin()
             plugins {
                 kotlin("multiplatform").apply(false)
-            }
-            buildScriptInjection {
-                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":lib-a")))
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":lib-b")))
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":lib-web")))
-                project.dependencies.add("kotlinNpmSharedDependenciesWasmJs", project.dependencies.project(mapOf("path" to ":lib-b")))
             }
 
             includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
@@ -224,13 +215,10 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
     @GradleTest
     fun testNpmDependenciesReportPicksUpDependencyNpmChanges(gradleVersion: GradleVersion) {
         project("emptyKts", gradleVersion) {
+            enableWebIsolatedProjectsSupportPreview()
+            applyKotlinEcosystemSettingsPlugin()
             plugins {
                 kotlin("multiplatform").apply(false)
-            }
-            buildScriptInjection {
-                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":lib-a")))
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":lib-b")))
             }
 
             includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
@@ -284,13 +272,10 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
     @GradleTest
     fun testNoCircularNpmDependenciesReportBetweenTestAndMainCompilations(gradleVersion: GradleVersion) {
         project("emptyKts", gradleVersion) {
+            enableWebIsolatedProjectsSupportPreview()
+            applyKotlinEcosystemSettingsPlugin()
             plugins {
                 kotlin("multiplatform").apply(false)
-            }
-            buildScriptInjection {
-                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":core")))
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":test-utils")))
             }
 
             includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "core") {
@@ -526,13 +511,10 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
     @GradleTest
     fun testSharedNpmProjectWithSeveralJsTargets(gradleVersion: GradleVersion) {
         project("emptyKts", gradleVersion) {
+            enableWebIsolatedProjectsSupportPreview()
+            applyKotlinEcosystemSettingsPlugin()
             plugins {
                 kotlin("multiplatform").apply(false)
-            }
-            buildScriptInjection {
-                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":lib-a")))
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":lib-b")))
             }
 
             includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
@@ -626,6 +608,43 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
         }
     }
 
+    // TODO KT-91654 Delete: the functional test `with Preview and without the settings plugin the root project collects the other projects and warns` already covers almost everything here; the IT only adds package.json contents that `testSharedNpmProjectContent` already exercises.
+    @DisplayName("Without the Kotlin ecosystem plugin, the root project falls back to collecting the other projects and warns")
+    @GradleTest
+    fun testSharedNpmProjectFallbackWithoutEcosystemPlugin(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            enableWebIsolatedProjectsSupportPreview()
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+
+            listOf("lib-a", "lib-b").forEach { name ->
+                includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = name) {
+                    buildScriptInjection {
+                        project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                        kotlinMultiplatform.apply {
+                            js { nodejs() }
+                            sourceSets.getByName("jsMain").dependencies {
+                                npm("is-even", "1.0.0")
+                            }
+                        }
+                    }
+                }
+            }
+
+            build("kotlinJsSetupSharedNpmProject") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.SharedNpmProjectEcosystemPluginMissing,
+                    expectedSeverity = KotlinToolingDiagnosticsSeverity.WARNING,
+                )
+                listOf("lib-a", "lib-b").forEach { name ->
+                    val packageJson = projectPath.resolve("build/js/shared-npm-project/packages/emptyKts-$name/package.json")
+                    assertEquals("1.0.0", readPackageJson(packageJson).dependencies["is-even"], "is-even in $packageJson")
+                }
+            }
+        }
+    }
+
     @DisplayName("An npm dependency report without a compilation name fails the shared npm project setup")
     @GradleTest
     fun testNpmDependencyReportWithoutCompilationNameFailsSetup(gradleVersion: GradleVersion) {
@@ -643,12 +662,10 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
         writeInvalidReport: (report: Path) -> Unit,
     ) {
         project("emptyKts", gradleVersion) {
+            enableWebIsolatedProjectsSupportPreview()
+            applyKotlinEcosystemSettingsPlugin()
             plugins {
                 kotlin("multiplatform").apply(false)
-            }
-            buildScriptInjection {
-                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-                project.dependencies.add("kotlinNpmSharedDependenciesJs", project.dependencies.project(mapOf("path" to ":lib")))
             }
 
             includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib") {
@@ -700,5 +717,8 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
             packageJson.devDependencies.filterKeys { it in requiredDevDependencies }.toSortedMap(),
             "devDependencies of $file",
         )
+    }
+    companion object {
+
     }
 }
