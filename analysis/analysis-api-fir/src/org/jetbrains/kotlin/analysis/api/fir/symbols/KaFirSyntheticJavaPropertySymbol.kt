@@ -44,7 +44,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
     override val origin: KaSymbolOrigin
         get() = withValidityAssertion { KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
 
-    override val initializer: KaInitializerValue? get() = withValidityAssertion { firSymbol.getKtConstantInitializer(builder) }
+    override val initializer: KaInitializerValue? get() = withValidityAssertion { firSymbol.getJavaAnnotationDefaultValue(builder) }
 
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
     override val visibility: KaSymbolVisibility get() = withValidityAssertion { firSymbol.visibility.asKaSymbolVisibility }

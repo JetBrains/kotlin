@@ -1,0 +1,16 @@
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.TYPE)) public final annotation class Ann : R|kotlin/Annotation| {
+    public final val klass: R|kotlin/reflect/KClass<*>|
+        public get(): R|kotlin/reflect/KClass<*>|
+
+    public constructor(klass: R|kotlin/reflect/KClass<*>|): R|test/Ann|
+
+}
+
+public final class Usage : R|kotlin/Any| {
+    public final fun unsignedArrays(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/UByteArray|)))  kotlin/String|, b: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/UShortArray|)))  kotlin/String|, c: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/UIntArray|)))  kotlin/String|, d: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/ULongArray|)))  kotlin/String|): R|kotlin/Unit|
+
+    public final fun primitiveArray(a: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/IntArray|)))  kotlin/String|): R|kotlin/Unit|
+
+    public constructor(): R|test/Usage|
+
+}

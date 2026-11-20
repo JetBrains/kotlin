@@ -144,7 +144,7 @@ internal fun ProtoBuf.Annotation.Argument.Value.toFirExpression(session: FirSess
         CLASS -> buildGetClassCall {
             val classId = nameResolver.getClassId(this@toFirExpression.classId)
             val lookupTag = classId.toLookupTag()
-            val referencedType = lookupTag.constructType()
+            val referencedType = lookupTag.constructType().withArrayDimensions(arrayDimensionCount)
             val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
             argumentList = buildUnaryArgumentList(
                 buildClassReferenceExpression {
@@ -174,4 +174,3 @@ internal fun ProtoBuf.Annotation.Argument.Value.toFirExpression(session: FirSess
 
 private fun const(kind: ConstantValueKind, value: Any?): FirLiteralExpression =
     buildLiteralExpression(null, kind, value, setType = true)
-

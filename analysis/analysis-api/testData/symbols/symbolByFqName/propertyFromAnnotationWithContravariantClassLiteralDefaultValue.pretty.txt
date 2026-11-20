@@ -1,0 +1,1 @@
+val value: kotlin.reflect.KClass<in kotlin.Array<kotlin.Any>>

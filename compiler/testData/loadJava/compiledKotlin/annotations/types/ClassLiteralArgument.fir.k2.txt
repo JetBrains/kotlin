@@ -5,7 +5,7 @@ public final class A : R|kotlin/Any| {
 
     public final fun innerGeneric(s: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|test/InnerGeneric.Inner|)))  kotlin/String|): R|kotlin/Unit|
 
-    public final fun arrays(s: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Int|)))  kotlin/Array<kotlin/Int>|, t: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/IntArray|)))  kotlin/Array<kotlin/IntArray>|, u: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Int|)))  kotlin/Array<kotlin/Array<kotlin/Int>>|, v: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/String|)))  kotlin/Array<kotlin/Array<kotlin/Array<kotlin/String>>>|): R|kotlin/Unit|
+    public final fun arrays(s: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/Int>|)))  kotlin/Array<kotlin/Int>|, t: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/IntArray>|)))  kotlin/Array<kotlin/IntArray>|, u: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/Array<kotlin/Int>>|)))  kotlin/Array<kotlin/Array<kotlin/Int>>|, v: R|@R|test/Ann|(klass = <getClass>(<getClass>(R|kotlin/Array<kotlin/Array<kotlin/Array<kotlin/String>>>|)))  kotlin/Array<kotlin/Array<kotlin/Array<kotlin/String>>>|): R|kotlin/Unit|
 
     public constructor(): R|test/A|
 

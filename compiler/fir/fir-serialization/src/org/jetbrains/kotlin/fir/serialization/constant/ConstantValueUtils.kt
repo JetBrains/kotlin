@@ -18,8 +18,9 @@ internal fun create(argumentType: ConeKotlinType, session: FirSession): KClassVa
     var type: ConeKotlinType = argumentType.fullyExpandedType(session)
     var arrayDimensions = 0
     while (true) {
+        // Primitive and unsigned arrays are classes of their own, so they aren't counted as dimensions
         if (type.isPrimitiveArray) break
-        type = type.arrayElementType() ?: break
+        type = type.arrayElementType(checkUnsignedArrays = false) ?: break
         arrayDimensions++
     }
     val classSymbol = type.toClassLikeSymbol(session) ?: return null
