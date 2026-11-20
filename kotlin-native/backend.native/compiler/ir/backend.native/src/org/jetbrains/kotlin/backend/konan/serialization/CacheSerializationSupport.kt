@@ -221,11 +221,8 @@ internal class ClassFieldsDeserializer(
 
         fun getByClassId(classId: ClassId): IrClassSymbol {
             val classIdSig = getPublicSignature(classId.packageFqName, classId.relativeClassName.asString())
-            return deserializer.linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
-                    classIdSig,
-                    BinarySymbolData.SymbolKind.CLASS_SYMBOL,
-                    deserializer
-            ) as IrClassSymbol
+            return deserializer.linker.getSymbolAndPutIntoQueue(classIdSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol?
+                    ?: error("Failed to deserialize class: $classId")
         }
 
         return serializedClassFields.fields.mapIndexed { index, field ->
