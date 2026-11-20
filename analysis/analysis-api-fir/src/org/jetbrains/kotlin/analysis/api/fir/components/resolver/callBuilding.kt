@@ -128,13 +128,26 @@ internal fun FirElement.toKaResolutionAttempt(
     fun <T> transformErrorReference(
         call: FirElement,
         calleeReference: T,
-    ): KaSimpleCallResolutionError where T : FirNamedReference, T : FirDiagnosticHolder = transformErrorReference(
-        psi = psi,
-        call = call,
-        diagnosticHolder = calleeReference,
-        calleeReference = calleeReference,
-        resolveFragmentOfCall = resolveFragmentOfCall,
-    )
+    ): KaCallResolutionAttempt where T : FirNamedReference, T : FirDiagnosticHolder {
+        // An erroneous `set` call of a compound array access is one of its sub-calls
+        if (isCompoundArrayAccessSetCall(psi, call)) {
+            handleCompoundAccessCall(
+                psi = psi,
+                fir = call,
+                resolveFragmentOfCall = resolveFragmentOfCall,
+                // Only the variable access convention uses the mapping
+                typeArgumentsMapping = emptyMap(),
+            )?.let { return it }
+        }
+
+        return transformErrorReference(
+            psi = psi,
+            call = call,
+            diagnosticHolder = calleeReference,
+            calleeReference = calleeReference,
+            resolveFragmentOfCall = resolveFragmentOfCall,
+        )
+    }
 
     return when (this) {
         // FIR does not resolve to a symbol for equality calls.

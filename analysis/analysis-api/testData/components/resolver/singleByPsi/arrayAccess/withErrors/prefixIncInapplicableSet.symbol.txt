@@ -2,6 +2,15 @@ KtOperationReferenceExpression(153,155): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'B', but 'String' was expected.>
+  KaCompoundSymbolResolutionError:
+    simpleAttempts = [
+      KaSimpleSymbolResolutionSuccess:
+        symbols = [
+          /B.inc(<dispatch receiver>: B): B
+        ],
+      KaSimpleSymbolResolutionError:
+        candidateSymbols = [
+          /B.set(<dispatch receiver>: B, i: kotlin.Int, value: kotlin.String): kotlin.Unit
+        ]
+        diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'B', but 'String' was expected.>
+    ]
