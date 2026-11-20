@@ -95,6 +95,15 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     }
 
     /**
+     * [Action] based version of [whenNodejsConfigured] above.
+     */
+    fun whenNodejsConfigured(body: Action<KotlinJsNodeDsl>) {
+        whenNodejsConfigured {
+            body.execute(this)
+        }
+    }
+
+    /**
      * Applies configuration to all browser execution environments used by this target.
      *
      * If browser is not enabled for this target, [body] will not be used.
@@ -106,6 +115,15 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
         subTargets
             .withType<KotlinBrowserJsIr>()
             .configureEach(body)
+    }
+
+    /**
+     * [Action] based version of [whenBrowserConfigured] above.
+     */
+    fun whenBrowserConfigured(body: Action<KotlinJsBrowserDsl>) {
+        whenBrowserConfigured {
+            body.execute(this)
+        }
     }
 }
 
