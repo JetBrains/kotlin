@@ -63,15 +63,18 @@ public class SirDeclarationFromKtSymbolProvider(
                         createSirEnumFromKtSymbol(ktSymbol, sirSession).let(SirTranslationResult::Enum)
                     }
                     else -> {
-                        createSirClassFromKtSymbol(
+                        val declaration = createSirClassFromKtSymbol(
                             ktSymbol = ktSymbol,
                             sirSession = sirSession,
-                        ).let {
-                            SirTranslationResult.RegularClass(
-                                declaration = it,
-                                sealedType = it.sealedType
-                            )
-                        }
+                        )
+                        SirTranslationResult.RegularClass(
+                            declaration = declaration,
+                            sealedType = declaration.sealedType,
+                            typedListDeclarations = declaration.typedListDeclarations?.let {
+                                if (it !is SirTypedListDeclarations.Generic) return@let null
+                                Triple(it.typedListProtocol, it.typedListExtension, it.typedListStruct)
+                            }
+                        )
                     }
                 }
             }
