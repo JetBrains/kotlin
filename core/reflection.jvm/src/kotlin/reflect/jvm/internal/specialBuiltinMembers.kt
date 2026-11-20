@@ -56,7 +56,7 @@ private fun MemberContainer<*>.findBuiltinSpecialFunctionJvmName(nameAndDescript
     val signature = SignatureBuildingComponents.signature(javaAnalogue.classId.internalName, nameAndDescriptor)
     SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME[signature]?.let { return it }
     for (supertype in supertypes) {
-        val superclass = supertype.classifier as? MemberContainer<*> ?: continue
+        val superclass = supertype.memberContainer ?: continue
         if (!superclass.isMappedBuiltin) continue
         superclass.findBuiltinSpecialFunctionJvmName(nameAndDescriptor)?.let { return it }
     }
