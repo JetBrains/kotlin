@@ -1,0 +1,4 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/Unit| {
+        Q|SingularConflict|.R|/SingularConflict.builder*s|().R|/SingularConflict.SingularConflictBuilder.oneSheep|(String(a)).R|/SingularConflict.SingularConflictBuilder.oneSheep|(Int(2)).R|/SingularConflict.SingularConflictBuilder.build|()
+    }

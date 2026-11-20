@@ -78,7 +78,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             builderSymbol.typeParameterSymbols.elementAtOrNull(builderSymbol.typeParameterSymbols.size - CLASS_TYPE_PARAMETER_INDEX_FROM_END)?.defaultType
                 ?: return
 
-        addFunctionIfNotClashing(SELF, existingFunctionNames) {
+        addFunctionIfNotClashingWithSources(SELF, existingFunctionNames, allowGeneratedClash = false) {
             builderSymbol.createJavaMethod(
                 it,
                 valueParameters = emptyList(),
@@ -88,7 +88,8 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 key = BuilderGeneratorKey(BuilderDeclarationType.Function.Self)
             ).symbol
         }
-        addFunctionIfNotClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) {
+        val buildMethodName = Name.identifier(builder.buildMethodName)
+        addFunctionIfNotClashingWithSources(buildMethodName, existingFunctionNames, allowGeneratedClash = false) {
             builderSymbol.createJavaMethod(
                 it,
                 valueParameters = emptyList(),

@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.diagnostics.warning2
 import org.jetbrains.kotlin.diagnostics.warningWithoutSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.KOTLIN_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_CONFIG_IS_MISSING
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_PLUGIN_IS_EXPERIMENTAL
@@ -69,12 +71,14 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_BUILDER_CANNOT_OBTAIN
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CANNOT_SINGULARIZE_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.COMPANION_OBJECT_SERIALIZABLE_CONFLICT
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.LOMBOK_GENERATED_DECLARATION_CLASH
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NOT_INCLUDED_REASON
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_GUAVA
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
@@ -141,6 +145,8 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val CANNOT_SINGULARIZE_NAME by error0<KtAnnotationEntry>()
     val UNSUPPORTED_SINGULAR_TYPE by error1<KtAnnotationEntry, ConeKotlinType>()
     val SINGULAR_REQUIRES_GUAVA by error1<KtAnnotationEntry, FqName>()
+
+    val LOMBOK_GENERATED_DECLARATION_CLASH by error1<KtClass, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 
@@ -364,6 +370,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             SINGULAR_REQUIRES_GUAVA,
             "Package ''{0}'' does not exist. ''lombok.singular.useGuava'' requires Guava on the classpath.",
             TO_STRING,
+        )
+        map.put(
+            LOMBOK_GENERATED_DECLARATION_CLASH,
+            "Some Lombok-generated declarations have conflicting signatures:{0}",
+            SYMBOLS_ON_NEXT_LINES
         )
     }
 }
