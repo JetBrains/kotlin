@@ -2884,8 +2884,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface ValueClassNotFinal : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass: KClass<ValueClassNotFinal>
             get() = ValueClassNotFinal::class
-
-        public val prefix: String
     }
 
     @KaUnstableDiagnosticApi
@@ -3112,6 +3110,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface WillBecomeValueClassNotTopLevel : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass: KClass<WillBecomeValueClassNotTopLevel>
             get() = WillBecomeValueClassNotTopLevel::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassOpen : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<WillBecomeValueClassOpen>
+            get() = WillBecomeValueClassOpen::class
     }
 
     @KaUnstableDiagnosticApi

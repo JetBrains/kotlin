@@ -3077,7 +3077,6 @@ private fun KaDiagnosticConverterBuilder.addConversions62() {
     }
     add(FirErrors.VALUE_CLASS_NOT_FINAL) { firDiagnostic ->
         ValueClassNotFinalImpl(
-            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8997,6 +8996,12 @@ private fun KaDiagnosticConverterBuilder.addConversions182() {
     }
     add(FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL) { firDiagnostic ->
         WillBecomeValueClassNotTopLevelImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_OPEN) { firDiagnostic ->
+        WillBecomeValueClassOpenImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

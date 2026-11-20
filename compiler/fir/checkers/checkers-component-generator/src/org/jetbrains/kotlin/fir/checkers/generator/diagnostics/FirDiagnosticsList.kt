@@ -764,9 +764,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val VALUE_CLASSES by object : DiagnosticGroup("Value classes") {
         val VALUE_CLASS_NOT_TOP_LEVEL by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
-        val VALUE_CLASS_NOT_FINAL by error<KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER) {
-            parameter<String>("prefix")
-        }
+        val VALUE_CLASS_NOT_FINAL by error<KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER)
         val VALUE_CLASS_OPEN by error<KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER)
         val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER) {
             parameter<String>("modifier")
@@ -827,6 +825,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("type")
         }
         val WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val WILL_BECOME_VALUE_CLASS_OPEN by error<KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER)
         val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
         val EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY by error<KtDeclaration>()
         val WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR by error<KtElement>()
