@@ -653,6 +653,8 @@ testing {
                         property = "kotlinBuildRepo",
                     )
 
+                    useHostDependencyCacheAsReadOnly(this)
+
                     androidSdkProvisioner {
                         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
                         dependsOn(acceptLicensesTask)

@@ -647,6 +647,8 @@ fun Test.applyIntegrationTestConfiguration() {
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
+    useHostDependencyCacheAsReadOnly(this)
+
     // This is a classpath that the injections will see
     val buildScriptInjectionsClasspath = files(
         kgpTestingUtilities,
