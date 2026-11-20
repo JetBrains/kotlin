@@ -1,0 +1,21 @@
+.worktreeinclude
+
+# Local properties
+local.properties
+*.local.properties
+
+# AI
+.ai/local.md
+**/.junie/plans/
+.claude/settings.local.json
+
+# Misc tools
+.idecli
+
+# --- IntelliJ project settings, added automatically ---
+# Local IDE project settings.
+.idea/*.xml
+.idea/runConfigurations/
+.idea/codeStyles/
+.idea/inspectionProfiles/
+.run/
