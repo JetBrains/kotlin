@@ -60,7 +60,7 @@ internal object KlibChangesComputer {
     /**
      * Computes changes between the current and previous lists of snapshots, plus unchanged elements that are impacted by the changes.
      *
-     * NOTE: Duplicate ids are not handled yet (see KT-90559 progress doc).
+     * NOTE: Each list of snapshots must not contain duplicate ids (see [toKlibSnapshots]).
      */
     fun computeChangedAndImpactedSet(
         currentSnapshots: List<KlibSnapshot>,

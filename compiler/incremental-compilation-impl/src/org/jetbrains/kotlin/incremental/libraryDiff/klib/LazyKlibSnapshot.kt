@@ -61,5 +61,13 @@ internal class LazyKlibSnapshot(
     }
 }
 
-/** Flattens the snapshots of all klibs. Duplicate ids are not handled yet (see KT-90559 progress doc). */
-internal fun List<KlibEntrySnapshot>.toKlibSnapshots(): List<KlibSnapshot> = flatMap { it.klibSnapshots }
+// TODO(KT-90559): handle duplicate ids across klibs. Until then, fail instead of silently missing changes.
+/** Flattens the snapshots of all klibs. */
+internal fun List<KlibEntrySnapshot>.toKlibSnapshots(): List<KlibSnapshot> {
+    val snapshots = flatMap { it.klibSnapshots }
+
+    val duplicateIds = snapshots.groupingBy { it.id }.eachCount().filterValues { it > 1 }.keys
+    check(duplicateIds.isEmpty()) { "Klib snapshots with duplicate ids are not supported yet: ${duplicateIds.sorted()}" }
+
+    return snapshots
+}

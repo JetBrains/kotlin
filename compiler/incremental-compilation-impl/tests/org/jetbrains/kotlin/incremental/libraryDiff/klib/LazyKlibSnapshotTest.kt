@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
 
 class LazyKlibSnapshotTest : KlibSnapshotTestCommon() {
@@ -35,6 +37,14 @@ class LazyKlibSnapshotTest : KlibSnapshotTestCommon() {
             (firstKlib.klibSnapshots + secondKlib.klibSnapshots).associate { it.id to it.contentHash },
             lazyKlibSnapshot.getCurrentKlibSnapshot(OnClasspathDiffComputation).associate { it.id to it.contentHash },
         )
+    }
+
+    @Test
+    fun testDuplicateIdsAcrossKlibsFail() {
+        val lazyKlibSnapshot = lazyKlibSnapshot(currentEntrySnapshots = listOf(firstKlib, firstKlib))
+
+        val exception = assertFailsWith<IllegalStateException> { lazyKlibSnapshot.getCurrentKlibSnapshot(OnClasspathDiffComputation) }
+        assertContains(exception.message.orEmpty(), "com/example/BaseKt")
     }
 
     @Test
