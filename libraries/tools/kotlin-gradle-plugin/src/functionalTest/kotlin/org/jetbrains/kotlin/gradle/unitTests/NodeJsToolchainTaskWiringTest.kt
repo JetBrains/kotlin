@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrigh
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
 import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.toolchains.externalToolchainServiceName
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
@@ -43,7 +44,7 @@ class NodeJsToolchainTaskWiringTest {
     }
 
     private fun Project.registeredService(): NodeJsToolchainService<*> = gradle.sharedServices.registrations
-        .getByName(nodeJsServiceName)
+        .getByName(externalToolchainServiceName(NodeJsToolchainService::class.java))
         .service
         .get() as NodeJsToolchainService<*>
 
@@ -161,7 +162,7 @@ class NodeJsToolchainTaskWiringTest {
     @Test
     fun `disabled toolchain resolves the legacy executable`() {
         val project = buildProject()
-        registerNodeJsToolchainServiceIfAbsent(project)
+        project.locateOrRegisterNodeJsToolchainService()
         val service = assertIs<DisabledNodeJsToolchainServiceImpl>(project.registeredService())
 
         val executable = service.resolveNodeJsExecutable(

@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.WasmToolsToolchainMode
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
 import org.jetbrains.kotlin.gradle.targets.web.WebIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -806,30 +805,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val binaryenDefaultVersion: Provider<String>
         get() = property(PropertyNames.KOTLIN_BINARYEN_DEFAULT_VERSION)
             .orElse(DEFAULT_BINARYEN_VERSION)
-
-    val nodeJsToolchainMode: NodeJsToolchainMode
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_MODE).orNull
-            ?.let { NodeJsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) }
-            ?.also { mode ->
-                if (mode != NodeJsToolchainMode.DISABLE) {
-                    project.reportDiagnosticOncePerBuild(
-                        KotlinToolingDiagnostics.ExperimentalFeatureWarning(
-                            "Node.js toolchain",
-                            "https://kotl.in/experimental-nodejs-toolchain",
-                        ),
-                        key = "NodeJsToolchain"
-                    )
-                }
-            } ?: NodeJsToolchainMode.DISABLE
-
-    val nodeJsToolchainInstallationDir: Provider<String>
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_INSTALLATION_DIR)
-
-    val nodeJsToolchainDownloadUrl: Provider<String>
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DOWNLOAD_URL)
-
-    val nodeJsToolchainPreinstalledExecutablePath: Provider<String>
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH)
 
     val wasiAdapterToolchainMode: WasiAdapterToolchainMode
         get() = property(PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE).orNull
