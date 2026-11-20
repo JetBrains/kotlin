@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:psi:psi-api"))
+    implementation(project(":compiler:psi:psi-utils"))
     api(project(":analysis:decompiled:decompiler"))
     api(project(":analysis:light-classes-base"))
     implementation(project(":analysis:analysis-api"))

@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:language.targets.jvm"))
     implementation(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:psi:psi-utils"))
     implementation(project(":compiler:ir.tree"))
     implementation(project(":compiler:cli-base"))
     api(project(":compiler:fir:entrypoint"))

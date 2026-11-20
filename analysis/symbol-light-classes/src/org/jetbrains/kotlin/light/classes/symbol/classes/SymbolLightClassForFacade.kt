@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.jvmFacadeClassFqName
 import javax.swing.Icon
 
 internal class SymbolLightClassForFacade(
@@ -189,7 +189,7 @@ internal class SymbolLightClassForFacade(
     override fun getNameIdentifier(): PsiIdentifier? = null
 
     override fun isValid() = files.all {
-        it.isValid && facadeClassFqName == it.javaFileFacadeFqName
+        it.isValid && facadeClassFqName == it.jvmFacadeClassFqName
     } && files.any {
         it.hasTopLevelCallables()
     }

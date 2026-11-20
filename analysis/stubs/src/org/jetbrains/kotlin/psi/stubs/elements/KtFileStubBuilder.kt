@@ -12,7 +12,7 @@ import com.intellij.psi.stubs.DefaultStubBuilder
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.JvmFileClassUtil
+import org.jetbrains.kotlin.psi.jvmFacadeClassFqName
 import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
@@ -60,10 +60,9 @@ class KtFileStubBuilder : DefaultStubBuilder() {
             errorMessage != null -> KotlinFileStubKindImpl.Invalid(errorMessage)
             file.isScript() -> KotlinFileStubKindImpl.Script(packageFqName = packageFqName)
             file.hasTopLevelCallables() -> {
-                val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
                 KotlinFileStubKindImpl.Facade(
                     packageFqName = packageFqName,
-                    facadeFqName = fileClassInfo.facadeClassFqName,
+                    facadeFqName = file.jvmFacadeClassFqName,
                 )
             }
 

@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirBasePropertyAccessorSy
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiSymbol
 import org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.jvmFacadeClassFqName
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import kotlin.reflect.full.createType
@@ -47,7 +47,7 @@ internal fun checkContainingJvmClassName(
         this is KaParameterSymbol -> (containingSymbol as? KaFunctionSymbol)?.computeExpectedJvmClassName()
         this.isLocal -> null
         ktClass != null -> ktClass.getClassId()?.asFqNameString() // Member
-        else -> ktFile.javaFileFacadeFqName.asString() // Top-level
+        else -> ktFile.jvmFacadeClassFqName.asString() // Top-level
     }
 
     if (ktFile.isScript()) return

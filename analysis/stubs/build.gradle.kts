@@ -19,8 +19,8 @@ dependencies {
     api(project(":core:metadata"))
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":compiler:psi:parser"))
+    implementation(project(":compiler:psi:psi-utils"))
     implementation(project(":core:error.handling"))
-    implementation(project(":core:names.jvm"))
     implementation(project(":core:util.runtime"))
 
     compileOnly(intellijCore())
@@ -103,4 +103,3 @@ projectTests {
     testData(project.isolated, "testData")
     testData(project(":compiler:psi:psi-impl").isolated, "testData/psi")
 }
-
