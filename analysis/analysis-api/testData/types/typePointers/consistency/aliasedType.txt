@@ -26,6 +26,7 @@ KaUsualClassType:
               isMarkedNullable: false
               isNullable: false
               hasFlexibleNullability: false
+              isRaw: false
             annotations: []
             classId: kotlin/String
             qualifiers: [
@@ -39,6 +40,7 @@ KaUsualClassType:
             isMarkedNullable: false
             isNullable: false
             hasFlexibleNullability: false
+            isRaw: false
         ]
     ]
     symbol: KaTypeAliasSymbol(MyList)
@@ -59,6 +61,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         annotations: []
         classId: kotlin/String
         qualifiers: [
@@ -72,10 +75,12 @@ KaUsualClassType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
     ]
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   annotations: []
   classId: kotlin/collections/List
   qualifiers: [
@@ -99,6 +104,7 @@ KaUsualClassType:
             isMarkedNullable: false
             isNullable: false
             hasFlexibleNullability: false
+            isRaw: false
           annotations: []
           classId: kotlin/String
           qualifiers: [
@@ -112,6 +118,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -132,6 +139,7 @@ KaUsualClassType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
       annotations: []
       classId: kotlin/String
       qualifiers: [
@@ -145,7 +153,9 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false

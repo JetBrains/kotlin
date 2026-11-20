@@ -26,6 +26,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -44,6 +45,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -62,6 +64,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -80,6 +83,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   parameters: [
     KaFunctionValueParameter:
@@ -102,6 +106,7 @@ KaFunctionType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
     KaFunctionValueParameter:
       name: second
       type: KaUsualClassType:
@@ -122,6 +127,7 @@ KaFunctionType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
     KaFunctionValueParameter:
       name: third
       type: KaUsualClassType:
@@ -142,6 +148,7 @@ KaFunctionType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
     KaFunctionValueParameter:
       name: fourth
       type: KaUsualClassType:
@@ -162,6 +169,7 @@ KaFunctionType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -183,6 +191,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         KaUsualClassType:
           abbreviation: null
           annotations: [
@@ -201,6 +210,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         KaUsualClassType:
           abbreviation: null
           annotations: [
@@ -219,6 +229,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         KaUsualClassType:
           abbreviation: null
           annotations: [
@@ -237,6 +248,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         KaUsualClassType:
           abbreviation: null
           annotations: [
@@ -255,6 +267,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -270,6 +283,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   receiverType: KaUsualClassType:
@@ -287,6 +301,7 @@ KaFunctionType:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   returnType: KaUsualClassType:
     abbreviation: null
     annotations: []
@@ -302,6 +317,7 @@ KaFunctionType:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   symbol: KaNamedClassSymbol(kotlin/Function5)
   typeArguments: [
     KaUsualClassType:
@@ -319,6 +335,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -337,6 +354,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -355,6 +373,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -373,6 +392,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -391,6 +411,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -406,10 +427,12 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 kotlin.String.(first: kotlin.Int, second: kotlin.Int, third: kotlin.Int, fourth: kotlin.Int) -> kotlin.Unit

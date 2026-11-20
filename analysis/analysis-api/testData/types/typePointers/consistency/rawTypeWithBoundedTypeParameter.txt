@@ -1,0 +1,125 @@
+Restored type is the same as the original one
+
+KaFlexibleType:
+  abbreviation: null
+  annotations: []
+  lowerBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: Box
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Box
+        symbol: KaNamedClassSymbol(Box)
+        typeArguments: [
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/Number
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: Number
+                  symbol: KaNamedClassSymbol(kotlin/Number)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/Number)
+              typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
+              isRaw: false
+            upperBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/Number
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: Number
+                  symbol: KaNamedClassSymbol(kotlin/Number)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/Number)
+              typeArguments: []
+              isMarkedNullable: true
+              isNullable: true
+              hasFlexibleNullability: false
+              isRaw: false
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: true
+            isRaw: false
+        ]
+    ]
+    symbol: KaNamedClassSymbol(Box)
+    typeArguments: [
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Number
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Number
+              symbol: KaNamedClassSymbol(kotlin/Number)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Number)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+          isRaw: false
+        upperBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Number
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Number
+              symbol: KaNamedClassSymbol(kotlin/Number)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Number)
+          typeArguments: []
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
+          isRaw: false
+        isMarkedNullable: false
+        isNullable: true
+        hasFlexibleNullability: true
+        isRaw: false
+    ]
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+    isRaw: true
+  upperBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: Box
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Box
+        symbol: KaNamedClassSymbol(Box)
+        typeArguments: [
+          *
+        ]
+    ]
+    symbol: KaNamedClassSymbol(Box)
+    typeArguments: [
+      *
+    ]
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
+    isRaw: false
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+  isRaw: true

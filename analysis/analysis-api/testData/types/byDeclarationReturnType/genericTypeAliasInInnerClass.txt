@@ -31,6 +31,7 @@ KaUsualClassType:
             isMarkedNullable: false
             isNullable: false
             hasFlexibleNullability: false
+            isRaw: false
         ]
     ]
     symbol: KaTypeAliasSymbol(A.B.TA)
@@ -50,10 +51,12 @@ KaUsualClassType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
     ]
     isMarkedNullable: true
     isNullable: true
     hasFlexibleNullability: false
+    isRaw: false
   annotations: []
   classId: kotlin/collections/List
   qualifiers: [
@@ -76,6 +79,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -95,10 +99,12 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: true
   isNullable: true
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 A.B.TA<kotlin.Int>?

@@ -26,6 +26,7 @@ KaUsualClassType:
             isMarkedNullable: false
             isNullable: false
             hasFlexibleNullability: false
+            isRaw: false
           upperBound: KaUsualClassType:
             abbreviation: null
             annotations: []
@@ -41,9 +42,11 @@ KaUsualClassType:
             isMarkedNullable: true
             isNullable: true
             hasFlexibleNullability: false
+            isRaw: false
           isMarkedNullable: false
           isNullable: true
           hasFlexibleNullability: true
+          isRaw: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/Array)
@@ -66,6 +69,7 @@ KaUsualClassType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
       upperBound: KaUsualClassType:
         abbreviation: null
         annotations: []
@@ -81,13 +85,16 @@ KaUsualClassType:
         isMarkedNullable: true
         isNullable: true
         hasFlexibleNullability: false
+        isRaw: false
       isMarkedNullable: false
       isNullable: true
       hasFlexibleNullability: true
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 kotlin.Array<kotlin.Int!>

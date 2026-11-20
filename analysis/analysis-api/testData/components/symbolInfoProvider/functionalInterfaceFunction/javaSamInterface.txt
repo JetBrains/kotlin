@@ -36,6 +36,7 @@ CLASS:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   typeParameters: []
   visibility: PUBLIC
@@ -89,6 +90,7 @@ FUNCTIONAL INTERFACE FUNCTION:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
@@ -107,6 +109,7 @@ FUNCTIONAL INTERFACE FUNCTION:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaRunnable
   canBeOperator: false

@@ -31,6 +31,7 @@ KaUsualClassType:
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: false
+            isRaw: false
         ]
       KaResolvedClassTypeQualifier:
         name: LocalTypeAlias
@@ -42,6 +43,7 @@ KaUsualClassType:
     isMarkedNullable: true
     isNullable: true
     hasFlexibleNullability: false
+    isRaw: false
   annotations: []
   classId: <local>/LocalClass
   qualifiers: [
@@ -72,6 +74,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: true
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   symbol: KaNamedClassSymbol(<local>/LocalClass)
@@ -99,10 +102,12 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: true
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: true
   isNullable: true
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 LocalClass<T>.LocalTypeAlias?

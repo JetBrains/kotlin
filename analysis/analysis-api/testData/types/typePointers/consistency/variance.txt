@@ -24,6 +24,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         in KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -39,6 +40,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         out KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -54,6 +56,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   symbol: KaNamedClassSymbol(Foo)
@@ -73,6 +76,7 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     in KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -88,6 +92,7 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
     out KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -103,7 +108,9 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false

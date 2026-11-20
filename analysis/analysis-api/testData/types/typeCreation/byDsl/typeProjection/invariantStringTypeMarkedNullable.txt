@@ -15,6 +15,7 @@ Type: KaUsualClassType:
   isMarkedNullable: true
   isNullable: true
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type argument:
 INVARIANT kotlin.String?

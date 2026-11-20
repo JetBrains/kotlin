@@ -36,6 +36,7 @@ CLASS:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
+      isRaw: false
   ]
   typeParameters: []
   visibility: PUBLIC
@@ -89,6 +90,7 @@ FUNCTIONAL INTERFACE FUNCTION:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -133,6 +135,7 @@ FUNCTIONAL INTERFACE FUNCTION:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
       typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(typealias.kt)
@@ -157,6 +160,7 @@ FUNCTIONAL INTERFACE FUNCTION:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   getContainingFileSymbol: KaFileSymbol(typealias.kt)
   getContainingJvmClassName: IntPredicate
   canBeOperator: false

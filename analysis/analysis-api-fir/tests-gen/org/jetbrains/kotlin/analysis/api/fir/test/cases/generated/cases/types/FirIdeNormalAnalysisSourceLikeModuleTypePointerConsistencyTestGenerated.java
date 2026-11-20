@@ -248,6 +248,42 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypePointerConsistencyTestGener
   }
 
   @Test
+  @TestMetadata("rawType.kt")
+  public void testRawType() {
+    run("rawType.kt");
+  }
+
+  @Test
+  @TestMetadata("rawTypeAfterNotNullAssertion.kt")
+  public void testRawTypeAfterNotNullAssertion() {
+    run("rawTypeAfterNotNullAssertion.kt");
+  }
+
+  @Test
+  @TestMetadata("rawTypeAsTypeArgument.kt")
+  public void testRawTypeAsTypeArgument() {
+    run("rawTypeAsTypeArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("rawTypeFromJavaLibrary.kt")
+  public void testRawTypeFromJavaLibrary() {
+    run("rawTypeFromJavaLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("rawTypeFromKotlinLibrary.kt")
+  public void testRawTypeFromKotlinLibrary() {
+    run("rawTypeFromKotlinLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("rawTypeWithBoundedTypeParameter.kt")
+  public void testRawTypeWithBoundedTypeParameter() {
+    run("rawTypeWithBoundedTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("recursiveType.kt")
   public void testRecursiveType() {
     run("recursiveType.kt");

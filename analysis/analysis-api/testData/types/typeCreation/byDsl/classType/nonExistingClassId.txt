@@ -13,6 +13,7 @@ KaClassErrorType:
   isMarkedNullable: false
   isNullable: true
   hasFlexibleNullability: true
+  isRaw: false
 
 Rendered type:
 MyClass

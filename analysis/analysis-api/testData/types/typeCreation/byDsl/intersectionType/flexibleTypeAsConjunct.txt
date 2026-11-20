@@ -21,6 +21,7 @@ KaFlexibleType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
       KaUsualClassType:
         abbreviation: null
         annotations: []
@@ -36,10 +37,12 @@ KaFlexibleType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
     ]
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   upperBound: KaIntersectionType:
     abbreviation: null
     annotations: []
@@ -59,6 +62,7 @@ KaFlexibleType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
       KaUsualClassType:
         abbreviation: null
         annotations: []
@@ -74,13 +78,16 @@ KaFlexibleType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+        isRaw: false
     ]
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 (B & kotlin.Int..A & kotlin.Int)

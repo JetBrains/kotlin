@@ -30,6 +30,7 @@ KaFlexibleType:
               isMarkedNullable: false
               isNullable: false
               hasFlexibleNullability: false
+              isRaw: false
             upperBound: KaUsualClassType:
               abbreviation: null
               annotations: []
@@ -45,9 +46,11 @@ KaFlexibleType:
               isMarkedNullable: true
               isNullable: true
               hasFlexibleNullability: false
+              isRaw: false
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: true
+            isRaw: false
           KaFlexibleType:
             abbreviation: null
             annotations: []
@@ -77,9 +80,11 @@ KaFlexibleType:
                 isMarkedNullable: false
                 isNullable: true
                 hasFlexibleNullability: false
+                isRaw: false
               isMarkedNullable: false
               isNullable: false
               hasFlexibleNullability: false
+              isRaw: false
             upperBound: KaTypeParameterType:
               abbreviation: null
               annotations: []
@@ -103,9 +108,11 @@ KaFlexibleType:
               isMarkedNullable: true
               isNullable: true
               hasFlexibleNullability: false
+              isRaw: false
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: true
+            isRaw: false
         ]
     ]
     symbol: KaNamedClassSymbol(java/util/function/Function)
@@ -128,6 +135,7 @@ KaFlexibleType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         upperBound: KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -143,9 +151,11 @@ KaFlexibleType:
           isMarkedNullable: true
           isNullable: true
           hasFlexibleNullability: false
+          isRaw: false
         isMarkedNullable: false
         isNullable: true
         hasFlexibleNullability: true
+        isRaw: false
       KaFlexibleType:
         abbreviation: null
         annotations: []
@@ -175,9 +185,11 @@ KaFlexibleType:
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: false
+            isRaw: false
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         upperBound: KaTypeParameterType:
           abbreviation: null
           annotations: []
@@ -201,13 +213,16 @@ KaFlexibleType:
           isMarkedNullable: true
           isNullable: true
           hasFlexibleNullability: false
+          isRaw: false
         isMarkedNullable: false
         isNullable: true
         hasFlexibleNullability: true
+        isRaw: false
     ]
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
+    isRaw: false
   upperBound: KaUsualClassType:
     abbreviation: null
     annotations: []
@@ -235,6 +250,7 @@ KaFlexibleType:
               isMarkedNullable: false
               isNullable: false
               hasFlexibleNullability: false
+              isRaw: false
             upperBound: KaUsualClassType:
               abbreviation: null
               annotations: []
@@ -250,9 +266,11 @@ KaFlexibleType:
               isMarkedNullable: true
               isNullable: true
               hasFlexibleNullability: false
+              isRaw: false
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: true
+            isRaw: false
           KaFlexibleType:
             abbreviation: null
             annotations: []
@@ -282,9 +300,11 @@ KaFlexibleType:
                 isMarkedNullable: false
                 isNullable: true
                 hasFlexibleNullability: false
+                isRaw: false
               isMarkedNullable: false
               isNullable: false
               hasFlexibleNullability: false
+              isRaw: false
             upperBound: KaTypeParameterType:
               abbreviation: null
               annotations: []
@@ -308,9 +328,11 @@ KaFlexibleType:
               isMarkedNullable: true
               isNullable: true
               hasFlexibleNullability: false
+              isRaw: false
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: true
+            isRaw: false
         ]
     ]
     symbol: KaNamedClassSymbol(java/util/function/Function)
@@ -333,6 +355,7 @@ KaFlexibleType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         upperBound: KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -348,9 +371,11 @@ KaFlexibleType:
           isMarkedNullable: true
           isNullable: true
           hasFlexibleNullability: false
+          isRaw: false
         isMarkedNullable: false
         isNullable: true
         hasFlexibleNullability: true
+        isRaw: false
       KaFlexibleType:
         abbreviation: null
         annotations: []
@@ -380,9 +405,11 @@ KaFlexibleType:
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: false
+            isRaw: false
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
         upperBound: KaTypeParameterType:
           abbreviation: null
           annotations: []
@@ -406,13 +433,17 @@ KaFlexibleType:
           isMarkedNullable: true
           isNullable: true
           hasFlexibleNullability: false
+          isRaw: false
         isMarkedNullable: false
         isNullable: true
         hasFlexibleNullability: true
+        isRaw: false
     ]
     isMarkedNullable: true
     isNullable: true
     hasFlexibleNullability: false
+    isRaw: false
   isMarkedNullable: false
   isNullable: true
   hasFlexibleNullability: true
+  isRaw: false

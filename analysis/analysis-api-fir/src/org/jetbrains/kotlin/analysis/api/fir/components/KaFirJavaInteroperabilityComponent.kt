@@ -297,6 +297,10 @@ internal class KaFirJavaInteroperabilityComponent(
         return false
     }
 
+    override fun isRaw(type: KaType): Boolean = withValidityAssertion {
+        type.coneType.isRaw()
+    }
+
     override fun asPsiClass(classSymbol: KaClassSymbol): PsiClass? = withValidityAssertion {
         lightClassBridge.getLightClass(classSymbol, session = analysisSession)
     }

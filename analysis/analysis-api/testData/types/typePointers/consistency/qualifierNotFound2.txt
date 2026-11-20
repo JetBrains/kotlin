@@ -25,6 +25,7 @@ KaClassErrorType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
+          isRaw: false
       ]
     KaUnresolvedClassTypeQualifier:
       name: Bar
@@ -33,3 +34,4 @@ KaClassErrorType:
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false

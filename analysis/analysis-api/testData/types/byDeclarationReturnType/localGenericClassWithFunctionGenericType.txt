@@ -30,6 +30,7 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: true
           hasFlexibleNullability: false
+          isRaw: false
       ]
   ]
   symbol: KaNamedClassSymbol(<local>/Bar)
@@ -57,10 +58,12 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: true
       hasFlexibleNullability: false
+      isRaw: false
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 Bar<F>

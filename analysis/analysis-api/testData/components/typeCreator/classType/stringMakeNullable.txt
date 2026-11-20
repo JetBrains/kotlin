@@ -15,6 +15,7 @@ KaUsualClassType:
   isMarkedNullable: true
   isNullable: true
   hasFlexibleNullability: false
+  isRaw: false
 RENDERED TYPE:
 kotlin.String?
 
@@ -35,5 +36,6 @@ KaUsualClassType:
   isMarkedNullable: true
   isNullable: true
   hasFlexibleNullability: false
+  isRaw: false
 RENDERED TYPE:
 kotlin.String?

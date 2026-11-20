@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.contracts.description.Context
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.javaInterop.isRaw
 import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
@@ -274,6 +275,7 @@ public class KaDebugRenderer(
                 renderComputedValue("isMarkedNullable", printer, currentSymbolStack) { typeToRender.isMarkedNullable }
                 renderComputedValue("isNullable", printer, currentSymbolStack) { typeToRender.isNullable }
                 renderComputedValue("hasFlexibleNullability", printer, currentSymbolStack) { typeToRender.hasFlexibleNullability }
+                renderComputedValue("isRaw", printer, currentSymbolStack) { typeToRender.isRaw }
             } else {
                 append("annotations: ")
                 renderAnnotationsList(typeToRender.annotations, printer, currentSymbolStack)

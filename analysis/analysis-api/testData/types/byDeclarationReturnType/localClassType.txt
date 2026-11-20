@@ -13,6 +13,7 @@ KaUsualClassType:
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 B

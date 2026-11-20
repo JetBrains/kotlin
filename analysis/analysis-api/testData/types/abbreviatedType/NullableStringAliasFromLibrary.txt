@@ -14,6 +14,7 @@ KaUsualClassType:
     isMarkedNullable: false
     isNullable: true
     hasFlexibleNullability: false
+    isRaw: false
   annotations: []
   classId: kotlin/String
   qualifiers: [
@@ -27,6 +28,7 @@ KaUsualClassType:
   isMarkedNullable: true
   isNullable: true
   hasFlexibleNullability: false
+  isRaw: false
 
 Rendered type:
 library1.StringAlias
