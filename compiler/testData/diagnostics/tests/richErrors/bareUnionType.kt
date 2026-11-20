@@ -7,6 +7,7 @@ interface J<T> : I<T> {
 }
 
 fun unionToPrimary(x: I<String> | E1) {
+    val _ = x is I
     if (x is J) {
         x.foo()
     }
